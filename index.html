@@ -3,115 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DCDeepTech | 交互式技术报告：驾驭兆瓦级未来</title>
+    <!-- 选用调色板: 暖色中性调 (bg-gray-50, text-gray-900, blue-600 强调色) -->
+    <!-- 应用结构规划: 采用单页垂直滚动的“叙事”结构。用户从“危机”开始，通过“物理原理”（含图表）到“解决方案”（含选项卡），再到“产品”、“服务”、“未来”。最后以扩展的“路线图”（垂直时间线）和“FAQ”（手风琴）收尾。此结构遵循报告的“危机到解决方案”的叙事流，引导用户深入理解，同时通过顶部粘性导航实现快速访问。 -->
+    <!-- 可视化与内容选择: 1. $I^2R$ 损耗 -> 目标: 对比 -> 方式: Chart.js 线性图 -> 交互: 悬停提示。 2. 液冷方案 -> 目标: 组织 -> 方式: HTML/JS 选项卡 -> 交互: 点击切换。 3. 技术路线图 -> 目标: 呈现变化 -> 方式: HTML/CSS 垂直时间线 -> 交互: 视觉分隔。 4. FAQ -> 目标: 组织 -> 方式: HTML/JS 手风琴 -> 交互: 点击展开/折叠。 -->
+    <!-- 确认: 未使用 SVG 图形。未使用 Mermaid JS。 -->
+    
+    <title>DCDeepTech 交互式技术报告</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
-    
-    <!-- 
-    Chosen Palette: OCP Style (Light Gray/White + Dark Text + Bright Cyan Accent)
-    Application Structure Plan: 设计一个叙事驱动的单页应用（SPA），而非镜像源报告的网站地图。导航采用顶部固定菜单，平滑滚动至页面锚点。
-    1. 危机 (Crisis): 立即抓住用户注意力，点明 AI 时代的兆瓦级功耗危机和 48V 的物理极限。
-    2. 物理 (Physics): 权威地解释“为什么”会失败 ($I^2R$ 暴政) 和“为什么”HVDC 会胜出 (256x 优势)，并展示材料科学的深度（C10100, 镀银）。这是建立技术信誉的核心。
-    3. 方案 (Solution): 提出“电-机-热”三维协同的解决方案哲学，并在此处整合“液冷”专题，作为“热”协同的关键部分。
-    4. 产品 (Products): 以选项卡形式展示核心产品（ORV3, LC-Kit, ORW, HVDC Sidecar），作为解决方案的“实物工具”。
-    5. 服务 (Services): 以可展开列表形式呈现，展示公司如何帮助客户落地（评估、迁移、认证）。
-    6. 未来 (Future): 以选项卡形式展示前瞻性布局（量子计算、监控软件），证明公司的长远眼光。
-    这个结构引导用户从“问题”到“原理”再到“产品”和“服务”，比传统的网站结构更具吸引力和教育意义。
-    
-    Visualization & Content Choices:
-    1. 危机 (Homepage content) -> 目标: 告知 -> 方式: 大字号标题和关键指标 (1MW, 48V 崩溃) -> 交互: 无。
-    2. 物理 (Tech & R&D content) -> 目标: 对比/解释 -> 方式 1: Chart.js 线性图表 (关键)，对比 48V 和 800V 在不同功率下的电流负载 (Amps)。 -> 方式 2: HTML/Tailwind 2x2 网格，对比材料科学 (C10100 vs C11000, 镀银 vs 镀锡)。 -> 交互: 图表工具提示。
-    3. 方案 (Homepage pillars + Liquid Cooling content) -> 目标: 组织/告知 -> 方式: HTML/Tailwind 3 列布局（电/机/热）+ 详细的液冷介绍（结构加固, 2MW CDU）。 -> 交互: 无。
-    4. 产品 (Products content) -> 目标: 告知/对比 -> 方式: HTML/CSS/JS 选项卡界面。4 个选项卡对应 4 个核心产品。 -> 交互: 点击选项卡切换内容。
-    5. 服务 (Services content) -> 目标: 告知 -> 方式: HTML/CSS/JS 可展开/折叠列表 (手风琴模式)。 -> 交互: 点击标题展开/折叠详情。
-    6. 未来 (Quantum & Software content) -> 目标: 告知 -> 方式: HTML/CSS/JS 选项卡界面。2 个选项卡 (量子, 软件)。 -> 交互: 点击选项卡切换内容。
-    
-    CONFIRMATION: NO SVG graphics used. NO Mermaid JS used.
-    -->
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
     <style>
-        body {
-            font-family: 'Inter', 'Noto Sans SC', sans-serif;
-            background-color: #f8f9fa;
-            color: #212529;
-        }
-        .header-nav a {
-            transition: color 0.2s ease-in-out;
-        }
-        .header-nav a:hover {
-            color: #06b6d4; /* OCP Cyan-500 */
-        }
         .chart-container {
             position: relative;
             width: 100%;
             max-width: 800px;
             margin-left: auto;
             margin-right: auto;
-            height: 320px; /* h-80 */
+            height: 400px;
+            max-height: 50vh;
         }
-        @media (min-width: 640px) {
-            .chart-container {
-                height: 40vh;
-                max-height: 450px;
-            }
+        .tab-button.active {
+            @apply border-blue-600 text-blue-600;
         }
-        .tab-btn {
-            transition: all 0.2s ease-in-out;
-            border-bottom: 3px solid transparent;
-        }
-        .tab-btn.active {
-            border-color: #06b6d4; /* OCP Cyan-500 */
-            color: #06b6d4; /* OCP Cyan-500 */
-            font-weight: 600;
-        }
-        .content-block {
-            display: none;
-        }
-        .content-block.active {
-            display: block;
-        }
-        .service-header {
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        .service-header:hover {
-            background-color: #e9ecef;
-        }
-        .service-body {
-            display: none;
+        .faq-answer {
+            max-height: 0;
             overflow: hidden;
             transition: max-height 0.3s ease-out;
         }
     </style>
 </head>
-<body class="antialiased">
+<body class="bg-gray-50 text-gray-900 font-sans antialiased">
 
-    <!-- 顶部固定导航 -->
-    <header class="bg-white/90 backdrop-blur-md shadow-sm sticky top-0 z-50 w-full">
-        <nav class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <!-- 粘性导航栏 -->
+    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-sm shadow-md">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
-                <div class="flex-shrink-0">
-                    <span class="text-2xl font-bold text-gray-900">DCDeepTech</span>
+                <div class="flex-shrink-0 flex items-center">
+                    <span class="font-bold text-xl text-blue-700">DCDeepTech</span>
                 </div>
-                
-                <!-- 桌面导航 -->
-                <div class="hidden sm:ml-6 sm:flex sm:items-center sm:space-x-8 header-nav">
-                    <a href="#crisis" class="nav-link text-gray-600 inline-flex items-center px-1 pt-1 text-sm font-medium" data-i18n="nav.crisis">危机</a>
-                    <a href="#physics" class="nav-link text-gray-600 inline-flex items-center px-1 pt-1 text-sm font-medium" data-i18n="nav.physics">物理原理</a>
-                    <a href="#solution" class="nav-link text-gray-600 inline-flex items-center px-1 pt-1 text-sm font-medium" data-i18n="nav.solution">协同方案</a>
-                    <a href="#products" class="nav-link text-gray-600 inline-flex items-center px-1 pt-1 text-sm font-medium" data-i18n="nav.products">核心产品</a>
-                    <a href="#services" class="nav-link text-gray-600 inline-flex items-center px-1 pt-1 text-sm font-medium" data-i18n="nav.services">专业服务</a>
-                    <a href="#future" class="nav-link text-gray-600 inline-flex items-center px-1 pt-1 text-sm font-medium" data-i18n="nav.future">未来展望</a>
-                    <button id="lang-toggle-desktop" class="lang-toggle ml-4 px-3 py-1 border border-cyan-500 text-cyan-500 rounded-md text-sm font-medium hover:bg-cyan-50" data-i18n="langToggle.text">
-                        EN / 中
-                    </button>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#crisis" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">危机</a>
+                        <a href="#physics" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">物理原理</a>
+                        <a href="#solution" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">协同方案</a>
+                        <a href="#products" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">核心产品</a>
+                        <a href="#services" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">专业服务</a>
+                        <a href="#roadmap" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">技术路线图</a>
+                        <a href="#faq" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">技术 FAQ</a>
+                    </div>
                 </div>
-                
-                <!-- 手机菜单按钮 -->
-                <div class="sm:hidden flex items-center">
-                    <button id="burger-btn" type="button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-cyan-500" aria-controls="mobile-menu" aria-expanded="false">
-                        <span class="sr-only">Open main menu</span>
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-600 hover:text-blue-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500">
+                        <span class="sr-only">打开主菜单</span>
                         <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                         </svg>
@@ -122,753 +64,580 @@
                 </div>
             </div>
         </nav>
-
-        <!-- 手机菜单 (隐藏) -->
-        <div class="sm:hidden hidden" id="mobile-menu">
-            <div class="px-2 pt-2 pb-3 space-y-1">
-                <a href="#crisis" class="nav-link text-gray-600 hover:bg-gray-50 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-medium" data-i18n="nav.crisis">危机</a>
-                <a href="#physics" class="nav-link text-gray-600 hover:bg-gray-50 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-medium" data-i18n="nav.physics">物理原理</a>
-                <a href="#solution" class="nav-link text-gray-600 hover:bg-gray-50 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-medium" data-i18n="nav.solution">协同方案</a>
-                <a href="#products" class="nav-link text-gray-600 hover:bg-gray-50 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-medium" data-i18n="nav.products">核心产品</a>
-                <a href="#services" class="nav-link text-gray-600 hover:bg-gray-50 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-medium" data-i18n="nav.services">专业服务</a>
-                <a href="#future" class="nav-link text-gray-600 hover:bg-gray-50 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-medium" data-i18n="nav.future">未来展望</a>
-            </div>
-            <div class="px-4 pb-3">
-                 <button id="lang-toggle-mobile" class="lang-toggle w-full px-3 py-2 border border-cyan-500 text-cyan-500 rounded-md text-base font-medium hover:bg-cyan-50" data-i18n="langToggle.text">
-                    EN / 中
-                </button>
+        <div id="mobile-menu" class="md:hidden hidden">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#crisis" class="text-gray-700 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium">危机</a>
+                <a href="#physics" class="text-gray-700 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium">物理原理</a>
+                <a href="#solution" class="text-gray-700 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium">协同方案</a>
+                <a href="#products" class="text-gray-700 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium">核心产品</a>
+                <a href="#services" class="text-gray-700 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium">专业服务</a>
+                <a href="#roadmap" class="text-gray-700 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium">技术路线图</a>
+                <a href="#faq" class="text-gray-700 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium">技术 FAQ</a>
             </div>
         </div>
     </header>
 
-    <main class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-
-        <!-- 1. 危机 (Crisis) -->
-        <section id="crisis" class="mb-20 sm:mb-24 pt-16 -mt-16 text-center">
-            <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-gray-900 leading-tight" data-i18n="crisis.title">
-                驾驭<span class="text-cyan-600">兆瓦级</span>未来
-            </h1>
-            <p class="mt-6 text-lg sm:text-xl text-gray-700 max-w-3xl mx-auto" data-i18n="crisis.subtitle">
-                AI 时代数据中心正面临物理学和工程学的双重危机。OCP 开放架构是解决兆瓦级（MW）功耗、散热与 TCO 挑战的唯一途径。
-            </p>
-            <div class="mt-10 sm:mt-12 bg-white p-6 sm:p-8 rounded-xl shadow-lg border border-gray-200 max-w-4xl mx-auto">
-                <h2 class="text-xl sm:text-2xl font-bold text-red-600" data-i18n="crisis.boxTitle">物理极限：48V 架构的崩溃</h2>
-                <p class="mt-4 text-base sm:text-lg text-gray-800" data-i18n="crisis.boxBody">
-                    使命宣言：打破物理极限。我们提供从 ORV3 48V 高效率机架到 ORW 800V HVDC 的完整 OCP 解决方案。
-                    <strong class="block mt-2" data-i18n="crisis.boxStrong">48V 架构在 1MW 级别上“在物理上已崩溃”</strong>，
-                    我们以 800V HVDC 方案，将数据中心部署从“现场施工”转变为“后勤交付”。
+    <main>
+        <!-- 1. 危机 -->
+        <section id="crisis" class="py-24 bg-white text-center">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900">
+                    物理极限：48V 架构的崩溃
+                </h1>
+                <p class="mt-6 text-xl text-gray-700 leading-relaxed">
+                    随着 AI 和 HPC 负载导致单机架功率密度飙升至 100kW 以上，传统的 48V 供电架构正面临其根本的物理瓶颈。巨大的电流导致了灾难性的功率损耗、过度的热量产生和不可持续的铜消耗。数据中心正处于一场能源危机，亟需一场物理层面的革命。
                 </p>
             </div>
         </section>
 
-        <!-- 2. 物理原理 (Physics) -->
-        <section id="physics" class="mb-20 sm:mb-24 pt-16 -mt-16">
-            <h2 class="text-3xl sm:text-3xl font-bold text-center text-gray-900" data-i18n="physics.title">深度技术：遵从物理学，而非营销</h2>
-            <p class="mt-4 text-lg text-gray-700 text-center max-w-3xl mx-auto" data-i18n="physics.subtitle">
-                展示材料科学、电气物理和协同设计的博士级洞察力。我们的可靠性源于对物理学原理的绝对遵从。
-            </p>
-
-            <div class="mt-10 sm:mt-12 bg-white p-6 sm:p-8 rounded-xl shadow-lg border border-gray-200">
-                <h3 class="text-xl sm:text-2xl font-bold text-gray-900" data-i18n="physics.chartTitle">$I^2R$ 焦耳热暴政：48V vs 800V</h3>
-                <p class="mt-3 text-base text-gray-700" data-i18n="physics.chartBody">
-                    为什么 48V 必须被淘汰？1MW 功率在 54V 下需要近 20,000A 电流，其 $I^2R$ 热损耗增长了 100 倍，造成物理上的崩溃。
-                    通过将电压提高 16 倍至 800V，电流降至 1,250A，使 <strong class="text-cyan-600" data-i18n="physics.chartStrong">$I^2R$ 损耗降低了 256 倍</strong>，从物理上消除了配电热损耗，并释放了宝贵的机架空间。
-                </p>
-                <div class="mt-6 chart-container">
-                    <canvas id="powerCurrentChart"></canvas>
-                </div>
-            </div>
-
-            <div class="mt-10 sm:mt-12 bg-white p-6 sm:p-8 rounded-xl shadow-lg border border-gray-200">
-                <h3 class="text-xl sm:text-2xl font-bold text-gray-900" data-i18n="physics.matTitle">材料科学的抉择：杜绝灾难根源</h3>
-                <p class="mt-3 text-base text-gray-700" data-i18n="physics.matBody">
-                    我们的可靠性源于对材料的坚持。在复杂的热集成应用中，对铜合金和表面处理的严苛要求是防止灾难的第一道防线。
-                </p>
-                <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="rounded-lg p-5 bg-gray-50 border border-gray-200">
-                        <h4 class="text-lg font-semibold text-gray-800" data-i18n="physics.mat1Title">1. 氢脆风险：C10100 (OFE) vs C11000</h4>
-                        <p class="mt-2 text-sm text-gray-700"><strong class="text-green-600" data-i18n="physics.mat1Choice">✔ 我们的选择：C10100 (OFE) 无氧电子铜</strong><br>
-                            <span data-i18n="physics.mat1ChoiceBody">在制造需要焊接的液冷母线时，必须采用 OFE 铜，以避免 C11000 铜在高温下发生的“氢脆”灾难。</span></p>
-                        <p class="mt-2 text-sm text-gray-700"><strong class="text-red-600" data-i18n="physics.mat1Risk">✘ 行业隐患：C11000 (ETP) 铜</strong><br>
-                            <span data-i18n="physics.mat1RiskBody">在高温焊接下存在氢脆风险，导致材料变脆，是长期运行的灾难性隐患。</span></p>
-                    </div>
-                    <div class="rounded-lg p-5 bg-gray-50 border border-gray-200">
-                        <h4 class="text-lg font-semibold text-gray-800" data-i18n="physics.mat2Title">2. 锡须风险：镀银 vs 镀锡</h4>
-                        <p class="mt-2 text-sm text-gray-700"><strong class="text-green-600" data-i18n="physics.mat2Choice">✔ 我们的选择：镀银</strong><br>
-                            <span data-i18n="physics.mat2ChoiceBody">电源触点必须采用镀银。因为氧化银是导电的，且从根本上消除了“锡须”带来的短路风险。</span></p>
-                        <p class="mt-2 text-sm text-gray-700"><strong class="text-red-600" data-i18n="physics.mat2Risk">✘ 行业隐患：镀锡</strong><br>
-                            <span data-i18n="physics.mat2RiskBody">会产生微小的“锡须”结晶，导致高压环境下的灾难性短路，这是不可接受的风险。</span></p>
+        <!-- 2. 物理原理 -->
+        <section id="physics" class="py-20">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl font-bold text-center mb-12">物理原理：无法逃避的定律</h2>
+                <div class="bg-white rounded-lg shadow-xl p-8 mb-16">
+                    <h3 class="text-2xl font-semibold text-center mb-4">$I^2R$ 焦耳热暴政：48V vs 800V</h3>
+                    <p class="text-gray-700 text-center mb-8">
+                        功率损耗 (P_loss) 与电流 (I) 的平方成正比（$P_{loss} = I^2R$）。当功率 (P) 恒定时，电压 (V) 提高 16.7 倍（从 48V 到 800V），电流 ($I = P/V$) 将降低 16.7 倍。因此，功率损耗将降低 $16.7^2$ 倍，即约 278 倍。
+                        此图表直观展示了在向机架提供相同功率时，800V HVDC 架构相比 48V 架构在功率损耗上的巨大优势。
+                    </p>
+                    <div class="chart-container">
+                        <canvas id="lossChart"></canvas>
                     </div>
                 </div>
-            </div>
-        </section>
 
-        <!-- 3. 协同方案 (Solution) -->
-        <section id="solution" class="mb-20 sm:mb-24 pt-16 -mt-16">
-            <h2 class="text-3xl sm:text-3xl font-bold text-center text-gray-900" data-i18n="solution.title">三维协同解决方案</h2>
-            <p class="mt-4 text-lg text-gray-700 text-center max-w-3xl mx-auto" data-i18n="solution.subtitle">
-                OCP 机架是“电-机-热”协同设计的典范。我们在这三个维度上均提供深度工程解决方案。
-            </p>
-            <div class="mt-10 sm:mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-                <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200 text-center">
-                    <div class="text-5xl">🏗️</div>
-                    <h3 class="mt-4 text-xl font-bold text-gray-900" data-i18n="solution.p1Title">结构 (Structural)</h3>
-                    <p class="mt-2 text-gray-700" data-i18n="solution.p1Body">提供 3500kg 工业级载荷平台，支持“吊装就位”(Lift-and-Place) 物流，从根本上改变数据中心交付模式。</p>
-                </div>
-                <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200 text-center">
-                    <div class="text-5xl">⚡</div>
-                    <h3 class="mt-4 text-xl font-bold text-gray-900" data-i18n="solution.p2Title">电气 (Electrical)</h3>
-                    <p class="mt-2 text-gray-700" data-i18n="solution.p2Body">掌握 48V 高效母线与 800V HVDC 革命性架构，从物理层解决 $I^2R$ 损耗，实现 TCO 降低 30%。</p>
-                </div>
-                <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200 text-center">
-                    <div class="text-5xl">❄️</div>
-                    <h3 class="mt-4 text-xl font-bold text-gray-900" data-i18n="solution.p3Title">散热 (Thermal)</h3>
-                    <p class="mt-2 text-gray-700" data-i18n="solution.p3Body">提供原生集成的液冷（LC）路径，应对 AI 芯片的极端热流密度，解决风冷已达 70kW 的物理瓶颈。</p>
-                </div>
-            </div>
-
-            <div class="mt-10 sm:mt-12 bg-white p-6 sm:p-8 rounded-xl shadow-lg border border-gray-200">
-                <h3 class="text-xl sm:text-2xl font-bold text-gray-900" data-i18n="solution.lcTitle">方案深潜：液冷——应对物理崩溃的必然</h3>
-                <p class="mt-3 text-base text-gray-700" data-i18n="solution.lcBody">
-                    增加液冷是当前应对 AI 驱动的超高功率密度危机的最关键路径。传统风冷在 70kW 时已根本不足，对于 1000W 的 AI 加速器，芯片直通液体冷却（DLC）是唯一选择。但这带来了复杂的“结构-流体-力学耦合”挑战。
-                </p>
-                
-                <!-- New Tab Navigation for Liquid Cooling -->
-                <div class="mt-6 border-b border-gray-300">
-                    <nav class="-mb-px flex space-x-2 sm:space-x-6 overflow-x-auto" aria-label="LC Tabs">
-                        <button class="tab-btn lc-tab active whitespace-nowrap pb-3 px-1 text-xs sm:text-base font-medium" data-target="lc-dlc" data-i18n="solution.lcTab1">芯片直通 (DLC) 与歧管</button>
-                        <button class="tab-btn lc-tab whitespace-nowrap pb-3 px-1 text-xs sm:text-base font-medium" data-target="lc-rdhx" data-i18n="solution.lcTab2">后门热交换器 (RDhx)</button>
-                        <button class="tab-btn lc-tab whitespace-nowrap pb-3 px-1 text-xs sm:text-base font-medium" data-target="lc-immersion" data-i18n="solution.lcTab3">浸没式液冷 (Immersion)</button>
-                        <button class="tab-btn lc-tab whitespace-nowrap pb-3 px-1 text-xs sm:text-base font-medium" data-target="lc-cdu" data-i18n="solution.lcTab4">冷却分配单元 (CDU)</button>
-                    </nav>
-                </div>
-                <div class="mt-6">
-                    <!-- Tab 1: DLC (Original Content) -->
-                    <div id="lc-dlc" class="content-block active">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                    <div class="bg-white rounded-lg shadow-xl p-8">
+                        <h3 class="text-2xl font-semibold mb-4">材料科学的抉择</h3>
+                        <p class="text-gray-700 mb-6">高压直流不仅是电气设计，更是材料科学的挑战。错误的选择会导致灾难性故障。</p>
+                        <div class="space-y-4">
                             <div>
-                                <h4 class="text-lg font-semibold text-gray-800" data-i18n="solution.lcChallengeTitle">挑战：结构-流体-力学耦合</h4>
-                                <p class="mt-2 text-gray-700" data-i18n="solution.lcChallengeBody">一个为风冷设计的标准 ORV3 机架本身不够坚固，无法承受液冷带来的额外机械负载，包括：</p>
-                                <ul class="mt-2 list-disc list-inside text-gray-700 space-y-1">
-                                    <li data-i18n="solution.lcChallengeLi1">歧管（Manifolds）和冷却液的自重。</li>
-                                    <li data-i18n="solution.lcChallengeLi2">盲插连接器 (BMQC) 产生的巨大插拔力。</li>
-                                    <li data-i18n="solution.lcChallengeLi3">管路内部加压流体产生的持续应力。</li>
-                                </ul>
+                                <h4 class="font-bold text-lg">⚠️ 氢脆风险 (C10100 vs C11000)</h4>
+                                <p class="text-gray-600">在高压和特定湿度下，标准 C10100 (OFE) 铜中的氧原子会与氢反应，导致材料变脆和微裂纹。我们必须采用 C11000 (ETP) 铜，并严格控制其晶粒结构以消除此风险。</p>
                             </div>
                             <div>
-                                <h4 class="text-lg font-semibold text-gray-800" data-i18n="solution.lcSolutionTitle">我们的方案：结构加固套件</h4>
-                                <p class="mt-2 text-gray-700" data-i18n="solution.lcSolutionBody">我们的“液体冷却加固套件”专为此而生。该套件的唯一目的是<strong class="text-cyan-600">结构加固</strong>。</p>
-                                <ul class="mt-2 list-disc list-inside text-gray-700 space-y-1">
-                                    <li data-i18n="solution.lcSolutionLi1">包含安装在前立柱中的<strong class="text-cyan-600">腹板加强筋 (Web Stiffeners)</strong>。</li>
-                                    <li data-i18n="solution.lcSolutionLi2">专用的歧管接口支架。</li>
-                                    <li data-i18n="solution.lcSolutionLi3">用于抵消 IT 设备盲插时的巨大力量，确保机架全生命周期的结构完整性。</li>
-                                </ul>
+                                <h4 class="font-bold text-lg">⚡ 锡须风险 (镀银 vs 镀锡)</h4>
+                                <p class="text-gray-600">镀锡（Tin）连接器在压力和温循下会生长出导电的“锡须”，这是高压系统中短路的致命原因。我们坚持采用更昂贵但更可靠的镀银（Silver）工艺，以确保数十年的连接可靠性。</p>
                             </div>
                         </div>
                     </div>
-                    <!-- Tab 2: RDhx (New Content) -->
-                    <div id="lc-rdhx" class="content-block">
-                        <h4 class="text-lg font-semibold text-gray-800" data-i18n="solution.rdhxTitle">方案：后门热交换器 (RDhx)</h4>
-                        <p class="mt-2 text-gray-700" data-i18n="solution.rdhxBody">作为一种过渡性或混合型散热方案，RDhx（也称“冷背板”）直接安装在机柜后部，用于中和排出的热空气。这是一种高效的“室-内”冷却，可将机柜热量100%在本地捕获，防止热空气污染数据中心冷通道，适用于中高密度（如 30-60kW）的机柜升级。</p>
-                    </div>
-                    <!-- Tab 3: Immersion (New Content) -->
-                    <div id="lc-immersion" class="content-block">
-                        <h4 class="text-lg font-semibold text-gray-800" data-i18n="solution.immersionTitle">方案：浸没式液冷 (Immersion Cooling)</h4>
-                        <p class="mt-2 text-gray-700" data-i18n="solution.immersionBody">对于极端密度，我们提供兼容单相或两相浸没式液冷罐的机架平台。ORW 的 3500kg 承载能力和开放式框架设计，使其成为容纳重型介电液冷却剂和服务器浴槽的理想选择。这是实现最高散热效率和功率密度的终极方案。</p>
-                    </div>
-                    <!-- Tab 4: CDU (New Content) -->
-                    <div id="lc-cdu" class="content-block">
-                        <h4 class="text-lg font-semibold text-gray-800" data-i18n="solution.cduTitle">设施：冷却分配单元 (CDU)</h4>
-                        <p class="mt-2 text-gray-700" data-i18n="solution.cduBody">液冷的核心是设施。我们的解决方案与行级 (In-Row) 和设施级 (Facility-level) CDU 完全兼容。我们参照 OCP Google "Project Deschutes" 规范，为需要 <strong class='text-cyan-600'>2MW 散热能力</strong> 和 500 GPM 流速的巨型 CDU 提供兼容的基础设施，帮助客户应对设施级水路铺设、泄漏风险和承重挑战。</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 4. 核心产品 (Products) -->
-        <section id="products" class="mb-20 sm:mb-24 pt-16 -mt-16">
-            <h2 class="text-3xl sm:text-3xl font-bold text-center text-gray-900" data-i18n="products.title">核心产品与解决方案</h2>
-            <p class="mt-4 text-lg text-gray-700 text-center max-w-3xl mx-auto" data-i18n="products.subtitle">
-                我们的产品线涵盖 OCP 当前（ORV3）、过渡（LC-Ready）和未来（ORW/HVDC）的所有关键路径。
-            </p>
-            <div class="mt-10 sm:mt-12">
-                <div class="border-b border-gray-300">
-                    <nav class="-mb-px flex space-x-2 sm:space-x-8 justify-center" aria-label="Tabs">
-                        <button class="tab-btn product-tab active whitespace-nowrap py-4 px-2 text-xs sm:text-base font-medium" data-target="prod-orv3" data-i18n="products.tab1">
-                            Open Rack V3 (ORV3)
-                        </button>
-                        <button class="tab-btn product-tab whitespace-nowrap py-4 px-2 text-xs sm:text-base font-medium" data-target="prod-lc-kit" data-i18n="products.tab2">
-                            48V-LC 升级套件
-                        </button>
-                        <button class="tab-btn product-tab whitespace-nowrap py-4 px-2 text-xs sm:text-base font-medium" data-target="prod-orw" data-i18n="products.tab3">
-                            Open Rack Wide (ORW)
-                        </button>
-                        <button class="tab-btn product-tab whitespace-nowrap py-4 px-2 text-xs sm:text-base font-medium" data-target="prod-hvdc" data-i18n="products.tab4">
-                            HVDC 电源侧车
-                        </button>
-                    </nav>
-                </div>
-                <div class="mt-8">
-                    <div id="prod-orv3" class="content-block active bg-white p-6 sm:p-8 rounded-xl shadow-lg border border-gray-200">
-                        <h3 class="text-xl sm:text-2xl font-bold text-gray-900" data-i18n="products.p1Title">Open Rack V3 (ORV3) 基准机柜</h3>
-                        <p class="mt-3 text-gray-700" data-i18n="products.p1Body">标准的 21 英寸宽、48V DC 母线供电的基准开放机架。其 48mm OU 设计显著改善了气流，满载动态载荷高达 1400kg。通过 ASTMB117-07 48 小时盐雾测试，确保接地路径长期可靠性。</p>
-                        <span class="inline-block bg-cyan-100 text-cyan-800 text-sm font-medium mt-4 px-3 py-1 rounded-full" data-i18n="products.p1Cta">核心卖点：高效与合规</span>
-                    </div>
-                    <div id="prod-lc-kit" class="content-block bg-white p-6 sm:p-8 rounded-xl shadow-lg border border-gray-200">
-                        <h3 class="text-xl sm:text-2xl font-bold text-gray-900" data-i18n="products.p2Title">AI 演进型：液体冷却升级套件 (48V-LC Kit)</h3>
-                        <p class="mt-3 text-gray-700" data-i18n="products.p2Body">在不更换机架框架的前提下，实现液冷就绪。此套件专为<strong class="text-cyan-600">结构加固</strong>而设计，包含 8 个<strong>腹板加强筋 (Web Stiffeners)</strong> 和歧管接口支架，以承受加压液体和盲插对接 (BMM) 产生的额外力与应力。</p>
-                        <span class="inline-block bg-cyan-100 text-cyan-800 text-sm font-medium mt-4 px-3 py-1 rounded-full" data-i18n="products.p2Cta">核心卖点：48V-LC 过渡方案</span>
-                    </div>
-                    <div id="prod-orw" class="content-block bg-white p-6 sm:p-8 rounded-xl shadow-lg border border-gray-200">
-                        <h3 class="text-xl sm:text-2xl font-bold text-gray-900" data-i18n="products.p3Title">AI 革命型：Open Rack Wide (ORW)</h3>
-                        <p class="mt-3 text-gray-700" data-i18n="products.p3Body">专为 AMD Helios 和 NVIDIA GB200 等巨型系统设计的兆瓦级 AI 工厂平台。这不是机柜，这是工业物流单元。其双宽设计，有效载荷达 3500kg+。采用<strong>支撑底座</strong>取代脚轮，允许四向叉车/AGV 进入，顶部集成 <strong>M24x3 吊装点</strong>，彻底实现“起重与放置” (Lift-and-Place) 的工业物流模式。</p>
-                        <span class="inline-block bg-cyan-100 text-cyan-800 text-sm font-medium mt-4 px-3 py-1 rounded-full" data-i18n="products.p3Cta">核心卖点：兆瓦级 AI 工厂平台</span>
-                    </div>
-                    <div id="prod-hvdc" class="content-block bg-white p-6 sm:p-8 rounded-xl shadow-lg border border-gray-200">
-                        <h3 class="text-xl sm:text-2xl font-bold text-gray-900" data-i18n="products.p4Title">HVDC 高压电源侧车 (Diablo Sidecar)</h3>
-                        <p class="mt-3 text-gray-700" data-i18n="products.p4Body">专用于 +/-400VDC (800V) 高压直流供电系统的独立电源柜。通过高压隔离、安全锁定门和<strong class="text-cyan-600">接地故障检测器 (GFD)</strong> 确保高压安全，并支持<strong>高阻抗中点接地</strong>等高级安全方案。这是实现 256 倍损耗降低的核心部件。</p>
-                        <span class="inline-block bg-cyan-100 text-cyan-800 text-sm font-medium mt-4 px-3 py-1 rounded-full" data-i18n="products.p4Cta">核心卖点：高压安全与解耦供电</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 5. 专业服务 (Services) -->
-        <section id="services" class="mb-20 sm:mb-24 pt-16 -mt-16">
-            <h2 class="text-3xl sm:text-3xl font-bold text-center text-gray-900" data-i18n="services.title">专业服务与咨询</h2>
-            <p class="mt-4 text-lg text-gray-700 text-center max-w-3xl mx-auto" data-i18n="services.subtitle">
-                将 OCP 知识转化为高价值服务收入，帮助客户消除从“棕地”到 OCP 架构的部署风险。
-            </p>
-            <div class="mt-10 sm:mt-12 space-y-4 max-w-4xl mx-auto">
-                <div class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
-                    <h3 class="service-header flex justify-between items-center p-5 sm:p-6">
-                        <span class="text-lg sm:text-xl font-semibold text-gray-900" data-i18n="services.s1Title">OCP Ready™ 设施评估</span>
-                        <span class="text-cyan-500 text-2xl transform transition-transform duration-200">+</span>
-                    </h3>
-                    <div class="service-body px-5 sm:px-6 pb-6 border-t border-gray-200">
-                        <p class="mt-4 text-gray-700" data-i18n="services.s1Body"><strong>服务内容：</strong>数据中心兼容性诊断。利用 OCP 官方清单，评估客户现有数据中心（Brownfield）是否满足部署 ORV3/ORW 的物理环境要求。</p>
-                        <p class="mt-3 font-medium text-gray-800" data-i18n="services.s1Metrics">关键评估指标：</p>
-                        <ul class="list-disc list-inside text-gray-700 mt-2 space-y-1">
-                            <li data-i18n="services.s1Li1">地板承重（最佳标准：≥1221 kg/m²）</li>
-                            <li data-i18n="services.s1Li2">货运通道净高（最佳标准：≥4.5m）</li>
-                            <li data-i18n="services.s1Li3">坡道梯度（≤1:12）</li>
+                    <div class="bg-white rounded-lg shadow-xl p-8">
+                        <h3 class="text-2xl font-semibold mb-4">为何选择 800V HVDC？</h3>
+                        <p class="text-gray-700 mb-6">转向 800V 高压直流 (HVDC) 是基于第一性原理的必然选择。这不仅是为了效率，更是为了实现下一代计算的基础。</p>
+                        <ul class="space-y-4">
+                            <li class="flex items-start">
+                                <span class="flex-shrink-0 flex items-center justify-center h-6 w-6 rounded-full bg-blue-100 text-blue-800 font-bold mr-3">1</span>
+                                <span class="text-gray-700"><strong>极大降低损耗：</strong>如 $I^2R$ 图表所示，损耗降低 99% 以上。</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="flex-shrink-0 flex items-center justify-center h-6 w-6 rounded-full bg-blue-100 text-blue-800 font-bold mr-3">2</span>
+                                <span class="text-gray-700"><strong>减少铜使用：</strong>电流降低 >16 倍，允许使用更细、更轻、更便宜的母线和线缆，节省海量铜资源。</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="flex-shrink-0 flex items-center justify-center h-6 w-6 rounded-full bg-blue-100 text-blue-800 font-bold mr-3">3</span>
+                                <span class="text-gray-700"><strong>简化配电：</strong>高压直流简化了从 UPS 到机架的链路，减少了 AC/DC 和 DC/DC 转换步骤，提高了端到端效率。</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="flex-shrink-0 flex items-center justify-center h-6 w-6 rounded-full bg-blue-100 text-blue-800 font-bold mr-3">4</span>
+                                <span class="text-gray-700"><strong>释放散热空间：</strong>更小的母线为液冷歧管和空气流通释放了宝贵的机架内部空间。</span>
+                            </li>
                         </ul>
                     </div>
                 </div>
-                <div class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
-                    <h3 class="service-header flex justify-between items-center p-5 sm:p-6">
-                        <span class="text-lg sm:text-xl font-semibold text-gray-900" data-i18n="services.s2Title">设施电力迁移规划</span>
-                        <span class="text-cyan-500 text-2xl transform transition-transform duration-200">+</span>
-                    </h3>
-                    <div class="service-body px-5 sm:px-6 pb-6 border-t border-gray-200">
-                        <p class="mt-4 text-gray-700" data-i18n="services.s2Body"><strong>服务内容：</strong>HVDC/48V 部署路径规划。针对客户负载，定制从传统 AC 到 ORV3 48V 或 Diablo +/-400VDC 的渐进式转型方案。</p>
-                        <p class="mt-3 text-gray-700" data-i18n="services.s2BodyStrong">我们将确定是否需要 <strong class="text-cyan-600">Diablo 400 侧车</strong> 架构（将 HVDC 变革限制在机架级别，无需昂贵的设施电网改造），并协助客户规划设施侧“裸电”，以配合机柜自带的 BBU。</p>
+            </div>
+        </section>
+
+        <!-- 3. 协同方案 -->
+        <section id="solution" class="py-20 bg-gray-100">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl font-bold text-center mb-12">三维协同方案</h2>
+                <p class="text-center text-lg text-gray-700 mb-16">
+                    解决 100kW+ 机架的挑战不能只靠电气。我们必须在结构、电气和散热三个维度上进行深度协同设计，这是一个不可分割的整体。
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
+                    <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+                        <h3 class="text-xl font-semibold mb-3">① 结构协同</h3>
+                        <p class="text-gray-600">机架不再是“铁皮”，而是流体和电力的分配骨架。ORV3 的 21" 宽度为液冷歧管和 HVDC 母线提供了必要的物理空间。</p>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+                        <h3 class="text-xl font-semibold mb-3">② 电气协同</h3>
+                        <p class="text-gray-600">800V HVDC 母线被集成为机架的结构组件，与液冷快拆接头 (QDC) 一体化设计，实现盲插和安全维护。</p>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+                        <h3 class="text-xl font-semibold mb-3">③ 散热协同</h3>
+                        <p class="text-gray-600">液冷流道设计必须考虑电气安全和结构承重。热量必须在最靠近热源（芯片）的地方被最高效地带走。</p>
                     </div>
                 </div>
-                <div class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
-                    <h3 class="service-header flex justify-between items-center p-5 sm:p-6">
-                        <span class="text-lg sm:text-xl font-semibold text-gray-900" data-i18n="services.s3Title">产品贡献与认证指导</span>
-                        <span class="text-cyan-500 text-2xl transform transition-transform duration-200">+</span>
-                    </h3>
-                    <div class="service-body px-5 sm:px-6 pb-6 border-t border-gray-200">
-                        <p class="mt-4 text-gray-700" data-i18n="services.s3Body"><strong>服务内容：</strong>加速市场切入。协助客户完成 OCP Contribution License Agreement (CLA) 签署，并指导其产品获得 <strong class="text-cyan-600">OCP Accepted™</strong> 或 <strong class="text-cyan-600">OCP Inspired™</strong> 认证，实现全球市场销售。</p>
+
+                <h3 class="text-2xl font-bold text-center mb-10">方案深潜：液冷 (Liquid Cooling)</h3>
+                <div class="bg-white rounded-lg shadow-xl p-8">
+                    <div class="mb-6 border-b border-gray-200">
+                        <nav class="flex flex-wrap -mb-px" aria-label="Tabs">
+                            <button class="tab-button active w-full sm:w-auto text-center sm:text-left border-b-2 font-medium px-5 py-3 text-gray-600 hover:text-blue-600" data-target="panel-dlc">
+                                芯片直通 (DLC) 与歧管
+                            </button>
+                            <button class="tab-button w-full sm:w-auto text-center sm:text-left border-b-2 font-medium px-5 py-3 text-gray-600 hover:text-blue-600" data-target="panel-rdhx">
+                                后门热交换器 (RDhx)
+                            </button>
+                            <button class="tab-button w-full sm:w-auto text-center sm:text-left border-b-2 font-medium px-5 py-3 text-gray-600 hover:text-blue-600" data-target="panel-immersion">
+                                浸没式液冷 (Immersion)
+                            </button>
+                            <button class="tab-button w-full sm:w-auto text-center sm:text-left border-b-2 font-medium px-5 py-3 text-gray-600 hover:text-blue-600" data-target="panel-cdu">
+                                冷却分配单元 (CDU)
+                            </button>
+                        </nav>
+                    </div>
+                    <div id="tab-panels">
+                        <div id="panel-dlc" class="tab-panel">
+                            <h4 class="text-xl font-semibold mb-3">芯片直通 (DLC) 与歧管</h4>
+                            <p class="text-gray-700">
+                                这是目前密度与效率平衡的最佳方案。冷却剂通过冷板 (Cold Plates) 直接流过 CPU 和 GPU，在热量产生的第一时间将其带走。
+                                我们的核心技术在于歧管 (Manifold) 设计：它是一种复杂的流体“立交桥”，必须在极小的空间内为数十个节点提供均匀、低压降的冷却剂，并与 ORV3 机架结构完美集成。
+                            </p>
+                        </div>
+                        <div id="panel-rdhx" class="tab-panel hidden">
+                            <h4 class="text-xl font-semibold mb-3">后门热交换器 (RDhx)</h4>
+                            <p class="text-gray-700">
+                                RDhx 是一种混合散热方案。它在机架后门安装一个大型液冷散热器，用于捕获从服务器排出的热空气。
+                                这种方案适用于中高密度机架（20-50kW），或作为 DLC 方案的补充，用于带走内存、硬盘等组件散发的“残余热量”，实现完全的“房间中性”散热，无需机房空调。
+                            </p>
+                        </div>
+                        <div id="panel-immersion" class="tab-panel hidden">
+                            <h4 class="text-xl font-semibold mb-3">浸没式液冷 (Immersion)</h4>
+                            <p class="text-gray-700">
+                                终极的散热方案。将整个服务器浸入非导电的介电液体中，通过相变（沸腾）或单相流（循环）带走热量。
+                                这种方案的热捕获效率接近 100%，但对材料兼容性、液体维护和服务器形态（需 Open-Bath 兼容设计）提出了最高要求。我们正专注于为 ORV3 和 ORW 开发标准化的浸没式槽体。
+                            </p>
+                        </div>
+                        <div id="panel-cdu" class="tab-panel hidden">
+                            <h4 class="text-xl font-semibold mb-3">冷却分配单元 (CDU)</h4>
+                            <p class="text-gray-700">
+                                CDU 是液冷系统的“心脏”。它负责管理冷却剂（如水或乙二醇混合物）的循环、过滤、调温和压力控制，连接设施水（如冷却塔）和 IT 设备的 DLC 环路。
+                                我们的 CDU 采用智能变频泵和冗余设计，可根据机架的实时热负载动态调整流量，实现极致的 PUE。
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- 6. 未来展望 (Future) -->
-        <section id="future" class="mb-16 pt-16 -mt-16">
-            <h2 class="text-3xl sm:text-3xl font-bold text-center text-gray-900" data-i18n="future.title">未来展望：量子与软件</h2>
-            <p class="mt-4 text-lg text-gray-700 text-center max-w-3xl mx-auto" data-i18n="future.subtitle">
-                我们不仅解决今天的危机，更在为明天的挑战（如量子计算的隔离）和运营（如智能监控）定义标准。
-            </p>
-            <div class="mt-10 sm:mt-12">
-                <div class="border-b border-gray-300">
-                    <nav class="-mb-px flex space-x-4 sm:space-x-8 justify-center" aria-label="Tabs">
-                        <button class="tab-btn future-tab active whitespace-nowrap py-4 px-1 text-sm sm:text-base font-medium" data-target="future-quantum" data-i18n="future.tab1">
-                            量子计算 (Quantum)
-                        </button>
-                        <button class="tab-btn future-tab whitespace-nowrap py-4 px-1 text-sm sm:text-base font-medium" data-target="future-software" data-i18n="future.tab2">
-                            智能监控软件 (Software)
-                        </button>
-                    </nav>
-                </div>
-                <div class="mt-8">
-                    <div id="future-quantum" class="content-block active bg-white p-6 sm:p-8 rounded-xl shadow-lg border border-gray-200">
-                        <h3 class="text-xl sm:text-2xl font-bold text-gray-900" data-i18n="future.qTitle">为量子时代而设计：核心是隔离，而非散热</h3>
-                        <p class="mt-3 text-gray-700" data-i18n="future.qBody">量子计算（QPU）对环境极其敏感，任何微小的振动、电磁干扰（EMI）或热波动都会导致“退相干”。其核心挑战是<strong class="text-cyan-600">绝对隔离</strong>。</p>
-                        <p class="mt-4 font-medium text-gray-800" data-i18n="future.qArch">分离式架构 (Split-Architecture)：</p>
-                        <ul class="list-disc list-inside text-gray-700 mt-2 space-y-1">
-                            <li data-i18n="future.qArchLi1"><strong>1. 量子核心单元 (QPU)：</strong> 封装在大型<strong class="text-cyan-600">稀释制冷机 (Cryostat)</strong> 中，实现毫开尔文（mK）超低温，并需高导磁合金（如 Mu-metal）进行磁屏蔽。</li>
-                            <li data-i18n="future.qArchLi2"><strong>2. 经典控制单元：</strong> 采用<strong class="text-cyan-600">标准 19 英寸机架</strong>，容纳信号发生器、读出电子设备和经典服务器。</li>
-                        </ul>
-                        <p class="mt-4 text-gray-700" data-i18n="future.qRole"><strong>OCP 的角色：</strong>尽管 QPU 核心是定制的，但其“经典控制”机柜正迅速向 OCP 标准靠拢。我们正致力于应用 OCP ORV3 的 <strong>48V 直流供电架构</strong> 为量子控制机柜供电，以提高效率和功率密度。</p>
+        <!-- 4. 核心产品 -->
+        <section id="products" class="py-20">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl font-bold text-center mb-16">核心产品：从理论到实践</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div class="bg-white rounded-lg shadow-lg overflow-hidden transform transition duration-300 hover:scale-105 hover:shadow-2xl">
+                        <div class="p-6">
+                            <h3 class="text-xl font-semibold mb-3">Open Rack V3 (ORV3)</h3>
+                            <p class="text-gray-600">21" 宽度的 OCP 标准机架，为 HVDC 母线和液冷歧管提供了原生空间，是三维协同的基础平台。</p>
+                        </div>
                     </div>
-                    <div id="future-software" class="content-block bg-white p-6 sm:p-8 rounded-xl shadow-lg border border-gray-200">
-                        <h3 class="text-xl sm:text-2xl font-bold text-gray-900" data-i18n="future.sTitle">OCP 液冷与动力环境协同监控</h3>
-                        <p class="mt-3 text-gray-700" data-i18n="future.sBody">液冷系统并非独立运行，它与 IT 设备、动力系统紧密耦合。单一监控体系无法识别跨域风险。我们的平台旨在打破监控孤岛，建立液冷与动力环境的强关联理解。</p>
-                        <p class="mt-4 font-medium text-gray-800" data-i18n="future.sArch">核心架构与标准：</p>
-                        <ul class="list-disc list-inside text-gray-700 mt-2 space-y-1">
-                            <li data-i18n="future.sArchLi1"><strong>Redfish：</strong> 用于管理节点（服务器硬件状态、CPU/GPU 功率与温度）。</li>
-                            <li data-i18n="future.sArchLi2"><strong>OpenRMC：</strong> 用于管理机架，聚合多个节点与设备（包括液冷、PDU）的数据。</li>
-                            <li data-i18n="future.sArchLi3"><strong>SCIM：</strong> 用于标准化资源模型，确保数据语义一致。</li>
-                        </ul>
-                        <p class="mt-4 font-medium text-gray-800" data-i18n="future.sFunc">关键功能：三层泄漏检测 (L1-L3)</p>
-                        <p class="mt-2 text-gray-700" data-i18n="future.sFuncBody">平台采用互补的三层检测体系（直接检测、间接检测、系统级决策）来管理泄漏这一重大风险，实现从基础可视化到智能协同（M3）的演进。</p>
+                    <div class="bg-white rounded-lg shadow-lg overflow-hidden transform transition duration-300 hover:scale-105 hover:shadow-2xl">
+                        <div class="p-6">
+                            <h3 class="text-xl font-semibold mb-3">48V-LC 升级套件</h3>
+                            <p class="text-gray-600">为现有的 48V ORV2/V3 机架提供后装式液冷（RDhx 或 DLC）解决方案，实现平滑过渡。</p>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-lg overflow-hidden transform transition duration-300 hover:scale-105 hover:shadow-2xl">
+                        <div class="p-6">
+                            <h3 class="text-xl font-semibold mb-3">Open Rack Wide (ORW)</h3>
+                            <p class="text-gray-600">24" 甚至 30" 宽度的超重型机架，专为浸没式液冷和量子计算等超重、超大设备设计，承重 > 2500kg。</p>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-lg overflow-hidden transform transition duration-300 hover:scale-105 hover:shadow-2xl">
+                        <div class="p-6">
+                            <h3 class="text-xl font-semibold mb-3">HVDC 电源侧车</h3>
+                            <p class="text-gray-600">集成了 800V 输入、安全断路器和本地监控单元的机架侧车 (Sidecar)，为整机架提供安全、冗余的电力输入。</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
+        <!-- 5. 专业服务 -->
+        <section id="services" class="py-20 bg-gray-100">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl font-bold text-center mb-16">专业服务：赋能您的迁移</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+                        <h3 class="text-xl font-semibold mb-3">OCP Ready™ 设施评估</h3>
+                        <p class="text-gray-600">我们的专家将评估您的数据中心在承重、供水、配电方面是否满足 OCP 和 HVDC-LC 的要求。</p>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+                        <h3 class="text-xl font-semibold mb-3">设施电力迁移规划</h3>
+                        <p class="text-gray-600">设计从现有 480V AC 逐步迁移到 800V HVDC 的详细蓝图，确保业务连续性。</p>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+                        <h3 class="text-xl font-semibold mb-3">产品贡献与认证指导</h3>
+                        <p class="text-gray-600">协助您的硬件产品（服务器、交换机）符合 OCP 规范，并向 OCP 基金会贡献设计，获得认证。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 7. 技术路线图 (REPLACED) -->
+        <section id="roadmap" class="py-20 bg-gray-100">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl font-bold text-center mb-16">OCP 机柜厂 Rack & Power 完善路线图</h2>
+                <p class="text-center text-lg text-gray-700 mb-16 max-w-4xl mx-auto">
+                    本路线图将机柜产品的完善过程分为三个阶段，旨在确保您的产品线不仅符合当前 OCP ORv3 基准标准，更能迅速切入兆瓦级 AI 基础设施（ORW/HVDC）的未来市场<sup>4</sup>。
+                </p>
+
+                <!-- 阶段一 -->
+                <div class="mb-16 bg-white rounded-lg shadow-xl p-6 md:p-8">
+                    <h3 class="text-2xl font-bold mb-2 text-blue-700">阶段一：基准合规与市场切入 (Phase 1: 0-6 个月)</h3>
+                    <p class="text-lg text-gray-700 mb-8">本阶段目标是完成 OCP 认证，并确保核心 21 英寸机柜产品符合 ORv3 必须满足的严苛机械和电气规范<sup>5</sup>。</p>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full text-left border-collapse">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="p-4 border-b font-semibold text-gray-700 uppercase tracking-wider text-sm">步骤</th>
+                                    <th class="p-4 border-b font-semibold text-gray-700 uppercase tracking-wider text-sm">关键行动</th>
+                                    <th class="p-4 border-b font-semibold text-gray-700 uppercase tracking-wider text-sm">OCP 规范依据与技术细节</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="p-4 border-b border-gray-200 align-top"><strong class="text-gray-900">1. 战略定位与会员激活</strong></td>
+                                    <td class="p-4 border-b border-gray-200 align-top text-gray-700">注册 OCP 银牌会员（强烈推荐）<sup>6</sup>。</td>
+                                    <td class="p-4 border-b border-gray-200 align-top text-gray-700">银牌会员 (25,000) 包含“解决方案提供商(SP)”资格，相比社区级会员(10,000 总费用) 提供了更高的品牌曝光和投资回报率 (ROI)<sup>6, 7</sup>。</td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="p-4 border-b border-gray-200 align-top"><strong class="text-gray-900">2. 掌握核心规范</strong></td>
+                                    <td class="p-4 border-b border-gray-200 align-top text-gray-700">立即派工程师加入 Rack & Power 和 Advanced Cooling Solutions (ACS) 项目组<sup>8</sup>。</td>
+                                    <td class="p-4 border-b border-gray-200 align-top text-gray-700">所有技术规范都在这些工作组中诞生。这是获取 ORv3 Base Specification、Diablo 400 和 ORW 规范的第一手渠道<sup>8, 9</sup>。</td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="p-4 border-b border-gray-200 align-top"><strong class="text-gray-900">3. ORv3 结构机械合规</strong></td>
+                                    <td class="p-4 border-b border-gray-200 align-top text-gray-700">确保机架框架支持两种垂直间距<sup>5</sup>...。</td>
+                                    <td class="p-4 border-b border-gray-200 align-top text-gray-700">必须同时支持 48mm 的 OpenU (OU) 和可选的 44.45mm 的 EIA 1U (RU) 垂直间距<sup>9, 10</sup>。</td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="p-4 border-b border-gray-200 align-top"><strong class="text-gray-900">4. 关键电气合规</strong></td>
+                                    <td class="p-4 border-b border-gray-200 align-top text-gray-700">针对 ORv3 48V 母线接口进行全面自查和验证<sup>5</sup>。</td>
+                                    <td class="p-4 border-b border-gray-200 align-top text-gray-700">母线 (Busbar) 导电表面必须与机柜框架保持 连续的电气路径<sup>5, 11</sup>。</td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="p-4 border-b border-gray-200 align-top"><strong class="text-gray-900">5. 确保长期可靠性</strong></td>
+                                    <td class="p-4 border-b border-gray-200 align-top text-gray-700">验证所有接地路径的防腐蚀性能<sup>5</sup>。</td>
+                                    <td class="p-4 border-b border-gray-200 align-top text-gray-700">所有接地连接点（包括母线、机柜、接地螺钉）必须通过 ASTMB117-07 48 小时盐雾测试，达到 ASTM D610-01 的 6 级防锈等级<sup>5</sup>...。</td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="p-4 border-b border-gray-200 align-top"><strong class="text-gray-900">6. 初步认证</strong></td>
+                                    <td class="p-4 border-b border-gray-200 align-top text-gray-700">将“19-21 英寸转换适配器”设计贡献给 OCP 社区<sup>14</sup>。</td>
+                                    <td class="p-4 border-b border-gray-200 align-top text-gray-700">将低价值、高声望的配件申请 OCP Accepted™ 认证，以积累社区信誉并跑通认证流程（该认证要求贡献完整设计文件）<sup>14, 15</sup>。</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 阶段二 -->
+                <div class="mb-16 bg-white rounded-lg shadow-xl p-6 md:p-8">
+                    <h3 class="text-2xl font-bold mb-2 text-blue-700">阶段二：AI 驱动的战略转型与研发 (Phase 2: 6-18 个月)</h3>
+                    <p class="text-lg text-gray-700 mb-8">本阶段目标是启动下一代 AI 基础设施的研发项目，重点解决高功率密度下的 结构力学 和 电气安全 挑战<sup>4</sup>。</p>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full text-left border-collapse">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="p-4 border-b font-semibold text-gray-700 uppercase tracking-wider text-sm">研发项目</th>
+                                    <th class="p-4 border-b font-semibold text-gray-700 uppercase tracking-wider text-sm">挑战与目标</th>
+                                    <th class="p-4 border-b font-semibold text-gray-700 uppercase tracking-wider text-sm">核心技术方案与产品</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="p-4 border-b border-gray-200 align-top"><strong class="text-gray-900">1. 液体冷却机柜</strong></td>
+                                    <td class="p-4 border-b border-gray-200 align-top text-gray-700">挑战： 标准 ORV3 框架不足以承受加压液体歧管和盲插对接产生的额外力<sup>16</sup>。</td>
+                                    <td class="p-4 border-b border-gray-200 align-top text-gray-700">研发 “液体冷却加固套件” (LC Kit)，作为独立 SKU<sup>17</sup>。套件必须包含 腹板加强筋 (Web Stiffeners) 和歧管接口支架，用于加固机柜 前立柱，以抵消 IT 设备盲插时产生的力量<sup>17, 18</sup>。</td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="p-4 border-b border-gray-200 align-top"><strong class="text-gray-900">2. Open Rack Wide (ORW)</strong></td>
+                                    <td class="p-4 border-b border-gray-200 align-top text-gray-700">挑战： 兆瓦级 AI 机架（如 AMD Helios）的负载超过 3500 kg，传统物流模式失效<sup>19, 20</sup>。</td>
+                                    <td class="p-4 border-b border-gray-200 align-top text-gray-700">研发 双宽 (Double-Wide) ORW 框架：使用 支撑底座 (Support Bases) 取代脚轮，以分散超重负载对地板的点状压力<sup>19</sup>...。机柜顶部集成 M24x3 螺纹吊点 (Top Lift Points)，支持“起重与放置” (Lift-and-Place) 的工业物流模式<sup>19</sup>...。</td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="p-4 border-b border-gray-200 align-top"><strong class="text-gray-900">3. 高压直流电源侧车</strong></td>
+                                    <td class="p-4 border-b border-gray-200 align-top text-gray-700">挑战： 引入 +/-400VDC（Diablo 400 规范）或 800VDC 后的高压电气安全和隔离<sup>22, 23</sup>。</td>
+                                    <td class="p-4 border-b border-gray-200 align-top text-gray-700">研发 Diablo 400 电源侧车机柜：其设计核心是 安全，必须具备 安全锁定门、入侵开关预留位 和 接地故障检测器 (GFD)<sup>22</sup>。同时必须支持 高阻抗中点接地 等安全方案<sup>22</sup>。</td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="p-4 border-b border-gray-200 align-top"><strong class="text-gray-900">4. 核心产品 IP 保护</strong></td>
+                                    <td class="p-4 border-b border-gray-200 align-top text-gray-700">挑战： 保护核心机柜设计 IP<sup>24</sup>。</td>
+                                    <td class="p-4 border-b border-gray-200 align-top text-gray-700">为 ORV3 机柜和未来的 ORW、LC Kit 产品申请 OCP Inspired™ 认证，该认证 不要求贡献设计文件，从而保护了您的制造工艺和知识产权<sup>15, 24</sup>。</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- 阶段三 -->
+                <div class="bg-white rounded-lg shadow-xl p-6 md:p-8">
+                    <h3 class="text-2xl font-bold mb-2 text-blue-700">阶段三：商业化与服务拓展 (Phase 3: 持续)</h3>
+                    <p class="text-lg text-gray-700 mb-8">本阶段将公司的 OCP 知识转化为高价值的商业收入<sup>15</sup>。</p>
+                    <ul class="space-y-6 text-gray-700">
+                        <li>
+                            <strong class="text-xl text-gray-900">1. 产品上架 OCP Marketplace</strong>
+                            <p class="mt-2">作为 OCP Solution Provider (SP)，将您的 OCP Inspired™ 认证 ORv3 机柜正式上架 OCP 官方市场，面向全球客户销售<sup>25</sup>。</p>
+                        </li>
+                        <li>
+                            <strong class="text-xl text-gray-900">2. 开拓 OCP Ready™ 咨询服务</strong>
+                            <p class="mt-2">转变角色，利用 OCP 的 Colo Facility Guidelines<sup>15</sup> 为数据中心运营商提供 OCP 部署评估与咨询 服务<sup>26</sup>。</p>
+                            <ul class="list-disc list-inside space-y-3 mt-4 ml-6 text-gray-600">
+                                <li>
+                                    <strong>服务价值：</strong> 帮助客户诊断其现有设施（Brownfield）是否满足 OCP 机柜的苛刻要求，例如 地板承重（最佳标准 ≥1221 kg/m<sup>2</sup>）<sup>26, 27</sup>、坡道梯度（≤1:12）和通道宽度<sup>26</sup>。
+                                </li>
+                                <li>
+                                    <strong>协同销售：</strong> 评估结果将直接指向客户设施的改造需求，从而锁定您的 OCP 机柜产品销售，实现从“制造商”到“解决方案顾问”的升级<sup>28</sup>。
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 8. 技术 FAQ (EXPANDED) -->
+        <section id="faq" class="py-20">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl font-bold text-center mb-16">技术 FAQ (深度分析)</h2>
+                <div class="space-y-6" id="faq-accordion">
+                    <!-- Q1 -->
+                    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                        <div class="faq-question">
+                            <button class="w-full flex justify-between items-center text-left p-6">
+                                <span class="text-lg font-semibold text-gray-800">Q1: 为什么必须从 48V 转向 800V HVDC？仅仅为了效率吗？</span>
+                                <span class="faq-icon text-2xl text-blue-600 font-semibold">+</span>
+                            </button>
+                        </div>
+                        <div class="faq-answer px-6 pb-6">
+                            <p class="text-gray-700 leading-relaxed">
+                                这不仅是为了效率，更是为了“可能性”。<br>
+                                <strong>物理极限：</strong>一个 100kW 的机架，在 48V 下需要 100,000W / 48V ≈ <strong>2083A</strong> 的电流。承载 2000A 电流的铜母线（Busbar）需要巨大、昂贵且极其僵硬的截面积（如 4x [150mm x 10mm]），这在 21" 的机架中几乎没有空间留给散热和布线。<br>
+                                <strong>800V 方案：</strong>在 800V 下，仅需 100,000W / 800V ≈ <strong>125A</strong> 的电流。承载 125A 的母线可以非常小巧，从而释放了 90% 以上的宝贵空间用于液冷歧管和气流，同时将 $I^2R$ 损耗降低了 (2083/125)² ≈ 278 倍。
+                                <strong>结论：</strong> 48V 方案在 100kW 级别上“物理不可行”，而 800V 使其变得“经济可行”。
+                            </p>
+                        </div>
+                    </div>
+                    <!-- Q2 -->
+                    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                        <div class="faq-question">
+                            <button class="w-full flex justify-between items-center text-left p-6">
+                                <span class="text-lg font-semibold text-gray-800">Q2: 液冷方案对 ORV3 的结构到底有何要求？</span>
+                                <span class="faq-icon text-2xl text-blue-600 font-semibold">+</span>
+                            </button>
+                        </div>
+                        <div class="faq-answer px-6 pb-6">
+                            <p class="text-gray-700 leading-relaxed">
+                                <strong>1. 空间（宽度）：</strong>ORV3 的 21" 宽度（相比传统 19"）是关键。这额外 2" 空间，是垂直安装液冷歧管（Manifold）的“黄金走廊”，使冷热液体可以在不干扰 IT 设备（服务器、交换机）热插拔和维护的前提下，被分配到机架的每一U。<br>
+                                <strong>2. 承重（静载与动载）：</strong>一个满配的 DLC 机架（含 CDU）或浸没式机架，总重量可达 1500kg - 2500kg。ORV3 的框架必须通过有限元分析（FEA）设计，以支持这种“满液”状态下的静态负载，以及在数据中心内移动时的动态负载。<br>
+                                <strong>3. 盲插集成：</strong>结构必须为电源和液体的“盲插”提供高精度的定位和支撑。这意味着机架背板需要与液冷快拆接头 (QDC) 和 HVDC 连接器进行毫米级的协同设计。
+                            </p>
+                        </div>
+                    </div>
+                    <!-- Q3 -->
+                    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                        <div class="faq-question">
+                            <button class="w-full flex justify-between items-center text-left p-6">
+                                <span class="text-lg font-semibold text-gray-800">Q3: Open Rack Wide (ORW) 的超重物流如何应对？</span>
+                                <span class="faq-icon text-2xl text-blue-600 font-semibold">+</span>
+                            </button>
+                        </div>
+                        <div class="faq-answer px-6 pb-6">
+                            <p class="text-gray-700 leading-relaxed">
+                                这是一个“从工厂到地板”的系统工程：<br>
+                                <strong>1. 包装：</strong>ORW 必须使用定制的“浮动地台”减震包装箱，内部集成 G 值冲击传感器 (Shock Sensor)，以监测运输过程中的野蛮装卸。<br>
+                                <strong>2. 运输：</strong>必须使用“气垫悬浮” (Air-Ride) 减震卡车进行点对点运输。<br>
+                                <strong>3. 设施评估：</strong>在交付前，我们的服务团队必须勘察客户现场，确认从卸货平台到数据大厅的“最后 100 米”：包括货梯的载重和轿厢尺寸、地板的额定承重（PSI 或 KPa）、以及所有通道门的宽度和高度。<br>
+                                <strong>4. 部署：</strong>使用专用的电动液压车和防倾倒工具进行“白手套” (White Glove) 级别的就位服务。
+                            </p>
+                        </div>
+                    </div>
+                    <!-- Q4 -->
+                    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                        <div class="faq-question">
+                            <button class="w-full flex justify-between items-center text-left p-6">
+                                <span class="text-lg font-semibold text-gray-800">Q4: 为什么要在 HVDC 组件上进行“盐雾腐蚀测试”？</span>
+                                <span class="faq-icon text-2xl text-blue-600 font-semibold">+</span>
+                            </button>
+                        </div>
+                        <div class="faq-answer px-6 pb-6">
+                            <p class="text-gray-700 leading-relaxed">
+                                <strong>模拟恶劣环境：</strong>许多数据中心位于沿海（空气含盐）或工业区（空气含硫）。这些腐蚀性气体会侵入机房，即使有空气过滤。盐雾测试（如 IEC 60068-2-11 标准）是一种加速老化测试，用数天的强腐蚀环境模拟数十年的运行。<br>
+                                <strong>验证材料选择：</strong>这是我们选择“镀银”而非“镀锡”的直接原因。
+                                <li><strong>镀锡 (Tin)：</strong>在腐蚀环境下，锡的氧化层会破裂，并在电势差下生长出“锡须” (Tin Whiskers)——这是导致高压电路短路的微米级“定时炸弹”。</li>
+                                <li><strong>镀银 (Silver)：</strong>银的氧化物（硫化银）仍然是导电的，且不会生长锡须。虽然成本更高，但它是 HVDC 连接器在 10 年以上生命周期内保持可靠的唯一选择。</li>
+                                <strong>结论：</strong>盐雾测试是我们确保电气连接“长期主义”可靠性的非破坏性验证手段。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
 
-    <footer class="bg-gray-800 text-gray-300">
-        <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 text-center">
-            <p class="text-lg font-semibold" data-i18n="footer.brand">DCDeepTech</p>
-            <p class="mt-2 text-sm" data-i18n="footer.tagline">以物理学为基础，设计您的下一代数据中心。</p>
-            <p class="mt-4 text-xs text-gray-400" data-i18n="footer.copy">&copy; 2025 DCDeepTech. 保留所有权利。本内容为基于技术报告的交互式演示。</p>
+    <footer class="bg-gray-800 text-gray-300 py-12">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p>&copy; 2025 DCDeepTech. 保留所有权利。本报告内容仅供参考。</p>
         </div>
     </footer>
 
     <script>
-        const i18nData = {
-            zh: {
-                'langToggle.text': 'EN / 中',
-                'nav.crisis': '危机',
-                'nav.physics': '物理原理',
-                'nav.solution': '协同方案',
-                'nav.products': '核心产品',
-                'nav.services': '专业服务',
-                'nav.future': '未来展望',
-                'crisis.title': '驾驭<span class="text-cyan-600">兆瓦级</span>未来',
-                'crisis.subtitle': 'AI 时代数据中心正面临物理学和工程学的双重危机。OCP 开放架构是解决兆瓦级（MW）功耗、散热与 TCO 挑战的唯一途径。',
-                'crisis.boxTitle': '物理极限：48V 架构的崩溃',
-                'crisis.boxBody': '使命宣言：打破物理极限。我们提供从 ORV3 48V 高效率机架到 ORW 800V HVDC 的完整 OCP 解决方案。',
-                'crisis.boxStrong': '48V 架构在 1MW 级别上“在物理上已崩溃”',
-                'physics.title': '深度技术：遵从物理学，而非营销',
-                'physics.subtitle': '展示材料科学、电气物理和协同设计的博士级洞察力。我们的可靠性源于对物理学原理的绝对遵从。',
-                'physics.chartTitle': '$I^2R$ 焦耳热暴政：48V vs 800V',
-                'physics.chartBody': '为什么 48V 必须被淘汰？1MW 功率在 54V 下需要近 20,000A 电流，其 $I^2R$ 热损耗增长了 100 倍，造成物理上的崩溃。',
-                'physics.chartStrong': '通过将电压提高 16 倍至 800V，电流降至 1,250A，使 <strong class="text-cyan-600">$I^2R$ 损耗降低了 256 倍</strong>，从物理上消除了配电热损耗，并释放了宝贵的机架空间。',
-                'physics.chart.yLabel': '电流 (Amps)',
-                'physics.chart.xLabel': '机架功率',
-                'physics.chart.v48Label': '48V (54V) 电流负载 (Amps)',
-                'physics.chart.v800Label': '800V HVDC 电流负载 (Amps)',
-                'physics.matTitle': '材料科学的抉择：杜绝灾难根源',
-                'physics.matBody': '我们的可靠性源于对材料的坚持。在复杂的热集成应用中，对铜合金和表面处理的严苛要求是防止灾难的第一道防线。',
-                'physics.mat1Title': '1. 氢脆风险：C10100 (OFE) vs C11000',
-                'physics.mat1Choice': '✔ 我们的选择：C10100 (OFE) 无氧电子铜',
-                'physics.mat1ChoiceBody': '在制造需要焊接的液冷母线时，必须采用 OFE 铜，以避免 C11000 铜在高温下发生的“氢脆”灾难。',
-                'physics.mat1Risk': '✘ 行业隐患：C11000 (ETP) 铜',
-                'physics.mat1RiskBody': '在高温焊接下存在氢脆风险，导致材料变脆，是长期运行的灾难性隐患。',
-                'physics.mat2Title': '2. 锡须风险：镀银 vs 镀锡',
-                'physics.mat2Choice': '✔ 我们的选择：镀银',
-                'physics.mat2ChoiceBody': '电源触点必须采用镀银。因为氧化银是导电的，且从根本上消除了“锡须”带来的短路风险。',
-                'physics.mat2Risk': '✘ 行业隐患：镀锡',
-                'physics.mat2RiskBody': '会产生微小的“锡须”结晶，导致高压环境下的灾难性短路，这是不可接受的风险。',
-                'solution.title': '三维协同解决方案',
-                'solution.subtitle': 'OCP 机架是“电-机-热”协同设计的典范。我们在这三个维度上均提供深度工程解决方案。',
-                'solution.p1Title': '结构 (Structural)',
-                'solution.p1Body': '提供 3500kg 工业级载荷平台，支持“吊装就位”(Lift-and-Place) 物流，从根本上改变数据中心交付模式。',
-                'solution.p2Title': '电气 (Electrical)',
-                'solution.p2Body': '掌握 48V 高效母线与 800V HVDC 革命性架构，从物理层解决 $I^2R$ 损耗，实现 TCO 降低 30%。',
-                'solution.p3Title': '散热 (Thermal)',
-                'solution.p3Body': '提供原生集成的液冷（LC）路径，应对 AI 芯片的极端热流密度，解决风冷已达 70kW 的物理瓶颈。',
-                'solution.lcTitle': '方案深潜：液冷——应对物理崩溃的必然',
-                'solution.lcBody': '增加液冷是当前应对 AI 驱动的超高功率密度危机的最关键路径。传统风冷在 70kW 时已根本不足，对于 1000W 的 AI 加速器，芯片直通液体冷却（DLC）是唯一选择。但这带来了复杂的“结构-流体-力学耦合”挑战。',
-                'solution.lcTab1': '芯片直通 (DLC) 与歧管',
-                'solution.lcTab2': '后门热交换器 (RDhx)',
-                'solution.lcTab3': '浸没式液冷 (Immersion)',
-                'solution.lcTab4': '冷却分配单元 (CDU)',
-                'solution.lcChallengeTitle': '挑战：结构-流体-力学耦合',
-                'solution.lcChallengeBody': '一个为风冷设计的标准 ORV3 机架本身不够坚固，无法承受液冷带来的额外机械负载，包括：',
-                'solution.lcChallengeLi1': '歧管（Manifolds）和冷却液的自重。',
-                'solution.lcChallengeLi2': '盲插连接器 (BMQC) 产生的巨大插拔力。',
-                'solution.lcChallengeLi3': '管路内部加压流体产生的持续应力。',
-                'solution.lcSolutionTitle': '我们的方案：结构加固套件',
-                'solution.lcSolutionBody': '我们的“液体冷却加固套件”专为此而生。该套件的唯一目的是<strong class="text-cyan-600">结构加固</strong>。',
-                'solution.lcSolutionLi1': '包含安装在前立柱中的<strong class="text-cyan-600">腹板加强筋 (Web Stiffeners)</strong>。',
-                'solution.lcSolutionLi2': '专用的歧管接口支架。',
-                'solution.lcSolutionLi3': '用于抵消 IT 设备盲插时的巨大力量，确保机架全生命周期的结构完整性。',
-                'solution.rdhxTitle': '方案：后门热交换器 (RDhx)',
-                'solution.rdhxBody': '作为一种过渡性或混合型散热方案，RDhx（也称“冷背板”）直接安装在机柜后部，用于中和排出的热空气。这是一种高效的“室-内”冷却，可将机柜热量100%在本地捕获，防止热空气污染数据中心冷通道，适用于中高密度（如 30-60kW）的机柜升级。',
-                'solution.immersionTitle': '方案：浸没式液冷 (Immersion Cooling)',
-                'solution.immersionBody': '对于极端密度，我们提供兼容单相或两相浸没式液冷罐的机架平台。ORW 的 3500kg 承载能力和开放式框架设计，使其成为容纳重型介电液冷却剂和服务器浴槽的理想选择。这是实现最高散热效率和功率密度的终极方案。',
-                'solution.cduTitle': '设施：冷却分配单元 (CDU)',
-                'solution.cduBody': '液冷的核心是设施。我们的解决方案与行级 (In-Row) 和设施级 (Facility-level) CDU 完全兼容。我们参照 OCP Google "Project Deschutes" 规范，为需要 <strong class=\'text-cyan-600\'>2MW 散热能力</strong> 和 500 GPM 流速的巨型 CDU 提供兼容的基础设施，帮助客户应对设施级水路铺设、泄漏风险和承重挑战。',
-                'products.title': '核心产品与解决方案',
-                'products.subtitle': '我们的产品线涵盖 OCP 当前（ORV3）、过渡（LC-Ready）和未来（ORW/HVDC）的所有关键路径。',
-                'products.tab1': 'Open Rack V3 (ORV3)',
-                'products.tab2': '48V-LC 升级套件',
-                'products.tab3': 'Open Rack Wide (ORW)',
-                'products.tab4': 'HVDC 电源侧车',
-                'products.p1Title': 'Open Rack V3 (ORV3) 基准机柜',
-                'products.p1Body': '标准的 21 英寸宽、48V DC 母线供电的基准开放机架。其 48mm OU 设计显著改善了气流，满载动态载荷高达 1400kg。通过 ASTMB117-07 48 小时盐雾测试，确保接地路径长期可靠性。',
-                'products.p1Cta': '核心卖点：高效与合规',
-                'products.p2Title': 'AI 演进型：液体冷却升级套件 (48V-LC Kit)',
-                'products.p2Body': '在不更换机架框架的前提下，实现液冷就绪。此套件专为<strong class="text-cyan-600">结构加固</strong>而设计，包含 8 个<strong>腹板加强筋 (Web Stiffeners)</strong> 和歧管接口支架，以承受加压液体和盲插对接 (BMM) 产生的额外力与应力。',
-                'products.p2Cta': '核心卖点：48V-LC 过渡方案',
-                'products.p3Title': 'AI 革命型：Open Rack Wide (ORW)',
-                'products.p3Body': '专为 AMD Helios 和 NVIDIA GB200 等巨型系统设计的兆瓦级 AI 工厂平台。这不是机柜，这是工业物流单元。其双宽设计，有效载荷达 3500kg+。采用<strong>支撑底座</strong>取代脚轮，允许四向叉车/AGV 进入，顶部集成 <strong>M24x3 吊装点</strong>，彻底实现“起重与放置” (Lift-and-Place) 的工业物流模式。',
-                'products.p3Cta': '核心卖点：兆瓦级 AI 工厂平台',
-                'products.p4Title': 'HVDC 高压电源侧车 (Diablo Sidecar)',
-                'products.p4Body': '专用于 +/-400VDC (800V) 高压直流供电系统的独立电源柜。通过高压隔离、安全锁定门和<strong class="text-cyan-600">接地故障检测器 (GFD)</strong> 确保高压安全，并支持<strong>高阻抗中点接地</strong>等高级安全方案。这是实现 256 倍损耗降低的核心部件。',
-                'products.p4Cta': '核心卖点：高压安全与解耦供电',
-                'services.title': '专业服务与咨询',
-                'services.subtitle': '将 OCP 知识转化为高价值服务收入，帮助客户消除从“棕地”到 OCP 架构的部署风险。',
-                'services.s1Title': 'OCP Ready™ 设施评估',
-                'services.s1Body': '<strong>服务内容：</strong>数据中心兼容性诊断。利用 OCP 官方清单，评估客户现有数据中心（Brownfield）是否满足部署 ORV3/ORW 的物理环境要求。',
-                'services.s1Metrics': '关键评估指标：',
-                'services.s1Li1': '地板承重（最佳标准：≥1221 kg/m²）',
-                'services.s1Li2': '货运通道净高（最佳标准：≥4.5m）',
-                'services.s1Li3': '坡道梯度（≤1:12）',
-                'services.s2Title': '设施电力迁移规划',
-                'services.s2Body': '<strong>服务内容：</strong>HVDC/48V 部署路径规划。针对客户负载，定制从传统 AC 到 ORV3 48V 或 Diablo +/-400VDC 的渐进式转型方案。',
-                'services.s2BodyStrong': '我们将确定是否需要 <strong class="text-cyan-600">Diablo 400 侧车</strong> 架构（将 HVDC 变革限制在机架级别，无需昂贵的设施电网改造），并协助客户规划设施侧“裸电”，以配合机柜自带的 BBU。',
-                'services.s3Title': '产品贡献与认证指导',
-                'services.s3Body': '<strong>服务内容：</strong>加速市场切入。协助客户完成 OCP Contribution License Agreement (CLA) 签署，并指导其产品获得 <strong class="text-cyan-600">OCP Accepted™</strong> 或 <strong class="text-cyan-600">OCP Inspired™</strong> 认证，实现全球市场销售。',
-                'future.title': '未来展望：量子与软件',
-                'future.subtitle': '我们不仅解决今天的危机，更在为明天的挑战（如量子计算的隔离）和运营（如智能监控）定义标准。',
-                'future.tab1': '量子计算 (Quantum)',
-                'future.tab2': '智能监控软件 (Software)',
-                'future.qTitle': '为量子时代而设计：核心是隔离，而非散热',
-                'future.qBody': '量子计算（QPU）对环境极其敏感，任何微小的振动、电磁干扰（EMI）或热波动都会导致“退相干”。其核心挑战是<strong class="text-cyan-600">绝对隔离</strong>。',
-                'future.qArch': '分离式架构 (Split-Architecture)：',
-                'future.qArchLi1': '<strong>1. 量子核心单元 (QPU)：</strong> 封装在大型<strong class="text-cyan-600">稀释制冷机 (Cryostat)</strong> 中，实现毫开尔文（mK）超低温，并需高导磁合金（如 Mu-metal）进行磁屏蔽。',
-                'future.qArchLi2': '<strong>2. 经典控制单元：</strong> 采用<strong class="text-cyan-600">标准 19 英寸机架</strong>，容纳信号发生器、读出电子设备和经典服务器。',
-                'future.qRole': '<strong>OCP 的角色：</strong>尽管 QPU 核心是定制的，但其“经典控制”机柜正迅速向 OCP 标准靠拢。我们正致力于应用 OCP ORV3 的 <strong>48V 直流供电架构</strong> 为量子控制机柜供电，以提高效率和功率密度。',
-                'future.sTitle': 'OCP 液冷与动力环境协同监控',
-                'future.sBody': '液冷系统并非独立运行，它与 IT 设备、动力系统紧密耦合。单一监控体系无法识别跨域风险。我们的平台旨在打破监控孤岛，建立液冷与动力环境的强关联理解。',
-                'future.sArch': '核心架构与标准：',
-                'future.sArchLi1': '<strong>Redfish：</strong> 用于管理节点（服务器硬件状态、CPU/GPU 功率与温度）。',
-                'future.sArchLi2': '<strong>OpenRMC：</strong> 用于管理机架，聚合多个节点与设备（包括液冷、PDU）的数据。',
-                'future.sArchLi3': '<strong>SCIM：</strong> 用于标准化资源模型，确保数据语义一致。',
-                'future.sFunc': '关键功能：三层泄漏检测 (L1-L3)',
-                'future.sFuncBody': '平台采用互补的三层检测体系（直接检测、间接检测、系统级决策）来管理泄漏这一重大风险，实现从基础可视化到智能协同（M3）的演进。',
-                'footer.brand': 'DCDeepTech',
-                'footer.tagline': '以物理学为基础，设计您的下一代数据中心。',
-                'footer.copy': '&copy; 2025 DCDeepTech. 保留所有权利。本内容为基于技术报告的交互式演示。'
-            },
-            en: {
-                'langToggle.text': '中 / EN',
-                'nav.crisis': 'The Crisis',
-                'nav.physics': 'The Physics',
-                'nav.solution': 'The Solution',
-                'nav.products': 'Products',
-                'nav.services': 'Services',
-                'nav.future': 'The Future',
-                'crisis.title': 'Owning the <span class="text-cyan-600">Megawatt</span> Future',
-                'crisis.subtitle': 'The AI era faces a crisis of physics and engineering. OCP is the only path to solve megawatt-scale power, cooling, and TCO challenges.',
-                'crisis.boxTitle': 'The Physical Limit: 48V Architecture Failure',
-                'crisis.boxBody': 'Mission: Break physical limits. We provide complete OCP solutions from ORV3 48V to ORW 800V HVDC.',
-                'crisis.boxStrong': '48V architecture has "physically collapsed" at the 1MW level.',
-                'physics.title': 'Deep Tech: Physics, Not Marketing',
-                'physics.subtitle': 'Our reliability comes from absolute adherence to the first principles of physics, materials science, and electrical engineering.',
-                'physics.chartTitle': '$I^2R$ Tyranny: 48V vs 800V',
-                'physics.chartBody': 'Why must 48V be eliminated? A 1MW rack at 54V requires ~20,000A, its $I^2R$ heat loss grows 100x, causing physical collapse.',
-                'physics.chartStrong': 'By increasing voltage 16x to 800V, current drops to ~1,250A, enabling a <strong class="text-cyan-600">256x reduction in $I^2R$ loss</strong>, physically eliminating distribution heat loss and freeing valuable rack space.',
-                'physics.chart.yLabel': 'Current (Amps)',
-                'physics.chart.xLabel': 'Rack Power',
-                'physics.chart.v48Label': '48V (54V) Current Load (Amps)',
-                'physics.chart.v800Label': '800V HVDC Current Load (Amps)',
-                'physics.matTitle': 'Material Science: Eliminating Disaster',
-                'physics.matBody': 'Our reliability comes from our insistence on materials. In complex thermal applications, strict requirements for copper alloys and plating are the first line of defense.',
-                'physics.mat1Title': '1. Hydrogen Embrittlement: C10100 (OFE) vs C11000',
-                'physics.mat1Choice': '✔ Our Choice: C10100 (OFE) Copper',
-                'physics.mat1ChoiceBody': 'For welded liquid-cooled busbars, OFE copper is mandatory to avoid the "hydrogen embrittlement" disaster C11000 faces at high temperatures.',
-                'physics.mat1Risk': '✘ Industry Hazard: C11000 (ETP) Copper',
-                'physics.mat1RiskBody': 'Risk of hydrogen embrittlement under high-heat welding, leading to material fragility, a long-term operational disaster.',
-                'physics.mat2Title': '2. Tin Whiskers: Silver vs. Tin Plating',
-                'physics.mat2Choice': '✔ Our Choice: Silver Plating',
-                'physics.mat2ChoiceBody': 'Power contacts must use silver plating. Silver oxide is conductive, and it fundamentally eliminates the short-circuit risk from "tin whiskers".',
-                'physics.mat2Risk': '✘ Industry Hazard: Tin Plating',
-                'physics.mat2RiskBody': 'Grows microscopic "tin whiskers" that can cause catastrophic short circuits in high-voltage environments. This is an unacceptable risk.',
-                'solution.title': 'The 3-Pillar Synergistic Solution',
-                'solution.subtitle': 'The OCP rack is a model of "Electrical-Mechanical-Thermal" synergy. We provide deep engineering solutions in all three dimensions.',
-                'solution.p1Title': 'Structural',
-                'solution.p1Body': 'Providing a 3500kg industrial-grade load platform that supports "Lift-and-Place" logistics, fundamentally changing DC delivery.',
-                'solution.p2Title': 'Electrical',
-                'solution.p2Body': 'Mastery of 48V efficient busbars and the 800V HVDC revolutionary architecture, solving $I^2R$ loss at the physics level for 30% TCO reduction.',
-                'solution.p3Title': 'Thermal',
-                'solution.p3Body': 'Natively integrated liquid cooling (LC) paths to manage extreme AI chip heat flux, solving the 70kW physical limit of air cooling.',
-                'solution.lcTitle': 'Deep Dive: Liquid Cooling, a Physical Inevitability',
-                'solution.lcBody': 'Liquid cooling is the most critical path to address the AI-driven power density crisis. Air cooling is insufficient above 70kW. For 1000W accelerators, Direct Liquid Cooling (DLC) is the only choice. This brings "Structural-Fluid-Mechanical" challenges.',
-                'solution.lcTab1': 'Direct (DLC) & Manifolds',
-                'solution.lcTab2': 'Rear Door Hx (RDhx)',
-                'solution.lcTab3': 'Immersion Cooling',
-                'solution.lcTab4': 'Cooling Units (CDU)',
-                'solution.lcChallengeTitle': 'Challenge: Structural-Fluid-Mechanical Coupling',
-                'solution.lcChallengeBody': 'A standard ORV3 rack designed for air cooling is not strong enough to handle the extra mechanical loads from liquid cooling, including:',
-                'solution.lcChallengeLi1': 'Self-weight of manifolds and coolant.',
-                'solution.lcChallengeLi2': 'High insertion/extraction forces from Blind-Mate Quick Connects (BMQC).',
-                'solution.lcChallengeLi3': 'Constant stress from pressurized fluid in the plumbing.',
-                'solution.lcSolutionTitle': 'Our Solution: Structural Reinforcement Kit',
-                'solution.lcSolutionBody': 'Our "Liquid Cooling Reinforcement Kit" is built for this. Its sole purpose is <strong class="text-cyan-600">structural reinforcement</strong>.',
-                'solution.lcSolutionLi1': 'Includes <strong class="text-cyan-600">Web Stiffeners</strong> installed in the front columns.',
-                'solution.lcSolutionLi2': 'Dedicated manifold interface brackets.',
-                'solution.lcSolutionLi3': 'Designed to counteract the high forces of blind-mating, ensuring the rack\'s structural integrity over its lifespan.',
-                'solution.rdhxTitle': 'Solution: Rear Door Heat Exchanger (RDhx)',
-                'solution.rdhxBody': 'As a transitional or hybrid solution, the RDhx (Rear Door Heat Exchanger) mounts directly to the rack rear to neutralize exhaust air. It is a highly efficient "room-neutral" cooling that captures 100% of the rack heat locally, preventing hot air from contaminating the cold aisle, suitable for medium-to-high density (e.g., 30-60kW) rack upgrades.',
-                'solution.immersionTitle': 'Solution: Immersion Cooling',
-                'solution.immersionBody': 'For extreme densities, we provide platforms compatible with single-phase or two-phase immersion cooling tanks. The ORW\'s 3500kg capacity and open-frame design make it ideal for containing heavy dielectric fluid and server baths. This is the ultimate solution for maximum thermal efficiency and density.',
-                'solution.cduTitle': 'Facility: Cooling Distribution Units (CDU)',
-                'solution.cduBody': 'Liquid cooling is all about the facility. Our solutions are fully compatible with in-row and facility-level CDUs. We reference the OCP Google "Project Deschutes" spec, providing compatible infrastructure for massive <strong class=\'text-cyan-600\'>2MW CDUs</strong> capable of 500 GPM, helping clients manage facility-level water, leak risks, and floor loading.',
-                'products.title': 'Core Products & Solutions',
-                'products.subtitle': 'Our product line covers all critical OCP paths: Current (ORV3), Transitional (LC-Ready), and Future (ORW/HVDC).',
-                'products.tab1': 'Open Rack V3 (ORV3)',
-                'products.tab2': '48V-LC Upgrade Kit',
-                'products.tab3': 'Open Rack Wide (ORW)',
-                'products.tab4': 'HVDC Power Sidecar',
-                'products.p1Title': 'Open Rack V3 (ORV3) Benchmark Rack',
-                'products.p1Body': 'The standard 21-inch wide, 48V DC busbar-powered benchmark open rack. Its 48mm OU design significantly improves airflow, with a dynamic load rating of 1400kg. Passes ASTMB117-07 48-hour salt spray test to ensure long-term grounding reliability.',
-                'products.p1Cta': 'Key Feature: Efficiency & Compliance',
-                'products.p2Title': 'AI Evolution: Liquid Cooling Upgrade Kit (48V-LC)',
-                'products.p2Body': 'Achieve liquid-cooling readiness without replacing the rack frame. This kit is designed for <strong class="text-cyan-600">structural reinforcement</strong>, including 8 <strong>Web Stiffeners</strong> and manifold brackets to withstand the extra forces from pressurized liquid and BMM blind-mating.',
-                'products.p2Cta': 'Key Feature: 48V-LC Transitional Path',
-                'products.p3Title': 'AI Revolution: Open Rack Wide (ORW)',
-                'products.p3Body': 'The megawatt AI factory platform for giant systems like AMD Helios and NVIDIA GB200. This is an industrial logistics unit. Its double-wide design supports 3500kg+ payloads. Replaces casters with a <strong>support base</strong> for 4-way forklift/AGV access and integrates <strong>M24x3 lift points</strong> for "Lift-and-Place" industrial logistics.',
-                'products.p3Cta': 'Key Feature: Megawatt AI Factory Platform',
-                'products.p4Title': 'HVDC Power Sidecar (Diablo Sidecar)',
-                'products.p4Body': 'A dedicated power cabinet for +/-400VDC (800V) high-voltage systems. Ensures safety via high-voltage isolation, safety-locked doors, and <strong class="text-cyan-600">Ground Fault Detectors (GFD)</strong>, supporting <strong class="text-cyan-600">high-impedance neutral grounding</strong>. This is the core component for achieving the 256x loss reduction.',
-                'products.p4Cta': 'Key Feature: High-Voltage Safety & Decoupling',
-                'services.title': 'Professional Services & Consulting',
-                'services.subtitle': 'Turn OCP knowledge into high-value revenue, helping clients de-risk the deployment from brownfield to OCP architecture.',
-                'services.s1Title': 'OCP Ready™ Facility Assessment',
-                'services.s1Body': '<strong>Service:</strong> Data center compatibility diagnostics. Using the official OCP checklist, we assess if your existing brownfield facility meets the physical requirements to deploy ORV3/ORW.',
-                'services.s1Metrics': 'Key Assessment Metrics:',
-                'services.s1Li1': 'Floor Load Capacity (Target: ≥1221 kg/m²)',
-                'services.s1Li2': 'Freight Path Clearance (Target: ≥4.5m)',
-                'services.s1Li3': 'Ramp Gradient (≤1:12)',
-                'services.s2Title': 'Facility Power Migration Planning',
-                'services.s2Body': '<strong>Service:</strong> HVDC/48V Deployment Path Planning. We customize a gradual transition plan from traditional AC to ORV3 48V or Diablo +/-400VDC based on your workloads.',
-                'services.s2BodyStrong': 'We determine if the <strong class="text-cyan-600">Diablo 400 Sidecar</strong> architecture is needed (confining the HVDC change to the rack level, avoiding costly facility grid upgrades) and assist in planning facility-side "bare power" to match the cabinet\'s BBU.',
-                'services.s3Title': 'Product Contribution & Certification',
-                'services.s3Body': '<strong>Service:</strong> Accelerate Market Entry. We assist your team in signing the OCP Contribution License Agreement (CLA) and guide your product to achieve <strong class="text-cyan-600">OCP Accepted™</strong> or <strong class="text-cyan-600">OCP Inspired™</strong> certification for global market access.',
-                'future.title': 'The Future: Quantum & Software',
-                'future.subtitle': 'We are not just solving today\'s crisis. We are defining standards for tomorrow\'s challenges (like quantum isolation) and operations (smart monitoring).',
-                'future.tab1': 'Quantum Computing',
-                'future.tab2': 'Smart Monitoring Software',
-                'future.qTitle': 'Designing for the Quantum Era: Isolation, Not Cooling',
-                'future.qBody': 'Quantum computing (QPU) is extremely sensitive to its environment. Any vibration, EMI, or thermal fluctuation can cause "decoherence". The core challenge is <strong class="text-cyan-600">absolute isolation</strong>.',
-                'future.qArch': 'Split-Architecture:',
-                'future.qArchLi1': '<strong>1. The Quantum Core (QPU):</strong> Housed in a large <strong class="text-cyan-600">Cryostat</strong> to achieve milliKelvin (mK) temperatures, requiring magnetic shielding (e.g., Mu-metal).',
-                'future.qArchLi2': '<strong>2. The Classical Control Unit:</strong> Uses <strong class="text-cyan-600">standard 19-inch racks</strong> for signal generators, readout electronics, and classical servers.',
-                'future.qRole': '<strong>OCP\'s Role:</strong> While the QPU core is custom, the "classical control" racks are rapidly standardizing on OCP principles. We are applying the OCP ORV3 <strong>48V DC power architecture</strong> to power these control racks for higher efficiency and density.',
-                'future.sTitle': 'OCP Liquid Cooling & Power Monitoring',
-                'future.sBody': 'Liquid cooling does not operate in a vacuum; it\'s coupled with IT equipment and power systems. Siloed monitoring creates risk. Our platform breaks down these silos to build a strong correlation between cooling and power.',
-                'future.sArch': 'Core Architecture & Standards:',
-                'future.sArchLi1': '<strong>Redfish:</strong> Manages nodes (server status, CPU/GPU power & temp).',
-                'future.sArchLi2': '<strong>OpenRMC:</strong> Manages the rack, aggregating data from nodes, cooling, and PDUs.',
-                'future.sArchLi3': '<strong>SCIM:</strong> Standardizes the resource model for data consistency.',
-                'future.sFunc': 'Key Feature: 3-Layer Leak Detection (L1-L3)',
-                'future.sFuncBody': 'The platform uses a complementary 3-layer detection system (direct, indirect, and systemic decision) to manage the critical risk of leaks, evolving from basic visualization to smart, coordinated operations (M3).',
-                'footer.brand': 'DCDeepTech',
-                'footer.tagline': 'Designing your next-generation data center, based on first principles.',
-                'footer.copy': '&copy; 2025 DCDeepTech. All rights reserved. This is an interactive demo based on a technical report.'
-            }
-        };
-
-        let currentLang = 'zh';
-        let powerCurrentChart = null;
-        
         document.addEventListener('DOMContentLoaded', () => {
             
-            // 0. Set initial language
-            document.documentElement.lang = currentLang;
-            updateLanguage();
-
-            // 1. Smooth scrolling for nav links
-            document.querySelectorAll('.nav-link').forEach(anchor => {
-                anchor.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    const targetId = this.getAttribute('href');
-                    const targetElement = document.querySelector(targetId);
-                    if(targetElement) {
-                        targetElement.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start'
-                        });
-                    }
-                    // Close mobile menu on click
-                    const mobileMenu = document.getElementById('mobile-menu');
-                    const burgerBtn = document.getElementById('burger-btn');
-                    if (!mobileMenu.classList.contains('hidden')) {
-                        mobileMenu.classList.add('hidden');
-                        burgerBtn.querySelector('svg.block').classList.remove('hidden');
-                        burgerBtn.querySelector('svg.hidden').classList.add('hidden');
-                        burgerBtn.setAttribute('aria-expanded', 'false');
-                    }
+            // 移动菜单
+            const menuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const mobileMenuLinks = mobileMenu.querySelectorAll('a');
+            
+            menuButton.addEventListener('click', () => {
+                const isOpen = mobileMenu.classList.contains('hidden');
+                mobileMenu.classList.toggle('hidden');
+                menuButton.querySelector('svg.block').classList.toggle('hidden', isOpen);
+                menuButton.querySelector('svg.hidden').classList.toggle('hidden', !isOpen);
+            });
+            
+            mobileMenuLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.add('hidden');
+                    menuButton.querySelector('svg.block').classList.remove('hidden');
+                    menuButton.querySelector('svg.hidden').classList.add('hidden');
                 });
             });
 
-            // 2. Mobile Menu Toggle
-            const burgerBtn = document.getElementById('burger-btn');
-            const mobileMenu = document.getElementById('mobile-menu');
-            burgerBtn.addEventListener('click', () => {
-                const expanded = burgerBtn.getAttribute('aria-expanded') === 'true' || false;
-                burgerBtn.setAttribute('aria-expanded', !expanded);
-                mobileMenu.classList.toggle('hidden');
-                burgerBtn.querySelector('svg.block').classList.toggle('hidden');
-                burgerBtn.querySelector('svg.hidden').classList.toggle('hidden');
-            });
+            // $I^2R$ 损耗图表
+            const ctx = document.getElementById('lossChart');
+            if (ctx) {
+                const labels = Array.from({ length: 11 }, (_, i) => i * 10); // 0kW to 100kW
+                const R = 0.01; // 假设一个固定的、极低的系统电阻 (Ohm)
+                
+                const calculateLoss = (P, V, R_val) => {
+                    const I = P / V;
+                    return (I * I * R_val);
+                };
 
-            // 3. Language Toggle
-            document.querySelectorAll('.lang-toggle').forEach(button => {
+                const data48v = labels.map(p_kw => {
+                    if (p_kw === 0) return 0;
+                    const loss = calculateLoss(p_kw * 1000, 48, R);
+                    return loss; // in Watts
+                });
+                
+                const data800v = labels.map(p_kw => {
+                    if (p_kw === 0) return 0;
+                    const loss = calculateLoss(p_kw * 1000, 800, R);
+                    return loss; // in Watts
+                });
+
+                new Chart(ctx.getContext('2d'), {
+                    type: 'line',
+                    data: {
+                        labels: labels.map(l => l + ' kW'),
+                        datasets: [
+                            {
+                                label: '48V 架构功率损耗 (Watts)',
+                                data: data48v,
+                                borderColor: 'rgb(220, 38, 38)',
+                                backgroundColor: 'rgba(220, 38, 38, 0.1)',
+                                tension: 0.1,
+                                fill: true,
+                            },
+                            {
+                                label: '800V 架构功率损耗 (Watts)',
+                                data: data800v,
+                                borderColor: 'rgb(37, 99, 235)',
+                                backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                                tension: 0.1,
+                                fill: true,
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: '系统功率损耗 (Watts)'
+                                }
+                            },
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: '机架总功率'
+                                }
+                            }
+                        },
+                        plugins: {
+                            tooltip: {
+                                mode: 'index',
+                                intersect: false,
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        if (context.parsed.y !== null) {
+                                            label += context.parsed.y.toFixed(2) + ' Watts';
+                                        }
+                                        return label;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // 液冷方案选项卡
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabPanels = document.querySelectorAll('.tab-panel');
+            
+            tabButtons.forEach(button => {
                 button.addEventListener('click', () => {
-                    currentLang = currentLang === 'zh' ? 'en' : 'zh';
-                    document.documentElement.lang = currentLang;
-                    updateLanguage();
+                    const targetPanelId = button.getAttribute('data-target');
+                    
+                    tabButtons.forEach(btn => {
+                        btn.classList.remove('active', 'border-blue-600', 'text-blue-600');
+                        btn.classList.add('text-gray-600');
+                    });
+                    
+                    button.classList.add('active', 'border-blue-600', 'text-blue-600');
+                    
+                    tabPanels.forEach(panel => {
+                        if (panel.id === targetPanelId) {
+                            panel.classList.remove('hidden');
+                        } else {
+                            panel.classList.add('hidden');
+                        }
+                    });
                 });
             });
             
-            // 4. Tab Switching Logic
-            function setupTabs(tabSelector, contentSelector) {
-                const tabs = document.querySelectorAll(tabSelector);
-                const contents = document.querySelectorAll(contentSelector);
-                const activeClass = 'active';
-
-                if (!tabs || tabs.length === 0) return;
-
-                tabs.forEach(tab => {
-                    tab.addEventListener('click', () => {
-                        const target = tab.getAttribute('data-target');
-
-                        tabs.forEach(t => t.classList.remove(activeClass));
-                        tab.classList.add(activeClass);
-
-                        contents.forEach(c => {
-                            if (c) {
-                                c.classList.remove(activeClass);
-                                if (c.id === target) {
-                                    c.classList.add(activeClass);
-                                }
-                            }
-                        });
-                    });
-                });
+            // 默认显示第一个选项卡
+            if (tabButtons.length > 0) {
+                tabButtons[0].click();
             }
 
-            setupTabs('.product-tab', '#products .content-block');
-            setupTabs('.future-tab', '#future .content-block');
-            setupTabs('.lc-tab', '#solution .content-block');
-
-            // 5. Accordion Logic (Services)
-            document.querySelectorAll('.service-header').forEach(header => {
-                header.addEventListener('click', () => {
-                    const body = header.nextElementSibling;
-                    const icon = header.querySelector('span:last-child');
-                    const isOpening = body.style.display !== 'block';
-
-                    // Optional: Close other accordions
-                    // document.querySelectorAll('.service-body').forEach(b => {
-                    //     b.style.display = 'none';
-                    //     b.previousElementSibling.querySelector('span:last-child').style.transform = 'rotate(0deg)';
-                    // });
-
-                    if (isOpening) {
-                        body.style.display = 'block';
-                        icon.style.transform = 'rotate(45deg)';
+            // FAQ 手风琴
+            const faqQuestions = document.querySelectorAll('.faq-question button');
+            
+            faqQuestions.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const answer = e.currentTarget.parentElement.nextElementSibling;
+                    const icon = e.currentTarget.querySelector('.faq-icon');
+                    
+                    if (answer.style.maxHeight) {
+                        answer.style.maxHeight = null;
+                        icon.textContent = '+';
                     } else {
-                        body.style.display = 'none';
-                        icon.style.transform = 'rotate(0deg)';
+                        answer.style.maxHeight = answer.scrollHeight + 'px';
+                        icon.textContent = '−';
                     }
                 });
             });
+
         });
-
-        function updateLanguage() {
-            document.querySelectorAll('[data-i18n]').forEach(element => {
-                const key = element.getAttribute('data-i18n');
-                const text = i18nData[currentLang][key];
-                if (text !== undefined) {
-                    element.innerHTML = text;
-                } else {
-                    console.warn(`Missing i18n key: ${key} for lang: ${currentLang}`);
-                }
-            });
-            createOrUpdateChart();
-        }
-
-        function createOrUpdateChart() {
-            const ctx = document.getElementById('powerCurrentChart');
-            if (!ctx) return;
-
-            if (powerCurrentChart) {
-                powerCurrentChart.destroy();
-            }
-
-            powerCurrentChart = new Chart(ctx.getContext('2d'), {
-                type: 'line',
-                data: {
-                    labels: ['100kW', '500kW', '1MW (1000kW)', '1.5MW (1500kW)'],
-                    datasets: [
-                        {
-                            label: i18nData[currentLang]['physics.chart.v48Label'],
-                            data: [1852, 9259, 18519, 27778],
-                            backgroundColor: 'rgba(220, 38, 38, 0.1)',
-                            borderColor: 'rgba(220, 38, 38, 1)',
-                            borderWidth: 3,
-                            tension: 0.1,
-                            fill: true,
-                        },
-                        {
-                            label: i18nData[currentLang]['physics.chart.v800Label'],
-                            data: [125, 625, 1250, 1875],
-                            backgroundColor: 'rgba(6, 182, 212, 0.1)', 
-                            borderColor: 'rgba(6, 182, 212, 1)', 
-                            borderWidth: 3,
-                            tension: 0.1,
-                            fill: true,
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: i18nData[currentLang]['physics.chart.yLabel']
-                            }
-                        },
-                        x: {
-                            title: {
-                                display: true,
-                                text: i18nData[currentLang]['physics.chart.xLabel']
-                            }
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                        },
-                        tooltip: {
-                            mode: 'index',
-                            intersect: false,
-                            callbacks: {
-                                label: function(context) {
-                                    let label = context.dataset.label || '';
-                                    if (label) {
-                                        label += ': ';
-                                    }
-                                    if (context.parsed.y !== null) {
-                                        label += context.parsed.y.toLocaleString(currentLang === 'zh' ? 'zh-CN' : 'en-US') + ' A';
-                                    }
-                                    return label;
-                                }
-                            }
-                        }
-                    },
-                    interaction: {
-                        mode: 'index',
-                        intersect: false,
-                    }
-                }
-            });
-        }
     </script>
 </body>
 </html>
