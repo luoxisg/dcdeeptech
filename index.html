@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en" class="scroll-smooth"> <!-- 默认语言为英文 -->
 <head>
     <meta charset="UTF-8">
@@ -143,10 +143,28 @@
                         <li class="nav-item"><a href="#physics" class="px-3 py-2 rounded-md text-sm font-medium text-ocp-text-secondary hover:text-ocp-green" data-lang-key="nav_physics">Physics</a></li>
                         <li class="nav-item"><a href="#solution" class="px-3 py-2 rounded-md text-sm font-medium text-ocp-text-secondary hover:text-ocp-green" data-lang-key="nav_solution">Solution</a></li>
                         <li class="nav-item"><a href="#products" class="px-3 py-2 rounded-md text-sm font-medium text-ocp-text-secondary hover:text-ocp-green" data-lang-key="nav_products">Products</a></li>
-                        <li class="nav-item"><a href="#services" class="px-3 py-2 rounded-md text-sm font-medium text-ocp-text-secondary hover:text-ocp-green" data-lang-key="nav_services">Services</a></li>
+                        <li class="nav-item"><a href="#services" class="px-3 py-2 rounded-md text-sm font-medium text-ocp-text-secondary hover:text-ocp-green" data-lang-key="nav_services">Services</a></li> <!-- *** ADDED *** -->
                         <li class="nav-item"><a href="#future" class="px-3 py-2 rounded-md text-sm font-medium text-ocp-text-secondary hover:text-ocp-green" data-lang-key="nav_future">Future</a></li>
                         <li class="nav-item"><a href="#roadmap" class="px-3 py-2 rounded-md text-sm font-medium text-ocp-text-secondary hover:text-ocp-green" data-lang-key="nav_roadmap">Roadmap</a></li>
                         <li class="nav-item"><a href="#faq" class="px-3 py-2 rounded-md text-sm font-medium text-ocp-text-secondary hover:text-ocp-green" data-lang-key="nav_faq">FAQ</a></li>
+                        
+                        <!-- *** NEW DOWNLOAD DROPDOWN *** -->
+                        <li class="nav-item relative" id="desktop-download-trigger">
+                            <button class="px-3 py-2 rounded-md text-sm font-medium text-ocp-text-secondary hover:text-ocp-green flex items-center space-x-1" data-lang-key="nav_download">
+                                <span>Download</span>
+                                <i data-feather="chevron-down" class="h-4 w-4"></i>
+                            </button>
+                            <div id="desktop-download-menu" class="hidden absolute top-full left-0 mt-2 w-56 bg-white rounded-ocp shadow-ocp-light border border-gray-200 z-50 py-1">
+                                <a href="/download/CCP approved product.pdf" target="_blank" class="block px-4 py-2 text-sm text-ocp-text-secondary hover:bg-ocp-bg-light hover:text-ocp-green" data-lang-key="nav_download_pdf">
+                                    CCP Approved Product.pdf
+                                </a>
+                                <a href="/download/Meta Bom. xlsx" target="_blank" class="block px-4 py-2 text-sm text-ocp-text-secondary hover:bg-ocp-bg-light hover:text-ocp-green" data-lang-key="nav_download_excel">
+                                    Meta BOM.xlsx
+                                </a>
+                            </div>
+                        </li>
+                        <!-- *** END NEW DROPDOWN *** -->
+                    
                     </ul>
                 </nav>
                 
@@ -177,10 +195,28 @@
                 <a href="#physics" class="block px-3 py-2 rounded-md text-base font-medium text-ocp-text-secondary hover:text-ocp-green hover:bg-ocp-bg-light" data-lang-key="nav_physics">Physics</a>
                 <a href="#solution" class="block px-3 py-2 rounded-md text-base font-medium text-ocp-text-secondary hover:text-ocp-green hover:bg-ocp-bg-light" data-lang-key="nav_solution">Solution</a>
                 <a href="#products" class="block px-3 py-2 rounded-md text-base font-medium text-ocp-text-secondary hover:text-ocp-green hover:bg-ocp-bg-light" data-lang-key="nav_products">Products</a>
-                <a href="#services" class="block px-3 py-2 rounded-md text-base font-medium text-ocp-text-secondary hover:text-ocp-green hover:bg-ocp-bg-light" data-lang-key="nav_services">Services</a>
+                <a href="#services" class="block px-3 py-2 rounded-md text-base font-medium text-ocp-text-secondary hover:text-ocp-green hover:bg-ocp-bg-light" data-lang-key="nav_services">Services</a> <!-- *** ADDED *** -->
                 <a href="#future" class="block px-3 py-2 rounded-md text-base font-medium text-ocp-text-secondary hover:text-ocp-green hover:bg-ocp-bg-light" data-lang-key="nav_future">Future</a>
                 <a href="#roadmap" class="block px-3 py-2 rounded-md text-base font-medium text-ocp-text-secondary hover:text-ocp-green hover:bg-ocp-bg-light" data-lang-key="nav_roadmap">Roadmap</a>
                 <a href="#faq" class="block px-3 py-2 rounded-md text-base font-medium text-ocp-text-secondary hover:text-ocp-green hover:bg-ocp-bg-light" data-lang-key="nav_faq">FAQ</a>
+                
+                <!-- *** NEW MOBILE DOWNLOAD *** -->
+                <div id="mobile-download-trigger" class="relative">
+                    <button class="w-full flex justify-between items-center px-3 py-2 rounded-md text-base font-medium text-ocp-text-secondary hover:text-ocp-green hover:bg-ocp-bg-light" data-lang-key="nav_download">
+                        <span>Download</span>
+                        <i data-feather="chevron-down" class="h-5 w-5 transition-transform duration-200"></i>
+                    </button>
+                    <div id="mobile-download-menu" class="hidden pl-6 pt-1 pb-2 space-y-1">
+                        <a href="/download/CCP approved product.pdf" target="_blank" class="block px-3 py-2 rounded-md text-base font-medium text-ocp-text-secondary hover:text-ocp-green hover:bg-ocp-bg-light" data-lang-key="nav_download_pdf">
+                            CCP Approved Product.pdf
+                        </a>
+                        <a href="/download/Meta Bom. xlsx" target="_blank" class="block px-3 py-2 rounded-md text-base font-medium text-ocp-text-secondary hover:text-ocp-green hover:bg-ocp-bg-light" data-lang-key="nav_download_excel">
+                            Meta BOM.xlsx
+                        </a>
+                    </div>
+                </div>
+                <!-- *** END NEW MOBILE DOWNLOAD *** -->
+            
             </div>
             <!-- Language Switcher (Mobile) -->
             <div class="border-t border-gray-100 px-2 pt-3 pb-3 sm:px-3">
@@ -326,7 +362,7 @@
             </div>
         </section>
 
-        <!-- 5. 专业服务 -->
+        <!-- 5. 专业服务 *** ADDED SECTION *** -->
         <section id="services" class="py-12 sm:py-20 bg-white">
             <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                 <h2 class="text-3xl font-semibold text-center mb-12 text-ocp-navy" data-lang-key="services_title">5. Professional Services</h2>
@@ -355,13 +391,18 @@
                     <div class="bg-white rounded-ocp shadow-ocp-light p-8">
                         <h3 class="text-2xl font-semibold mb-4 text-ocp-navy" data-lang-key="future_quantum_title">Quantum Computing</h3>
                         <p class="text-ocp-text-secondary text-base" data-lang-key="future_quantum_desc">
-                            Today's HVDC and liquid cooling technologies are the foundation for future infrastructure. Quantum computing requires extreme cryogenic cooling (milli-Kelvin levels) and highly stable power. The experience we gain today with 800V and CDUs will be key to managing the complex thermal and power challenges of quantum systems.
+                            <!-- *** UPDATED CONTENT *** -->
+                            Current HVDC and liquid cooling technologies are the cornerstone for future computing infrastructure, and quantum computing will be the core force driving the global paradigm shift in computing. Quantum computing requires cryogenic cooling under extreme conditions (often reaching the millikelvin level) and a highly stable, noise-free power supply with extremely low power fluctuations. The technical capabilities we accumulate today in 800V HVDC power supply and CDU liquid cooling integration will be directly migrated and upgraded for thermal management, electromagnetic compatibility, and energy control in future quantum computing systems.
+                            As the scale of qubits evolves from hundreds and thousands to millions, system-level thermal coupling issues, energy efficiency management, and fault tolerance mechanisms will become industry bottlenecks. Therefore, building an energy foundation and liquid cooling ecosystem for the quantum computing era is the inevitable direction for future data center upgrades. We believe that mastering the integrated capabilities of power, electro-thermal, fluid, and control will be the core competitiveness in leading the next generation of quantum computing infrastructure.
                         </p>
                     </div>
                     <div class="bg-white rounded-ocp shadow-ocp-light p-8">
                         <h3 class="text-2xl font-semibold mb-4 text-ocp-navy" data-lang-key="future_software_title">Intelligent Monitoring Software</h3>
                         <p class="text-ocp-text-secondary text-base" data-lang-key="future_software_desc">
-                            Hardware's endgame is software. The next-generation data center will be managed by an AI-driven "Digital Twin." This software will monitor rack power, temperature, and fluid flow rates in real-time, dynamically adjusting CDU pump speeds and HVDC voltage to achieve sub-millisecond optimal efficiency and TCO under any workload.
+                            <!-- *** UPDATED CONTENT *** -->
+                            Hardware's endpoint is software, and "software-defined compute operations" has become an industry consensus. The next-generation data center will be AI-driven, transitioning from traditional passive maintenance to adaptive, autonomous software management via "Digital Twin + Intelligent Agents." This software will perform real-time monitoring and intelligent control of critical dimensions such as rack power distribution, temperature gradients, liquid flow rates and pressure drops, and energy efficiency performance. It will coordinate with HVDC voltage, CDU cooling loops, and overall workload strategies to achieve sub-millisecond energy efficiency optimization and TCO minimization under any workload.
+                            Building on this, we are introducing Predictive Maintenance capabilities. By deep learning on sensor data, operational logs, and failure modes, AI models will enable trend analysis, anomaly prediction, and risk alarming. The system can proactively identify potential faults such as pump degradation, heat exchange efficiency decline, energy consumption anomalies, power fluctuations, or minor liquid leaks. This triggers preemptive maintenance strategies or automatically dispatches redundant resources, minimizing downtime risk and significantly improving SLA, MTBF, and overall operational efficiency.
+                            In the future, this software will form a self-healing closed loop: continuously evolving from "Monitor → Predict → Decide → Execute → Optimize." It will provide data centers with true Autonomous DC capabilities, allowing customers to achieve higher stability and energy efficiency with lower human intervention.
                         </p>
                     </div>
                 </div>
@@ -619,10 +660,13 @@
                 "nav_physics": "Physics",
                 "nav_solution": "Solution",
                 "nav_products": "Products",
-                "nav_services": "Services",
+                "nav_services": "Services", // *** ADDED ***
                 "nav_future": "Future",
                 "nav_roadmap": "Roadmap",
                 "nav_faq": "FAQ",
+                "nav_download": "Download", // *** ADDED ***
+                "nav_download_pdf": "CCP Approved Product.pdf", // *** ADDED ***
+                "nav_download_excel": "Meta BOM.xlsx", // *** ADDED ***
                 "report_title": "DCDeepTech Report",
                 
                 "crisis_eyebrow": "1. Crisis",
@@ -670,19 +714,21 @@
                 "products_card4_title": "HVDC Power Sidecar",
                 "products_card4_desc": "A separate cabinet unit housing the 800V HVDC PDU and safety protection circuits, providing high-voltage power to adjacent ORW racks.",
 
-                "services_title": "5. Professional Services",
-                "services_item1_title": "OCP Ready™ Facility Assessment",
-                "services_item1_desc": "Assess a customer's existing data center (floor loading, power, cooling) to determine readiness for OCP ORV3 and liquid cooling deployment.",
-                "services_item2_title": "Facility Power Migration Planning",
-                "services_item2_desc": "Design a detailed blueprint for migrating from traditional 48V to 800V HVDC, including safety protocols, PDU deployment, and distribution strategies.",
-                "services_item3_title": "Product Contribution & Certification Guidance",
-                "services_item3_desc": "Assist customers or partners in contributing their hardware designs (e.g., servers, switches) to the OCP community and guide them through the certification process.",
+                "services_title": "5. Professional Services", // *** ADDED ***
+                "services_item1_title": "OCP Ready™ Facility Assessment", // *** ADDED ***
+                "services_item1_desc": "Assess a customer's existing data center (floor loading, power, cooling) to determine readiness for OCP ORV3 and liquid cooling deployment.", // *** ADDED ***
+                "services_item2_title": "Facility Power Migration Planning", // *** ADDED ***
+                "services_item2_desc": "Design a detailed blueprint for migrating from traditional 48V to 800V HVDC, including safety protocols, PDU deployment, and distribution strategies.", // *** ADDED ***
+                "services_item3_title": "Product Contribution & Certification Guidance", // *** ADDED ***
+                "services_item3_desc": "Assist customers or partners in contributing their hardware designs (e.g., servers, switches) to the OCP community and guide them through the certification process.", // *** ADDED ***
 
                 "future_title": "6. Future Outlook",
                 "future_quantum_title": "Quantum Computing",
-                "future_quantum_desc": "Today's HVDC and liquid cooling technologies are the foundation for future infrastructure. Quantum computing requires extreme cryogenic cooling (milli-Kelvin levels) and highly stable power. The experience we gain today with 800V and CDUs will be key to managing the complex thermal and power challenges of quantum systems.",
+                // *** UPDATED ***
+                "future_quantum_desc": "Current HVDC and liquid cooling technologies are the cornerstone for future computing infrastructure, and quantum computing will be the core force driving the global paradigm shift in computing. Quantum computing requires cryogenic cooling under extreme conditions (often reaching the millikelvin level) and a highly stable, noise-free power supply with extremely low power fluctuations. The technical capabilities we accumulate today in 800V HVDC power supply and CDU liquid cooling integration will be directly migrated and upgraded for thermal management, electromagnetic compatibility, and energy control in future quantum computing systems.\nAs the scale of qubits evolves from hundreds and thousands to millions, system-level thermal coupling issues, energy efficiency management, and fault tolerance mechanisms will become industry bottlenecks. Therefore, building an energy foundation and liquid cooling ecosystem for the quantum computing era is the inevitable direction for future data center upgrades. We believe that mastering the integrated capabilities of power, electro-thermal, fluid, and control will be the core competitiveness in leading the next generation of quantum computing infrastructure.",
                 "future_software_title": "Intelligent Monitoring Software",
-                "future_software_desc": "Hardware's endgame is software. The next-generation data center will be managed by an AI-driven \"Digital Twin.\" This software will monitor rack power, temperature, and fluid flow rates in real-time, dynamically adjusting CDU pump speeds and HVDC voltage to achieve sub-millisecond optimal efficiency and TCO under any workload.",
+                // *** UPDATED ***
+                "future_software_desc": "Hardware's endpoint is software, and \"software-defined compute operations\" has become an industry consensus. The next-generation data center will be AI-driven, transitioning from traditional passive maintenance to adaptive, autonomous software management via \"Digital Twin + Intelligent Agents.\" This software will perform real-time monitoring and intelligent control of critical dimensions such as rack power distribution, temperature gradients, liquid flow rates and pressure drops, and energy efficiency performance. It will coordinate with HVDC voltage, CDU cooling loops, and overall workload strategies to achieve sub-millisecond energy efficiency optimization and TCO minimization under any workload.\nBuilding on this, we are introducing Predictive Maintenance capabilities. By deep learning on sensor data, operational logs, and failure modes, AI models will enable trend analysis, anomaly prediction, and risk alarming. The system can proactively identify potential faults such as pump degradation, heat exchange efficiency decline, energy consumption anomalies, power fluctuations, or minor liquid leaks. This triggers preemptive maintenance strategies or automatically dispatches redundant resources, minimizing downtime risk and significantly improving SLA, MTBF, and overall operational efficiency.\nIn the future, this software will form a self-healing closed loop: continuously evolving from \"Monitor → Predict → Decide → Execute → Optimize.\" It will provide data centers with true Autonomous DC capabilities, allowing customers to achieve higher stability and energy efficiency with lower human intervention.",
 
                 "roadmap_title": "OCP Rack & Power Vendor Improvement Roadmap",
                 "roadmap_desc": "This roadmap divides the rack product improvement process into three phases, aiming to ensure your product line not only meets current OCP ORv3 benchmark standards but can also rapidly penetrate the future market for megawatt-scale AI infrastructure (ORW/HVDC).",
@@ -739,7 +785,7 @@
                 "roadmap_p3_i2_l2": "<strong>Synergistic Sales:</strong> The assessment results will directly identify facility upgrade needs, locking in sales for your OCP rack products and upgrading your role from \"Manufacturer\" to \"Solution Consultant.\"",
                 "roadmap_p3_i3_title": "3. Market Sales Forecast (Based on OCP Ecosystem, USD)",
                 "roadmap_p3_i3_desc": "Leveraging the credibility of OCP certified products and the global exposure of the OCP Marketplace, we project the following sales trajectory:",
-                "roadmap_p3_i3_l1": "<strong>Y1 (Phases 1-2):</strong> Focus on OCP Accepted™ <strong>\"21-19-inch Adapters\"</strong> (Target: 2,000 units) and OCP Ready™ consulting (Target: 10 projects), generating <strong>$500,000 USD</strong> in early revenue (Based on $150/unit & $20,000/project).",
+                "roadmap_p3_i3_l1": "<strong>Y1 (Phases 1-2):</strong> Focus on OCP Accepted™ <strong>\"21-19 -inch Adapters\"</strong> (Target: 2,000 units) and OCP Ready™ consulting (Target: 10 projects), generating <strong>$500,000 USD</strong> in early revenue (Based on $150/unit & $20,000/project).",
                 "roadmap_p3_i3_l2": "<strong>Y2 (Phases 2-3):</strong> Launch OCP Inspired™ ORV3 benchmark racks (Target: 500 units, ASP ~$2,500) and 48V-LC Upgrade Kits (Target: 200 kits, ASP ~$5,000), targeting <strong>$2,250,000 USD</strong> in sales.",
                 "roadmap_p3_i3_l3": "<strong>Y3-Y4 (Phase 3):</strong> Scale delivery of high-value AI infrastructure. Target 1,000+ ORW / HVDC-LC racks (ASP $15,000+) and expand consulting to 50 projects, targeting annual revenue exceeding <strong>$16,000,000 USD</strong>.",
                 
@@ -772,10 +818,13 @@
                 "nav_physics": "物理原理",
                 "nav_solution": "协同方案",
                 "nav_products": "核心产品",
-                "nav_services": "专业服务",
+                "nav_services": "专业服务", // *** ADDED ***
                 "nav_future": "未来展望",
                 "nav_roadmap": "技术路线图",
                 "nav_faq": "FAQ",
+                "nav_download": "下载", // *** ADDED ***
+                "nav_download_pdf": "CCP 认证产品.pdf", // *** ADDED ***
+                "nav_download_excel": "Meta 物料清单.xlsx", // *** ADDED ***
                 "report_title": "DCDeepTech 报告",
 
                 "crisis_eyebrow": "1. 危机 (Crisis)",
@@ -823,19 +872,21 @@
                 "products_card4_title": "HVDC 电源侧车",
                 "products_card4_desc": "一个独立的机柜单元，容纳 800V HVDC PDU 和安全保护电路，为相邻的 ORW 机柜提供高压电源。",
                 
-                "services_title": "5. 专业服务 (Services)",
-                "services_item1_title": "OCP Ready™ 设施评估",
-                "services_item1_desc": "评估客户现有数据中心（地板承重、电力、冷却）是否满足 OCP ORV3 和液冷部署要求。",
-                "services_item2_title": "设施电力迁移规划",
-                "services_item2_desc": "设计从传统 48V 向 800V HVDC 迁移的详细蓝图，包括安全规程、PDU 部署和配电策略。",
-                "services_item3_title": "产品贡献与认证指导",
-                "services_item3_desc": "协助客户或合作伙伴将其设计的硬件（如服务器、交换机）贡献给 OCP 社区，并指导其完成认证流程。",
+                "services_title": "5. 专业服务 (Services)", // *** ADDED ***
+                "services_item1_title": "OCP Ready™ 设施评估", // *** ADDED ***
+                "services_item1_desc": "评估客户现有数据中心（地板承重、电力、冷却）是否满足 OCP ORV3 和液冷部署要求。", // *** ADDED ***
+                "services_item2_title": "设施电力迁移规划", // *** ADDED ***
+                "services_item2_desc": "设计从传统 48V 向 800V HVDC 迁移的详细蓝图，包括安全规程、PDU 部署和配电策略。", // *** ADDED ***
+                "services_item3_title": "产品贡献与认证指导", // *** ADDED ***
+                "services_item3_desc": "协助客户或合作伙伴将其设计的硬件（如服务器、交换机）贡献给 OCP 社区，并指导其完成认证流程。", // *** ADDED ***
 
                 "future_title": "6. 未来展望 (Future)",
                 "future_quantum_title": "量子计算 (Quantum)",
-                "future_quantum_desc": "当前的 HVDC 和液冷技术是未来基础设施的基石。量子计算需要极端的低温冷却（毫开尔文级别）和高度稳定的电源。我们今天在 800V 和 CDU 方面积累的经验，将是未来管理量子系统复杂热工和电源挑战的关键。",
+                // *** UPDATED ***
+                "future_quantum_desc": "当前的 HVDC 与液冷技术是未来算力基础设施的基石，而量子计算将是推动全球计算范式变革的核心力量。量子计算需要极端条件下的低温冷却（通常需达到毫开尔文级别）与高度稳定、无噪声和极低功率波动的电源供应。我们今天在 800V 高压直流供电（HVDC）与 CDU 液冷集成方面积累的技术能力，将直接迁移与升级应用于未来量子计算系统的热管理、电磁兼容及能源调控之中。\n随着量子比特规模从数百、数千向数百万量级演进，系统级的热耦合问题、能效管理与容错机制将成为产业瓶颈。因此，构建面向量子计算时代的能源底座与液冷生态，是未来数据中心升级的必然方向。我们相信：掌握电源、电热、流体与控制一体化能力，将是引领下一代量子计算基础设施的核心竞争力。",
                 "future_software_title": "智能监控软件 (Software)",
-                "future_software_desc": "硬件的终点是软件。下一代数据中心将由 AI 驱动的“数字孪生”软件管理。该软件将实时监控机柜的功率、温度、液体流速，并动态调整 CDU 泵速和 HVDC 电压，以在任何工作负载下实现亚毫秒级的最佳效率和TCO。",
+                // *** UPDATED ***
+                "future_software_desc": "硬件的终点是软件，而软件定义算力运维已成为行业共识。下一代数据中心将由 AI 驱动，通过“数字孪生 + 智能体”实现从传统被动式维护转向自适应式、自治式的软件管理。该软件将对机柜功率分配、温度梯度、液体流速及压降、能效表现等关键维度进行实时监测与智能调控，并与 HVDC 电压、CDU 冷却回路及整机负载策略联动，让系统在任何工况下都能实现亚毫秒级的能效优化与 TCO 最小化。\n在此基础上，我们引入 预测性维护（Predictive Maintenance） 能力，通过 AI 模型对传感器数据、运行日志与故障模式进行深度学习，实现趋势性分析、异常预测与风险预警。系统可提前识别泵体衰减、换热效率下降、能耗异常、电源波动、液路微泄漏等潜在故障，提前触发运维策略或自动调度冗余资源，从而将停机风险降至最低，并显著提升 SLA、MTBF 与整体运维效率。\n未来，该软件将形成自愈式闭环：从“监测 → 预测 → 决策 → 执行 → 优化”持续演进，为数据中心提供真正意义上的自治运行能力（Autonomous DC），让客户以更低的人力投入实现更高的稳定性与能效水平。",
 
                 "roadmap_title": "OCP 机柜厂 Rack & Power 完善路线图",
                 "roadmap_desc": "本路线图将机柜产品的完善过程分为三个阶段，旨在确保您的产品线不仅符合当前 OCP ORv3 基准标准，更能迅速切入兆瓦级 AI 基础设施（ORW/HVDC）的未来市场。",
@@ -845,22 +896,22 @@
                 "roadmap_p1_th1": "步骤",
                 "roadmap_p1_th2": "关键行动",
                 "roadmap_p1_th3": "OCP 规范依据与技术细节",
-                "roadmap_p1_r1_1": "1. 战略定位与会员激活",
+                "roadmap_p1_r1_1": "<strong>1. 战略定位与会员激活</strong>",
                 "roadmap_p1_r1_2": "注册 OCP 银牌会员（强烈推荐）。",
                 "roadmap_p1_r1_3": "银牌会员 (25,000) 包含“解决方案提供商(SP)”资格，相比社区级会员(10,000 总费用) 提供了更高的品牌曝光和投资回报率 (ROI)。",
-                "roadmap_p1_r2_1": "2. 掌握核心规范",
+                "roadmap_p1_r2_1": "<strong>2. 掌握核心规范</strong>",
                 "roadmap_p1_r2_2": "立即派工程师加入 Rack & Power 和 Advanced Cooling Solutions (ACS) 项目组。",
                 "roadmap_p1_r2_3": "所有技术规范都在这些工作组中诞生。这是获取 ORv3 Base Specification、Diablo 400 和 ORW 规范的第一手渠道。",
-                "roadmap_p1_r3_1": "3. ORV3 结构机械合规",
+                "roadmap_p1_r3_1": "<strong>3. ORV3 结构机械合规</strong>",
                 "roadmap_p1_r3_2": "确保机架框架支持两种垂直间距...。",
                 "roadmap_p1_r3_3": "必须同时支持 48mm 的 OpenU (OU) 和可选的 44.45mm 的 EIA 1U (RU) 垂直间距。",
-                "roadmap_p1_r4_1": "4. 关键电气合规",
+                "roadmap_p1_r4_1": "<strong>4. 关键电气合规</strong>",
                 "roadmap_p1_r4_2": "针对 ORV3 48V 母线接口进行全面自查和验证。",
                 "roadmap_p1_r4_3": "母线 (Busbar) 导电表面必须与机柜框架保持 连续的电气路径。",
-                "roadmap_p1_r5_1": "5. 确保长期可靠性",
+                "roadmap_p1_r5_1": "<strong>5. 确保长期可靠性</strong>",
                 "roadmap_p1_r5_2": "验证所有接地路径的防腐蚀性能。",
                 "roadmap_p1_r5_3": "所有接地连接点（包括母线、机柜、接地螺钉）必须通过 ASTMB117-07 48 小时盐雾测试，达到 ASTM D610-01 的 6 级防锈等级...。",
-                "roadmap_p1_r6_1": "6. 初步认证",
+                "roadmap_p1_r6_1": "<strong>6. 初步认证</strong>",
                 "roadmap_p1_r6_2": "将“21-19 英寸转换适配器”设计贡献给 OCP 社区。",
                 "roadmap_p1_r6_3": "将低价值、高声望的配件申请 OCP Accepted™ 认证，以积累社区信誉并跑通认证流程（该认证要求贡献完整设计文件）。",
                 
@@ -869,16 +920,16 @@
                 "roadmap_p2_th1": "研发项目",
                 "roadmap_p2_th2": "挑战与目标",
                 "roadmap_p2_th3": "核心技术方案与产品",
-                "roadmap_p2_r1_1": "1. 液体冷却机柜",
+                "roadmap_p2_r1_1": "<strong>1. 液体冷却机柜</strong>",
                 "roadmap_p2_r1_2": "挑战： 标准 ORV3 框架不足以承受加压液体歧管和盲插对接产生的额外力。",
                 "roadmap_p2_r1_3": "研发 “液体冷却加固套件” (LC Kit)，作为独立 SKU。套件必须包含 腹板加强筋 (Web Stiffeners) 和歧管接口支架，用于加固机柜 前立柱，以抵消 IT 设备盲插时产生的力量。",
-                "roadmap_p2_r2_1": "2. Open Rack Wide (ORW)",
+                "roadmap_p2_r2_1": "<strong>2. Open Rack Wide (ORW)</strong>",
                 "roadmap_p2_r2_2": "挑战： 兆瓦级 AI 机架（如 AMD Helios）的负载超过 3500 kg，传统物流模式失效。",
                 "roadmap_p2_r2_3": "研发 双宽 (Double-Wide) ORW 框架：使用 支撑底座 (Support Bases) 取代脚轮，以分散超重负载对地板的点状压力...。机柜顶部集成 M24x3 螺纹吊点 (Top Lift Points)，支持“起重与放置” (Lift-and-Place) 的工业物流模式...。",
-                "roadmap_p2_r3_1": "3. 高压直流电源侧车",
+                "roadmap_p2_r3_1": "<strong>3. 高压直流电源侧车</strong>",
                 "roadmap_p2_r3_2": "挑战： 引入 +/-400VDC（Diablo 400 规范）或 800VDC 后的高压电气安全和隔离。",
                 "roadmap_p2_r3_3": "研发 Diablo 400 电源侧车机柜：其设计核心是 安全，必须具备 安全锁定门、入侵开关预留位 和 接地故障检测器 (GFD)。同时必须支持 高阻抗中点接地 等安全方案。",
-                "roadmap_p2_r4_1": "4. 核心产品 IP 保护",
+                "roadmap_p2_r4_1": "<strong>4. 核心产品 IP 保护</strong>",
                 "roadmap_p2_r4_2": "挑战： 保护核心机柜设计 IP。",
                 "roadmap_p2_r4_3": "为 ORV3 机柜和未来的 ORW、LC Kit 产品申请 OCP Inspired™ 认证，该认证 不要求贡献设计文件，从而保护了您的制造工艺和知识产权。",
 
@@ -904,7 +955,7 @@
                 "faq_q3_q": "Q3: 如何应对 Open Rack Wide (ORW) 的超重物流？",
                 "faq_q3_a": "<strong>答：</strong> ORW 机柜（如 AMD Helios 兆瓦级 AI 机架）的满载重量可达 <strong>3500 公斤</strong>。这完全超出了传统数据中心“带脚轮滚动”的物流模式。<br><br>ORW 规范通过两种方式解决这个问题：<br><strong>1. 工业物流：</strong> 机柜顶部必须集成 <strong>M24x3 螺纹吊点 (Top Lift Points)</strong>。这允许使用工业起重机 (Crane) 或龙门吊 (Gantry) 进行“起重与放置” (Lift-and-Place) 操作，这是工厂和重型设备部署的标准做法。<br><strong>2. 负载分散：</strong> 机柜底部使用 <strong>支撑底座 (Support Bases)</strong> 或调平脚，取代了传统脚轮。这能将 3500 公斤的重量均匀分散到更大的地板面积上，防止对高架地板 (Raised Floor) 造成点状压力（Point Loading）而导致压塌。",
                 "faq_q4_q": "Q4: 为什么要进行 48 小时盐雾腐蚀测试？",
-                "faq_q4_a": "<strong>答：</strong> 这是为了确保数据中心的 <strong>长期运行安全</strong> 和 <strong>电气接地完整性</strong>。<br><br>数据中心并非完全无菌，空气中可能存在来自外部环境（如沿海地区）或内部（如电池备用系统）的微量腐蚀性污染物。ORV3 规范要求所有关键的电气接地路径（包括母线、机柜框架、接地螺钉）必须通过 <strong>ASTMB117 48 小时盐雾测试</strong>。<br><br>这项测试模拟了加速老化过程，以确保即使在轻度腐蚀性环境中，这些连接点在 5-10 年的生命周期内 <strong>仍能保持极低的电阻</strong>。如果接地路径因腐蚀而失效，不仅会增加设备故障风险，还会在发生电气故障时（如 HVDC 短路）带来致命的 <strong>安全电击风险</strong>。",
+                "faq_q4_a": "<strong>答：</strong> 这是为了确保数据中心的 <strong>长期运行安全</strong> 和 <strong>电气接地完整性</strong>。<br><br>数据中心并非完全无菌，空气中可能存在来自外部环境（如沿海地区）或内部（如电池备用系统）的微量腐orsive 污染物。ORV3 规范要求所有关键的电气接地路径（包括母线、机柜框架、接地螺钉）必须通过 <strong>ASTMB117 48 小时盐雾测试</strong>。<br><br>这项测试模拟了加速老化过程，以确保即使在轻度腐蚀性环境中，这些连接点在 5-10 年的生命周期内 <strong>仍能保持极低的电阻</strong>。如果接地路径因腐蚀而失效，不仅会增加设备故障风险，还会在发生电气故障时（如 HVDC 短路）带来致命的 <strong>安全电击风险</strong>。",
                 "faq_q5_q": "Q5: 什么是“21-19 英寸转换适配器”？为什么需要它？",
                 "faq_q5_a": "<strong>答：</strong> OCP Open Rack V3 (ORV3) 使用 <strong>21 英寸</strong> 宽度的机柜标准，而传统的数据中心设备（服务器、交换机、PDU）绝大多数是 <strong>19 英寸</strong> 宽度。<br><br>“21-19 英寸转换适配器”是一种简单的金属支架 (Bracket) 或面板，它安装在 21 英寸的 ORV3 机柜立柱上，在机柜内部创造出一个 19 英寸宽度的安装空间。<br><br><strong>为什么需要它：</strong> 这是实现 <strong>“棕地” (Brownfield) 部署</strong> 和 <strong>逐步迁移</strong> 的关键。它允许企业在采用先进的 ORV3 机柜（为了更好的散热和电力）的同时，继续使用其现有的、昂贵的 19 英寸 IT 设备，而无需一次性全部替换。这是一个关键的“桥梁”产品。",
                 "faq_q6_q": "Q6: 48V 母线 (Busbar) 相比传统线缆 PDU 有什么优势？",
@@ -933,6 +984,10 @@
             document.documentElement.lang = lang;
             
             const content = contentStore[lang];
+            if (!content) {
+                console.error(`Language content not found for: ${lang}`);
+                return;
+            }
 
             // 遍历所有带 data-lang-key 的元素并更新内容
             document.querySelectorAll('[data-lang-key]').forEach(element => {
@@ -940,6 +995,9 @@
                 if (content[key]) {
                     // 使用 innerHTML 以支持 <strong> 等标签
                     element.innerHTML = content[key];
+                } else {
+                    // *** 警告缺失的键 ***
+                    console.warn(`Missing translation key: ${key} for lang: ${lang}`);
                 }
             });
 
@@ -972,12 +1030,56 @@
                 closeIcon.classList.toggle('hidden');
             });
 
+            // *** NEW: Desktop Download Dropdown Logic ***
+            const desktopTriggerBtn = document.querySelector('#desktop-download-trigger button');
+            const desktopMenu = document.getElementById('desktop-download-menu');
+
+            if (desktopTriggerBtn && desktopMenu) {
+                desktopTriggerBtn.addEventListener('click', (e) => {
+                    e.stopPropagation(); // 防止点击事件冒泡到 document
+                    desktopMenu.classList.toggle('hidden');
+                });
+            }
+
+            // *** NEW: Mobile Download Dropdown Logic ***
+            const mobileTriggerBtn = document.querySelector('#mobile-download-trigger button');
+            const mobileMenuDropdown = document.getElementById('mobile-download-menu');
+
+            if (mobileTriggerBtn && mobileMenuDropdown) {
+                mobileTriggerBtn.addEventListener('click', (e) => {
+                    const isHidden = mobileMenuDropdown.classList.toggle('hidden');
+                    const icon = mobileTriggerBtn.querySelector('i');
+                    if (isHidden) {
+                        icon.style.transform = 'rotate(0deg)';
+                    } else {
+                        icon.style.transform = 'rotate(180deg)';
+                    }
+                });
+            }
+
+            // *** NEW: Click outside to close desktop dropdown ***
+            document.addEventListener('click', (e) => {
+                if (desktopMenu && !desktopMenu.classList.contains('hidden')) {
+                    const trigger = document.getElementById('desktop-download-trigger');
+                    if (!trigger.contains(e.target)) {
+                        desktopMenu.classList.add('hidden');
+                    }
+                }
+            });
+
+
             // 移动菜单链接点击时关闭菜单
             mobileMenu.querySelectorAll('a').forEach(link => {
                 link.addEventListener('click', () => {
                     mobileMenu.classList.add('hidden');
                     menuIcon.classList.remove('hidden');
                     closeIcon.classList.add('hidden');
+                    // 重置移动端下载菜单
+                    if (mobileMenuDropdown) {
+                        mobileMenuDropdown.classList.add('hidden');
+                        const icon = mobileTriggerBtn.querySelector('i');
+                        if (icon) icon.style.transform = 'rotate(0deg)';
+                    }
                 });
             });
 
@@ -1122,6 +1224,11 @@
             if (!lossChartInstance) return;
             
             const content = contentStore[lang];
+            
+            if (!content) {
+                console.error(`Language content not found for chart update: ${lang}`);
+                return;
+            }
 
             // 更新图表标签和标题
             lossChartInstance.data.labels = [content.physics_chart_label_48v, content.physics_chart_label_800v];
