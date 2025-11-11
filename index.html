@@ -1,9 +1,9 @@
- <!DOCTYPE html>
-<html lang="zh-CN" class="scroll-smooth">
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth"> <!-- 默认语言为英文 -->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DCDeepTech 交互式技术报告 (OCP 风格)</title>
+    <title data-lang-key="title">DCDeepTech Interactive Technical Report (OCP Style)</title>
     
     <!-- 1. 引入 Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -133,30 +133,39 @@
                 <div class="flex-shrink-0 flex items-center">
                     <!-- OCP 风格 Logo 占位符 -->
                     <i data-feather="box" class="h-8 w-8 text-ocp-green"></i>
-                    <span class="ml-2 text-xl font-bold text-ocp-navy">DCDeepTech 报告</span>
+                    <span class="ml-2 text-xl font-bold text-ocp-navy" data-lang-key="report_title">DCDeepTech Report</span>
                 </div>
 
                 <!-- 桌面菜单 (Tab式) -->
                 <nav class="hidden md:flex md:items-center md:space-x-1 lg:space-x-2">
                     <ul class="flex items-center space-x-1 lg:space-x-2">
-                        <li class="nav-item"><a href="#crisis" class="px-3 py-2 rounded-md text-sm font-medium text-ocp-text-secondary hover:text-ocp-green">危机</a></li>
-                        <li class="nav-item"><a href="#physics" class="px-3 py-2 rounded-md text-sm font-medium text-ocp-text-secondary hover:text-ocp-green">物理原理</a></li>
-                        <li class="nav-item"><a href="#solution" class="px-3 py-2 rounded-md text-sm font-medium text-ocp-text-secondary hover:text-ocp-green">协同方案</a></li>
-                        <li class="nav-item"><a href="#products" class="px-3 py-2 rounded-md text-sm font-medium text-ocp-text-secondary hover:text-ocp-green">核心产品</a></li>
-                        <li class="nav-item"><a href="#services" class="px-3 py-2 rounded-md text-sm font-medium text-ocp-text-secondary hover:text-ocp-green">专业服务</a></li>
-                        <li class="nav-item"><a href="#future" class="px-3 py-2 rounded-md text-sm font-medium text-ocp-text-secondary hover:text-ocp-green">未来展望</a></li>
-                        <li class="nav-item"><a href="#roadmap" class="px-3 py-2 rounded-md text-sm font-medium text-ocp-text-secondary hover:text-ocp-green">技术路线图</a></li>
-                        <li class="nav-item"><a href="#faq" class="px-3 py-2 rounded-md text-sm font-medium text-ocp-text-secondary hover:text-ocp-green">FAQ</a></li>
+                        <li class="nav-item"><a href="#crisis" class="px-3 py-2 rounded-md text-sm font-medium text-ocp-text-secondary hover:text-ocp-green" data-lang-key="nav_crisis">Crisis</a></li>
+                        <li class="nav-item"><a href="#physics" class="px-3 py-2 rounded-md text-sm font-medium text-ocp-text-secondary hover:text-ocp-green" data-lang-key="nav_physics">Physics</a></li>
+                        <li class="nav-item"><a href="#solution" class="px-3 py-2 rounded-md text-sm font-medium text-ocp-text-secondary hover:text-ocp-green" data-lang-key="nav_solution">Solution</a></li>
+                        <li class="nav-item"><a href="#products" class="px-3 py-2 rounded-md text-sm font-medium text-ocp-text-secondary hover:text-ocp-green" data-lang-key="nav_products">Products</a></li>
+                        <li class="nav-item"><a href="#services" class="px-3 py-2 rounded-md text-sm font-medium text-ocp-text-secondary hover:text-ocp-green" data-lang-key="nav_services">Services</a></li>
+                        <li class="nav-item"><a href="#future" class="px-3 py-2 rounded-md text-sm font-medium text-ocp-text-secondary hover:text-ocp-green" data-lang-key="nav_future">Future</a></li>
+                        <li class="nav-item"><a href="#roadmap" class="px-3 py-2 rounded-md text-sm font-medium text-ocp-text-secondary hover:text-ocp-green" data-lang-key="nav_roadmap">Roadmap</a></li>
+                        <li class="nav-item"><a href="#faq" class="px-3 py-2 rounded-md text-sm font-medium text-ocp-text-secondary hover:text-ocp-green" data-lang-key="nav_faq">FAQ</a></li>
                     </ul>
                 </nav>
                 
-                <!-- 移动端菜单按钮 -->
-                <div class="md:hidden">
-                    <button id="mobile-menu-button" class="inline-flex items-center justify-center p-2 rounded-md text-ocp-text-secondary hover:text-ocp-green hover:bg-green-50 focus:outline-none">
-                        <span class="sr-only">打开主菜单</span>
-                        <i data-feather="menu" class="block h-6 w-6"></i>
-                        <i data-feather="x" class="hidden h-6 w-6"></i>
-                    </button>
+                <div class="flex items-center">
+                    <!-- Language Switcher (Desktop) -->
+                    <div class="hidden md:flex items-center ml-4">
+                        <button id="lang-switcher-desktop" class="text-sm font-medium text-ocp-text-secondary hover:text-ocp-green" data-lang-key="lang_switcher_label">
+                            Language: EN / ZH
+                        </button>
+                    </div>
+
+                    <!-- 移动端菜单按钮 -->
+                    <div class="md:hidden ml-4">
+                        <button id="mobile-menu-button" class="inline-flex items-center justify-center p-2 rounded-md text-ocp-text-secondary hover:text-ocp-green hover:bg-green-50 focus:outline-none">
+                            <span class="sr-only">打开主菜单</span>
+                            <i data-feather="menu" class="block h-6 w-6"></i>
+                            <i data-feather="x" class="hidden h-6 w-6"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -164,14 +173,20 @@
         <!-- Mobile Menu, show/hide based on menu state. -->
         <div class="md:hidden hidden" id="mobile-menu">
             <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                <a href="#crisis" class="block px-3 py-2 rounded-md text-base font-medium text-ocp-text-secondary hover:text-ocp-green hover:bg-ocp-bg-light">危机</a>
-                <a href="#physics" class="block px-3 py-2 rounded-md text-base font-medium text-ocp-text-secondary hover:text-ocp-green hover:bg-ocp-bg-light">物理原理</a>
-                <a href="#solution" class="block px-3 py-2 rounded-md text-base font-medium text-ocp-text-secondary hover:text-ocp-green hover:bg-ocp-bg-light">协同方案</a>
-                <a href="#products" class="block px-3 py-2 rounded-md text-base font-medium text-ocp-text-secondary hover:text-ocp-green hover:bg-ocp-bg-light">核心产品</a>
-                <a href="#services" class="block px-3 py-2 rounded-md text-base font-medium text-ocp-text-secondary hover:text-ocp-green hover:bg-ocp-bg-light">专业服务</a>
-                <a href="#future" class="block px-3 py-2 rounded-md text-base font-medium text-ocp-text-secondary hover:text-ocp-green hover:bg-ocp-bg-light">未来展望</a>
-                <a href="#roadmap" class="block px-3 py-2 rounded-md text-base font-medium text-ocp-text-secondary hover:text-ocp-green hover:bg-ocp-bg-light">技术路线图</a>
-                <a href="#faq" class="block px-3 py-2 rounded-md text-base font-medium text-ocp-text-secondary hover:text-ocp-green hover:bg-ocp-bg-light">FAQ</a>
+                <a href="#crisis" class="block px-3 py-2 rounded-md text-base font-medium text-ocp-text-secondary hover:text-ocp-green hover:bg-ocp-bg-light" data-lang-key="nav_crisis">Crisis</a>
+                <a href="#physics" class="block px-3 py-2 rounded-md text-base font-medium text-ocp-text-secondary hover:text-ocp-green hover:bg-ocp-bg-light" data-lang-key="nav_physics">Physics</a>
+                <a href="#solution" class="block px-3 py-2 rounded-md text-base font-medium text-ocp-text-secondary hover:text-ocp-green hover:bg-ocp-bg-light" data-lang-key="nav_solution">Solution</a>
+                <a href="#products" class="block px-3 py-2 rounded-md text-base font-medium text-ocp-text-secondary hover:text-ocp-green hover:bg-ocp-bg-light" data-lang-key="nav_products">Products</a>
+                <a href="#services" class="block px-3 py-2 rounded-md text-base font-medium text-ocp-text-secondary hover:text-ocp-green hover:bg-ocp-bg-light" data-lang-key="nav_services">Services</a>
+                <a href="#future" class="block px-3 py-2 rounded-md text-base font-medium text-ocp-text-secondary hover:text-ocp-green hover:bg-ocp-bg-light" data-lang-key="nav_future">Future</a>
+                <a href="#roadmap" class="block px-3 py-2 rounded-md text-base font-medium text-ocp-text-secondary hover:text-ocp-green hover:bg-ocp-bg-light" data-lang-key="nav_roadmap">Roadmap</a>
+                <a href="#faq" class="block px-3 py-2 rounded-md text-base font-medium text-ocp-text-secondary hover:text-ocp-green hover:bg-ocp-bg-light" data-lang-key="nav_faq">FAQ</a>
+            </div>
+            <!-- Language Switcher (Mobile) -->
+            <div class="border-t border-gray-100 px-2 pt-3 pb-3 sm:px-3">
+                <button id="lang-switcher-mobile" class="w-full text-left block px-3 py-2 rounded-md text-base font-medium text-ocp-text-secondary hover:text-ocp-green hover:bg-ocp-bg-light" data-lang-key="lang_switcher_label">
+                    Language: EN / ZH
+                </button>
             </div>
         </div>
     </header>
@@ -181,10 +196,10 @@
         <!-- 1. 危机 -->
         <section id="crisis" class="py-12 sm:py-20 bg-white">
             <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                <h2 class="text-3xl font-semibold text-center mb-4 text-ocp-navy">1. 危机 (Crisis)</h2>
-                <p class="text-center text-lg sm:text-xl text-ocp-text-secondary">
-                    <strong>物理极限：48V 架构的崩溃。</strong>
-                    随着 AI 和 HPC（高性能计算）的指数级增长，数据中心的机柜功率密度正在爆炸性地突破 30kW、50kW 甚至 100kW。传统的 48V 电力架构在这种高功率需求下，正面临着灾难性的效率崩溃和热失控风险。
+                <h2 class="text-3xl font-semibold text-center mb-4 text-ocp-navy" data-lang-key="crisis_eyebrow">1. Crisis</h2>
+                <p class="text-center text-lg sm:text-xl text-ocp-text-secondary" data-lang-key="crisis_desc">
+                    <strong>Physical Limit: Collapse of the 48V Architecture.</strong>
+                    With the exponential growth of AI and HPC, power density in data center racks is exploding past 30kW, 50kW, and even 100kW. Under this high-power demand, the traditional 48V power architecture is facing a catastrophic efficiency collapse and thermal runaway risk.
                 </p>
             </div>
         </section>
@@ -192,16 +207,16 @@
         <!-- 2. 物理原理 -->
         <section id="physics" class="py-12 sm:py-20 bg-ocp-bg-light">
             <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-                <h2 class="text-3xl font-semibold text-center mb-12 text-ocp-navy">2. 物理原理 (Physics)</h2>
+                <h2 class="text-3xl font-semibold text-center mb-12 text-ocp-navy" data-lang-key="physics_title">2. The Physics</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
                     <!-- 2.1 I2R 焦耳热暴政 -->
                     <div class="bg-white p-6 rounded-ocp shadow-ocp-light">
-                        <h3 class="text-xl font-semibold mb-4 text-ocp-navy">I2R 焦耳热暴政 (48V vs 800V)</h3>
-                        <p class="text-ocp-text-secondary mb-4 text-base">
-                            根据焦耳定律 (Ploss = I²R)，功率损失与电流 (I) 的平方成正比。在传输相同功率 (P=V*I) 时，将电压 (V) 提高 16 倍（从 48V 到 800V），电流 (I) 将降低 16 倍。
+                        <h3 class="text-xl font-semibold mb-4 text-ocp-navy" data-lang-key="physics_chart_title">The Tyranny of I²R Joule Heating (48V vs 800V)</h3>
+                        <p class="text-ocp-text-secondary mb-4 text-base" data-lang-key="physics_chart_desc1">
+                            According to Joule's Law (Ploss = I²R), power loss is proportional to the square of the current (I). When transmitting the same power (P=V*I), increasing the voltage (V) by 16 times (from 48V to 800V) reduces the current (I) by 16 times.
                         </p>
-                        <p class="text-ocp-text-secondary mb-4 text-base">
-                            最终结果是：功率损失 (I²R) 降低了 <strong>16² = 256 倍</strong>。
+                        <p class="text-ocp-text-secondary mb-4 text-base" data-lang-key="physics_chart_desc2">
+                            The final result: Power loss (I²R) is reduced by <strong>16² = 256 times</strong>.
                         </p>
                         <div class="chart-container relative w-full max-w-lg h-64 md:h-80 mx-auto">
                             <canvas id="lossChart"></canvas>
@@ -210,20 +225,20 @@
                     
                     <!-- 2.2 材料科学 -->
                     <div class="bg-white p-6 rounded-ocp shadow-ocp-light">
-                        <h3 class="text-xl font-semibold mb-4 text-ocp-navy">2.2 材料科学的抉择</h3>
-                        <p class="text-ocp-text-secondary mb-6 text-base">在高压 (HVDC) 和高电流密度下，材料的选择变得至关重要，直接影响系统的安全性和长期可靠性。</p>
+                        <h3 class="text-xl font-semibold mb-4 text-ocp-navy" data-lang-key="physics_materials_title">2.2 The Choice of Materials</h3>
+                        <p class="text-ocp-text-secondary mb-6 text-base" data-lang-key="physics_materials_desc">Under High Voltage DC (HVDC) and high current density, material selection becomes critical, directly impacting system safety and long-term reliability.</p>
                         
                         <div class="space-y-6">
                             <div>
-                                <h4 class="text-lg font-semibold text-ocp-text-primary">氢脆风险 (C10100 vs C11000)</h4>
-                                <p class="mt-2 text-ocp-text-secondary text-base">
-                                    在高压直流环境中，C10100 (OFHC - 无氧高导铜) 是首选。传统的 C11000 (ETP - 电解韧铜) 含有氧，在特定条件下可能产生水蒸气，导致微观裂纹和“氢脆”现象，引发结构性失效。
+                                <h4 class="text-lg font-semibold text-ocp-text-primary" data-lang-key="physics_materials_h2_title">Hydrogen Embrittlement Risk (C10100 vs C11000)</h4>
+                                <p class="mt-2 text-ocp-text-secondary text-base" data-lang-key="physics_materials_h2_desc">
+                                    In HVDC environments, C10100 (OFHC - Oxygen-Free High-Conductivity Copper) is preferred. Traditional C11000 (ETP - Electrolytic Tough Pitch) copper contains oxygen, which can lead to water vapor formation under certain conditions, causing micro-cracks and "hydrogen embrittlement," leading to structural failure.
                                 </p>
                             </div>
                             <div>
-                                <h4 class="text-lg font-semibold text-ocp-text-primary">锡须风险 (镀银 vs 镀锡)</h4>
-                                <p class="mt-2 text-ocp-text-secondary text-base">
-                                    镀锡母线 (Busbar) 在压力和环境中会生长出微小的“锡须”，在高压直流环境中极易引发短路。因此，镀银 (Silver Plating) 成为高压连接器的强制要求，因为它不会生长锡须，并能提供更低的接触电阻。
+                                <h4 class="text-lg font-semibold text-ocp-text-primary" data-lang-key="physics_materials_tin_title">Tin Whisker Risk (Silver vs. Tin Plating)</h4>
+                                <p class="mt-2 text-ocp-text-secondary text-base" data-lang-key="physics_materials_tin_desc">
+                                    Tin-plated busbars can grow microscopic "tin whiskers" under pressure and environmental stress. In an HVDC environment, these are extremely likely to cause short circuits. Therefore, Silver Plating is a mandatory requirement for high-voltage connectors as it does not grow whiskers and provides lower contact resistance.
                                 </p>
                             </div>
                         </div>
@@ -235,52 +250,47 @@
         <!-- 3. 协同方案 (液冷) -->
         <section id="solution" class="py-12 sm:py-20 bg-white">
             <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-                <h2 class="text-3xl font-semibold text-center mb-4 text-ocp-navy">3. 协同方案 (Solution)</h2>
-                <p class="text-center text-lg sm:text-xl text-ocp-text-secondary mb-12">解决 100kW+ 机柜的挑战，需要结构、电气和散热的三维协同。其中，散热是最大的瓶颈，而液冷是唯一的答案。</p>
+                <h2 class="text-3xl font-semibold text-center mb-4 text-ocp-navy" data-lang-key="solution_title">3. The Coordinated Solution</h2>
+                <p class="text-center text-lg sm:text-xl text-ocp-text-secondary mb-12" data-lang-key="solution_desc">Solving the 100kW+ rack challenge requires a 3D coordination of structure, electrical, and thermal design. Thermal management is the biggest bottleneck, and liquid cooling is the only answer.</p>
                 
-                <h3 class="text-2xl font-semibold text-center mb-8 text-ocp-navy">方案深潜：液冷 (Liquid Cooling) 选项</h3>
+                <h3 class="text-2xl font-semibold text-center mb-8 text-ocp-navy" data-lang-key="solution_subtitle">Solution Deep Dive: Liquid Cooling Options</h3>
 
                 <!-- 选项卡按钮 -->
                 <div class="mb-8 flex flex-wrap justify-center gap-2 border-b border-gray-200">
-                    <button class="tab-button active" data-tab="tab-dlc">芯片直通 (DLC)</button>
-                    <button class="tab-button" data-tab="tab-rdhx">后门热交换器 (RDhx)</button>
-                    <button class="tab-button" data-tab="tab-immersion">浸没式液冷 (Immersion)</button>
-                    <button class="tab-button" data-tab="tab-cdu">冷却分配单元 (CDU)</button>
+                    <button class="tab-button active" data-tab="tab-dlc" data-lang-key="solution_tab_dlc">Direct-to-Chip (DLC)</button>
+                    <button class="tab-button" data-tab="tab-rdhx" data-lang-key="solution_tab_rdhx">Rear Door Heat Exchanger (RDhx)</button>
+                    <button class="tab-button" data-tab="tab-immersion" data-lang-key="solution_tab_immersion">Immersion Cooling</button>
+                    <button class="tab-button" data-tab="tab-cdu" data-lang-key="solution_tab_cdu">Coolant Distribution Unit (CDU)</button>
                 </div>
 
                 <!-- 选项卡内容 -->
                 <div class="bg-ocp-bg-light rounded-ocp shadow-inner p-6 md:p-10">
                     <!-- DLC -->
                     <div id="tab-dlc" class="tab-content">
-                        <h4 class="text-xl font-bold text-ocp-navy mb-3">芯片直通 (Direct-to-Chip Liquid Cooling)</h4>
-                        <p class="text-ocp-text-secondary text-base">
-                            <strong>描述：</strong> 冷却液通过管道直接流过固定在 CPU、GPU 等高热量芯片上的冷板 (Cold Plate)，精确地带走核心热量。这是目前效率最高、最精确的散热方式。
-                            <br><strong>关键组件：</strong> 冷板、歧管 (Manifolds)、快换接头 (Quick Disconnects)。
+                        <h4 class="text-xl font-bold text-ocp-navy mb-3" data-lang-key="solution_tab_dlc_title">Direct-to-Chip Liquid Cooling</h4>
+                        <p class="text-ocp-text-secondary text-base" data-lang-key="solution_tab_dlc_desc">
+                            <strong>Description:</strong> Coolant flows directly through cold plates attached to high-heat components like CPUs and GPUs, precisely removing core heat. This is the most efficient and precise cooling method available today.<br><strong>Key Components:</strong> Cold Plates, Manifolds, Quick Disconnects (QDs).
                         </p>
                     </div>
                     <!-- RDhx -->
                     <div id="tab-rdhx" class="tab-content hidden">
-                        <h4 class="text-xl font-bold text-ocp-navy mb-3">后门热交换器 (Rear Door Heat Exchanger)</h4>
-                        <p class="text-ocp-text-secondary text-base">
-                            <strong>描述：</strong> 一个安装在机柜后门的巨大散热器。服务器风扇排出的热空气穿过这个充满冷却液的散热器，被冷却后再排入数据中心。
-                            <br><strong>优势：</strong> 作为“房间级”散热的补充，可以处理中高密度机柜，对服务器本身无改动。
+                        <h4 class="text-xl font-bold text-ocp-navy mb-3" data-lang-key="solution_tab_rdhx_title">Rear Door Heat Exchanger (RDhx)</h4>
+                        <p class="text-ocp-text-secondary text-base" data-lang-key="solution_tab_rdhx_desc">
+                            <strong>Description:</strong> A large radiator installed on the rear door of the rack. Hot air exhausted by server fans passes through this coolant-filled radiator, is cooled, and then expelled into the data center.<br><strong>Benefit:</strong> Complements room-level cooling, can handle medium-to-high density racks, and requires no modification to the servers themselves.
                         </p>
                     </div>
                     <!-- Immersion -->
                     <div id="tab-immersion" class="tab-content hidden">
-                        <h4 class="text-xl font-bold text-ocp-navy mb-3">浸没式液冷 (Immersion Cooling)</h4>
-                        <p class="text-ocp-text-secondary text-base">
-                            <strong>描述：</strong> 将整个服务器（主板、芯片等）完全浸泡在不导电的介电液中。热量被液体直接吸收。
-                            <br><strong>分类：</strong> 单相（液体不沸腾）或两相（液体沸腾，通过相变散热，效率极高）。
-                            <br><strong>挑战：</strong> 液体成本高昂，维护复杂，需要特殊的机柜和设施。
+                        <h4 class="text-xl font-bold text-ocp-navy mb-3" data-lang-key="solution_tab_immersion_title">Immersion Cooling</h4>
+                        <p class="text-ocp-text-secondary text-base" data-lang-key="solution_tab_immersion_desc">
+                            <strong>Description:</strong> The entire server (motherboard, chips, etc.) is fully submerged in a non-conductive dielectric fluid. Heat is directly absorbed by the fluid.<br><strong>Types:</strong> Single-phase (liquid does not boil) or Two-phase (liquid boils, transferring heat via phase change, extremely efficient).<br><strong>Challenge:</strong> High fluid cost, complex maintenance, requires specialized tanks and facilities.
                         </p>
                     </div>
                     <!-- CDU -->
                     <div id="tab-cdu" class="tab-content hidden">
-                        <h4 class="text-xl font-bold text-ocp-navy mb-3">冷却分配单元 (Coolant Distribution Unit)</h4>
-                        <p class="text-ocp-text-secondary text-base">
-                            <strong>描述：</strong> 液冷系统的心脏。它是一个泵站和热交换器，负责将数据中心的一次侧冷却水（如冷冻水）与机柜内的二次侧冷却液（如 DLC 液体）进行热量交换，并为液体循环提供动力。
-                            <br><strong>角色：</strong> 确保冷却液以正确的温度、压力和流速供应给歧管和冷板。
+                        <h4 class="text-xl font-bold text-ocp-navy mb-3" data-lang-key="solution_tab_cdu_title">Coolant Distribution Unit (CDU)</h4>
+                        <p class="text-ocp-text-secondary text-base" data-lang-key="solution_tab_cdu_desc">
+                            <strong>Description:</strong> The heart of the liquid cooling system. It is a pumping station and heat exchanger that manages the thermal exchange between the facility's primary cooling loop (e.g., chilled water) and the rack's secondary cooling loop (e.g., DLC fluid), while also providing the motive force for the fluid circulation.<br><strong>Role:</strong> Ensures the coolant is supplied to manifolds and cold plates at the correct temperature, pressure, and flow rate.
                         </p>
                     </div>
                 </div>
@@ -290,27 +300,27 @@
         <!-- 4. 核心产品 -->
         <section id="products" class="py-12 sm:py-20 bg-ocp-bg-light">
             <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-                <h2 class="text-3xl font-semibold text-center mb-12 text-ocp-navy">4. 核心产品 (Products)</h2>
+                <h2 class="text-3xl font-semibold text-center mb-12 text-ocp-navy" data-lang-key="products_title">4. Core Products</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                     <!-- Card 1: ORV3 -->
                     <div class="bg-white rounded-ocp shadow-ocp-light p-6 text-center transition-shadow duration-300 hover:shadow-md">
-                        <h3 class="text-xl font-semibold mb-3 text-ocp-navy">Open Rack V3 (ORV3)</h3>
-                        <p class="text-ocp-text-secondary text-base">OCP 社区的最新一代机柜标准。采用 21 英寸设备宽度，原生支持 48V 电力分配和液冷歧管集成。</p>
+                        <h3 class="text-xl font-semibold mb-3 text-ocp-navy" data-lang-key="products_card1_title">Open Rack V3 (ORV3)</h3>
+                        <p class="text-ocp-text-secondary text-base" data-lang-key="products_card1_desc">The latest generation rack standard from the OCP community. Features a 21-inch equipment width, native support for 48V power distribution, and liquid cooling manifold integration.</p>
                     </div>
                     <!-- Card 2: 48V-LC 升级套件 -->
                     <div class="bg-white rounded-ocp shadow-ocp-light p-6 text-center transition-shadow duration-300 hover:shadow-md">
-                        <h3 class="text-xl font-semibold mb-3 text-ocp-navy">48V-LC 升级套件</h3>
-                        <p class="text-ocp-text-secondary text-base">为现有 ORV3 机柜提供完整的液冷解决方案，包括歧管、CDU 接口和芯片冷板，实现平滑升级。</p>
+                        <h3 class="text-xl font-semibold mb-3 text-ocp-navy" data-lang-key="products_card2_title">48V-LC Upgrade Kit</h3>
+                        <p class="text-ocp-text-secondary text-base" data-lang-key="products_card2_desc">Provides a complete liquid cooling solution for existing ORV3 racks, including manifolds, CDU interfaces, and chip cold plates for a smooth upgrade path.</p>
                     </div>
                     <!-- Card 3: ORW -->
                     <div class="bg-white rounded-ocp shadow-ocp-light p-6 text-center transition-shadow duration-300 hover:shadow-md">
-                        <h3 class="text-xl font-semibold mb-3 text-ocp-navy">Open Rack Wide (ORW)</h3>
-                        <p class="text-ocp-text-secondary text-base">针对超高密度 AI/HPC 的加宽型机柜，提供更多空间容纳布线、配电和液冷管道，支持 100kW+ 负载。</p>
+                        <h3 class="text-xl font-semibold mb-3 text-ocp-navy" data-lang-key="products_card3_title">Open Rack Wide (ORW)</h3>
+                        <p class="text-ocp-text-secondary text-base" data-lang-key="products_card3_desc">A wider rack for ultra-high-density AI/HPC, providing more space for cabling, power distribution, and liquid cooling pipes, supporting 100kW+ loads.</p>
                     </div>
                     <!-- Card 4: HVDC 电源侧车 -->
                     <div class="bg-white rounded-ocp shadow-ocp-light p-6 text-center transition-shadow duration-300 hover:shadow-md">
-                        <h3 class="text-xl font-semibold mb-3 text-ocp-navy">HVDC 电源侧车</h3>
-                        <p class="text-ocp-text-secondary text-base">一个独立的机柜单元，容纳 800V HVDC PDU 和安全保护电路，为相邻的 ORW 机柜提供高压电源。</p>
+                        <h3 class="text-xl font-semibold mb-3 text-ocp-navy" data-lang-key="products_card4_title">HVDC Power Sidecar</h3>
+                        <p class="text-ocp-text-secondary text-base" data-lang-key="products_card4_desc">A separate cabinet unit housing the 800V HVDC PDU and safety protection circuits, providing high-voltage power to adjacent ORW racks.</p>
                     </div>
                 </div>
             </div>
@@ -319,19 +329,19 @@
         <!-- 5. 专业服务 -->
         <section id="services" class="py-12 sm:py-20 bg-white">
             <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-                <h2 class="text-3xl font-semibold text-center mb-12 text-ocp-navy">5. 专业服务 (Services)</h2>
+                <h2 class="text-3xl font-semibold text-center mb-12 text-ocp-navy" data-lang-key="services_title">5. Professional Services</h2>
                 <ul class="space-y-6 text-center">
                     <li class="bg-ocp-bg-light p-6 rounded-ocp shadow-ocp-light">
-                        <h3 class="text-xl font-semibold text-ocp-navy">OCP Ready™ 设施评估</h3>
-                        <p class="text-ocp-text-secondary mt-2 text-base">评估客户现有数据中心（地板承重、电力、冷却）是否满足 OCP ORV3 和液冷部署要求。</p>
+                        <h3 class="text-xl font-semibold text-ocp-navy" data-lang-key="services_item1_title">OCP Ready™ Facility Assessment</h3>
+                        <p class="text-ocp-text-secondary mt-2 text-base" data-lang-key="services_item1_desc">Assess a customer's existing data center (floor loading, power, cooling) to determine readiness for OCP ORV3 and liquid cooling deployment.</p>
                     </li>
                     <li class="bg-ocp-bg-light p-6 rounded-ocp shadow-ocp-light">
-                        <h3 class="text-xl font-semibold text-ocp-navy">设施电力迁移规划</h3>
-                        <p class="text-ocp-text-secondary mt-2 text-base">设计从传统 48V 向 800V HVDC 迁移的详细蓝图，包括安全规程、PDU 部署和配电策略。</p>
+                        <h3 class="text-xl font-semibold text-ocp-navy" data-lang-key="services_item2_title">Facility Power Migration Planning</h3>
+                        <p class="text-ocp-text-secondary mt-2 text-base" data-lang-key="services_item2_desc">Design a detailed blueprint for migrating from traditional 48V to 800V HVDC, including safety protocols, PDU deployment, and distribution strategies.</p>
                     </li>
                     <li class="bg-ocp-bg-light p-6 rounded-ocp shadow-ocp-light">
-                        <h3 class="text-xl font-semibold text-ocp-navy">产品贡献与认证指导</h3>
-                        <p class="text-ocp-text-secondary mt-2 text-base">协助客户或合作伙伴将其设计的硬件（如服务器、交换机）贡献给 OCP 社区，并指导其完成认证流程。</p>
+                        <h3 class="text-xl font-semibold text-ocp-navy" data-lang-key="services_item3_title">Product Contribution & Certification Guidance</h3>
+                        <p class="text-ocp-text-secondary mt-2 text-base" data-lang-key="services_item3_desc">Assist customers or partners in contributing their hardware designs (e.g., servers, switches) to the OCP community and guide them through the certification process.</p>
                     </li>
                 </ul>
             </div>
@@ -340,18 +350,18 @@
         <!-- 6. 未来展望 -->
         <section id="future" class="py-12 sm:py-20 bg-ocp-bg-light">
             <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-                <h2 class="text-3xl font-semibold text-center mb-12 text-ocp-navy">6. 未来展望 (Future)</h2>
+                <h2 class="text-3xl font-semibold text-center mb-12 text-ocp-navy" data-lang-key="future_title">6. Future Outlook</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div class="bg-white rounded-ocp shadow-ocp-light p-8">
-                        <h3 class="text-2xl font-semibold mb-4 text-ocp-navy">量子计算 (Quantum)</h3>
-                        <p class="text-ocp-text-secondary text-base">
-                            当前的 HVDC 和液冷技术是未来基础设施的基石。量子计算需要极端的低温冷却（毫开尔文级别）和高度稳定的电源。我们今天在 800V 和 CDU 方面积累的经验，将是未来管理量子系统复杂热工和电源挑战的关键。
+                        <h3 class="text-2xl font-semibold mb-4 text-ocp-navy" data-lang-key="future_quantum_title">Quantum Computing</h3>
+                        <p class="text-ocp-text-secondary text-base" data-lang-key="future_quantum_desc">
+                            Today's HVDC and liquid cooling technologies are the foundation for future infrastructure. Quantum computing requires extreme cryogenic cooling (milli-Kelvin levels) and highly stable power. The experience we gain today with 800V and CDUs will be key to managing the complex thermal and power challenges of quantum systems.
                         </p>
                     </div>
                     <div class="bg-white rounded-ocp shadow-ocp-light p-8">
-                        <h3 class="text-2xl font-semibold mb-4 text-ocp-navy">智能监控软件 (Software)</h3>
-                        <p class="text-ocp-text-secondary text-base">
-                            硬件的终点是软件。下一代数据中心将由 AI 驱动的“数字孪生”软件管理。该软件将实时监控机柜的功率、温度、液体流速，并动态调整 CDU 泵速和 HVDC 电压，以在任何工作负载下实现亚毫秒级的最佳效率和TCO。
+                        <h3 class="text-2xl font-semibold mb-4 text-ocp-navy" data-lang-key="future_software_title">Intelligent Monitoring Software</h3>
+                        <p class="text-ocp-text-secondary text-base" data-lang-key="future_software_desc">
+                            Hardware's endgame is software. The next-generation data center will be managed by an AI-driven "Digital Twin." This software will monitor rack power, temperature, and fluid flow rates in real-time, dynamically adjusting CDU pump speeds and HVDC voltage to achieve sub-millisecond optimal efficiency and TCO under any workload.
                         </p>
                     </div>
                 </div>
@@ -361,54 +371,54 @@
         <!-- 7. 技术路线图 -->
         <section id="roadmap" class="py-12 sm:py-20 bg-white">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <h2 class="text-3xl font-semibold text-center mb-16 text-ocp-navy">OCP 机柜厂 Rack & Power 完善路线图</h2>
-                <p class="text-center text-lg text-ocp-text-secondary mb-16 max-w-4xl mx-auto">
-                    本路线图将机柜产品的完善过程分为三个阶段，旨在确保您的产品线不仅符合当前 OCP ORv3 基准标准，更能迅速切入兆瓦级 AI 基础设施（ORW/HVDC）的未来市场。
+                <h2 class="text-3xl font-semibold text-center mb-16 text-ocp-navy" data-lang-key="roadmap_title">OCP Rack & Power Vendor Improvement Roadmap</h2>
+                <p class="text-center text-lg text-ocp-text-secondary mb-16 max-w-4xl mx-auto" data-lang-key="roadmap_desc">
+                    This roadmap divides the rack product improvement process into three phases, aiming to ensure your product line not only meets current OCP ORv3 benchmark standards but can also rapidly penetrate the future market for megawatt-scale AI infrastructure (ORW/HVDC).
                 </p>
 
                 <!-- 阶段一 -->
                 <div class="mb-16 bg-white rounded-ocp shadow-ocp-light p-6 md:p-8 border border-gray-200">
-                    <h3 class="text-2xl font-bold mb-2 text-ocp-green">阶段一：基准合规与市场切入 (Phase 1: 0-6 个月)</h3>
-                    <p class="text-lg text-ocp-text-secondary mb-8">本阶段目标是完成 OCP 认证，并确保核心 21 英寸机柜产品符合 ORv3 必须满足的严苛机械和电气规范。</p>
+                    <h3 class="text-2xl font-bold mb-2 text-ocp-green" data-lang-key="roadmap_p1_title">Phase 1: Benchmark Compliance & Market Entry (Months 0-6)</h3>
+                    <p class="text-lg text-ocp-text-secondary mb-8" data-lang-key="roadmap_p1_desc">The goal of this phase is to complete OCP certification and ensure the core 21-inch rack product meets the stringent mechanical and electrical specifications required by ORv3.</p>
                     <div class="overflow-x-auto">
                         <table class="min-w-full text-left border-collapse">
                             <thead class="bg-ocp-bg-light">
                                 <tr>
-                                    <th class="p-4 border-b font-semibold text-ocp-text-primary uppercase tracking-wider text-sm">步骤</th>
-                                    <th class="p-4 border-b font-semibold text-ocp-text-primary uppercase tracking-wider text-sm">关键行动</th>
-                                    <th class="p-4 border-b font-semibold text-ocp-text-primary uppercase tracking-wider text-sm">OCP 规范依据与技术细节</th>
+                                    <th class="p-4 border-b font-semibold text-ocp-text-primary uppercase tracking-wider text-sm" data-lang-key="roadmap_p1_th1">Step</th>
+                                    <th class="p-4 border-b font-semibold text-ocp-text-primary uppercase tracking-wider text-sm" data-lang-key="roadmap_p1_th2">Key Action</th>
+                                    <th class="p-4 border-b font-semibold text-ocp-text-primary uppercase tracking-wider text-sm" data-lang-key="roadmap_p1_th3">OCP Specification & Technical Details</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr class="hover:bg-ocp-bg-light">
-                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary"><strong class="text-ocp-navy">1. 战略定位与会员激活</strong></td>
-                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary">注册 OCP 银牌会员（强烈推荐）。</td>
-                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary">银牌会员 (25,000) 包含“解决方案提供商(SP)”资格，相比社区级会员(10,000 总费用) 提供了更高的品牌曝光和投资回报率 (ROI)。</td>
+                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary"><strong class="text-ocp-navy" data-lang-key="roadmap_p1_r1_1">1. Strategy & Membership</strong></td>
+                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary" data-lang-key="roadmap_p1_r1_2">Register as an OCP Silver Member (Highly Recommended).</td>
+                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary" data-lang-key="roadmap_p1_r1_3">Silver Membership ($25,000) includes 'Solution Provider (SP)' status, offering higher brand exposure and ROI compared to Community Level ($10,000 total fee).</td>
                                 </tr>
                                 <tr class="hover:bg-ocp-bg-light">
-                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary"><strong class="text-ocp-navy">2. 掌握核心规范</strong></td>
-                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary">立即派工程师加入 Rack & Power 和 Advanced Cooling Solutions (ACS) 项目组。</td>
-                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary">所有技术规范都在这些工作组中诞生。这是获取 ORv3 Base Specification、Diablo 400 和 ORW 规范的第一手渠道。</td>
+                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary"><strong class="text-ocp-navy" data-lang-key="roadmap_p1_r2_1">2. Master Core Specs</strong></td>
+                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary" data-lang-key="roadmap_p1_r2_2">Immediately assign engineers to join the Rack & Power and Advanced Cooling Solutions (ACS) project groups.</td>
+                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary" data-lang-key="roadmap_p1_r2_3">All technical specs originate here. This is the primary source for the ORv3 Base Specification, Diablo 400, and ORW specs.</td>
                                 </tr>
                                 <tr class="hover:bg-ocp-bg-light">
-                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary"><strong class="text-ocp-navy">3. ORV3 结构机械合规</strong></td>
-                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary">确保机架框架支持两种垂直间距...。</td>
-                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary">必须同时支持 48mm 的 OpenU (OU) 和可选的 44.45mm 的 EIA 1U (RU) 垂直间距。</td>
+                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary"><strong class="text-ocp-navy" data-lang-key="roadmap_p1_r3_1">3. ORV3 Mechanical Compliance</strong></td>
+                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary" data-lang-key="roadmap_p1_r3_2">Ensure the rack frame supports both vertical pitches...</td>
+                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary" data-lang-key="roadmap_p1_r3_3">Must support both the 48mm OpenU (OU) and the optional 44.45mm EIA 1U (RU) vertical pitches simultaneously.</td>
                                 </tr>
                                 <tr class="hover:bg-ocp-bg-light">
-                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary"><strong class="text-ocp-navy">4. 关键电气合规</strong></td>
-                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary">针对 ORV3 48V 母线接口进行全面自查和验证。</td>
-                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary">母线 (Busbar) 导电表面必须与机柜框架保持 连续的电气路径。</td>
+                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary"><strong class="text-ocp-navy" data-lang-key="roadmap_p1_r4_1">4. Key Electrical Compliance</strong></td>
+                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary" data-lang-key="roadmap_p1_r4_2">Conduct a full self-audit and verification of the ORV3 48V busbar interface.</td>
+                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary" data-lang-key="roadmap_p1_r4_3">The conductive surface of the Busbar must maintain a continuous electrical path with the rack frame.</td>
                                 </tr>
                                 <tr class="hover:bg-ocp-bg-light">
-                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary"><strong class="text-ocp-navy">5. 确保长期可靠性</strong></td>
-                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary">验证所有接地路径的防腐蚀性能。</td>
-                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary">所有接地连接点（包括母线、机柜、接地螺钉）必须通过 ASTMB117-07 48 小时盐雾测试，达到 ASTM D610-01 的 6 级防锈等级...。</td>
+                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary"><strong class="text-ocp-navy" data-lang-key="roadmap_p1_r5_1">5. Ensure Long-Term Reliability</strong></td>
+                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary" data-lang-key="roadmap_p1_r5_2">Verify the corrosion resistance of all grounding paths.</td>
+                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary" data-lang-key="roadmap_p1_r5_3">All grounding connection points (busbar, frame, screws) must pass the ASTMB117-07 48-hour salt spray test, achieving ASTM D610-01 Rust Grade 6...</td>
                                 </tr>
                                 <tr class="hover:bg-ocp-bg-light">
-                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary"><strong class="text-ocp-navy">6. 初步认证</strong></td>
-                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary">将“19-21 英寸转换适配器”设计贡献给 OCP 社区。</td>
-                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary">将低价值、高声望的配件申请 OCP Accepted™ 认证，以积累社区信誉并跑通认证流程（该认证要求贡献完整设计文件）。</td>
+                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary"><strong class="text-ocp-navy" data-lang-key="roadmap_p1_r6_1">6. Initial Certification</strong></td>
+                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary" data-lang-key="roadmap_p1_r6_2">Contribute the "19-to-21-inch Conversion Adapter" design to the OCP community.</td>
+                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary" data-lang-key="roadmap_p1_r6_3">Apply for OCP Accepted™ certification for this low-value, high-visibility accessory to build community credibility and test the certification process (requires contributing full design files).</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -417,37 +427,37 @@
 
                 <!-- 阶段二 -->
                 <div class="mb-16 bg-white rounded-ocp shadow-ocp-light p-6 md:p-8 border border-gray-200">
-                    <h3 class="text-2xl font-bold mb-2 text-ocp-green">阶段二：AI 驱动的战略转型与研发 (Phase 2: 6-18 个月)</h3>
-                    <p class="text-lg text-ocp-text-secondary mb-8">本阶段目标是启动下一代 AI 基础设施的研发项目，重点解决高功率密度下的 结构力学 和 电气安全 挑战。</p>
+                    <h3 class="text-2xl font-bold mb-2 text-ocp-green" data-lang-key="roadmap_p2_title">Phase 2: AI-Driven Strategic Pivot & R&D (Months 6-18)</h3>
+                    <p class="text-lg text-ocp-text-secondary mb-8" data-lang-key="roadmap_p2_desc">The goal of this phase is to initiate R&D for next-gen AI infrastructure, focusing on solving structural mechanics and electrical safety challenges under high power density.</p>
                     <div class="overflow-x-auto">
                         <table class="min-w-full text-left border-collapse">
                             <thead class="bg-ocp-bg-light">
                                 <tr>
-                                    <th class="p-4 border-b font-semibold text-ocp-text-primary uppercase tracking-wider text-sm">研发项目</th>
-                                    <th class="p-4 border-b font-semibold text-ocp-text-primary uppercase tracking-wider text-sm">挑战与目标</th>
-                                    <th class="p-4 border-b font-semibold text-ocp-text-primary uppercase tracking-wider text-sm">核心技术方案与产品</th>
+                                    <th class="p-4 border-b font-semibold text-ocp-text-primary uppercase tracking-wider text-sm" data-lang-key="roadmap_p2_th1">R&D Project</th>
+                                    <th class="p-4 border-b font-semibold text-ocp-text-primary uppercase tracking-wider text-sm" data-lang-key="roadmap_p2_th2">Challenge & Objective</th>
+                                    <th class="p-4 border-b font-semibold text-ocp-text-primary uppercase tracking-wider text-sm" data-lang-key="roadmap_p2_th3">Core Technical Solution & Product</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr class="hover:bg-ocp-bg-light">
-                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary"><strong class="text-ocp-navy">1. 液体冷却机柜</strong></td>
-                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary">挑战： 标准 ORV3 框架不足以承受加压液体歧管和盲插对接产生的额外力。</td>
-                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary">研发 “液体冷却加固套件” (LC Kit)，作为独立 SKU。套件必须包含 腹板加强筋 (Web Stiffeners) 和歧管接口支架，用于加固机柜 前立柱，以抵消 IT 设备盲插时产生的力量。</td>
+                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary"><strong class="text-ocp-navy" data-lang-key="roadmap_p2_r1_1">1. Liquid Cooling Rack</strong></td>
+                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary" data-lang-key="roadmap_p2_r1_2">Challenge: Standard ORV3 frame is insufficient to withstand the extra forces from pressurized liquid manifolds and blind-mate docking.</td>
+                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary" data-lang-key="roadmap_p2_r1_3">Develop a "Liquid Cooling Reinforcement Kit" (LC Kit) as a separate SKU. The kit must include Web Stiffeners and manifold interface brackets to reinforce the rack's front columns against forces from IT gear blind-mating.</td>
                                 </tr>
                                 <tr class="hover:bg-ocp-bg-light">
-                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary"><strong class="text-ocp-navy">2. Open Rack Wide (ORW)</strong></td>
-                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary">挑战： 兆瓦级 AI 机架（如 AMD Helios）的负载超过 3500 kg，传统物流模式失效。</td>
-                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary">研发 双宽 (Double-Wide) ORW 框架：使用 支撑底座 (Support Bases) 取代脚轮，以分散超重负载对地板的点状压力...。机柜顶部集成 M24x3 螺纹吊点 (Top Lift Points)，支持“起重与放置” (Lift-and-Place) 的工业物流模式...。</td>
+                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary"><strong class="text-ocp-navy" data-lang-key="roadmap_p2_r2_1">2. Open Rack Wide (ORW)</strong></td>
+                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary" data-lang-key="roadmap_p2_r2_2">Challenge: Megawatt-scale AI racks (e.g., AMD Helios) exceed 3500 kg, rendering traditional logistics obsolete.</td>
+                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary" data-lang-key="roadmap_p2_r2_3">Develop a Double-Wide ORW frame: Use Support Bases instead of casters to distribute the extreme load... Integrate M24x3 Top Lift Points to support industrial "Lift-and-Place" logistics...</td>
                                 </tr>
                                 <tr class="hover:bg-ocp-bg-light">
-                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary"><strong class="text-ocp-navy">3. 高压直流电源侧车</strong></td>
-                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary">挑战： 引入 +/-400VDC（Diablo 400 规范）或 800VDC 后的高压电气安全和隔离。</td>
-                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary">研发 Diablo 400 电源侧车机柜：其设计核心是 安全，必须具备 安全锁定门、入侵开关预留位 和 接地故障检测器 (GFD)。同时必须支持 高阻抗中点接地 等安全方案。</td>
+                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary"><strong class="text-ocp-navy" data-lang-key="roadmap_p2_r3_1">3. HVDC Power Sidecar</strong></td>
+                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary" data-lang-key="roadmap_p2_r3_2">Challenge: Electrical safety and isolation after introducing +/-400VDC (Diablo 400 spec) or 800VDC.</td>
+                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary" data-lang-key="roadmap_p2_r3_3">Develop a Diablo 400 Power Sidecar: Its design core is Safety. Must feature safety-locked doors, intrusion switch provisions, and a Ground Fault Detector (GFD). Must also support high-impedance neutral grounding schemes.</td>
                                 </tr>
                                 <tr class="hover:bg-ocp-bg-light">
-                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary"><strong class="text-ocp-navy">4. 核心产品 IP 保护</strong></td>
-                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary">挑战： 保护核心机柜设计 IP。</td>
-                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary">为 ORV3 机柜和未来的 ORW、LC Kit 产品申请 OCP Inspired™ 认证，该认证 不要求贡献设计文件，从而保护了您的制造工艺和知识产权。</td>
+                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary"><strong class="text-ocp-navy" data-lang-key="roadmap_p2_r4_1">4. Core Product IP Protection</strong></td>
+                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary" data-lang-key="roadmap_p2_r4_2">Challenge: Protect core rack design IP.</td>
+                                    <td class="p-4 border-b border-gray-200 align-top text-sm text-ocp-text-secondary" data-lang-key="roadmap_p2_r4_3">Apply for OCP Inspired™ certification for the ORV3 rack and future ORW/LC Kit products. This certification does *not* require contributing the design files, thus protecting your manufacturing processes and IP.</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -456,37 +466,37 @@
                 
                 <!-- 阶段三 -->
                 <div class="bg-white rounded-ocp shadow-ocp-light p-6 md:p-8 border border-gray-200">
-                    <h3 class="text-2xl font-bold mb-2 text-ocp-green">阶段三：商业化与服务拓展 (Phase 3: 持续)</h3>
-                    <p class="text-lg text-ocp-text-secondary mb-8">本阶段将公司的 OCP 知识转化为高价值的商业收入。</p>
+                    <h3 class="text-2xl font-bold mb-2 text-ocp-green" data-lang-key="roadmap_p3_title">Phase 3: Commercialization & Service Expansion (Ongoing)</h3>
+                    <p class="text-lg text-ocp-text-secondary mb-8" data-lang-key="roadmap_p3_desc">This phase converts the company's OCP knowledge into high-value commercial revenue.</p>
                     <ul class="space-y-6 text-ocp-text-secondary text-base">
                         <li>
-                            <strong class="text-xl text-ocp-navy">1. 产品上架 OCP Marketplace</strong>
-                            <p class="mt-2">作为 OCP Solution Provider (SP)，将您的 OCP Inspired™ 认证 ORv3 机柜正式上架 OCP 官方市场，面向全球客户销售。</p>
+                            <strong class="text-xl text-ocp-navy" data-lang-key="roadmap_p3_i1_title">1. List Products on OCP Marketplace</strong>
+                            <p class="mt-2" data-lang-key="roadmap_p3_i1_desc">As an OCP Solution Provider (SP), officially list your OCP Inspired™ certified ORv3 racks on the OCP Marketplace for global sales.</p>
                         </li>
                         <li>
-                            <strong class="text-xl text-ocp-navy">2. 开拓 OCP Ready™ 咨询服务</strong>
-                            <p class="mt-2">转变角色，利用 OCP 的 Colo Facility Guidelines 为数据中心运营商提供 OCP 部署评估与咨询 服务。</p>
+                            <strong class="text-xl text-ocp-navy" data-lang-key="roadmap_p3_i2_title">2. Launch OCP Ready™ Consulting Services</strong>
+                            <p class="mt-2" data-lang-key="roadmap_p3_i2_desc">Transition roles to provide OCP deployment assessment and consulting services to data center operators, leveraging OCP's Colo Facility Guidelines.</p>
                             <ul class="list-disc list-inside space-y-3 mt-4 ml-6 text-gray-600">
-                                <li>
-                                    <strong>服务价值：</strong> 帮助客户诊断其现有设施（Brownfield）是否满足 OCP 机柜的苛刻要求，例如 地板承重（最佳标准 ≥1221 kg/m2）、坡道梯度（≤1:12）和通道宽度。
+                                <li data-lang-key="roadmap_p3_i2_l1">
+                                    <strong>Service Value:</strong> Help clients diagnose if their existing facilities (Brownfield) meet OCP's demanding requirements, such as floor loading (standard ≥1221 kg/m2), ramp gradient (≤1:12), and aisle width.
                                 </li>
-                                <li>
-                                    <strong>协同销售：</strong> 评估结果将直接指向客户设施的改造需求，从而锁定您的 OCP 机柜产品销售，实现从“制造商”到“解决方案顾问”的升级。
+                                <li data-lang-key="roadmap_p3_i2_l2">
+                                    <strong>Synergistic Sales:</strong> The assessment results will directly identify facility upgrade needs, locking in sales for your OCP rack products and upgrading your role from "Manufacturer" to "Solution Consultant."
                                 </li>
                             </ul>
                         </li>
                         <li>
-                            <strong class="text-xl text-ocp-navy">3. 市场销售预计 (基于 OCP 生态，美元)</strong>
-                            <p class="mt-2">利用 OCP 认证产品的信誉和 OCP Marketplace 的全球曝光度，我们预计销售将按以下轨迹增长：</p>
+                            <strong class="text-xl text-ocp-navy" data-lang-key="roadmap_p3_i3_title">3. Market Sales Forecast (Based on OCP Ecosystem, USD)</strong>
+                            <p class="mt-2" data-lang-key="roadmap_p3_i3_desc">Leveraging the credibility of OCP certified products and the global exposure of the OCP Marketplace, we project the following sales trajectory:</p>
                             <ul class="list-disc list-inside space-y-3 mt-4 ml-6 text-gray-600">
-                                <li>
-                                    <strong>Y1 (阶段一至二):</strong> 专注于 OCP Accepted™ 认证的 <strong>"19-21 英寸转换适配器"</strong> (目标销售 2,000 套) 和 OCP Ready™ 咨询服务 (目标 10 个项目)，预计产生 <strong>$500,000 美元</strong> 的早期收入 (基于 $150/套 和 $20,000/项目)。
+                                <li data-lang-key="roadmap_p3_i3_l1">
+                                    <strong>Y1 (Phases 1-2):</strong> Focus on OCP Accepted™ <strong>"19-21-inch Adapters"</strong> (Target: 2,000 units) and OCP Ready™ consulting (Target: 10 projects), generating <strong>$500,000 USD</strong> in early revenue (Based on $150/unit & $20,000/project).
                                 </li>
-                                <li>
-                                    <strong>Y2 (阶段二至三):</strong> 推出 OCP Inspired™ ORV3 基准机柜 (目标 500 台, ASP ~$2,500) 和 48V-LC 升级套件 (目标 200 套, ASP ~$5,000)，目标销售额 <strong>$2,250,000 美元</strong>。
+                                <li data-lang-key="roadmap_p3_i3_l2">
+                                    <strong>Y2 (Phases 2-3):</strong> Launch OCP Inspired™ ORV3 benchmark racks (Target: 500 units, ASP ~$2,500) and 48V-LC Upgrade Kits (Target: 200 kits, ASP ~$5,000), targeting <strong>$2,250,000 USD</strong> in sales.
                                 </li>
-                                <li>
-                                    <strong>Y3-Y4 (阶段三):</strong> 规模化交付高价值 AI 基础设施，目标交付 1,000+ 套 ORW / HVDC-LC 机柜 (ASP $15,000+)，并扩展咨询服务至 50 个项目，目标年收入突破 <strong>$16,000,000 美元</strong>。
+                                <li data-lang-key="roadmap_p3_i3_l3">
+                                    <strong>Y3-Y4 (Phase 3):</strong> Scale delivery of high-value AI infrastructure. Target 1,000+ ORW / HVDC-LC racks (ASP $15,000+) and expand consulting to 50 projects, targeting annual revenue exceeding <strong>$16,000,000 USD</strong>.
                                 </li>
                             </ul>
                         </li>
@@ -498,113 +508,74 @@
         <!-- 8. 技术 FAQ -->
         <section id="faq" class="py-12 sm:py-20 bg-ocp-bg-light">
             <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-                <h2 class="text-3xl font-semibold text-center mb-12 text-ocp-navy">技术 FAQ</h2>
+                <h2 class="text-3xl font-semibold text-center mb-12 text-ocp-navy" data-lang-key="faq_title">Technical FAQ</h2>
                 <div class="space-y-8">
                     <!-- Q1 -->
                     <div>
-                        <h3 class="text-xl font-semibold mb-3 text-ocp-navy">Q1: 为什么从 48V 转向 800V HVDC？</h3>
-                        <p class="text-ocp-text-secondary text-base">
-                            <strong>答：</strong> 核心原因是 <strong>功率密度</strong> 和 <strong>效率</strong>。随着 AI 芯片功耗（如 NVIDIA B200）的爆炸式增长，单个机柜的功率需求很快将超过 100kW。在 48V 下，要传输 100kW 电力，电流高达 2083A ($I = P/V$)。根据焦耳定律 (Ploss = I2R)，如此高的电流会导致电缆和母线产生灾难性的热量损失 (I2R 暴政)，并需要极粗（且昂贵）的铜导体。
-                            <br><br>
-                            转向 800V (或 +/- 400VDC) 后，传输相同 100kW 功率的电流仅为 125A。电流降低了 <strong>94%</strong>，线缆损耗 (I2R) 降低了超过 <strong>99.7%</strong>。这使得使用更细、成本更低的线缆成为可能，显著提高了从 PDU 到芯片的端到端能源效率。
+                        <h3 class="text-xl font-semibold mb-3 text-ocp-navy" data-lang-key="faq_q1_q">Q1: Why move from 48V to 800V HVDC?</h3>
+                        <p class="text-ocp-text-secondary text-base" data-lang-key="faq_q1_a">
+                            <strong>A:</strong> The core reasons are <strong>power density</strong> and <strong>efficiency</strong>. With the explosive growth of AI chip power (e.g., NVIDIA B200), single-rack power will soon exceed 100kW. At 48V, transmitting 100kW requires 2083A ($I = P/V$). Per Joule's Law (Ploss = I²R), this massive current causes catastrophic heat loss (the I²R tyranny) in cables and busbars, requiring extremely thick (and expensive) copper conductors.<br><br>By moving to 800V (or +/- 400VDC), the current to deliver the same 100kW drops to just 125A. This is a <strong>94%</strong> reduction in current, leading to a ><strong>99.7%</strong> reduction in line loss (I²R). This allows for thinner, cheaper cabling and dramatically improves end-to-end energy efficiency from the PDU to the chip.
                         </p>
                     </div>
                     <!-- Q2 -->
                     <div>
-                        <h3 class="text-xl font-semibold mb-3 text-ocp-navy">Q2: 液冷 (Liquid Cooling) 对 ORV3 结构有何要求？</h3>
-                        <p class="text-ocp-text-secondary text-base">
-                            <strong>答：</strong> 液冷（尤其是芯片直通 DLC）引入了传统风冷机柜没有的两个主要结构挑战：
-                            <br>
-                            <strong>1. 静态重量：</strong> 液体（如水-乙二醇混合物）密度远大于空气。充满冷却液的歧管 (Manifolds) 和管路会给机柜框架增加 <strong>数百公斤</strong> 的静态负载。
-                            <br>
-                            <strong>2. 动态应力：</strong> 为了实现“盲插”热插拔，IT 设备上的快换接头 (QD) 在插入歧管时会产生 <strong>显著的推/拉力</strong>。这种力会直接作用于机柜的垂直立柱。
-                            <br><br>
-                            因此，ORV3 液冷规范要求对标准机柜进行 <strong>结构加固</strong>，例如在垂直立柱上增加 <strong>“腹板加强筋” (Web Stiffeners)</strong>，以防止框架在长期应力下变形或失效，确保盲插的可靠性。
+                        <h3 class="text-xl font-semibold mb-3 text-ocp-navy" data-lang-key="faq_q2_q">Q2: What structural demands does liquid cooling (LC) place on an ORV3 rack?</h3>
+                        <p class="text-ocp-text-secondary text-base" data-lang-key="faq_q2_a">
+                            <strong>A:</strong> Liquid cooling (especially Direct-to-Chip DLC) introduces two major structural challenges not present in traditional air-cooled racks:<br><strong>1. Static Weight:</strong> The liquid (e.g., water-glycol mix) is far denser than air. Coolant-filled manifolds and tubing can add <strong>hundreds of kilograms</strong> of static load to the rack frame.<br><strong>2. Dynamic Stress:</strong> To enable "blind-mate" hot-swapping, the Quick Disconnects (QDs) on the IT gear exert significant <strong>push/pull forces</strong> on the manifold when docking. This force is transferred directly to the rack's vertical columns.<br><br>Therefore, ORV3 liquid cooling specifications require <strong>structural reinforcement</strong> of the standard rack, such as adding <strong>"Web Stiffeners"</strong> to the vertical columns, to prevent frame deformation or failure under long-term stress and ensure reliable blind-mating.
                         </p>
                     </div>
                     <!-- Q3 -->
                     <div>
-                        <h3 class="text-xl font-semibold mb-3 text-ocp-navy">Q3: 如何应对 Open Rack Wide (ORW) 的超重物流？</h3>
-                        <p class="text-ocp-text-secondary text-base">
-                            <strong>答：</strong> ORW 机柜（如 AMD Helios 兆瓦级 AI 机架）的满载重量可达 <strong>3500 公斤</strong>。这完全超出了传统数据中心“带脚轮滚动”的物流模式。
-                            <br><br>
-                            ORW 规范通过两种方式解决这个问题：
-                            <br>
-                            <strong>1. 工业物流：</strong> 机柜顶部必须集成 <strong>M24x3 螺纹吊点 (Top Lift Points)</strong>。这允许使用工业起重机 (Crane) 或龙门吊 (Gantry) 进行“起重与放置” (Lift-and-Place) 操作，这是工厂和重型设备部署的标准做法。
-                            <br>
-                            <strong>2. 负载分散：</strong> 机柜底部使用 <strong>支撑底座 (Support Bases)</strong> 或调平脚，取代了传统脚轮。这能将 3500 公斤的重量均匀分散到更大的地板面积上，防止对高架地板 (Raised Floor) 造成点状压力（Point Loading）而导致压塌。
+                        <h3 class="text-xl font-semibold mb-3 text-ocp-navy" data-lang-key="faq_q3_q">Q3: How do you handle the extreme weight and logistics of Open Rack Wide (ORW)?</h3>
+                        <p class="text-ocp-text-secondary text-base" data-lang-key="faq_q3_a">
+                            <strong>A:</strong> An ORW rack (like the AMD Helios megawatt AI rack) can weigh up to <strong>3500 kg</strong> when fully populated. This completely breaks the traditional data center logistics model of "rolling on casters."<br><br>The ORW specification addresses this in two ways:<br><strong>1. Industrial Logistics:</strong> The rack must integrate <strong>M24x3 threaded Top Lift Points</strong>. This allows the use of industrial cranes or gantries for a "Lift-and-Place" operation, which is standard practice for factory and heavy equipment deployment.<br><strong>2. Load Distribution:</strong> The rack bottom uses <strong>Support Bases</strong> or leveling feet instead of traditional casters. This distributes the 3500 kg load over a larger floor area, preventing point-loading failures on raised floors.
                         </p>
                     </div>
                     <!-- Q4 -->
                     <div>
-                        <h3 class="text-xl font-semibold mb-3 text-ocp-navy">Q4: 为什么要进行 48 小时盐雾腐蚀测试？</h3>
-                        <p class="text-ocp-text-secondary text-base">
-                            <strong>答：</strong> 这是为了确保数据中心的 <strong>长期运行安全</strong> 和 <strong>电气接地完整性</strong>。
-                            <br><br>
-                            数据中心并非完全无菌，空气中可能存在来自外部环境（如沿海地区）或内部（如电池备用系统）的微量腐蚀性污染物。ORV3 规范要求所有关键的电气接地路径（包括母线、机柜框架、接地螺钉）必须通过 <strong>ASTMB117 48 小时盐雾测试</strong>。
-                            <br><br>
-                            这项测试模拟了加速老化过程，以确保即使在轻度腐蚀性环境中，这些连接点在 5-10 年的生命周期内 <strong>仍能保持极低的电阻</strong>。如果接地路径因腐蚀而失效，不仅会增加设备故障风险，还会在发生电气故障时（如 HVDC 短路）带来致命的 <strong>安全电击风险</strong>。
+                        <h3 class="text-xl font-semibold mb-3 text-ocp-navy" data-lang-key="faq_q4_q">Q4: Why is the 48-hour salt spray corrosion test required?</h3>
+                        <p class="text-ocp-text-secondary text-base" data-lang-key="faq_q4_a">
+                            <strong>A:</strong> This is to ensure <strong>long-term operational safety</strong> and <strong>electrical grounding integrity</strong>.<br><br>Data centers are not sterile; air can contain trace corrosive contaminants from the outside (e.g., coastal air) or inside (e.g., battery backup systems). The ORV3 spec requires all critical electrical grounding paths (busbars, frame, screws) to pass the <strong>ASTMB117 48-hour salt spray test</strong>.<br><br>This test simulates an accelerated aging process to ensure these connections <strong>remain low-resistance</strong> over a 5-10 year lifespan, even in a mildly corrosive environment. If a ground path fails due to corrosion, it not only increases equipment failure risk but also creates a lethal <strong>electrical shock hazard</strong> during a fault condition (like an HVDC short).
                         </p>
                     </div>
                     
                     <!-- Q5 -->
                     <div>
-                        <h3 class="text-xl font-semibold mb-3 text-ocp-navy">Q5: 什么是“19-21 英寸转换适配器”？为什么需要它？</h3>
-                        <p class="text-ocp-text-secondary text-base">
-                            <strong>答：</strong> OCP Open Rack V3 (ORV3) 使用 <strong>21 英寸</strong> 宽度的机柜标准，而传统的数据中心设备（服务器、交换机、PDU）绝大多数是 <strong>19 英寸</strong> 宽度。
-                            <br><br>
-                            “19-21 英寸转换适配器”是一种简单的金属支架 (Bracket) 或面板，它安装在 21 英寸的 ORV3 机柜立柱上，在机柜内部创造出一个 19 英寸宽度的安装空间。
-                            <br><br>
-                            <strong>为什么需要它：</strong> 这是实现 <strong>“棕地” (Brownfield) 部署</strong> 和 <strong>逐步迁移</strong> 的关键。它允许企业在采用先进的 ORV3 机柜（为了更好的散热和电力）的同时，继续使用其现有的、昂贵的 19 英寸 IT 设备，而无需一次性全部替换。这是一个关键的“桥梁”产品。
+                        <h3 class="text-xl font-semibold mb-3 text-ocp-navy" data-lang-key="faq_q5_q">Q5: What is a "19-to-21-inch conversion adapter" and why is it needed?</h3>
+                        <p class="text-ocp-text-secondary text-base" data-lang-key="faq_q5_a">
+                            <strong>A:</strong> OCP Open Rack V3 (ORV3) uses a <strong>21-inch</strong> wide cabinet standard, whereas the vast majority of traditional data center equipment (servers, switches, PDUs) is <strong>19-inch</strong> wide.<br><br>A "19-to-21-inch conversion adapter" is a simple metal bracket or panel that mounts to the 21-inch ORV3 columns, creating a 19-inch mounting space inside the rack.<br><br><strong>Why it's needed:</strong> This is the key to <strong>"Brownfield" deployments</strong> and <strong>gradual migration</strong>. It allows an enterprise to adopt advanced ORV3 racks (for better cooling and power) while continuing to use their existing, expensive 19-inch IT equipment, without a forklift upgrade. It's a critical "bridge" product.
                         </p>
                     </div>
 
                     <!-- Q6 -->
                     <div>
-                        <h3 class="text-xl font-semibold mb-3 text-ocp-navy">Q6: 48V 母线 (Busbar) 相比传统线缆 PDU 有什么优势？</h3>
-                        <p class="text-ocp-text-secondary text-base">
-                            <strong>答：</strong> 传统 PDU（电源分配单元）使用多条线缆为机柜内的每台服务器供电，在 30kW+ 的高密度机柜中，这会很快变成“线缆噩梦” (Cable Mess)。
-                            <br><br>
-                            48V 母线是一个预装在机柜背部或侧面的、贯穿机柜全高的刚性铜排。服务器通过“盲插” (Blind-mate) 的电源连接器直接卡入母线取电。
-                            <br><br>
-                            <strong>优势：</strong>
-                            <br><strong>1. 简化运维：</strong> 消除机柜后部 90% 的电源线缆，极大简化了服务器的安装和热插拔维护。
-                            <br><strong>2. 改善散热：</strong> 没有了杂乱的线缆阻挡，冷空气可以更顺畅地流过服务器，提高了散热效率。
-                            <br><strong>3. 提高可靠性：</strong> 刚性连接和更少的连接点（相比 PDU 插座）减少了故障点。
+                        <h3 class="text-xl font-semibold mb-3 text-ocp-navy" data-lang-key="faq_q6_q">Q6: What is the advantage of a 48V Busbar over a traditional cable PDU?</h3>
+                        <p class="text-ocp-text-secondary text-base" data-lang-key="faq_q6_a">
+                            <strong>A:</strong> A traditional PDU (Power Distribution Unit) uses multiple cables to power each server, which quickly becomes a "cable mess" in a 30kW+ high-density rack.<br><br>A 48V busbar is a rigid copper bar pre-installed in the back or side of the rack, running its full height. Servers use a "blind-mate" power connector to dock directly onto the busbar for power.<br><br><strong>Advantages:</strong><br><strong>1. Simplified Ops:</strong> Eliminates 90% of power cabling from the rear of the rack, vastly simplifying server installation and hot-swapping.<br><strong>2. Improved Airflow:</strong> With no cable clutter blocking airflow, cool air can pass through servers more efficiently, improving thermal performance.<br><strong>3. Higher Reliability:</strong> A rigid connection and fewer connection points (vs. PDU outlets) reduce points of failure.
                         </p>
                     </div>
 
                     <!-- Q7 -->
                     <div>
-                        <h3 class="text-xl font-semibold mb-3 text-ocp-navy">Q7: 为什么 ORV3 采用 48mm 的 "OpenU" (OU) 单位？</h3>
-                        <p class="text-ocp-text-secondary text-base">
-                            <strong>答：</strong> 传统的 EIA 1U (RU) 标准是 1.75 英寸（即 44.45mm）。这是几十年前制定的标准。
-                            <br><br>
-                            OCP 社区发现，随着 CPU/GPU 功耗增加，散热器 (Heatsink) 越来越高，风扇 (Fan) 也需要越来越大（以在更低转速下推动更多风量，从而节能降噪）。
-                            <br><br>
-                            ORV3 引入的 <strong>48mm OpenU</strong> 提供了 <strong>额外 3.55mm 的垂直空间</strong>。这看似微小的高度增加，却极大地释放了服务器内部的设计空间，允许使用 <strong>更高、更高效的散热器和风扇</strong>，是 ORV3 能够应对更高热量密度的关键设计之一。
+                        <h3 class="text-xl font-semibold mb-3 text-ocp-navy" data-lang-key="faq_q7_q">Q7: Why does ORV3 use the 48mm "OpenU" (OU) unit?</h3>
+                        <p class="text-ocp-text-secondary text-base" data-lang-key="faq_q7_a">
+                            <strong>A:</strong> The traditional EIA 1U (RU) standard is 1.75 inches (44.45mm), a standard set decades ago.<br><br>The OCP community found that as CPU/GPU power increased, heatsinks needed to be taller, and fans needed to be larger (to move more air at lower, quieter, more efficient RPMs).<br><br>The <strong>48mm OpenU</strong> introduced by ORV3 provides an <strong>extra 3.55mm of vertical space</strong>. This seemingly small height increase significantly liberates the internal design of the server, allowing for <strong>taller, more effective heatsinks and fans</strong>. It is one of the key designs enabling ORV3 to handle higher thermal densities.
                         </p>
                     </div>
 
                     <!-- Q8 -->
                     <div>
-                        <h3 class="text-xl font-semibold mb-3 text-ocp-navy">Q8: 锡须 (Tin Whiskers) 真的那么危险吗？</h3>
-                        <p class="text-ocp-text-secondary text-base">
-                            <strong>答：</strong> <strong>是的，极其危险</strong>，尤其是在高压直流 (HVDC) 环境中。
-                            <br><br>
-                            锡须是从纯锡 (Tin) 镀层表面自发生长出来的微米级导电细丝。在 12V 或 48V 的低压环境中，它们可能不足以造成严重破坏。
-                            <br><br>
-                            但在 800V HVDC 系统中，电压极高，电气间隙（Clearance）是设计的关键。一根微小的锡须就足以 <strong>跨越两个高压触点</strong>，形成 <strong>灾难性的短路 (Short Circuit)</strong>。这种短路会立即引发电弧（Arc Flash），烧毁组件，甚至导致火灾。这就是为什么 HVDC 母线和连接器强制要求使用 <strong>镀银 (Silver Plating)</strong> 或其他非锡合金，因为银不会生长锡须。
+                        <h3 class="text-xl font-semibold mb-3 text-ocp-navy" data-lang-key="faq_q8_q">Q8: Are "Tin Whiskers" really that dangerous?</h3>
+                        <p class="text-ocp-text-secondary text-base" data-lang-key="faq_q8_a">
+                            <strong>A:</strong> <strong>Yes, extremely dangerous</strong>, especially in an HVDC environment.<br><br>Tin whiskers are microscopic, electrically conductive filaments that spontaneously grow from pure tin-plated surfaces. In a low-voltage 12V or 48V system, they might not be strong enough to cause a major fault.<br><br>However, in an 800V HVDC system, the voltage is extreme and electrical clearance is critical. A single tiny whisker is all it takes to <strong>bridge two high-voltage contacts</strong>, creating a <strong>catastrophic short circuit</strong>. This short will immediately cause an arc flash, destroying components and potentially starting a fire. This is why HVDC busbars and connectors mandate <strong>Silver Plating</strong> or other non-tin alloys, as silver does not grow whiskers.
                         </p>
                     </div>
 
                     <!-- Q9 -->
                     <div>
-                        <h3 class="text-xl font-semibold mb-3 text-ocp-navy">Q9: 部署 OCP 是否必须新建一个“绿地” (Greenfield) 数据中心？</h3>
-                        <p class="text-ocp-text-secondary text-base">
-                            <strong>答：</strong> <strong>不是。</strong> 这是一个常见的误解。虽然 OCP 解决方案（如 HVDC、ORW、液冷）在新建的“绿地”数据中心中能发挥最大效益（因为可以从头规划地板承重、配电和冷却），但 OCP 生态系统非常注重 <strong>“棕地” (Brownfield，即现有设施) 的兼容性</strong>。
-                            <br><br>
-                            我们的“产品”和“服务”章节中提到的组件，如 <strong>“19-21 英寸适配器”</strong>、<strong>“48V-LC 升级套件”</strong> 以及 <strong>“OCP Ready™ 设施评估”</strong> 服务，其核心目的就是帮助客户在现有数据中心内 <strong>渐进式地 (Incrementally)</strong> 采用 OCP 技术，保护现有投资，平滑过渡到下一代基础设施。
+                        <h3 class="text-xl font-semibold mb-3 text-ocp-navy" data-lang-key="faq_q9_q">Q9: Do I need a new "Greenfield" data center to deploy OCP?</h3>
+                        <p class="text-ocp-text-secondary text-base" data-lang-key="faq_q9_a">
+                            <strong>A:</strong> <strong>No.</strong> This is a common misconception. While OCP solutions (like HVDC, ORW, and liquid cooling) achieve maximum benefit in a new "Greenfield" build (where floor loading, power, and cooling can be planned from scratch), the OCP ecosystem is heavily focused on <strong>"Brownfield" (existing facility) compatibility</strong>.<br><br>The components mentioned in our "Products" and "Services" sections, such as the <strong>"19-to-21-inch adapter,"</strong> the <strong>"48V-LC Upgrade Kit,"</strong> and the <strong>"OCP Ready™ Facility Assessment"</strong> service, are all designed to help customers <strong>incrementally adopt</strong> OCP technologies within their existing data centers, protecting current investments and enabling a smooth transition to next-gen infrastructure.
                         </p>
                     </div>
 
@@ -629,8 +600,8 @@
                         <i data-feather="linkedin" class="h-6 w-6"></i>
                     </a>
                 </div>
-                <p class="mt-8 text-center text-base text-ocp-text-secondary md:mt-0 md:order-1">
-                    &copy; 2025 DCDeepTech 报告 (OCP 风格版).
+                <p class="mt-8 text-center text-base text-ocp-text-secondary md:mt-0 md:order-1" data-lang-key="footer_copy">
+                    &copy; 2025 DCDeepTech Report (OCP Style Edition).
                 </p>
             </div>
         </div>
@@ -638,6 +609,352 @@
 
 
     <script>
+        // -----------------------------------------------------------------
+        // 内容库 (Content Store)
+        // -----------------------------------------------------------------
+        const contentStore = {
+            "en": {
+                "title": "DCDeepTech Interactive Technical Report (OCP Style)",
+                "nav_crisis": "Crisis",
+                "nav_physics": "Physics",
+                "nav_solution": "Solution",
+                "nav_products": "Products",
+                "nav_services": "Services",
+                "nav_future": "Future",
+                "nav_roadmap": "Roadmap",
+                "nav_faq": "FAQ",
+                "report_title": "DCDeepTech Report",
+                
+                "crisis_eyebrow": "1. Crisis",
+                "crisis_desc": "<strong>Physical Limit: Collapse of the 48V Architecture.</strong> With the exponential growth of AI and HPC, power density in data center racks is exploding past 30kW, 50kW, and even 100kW. Under this high-power demand, the traditional 48V power architecture is facing a catastrophic efficiency collapse and thermal runaway risk.",
+
+                "physics_title": "2. The Physics",
+                "physics_chart_title": "The Tyranny of I²R Joule Heating (48V vs 800V)",
+                "physics_chart_desc1": "According to Joule's Law (Ploss = I²R), power loss is proportional to the square of the current (I). When transmitting the same power (P=V*I), increasing the voltage (V) by 16 times (from 48V to 800V) reduces the current (I) by 16 times.",
+                "physics_chart_desc2": "The final result: Power loss (I²R) is reduced by <strong>16² = 256 times</strong>.",
+                "physics_chart_xaxis": "Relative Loss (Logarithmic Scale)",
+                "physics_chart_tooltip": "Relative Power Loss (I²R)",
+                "physics_chart_label_48v": "48V Architecture",
+                "physics_chart_label_800v": "800V HVDC Architecture",
+
+                "physics_materials_title": "2.2 The Choice of Materials",
+                "physics_materials_desc": "Under High Voltage DC (HVDC) and high current density, material selection becomes critical, directly impacting system safety and long-term reliability.",
+                "physics_materials_h2_title": "Hydrogen Embrittlement Risk (C10100 vs C11000)",
+                "physics_materials_h2_desc": "In HVDC environments, C10100 (OFHC - Oxygen-Free High-Conductivity Copper) is preferred. Traditional C11000 (ETP - Electrolytic Tough Pitch) copper contains oxygen, which can lead to water vapor formation under certain conditions, causing micro-cracks and \"hydrogen embrittlement,\" leading to structural failure.",
+                "physics_materials_tin_title": "Tin Whisker Risk (Silver vs. Tin Plating)",
+                "physics_materials_tin_desc": "Tin-plated busbars can grow microscopic \"tin whiskers\" under pressure and environmental stress. In an HVDC environment, these are extremely likely to cause short circuits. Therefore, Silver Plating is a mandatory requirement for high-voltage connectors as it does not grow whiskers and provides lower contact resistance.",
+
+                "solution_title": "3. The Coordinated Solution",
+                "solution_desc": "Solving the 100kW+ rack challenge requires a 3D coordination of structure, electrical, and thermal design. Thermal management is the biggest bottleneck, and liquid cooling is the only answer.",
+                "solution_subtitle": "Solution Deep Dive: Liquid Cooling Options",
+                "solution_tab_dlc": "Direct-to-Chip (DLC)",
+                "solution_tab_rdhx": "Rear Door Heat Exchanger (RDhx)",
+                "solution_tab_immersion": "Immersion Cooling",
+                "solution_tab_cdu": "Coolant Distribution Unit (CDU)",
+                "solution_tab_dlc_title": "Direct-to-Chip Liquid Cooling",
+                "solution_tab_dlc_desc": "<strong>Description:</strong> Coolant flows directly through cold plates attached to high-heat components like CPUs and GPUs, precisely removing core heat. This is the most efficient and precise cooling method available today.<br><strong>Key Components:</strong> Cold Plates, Manifolds, Quick Disconnects (QDs).",
+                "solution_tab_rdhx_title": "Rear Door Heat Exchanger (RDhx)",
+                "solution_tab_rdhx_desc": "<strong>Description:</strong> A large radiator installed on the rear door of the rack. Hot air exhausted by server fans passes through this coolant-filled radiator, is cooled, and then expelled into the data center.<br><strong>Benefit:</strong> Complements room-level cooling, can handle medium-to-high density racks, and requires no modification to the servers themselves.",
+                "solution_tab_immersion_title": "Immersion Cooling",
+                "solution_tab_immersion_desc": "<strong>Description:</strong> The entire server (motherboard, chips, etc.) is fully submerged in a non-conductive dielectric fluid. Heat is directly absorbed by the fluid.<br><strong>Types:</strong> Single-phase (liquid does not boil) or Two-phase (liquid boils, transferring heat via phase change, extremely efficient).<br><strong>Challenge:</strong> High fluid cost, complex maintenance, requires specialized tanks and facilities.",
+                "solution_tab_cdu_title": "Coolant Distribution Unit (CDU)",
+                "solution_tab_cdu_desc": "<strong>Description:</strong> The heart of the liquid cooling system. It is a pumping station and heat exchanger that manages the thermal exchange between the facility's primary cooling loop (e.g., chilled water) and the rack's secondary cooling loop (e.g., DLC fluid), while also providing the motive force for the fluid circulation.<br><strong>Role:</strong> Ensures the coolant is supplied to manifolds and cold plates at the correct temperature, pressure, and flow rate.",
+                
+                "products_title": "4. Core Products",
+                "products_card1_title": "Open Rack V3 (ORV3)",
+                "products_card1_desc": "The latest generation rack standard from the OCP community. Features a 21-inch equipment width, native support for 48V power distribution, and liquid cooling manifold integration.",
+                "products_card2_title": "48V-LC Upgrade Kit",
+                "products_card2_desc": "Provides a complete liquid cooling solution for existing ORV3 racks, including manifolds, CDU interfaces, and chip cold plates for a smooth upgrade path.",
+                "products_card3_title": "Open Rack Wide (ORW)",
+                "products_card3_desc": "A wider rack for ultra-high-density AI/HPC, providing more space for cabling, power distribution, and liquid cooling pipes, supporting 100kW+ loads.",
+                "products_card4_title": "HVDC Power Sidecar",
+                "products_card4_desc": "A separate cabinet unit housing the 800V HVDC PDU and safety protection circuits, providing high-voltage power to adjacent ORW racks.",
+
+                "services_title": "5. Professional Services",
+                "services_item1_title": "OCP Ready™ Facility Assessment",
+                "services_item1_desc": "Assess a customer's existing data center (floor loading, power, cooling) to determine readiness for OCP ORV3 and liquid cooling deployment.",
+                "services_item2_title": "Facility Power Migration Planning",
+                "services_item2_desc": "Design a detailed blueprint for migrating from traditional 48V to 800V HVDC, including safety protocols, PDU deployment, and distribution strategies.",
+                "services_item3_title": "Product Contribution & Certification Guidance",
+                "services_item3_desc": "Assist customers or partners in contributing their hardware designs (e.g., servers, switches) to the OCP community and guide them through the certification process.",
+
+                "future_title": "6. Future Outlook",
+                "future_quantum_title": "Quantum Computing",
+                "future_quantum_desc": "Today's HVDC and liquid cooling technologies are the foundation for future infrastructure. Quantum computing requires extreme cryogenic cooling (milli-Kelvin levels) and highly stable power. The experience we gain today with 800V and CDUs will be key to managing the complex thermal and power challenges of quantum systems.",
+                "future_software_title": "Intelligent Monitoring Software",
+                "future_software_desc": "Hardware's endgame is software. The next-generation data center will be managed by an AI-driven \"Digital Twin.\" This software will monitor rack power, temperature, and fluid flow rates in real-time, dynamically adjusting CDU pump speeds and HVDC voltage to achieve sub-millisecond optimal efficiency and TCO under any workload.",
+
+                "roadmap_title": "OCP Rack & Power Vendor Improvement Roadmap",
+                "roadmap_desc": "This roadmap divides the rack product improvement process into three phases, aiming to ensure your product line not only meets current OCP ORv3 benchmark standards but can also rapidly penetrate the future market for megawatt-scale AI infrastructure (ORW/HVDC).",
+                
+                "roadmap_p1_title": "Phase 1: Benchmark Compliance & Market Entry (Months 0-6)",
+                "roadmap_p1_desc": "The goal of this phase is to complete OCP certification and ensure the core 21-inch rack product meets the stringent mechanical and electrical specifications required by ORv3.",
+                "roadmap_p1_th1": "Step",
+                "roadmap_p1_th2": "Key Action",
+                "roadmap_p1_th3": "OCP Specification & Technical Details",
+                "roadmap_p1_r1_1": "1. Strategy & Membership",
+                "roadmap_p1_r1_2": "Register as an OCP Silver Member (Highly Recommended).",
+                "roadmap_p1_r1_3": "Silver Membership ($25,000) includes 'Solution Provider (SP)' status, offering higher brand exposure and ROI compared to Community Level ($10,000 total fee).",
+                "roadmap_p1_r2_1": "2. Master Core Specs",
+                "roadmap_p1_r2_2": "Immediately assign engineers to join the Rack & Power and Advanced Cooling Solutions (ACS) project groups.",
+                "roadmap_p1_r2_3": "All technical specs originate here. This is the primary source for the ORv3 Base Specification, Diablo 400, and ORW specs.",
+                "roadmap_p1_r3_1": "3. ORV3 Mechanical Compliance",
+                "roadmap_p1_r3_2": "Ensure the rack frame supports both vertical pitches...",
+                "roadmap_p1_r3_3": "Must support both the 48mm OpenU (OU) and the optional 44.45mm EIA 1U (RU) vertical pitches simultaneously.",
+                "roadmap_p1_r4_1": "4. Key Electrical Compliance",
+                "roadmap_p1_r4_2": "Conduct a full self-audit and verification of the ORV3 48V busbar interface.",
+                "roadmap_p1_r4_3": "The conductive surface of the Busbar must maintain a continuous electrical path with the rack frame.",
+                "roadmap_p1_r5_1": "5. Ensure Long-Term Reliability",
+                "roadmap_p1_r5_2": "Verify the corrosion resistance of all grounding paths.",
+                "roadmap_p1_r5_3": "All grounding connection points (busbar, frame, screws) must pass the ASTMB117-07 48-hour salt spray test, achieving ASTM D610-01 Rust Grade 6...",
+                "roadmap_p1_r6_1": "6. Initial Certification",
+                "roadmap_p1_r6_2": "Contribute the \"19-to-21-inch Conversion Adapter\" design to the OCP community.",
+                "roadmap_p1_r6_3": "Apply for OCP Accepted™ certification for this low-value, high-visibility accessory to build community credibility and test the certification process (requires contributing full design files).",
+
+                "roadmap_p2_title": "Phase 2: AI-Driven Strategic Pivot & R&D (Months 6-18)",
+                "roadmap_p2_desc": "The goal of this phase is to initiate R&D for next-gen AI infrastructure, focusing on solving structural mechanics and electrical safety challenges under high power density.",
+                "roadmap_p2_th1": "R&D Project",
+                "roadmap_p2_th2": "Challenge & Objective",
+                "roadmap_p2_th3": "Core Technical Solution & Product",
+                "roadmap_p2_r1_1": "1. Liquid Cooling Rack",
+                "roadmap_p2_r1_2": "Challenge: Standard ORV3 frame is insufficient to withstand the extra forces from pressurized liquid manifolds and blind-mate docking.",
+                "roadmap_p2_r1_3": "Develop a \"Liquid Cooling Reinforcement Kit\" (LC Kit) as a separate SKU. The kit must include Web Stiffeners and manifold interface brackets to reinforce the rack's front columns against forces from IT gear blind-mating.",
+                "roadmap_p2_r2_1": "2. Open Rack Wide (ORW)",
+                "roadmap_p2_r2_2": "Challenge: Megawatt-scale AI racks (e.g., AMD Helios) exceed 3500 kg, rendering traditional logistics obsolete.",
+                "roadmap_p2_r2_3": "Develop a Double-Wide ORW frame: Use Support Bases instead of casters to distribute the extreme load... Integrate M24x3 Top Lift Points to support industrial \"Lift-and-Place\" logistics...",
+                "roadmap_p2_r3_1": "3. HVDC Power Sidecar",
+                "roadmap_p2_r3_2": "Challenge: Electrical safety and isolation after introducing +/-400VDC (Diablo 400 spec) or 800VDC.",
+                "roadmap_p2_r3_3": "Develop a Diablo 400 Power Sidecar: Its design core is Safety. Must feature safety-locked doors, intrusion switch provisions, and a Ground Fault Detector (GFD). Must also support high-impedance neutral grounding schemes.",
+                "roadmap_p2_r4_1": "4. Core Product IP Protection",
+                "roadmap_p2_r4_2": "Challenge: Protect core rack design IP.",
+                "roadmap_p2_r4_3": "Apply for OCP Inspired™ certification for the ORV3 rack and future ORW/LC Kit products. This certification does *not* require contributing the design files, thus protecting your manufacturing processes and IP.",
+
+                "roadmap_p3_title": "Phase 3: Commercialization & Service Expansion (Ongoing)",
+                "roadmap_p3_desc": "This phase converts the company's OCP knowledge into high-value commercial revenue.",
+                "roadmap_p3_i1_title": "1. List Products on OCP Marketplace",
+                "roadmap_p3_i1_desc": "As an OCP Solution Provider (SP), officially list your OCP Inspired™ certified ORv3 racks on the OCP Marketplace for global sales.",
+                "roadmap_p3_i2_title": "2. Launch OCP Ready™ Consulting Services",
+                "roadmap_p3_i2_desc": "Transition roles to provide OCP deployment assessment and consulting services to data center operators, leveraging OCP's Colo Facility Guidelines.",
+                "roadmap_p3_i2_l1": "<strong>Service Value:</strong> Help clients diagnose if their existing facilities (Brownfield) meet OCP's demanding requirements, such as floor loading (standard ≥1221 kg/m2), ramp gradient (≤1:12), and aisle width.",
+                "roadmap_p3_i2_l2": "<strong>Synergistic Sales:</strong> The assessment results will directly identify facility upgrade needs, locking in sales for your OCP rack products and upgrading your role from \"Manufacturer\" to \"Solution Consultant.\"",
+                "roadmap_p3_i3_title": "3. Market Sales Forecast (Based on OCP Ecosystem, USD)",
+                "roadmap_p3_i3_desc": "Leveraging the credibility of OCP certified products and the global exposure of the OCP Marketplace, we project the following sales trajectory:",
+                "roadmap_p3_i3_l1": "<strong>Y1 (Phases 1-2):</strong> Focus on OCP Accepted™ <strong>\"19-21-inch Adapters\"</strong> (Target: 2,000 units) and OCP Ready™ consulting (Target: 10 projects), generating <strong>$500,000 USD</strong> in early revenue (Based on $150/unit & $20,000/project).",
+                "roadmap_p3_i3_l2": "<strong>Y2 (Phases 2-3):</strong> Launch OCP Inspired™ ORV3 benchmark racks (Target: 500 units, ASP ~$2,500) and 48V-LC Upgrade Kits (Target: 200 kits, ASP ~$5,000), targeting <strong>$2,250,000 USD</strong> in sales.",
+                "roadmap_p3_i3_l3": "<strong>Y3-Y4 (Phase 3):</strong> Scale delivery of high-value AI infrastructure. Target 1,000+ ORW / HVDC-LC racks (ASP $15,000+) and expand consulting to 50 projects, targeting annual revenue exceeding <strong>$16,000,000 USD</strong>.",
+                
+                "faq_title": "Technical FAQ",
+                "faq_q1_q": "Q1: Why move from 48V to 800V HVDC?",
+                "faq_q1_a": "<strong>A:</strong> The core reasons are <strong>power density</strong> and <strong>efficiency</strong>. With the explosive growth of AI chip power (e.g., NVIDIA B200), single-rack power will soon exceed 100kW. At 48V, transmitting 100kW requires 2083A ($I = P/V$). Per Joule's Law (Ploss = I²R), this massive current causes catastrophic heat loss (the I²R tyranny) in cables and busbars, requiring extremely thick (and expensive) copper conductors.<br><br>By moving to 800V (or +/- 400VDC), the current to deliver the same 100kW drops to just 125A. This is a <strong>94%</strong> reduction in current, leading to a ><strong>99.7%</strong> reduction in line loss (I²R). This allows for thinner, cheaper cabling and dramatically improves end-to-end energy efficiency from the PDU to the chip.",
+                "faq_q2_q": "Q2: What structural demands does liquid cooling (LC) place on an ORV3 rack?",
+                "faq_q2_a": "<strong>A:</strong> Liquid cooling (especially Direct-to-Chip DLC) introduces two major structural challenges not present in traditional air-cooled racks:<br><strong>1. Static Weight:</strong> The liquid (e.g., water-glycol mix) is far denser than air. Coolant-filled manifolds and tubing can add <strong>hundreds of kilograms</strong> of static load to the rack frame.<br><strong>2. Dynamic Stress:</strong> To enable \"blind-mate\" hot-swapping, the Quick Disconnects (QDs) on the IT gear exert significant <strong>push/pull forces</strong> on the manifold when docking. This force is transferred directly to the rack's vertical columns.<br><br>Therefore, ORV3 liquid cooling specifications require <strong>structural reinforcement</strong> of the standard rack, such as adding <strong>\"Web Stiffeners\"</strong> to the vertical columns, to prevent frame deformation or failure under long-term stress and ensure reliable blind-mating.",
+                "faq_q3_q": "Q3: How do you handle the extreme weight and logistics of Open Rack Wide (ORW)?",
+                "faq_q3_a": "<strong>A:</strong> An ORW rack (like the AMD Helios megawatt AI rack) can weigh up to <strong>3500 kg</strong> when fully populated. This completely breaks the traditional data center logistics model of \"rolling on casters.\"<br><br>The ORW specification addresses this in two ways:<br><strong>1. Industrial Logistics:</strong> The rack must integrate <strong>M24x3 threaded Top Lift Points</strong>. This allows the use of industrial cranes or gantries for a \"Lift-and-Place\" operation, which is standard practice for factory and heavy equipment deployment.<br><strong>2. Load Distribution:</strong> The rack bottom uses <strong>Support Bases</strong> or leveling feet instead of traditional casters. This distributes the 3500 kg load over a larger floor area, preventing point-loading failures on raised floors.",
+                "faq_q4_q": "Q4: Why is the 48-hour salt spray corrosion test required?",
+                "faq_q4_a": "<strong>A:</strong> This is to ensure <strong>long-term operational safety</strong> and <strong>electrical grounding integrity</strong>.<br><br>Data centers are not sterile; air can contain trace corrosive contaminants from the outside (e.g., coastal air) or inside (e.g., battery backup systems). The ORV3 spec requires all critical electrical grounding paths (busbars, frame, screws) to pass the <strong>ASTMB117 48-hour salt spray test</strong>.<br><br>This test simulates an accelerated aging process to ensure these connections <strong>remain low-resistance</strong> over a 5-10 year lifespan, even in a mildly corrosive environment. If a ground path fails due to corrosion, it not only increases equipment failure risk but also creates a lethal <strong>electrical shock hazard</strong> during a fault condition (like an HVDC short).",
+                "faq_q5_q": "Q5: What is a \"19-to-21-inch conversion adapter\" and why is it needed?",
+                "faq_q5_a": "<strong>A:</strong> OCP Open Rack V3 (ORV3) uses a <strong>21-inch</strong> wide cabinet standard, whereas the vast majority of traditional data center equipment (servers, switches, PDUs) is <strong>19-inch</strong> wide.<br><br>A \"19-to-21-inch conversion adapter\" is a simple metal bracket or panel that mounts to the 21-inch ORV3 columns, creating a 19-inch mounting space inside the rack.<br><br><strong>Why it's needed:</strong> This is the key to <strong>\"Brownfield\" deployments</strong> and <strong>gradual migration</strong>. It allows an enterprise to adopt advanced ORV3 racks (for better cooling and power) while continuing to use their existing, expensive 19-inch IT equipment, without a forklift upgrade. It's a critical \"bridge\" product.",
+                "faq_q6_q": "Q6: What is the advantage of a 48V Busbar over a traditional cable PDU?",
+                "faq_q6_a": "<strong>A:</strong> A traditional PDU (Power Distribution Unit) uses multiple cables to power each server, which quickly becomes a \"cable mess\" in a 30kW+ high-density rack.<br><br>A 48V busbar is a rigid copper bar pre-installed in the back or side of the rack, running its full height. Servers use a \"blind-mate\" power connector to dock directly onto the busbar for power.<br><br><strong>Advantages:</strong><br><strong>1. Simplified Ops:</strong> Eliminates 90% of power cabling from the rear of the rack, vastly simplifying server installation and hot-swapping.<br><strong>2. Improved Airflow:</strong> With no cable clutter blocking airflow, cool air can pass through servers more efficiently, improving thermal performance.<br><strong>3. Higher Reliability:</strong> A rigid connection and fewer connection points (vs. PDU outlets) reduce points of failure.",
+                "faq_q7_q": "Q7: Why does ORV3 use the 48mm \"OpenU\" (OU) unit?",
+                "faq_q7_a": "<strong>A:</strong> The traditional EIA 1U (RU) standard is 1.75 inches (44.45mm), a standard set decades ago.<br><br>The OCP community found that as CPU/GPU power increased, heatsinks needed to be taller, and fans needed to be larger (to move more air at lower, quieter, more efficient RPMs).<br><br>The <strong>48mm OpenU</strong> introduced by ORV3 provides an <strong>extra 3.55mm of vertical space</strong>. This seemingly small height increase significantly liberates the internal design of the server, allowing for <strong>taller, more effective heatsinks and fans</strong>. It is one of the key designs enabling ORV3 to handle higher thermal densities.",
+                "faq_q8_q": "Q8: Are \"Tin Whiskers\" really that dangerous?",
+                "faq_q8_a": "<strong>A:</strong> <strong>Yes, extremely dangerous</strong>, especially in an HVDC environment.<br><br>Tin whiskers are microscopic, electrically conductive filaments that spontaneously grow from pure tin-plated surfaces. In a low-voltage 12V or 48V system, they might not be strong enough to cause a major fault.<br><br>However, in an 800V HVDC system, the voltage is extreme and electrical clearance is critical. A single tiny whisker is all it takes to <strong>bridge two high-voltage contacts</strong>, creating a <strong>catastrophic short circuit</strong>. This short will immediately cause an arc flash, destroying components and potentially starting a fire. This is why HVDC busbars and connectors mandate <strong>Silver Plating</strong> or other non-tin alloys, as silver does not grow whiskers.",
+                "faq_q9_q": "Q9: Do I need a new \"Greenfield\" data center to deploy OCP?",
+                "faq_q9_a": "<strong>A:</strong> <strong>No.</strong> This is a common misconception. While OCP solutions (like HVDC, ORW, and liquid cooling) achieve maximum benefit in a new \"Greenfield\" build (where floor loading, power, and cooling can be planned from scratch), the OCP ecosystem is heavily focused on <strong>\"Brownfield\" (existing facility) compatibility</strong>.<br><br>The components mentioned in our \"Products\" and \"Services\" sections, such as the <strong>\"19-to-21-inch adapter,\"</strong> the <strong>\"48V-LC Upgrade Kit,\"</strong> and the <strong>\"OCP Ready™ Facility Assessment\"</strong> service, are all designed to help customers <strong>incrementally adopt</strong> OCP technologies within their existing data centers, protecting current investments and enabling a smooth transition to next-gen infrastructure.",
+
+                "footer_copy": "&copy; 2025 DCDeepTech Report (OCP Style Edition).",
+                "lang_switcher_label": "Language: EN / ZH"
+            },
+            "zh": {
+                "title": "DCDeepTech 交互式技术报告 (OCP 风格)",
+                "nav_crisis": "危机",
+                "nav_physics": "物理原理",
+                "nav_solution": "协同方案",
+                "nav_products": "核心产品",
+                "nav_services": "专业服务",
+                "nav_future": "未来展望",
+                "nav_roadmap": "技术路线图",
+                "nav_faq": "FAQ",
+                "report_title": "DCDeepTech 报告",
+
+                "crisis_eyebrow": "1. 危机 (Crisis)",
+                "crisis_desc": "<strong>物理极限：48V 架构的崩溃。</strong> 随着 AI 和 HPC（高性能计算）的指数级增长，数据中心的机柜功率密度正在爆炸性地突破 30kW、50kW 甚至 100kW。传统的 48V 电力架构在这种高功率需求下，正面临着灾难性的效率崩溃和热失控风险。",
+
+                "physics_title": "2. 物理原理 (Physics)",
+                "physics_chart_title": "I²R 焦耳热暴政 (48V vs 800V)",
+                "physics_chart_desc1": "根据焦耳定律 (Ploss = I²R)，功率损失与电流 (I) 的平方成正比。在传输相同功率 (P=V*I) 时，将电压 (V) 提高 16 倍（从 48V 到 800V），电流 (I) 将降低 16 倍。",
+                "physics_chart_desc2": "最终结果是：功率损失 (I²R) 降低了 <strong>16² = 256 倍</strong>。",
+                "physics_chart_xaxis": "相对损失 (对数尺度)",
+                "physics_chart_tooltip": "相对功率损失 (I²R)",
+                "physics_chart_label_48v": "48V 架构",
+                "physics_chart_label_800v": "800V HVDC 架构",
+
+                "physics_materials_title": "2.2 材料科学的抉择",
+                "physics_materials_desc": "在高压 (HVDC) 和高电流密度下，材料的选择变得至关重要，直接影响系统的安全性和长期可靠性。",
+                "physics_materials_h2_title": "氢脆风险 (C10100 vs C11000)",
+                "physics_materials_h2_desc": "在高压直流环境中，C10100 (OFHC - 无氧高导铜) 是首选。传统的 C11000 (ETP - 电解韧铜) 含有氧，在特定条件下可能产生水蒸气，导致微观裂纹和“氢脆”现象，引发结构性失效。",
+                "physics_materials_tin_title": "锡须风险 (镀银 vs 镀锡)",
+                "physics_materials_tin_desc": "镀锡母线 (Busbar) 在压力和环境中会生长出微小的“锡须”，在高压直流环境中极易引发短路。因此，镀银 (Silver Plating) 成为高压连接器的强制要求，因为它不会生长锡须，并能提供更低的接触电阻。",
+
+                "solution_title": "3. 协同方案 (Solution)",
+                "solution_desc": "解决 100kW+ 机柜的挑战，需要结构、电气和散热的三维协同。其中，散热是最大的瓶颈，而液冷是唯一的答案。",
+                "solution_subtitle": "方案深潜：液冷 (Liquid Cooling) 选项",
+                "solution_tab_dlc": "芯片直通 (DLC)",
+                "solution_tab_rdhx": "后门热交换器 (RDhx)",
+                "solution_tab_immersion": "浸没式液冷 (Immersion)",
+                "solution_tab_cdu": "冷却分配单元 (CDU)",
+                "solution_tab_dlc_title": "芯片直通 (Direct-to-Chip Liquid Cooling)",
+                "solution_tab_dlc_desc": "<strong>描述：</strong> 冷却液通过管道直接流过固定在 CPU、GPU 等高热量芯片上的冷板 (Cold Plate)，精确地带走核心热量。这是目前效率最高、最精确的散热方式。<br><strong>关键组件：</strong> 冷板、歧管 (Manifolds)、快换接头 (Quick Disconnects)。",
+                "solution_tab_rdhx_title": "后门热交换器 (Rear Door Heat Exchanger)",
+                "solution_tab_rdhx_desc": "<strong>描述：</strong> 一个安装在机柜后门的巨大散热器。服务器风扇排出的热空气穿过这个充满冷却液的散热器，被冷却后再排入数据中心。<br><strong>优势：</strong> 作为“房间级”散热的补充，可以处理中高密度机柜，对服务器本身无改动。",
+                "solution_tab_immersion_title": "浸没式液冷 (Immersion Cooling)",
+                "solution_tab_immersion_desc": "<strong>描述：</strong> 将整个服务器（主板、芯片等）完全浸泡在不导电的介电液中。热量被液体直接吸收。<br><strong>分类：</strong> 单相（液体不沸腾）或两相（液体沸腾，通过相变散热，效率极高）。<br><strong>挑战：</strong> 液体成本高昂，维护复杂，需要特殊的机柜和设施。",
+                "solution_tab_cdu_title": "冷却分配单元 (Coolant Distribution Unit)",
+                "solution_tab_cdu_desc": "<strong>描述：</strong> 液冷系统的心脏。它是一个泵站和热交换器，负责将数据中心的一次侧冷却水（如冷冻水）与机柜内的二次侧冷却液（如 DLC 液体）进行热量交换，并为液体循环提供动力。<br><strong>角色：</strong> 确保冷却液以正确的温度、压力和流速供应给歧管和冷板。",
+
+                "products_title": "4. 核心产品 (Products)",
+                "products_card1_title": "Open Rack V3 (ORV3)",
+                "products_card1_desc": "OCP 社区的最新一代机柜标准。采用 21 英寸设备宽度，原生支持 48V 电力分配和液冷歧管集成。",
+                "products_card2_title": "48V-LC 升级套件",
+                "products_card2_desc": "为现有 ORV3 机柜提供完整的液冷解决方案，包括歧管、CDU 接口和芯片冷板，实现平滑升级。",
+                "products_card3_title": "Open Rack Wide (ORW)",
+                "products_card3_desc": "针对超高密度 AI/HPC 的加宽型机柜，提供更多空间容纳布线、配电和液冷管道，支持 100kW+ 负载。",
+                "products_card4_title": "HVDC 电源侧车",
+                "products_card4_desc": "一个独立的机柜单元，容纳 800V HVDC PDU 和安全保护电路，为相邻的 ORW 机柜提供高压电源。",
+                
+                "services_title": "5. 专业服务 (Services)",
+                "services_item1_title": "OCP Ready™ 设施评估",
+                "services_item1_desc": "评估客户现有数据中心（地板承重、电力、冷却）是否满足 OCP ORV3 和液冷部署要求。",
+                "services_item2_title": "设施电力迁移规划",
+                "services_item2_desc": "设计从传统 48V 向 800V HVDC 迁移的详细蓝图，包括安全规程、PDU 部署和配电策略。",
+                "services_item3_title": "产品贡献与认证指导",
+                "services_item3_desc": "协助客户或合作伙伴将其设计的硬件（如服务器、交换机）贡献给 OCP 社区，并指导其完成认证流程。",
+
+                "future_title": "6. 未来展望 (Future)",
+                "future_quantum_title": "量子计算 (Quantum)",
+                "future_quantum_desc": "当前的 HVDC 和液冷技术是未来基础设施的基石。量子计算需要极端的低温冷却（毫开尔文级别）和高度稳定的电源。我们今天在 800V 和 CDU 方面积累的经验，将是未来管理量子系统复杂热工和电源挑战的关键。",
+                "future_software_title": "智能监控软件 (Software)",
+                "future_software_desc": "硬件的终点是软件。下一代数据中心将由 AI 驱动的“数字孪生”软件管理。该软件将实时监控机柜的功率、温度、液体流速，并动态调整 CDU 泵速和 HVDC 电压，以在任何工作负载下实现亚毫秒级的最佳效率和TCO。",
+
+                "roadmap_title": "OCP 机柜厂 Rack & Power 完善路线图",
+                "roadmap_desc": "本路线图将机柜产品的完善过程分为三个阶段，旨在确保您的产品线不仅符合当前 OCP ORv3 基准标准，更能迅速切入兆瓦级 AI 基础设施（ORW/HVDC）的未来市场。",
+                
+                "roadmap_p1_title": "阶段一：基准合规与市场切入 (Phase 1: 0-6 个月)",
+                "roadmap_p1_desc": "本阶段目标是完成 OCP 认证，并确保核心 21 英寸机柜产品符合 ORv3 必须满足的严苛机械和电气规范。",
+                "roadmap_p1_th1": "步骤",
+                "roadmap_p1_th2": "关键行动",
+                "roadmap_p1_th3": "OCP 规范依据与技术细节",
+                "roadmap_p1_r1_1": "1. 战略定位与会员激活",
+                "roadmap_p1_r1_2": "注册 OCP 银牌会员（强烈推荐）。",
+                "roadmap_p1_r1_3": "银牌会员 (25,000) 包含“解决方案提供商(SP)”资格，相比社区级会员(10,000 总费用) 提供了更高的品牌曝光和投资回报率 (ROI)。",
+                "roadmap_p1_r2_1": "2. 掌握核心规范",
+                "roadmap_p1_r2_2": "立即派工程师加入 Rack & Power 和 Advanced Cooling Solutions (ACS) 项目组。",
+                "roadmap_p1_r2_3": "所有技术规范都在这些工作组中诞生。这是获取 ORv3 Base Specification、Diablo 400 和 ORW 规范的第一手渠道。",
+                "roadmap_p1_r3_1": "3. ORV3 结构机械合规",
+                "roadmap_p1_r3_2": "确保机架框架支持两种垂直间距...。",
+                "roadmap_p1_r3_3": "必须同时支持 48mm 的 OpenU (OU) 和可选的 44.45mm 的 EIA 1U (RU) 垂直间距。",
+                "roadmap_p1_r4_1": "4. 关键电气合规",
+                "roadmap_p1_r4_2": "针对 ORV3 48V 母线接口进行全面自查和验证。",
+                "roadmap_p1_r4_3": "母线 (Busbar) 导电表面必须与机柜框架保持 连续的电气路径。",
+                "roadmap_p1_r5_1": "5. 确保长期可靠性",
+                "roadmap_p1_r5_2": "验证所有接地路径的防腐蚀性能。",
+                "roadmap_p1_r5_3": "所有接地连接点（包括母线、机柜、接地螺钉）必须通过 ASTMB117-07 48 小时盐雾测试，达到 ASTM D610-01 的 6 级防锈等级...。",
+                "roadmap_p1_r6_1": "6. 初步认证",
+                "roadmap_p1_r6_2": "将“19-21 英寸转换适配器”设计贡献给 OCP 社区。",
+                "roadmap_p1_r6_3": "将低价值、高声望的配件申请 OCP Accepted™ 认证，以积累社区信誉并跑通认证流程（该认证要求贡献完整设计文件）。",
+                
+                "roadmap_p2_title": "阶段二：AI 驱动的战略转型与研发 (Phase 2: 6-18 个月)",
+                "roadmap_p2_desc": "本阶段目标是启动下一代 AI 基础设施的研发项目，重点解决高功率密度下的 结构力学 和 电气安全 挑战。",
+                "roadmap_p2_th1": "研发项目",
+                "roadmap_p2_th2": "挑战与目标",
+                "roadmap_p2_th3": "核心技术方案与产品",
+                "roadmap_p2_r1_1": "1. 液体冷却机柜",
+                "roadmap_p2_r1_2": "挑战： 标准 ORV3 框架不足以承受加压液体歧管和盲插对接产生的额外力。",
+                "roadmap_p2_r1_3": "研发 “液体冷却加固套件” (LC Kit)，作为独立 SKU。套件必须包含 腹板加强筋 (Web Stiffeners) 和歧管接口支架，用于加固机柜 前立柱，以抵消 IT 设备盲插时产生的力量。",
+                "roadmap_p2_r2_1": "2. Open Rack Wide (ORW)",
+                "roadmap_p2_r2_2": "挑战： 兆瓦级 AI 机架（如 AMD Helios）的负载超过 3500 kg，传统物流模式失效。",
+                "roadmap_p2_r2_3": "研发 双宽 (Double-Wide) ORW 框架：使用 支撑底座 (Support Bases) 取代脚轮，以分散超重负载对地板的点状压力...。机柜顶部集成 M24x3 螺纹吊点 (Top Lift Points)，支持“起重与放置” (Lift-and-Place) 的工业物流模式...。",
+                "roadmap_p2_r3_1": "3. 高压直流电源侧车",
+                "roadmap_p2_r3_2": "挑战： 引入 +/-400VDC（Diablo 400 规范）或 800VDC 后的高压电气安全和隔离。",
+                "roadmap_p2_r3_3": "研发 Diablo 400 电源侧车机柜：其设计核心是 安全，必须具备 安全锁定门、入侵开关预留位 和 接地故障检测器 (GFD)。同时必须支持 高阻抗中点接地 等安全方案。",
+                "roadmap_p2_r4_1": "4. 核心产品 IP 保护",
+                "roadmap_p2_r4_2": "挑战： 保护核心机柜设计 IP。",
+                "roadmap_p2_r4_3": "为 ORV3 机柜和未来的 ORW、LC Kit 产品申请 OCP Inspired™ 认证，该认证 不要求贡献设计文件，从而保护了您的制造工艺和知识产权。",
+
+                "roadmap_p3_title": "阶段三：商业化与服务拓展 (Phase 3: 持续)",
+                "roadmap_p3_desc": "本阶段将公司的 OCP 知识转化为高价值的商业收入。",
+                "roadmap_p3_i1_title": "1. 产品上架 OCP Marketplace",
+                "roadmap_p3_i1_desc": "作为 OCP Solution Provider (SP)，将您的 OCP Inspired™ 认证 ORv3 机柜正式上架 OCP 官方市场，面向全球客户销售。",
+                "roadmap_p3_i2_title": "2. 开拓 OCP Ready™ 咨询服务",
+                "roadmap_p3_i2_desc": "转变角色，利用 OCP 的 Colo Facility Guidelines 为数据中心运营商提供 OCP 部署评估与咨询 服务。",
+                "roadmap_p3_i2_l1": "<strong>服务价值：</strong> 帮助客户诊断其现有设施（Brownfield）是否满足 OCP 机柜的苛刻要求，例如 地板承重（最佳标准 ≥1221 kg/m2）、坡道梯度（≤1:12）和通道宽度。",
+                "roadmap_p3_i2_l2": "<strong>协同销售：</strong> 评估结果将直接指向客户设施的改造需求，从而锁定您的 OCP 机柜产品销售，实现从“制造商”到“解决方案顾问”的升级。",
+                "roadmap_p3_i3_title": "3. 市场销售预计 (基于 OCP 生态，美元)",
+                "roadmap_p3_i3_desc": "利用 OCP 认证产品的信誉和 OCP Marketplace 的全球曝光度，我们预计销售将按以下轨迹增长：",
+                "roadmap_p3_i3_l1": "<strong>Y1 (阶段一至二):</strong> 专注于 OCP Accepted™ 认证的 <strong>\"19-21 英寸转换适配器\"</strong> (目标销售 2,000 套) 和 OCP Ready™ 咨询服务 (目标 10 个项目)，预计产生 <strong>$500,000 美元</strong> 的早期收入 (基于 $150/套 和 $20,000/项目)。",
+                "roadmap_p3_i3_l2": "<strong>Y2 (阶段二至三):</strong> 推出 OCP Inspired™ ORV3 基准机柜 (目标 500 台, ASP ~$2,500) 和 48V-LC 升级套件 (目标 200 套, ASP ~$5,000)，目标销售额 <strong>$2,250,000 美元</strong>。",
+                "roadmap_p3_i3_l3": "<strong>Y3-Y4 (阶段三):</strong> 规模化交付高价值 AI 基础设施，目标交付 1,000+ 套 ORW / HVDC-LC 机柜 (ASP $15,000+)，并扩展咨询服务至 50 个项目，目标年收入突破 <strong>$16,000,000 美元</strong>。",
+
+                "faq_title": "技术 FAQ",
+                "faq_q1_q": "Q1: 为什么从 48V 转向 800V HVDC？",
+                "faq_q1_a": "<strong>答：</strong> 核心原因是 <strong>功率密度</strong> 和 <strong>效率</strong>。随着 AI 芯片功耗（如 NVIDIA B200）的爆炸式增长，单个机柜的功率需求很快将超过 100kW。在 48V 下，要传输 100kW 电力，电流高达 2083A ($I = P/V$)。根据焦耳定律 (Ploss = I2R)，如此高的电流会导致电缆和母线产生灾难性的热量损失 (I2R 暴政)，并需要极粗（且昂贵）的铜导体。<br><br>转向 800V (或 +/- 400VDC) 后，传输相同 100kW 功率的电流仅为 125A。电流降低了 <strong>94%</strong>，线缆损耗 (I²R) 降低了超过 <strong>99.7%</strong>。这使得使用更细、成本更低的线缆成为可能，显著提高了从 PDU 到芯片的端到端能源效率。",
+                "faq_q2_q": "Q2: 液冷 (Liquid Cooling) 对 ORV3 结构有何要求？",
+                "faq_q2_a": "<strong>答：</strong> 液冷（尤其是芯片直通 DLC）引入了传统风冷机柜没有的两个主要结构挑战：<br><strong>1. 静态重量：</strong> 液体（如水-乙二醇混合物）密度远大于空气。充满冷却液的歧管 (Manifolds) 和管路会给机柜框架增加 <strong>数百公斤</strong> 的静态负载。<br><strong>2. 动态应力：</strong> 为了实现“盲插”热插拔，IT 设备上的快换接头 (QD) 在插入歧管时会产生 <strong>显著的推/拉力</strong>。这种力会直接作用于机柜的垂直立柱。<br><br>因此，ORV3 液冷规范要求对标准机柜进行 <strong>结构加固</strong>，例如在垂直立柱上增加 <strong>“腹板加强筋” (Web Stiffeners)</strong>，以防止框架在长期应力下变形或失效，确保盲插的可靠性。",
+                "faq_q3_q": "Q3: 如何应对 Open Rack Wide (ORW) 的超重物流？",
+                "faq_q3_a": "<strong>答：</strong> ORW 机柜（如 AMD Helios 兆瓦级 AI 机架）的满载重量可达 <strong>3500 公斤</strong>。这完全超出了传统数据中心“带脚轮滚动”的物流模式。<br><br>ORW 规范通过两种方式解决这个问题：<br><strong>1. 工业物流：</strong> 机柜顶部必须集成 <strong>M24x3 螺纹吊点 (Top Lift Points)</strong>。这允许使用工业起重机 (Crane) 或龙门吊 (Gantry) 进行“起重与放置” (Lift-and-Place) 操作，这是工厂和重型设备部署的标准做法。<br><strong>2. 负载分散：</strong> 机柜底部使用 <strong>支撑底座 (Support Bases)</strong> 或调平脚，取代了传统脚轮。这能将 3500 公斤的重量均匀分散到更大的地板面积上，防止对高架地板 (Raised Floor) 造成点状压力（Point Loading）而导致压塌。",
+                "faq_q4_q": "Q4: 为什么要进行 48 小时盐雾腐蚀测试？",
+                "faq_q4_a": "<strong>答：</strong> 这是为了确保数据中心的 <strong>长期运行安全</strong> 和 <strong>电气接地完整性</strong>。<br><br>数据中心并非完全无菌，空气中可能存在来自外部环境（如沿海地区）或内部（如电池备用系统）的微量腐蚀性污染物。ORV3 规范要求所有关键的电气接地路径（包括母线、机柜框架、接地螺钉）必须通过 <strong>ASTMB117 48 小时盐雾测试</strong>。<br><br>这项测试模拟了加速老化过程，以确保即使在轻度腐蚀性环境中，这些连接点在 5-10 年的生命周期内 <strong>仍能保持极低的电阻</strong>。如果接地路径因腐蚀而失效，不仅会增加设备故障风险，还会在发生电气故障时（如 HVDC 短路）带来致命的 <strong>安全电击风险</strong>。",
+                "faq_q5_q": "Q5: 什么是“19-21 英寸转换适配器”？为什么需要它？",
+                "faq_q5_a": "<strong>答：</strong> OCP Open Rack V3 (ORV3) 使用 <strong>21 英寸</strong> 宽度的机柜标准，而传统的数据中心设备（服务器、交换机、PDU）绝大多数是 <strong>19 英寸</strong> 宽度。<br><br>“19-21 英寸转换适配器”是一种简单的金属支架 (Bracket) 或面板，它安装在 21 英寸的 ORV3 机柜立柱上，在机柜内部创造出一个 19 英寸宽度的安装空间。<br><br><strong>为什么需要它：</strong> 这是实现 <strong>“棕地” (Brownfield) 部署</strong> 和 <strong>逐步迁移</strong> 的关键。它允许企业在采用先进的 ORV3 机柜（为了更好的散热和电力）的同时，继续使用其现有的、昂贵的 19 英寸 IT 设备，而无需一次性全部替换。这是一个关键的“桥梁”产品。",
+                "faq_q6_q": "Q6: 48V 母线 (Busbar) 相比传统线缆 PDU 有什么优势？",
+                "faq_q6_a": "<strong>答：</strong> 传统 PDU（电源分配单元）使用多条线缆为机柜内的每台服务器供电，在 30kW+ 的高密度机柜中，这会很快变成“线缆噩梦” (Cable Mess)。<br><br>48V 母线是一个预装在机柜背部或侧面的、贯穿机柜全高的刚性铜排。服务器通过“盲插” (Blind-mate) 的电源连接器直接卡入母线取电。<br><br><strong>优势：</strong><br><strong>1. 简化运维：</strong> 消除机柜后部 90% 的电源线缆，极大简化了服务器的安装和热插拔维护。<br><strong>2. 改善散热：</strong> 没有了杂乱的线缆阻挡，冷空气可以更顺畅地流过服务器，提高了散热效率。<br><strong>3. 提高可靠性：</strong> 刚性连接和更少的连接点（相比 PDU 插座）减少了故障点。",
+                "faq_q7_q": "Q7: 为什么 ORV3 采用 48mm 的 \"OpenU\" (OU) 单位？",
+                "faq_q7_a": "<strong>答：</strong> 传统的 EIA 1U (RU) 标准是 1.75 英寸（即 44.45mm）。这是几十年前制定的标准。<br><br>OCP 社区发现，随着 CPU/GPU 功耗增加，散热器 (Heatsink) 越来越高，风扇 (Fan) 也需要越来越大（以在更低转速下推动更多风量，从而节能降噪）。<br><br>ORV3 引入的 <strong>48mm OpenU</strong> 提供了 <strong>额外 3.55mm 的垂直空间</strong>。这看似微小的高度增加，却极大地释放了服务器内部的设计空间，允许使用 <strong>更高、更高效的散热器和风扇</strong>，是 ORV3 能够应对更高热量密度的关键设计之一。",
+                "faq_q8_q": "Q8: 锡须 (Tin Whiskers) 真的那么危险吗？",
+                "faq_q8_a": "<strong>答：</strong> <strong>是的，极其危险</strong>，尤其是在高压直流 (HVDC) 环境中。<br><br>锡须是从纯锡 (Tin) 镀层表面自发生长出来的微米级导电细丝。在 12V 或 48V 的低压环境中，它们可能不足以造成严重破坏。<br><br>但在 800V HVDC 系统中，电压极高，电气间隙（Clearance）是设计的关键。一根微小的锡须就足以 <strong>跨越两个高压触点</strong>，形成 <strong>灾难性的短路 (Short Circuit)</strong>。这种短路会立即引发电弧（Arc Flash），烧毁组件，甚至导致火灾。这就是为什么 HVDC 母线和连接器强制要求使用 <strong>镀银 (Silver Plating)</strong> 或其他非锡合金，因为银不会生长锡须。",
+                "faq_q9_q": "Q9: 部署 OCP 是否必须新建一个“绿地” (Greenfield) 数据中心？",
+                "faq_q9_a": "<strong>答：</strong> <strong>不是。</strong> 这是一个常见的误解。虽然 OCP 解决方案（如 HVDC、ORW、液冷）在新建的“绿地”数据中心中能发挥最大效益（因为可以从头规划地板承重、配电和冷却），但 OCP 生态系统非常注重 <strong>“棕地” (Brownfield，即现有设施) 的兼容性</strong>。<br><br>我们的“产品”和“服务”章节中提到的组件，如 <strong>“19-21 英寸适配器”</strong>、<strong>“48V-LC 升级套件”</strong> 以及 <strong>“OCP Ready™ 设施评估”</strong> 服务，其核心目的就是帮助客户在现有数据中心内 <strong>渐进式地 (Incrementally)</strong> 采用 OCP 技术，保护现有投资，平滑过渡到下一代基础设施。",
+
+                "footer_copy": "&copy; 2025 DCDeepTech 报告 (OCP 风格版).",
+                "lang_switcher_label": "语言: EN / ZH"
+            }
+        };
+
+        // -----------------------------------------------------------------
+        // 语言切换逻辑
+        // -----------------------------------------------------------------
+        let currentLang = localStorage.getItem('lang') || 'en'; // 默认英文
+        let lossChartInstance = null; // 用于存储图表实例
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('lang', lang);
+            document.documentElement.lang = lang;
+            
+            const content = contentStore[lang];
+
+            // 遍历所有带 data-lang-key 的元素并更新内容
+            document.querySelectorAll('[data-lang-key]').forEach(element => {
+                const key = element.getAttribute('data-lang-key');
+                if (content[key]) {
+                    // 使用 innerHTML 以支持 <strong> 等标签
+                    element.innerHTML = content[key];
+                }
+            });
+
+            // 更新图表
+            updateChartLanguage(lang);
+        }
+
+        function toggleLanguage() {
+            const newLang = currentLang === 'en' ? 'zh' : 'en';
+            setLanguage(newLang);
+        }
+        
+        // -----------------------------------------------------------------
+        // 页面加载和事件监听
+        // -----------------------------------------------------------------
         document.addEventListener('DOMContentLoaded', () => {
             
             // 激活 Feather Icons
@@ -708,15 +1025,37 @@
             window.addEventListener('scroll', updateActiveNav);
             updateActiveNav();
 
-            // I2R 功率损失图表 (OCP 风格)
+            // 语言切换器事件
+            document.getElementById('lang-switcher-desktop').addEventListener('click', toggleLanguage);
+            document.getElementById('lang-switcher-mobile').addEventListener('click', () => {
+                toggleLanguage();
+                // 切换后关闭移动菜单
+                mobileMenu.classList.add('hidden');
+                menuIcon.classList.remove('hidden');
+                closeIcon.classList.add('hidden');
+            });
+
+            // 初始化 I2R 功率损失图表
+            createLossChart(currentLang);
+
+            // 初始加载语言
+            setLanguage(currentLang);
+        });
+
+        // -----------------------------------------------------------------
+        // 图表特定逻辑
+        // -----------------------------------------------------------------
+        function createLossChart(lang) {
             const ctxLoss = document.getElementById('lossChart');
+            const content = contentStore[lang];
+            
             if (ctxLoss) {
-                new Chart(ctxLoss.getContext('2d'), {
+                lossChartInstance = new Chart(ctxLoss.getContext('2d'), {
                     type: 'bar',
                     data: {
-                        labels: ['48V 架构', '800V HVDC 架构'],
+                        labels: [content.physics_chart_label_48v, content.physics_chart_label_800v],
                         datasets: [{
-                            label: '相对功率损失 (I²R)',
+                            label: content.physics_chart_tooltip,
                             data: [256, 1], 
                             backgroundColor: [
                                 'rgba(0, 59, 113, 0.7)', // ocp-navy
@@ -737,7 +1076,7 @@
                             x: {
                                 title: {
                                     display: true,
-                                    text: '相对损失 (对数尺度)'
+                                    text: content.physics_chart_xaxis
                                 },
                                 type: 'logarithmic',
                                 min: 0.1,
@@ -767,7 +1106,7 @@
                                             label += ': ';
                                         }
                                         if (context.parsed.x !== null) {
-                                            label += context.parsed.x + 'x 相对损失';
+                                            label += context.parsed.x + 'x';
                                         }
                                         return label;
                                     }
@@ -777,7 +1116,21 @@
                     }
                 });
             }
-        });
+        }
+
+        function updateChartLanguage(lang) {
+            if (!lossChartInstance) return;
+            
+            const content = contentStore[lang];
+
+            // 更新图表标签和标题
+            lossChartInstance.data.labels = [content.physics_chart_label_48v, content.physics_chart_label_800v];
+            lossChartInstance.data.datasets[0].label = content.physics_chart_tooltip;
+            lossChartInstance.options.scales.x.title.text = content.physics_chart_xaxis;
+            
+            lossChartInstance.update();
+        }
+
     </script>
 </body>
 </html>
