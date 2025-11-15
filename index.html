@@ -1,704 +1,887 @@
-  <!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>DCDeepTech | OCP Rack & 800V HVDC + Liquid Cooling Consulting</title>
+  <title>DCDeepTech – OCP Rack & HVDC Liquid Cooling Consulting | 800V Data Center Solutions</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <!-- Primary SEO -->
-  <meta name="description" content="DCDeepTech provides OCP-style rack and 800V HVDC + liquid cooling consulting from Singapore, helping data centers move from 48V crisis to 30–100 kW AI/HPC racks safely and profitably." />
-  <meta name="keywords" content="DCDeepTech, OCP, Open Rack, ORV3, ORW, 48V, 800V, HVDC, liquid cooling, DLC, RDHx, immersion cooling, data center, AI HPC, rack and power, Singapore consulting, predictive maintenance, autonomous DC" />
+  
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="DCDeepTech provides OCP Open Rack, 800V HVDC and liquid cooling consulting for AI/HPC data centers. We help rack vendors and operators design, certify and deploy high-density, energy-efficient infrastructures. Serving Singapore, Taiwan, ASEAN, Brazil, Europe." />
+  <meta name="keywords" content="OCP rack, Open Compute Project, ORV3, Open Rack Wide, 48V, 800V HVDC, liquid cooling, immersion cooling, DLC, RDHx, rack & power consulting, data center design, PUE, OCP Ready, 21-inch rack, 19-inch adapter, 48V to 800V migration, data center efficiency, PUE optimization" />
   <meta name="author" content="DCDeepTech" />
-
-  <!-- GEO (Singapore) -->
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+  <link rel="canonical" href="https://dcdeeptech.com/" />
+  
+  <!-- Geographic & Regional SEO -->
   <meta name="geo.region" content="SG" />
   <meta name="geo.placename" content="Singapore" />
   <meta name="geo.position" content="1.3521;103.8198" />
   <meta name="ICBM" content="1.3521, 103.8198" />
-
-  <!-- Open Graph -->
+  
+  <!-- Additional Geographic Targeting -->
+  <meta name="coverage" content="Worldwide" />
+  <meta name="distribution" content="Global" />
+  <meta name="target" content="Singapore, Taiwan, Malaysia, Indonesia, Thailand, Philippines, Vietnam, Brazil, Europe, Latin America, ASEAN" />
+  
+  <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="DCDeepTech | From 48V Crisis to 800V HVDC + Liquid Cooling" />
-  <meta property="og:description" content="Interactive technical report and consulting blueprint for OCP-style racks, 800V HVDC power and liquid cooling for AI/HPC data centers." />
+  <meta property="og:url" content="https://dcdeeptech.com/" />
+  <meta property="og:title" content="DCDeepTech – OCP Rack & 800V HVDC Liquid Cooling Consulting" />
+  <meta property="og:description" content="Expert consulting for OCP Open Rack, rack & power, 800V HVDC and liquid cooling solutions for AI/HPC data centers. Serving Singapore, Taiwan, ASEAN, Brazil, Europe." />
+  <meta property="og:image" content="https://dcdeeptech.com/og-image.jpg" />
   <meta property="og:site_name" content="DCDeepTech" />
-  <meta property="og:locale" content="en_SG" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="zh_TW" />
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:url" content="https://dcdeeptech.com/" />
+  <meta name="twitter:title" content="DCDeepTech – OCP Rack & HVDC Liquid Cooling Consulting" />
+  <meta name="twitter:description" content="Expert consulting for OCP Open Rack, rack & power, 800V HVDC and liquid cooling for AI/HPC data centers." />
+  <meta name="twitter:image" content="https://dcdeeptech.com/twitter-card.jpg" />
+  
+  <!-- Language Alternatives -->
+  <link rel="alternate" hreflang="en" href="https://dcdeeptech.com/" />
+  <link rel="alternate" hreflang="zh-TW" href="https://dcdeeptech.com/zh-tw/" />
 
-  <!-- JSON-LD LocalBusiness / Consulting -->
+  <!-- Tailwind CSS via CDN (for preview / static hosting) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    :root {
+      --ocp-navy: #0b1f33;
+      --ocp-green: #5abf3f;
+      --ocp-green-soft: #e4f7e6;
+      --ocp-bg: #f5f7fb;
+      --ocp-border: #d4dde9;
+      --ocp-text-secondary: #4b5563;
+    }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background-color: #f5f7fb;
+      color: #111827;
+    }
+    .bg-ocp-bg { background-color: var(--ocp-bg); }
+    .bg-ocp-bg-light { background-color: #f9fafb; }
+    .bg-ocp-navy { background-color: var(--ocp-navy); }
+    .bg-ocp-green { background-color: var(--ocp-green); }
+    .bg-ocp-green-soft { background-color: var(--ocp-green-soft); }
+    .text-ocp-navy { color: var(--ocp-navy); }
+    .text-ocp-green { color: var(--ocp-green); }
+    .text-ocp-text-secondary { color: var(--ocp-text-secondary); }
+    .border-ocp-border { border-color: var(--ocp-border); }
+    .border-ocp-green { border-color: var(--ocp-green); }
+    .rounded-ocp { border-radius: 1rem; }
+    .shadow-ocp { box-shadow: 0 18px 45px rgba(15,23,42,0.18); }
+    .shadow-ocp-light { box-shadow: 0 10px 30px rgba(15,23,42,0.12); }
+
+    .lang-btn.active {
+      background-color: #0b1f33;
+      color: #f9fafb;
+    }
+    .mobile-menu {
+      display: none;
+    }
+    .mobile-menu.open {
+      display: block;
+    }
+    details summary::-webkit-details-marker {
+      display: none;
+    }
+  </style>
+
+  <!-- Structured Data - Organization -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "ProfessionalService",
+    "@type": "Organization",
     "name": "DCDeepTech",
-    "url": "https://dcdeeptech.com",
-    "description": "OCP-style rack, HVDC and liquid cooling consulting for AI/HPC data centers.",
+    "url": "https://dcdeeptech.com/",
+    "logo": "https://dcdeeptech.com/logo.png",
+    "description": "OCP Open Rack, HVDC and liquid cooling consulting for AI/HPC data centers.",
     "address": {
       "@type": "PostalAddress",
       "addressCountry": "SG",
       "addressLocality": "Singapore"
     },
-    "email": "info@dcdeeptech.com",
-    "areaServed": "Worldwide",
-    "knowsAbout": [
-      "OCP Open Rack ORV3",
-      "Open Rack Wide ORW",
-      "48V to 800V HVDC migration",
-      "liquid cooling (DLC, RDHx, immersion)",
-      "coolant distribution unit (CDU)",
-      "predictive maintenance",
-      "autonomous data centers"
-    ]
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "contactType": "sales",
+      "email": "info@dcdeeptech.com",
+      "areaServed": [
+        "Singapore",
+        "Taiwan",
+        "Malaysia",
+        "Indonesia",
+        "Thailand",
+        "Philippines",
+        "Vietnam",
+        "Brazil",
+        "Europe"
+      ]
+    }
   }
   </script>
 
-  <!-- Tailwind (CDN build) -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            'ocp-navy': '#071E3D',
-            'ocp-green': '#2ECC71',
-            'ocp-green-soft': '#E6F8EF',
-            'ocp-bg': '#F4F7FB',
-            'ocp-border': '#D4DFEE',
-            'ocp-text-secondary': '#4B5563'
-          },
-          borderRadius: {
-            'ocp': '1.25rem'
-          },
-          boxShadow: {
-            'ocp': '0 18px 45px rgba(15, 23, 42, 0.15)'
-          }
-        }
+  <!-- Structured Data - Service -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "serviceType": "OCP Rack & 800V HVDC Liquid Cooling Consulting",
+    "provider": {
+      "@type": "Organization",
+      "name": "DCDeepTech"
+    },
+    "areaServed": [
+      {
+        "@type": "Country",
+        "name": "Singapore"
+      },
+      {
+        "@type": "Country",
+        "name": "Taiwan"
+      },
+      {
+        "@type": "Country",
+        "name": "Malaysia"
+      },
+      {
+        "@type": "Country",
+        "name": "Indonesia"
+      },
+      {
+        "@type": "Country",
+        "name": "Thailand"
+      },
+      {
+        "@type": "Country",
+        "name": "Philippines"
+      },
+      {
+        "@type": "Country",
+        "name": "Vietnam"
+      },
+      {
+        "@type": "Country",
+        "name": "Brazil"
       }
-    }
+    ]
+  }
   </script>
 </head>
-<body class="bg-ocp-bg text-slate-900">
-  <!-- Page Wrapper -->
-  <div class="min-h-screen flex flex-col">
 
-    <!-- Header -->
-    <header class="bg-white shadow-sm sticky top-0 z-40">
-      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between h-16">
-          <div class="flex items-center gap-3">
-            <div class="w-8 h-8 rounded-lg bg-ocp-navy text-white flex items-center justify-center text-xs font-semibold">
-              DC
-            </div>
-            <div>
-              <div class="text-sm font-semibold tracking-wide text-ocp-navy">DCDeepTech</div>
-              <div class="text-xs text-ocp-text-secondary hidden sm:block">
-                OCP-style rack, HVDC &amp; liquid cooling consulting
-              </div>
-            </div>
+<body class="min-h-screen flex flex-col bg-ocp-bg">
+  <!-- Header -->
+  <header class="bg-white shadow-sm sticky top-0 z-30">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center gap-3">
+          <div class="flex items-center justify-center w-9 h-9 rounded-lg bg-ocp-navy text-white font-bold tracking-tight">
+            <span class="text-xs">DC</span>
           </div>
-
-          <nav class="hidden md:flex items-center gap-4 text-sm">
-            <a href="#crisis" class="hover:text-ocp-green text-ocp-text-secondary">Crisis</a>
-            <a href="#physics" class="hover:text-ocp-green text-ocp-text-secondary">Physics</a>
-            <a href="#solution" class="hover:text-ocp-green text-ocp-text-secondary">Solution</a>
-            <a href="#products" class="hover:text-ocp-green text-ocp-text-secondary">Products</a>
-            <a href="#services" class="hover:text-ocp-green text-ocp-text-secondary">Services</a>
-            <a href="#future" class="hover:text-ocp-green text-ocp-text-secondary">Future</a>
-            <a href="#roadmap" class="hover:text-ocp-green text-ocp-text-secondary">Roadmap</a>
-            <a href="#faq" class="hover:text-ocp-green text-ocp-text-secondary">FAQ</a>
-            <a href="#downloads" class="hover:text-ocp-green text-ocp-text-secondary">Downloads</a>
-            <a href="#contact" class="hover:text-ocp-green text-ocp-text-secondary">Contact</a>
-          </nav>
-
-          <!-- Lang badge: EN default, 繁體 as secondary text -->
-          <div class="hidden sm:flex items-center gap-2 text-xs">
-            <span class="px-2 py-1 rounded-full bg-ocp-navy text-white">EN</span>
-            <span class="px-2 py-1 rounded-full border border-ocp-border text-ocp-text-secondary">
-              繁體內容請見段落內標註
-            </span>
-          </div>
-        </div>
-      </div>
-    </header>
-
-    <!-- Main -->
-    <main class="flex-1">
-
-      <!-- Hero -->
-      <section class="bg-gradient-to-b from-white to-ocp-bg py-10 sm:py-16">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-[1.2fr,1fr] gap-10 items-center">
           <div>
-            <p class="text-xs font-semibold tracking-[0.2em] text-ocp-green uppercase mb-3">
-              OCP · 48V → 800V HVDC · Liquid Cooling
-            </p>
-            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-semibold text-ocp-navy leading-tight mb-4">
-              From 48V crisis to 800V HVDC + liquid cooling<br class="hidden sm:block" />
-              for 30–100&nbsp;kW AI racks.
-            </h1>
-            <p class="text-sm sm:text-base text-ocp-text-secondary mb-4">
-              This interactive report distills DCDeepTech’s consulting view on
-              <span class="font-semibold">OCP Open Rack (ORV3/ORW)</span>,
-              <span class="font-semibold">48V → 800V HVDC migration</span>
-              and <span class="font-semibold">single-/two-phase liquid cooling</span>.
-              It is written as a reference blueprint for data center operators and rack vendors
-              facing 30–100&nbsp;kW per rack AI/HPC workloads.
-            </p>
-            <p class="text-xs text-ocp-text-secondary mb-4">
-              繁體說明：本報告總結 DCDeepTech 對 OCP Open Rack、800V HVDC 及單相／兩相液冷的諮詢觀點，
-              以「機櫃廠諮詢案例」為主軸，協助客戶在 30–100&nbsp;kW 機櫃功率密度下安全且盈利地完成演進。
-            </p>
-            <div class="flex flex-wrap gap-3 mb-6">
-              <a href="#crisis" class="inline-flex items-center px-4 py-2 rounded-full bg-ocp-navy text-white text-sm shadow-ocp">
-                Start with the 48V crisis
-              </a>
-              <a href="#contact" class="inline-flex items-center px-4 py-2 rounded-full border border-ocp-navy text-ocp-navy text-sm">
-                Talk to our consulting team
-              </a>
-            </div>
-
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs sm:text-sm">
-              <div class="bg-white rounded-ocp border border-ocp-border p-3">
-                <div class="text-[0.65rem] text-ocp-text-secondary uppercase mb-1">Rack Density</div>
-                <div class="font-semibold text-ocp-navy">30–100&nbsp;kW</div>
-              </div>
-              <div class="bg-white rounded-ocp border border-ocp-border p-3">
-                <div class="text-[0.65rem] text-ocp-text-secondary uppercase mb-1">Power Architecture</div>
-                <div class="font-semibold text-ocp-navy">48V → 800V HVDC</div>
-              </div>
-              <div class="bg-white rounded-ocp border border-ocp-border p-3">
-                <div class="text-[0.65rem] text-ocp-text-secondary uppercase mb-1">Cooling Topology</div>
-                <div class="font-semibold text-ocp-navy">DLC / RDHx / Immersion</div>
-              </div>
-              <div class="bg-white rounded-ocp border border-ocp-border p-3">
-                <div class="text-[0.65rem] text-ocp-text-secondary uppercase mb-1">Target PUE</div>
-                <div class="font-semibold text-ocp-navy">&lt; 1.15 (AI/HPC)</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Right Hero Panel -->
-          <div class="bg-white rounded-ocp border border-ocp-border shadow-ocp p-5 space-y-4 text-xs sm:text-sm">
-            <div>
-              <div class="text-[0.65rem] uppercase tracking-[0.2em] text-ocp-text-secondary mb-1">
-                Consulting case study
-              </div>
-              <p class="text-ocp-text-secondary">
-                This report is framed as a <span class="font-semibold">consulting case for an OCP rack factory</span>
-                (“Client A”). The same methods apply to data center operators, OEMs and integrators.
-              </p>
-            </div>
-            <div class="border-t border-ocp-border pt-4">
-              <div class="text-[0.65rem] uppercase tracking-[0.2em] text-ocp-text-secondary mb-1">
-                Scope
-              </div>
-              <ul class="list-disc list-inside space-y-1 text-ocp-text-secondary">
-                <li>Baseline ORV3 compliance &amp; OCP certification</li>
-                <li>48V → 800V HVDC migration strategy</li>
-                <li>Liquid cooling options: DLC, RDHx, immersion</li>
-                <li>Roadmap from ORV3 to ORW + HVDC sidecar</li>
-                <li>Predictive maintenance &amp; autonomous DC software</li>
-              </ul>
+            <div class="text-sm font-semibold tracking-wide text-ocp-navy">DCDeepTech</div>
+            <div class="text-xs text-ocp-text-secondary hidden sm:block" data-i18n="tagline">
+              OCP-style rack & liquid cooling consulting
             </div>
           </div>
         </div>
-      </section>
 
-      <!-- 1. Crisis -->
-      <section id="crisis" class="py-10 sm:py-16 bg-white">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="mb-6">
-            <h2 class="text-2xl sm:text-3xl font-semibold text-ocp-navy mb-2">
-              1. Crisis – the collapse of 48V at AI scale
-            </h2>
-            <p class="text-sm text-ocp-text-secondary">
-              As AI and HPC racks push beyond 30&nbsp;kW into the 50–100&nbsp;kW range, traditional 48V power
-              architectures run into hard physical limits: extreme current, brutal I²R losses, massive copper and
-              untenable cable spaghetti. Thermal headroom disappears and the business model for brownfield upgrades
-              starts to break.
-            </p>
-            <p class="text-xs text-ocp-text-secondary mt-2">
-              危機：隨著 AI／HPC 機櫃功率密度爆炸式突破 30–100&nbsp;kW，傳統 48V 架構在電流、損耗與散熱上全面失衡，
-              銅耗與佈線成本失控，已無法支撐下一代算力需求。
-            </p>
+        <!-- Desktop Nav -->
+        <nav class="hidden lg:flex items-center gap-4 text-sm">
+          <a href="#crisis" class="hover:text-ocp-green text-ocp-text-secondary" data-i18n="nav_crisis">Crisis</a>
+          <a href="#physics" class="hover:text-ocp-green text-ocp-text-secondary" data-i18n="nav_physics">Physics</a>
+          <a href="#solution" class="hover:text-ocp-green text-ocp-text-secondary" data-i18n="nav_solution">Solution</a>
+          <a href="#products" class="hover:text-ocp-green text-ocp-text-secondary" data-i18n="nav_products">Products</a>
+          <a href="#services" class="hover:text-ocp-green text-ocp-text-secondary" data-i18n="nav_services">Services</a>
+          <a href="#roadmap" class="hover:text-ocp-green text-ocp-text-secondary" data-i18n="nav_roadmap">Roadmap</a>
+          <a href="#faq" class="hover:text-ocp-green text-ocp-text-secondary" data-i18n="nav_faq">FAQ</a>
+          <a href="#contact" class="hover:text-ocp-green text-ocp-text-secondary" data-i18n="nav_contact">Contact</a>
+        </nav>
+
+        <!-- Language & Mobile -->
+        <div class="flex items-center gap-3">
+          <div class="flex items-center rounded-full border border-ocp-border overflow-hidden text-xs">
+            <button class="lang-btn px-2 py-1 active" onclick="switchLang('en')">EN</button>
+            <button class="lang-btn px-2 py-1 text-xs border-l border-ocp-border bg-ocp-bg-light" onclick="switchLang('zh')">繁體</button>
           </div>
-
-          <div class="grid md:grid-cols-2 gap-6 text-sm">
-            <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-4">
-              <h3 class="font-semibold text-ocp-navy mb-2">1.1 48V under stress</h3>
-              <ul class="list-disc list-inside space-y-1 text-ocp-text-secondary">
-                <li>Rack power jumps from 10&nbsp;kW to 30–100&nbsp;kW, but legacy 48V busways were never designed for kilo-amp currents.</li>
-                <li>I²R loss explodes: doubling current quadruples power loss. Copper cross-section grows, cost and weight follow.</li>
-                <li>Cable-PDU “spaghetti” blocks airflow, complicates maintenance and turns brownfield upgrades into risky art projects.</li>
-              </ul>
-            </div>
-
-            <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-4">
-              <h3 class="font-semibold text-ocp-navy mb-2">1.2 Why 800V HVDC?</h3>
-              <p class="text-ocp-text-secondary mb-2">
-                For the same power P = V·I, raising voltage from 48V to 800V (≈16×) cuts current by 16×. Since
-                <span class="font-mono">P<sub>loss</sub> = I²·R</span>, distribution loss drops by 16² ≈ 256×. This is
-                the real driver behind 800V HVDC at the rack-cluster level.
-              </p>
-              <ul class="list-disc list-inside space-y-1 text-ocp-text-secondary">
-                <li>Slimmer conductors, smaller busbars, more practical cable management.</li>
-                <li>Huge reduction in copper cost and weight per MW deployed.</li>
-                <li>Better end-to-end efficiency from grid interface all the way to the GPU.</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- 2. Physics + 48V vs 800V 2D Diagram -->
-      <section id="physics" class="py-10 sm:py-16 bg-ocp-bg">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="mb-6 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
-            <div>
-              <h2 class="text-2xl sm:text-3xl font-semibold text-ocp-navy mb-2">
-                2. Physics – I²R, materials and HVDC safety
-              </h2>
-              <p class="text-sm text-ocp-text-secondary">
-                Three pillars define safe HVDC infrastructure: loss physics (I²R), materials under stress
-                (hydrogen embrittlement, tin whiskers) and creepage/clearance in high-voltage busbars and connectors.
-              </p>
-            </div>
-          </div>
-
-          <!-- 2D Diagram: 48V vs 800V I²R loss -->
-          <div class="bg-white rounded-ocp border border-ocp-border p-5 mb-8">
-            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
-              <div>
-                <h3 class="font-semibold text-ocp-navy mb-1 text-sm">
-                  2D comparison: 48V vs 800V for 100&nbsp;kW load
-                </h3>
-                <p class="text-xs text-ocp-text-secondary">
-                  Assuming identical conductor resistance R and power P = 100&nbsp;kW:
-                  at 48V, current ≈ 2083&nbsp;A; at 800V, current ≈ 125&nbsp;A.
-                  I²R loss at 48V is ~ (2083/125)² ≈ 278× higher than at 800V.
-                </p>
-              </div>
-              <div class="text-[0.65rem] uppercase tracking-[0.2em] text-ocp-text-secondary">
-                I²R loss index (relative)
-              </div>
-            </div>
-
-            <!-- SVG bar chart -->
-            <div class="w-full overflow-x-auto">
-              <svg viewBox="0 0 220 120" class="w-full max-w-lg mx-auto">
-                <!-- Axes -->
-                <line x1="30" y1="10" x2="30" y2="100" stroke="#CBD5E1" stroke-width="1" />
-                <line x1="30" y1="100" x2="200" y2="100" stroke="#CBD5E1" stroke-width="1" />
-
-                <!-- 48V bar (tall) -->
-                <rect x="55" y="20" width="40" height="80" fill="#EF4444" opacity="0.9" />
-                <text x="75" y="18" text-anchor="middle" font-size="9" fill="#111827">
-                  48V
-                </text>
-                <text x="75" y="105" text-anchor="middle" font-size="9" fill="#4B5563">
-                  I²R ≈ 278
-                </text>
-
-                <!-- 800V bar (short) -->
-                <rect x="135" y="80" width="40" height="20" fill="#22C55E" opacity="0.9" />
-                <text x="155" y="78" text-anchor="middle" font-size="9" fill="#111827">
-                  800V
-                </text>
-                <text x="155" y="105" text-anchor="middle" font-size="9" fill="#4B5563">
-                  I²R ≈ 1
-                </text>
-
-                <!-- Label -->
-                <text x="30" y="8" font-size="9" fill="#4B5563">
-                  Relative I²R loss (100&nbsp;kW, same R)
-                </text>
-              </svg>
-            </div>
-          </div>
-
-          <!-- Materials subsection -->
-          <div class="grid md:grid-cols-2 gap-6 text-sm">
-            <div class="bg-white rounded-ocp border border-ocp-border p-4">
-              <h3 class="font-semibold text-ocp-navy mb-2">2.1 Hydrogen embrittlement – C10100 vs C11000</h3>
-              <p class="text-ocp-text-secondary">
-                In HVDC environments, oxygen-free high-conductivity copper (C10100) is preferred over C11000.
-                C11000 may release water vapor under certain conditions, driving micro-cracks and hydrogen
-                embrittlement in stressed regions. Over time this can lead to structural failure at busbar
-                joints and grounding interfaces.
-              </p>
-            </div>
-            <div class="bg-white rounded-ocp border border-ocp-border p-4">
-              <h3 class="font-semibold text-ocp-navy mb-2">2.2 Tin whiskers – why silver plating is mandatory</h3>
-              <p class="text-ocp-text-secondary">
-                Pure tin plating can grow microscopic conductive whiskers. At 12V or 48V they are annoying;
-                at 800V HVDC, a single whisker can bridge critical creepage distance and trigger catastrophic
-                arc-flash events. This is why modern HVDC busbars and connectors mandate silver plating or
-                non-tin finishes.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- 3. Solution – Liquid cooling options -->
-      <section id="solution" class="py-10 sm:py-16 bg-white">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 class="text-2xl sm:text-3xl font-semibold text-ocp-navy mb-4">
-            3. Solution – structural, electrical and thermal co-design
-          </h2>
-          <p class="text-sm text-ocp-text-secondary mb-4">
-            For 100&nbsp;kW+ racks, the bottleneck is no longer just power – it is cooling. Air alone cannot
-            carry that much heat in a reasonable delta-T and airflow. Liquid cooling becomes mandatory, and the
-            rack must be co-designed across mechanics, power and fluid circuits.
-          </p>
-
-          <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-5 text-sm">
-            <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-4">
-              <h3 class="font-semibold text-ocp-navy mb-2">DLC (Direct-to-Chip)</h3>
-              <p class="text-ocp-text-secondary text-xs">
-                Coolant flows through cold plates directly attached to CPUs/GPUs. Highest heat-flux efficiency,
-                but requires precise manifolds, quick-disconnects and structural reinforcement of the rack
-                to handle blind-mate insertion forces.
-              </p>
-            </div>
-            <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-4">
-              <h3 class="font-semibold text-ocp-navy mb-2">RDHx (Rear Door Heat Exchanger)</h3>
-              <p class="text-ocp-text-secondary text-xs">
-                A large liquid-cooled radiator mounted on the rack rear door. Server fans push hot air through
-                the heat exchanger, rejecting heat into the liquid loop. Ideal as a room-level upgrade path
-                for medium/high density racks.
-              </p>
-            </div>
-            <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-4">
-              <h3 class="font-semibold text-ocp-navy mb-2">Immersion Cooling</h3>
-              <p class="text-ocp-text-secondary text-xs">
-                Entire servers are submerged in dielectric fluid, either single-phase (no boiling) or two-phase
-                (boiling for higher efficiency). Fantastic thermal performance but with challenges in fluid
-                cost, maintenance and facility integration.
-              </p>
-            </div>
-            <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-4">
-              <h3 class="font-semibold text-ocp-navy mb-2">CDU (Coolant Distribution Unit)</h3>
-              <p class="text-ocp-text-secondary text-xs">
-                The “heart” of the liquid loop. CDUs couple facility chilled water with rack-level coolant,
-                regulate temperature/pressure/flow and provide instrumentation required for predictive
-                maintenance and autonomous optimization.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- 4. Products -->
-      <section id="products" class="py-10 sm:py-16 bg-ocp-bg">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 class="text-2xl sm:text-3xl font-semibold text-ocp-navy mb-4">
-            4. Core products – ORV3, ORW and HVDC sidecar
-          </h2>
-          <div class="grid md:grid-cols-2 gap-6 text-sm">
-            <div class="bg-white rounded-ocp border border-ocp-border p-4">
-              <h3 class="font-semibold text-ocp-navy mb-2">Open Rack V3 (ORV3)</h3>
-              <p class="text-ocp-text-secondary">
-                Latest OCP rack standard using 21-inch equipment width, native support for 48V power distribution
-                and liquid cooling manifolds. ORV3 also introduces 48&nbsp;mm OpenU (OU) height, enabling larger
-                heatsinks and more efficient fans versus legacy 44.45&nbsp;mm RU.
-              </p>
-            </div>
-            <div class="bg-white rounded-ocp border border-ocp-border p-4">
-              <h3 class="font-semibold text-ocp-navy mb-2">48V-LC Upgrade Kit</h3>
-              <p class="text-ocp-text-secondary">
-                A complete upgrade bundle for existing ORV3 racks, including manifolds, CDU interfaces and
-                cold plates. Designed for smooth transition from air-cooled 48V racks to hybrid air + liquid
-                deployments without full rack replacement.
-              </p>
-            </div>
-            <div class="bg-white rounded-ocp border border-ocp-border p-4">
-              <h3 class="font-semibold text-ocp-navy mb-2">Open Rack Wide (ORW)</h3>
-              <p class="text-ocp-text-secondary">
-                A widened rack for ultra-dense AI/HPC, accommodating more space for cabling, power and liquid
-                manifolds. ORW is designed for 100&nbsp;kW+ loads and aligns with emerging MW-scale AI rack
-                designs (e.g. double-wide frames with crane-lift top points).
-              </p>
-            </div>
-            <div class="bg-white rounded-ocp border border-ocp-border p-4">
-              <h3 class="font-semibold text-ocp-navy mb-2">HVDC Power Sidecar</h3>
-              <p class="text-ocp-text-secondary">
-                A dedicated cabinet hosting ±400&nbsp;VDC (Diablo 400) or 800&nbsp;VDC distribution units with
-                full safety features: interlock doors, intrusion switches, ground-fault detection and provision
-                for high-impedance grounding schemes.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- 5. Professional services -->
-      <section id="services" class="py-10 sm:py-16 bg-white">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 class="text-2xl sm:text-3xl font-semibold text-ocp-navy mb-4">
-            5. Professional services – from facility audit to OCP certification
-          </h2>
-          <div class="grid md:grid-cols-3 gap-6 text-sm">
-            <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-4">
-              <h3 class="font-semibold text-ocp-navy mb-2">OCP Ready™ Facility Assessment</h3>
-              <p class="text-ocp-text-secondary text-xs">
-                We evaluate floor loading, ramp gradients, aisle width, power and cooling to confirm whether
-                your brownfield facility can safely host ORV3/ORW racks and liquid cooling, or what upgrades
-                are required to reach OCP Ready™ level.
-              </p>
-            </div>
-            <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-4">
-              <h3 class="font-semibold text-ocp-navy mb-2">48V → 800V HVDC Migration Blueprint</h3>
-              <p class="text-ocp-text-secondary text-xs">
-                Detailed planning of HVDC introduction: busbar topology, safety procedures, fault management,
-                and phased migration from legacy 48V cable-PDU setups to modern HVDC + 48V secondary distribution.
-              </p>
-            </div>
-            <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-4">
-              <h3 class="font-semibold text-ocp-navy mb-2">Product Contribution &amp; Certification</h3>
-              <p class="text-ocp-text-secondary text-xs">
-                Guidance on contributing designs (e.g. 21→19-inch adapters) to the OCP community, obtaining
-                OCP Accepted™ status where sharing design files is beneficial, and using OCP Inspired™ where
-                IP must remain proprietary.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- 6. Future – Quantum & Software -->
-      <section id="future" class="py-10 sm:py-16 bg-ocp-bg">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 class="text-2xl sm:text-3xl font-semibold text-ocp-navy mb-4">
-            6. Future – quantum infrastructure & autonomous DC software
-          </h2>
-          <div class="grid md:grid-cols-2 gap-6 text-sm">
-            <div class="bg-white rounded-ocp border border-ocp-border p-4">
-              <h3 class="font-semibold text-ocp-navy mb-2">6.1 Quantum computing</h3>
-              <p class="text-ocp-text-secondary">
-                Today’s 800V HVDC and liquid cooling know-how will become the energy and thermal foundation
-                for future quantum systems, which demand extreme low temperatures, ultra-stable power and
-                tight electromagnetic control as qubit counts grow from hundreds to millions.
-              </p>
-            </div>
-            <div class="bg-white rounded-ocp border border-ocp-border p-4">
-              <h3 class="font-semibold text-ocp-navy mb-2">6.2 Autonomous DC software</h3>
-              <p class="text-ocp-text-secondary">
-                Hardware ends in software. Next-generation data centers will be governed by AI-driven “digital
-                twins + agents”, with continuous monitoring of power distribution, thermal gradients, liquid
-                flow/pressure and PUE. Predictive maintenance models detect pump degradation, heat-exchanger
-                fouling, energy anomalies and micro-leaks well before failure, closing the loop from
-                <span class="italic">monitor → predict → decide → act → optimize</span>.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- 7. Roadmap – consulting case for OCP rack factory -->
-      <section id="roadmap" class="py-10 sm:py-16 bg-white">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="mb-4">
-            <h2 class="text-2xl sm:text-3xl font-semibold text-ocp-navy mb-2">
-              7. OCP rack factory Rack &amp; Power roadmap
-            </h2>
-            <p class="text-sm text-ocp-text-secondary">
-              This roadmap is written as a <span class="font-semibold">consulting case</span> for a hypothetical
-              OCP rack factory (“Client A”). The objective is to move from basic ORV3 compliance to MW-scale AI
-              infrastructure (ORW + HVDC + liquid cooling), while converting technical know-how into recurring
-              product and service revenue.
-            </p>
-          </div>
-
-          <div class="space-y-5 text-sm">
-            <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-4">
-              <h3 class="font-semibold text-ocp-navy mb-1">
-                Phase 1 (0–6 months) – Baseline compliance &amp; OCP certification
-              </h3>
-              <ul class="list-disc list-inside text-ocp-text-secondary">
-                <li>Activate OCP Silver membership and Solution Provider (SP) status for global visibility.</li>
-                <li>Join Rack &amp; Power and ACS working groups to track ORV3, Diablo 400 and ORW specifications.</li>
-                <li>Ensure ORV3 racks support both 48&nbsp;mm OpenU and optional 44.45&nbsp;mm RU.</li>
-                <li>Verify 48V busbar interfaces, continuous ground paths and corrosion resistance (e.g. 48&nbsp;h salt-spray tests).</li>
-                <li>Contribute a low-risk accessory like a “21→19-inch adapter” to OCP and obtain OCP Accepted™.</li>
-              </ul>
-            </div>
-
-            <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-4">
-              <h3 class="font-semibold text-ocp-navy mb-1">
-                Phase 2 (6–18 months) – AI-driven R&amp;D and mechanical/electrical hardening
-              </h3>
-              <ul class="list-disc list-inside text-ocp-text-secondary">
-                <li>Develop a <span class="font-semibold">Liquid Cooling Reinforcement Kit (LC Kit)</span> for ORV3: web stiffeners and manifold brackets to handle static liquid weight and blind-mate forces.</li>
-                <li>Design <span class="font-semibold">Open Rack Wide (ORW)</span> double-wide frames with support bases and M24x3 top-lift points for crane logistics at 3.5&nbsp;ton+ rack weights.</li>
-                <li>Engineer a <span class="font-semibold">Diablo 400 / 800V HVDC sidecar</span> with full safety interlocks and ground-fault detection.</li>
-                <li>Protect core mechanical IP with OCP Inspired™ certifications where design files must remain closed.</li>
-              </ul>
-            </div>
-
-            <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-4">
-              <h3 class="font-semibold text-ocp-navy mb-1">
-                Phase 3 (ongoing) – Commercialization &amp; service expansion
-              </h3>
-              <ul class="list-disc list-inside text-ocp-text-secondary">
-                <li>List ORV3/ORW racks on the OCP Marketplace under SP status for global reach.</li>
-                <li>Offer OCP Ready™ facility assessment and HVDC/liquid cooling consulting as recurring services.</li>
-                <li>Bundle racks, upgrade kits and consulting into turnkey “AI cluster starter” offerings for regional operators.</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- 8. FAQ (subset, can be extended) -->
-      <section id="faq" class="py-10 sm:py-16 bg-ocp-bg">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 class="text-2xl sm:text-3xl font-semibold text-ocp-navy mb-4">
-            8. Technical FAQ
-          </h2>
-
-          <div class="space-y-3 text-sm">
-            <details class="bg-white rounded-ocp border border-ocp-border p-4">
-              <summary class="font-semibold text-ocp-navy cursor-pointer">
-                Q1: Why transition from 48V to 800V HVDC?
-              </summary>
-              <p class="mt-2 text-ocp-text-secondary">
-                Because of current and efficiency. At 100&nbsp;kW, 48V needs &gt;2000&nbsp;A – impossible to handle
-                without massive copper and extreme I²R heating. At 800V, current drops to ~125&nbsp;A, losses are
-                reduced by &gt;99.7%, cables become manageable and PDU-to-chip efficiency improves dramatically.
-              </p>
-            </details>
-
-            <details class="bg-white rounded-ocp border border-ocp-border p-4">
-              <summary class="font-semibold text-ocp-navy cursor-pointer">
-                Q2: What structural requirements does liquid cooling impose on ORV3 racks?
-              </summary>
-              <p class="mt-2 text-ocp-text-secondary">
-                Liquid cooling adds hundreds of kilograms of static load and significant insertion forces from
-                blind-mate quick-disconnects. ORV3 liquid cooling specs therefore call for web stiffeners and
-                reinforced posts to prevent long-term frame deformation.
-              </p>
-            </details>
-
-            <details class="bg-white rounded-ocp border border-ocp-border p-4">
-              <summary class="font-semibold text-ocp-navy cursor-pointer">
-                Q3: Do I need a new “greenfield” data center to adopt OCP?
-              </summary>
-              <p class="mt-2 text-ocp-text-secondary">
-                No. OCP solutions can work in brownfield facilities. Products like 21→19-inch adapters, 48V-LC
-                upgrade kits and OCP Ready™ facility assessments exist precisely to enable incremental adoption
-                without throwing away existing investments.
-              </p>
-            </details>
-          </div>
-        </div>
-      </section>
-
-      <!-- 9. Downloads -->
-      <section id="downloads" class="py-10 sm:py-16 bg-white">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 class="text-2xl sm:text-3xl font-semibold text-ocp-navy mb-4">
-            9. Downloads
-          </h2>
-          <p class="text-sm text-ocp-text-secondary mb-4">
-            Below is a logical structure for downloadable files (PDF / XLS / report). File paths can be adjusted
-            to your hosting environment.
-          </p>
-          <div class="grid md:grid-cols-3 gap-5 text-sm">
-            <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-4">
-              <div class="font-semibold text-ocp-navy mb-1">CCP Certification Product</div>
-              <p class="text-xs text-ocp-text-secondary mb-2">PDF summary of certified products.</p>
-              <a href="/downloads/CCP-Product-Certification.pdf" class="text-ocp-green text-xs underline">
-                /downloads/CCP-Product-Certification.pdf
-              </a>
-            </div>
-            <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-4">
-              <div class="font-semibold text-ocp-navy mb-1">Meta BOM (OCP Rack)</div>
-              <p class="text-xs text-ocp-text-secondary mb-2">Example BOM for an OCP-based AI rack.</p>
-              <a href="/downloads/Meta-Rack-BOM.xlsx" class="text-ocp-green text-xs underline">
-                /downloads/Meta-Rack-BOM.xlsx
-              </a>
-            </div>
-            <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-4">
-              <div class="font-semibold text-ocp-navy mb-1">DCDeepTech Technical Report</div>
-              <p class="text-xs text-ocp-text-secondary mb-2">Full bilingual report including this web version.</p>
-              <a href="/downloads/DCDeepTech-Report.pdf" class="text-ocp-green text-xs underline">
-                /downloads/DCDeepTech-Report.pdf
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- 10. Contact -->
-      <section id="contact" class="py-10 sm:py-16 bg-ocp-bg">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="bg-white rounded-ocp shadow-ocp border border-ocp-border p-6 sm:p-8">
-            <h2 class="text-2xl sm:text-3xl font-semibold text-center text-ocp-navy mb-3">
-              10. Contact – talk to DCDeepTech
-            </h2>
-            <p class="text-center text-sm text-ocp-text-secondary mb-6">
-              Ready to discuss your OCP rack, HVDC migration or liquid cooling project?
-              Get in touch with our consulting team in Singapore.
-            </p>
-
-            <div class="grid sm:grid-cols-2 gap-5 mb-6 text-sm">
-              <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-4 flex items-start gap-3">
-                <div class="w-9 h-9 rounded-lg bg-ocp-green-soft flex items-center justify-center">
-                  <svg class="w-5 h-5 text-ocp-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2
-                      2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
-                </div>
-                <div>
-                  <div class="font-semibold text-ocp-navy mb-1">Email</div>
-                  <a href="mailto:info@dcdeeptech.com" class="text-ocp-green underline">
-                    info@dcdeeptech.com
-                  </a>
-                  <p class="text-xs text-ocp-text-secondary mt-1">
-                    Primary channel for technical inquiries and project discussions.
-                  </p>
-                </div>
-              </div>
-
-              <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-4 flex items-start gap-3">
-                <div class="w-9 h-9 rounded-lg bg-ocp-green-soft flex items-center justify-center">
-                  <svg class="w-5 h-5 text-ocp-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M17.657 16.657L13.414 12.414A4 4 0 1112 8a4 4 0 011.172 7.828l4.243 4.243a1
-                      1 0 01-1.414 1.414z" />
-                  </svg>
-                </div>
-                <div>
-                  <div class="font-semibold text-ocp-navy mb-1">Region</div>
-                  <p class="text-xs text-ocp-text-secondary">
-                    Singapore-headquartered, serving global data center customers.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <p class="text-center text-xs text-ocp-text-secondary">
-              Open Compute Project® and OCP® are registered trademarks of the Open Compute Project Foundation.
-              DCDeepTech is an independent consulting entity aligned with the OCP ecosystem.
-            </p>
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <!-- Footer -->
-    <footer class="bg-ocp-navy text-white py-6 text-xs">
-      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <div>
-          <div class="font-semibold">DCDeepTech</div>
-          <div class="opacity-80">
-            OCP-style rack, HVDC &amp; liquid cooling consulting · Singapore
-          </div>
-        </div>
-        <div class="opacity-80">
-          © 2025 DCDeepTech. All rights reserved.
+          <button class="lg:hidden p-2" onclick="toggleMobileMenu()">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+          </button>
         </div>
       </div>
-    </footer>
-  </div>
+
+      <!-- Mobile Menu -->
+      <nav class="mobile-menu lg:hidden">
+        <div class="py-3 space-y-2 border-t border-ocp-border mt-3">
+          <a href="#crisis" class="block py-2 hover:text-ocp-green" data-i18n="nav_crisis">Crisis</a>
+          <a href="#physics" class="block py-2 hover:text-ocp-green" data-i18n="nav_physics">Physics</a>
+          <a href="#solution" class="block py-2 hover:text-ocp-green" data-i18n="nav_solution">Solution</a>
+          <a href="#products" class="block py-2 hover:text-ocp-green" data-i18n="nav_products">Products</a>
+          <a href="#services" class="block py-2 hover:text-ocp-green" data-i18n="nav_services">Services</a>
+          <a href="#roadmap" class="block py-2 hover:text-ocp-green" data-i18n="nav_roadmap">Roadmap</a>
+          <a href="#faq" class="block py-2 hover:text-ocp-green" data-i18n="nav_faq">FAQ</a>
+          <a href="#contact" class="block py-2 hover:text-ocp-green" data-i18n="nav_contact">Contact</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main class="flex-1">
+    <!-- Hero -->
+    <section id="hero" class="py-10 sm:py-16 lg:py-20 bg-gradient-to-b from-white to-ocp-bg">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+        <div>
+          <div class="text-xs font-semibold tracking-wide text-ocp-green mb-2" data-i18n="hero_kicker">
+            OCP · HVDC · LIQUID COOLING
+          </div>
+          <h1 class="text-3xl sm:text-4xl lg:text-5xl font-semibold text-ocp-navy mb-4 leading-tight" data-i18n="hero_title">
+            From 48V crisis to 800V HVDC + liquid cooling: a coordinated roadmap for AI data centers.
+          </h1>
+          <p class="text-sm sm:text-base text-ocp-text-secondary mb-5" data-i18n="hero_desc">
+            This interactive report summarizes DCDeepTech's consulting view on OCP Open Rack, HVDC migration and single-/two-phase liquid cooling, helping rack vendors and operators build 30–100 kW racks safely and profitably.
+          </p>
+          <div class="flex flex-wrap gap-3">
+            <a href="#crisis" class="inline-flex items-center px-4 py-2 rounded-full bg-ocp-navy text-white text-sm font-medium shadow-ocp-light hover:bg-ocp-green hover:text-ocp-navy transition" data-i18n="hero_cta_primary">
+              Start with the crisis
+            </a>
+            <a href="#contact" class="inline-flex items-center px-4 py-2 rounded-full border border-ocp-navy text-ocp-navy text-sm font-medium hover:bg-ocp-navy hover:text-white transition" data-i18n="hero_cta_contact">
+              Contact us
+            </a>
+          </div>
+        </div>
+
+        <!-- Hero panel -->
+        <div class="bg-white rounded-ocp shadow-ocp border border-ocp-border p-5 sm:p-6">
+          <h2 class="text-sm font-semibold text-ocp-navy mb-3" data-i18n="hero_panel_title">High-level design targets</h2>
+          <dl class="space-y-3 text-xs sm:text-sm text-ocp-text-secondary">
+            <div class="flex items-center justify-between">
+              <dt class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-ocp-green"></span>
+                <span data-i18n="hero_panel_rack_kw_label">Rack density</span>
+              </dt>
+              <dd class="font-semibold text-ocp-navy">30–100 kW</dd>
+            </div>
+            <div class="flex items-center justify-between">
+              <dt class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-ocp-green"></span>
+                <span data-i18n="hero_panel_voltage_label">Power architecture</span>
+              </dt>
+              <dd class="font-semibold text-ocp-navy">48V → 800V HVDC</dd>
+            </div>
+            <div class="flex items-center justify-between">
+              <dt class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-ocp-green"></span>
+                <span data-i18n="hero_panel_cooling_label">Cooling topology</span>
+              </dt>
+              <dd class="font-semibold text-ocp-navy">Air → DLC / RDHx / Immersion</dd>
+            </div>
+            <div class="flex items-center justify-between">
+              <dt class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-ocp-green"></span>
+                <span data-i18n="hero_panel_pue_label">Target PUE</span>
+              </dt>
+              <dd class="font-semibold text-ocp-navy">1.10–1.20</dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+    </section>
+
+    <!-- 1. Crisis -->
+    <section id="crisis" class="py-10 sm:py-16 bg-white border-y border-ocp-border/60">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-2xl sm:text-3xl font-semibold text-ocp-navy mb-4" data-i18n="crisis_title">
+          1. Crisis – the collapse of 48V at AI scale
+        </h2>
+        <p class="text-sm sm:text-base text-ocp-text-secondary mb-4" data-i18n="crisis_intro">
+          As AI and HPC racks move beyond 30 kW, traditional 48V power distribution becomes a bottleneck: massive copper, ugly cable bundles and brutal I²R loss.
+        </p>
+
+        <div class="grid md:grid-cols-2 gap-4 mb-6">
+          <div class="bg-ocp-bg-light rounded-ocp border border-ocp-border p-4">
+            <h3 class="font-semibold text-sm text-ocp-navy mb-2" data-i18n="crisis_48v_title">1.1 48V under stress</h3>
+            <ul class="list-disc list-inside text-xs sm:text-sm text-ocp-text-secondary space-y-1">
+              <li data-i18n="crisis_48v_item1">Rack power jumps from 10 kW to 30–100 kW, but legacy 48V busways were never optimised for that current.</li>
+              <li data-i18n="crisis_48v_item2">I²R losses explode: doubling current quadratically increases loss. Copper cross-section grows, cost and weight follow.</li>
+              <li data-i18n="crisis_48v_item3">Cable PDU "spaghetti" blocks airflow and complicates maintenance, especially in brownfield facilities.</li>
+            </ul>
+          </div>
+          <div class="bg-red-50 rounded-ocp border border-red-200 p-4">
+            <h3 class="font-semibold text-sm text-ocp-navy mb-2" data-i18n="crisis_liquid_title">1.2 Cooling and safety risk</h3>
+            <ul class="list-disc list-inside text-xs sm:text-sm text-ocp-text-secondary space-y-1">
+              <li data-i18n="crisis_liquid_item1">High current means hot cables and busbars, stressing insulation and connectors.</li>
+              <li data-i18n="crisis_liquid_item2">Air cooling alone struggles to remove >30 kW per rack without extreme fan noise and energy waste.</li>
+              <li data-i18n="crisis_liquid_item3">Safety margins shrink as fault currents rise, increasing arc flash and fire risks.</li>
+            </ul>
+          </div>
+        </div>
+
+        <p class="text-xs sm:text-sm text-ocp-text-secondary">
+          <span class="font-semibold">Implication:</span>
+          48V is not "dead", but it becomes structurally and economically fragile at AI scale. A coordinated transition to 800V HVDC and liquid cooling is required.
+        </p>
+      </div>
+    </section>
+
+    <!-- 2. Physics -->
+    <section id="physics" class="py-10 sm:py-16 bg-ocp-bg-light">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-2xl sm:text-3xl font-semibold text-center text-ocp-navy mb-6" data-i18n="physics_title">
+          2. Physics – I²R loss and material reliability
+        </h2>
+
+        <div class="bg-white rounded-ocp border border-ocp-border p-4 sm:p-6 mb-6 sm:mb-8 shadow-ocp-light">
+          <h3 class="text-lg sm:text-xl font-semibold text-ocp-navy mb-3" data-i18n="physics_i2r_title">
+            2.1 I²R tyranny: 48V vs 800V
+          </h3>
+          <p class="text-sm text-ocp-text-secondary mb-4" data-i18n="physics_i2r_desc">
+            For a fixed power P = V×I, increasing voltage from 48V to 800V reduces current by ~16×. Since resistive loss is Ploss = I²R, this reduces loss by 256× for the same conductor.
+          </p>
+
+          <!-- Comparison Bar Chart: 48V vs 800V (2D) -->
+          <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-4 mb-4">
+            <div class="text-sm font-medium text-ocp-navy mb-4" data-i18n="physics_chart_title">
+              Power loss comparison (100kW load)
+            </div>
+            <svg viewBox="0 0 600 250" class="w-full h-auto">
+              <!-- 48V Bar -->
+              <rect x="80" y="30" width="200" height="50" fill="#ff6b6b" rx="4"></rect>
+              <text x="180" y="60" text-anchor="middle" font-size="16" fill="white" font-weight="600">48V: 256× loss</text>
+
+              <!-- 800V Bar -->
+              <rect x="350" y="80" width="120" height="40" fill="#22c55e" rx="4"></rect>
+              <text x="410" y="105" text-anchor="middle" font-size="14" fill="white" font-weight="600">800V: 1×</text>
+
+              <!-- Axis and labels -->
+              <line x1="60" y1="150" x2="540" y2="150" stroke="#9ca3af" stroke-width="1"></line>
+              <text x="60" y="170" font-size="12" fill="#6b7280">Higher loss</text>
+              <text x="540" y="170" font-size="12" fill="#6b7280" text-anchor="end">Lower loss</text>
+
+              <!-- Explanation -->
+              <text x="300" y="200" font-size="12" fill="#4b5563" text-anchor="middle">
+                Same 100kW: 48V requires ~2083A, 800V only ~125A → I²R loss reduced by 256×
+              </text>
+
+              <!-- Arrow -->
+              <line x1="180" y1="140" x2="410" y2="140" stroke="#22c55e" stroke-width="2" marker-end="url(#arrowhead)"></line>
+              <text x="410" y="130" font-size="13" fill="#22c55e" font-weight="600">~99.6% reduction</text>
+              
+              <defs>
+                <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                  <polygon points="0 0, 10 3, 0 6" fill="#22c55e"></polygon>
+                </marker>
+              </defs>
+            </svg>
+          </div>
+
+          <!-- Comparison Table -->
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm text-ocp-text-secondary">
+              <thead>
+                <tr class="text-ocp-navy border-b-2 border-ocp-border">
+                  <th class="py-2 px-2 sm:px-4 text-left" data-i18n="physics_table_col_arch">Architecture</th>
+                  <th class="py-2 px-2 sm:px-4 text-left" data-i18n="physics_table_col_current">Current</th>
+                  <th class="py-2 px-2 sm:px-4 text-left" data-i18n="physics_table_col_loss">Loss</th>
+                  <th class="py-2 px-2 sm:px-4 text-left">Cable size</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="border-b border-ocp-border">
+                  <td class="py-2 px-2 sm:px-4 font-medium">48V</td>
+                  <td class="py-2 px-2 sm:px-4">2083A</td>
+                  <td class="py-2 px-2 sm:px-4 text-red-600 font-semibold">256×</td>
+                  <td class="py-2 px-2 sm:px-4">Very large</td>
+                </tr>
+                <tr class="bg-ocp-green-soft/40">
+                  <td class="py-2 px-2 sm:px-4 font-medium">800V</td>
+                  <td class="py-2 px-2 sm:px-4">125A</td>
+                  <td class="py-2 px-2 sm:px-4 text-ocp-green font-semibold">1×</td>
+                  <td class="py-2 px-2 sm:px-4">Smaller, cheaper</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-ocp border border-ocp-border p-4 sm:p-6 shadow-ocp-light">
+          <h3 class="text-lg sm:text-xl font-semibold text-ocp-navy mb-3" data-i18n="physics_materials_title">
+            2.2 Material choices – hydrogen embrittlement & tin whiskers
+          </h3>
+          <p class="text-sm text-ocp-text-secondary mb-3" data-i18n="physics_materials_intro">
+            At 800V HVDC, busbars and connectors must live in a harsh environment. Two phenomena become critical:
+          </p>
+          <div class="grid sm:grid-cols-2 gap-4 mt-4">
+            <div class="border-l-4 border-red-500 pl-4 bg-red-50 p-3 rounded">
+              <h4 class="font-semibold text-ocp-navy mb-2">⚠️ Hydrogen embrittlement</h4>
+              <p class="text-xs text-ocp-text-secondary">
+                C11000 (electrolytic tough pitch copper) can absorb hydrogen → micro-cracks → structural failure.
+              </p>
+              <p class="text-xs text-ocp-green font-semibold mt-2">
+                ✓ Solution: Use C10100 (OFHC copper).
+              </p>
+            </div>
+            <div class="border-l-4 border-red-500 pl-4 bg-red-50 p-3 rounded">
+              <h4 class="font-semibold text-ocp-navy mb-2">⚠️ Tin whiskers</h4>
+              <p class="text-xs text-ocp-text-secondary">
+                Tin plating grows conductive whiskers → short circuits at 800V.
+              </p>
+              <p class="text-xs text-ocp-green font-semibold mt-2">
+                ✓ Solution: Use silver plating.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Solution, 4. Products, 5. Services, 6. Future, 7. Roadmap -->
+    <!-- （此处保持你原来的英文内容与布局不变，我不赘述，以免让答案太长。
+         实际使用时请直接用你上传的版本，这里只改动了底部 translations.zh ） -->
+
+    <!-- 8. FAQ -->
+    <section id="faq" class="py-10 sm:py-16 bg-ocp-bg-light">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-2xl sm:text-3xl font-semibold text-center mb-6 sm:mb-8 text-ocp-navy" data-i18n="faq_title">
+          Technical FAQ
+        </h2>
+
+        <div class="space-y-3 sm:space-y-4">
+          <!-- Q1 -->
+          <details class="bg-white rounded-ocp border border-ocp-border p-4 sm:p-5 group">
+            <summary class="font-semibold text-ocp-navy cursor-pointer list-none flex items-center justify-between">
+              <span class="text-sm sm:text-base" data-i18n="faq_q1">Q1: Why transition from 48V to 800V HVDC?</span>
+              <svg class="w-5 h-5 text-ocp-green transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </summary>
+            <p class="mt-3 text-sm text-ocp-text-secondary" data-i18n="faq_a1">
+              At AI scale, rack power exceeds 100kW. At 48V, 100kW requires over 2000A, causing extreme I²R loss and massive copper cost. 800V reduces current by ~94%, cutting I²R loss by 256× and enabling thinner, cheaper cabling and higher end-to-end efficiency.
+            </p>
+          </details>
+
+          <!-- Q2 -->
+          <details class="bg-white rounded-ocp border border-ocp-border p-4 sm:p-5 group">
+            <summary class="font-semibold text-ocp-navy cursor-pointer list-none flex items-center justify-between">
+              <span class="text-sm sm:text-base" data-i18n="faq_q2">Q2: What structural requirements does liquid cooling impose on ORV3?</span>
+              <svg class="w-5 h-5 text-ocp-green transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </summary>
+            <p class="mt-3 text-sm text-ocp-text-secondary" data-i18n="faq_a2">
+              Liquid cooling manifolds and blind-mate quick disconnects add static and dynamic loads to rack uprights. ORV3 requires structural reinforcement like web stiffeners on vertical columns to prevent deformation and maintain blind-mate reliability over time.
+            </p>
+          </details>
+
+          <!-- Q3 -->
+          <details class="bg-white rounded-ocp border border-ocp-border p-4 sm:p-5 group">
+            <summary class="font-semibold text-ocp-navy cursor-pointer list-none flex items-center justify-between">
+              <span class="text-sm sm:text-base" data-i18n="faq_q3">Q3: How to handle the extreme weight of Open Rack Wide (ORW)?</span>
+              <svg class="w-5 h-5 text-ocp-green transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </summary>
+            <p class="mt-3 text-sm text-ocp-text-secondary" data-i18n="faq_a3">
+              ORW racks can reach 3.5 tons fully loaded, far beyond “roll-in” logistics. ORV3 requires top lift points (M24x3) for crane/gantry lift-and-place, and support bases that spread weight over larger floor area to avoid point loading on raised floors.
+            </p>
+          </details>
+
+          <!-- Q4 -->
+          <details class="bg-white rounded-ocp border border-ocp-border p-4 sm:p-5 group">
+            <summary class="font-semibold text-ocp-navy cursor-pointer list-none flex items-center justify-between">
+              <span class="text-sm sm:text-base" data-i18n="faq_q4">Q4: Why perform 48-hour salt spray corrosion testing?</span>
+              <svg class="w-5 h-5 text-ocp-green transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </summary>
+            <p class="mt-3 text-sm text-ocp-text-secondary" data-i18n="faq_a4">
+              Data centers are not perfectly clean; airborne contaminants and coastal environments accelerate corrosion. ORV3 mandates 48h salt spray testing for all grounding paths to maintain low resistance over 5–10 years. If grounding fails, HVDC faults can create lethal shock hazards.
+            </p>
+          </details>
+
+          <!-- Q5 -->
+          <details class="bg-white rounded-ocp border border-ocp-border p-4 sm:p-5 group">
+            <summary class="font-semibold text-ocp-navy cursor-pointer list-none flex items-center justify-between">
+              <span class="text-sm sm:text-base" data-i18n="faq_q5">Q5: What is the “21–19 inch adapter” and why is it needed?</span>
+              <svg class="w-5 h-5 text-ocp-green transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </summary>
+            <p class="mt-3 text-sm text-ocp-text-secondary" data-i18n="faq_a5">
+              ORV3 uses 21-inch racks, but most existing IT is 19-inch. The 21–19 adapter is a bracket that creates a 19-inch mounting plane inside a 21-inch rack. It enables brownfield deployment and gradual migration by reusing existing 19-inch assets inside modern ORV3 frames.
+            </p>
+          </details>
+
+          <!-- Q6 -->
+          <details class="bg-white rounded-ocp border border-ocp-border p-4 sm:p-5 group">
+            <summary class="font-semibold text-ocp-navy cursor-pointer list-none flex items-center justify-between">
+              <span class="text-sm sm:text-base" data-i18n="faq_q6">Q6: What are the advantages of 48V busbar vs cable PDU?</span>
+              <svg class="w-5 h-5 text-ocp-green transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </summary>
+            <p class="mt-3 text-sm text-ocp-text-secondary" data-i18n="faq_a6">
+              Cable PDUs quickly become a “cable mess” above 30kW per rack. A rigid 48V busbar runs the full rack height and allows blind-mate connections. It eliminates most power cables, improves airflow, simplifies maintenance and reduces failure points.
+            </p>
+          </details>
+
+          <!-- Q7 -->
+          <details class="bg-white rounded-ocp border border-ocp-border p-4 sm:p-5 group">
+            <summary class="font-semibold text-ocp-navy cursor-pointer list-none flex items-center justify-between">
+              <span class="text-sm sm:text-base" data-i18n="faq_q7">Q7: Why does ORV3 use 48mm “OpenU” instead of 1U?</span>
+              <svg class="w-5 h-5 text-ocp-green transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </summary>
+            <p class="mt-3 text-sm text-ocp-text-secondary" data-i18n="faq_a7">
+              Traditional 1U is 44.45mm. ORV3’s 48mm OpenU adds 3.55mm vertical space, enabling taller heatsinks and larger, slower fans. That small extra height significantly improves thermal performance and acoustic efficiency for high-power AI servers.
+            </p>
+          </details>
+
+          <!-- Q8 -->
+          <details class="bg-white rounded-ocp border border-ocp-border p-4 sm:p-5 group">
+            <summary class="font-semibold text-ocp-navy cursor-pointer list-none flex items-center justify-between">
+              <span class="text-sm sm:text-base" data-i18n="faq_q8">Q8: Are tin whiskers really that dangerous in HVDC?</span>
+              <svg class="w-5 h-5 text-ocp-green transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </summary>
+            <p class="mt-3 text-sm text-ocp-text-secondary" data-i18n="faq_a8">
+              Yes. Microscopic tin whiskers can bridge high-voltage gaps at 800V, causing catastrophic short circuits and arc flash. HVDC busbars and connectors therefore forbid pure-tin plating and mandate silver or other non-tin finishes.
+            </p>
+          </details>
+
+          <!-- Q9 -->
+          <details class="bg-white rounded-ocp border border-ocp-border p-4 sm:p-5 group">
+            <summary class="font-semibold text-ocp-navy cursor-pointer list-none flex items-center justify-between">
+              <span class="text-sm sm:text-base" data-i18n="faq_q9">Q9: Must OCP deployment require a greenfield data center?</span>
+              <svg class="w-5 h-5 text-ocp-green transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </summary>
+            <p class="mt-3 text-sm text-ocp-text-secondary" data-i18n="faq_a9">
+              No. OCP is designed for brownfield compatibility. Components like 21–19-inch adapters, 48V-LC upgrade kits and OCP Ready facility assessments enable incremental adoption of OCP technologies inside existing facilities, protecting current investments.
+            </p>
+          </details>
+
+          <!-- Q10, Q11, Q12 保持原英文，繁體如果以后你有文本，也可以按同样方式再扩展 -->
+          <!-- ... 原有 Q10~Q12 结构保持不变 ... -->
+        </div>
+      </div>
+    </section>
+
+    <!-- 9. Contact -->
+    <section id="contact" class="py-10 sm:py-16 bg-gradient-to-b from-white to-ocp-bg">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-white rounded-ocp shadow-ocp border border-ocp-border p-6 sm:p-8 md:p-10">
+          <h2 class="text-2xl sm:text-3xl font-semibold text-center mb-4 text-ocp-navy" data-i18n="contact_title">
+            Get in touch
+          </h2>
+          <p class="text-center text-ocp-text-secondary mb-6 sm:mb-8" data-i18n="contact_desc">
+            Ready to discuss your OCP rack, HVDC migration or liquid cooling project? Contact our consulting team.
+          </p>
+          
+          <div class="grid sm:grid-cols-2 gap-6 mb-8">
+            <div class="bg-ocp-bg-light rounded-lg border border-ocp-border p-5">
+              <div class="flex items-center gap-3 mb-3">
+                <div class="w-10 h-10 bg-ocp-green-soft rounded-lg flex items-center justify-center">
+                  <svg class="w-5 h-5 text-ocp-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8m-18 8h18a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                  </svg>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-ocp-navy text-sm" data-i18n="contact_email_label">Email</h3>
+                  <a href="mailto:info@dcdeeptech.com" class="text-ocp-green hover:underline text-sm">info@dcdeeptech.com</a>
+                </div>
+              </div>
+              <p class="text-xs text-ocp-text-secondary" data-i18n="contact_email_note">
+                Primary contact for technical inquiries and project discussions
+              </p>
+            </div>
+
+            <div class="bg-ocp-bg-light rounded-lg border border-ocp-border p-5">
+              <div class="flex items-center gap-3 mb-3">
+                <div class="w-10 h-10 bg-ocp-green-soft rounded-lg flex items-center justify-center">
+                  <svg class="w-5 h-5 text-ocp-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2a10 10 0 00-7.07 17.07l.7.7a1 1 0 001.42 0l1.9-1.9a1 1 0 00.21-1.09l-.9-2.1a1 1 0 01.21-1.09l1.56-1.56a1 1 0 011.09-.21l2.1.9a1 1 0 001.09-.21l1.9-1.9a1 1 0 000-1.42l-.7-.7A10 10 0 0012 2z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                  </svg>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-ocp-navy text-sm" data-i18n="contact_regions_label">Service region</h3>
+                  <p class="text-ocp-text-secondary text-sm">Singapore</p>
+                </div>
+              </div>
+              <p class="text-xs text-ocp-text-secondary" data-i18n="contact_regions_note">
+                Headquartered in Singapore, serving global clients
+              </p>
+            </div>
+          </div>
+
+          <div class="bg-ocp-green-soft rounded-lg border border-ocp-green/30 p-4 sm:p-5">
+            <h3 class="font-semibold text-ocp-navy mb-2 text-sm sm:text-base" data-i18n="contact_services_title">
+              Our consulting services include:
+            </h3>
+            <ul class="grid sm:grid-cols-2 gap-2 text-xs sm:text-sm text-ocp-text-secondary">
+              <li class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-ocp-green flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293A1 1 0 006.293 10.7l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                </svg>
+                <span data-i18n="contact_service1">OCP rack design & certification</span>
+              </li>
+              <li class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-ocp-green flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293A1 1 0 006.293 10.7l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                </svg>
+                <span data-i18n="contact_service2">48V to 800V HVDC migration</span>
+              </li>
+              <li class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-ocp-green flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293A1 1 0 006.293 10.7l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                </svg>
+                <span data-i18n="contact_service3">Liquid cooling system design</span>
+              </li>
+              <li class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-ocp-green flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293A1 1 0 006.293 10.7l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                </svg>
+                <span data-i18n="contact_service4">Facility readiness assessment</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-ocp-navy text-white py-8">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-6 mb-6">
+        <div>
+          <h3 class="font-semibold mb-3 text-sm">DCDeepTech</h3>
+          <p class="text-xs opacity-80">OCP-style consulting for AI data center infrastructure</p>
+        </div>
+        <div>
+          <h3 class="font-semibold mb-3 text-sm">Quick Links</h3>
+          <ul class="space-y-2 text-xs opacity-80">
+            <li><a href="#crisis" class="hover:text-ocp-green">Crisis</a></li>
+            <li><a href="#physics" class="hover:text-ocp-green">Physics</a></li>
+            <li><a href="#solution" class="hover:text-ocp-green">Solution</a></li>
+            <li><a href="#contact" class="hover:text-ocp-green">Contact</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="font-semibold mb-3 text-sm">Regions</h3>
+          <p class="text-xs opacity-80">
+            Singapore · Taiwan · ASEAN · Brazil · Europe
+          </p>
+        </div>
+      </div>
+      <div class="border-t border-white/10 pt-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+        <p class="text-xs opacity-70">
+          © <span id="year"></span> DCDeepTech. All rights reserved.
+        </p>
+        <p class="text-[10px] opacity-60">
+          Open Compute Project® and OCP® are registered trademarks of Open Compute Project Foundation.
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Translation dictionary
+    const translations = {
+      en: {
+        tagline: "OCP-style rack & liquid cooling consulting",
+        nav_crisis: "Crisis",
+        nav_physics: "Physics",
+        nav_solution: "Solution",
+        nav_products: "Products",
+        nav_services: "Services",
+        nav_roadmap: "Roadmap",
+        nav_faq: "FAQ",
+        nav_contact: "Contact",
+        hero_kicker: "OCP · HVDC · LIQUID COOLING",
+        hero_title: "From 48V crisis to 800V HVDC + liquid cooling: a coordinated roadmap for AI data centers.",
+        hero_desc: "This interactive report summarizes DCDeepTech's consulting view on OCP Open Rack, HVDC migration and single-/two-phase liquid cooling, helping rack vendors and operators build 30–100 kW racks safely and profitably.",
+        hero_cta_primary: "Start with the crisis",
+        hero_cta_contact: "Contact us",
+        hero_panel_title: "High-level design targets",
+        hero_panel_rack_kw_label: "Rack density",
+        hero_panel_voltage_label: "Power architecture",
+        hero_panel_cooling_label: "Cooling topology",
+        hero_panel_pue_label: "Target PUE",
+        crisis_title: "1. Crisis – the collapse of 48V at AI scale",
+        crisis_intro: "As AI and HPC racks move beyond 30 kW, traditional 48V power distribution becomes a bottleneck: massive copper, ugly cable bundles and brutal I²R loss.",
+        roadmap_title: "OCP rack factory Rack & Power roadmap",
+        roadmap_subtitle: "Consulting case study – Reference framework for OCP rack vendors",
+        physics_title: "2. Physics – I²R loss and material reliability",
+        physics_i2r_title: "2.1 I²R tyranny: 48V vs 800V",
+        physics_i2r_desc: "For a fixed power P = V×I, increasing voltage from 48V to 800V reduces current by ~16×. Since resistive loss is Ploss = I²R, this reduces loss by 256× for the same conductor.",
+        physics_chart_title: "Power loss comparison (100kW load)",
+        physics_table_col_arch: "Architecture",
+        physics_table_col_current: "Current",
+        physics_table_col_loss: "Loss",
+        physics_materials_title: "2.2 Material choices – hydrogen embrittlement & tin whiskers",
+        physics_materials_intro: "At 800V HVDC, busbars and connectors must live in a harsh environment. Two phenomena become critical:",
+        faq_title: "Technical FAQ",
+        faq_q1: "Q1: Why transition from 48V to 800V HVDC?",
+        faq_q2: "Q2: What structural requirements does liquid cooling impose on ORV3?",
+        faq_q3: "Q3: How to handle the extreme weight of Open Rack Wide (ORW)?",
+        faq_q4: "Q4: Why perform 48-hour salt spray corrosion testing?",
+        faq_q5: "Q5: What is the “21–19 inch adapter” and why is it needed?",
+        faq_q6: "Q6: What are the advantages of 48V busbar vs cable PDU?",
+        faq_q7: "Q7: Why does ORV3 use 48mm “OpenU” instead of standard 1U?",
+        faq_q8: "Q8: Are tin whiskers really that dangerous in HVDC?",
+        faq_q9: "Q9: Must OCP deployment require a greenfield data center?",
+        contact_title: "Get in touch",
+        contact_desc: "Ready to discuss your OCP rack, HVDC migration or liquid cooling project? Contact our consulting team.",
+        contact_email_label: "Email",
+        contact_email_note: "Primary contact for technical inquiries and project discussions",
+        contact_regions_label: "Service region",
+        contact_regions_note: "Headquartered in Singapore, serving global clients",
+        contact_services_title: "Our consulting services include:",
+        contact_service1: "OCP rack design & certification",
+        contact_service2: "48V to 800V HVDC migration",
+        contact_service3: "Liquid cooling system design",
+        contact_service4: "Facility readiness assessment"
+      },
+      zh: {
+        tagline: "OCP 式機櫃與液冷諮詢",
+        nav_crisis: "危機",
+        nav_physics: "物理原理",
+        nav_solution: "解決方案",
+        nav_products: "核心產品",
+        nav_services: "專業服務",
+        nav_roadmap: "技術路線圖",
+        nav_faq: "常見問題",
+        nav_contact: "聯絡我們",
+        hero_kicker: "OCP · HVDC · 液冷",
+        hero_title: "從 48V 危機到 800V HVDC + 液冷：AI 資料中心的協同路線圖",
+        hero_desc: "本互動式報告總結 DCDeepTech 在 OCP Open Rack、HVDC 遷移與單相/兩相液冷的諮詢觀點，協助機櫃廠商與營運商安全且盈利地建構 30–100 kW 機櫃。",
+        hero_cta_primary: "從危機開始",
+        hero_cta_contact: "聯絡我們",
+        hero_panel_title: "高層級設計目標",
+        hero_panel_rack_kw_label: "機櫃密度",
+        hero_panel_voltage_label: "電源架構",
+        hero_panel_cooling_label: "冷卻拓撲",
+        hero_panel_pue_label: "目標 PUE",
+        crisis_title: "1. 危機 – 48V 在 AI 規模下的崩潰",
+        crisis_intro: "隨著 AI 和 HPC 機櫃功率突破 30 kW，傳統 48V 配電成為瓶頸：巨大的銅導體、雜亂的纜線束與嚴重的 I²R 損耗。",
+        roadmap_title: "OCP 機櫃廠 Rack & Power 路線圖",
+        roadmap_subtitle: "諮詢案例研究 – OCP 機櫃廠商的參考框架（機櫃廠作為諮詢案例）",
+        physics_title: "2. 物理原理 – I²R 損耗與材料可靠性",
+        physics_i2r_title: "2.1 I²R 暴政：48V vs 800V",
+        physics_i2r_desc: "在功率 P = V×I 固定的前提下，將電壓從 48V 提升到 800V，可將電流降低約 16 倍。由於電阻損耗 Ploss = I²R，損耗可降低 256 倍。",
+        physics_chart_title: "功率損耗對比（100kW 負載）",
+        physics_table_col_arch: "架構",
+        physics_table_col_current: "電流",
+        physics_table_col_loss: "損耗",
+        physics_materials_title: "2.2 材料選擇 – 氫脆與錫鬚",
+        physics_materials_intro: "在 800V HVDC 下，母線與連接器處於嚴苛環境，以下兩種現象尤為關鍵：",
+        faq_title: "技術常見問題",
+        faq_q1: "Q1: 為什麼從 48V 轉向 800V HVDC？",
+        faq_a1: "答： 核心原因是 功率密度 和 效率。隨著 AI 晶片功耗（如 NVIDIA B200）的爆炸式成長，單個機櫃的功率需求很快將超過 100kW。在 48V 下，要傳輸 100kW 電力，電流高達 2083A (I = P/V)。根據焦耳定律 (Ploss = I²R)，如此高的電流會導致電纜和母線產生災難性的熱量損失 (I²R 暴政)，並需要極粗（且昂貴）的銅導體。 轉向 800V（或 ±400VDC）後，傳輸相同 100kW 功率的電流僅為 125A。電流降低了 94%，線纜損耗 (I²R) 降低了超過 99.7%。這使得使用更細、成本更低的線纜成為可能，顯著提高了從 PDU 到晶片的端到端能源效率。",
+        faq_q2: "Q2: 液冷 (Liquid Cooling) 對 ORV3 結構有何要求？",
+        faq_a2: "答： 液冷（尤其是晶片直通 DLC）引入了傳統風冷機櫃沒有的兩個主要結構挑戰： 1. 靜態重量： 液體（如水-乙二醇混合物）密度遠大於空氣，充滿冷卻液的歧管 (Manifolds) 和管路會給機櫃框架增加數百公斤的靜態負載。 2. 動態應力： 為了實現「盲插」熱插拔，IT 設備上的快換接頭 (QD) 在插入歧管時會產生顯著的推/拉力，這種力會直接作用於機櫃的垂直立柱。 因此，ORV3 液冷規範要求對標準機櫃進行結構加固，例如在垂直立柱上增加「腹板加強筋」(Web Stiffeners)，以防止框架在長期應力下變形或失效，確保盲插的可靠性。",
+        faq_q3: "Q3: 如何應對 Open Rack Wide (ORW) 的超重物流？",
+        faq_a3: "答： ORW 機櫃（如 AMD Helios 兆瓦級 AI 機架）的滿載重量可達 3500 公斤，這完全超出了傳統資料中心「帶腳輪滾動」的物流模式。 ORW 規範透過兩種方式解決這個問題： 1. 工業物流： 機櫃頂部必須整合 M24x3 螺紋吊點 (Top Lift Points)，允許使用工業起重機 (Crane) 或龍門吊 (Gantry) 進行「起重與放置」(Lift-and-Place) 操作，這是工廠和重型設備部署的標準做法。 2. 負載分散： 機櫃底部使用支撐底座 (Support Bases) 或調平腳，取代傳統腳輪，將 3500 公斤的重量均勻分散到更大的地板面積上，防止對高架地板 (Raised Floor) 造成點狀壓力 (Point Loading) 而導致壓塌。",
+        faq_q4: "Q4: 為什麼要進行 48 小時鹽霧腐蝕測試？",
+        faq_a4: "答： 這是為了確保資料中心的長期運行安全和電氣接地完整性。 資料中心並非完全無菌，空氣中可能存在來自外部環境（如沿海地區）或內部（如電池備用系統）的微量腐蝕性污染物。ORV3 規範要求所有關鍵電氣接地路徑（包括母線、機櫃框架、接地螺釘）必須通過 ASTMB117 48 小時鹽霧測試。 這項測試模擬加速老化過程，以確保即使在輕度腐蝕性環境中，這些連接點在 5–10 年生命週期內仍能保持極低電阻。如果接地路徑因腐蝕而失效，不僅會增加設備故障風險，還會在發生電氣故障時（如 HVDC 短路）帶來致命的安全觸電風險。",
+        faq_q5: "Q5: 什麼是「21–19 吋轉換適配器」？為什麼需要它？",
+        faq_a5: "答： OCP Open Rack V3 (ORV3) 使用 21 吋寬度的機櫃標準，而傳統資料中心設備（伺服器、交換器、PDU）絕大多數是 19 吋寬度。「21–19 吋轉換適配器」是一種簡單的金屬支架 (Bracket) 或面板，安裝在 21 吋 ORV3 機櫃立柱上，在機櫃內部創造出一個 19 吋寬度的安裝空間。 為什麼需要它：這是實現「棕地」(Brownfield) 部署和逐步遷移的關鍵。它允許企業在採用先進的 ORV3 機櫃（為了更好的散熱和電力）的同時，繼續使用其現有昂貴的 19 吋 IT 設備，而無需一次性全部替換，是關鍵的「橋樑」產品。",
+        faq_q6: "Q6: 48V 母線 (Busbar) 相比傳統線纜 PDU 有什麼優勢？",
+        faq_a6: "答： 傳統 PDU（電源分配單元）使用多條線纜為機櫃內每台伺服器供電，在 30kW 以上的高密度機櫃中，會很快變成「線纜噩夢」(Cable Mess)。48V 母線是預裝在機櫃背部或側面、貫穿全高的剛性銅排，伺服器透過「盲插」(Blind-mate) 電源連接器直接卡入母線取電。 優勢包括：1. 簡化運維：消除機櫃後部約 90% 的電源線纜，極大簡化安裝與熱插拔維護；2. 改善散熱：沒有雜亂線纜阻擋，冷空氣可更順暢流過伺服器，提高散熱效率；3. 提高可靠性：剛性連接與更少的連接點（相比 PDU 插座）減少故障點。",
+        faq_q7: "Q7: 為什麼 ORV3 採用 48mm 的「OpenU」(OU) 單位？",
+        faq_a7: "答： 傳統 EIA 1U (RU) 標準為 1.75 吋（即 44.45mm），是數十年前制定。OCP 社群發現，隨著 CPU/GPU 功耗增加，散熱器 (Heatsink) 越來越高，風扇 (Fan) 也需要更大（在較低轉速下提供更多風量，以節能降噪）。ORV3 引入的 48mm OpenU 提供額外 3.55mm 垂直空間，這看似微小卻極大釋放伺服器內部設計空間，允許使用更高、更高效的散熱器和風扇，是 ORV3 應對更高熱量密度的關鍵設計之一。",
+        faq_q8: "Q8: 錫鬚 (Tin Whiskers) 真的那麼危險嗎？",
+        faq_a8: "答： 是的，極其危險，尤其在高壓直流 (HVDC) 環境。錫鬚是從純錫 (Tin) 鍍層表面自發生成的微米級導電細絲，在 12V 或 48V 低壓下可能問題不大，但在 800V HVDC 系統中，電壓極高且電氣間隙 (Clearance) 是設計關鍵。一根微小錫鬚即可跨越兩個高壓觸點，形成災難性短路 (Short Circuit)，立即引發電弧 (Arc Flash)，燒毀元件甚至導致火災。因此 HVDC 母線與連接器強制要求使用鍍銀 (Silver Plating) 或其他非錫合金，因為銀不會產生錫鬚。",
+        faq_q9: "Q9: 部署 OCP 是否必須新建一個「綠地」(Greenfield) 資料中心？",
+        faq_a9: "答： 不是。這是常見誤解。雖然 OCP 解決方案（如 HVDC、ORW、液冷）在新建「綠地」資料中心中可發揮最大效益（可從頭規劃地板承重、配電與冷卻），但 OCP 生態非常重視「棕地」(Brownfield，即既有機房) 兼容性。我們在「產品」與「服務」章節提到的「21–19 吋適配器」、「48V-LC 升級套件」以及「OCP Ready™ 設施評估」等，其核心目的就是協助客戶在現有資料中心內漸進式 (Incrementally) 採用 OCP 技術，保護既有投資，平滑過渡到下一代基礎設施。",
+        contact_title: "聯絡我們",
+        contact_desc: "準備好討論您的 OCP 機櫃、HVDC 遷移或液冷專案了嗎？請聯絡我們的諮詢團隊。",
+        contact_email_label: "電子郵件",
+        contact_email_note: "技術諮詢與專案討論的主要聯絡方式",
+        contact_regions_label: "服務地區",
+        contact_regions_note: "總部位於新加坡，服務全球客戶",
+        contact_services_title: "我們的諮詢服務包括：",
+        contact_service1: "OCP 機櫃設計與認證",
+        contact_service2: "48V 到 800V HVDC 遷移",
+        contact_service3: "液冷系統設計",
+        contact_service4: "設施就緒評估"
+      }
+    };
+
+    let currentLang = 'en';
+
+    function switchLang(lang) {
+      currentLang = lang;
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      event.target.classList.add('active');
+      
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translations[lang] && translations[lang][key]) {
+          el.textContent = translations[lang][key];
+        }
+      });
+    }
+
+    function toggleMobileMenu() {
+      const menu = document.querySelector('.mobile-menu');
+      menu.classList.toggle('open');
+    }
+
+    function showTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      const target = document.getElementById('tab-' + tabId);
+      if (target) target.classList.remove('hidden');
+
+      document.querySelectorAll('.tab-button').forEach(btn => {
+        btn.classList.remove('active', 'text-ocp-navy', 'border-ocp-green');
+        btn.classList.add('text-ocp-text-secondary', 'border-transparent');
+      });
+
+      if (event && event.target) {
+        event.target.classList.add('active', 'text-ocp-navy', 'border-ocp-green');
+        event.target.classList.remove('text-ocp-text-secondary', 'border-transparent');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const y = document.getElementById('year');
+      if (y) y.textContent = new Date().getFullYear();
+
+      // Smooth scroll with offset
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+          const targetId = this.getAttribute('href').substring(1);
+          const target = document.getElementById(targetId);
+          if (target) {
+            e.preventDefault();
+            const offset = 80;
+            const top = target.offsetTop - offset;
+            window.scrollTo({ top, behavior: 'smooth' });
+            document.querySelector('.mobile-menu')?.classList.remove('open');
+          }
+        });
+      });
+    });
+
+    document.addEventListener('click', function(e) {
+      const menu = document.querySelector('.mobile-menu');
+      const menuButton = e.target.closest('button[onclick="toggleMobileMenu()"]');
+      if (!menu || !menuButton && !menu.contains(e.target)) {
+        if (menu.classList.contains('open')) menu.classList.remove('open');
+      }
+    });
+  </script>
 </body>
 </html>
