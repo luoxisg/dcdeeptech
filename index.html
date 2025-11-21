@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -96,9 +96,9 @@
       <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
           <div class="flex items-center gap-3">
-            <div class="w-8 h-8 rounded-lg bg-ocp-navy text-white flex items-center justify-center text-xs font-semibold">
-              DC
-            </div>
+            <!-- Logo Replacement Start -->
+            <img src="image_d520be.png" alt="DCDeepTech Logo" class="w-8 h-8 rounded-lg object-contain bg-white">
+            <!-- Logo Replacement End -->
             <div>
               <div class="text-sm font-semibold tracking-wide text-ocp-navy">DCDeepTech</div>
               <div class="text-xs text-ocp-text-secondary">
@@ -835,7 +835,7 @@
             </p>
             <h1 class="text-3xl sm:text-4xl lg:text-5xl font-semibold text-ocp-navy leading-tight mb-4">
               30–100&nbsp;kW AI / HPC 機櫃<br class="hidden sm:block" />
-              液冷產品與方案一頁版。
+              液冷產品與方案一頁版
             </h1>
             <p class="text-sm sm:text-base text-ocp-text-secondary mb-4">
               本一頁簡報總結 DCDeepTech 對
@@ -1215,7 +1215,7 @@
                 <p class="text-xs sm:text-sm text-ocp-text-secondary space-y-2">
                   <span class="font-semibold block">答： 核心原因是 功率密度 和 效率。</span>
                   隨著 AI 晶片功耗（如 NVIDIA B200）的爆炸式增長，單個機櫃的功率需求很快將超過 100kW。
-                  在 48V 下，要傳輸 100kW 電力，電流高達 2083A ($I = P/V$)。根據焦耳定律 ($P_{loss} = I^2R$)，如此高的電流會導致電纜和母線產生災難性的熱量損失 (I²R 暴政)，並需要極粗（且昂貴）的銅導體。
+                  在 48V 下，要傳輸 100kW 電力，電流高達 2083A ($I = P/V$). 根據焦耳定律 ($P_{loss} = I^2R$)，如此高的電流會導致電纜和母線產生災難性的熱量損失 (I²R 暴政)，並需要極粗（且昂貴）的銅導體。
                   <br><br>
                   轉向 800V (或 +/- 400VDC) 後，傳輸相同 100kW 功率的電流僅為 125A。電流降低了 94%，線纜損耗 (I²R) 降低了超過 99.7%。這使得使用更細、成本更低的線纜成為可能，顯著提高了從 PDU 到晶片的端到端能源效率。
                 </p>
@@ -1571,5 +1571,3 @@
   </script>
 </body>
 </html>
-
-
