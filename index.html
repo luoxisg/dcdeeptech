@@ -71,7 +71,16 @@
         
         <!-- Logo -->
         <div class="flex items-center gap-3 cursor-pointer" onclick="scrollToSection('overview')">
-          <img src="https://raw.githubusercontent.com/luoxisg/dcdeeptech/main/image/DCdeeptech_logo-removebg-preview.png" alt="DCDeepTech Logo" class="h-9 w-auto object-contain">
+          <!-- Logo Image with Fallback -->
+          <!-- 如果你的 Repo 是私有的，这里的链接可能失效。建议改为本地路径 ./image/xxx.png -->
+          <img src="https://raw.githubusercontent.com/luoxisg/dcdeeptech/main/image/DCdeeptech_logo-removebg-preview.png" 
+               alt="DCDeepTech Logo" 
+               class="h-9 w-auto object-contain"
+               onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');">
+          
+          <!-- Fallback Text Logo (Hidden by default, shows if img fails) -->
+          <div class="hidden text-xl font-bold text-ocp-navy tracking-tight">DCDeepTech</div>
+
           <div class="hidden sm:block leading-tight">
             <div class="text-sm font-bold text-ocp-navy tracking-tight">DCDeepTech</div>
             <div class="text-[10px] font-medium text-ocp-text-secondary uppercase tracking-wider">OCP Rack & Liquid Cooling</div>
@@ -235,7 +244,11 @@
 
         <div class="grid md:grid-cols-2 gap-8 mb-12">
           <div class="bg-slate-50 rounded-2xl border border-slate-200 p-2">
-             <img src="https://raw.githubusercontent.com/luoxisg/dcdeeptech/main/image/coolingpic.png" alt="Cooling Loop Diagram" class="w-full rounded-xl mb-3">
+             <!-- REPLACED IMAGE: coolingpic.png -> Unsplash Placeholder -->
+             <!-- Replace src below with "./image/coolingpic.png" if file is local -->
+             <img src="https://images.unsplash.com/photo-1563770095-39d4605e98cb?auto=format&fit=crop&q=80&w=800" 
+                  alt="Cooling Loop Diagram Placeholder" 
+                  class="w-full rounded-xl mb-3 object-cover h-64">
              <p class="px-2 text-xs text-slate-500">Cooling tower/Chiller (FWS) couples with Rack Loop (TCS) via CDU.</p>
           </div>
           <div class="space-y-6">
@@ -253,7 +266,11 @@
 
         <div class="grid md:grid-cols-2 gap-8 items-center">
           <div class="bg-slate-50 rounded-2xl border border-slate-200 p-2">
-            <img src="https://raw.githubusercontent.com/luoxisg/dcdeeptech/main/image/IMM.png" alt="Immersion Cooling" class="w-full rounded-xl mb-3">
+            <!-- REPLACED IMAGE: IMM.png -> Unsplash Placeholder -->
+            <!-- Replace src below with "./image/IMM.png" if file is local -->
+            <img src="https://images.unsplash.com/photo-1661347564839-12a344310905?q=80&w=800&auto=format&fit=crop" 
+                 alt="Immersion Cooling Placeholder" 
+                 class="w-full rounded-xl mb-3 object-cover h-64">
             <p class="px-2 text-xs text-slate-500">OCP-inspired dielectric fluids for immersion.</p>
           </div>
           <div class="bg-emerald-50 rounded-xl p-6 border border-emerald-100">
@@ -665,7 +682,10 @@
 
         <div class="grid md:grid-cols-2 gap-8 mb-12">
           <div class="bg-slate-50 rounded-2xl border border-slate-200 p-2">
-             <img src="https://raw.githubusercontent.com/luoxisg/dcdeeptech/main/image/coolingpic.png" alt="Cooling Loop" class="w-full rounded-xl mb-3">
+             <!-- REPLACED IMAGE: coolingpic.png -> Unsplash Placeholder -->
+             <img src="https://images.unsplash.com/photo-1563770095-39d4605e98cb?auto=format&fit=crop&q=80&w=800" 
+                  alt="Cooling Loop" 
+                  class="w-full rounded-xl mb-3 object-cover h-64">
              <p class="px-2 text-xs text-slate-500">FWS 與 TCS 透過 CDU 進行熱交換。</p>
           </div>
           <div class="space-y-6">
@@ -683,7 +703,10 @@
 
         <div class="grid md:grid-cols-2 gap-8 items-center">
           <div class="bg-slate-50 rounded-2xl border border-slate-200 p-2">
-            <img src="https://raw.githubusercontent.com/luoxisg/dcdeeptech/main/image/IMM.png" alt="Immersion" class="w-full rounded-xl mb-3">
+            <!-- REPLACED IMAGE: IMM.png -> Unsplash Placeholder -->
+            <img src="https://images.unsplash.com/photo-1661347564839-12a344310905?q=80&w=800&auto=format&fit=crop" 
+                 alt="Immersion" 
+                 class="w-full rounded-xl mb-3 object-cover h-64">
             <p class="px-2 text-xs text-slate-500">OCP Inspired 介電浸沒液。</p>
           </div>
           <div class="bg-emerald-50 rounded-xl p-6 border border-emerald-100">
