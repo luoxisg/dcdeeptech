@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="description" content="DCDeepTech provides OCP-style rack and liquid cooling (DLC, RDHx, immersion) consulting for AI/HPC data centers, helping operators move from 48V crisis to 30–100 kW liquid-cooled racks safely and profitably." />
-  <meta name="keywords" content="DCDeepTech, liquid cooling, DLC, RDHx, immersion cooling, CDU, OCP rack, ORV3, AI data center, HPC cooling, Singapore, Taiwan, ASEAN, Brazil, 800V HVDC" />
+  <meta name="keywords" content="DCDeepTech, liquid cooling, DLC, RDHx, immersion cooling, CDU, OCP rack, ORV3, AI data center, HPC cooling, Singapore, Taiwan, ASEAN, Brazil, 800V HVDC, SST, Flywheel" />
   <meta name="author" content="DCDeepTech" />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://dcdeeptech.com/liquid-cooling" />
@@ -22,18 +22,20 @@
       theme: {
         extend: {
           colors: {
-            'ocp-navy': '#071E3D',
-            'ocp-green': '#2ECC71',
-            'ocp-green-soft': '#E6F8EF',
-            'ocp-bg': '#F4F7FB',
-            'ocp-border': '#D4DFEE',
+            // Updated OCP Palette based on general branding
+            'ocp-navy': '#012169', // Deep Blue
+            'ocp-green': '#65C23C', // OCP Signature Green (from image)
+            'ocp-green-dark': '#488D2D',
+            'ocp-green-soft': '#E9F5E3',
+            'ocp-bg': '#F8F8F8', // Slightly off-white background
+            'ocp-border': '#DDDDDD',
             'ocp-text-secondary': '#4B5563'
           },
           borderRadius: {
             'ocp': '1.25rem'
           },
           boxShadow: {
-            'ocp': '0 18px 45px rgba(15, 23, 42, 0.15)'
+            'ocp': '0 10px 30px rgba(1, 33, 105, 0.1)'
           },
           animation: {
             'flow': 'flow 1s linear infinite',
@@ -52,12 +54,12 @@
   <style>
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background-color: #F4F7FB;
+      background-color: #F8F8F8; /* ocp-bg */
       color: #111827;
       overflow-x: hidden;
     }
     .lang-toggle-active {
-      background-color: #071E3D;
+      background-color: #012169; /* ocp-navy */
       color: #FFFFFF;
     }
     .faq-icon {
@@ -81,7 +83,7 @@
     /* --- Interactive Simulator Styles --- */
     .sim-container {
       background: #fff;
-      border: 1px solid #D4DFEE;
+      border: 1px solid #DDDDDD; /* ocp-border */
       border-radius: 1.25rem;
       padding: 1.5rem;
       position: relative;
@@ -118,27 +120,56 @@
     
     /* State: 800V (Good) */
     .state-800v .cable-visual {
-      background-color: #2ECC71;
+      background-color: #65C23C; /* ocp-green */
       width: 15%;
-      box-shadow: 0 0 10px rgba(46, 204, 113, 0.4);
+      box-shadow: 0 0 10px rgba(101, 194, 60, 0.4);
       animation: flow 1s linear infinite;
     }
-    .state-800v .sim-value { color: #2ECC71; }
+    .state-800v .sim-value { color: #65C23C; }
 
     /* Buttons */
     .active-btn {
-      background-color: #071E3D;
+      background-color: #012169; /* ocp-navy */
       color: white;
     }
     .inactive-btn {
-      background-color: #F4F7FB;
+      background-color: #F8F8F8; /* ocp-bg */
       color: #4B5563;
-      border: 1px solid #D4DFEE;
+      border: 1px solid #DDDDDD;
     }
     .contact-card-hover:hover {
       transform: translateY(-2px);
-      border-color: #2ECC71;
+      border-color: #65C23C; /* ocp-green */
       transition: all 0.2s ease;
+    }
+    
+    /* --- NEW/ENHANCED DESKTOP NAVIGATION STYLE --- */
+    .nav-btn {
+        transition: all 0.2s ease;
+        padding-top: 1.25rem;
+        padding-bottom: 1.25rem;
+        font-weight: 700;
+        font-size: 1rem;
+        letter-spacing: 0.025em;
+        border-bottom: 3px solid transparent;
+        position: relative;
+    }
+    .nav-btn:hover {
+        color: #012169; /* ocp-navy */
+        border-bottom: 3px solid #E9F5E3; /* ocp-green-soft */
+        background-color: #fcfcfc;
+    }
+    /* Active state styling for prominent menu item */
+    .nav-btn.is-active {
+        color: #012169 !important; /* Force navy text */
+        border-bottom: 3px solid #65C23C; /* Green border for active */
+        background-color: #F8F8F8; /* Subtle background for active (ocp-bg) */
+        box-shadow: inset 0 -5px 10px -5px rgba(0, 0, 0, 0.05);
+    }
+    .contact-button.is-active {
+        /* Keep contact button styling distinct */
+        background-color: #65C23C !important; /* ocp-green */
+        color: white !important;
     }
   </style>
 </head>
@@ -146,35 +177,46 @@
   <div class="min-h-screen flex flex-col">
     
     <!-- HEADER -->
-    <header class="bg-white shadow-sm sticky top-0 z-40 transition-all duration-300" id="main-header">
+    <header class="bg-white shadow-lg sticky top-0 z-40 transition-all duration-300" id="main-header">
       <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
           <div class="flex items-center gap-3">
+            <!-- Logo - ONLY RETAIN IMAGE -->
             <img src="https://raw.githubusercontent.com/luoxisg/dcdeeptech/main/image/DCdeeptech_logo-removebg-preview.png" alt="DCDeepTech Logo" class="h-8 sm:h-10 w-auto object-contain">
-            <div>
-              <div class="text-sm font-semibold tracking-wide text-ocp-navy">DCDeepTech</div>
-              <div class="text-xs text-ocp-text-secondary">OCP-style rack &amp; liquid cooling consulting</div>
-            </div>
           </div>
 
-          <!-- Desktop Nav -->
-          <nav class="hidden lg:flex items-center gap-4 text-xs sm:text-sm font-medium">
-            <button class="hover:text-ocp-green text-ocp-text-secondary transition-colors" onclick="scrollToSection('overview')">Overview</button>
-            <a href="https://dcdeeptech.com/showroom" target="_blank" class="text-ocp-green hover:text-ocp-navy transition-colors flex items-center gap-1 font-bold">
-              <i class="fa-solid fa-vr-cardboard"></i> Showroom
-            </a>
-            <button class="hover:text-ocp-green text-ocp-text-secondary transition-colors" onclick="scrollToSection('system')">Cooling loop</button>
-            <button class="hover:text-ocp-green text-ocp-text-secondary transition-colors" onclick="scrollToSection('options')">Options</button>
-            <button class="hover:text-ocp-green text-ocp-text-secondary transition-colors" onclick="scrollToSection('products')">Products</button>
-            <button class="hover:text-ocp-green text-ocp-text-secondary transition-colors" onclick="scrollToSection('downloads')">Downloads</button>
-            <button class="hover:text-ocp-green text-ocp-text-secondary transition-colors" onclick="scrollToSection('faq')">FAQ</button>
-            <button class="px-4 py-1.5 rounded-full bg-ocp-navy text-white hover:bg-opacity-90 transition-all shadow-md" onclick="scrollToSection('contact')">Contact</button>
+          <!-- Desktop Nav with New Top-Level Menu Structure -->
+          <nav class="hidden lg:flex items-stretch gap-0 text-sm font-medium h-16">
+            
+            <!-- Rack and Power -->
+            <button onclick="scrollToSection('rack-power-content')" data-menu-id="rack-power-content" class="nav-btn text-ocp-text-secondary hover:text-ocp-navy transition-colors">
+                Rack and Power
+            </button>
+
+            <!-- Cooling -->
+            <button onclick="scrollToSection('cooling-content')" data-menu-id="cooling-content" class="nav-btn text-ocp-text-secondary hover:text-ocp-navy transition-colors">
+                Cooling
+            </button>
+
+            <!-- Fiber / Connectivity -->
+            <button onclick="scrollToSection('fiber-content')" data-menu-id="fiber-content" class="nav-btn text-ocp-text-secondary hover:text-ocp-navy transition-colors">
+                Fiber / Connectivity
+            </button>
+            
+            <!-- Downloads (New Combined Section) -->
+            <button onclick="scrollToSection('downloads-content')" data-menu-id="downloads-content" class="nav-btn text-ocp-text-secondary hover:text-ocp-navy transition-colors">
+                Downloads
+            </button>
+
+
+            <!-- Contact Button -->
+            <button class="contact-button px-4 py-1.5 rounded-full bg-ocp-navy text-white hover:bg-opacity-90 transition-all shadow-md ml-8 self-center" onclick="scrollToSection('contact')">Contact Us</button>
           </nav>
 
           <!-- Language & Mobile Toggle -->
           <div class="flex items-center gap-2 text-xs">
             <button id="btn-en" class="px-3 py-1 rounded-full border border-ocp-border lang-toggle-active transition-all" onclick="setLanguage('en')">EN</button>
-            <button id="btn-zh" class="px-3 py-1 rounded-full border border-ocp-border transition-all" onclick="setLanguage('zh')">繁體</button>
+            <button id="btn-zh" class="px-3 py-1 rounded-full border border-ocp-border transition-all" onclick="setLanguage('zh')">正體</button>
             <button id="mobile-menu-button" class="lg:hidden ml-2 p-1 text-ocp-navy" onclick="toggleMobileMenu()">
               <i class="fa-solid fa-bars text-xl"></i>
             </button>
@@ -182,855 +224,1271 @@
         </div>
       </div>
       
-      <!-- Mobile Menu -->
-      <div id="mobile-menu" class="hidden opacity-0 -translate-y-2 lg:hidden bg-white shadow-lg absolute top-16 left-0 w-full z-30 border-t border-ocp-border">
-        <div class="flex flex-col gap-1 px-4 py-4">
-          <a href="https://dcdeeptech.com/showroom" target="_blank" class="block w-full text-left px-3 py-2 rounded-lg bg-ocp-green-soft text-ocp-green font-bold">
-            <i class="fa-solid fa-vr-cardboard mr-2"></i> Digital Showroom
-          </a>
-          <button class="block w-full text-left px-3 py-2 rounded-lg hover:bg-ocp-bg text-ocp-navy" onclick="scrollToSection('overview')">Overview</button>
-          <button class="block w-full text-left px-3 py-2 rounded-lg hover:bg-ocp-bg text-ocp-navy" onclick="scrollToSection('system')">Cooling loop</button>
-          <button class="block w-full text-left px-3 py-2 rounded-lg hover:bg-ocp-bg text-ocp-navy" onclick="scrollToSection('options')">Options</button>
-          <button class="block w-full text-left px-3 py-2 rounded-lg hover:bg-ocp-bg text-ocp-navy" onclick="scrollToSection('products')">Products</button>
-          <button class="block w-full text-left px-3 py-2 rounded-lg hover:bg-ocp-bg text-ocp-navy" onclick="scrollToSection('downloads')">Downloads</button>
-          <button class="block w-full text-left px-3 py-2 rounded-lg hover:bg-ocp-bg text-ocp-navy" onclick="scrollToSection('faq')">FAQ</button>
-          <button class="block w-full text-left px-3 py-2 rounded-lg hover:bg-ocp-bg text-ocp-navy font-semibold" onclick="scrollToSection('contact')">Contact</button>
+      <!-- Mobile Menu (Optimized for prominence and touch target) -->
+      <div id="mobile-menu" class="hidden opacity-0 -translate-y-2 lg:hidden bg-ocp-bg shadow-2xl absolute top-16 left-0 w-full z-30 border-t border-ocp-border p-4">
+        <div class="flex flex-col gap-3">
+          <!-- Rack and Power -->
+          <button class="mobile-nav-btn block w-full text-left px-4 py-3 rounded-xl bg-white text-ocp-navy font-bold text-base shadow-lg border border-ocp-border hover:bg-ocp-green-soft transition-all" onclick="scrollToSection('rack-power-content')">
+              <i class="fa-solid fa-server mr-3 text-ocp-navy"></i> Rack and Power
+          </button>
+          <!-- Cooling -->
+          <button class="mobile-nav-btn block w-full text-left px-4 py-3 rounded-xl bg-white text-ocp-navy font-bold text-base shadow-lg border border-ocp-border hover:bg-ocp-green-soft transition-all" onclick="scrollToSection('cooling-content')">
+              <i class="fa-solid fa-snowflake mr-3 text-blue-500"></i> Cooling
+          </button>
+          <!-- Fiber / Connectivity -->
+          <button class="mobile-nav-btn block w-full text-left px-4 py-3 rounded-xl bg-white text-ocp-navy font-bold text-base shadow-lg border border-ocp-border hover:bg-ocp-green-soft transition-all" onclick="scrollToSection('fiber-content')">
+              <i class="fa-solid fa-wave-square mr-3 text-purple-600"></i> Fiber / Connectivity
+          </button>
+          <!-- Downloads -->
+          <button class="mobile-nav-btn block w-full text-left px-4 py-3 rounded-xl bg-white text-ocp-navy font-bold text-base shadow-lg border border-ocp-border hover:bg-ocp-green-soft transition-all" onclick="scrollToSection('downloads-content')">
+              <i class="fa-solid fa-download mr-3 text-ocp-green"></i> Downloads
+          </button>
+          <!-- Contact -->
+          <button class="block w-full text-center px-4 py-3 rounded-full bg-ocp-green text-white font-semibold mt-4 shadow-xl hover:bg-ocp-navy transition-all" onclick="scrollToSection('contact')">
+            <i class="fa-solid fa-comments mr-2"></i> Contact Team
+          </button>
         </div>
       </div>
     </header>
 
-    <!-- =========================== ENGLISH CONTENT =========================== -->
-    <main id="page-en" class="flex-1 lang-page">
-      <section data-section="overview" class="bg-gradient-to-b from-white to-ocp-bg py-10 sm:py-16">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-[1.2fr,1fr] gap-10 items-start">
-          
-          <!-- Left Column: Text & Simulator -->
-          <div class="reveal">
-            <p class="text-xs font-semibold tracking-[0.2em] text-ocp-green uppercase mb-3">
-              OCP · 48V → 800V HVDC · Liquid Cooling
-            </p>
-            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-semibold text-ocp-navy leading-tight mb-4">
-              Liquid cooling blueprint<br class="hidden sm:block" />
-              for 30–100&nbsp;kW AI/HPC racks.
-            </h1>
-            <p class="text-sm sm:text-base text-ocp-text-secondary mb-4 leading-relaxed">
-              This one-page brief summarizes DCDeepTech’s consulting view on
-              <span class="font-semibold text-ocp-navy">rack-level liquid cooling</span> for AI/HPC:
-              how to connect cooling towers, chillers, CDUs and racks; how to choose between
-              <span class="font-semibold text-ocp-navy">DLC, RDHx and immersion</span>; and how to turn
-              OCP-style designs into reliable 30–100&nbsp;kW liquid-cooled racks.
-            </p>
-            <div class="flex flex-wrap gap-3 mb-8">
-              <button onclick="scrollToSection('system')" class="inline-flex items-center px-5 py-2.5 rounded-full bg-ocp-navy text-white text-sm shadow-ocp hover:bg-opacity-90 transition-all transform hover:scale-105">
-                View cooling loop diagram
-              </button>
-              <button onclick="scrollToSection('contact')" class="inline-flex items-center px-5 py-2.5 rounded-full border border-ocp-navy text-ocp-navy text-sm hover:bg-ocp-bg transition-all">
-                Talk to our team
-              </button>
+    <!-- =========================== PAGE CONTENT WRAPPER =========================== -->
+    <div id="page-content" class="pt-8 pb-8"> 
+
+      <!-- ======================================================================= -->
+      <!-- SECTION 1: RACK AND POWER -->
+      <!-- ======================================================================= -->
+      <section id="rack-power-content" data-section="rack-power-content" class="pt-10 sm:pt-16">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl sm:text-4xl font-bold text-ocp-navy mb-8 text-center border-b pb-4">
+                Rack and Power
+            </h2>
+        </div>
+        
+        <!-- ENGLISH CONTENT - RACK & POWER SEGMENT -->
+        <main id="page-en" class="flex-1 lang-page">
+          <section data-section="overview" class="bg-gradient-to-b from-white to-ocp-bg py-10 sm:py-16">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-[1.2fr,1fr] gap-10 items-start">
+              
+              <!-- Left Column: Text & CTA -->
+              <div class="reveal">
+                <p class="text-xs font-semibold tracking-[0.2em] text-ocp-green uppercase mb-3">
+                  OCP · 48V → 800V HVDC · Liquid Cooling
+                </p>
+                <h1 class="text-3xl sm:text-4xl lg:text-5xl font-semibold text-ocp-navy leading-tight mb-4">
+                  Liquid cooling blueprint<br class="hidden sm:block" />
+                  for 30–100&nbsp;kW AI/HPC racks.
+                </h1>
+                <p class="text-sm sm:text-base text-ocp-text-secondary mb-4 leading-relaxed">
+                  This one-page brief summarizes DCDeepTech’s consulting view on
+                  <span class="font-semibold text-ocp-navy">rack-level liquid cooling</span> for AI/HPC:
+                  how to connect cooling towers, chillers, CDUs and racks; how to choose between
+                  <span class="font-semibold text-ocp-navy">DLC, RDHx and immersion</span>; and how to turn
+                  OCP-style designs into reliable 30–100&nbsp;kW liquid-cooled racks.
+                </p>
+                <div class="flex flex-wrap gap-3 mb-8">
+                  <button onclick="scrollToSection('cooling-content')" class="inline-flex items-center px-5 py-2.5 rounded-full bg-ocp-navy text-white text-sm shadow-ocp hover:bg-opacity-90 transition-all transform hover:scale-105">
+                    View cooling loop diagram
+                  </button>
+                  <button onclick="scrollToSection('contact')" class="inline-flex items-center px-5 py-2.5 rounded-full border border-ocp-navy text-ocp-navy text-sm hover:bg-ocp-bg transition-all">
+                    Talk to our team
+                  </button>
+                </div>
+              </div>
+
+              <!-- Right Column: Stats & FAQ Preview -->
+              <div class="space-y-5 reveal delay-200">
+                <div class="grid grid-cols-2 gap-3">
+                  <div class="bg-white rounded-xl border border-ocp-border p-4 shadow-sm">
+                    <div class="text-[0.65rem] text-ocp-text-secondary uppercase mb-1">Rack density</div>
+                    <div class="font-bold text-ocp-navy text-lg">30–100&nbsp;kW</div>
+                  </div>
+                  <div class="bg-white rounded-xl border border-ocp-border p-4 shadow-sm">
+                    <div class="text-[0.65rem] text-ocp-text-secondary uppercase mb-1">Power Arch</div>
+                    <div class="font-bold text-ocp-navy text-lg">800V HVDC</div>
+                  </div>
+                  <div class="bg-white rounded-xl border border-ocp-border p-4 shadow-sm">
+                    <div class="text-[0.65rem] text-ocp-text-secondary uppercase mb-1">Cooling</div>
+                    <div class="font-bold text-ocp-navy text-lg">DLC / RDHx</div>
+                  </div>
+                  <div class="bg-white rounded-xl border border-ocp-border p-4 shadow-sm">
+                    <div class="text-[0.65rem] text-ocp-text-secondary uppercase mb-1">Target PUE</div>
+                    <div class="font-bold text-ocp-navy text-lg text-ocp-green">&lt; 1.15</div>
+                  </div>
+                </div>
+
+                <div class="bg-white rounded-ocp border border-ocp-border shadow-ocp p-6">
+                  <div class="text-[0.65rem] uppercase tracking-[0.2em] text-ocp-text-secondary mb-3">
+                    Typical questions we answer
+                  </div>
+                  <ul class="space-y-2 text-sm text-ocp-text-secondary">
+                    <li class="flex items-start gap-2"><i class="fa-solid fa-check text-ocp-green mt-1"></i><span>How do I connect my racks to the building chiller loop?</span></li>
+                    <li class="flex items-start gap-2"><i class="fa-solid fa-check text-ocp-green mt-1"></i><span>When should I use DLC vs RDHx vs immersion?</span></li>
+                    <li class="flex items-start gap-2"><i class="fa-solid fa-check text-ocp-green mt-1"></i><span>What does a “good” CDU and manifold design look like?</span></li>
+                    <li class="flex items-start gap-2"><i class="fa-solid fa-check text-ocp-green mt-1"></i><span>How do we monitor, alarm and maintain the liquid loop safely?</span></li>
+                  </ul>
+                </div>
+              </div>
+
+              <!-- *** INTERACTIVE SIMULATOR (EN) - Moved below side content for mobile flow *** -->
+              <div class="lg:col-span-2 sim-container shadow-ocp reveal delay-100 state-48v mt-10" id="sim-en">
+                <div class="flex justify-between items-center mb-4">
+                  <h3 class="font-semibold text-ocp-navy flex items-center gap-2">
+                    <i class="fa-solid fa-bolt text-ocp-green"></i> Energy Architecture Simulator
+                  </h3>
+                  <div class="flex gap-2 bg-ocp-bg p-1 rounded-lg">
+                    <button class="text-xs px-3 py-1 rounded-md font-semibold transition-colors active-btn" id="btn-48v-en" onclick="toggleSimulator('en', '48v')">48V Legacy</button>
+                    <button class="text-xs px-3 py-1 rounded-md font-semibold transition-colors inactive-btn" id="btn-800v-en" onclick="toggleSimulator('en', '800v')">800V HVDC</button>
+                  </div>
+                </div>
+                
+                <!-- Visual Area -->
+                <div class="relative bg-gray-50 rounded-lg p-4 border border-gray-200 min-h-[140px] flex flex-col justify-center">
+                  <div class="text-xs text-gray-400 absolute top-2 left-2 uppercase tracking-wider">Conductor Cross-Section</div>
+                  
+                  <div class="flex items-center gap-4">
+                      <div class="flex-1">
+                        <!-- The Animated Cable -->
+                        <div class="cable-visual shadow-lg">
+                          <span class="z-10 relative text-white/90 text-xs uppercase tracking-widest">Copper Busbar</span>
+                        </div>
+                      </div>
+                      <div class="w-32 text-right">
+                        <div class="text-xs text-gray-500">Current (Amps)</div>
+                        <div class="text-2xl font-bold font-mono text-ocp-navy sim-amps">2083 A</div>
+                      </div>
+                  </div>
+
+                  <!-- Warning/Success Message -->
+                  <div class="mt-3 flex items-center gap-2 text-xs font-bold sim-status text-red-600">
+                      <i class="fa-solid fa-triangle-exclamation"></i>
+                      <span>Critical I²R Heat Loss (Tyranny of Copper)</span>
+                  </div>
+                </div>
+
+                <!-- Metrics Grid -->
+                <div class="grid grid-cols-3 gap-4 mt-4 text-center text-xs">
+                  <div class="bg-gray-50 p-2 rounded border border-gray-100">
+                      <div class="text-gray-400 mb-1">Rack Power</div>
+                      <div class="font-bold text-ocp-navy">100,000 W</div>
+                  </div>
+                  <div class="bg-gray-50 p-2 rounded border border-gray-100">
+                      <div class="text-gray-400 mb-1">Line Loss</div>
+                      <div class="font-bold sim-loss text-red-600">EXTREME</div>
+                  </div>
+                  <div class="bg-gray-50 p-2 rounded border border-gray-100">
+                      <div class="text-gray-400 mb-1">Efficiency</div>
+                      <div class="font-bold sim-eff text-red-600">Low</div>
+                  </div>
+                </div>
+              </div>
+              <!-- *** END SIMULATOR *** -->
+
             </div>
-            
-            <!-- *** INTERACTIVE SIMULATOR (EN) *** -->
-            <div class="sim-container shadow-ocp reveal delay-100 state-48v" id="sim-en">
-              <div class="flex justify-between items-center mb-4">
-                <h3 class="font-semibold text-ocp-navy flex items-center gap-2">
-                  <i class="fa-solid fa-bolt text-ocp-green"></i> Energy Architecture Simulator
-                </h3>
-                <div class="flex gap-2 bg-ocp-bg p-1 rounded-lg">
-                  <button class="text-xs px-3 py-1 rounded-md font-semibold transition-colors active-btn" id="btn-48v-en" onclick="toggleSimulator('en', '48v')">48V Legacy</button>
-                  <button class="text-xs px-3 py-1 rounded-md font-semibold transition-colors inactive-btn" id="btn-800v-en" onclick="toggleSimulator('en', '800v')">800V HVDC</button>
+          </section>
+          
+          <!-- NEW SST + FLYWHEEL SECTION (EN) -->
+          <section data-section="power-solutions" class="py-10 sm:py-16 bg-white">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+              <h2 class="text-2xl sm:text-3xl font-semibold text-ocp-navy mb-3 reveal">Advanced Power Solutions: SST + Flywheel</h2>
+              <p class="text-sm text-ocp-text-secondary mb-6 reveal">Integrated Solid State Transformer (SST) and Flywheel Energy Storage for unparalleled efficiency and dynamic response in AI/HPC data centers.</p>
+              
+              <div class="grid md:grid-cols-3 gap-6 text-sm reveal delay-100">
+                <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-5">
+                  <h3 class="font-semibold text-ocp-navy mb-2 flex items-center gap-2"><i class="fa-solid fa-bolt-lightning text-yellow-600"></i> SST: High-Efficiency Power Conversion</h3>
+                  <ul class="list-disc list-inside text-xs text-ocp-text-secondary space-y-1">
+                    <li>High-frequency power electronics (SiC-based).</li>
+                    <li>End-to-end efficiency up to 99\%.</li>
+                    <li>Bi-directional energy flow and deep power quality control.</li>
+                  </ul>
+                </div>
+                <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-5">
+                  <h3 class="font-semibold text-ocp-navy mb-2 flex items-center gap-2"><i class="fa-solid fa-infinity text-blue-500"></i> Flywheel: Instant, Safe, Long-Life UPS</h3>
+                  <ul class="list-disc list-inside text-xs text-ocp-text-secondary space-y-1">
+                    <li>Microsecond to millisecond response speed.</li>
+                    <li>Inherently safe, no thermal runaway risk.</li>
+                    <li>Ultra-long life (>20 years) with infinite cycle count.</li>
+                    <li>Strong environmental tolerance (unaffected by heat/humidity).</li>
+                  </ul>
+                </div>
+                <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-5">
+                  <h3 class="font-semibold text-ocp-navy mb-2 flex items-center gap-2"><i class="fa-solid fa-fire-extinguisher text-ocp-green"></i> System Advantages for AI Clusters</h3>
+                  <ul class="list-disc list-inside text-xs text-ocp-text-secondary space-y-1">
+                    <li>Ultra-fast dynamic regulation for AI/GPU transient load.</li>
+                    <li>High power density (800-2800kW impact tolerance).</li>
+                    <li>PUE reduction: Overall system efficiency up to 99\%.</li>
+                    <li>Green and sustainable: No chemical batteries required.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </section>
+          <!-- END NEW SST + FLYWHEEL SECTION -->
+
+
+          <!-- SHOWROOM SECTION (EN) -->
+          <section data-section="showroom" class="py-12 bg-ocp-navy text-white relative overflow-hidden reveal">
+            <div class="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-ocp-green opacity-10 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-64 h-64 bg-blue-500 opacity-10 rounded-full blur-3xl"></div>
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+              <div class="md:w-2/3">
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="px-2 py-1 text-[10px] font-bold bg-ocp-green text-ocp-navy rounded uppercase tracking-wider">New</span>
+                    <span class="text-xs text-ocp-green-soft uppercase tracking-widest">Immersive Experience</span>
+                </div>
+                <h2 class="text-2xl sm:text-3xl font-bold mb-4">Global 24/7 Digital Showroom</h2>
+                <p class="text-gray-300 text-sm sm:text-base max-w-2xl">
+                  Step into our virtual consulting space. Explore 3D models of liquid-cooled ORV3 racks, examine CDU piping configurations, and visualize the future of AI infrastructure directly from your browser.
+                </p>
+              </div>
+              <div class="md:w-1/3 flex justify-center md:justify-end">
+                <a href="https://dcdeeptech.com/showroom" target="_blank" class="group relative inline-flex items-center gap-3 px-6 py-3 bg-white text-ocp-navy rounded-full font-semibold transition-all hover:bg-ocp-green hover:text-white shadow-[0_0_20px_rgba(101,194,60,0.3)]">
+                  <span>Enter Showroom</span>
+                  <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                </a>
+              </div>
+            </div>
+          </section>
+
+          <!-- PRODUCTS SECTION (Rack and Manifold Design & Finance) -->
+          <section data-section="products-p1" class="py-10 sm:py-16 bg-white">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+              <h2 class="text-2xl sm:text-3xl font-semibold text-ocp-navy mb-3 reveal">Rack & Power Services</h2>
+              <p class="text-sm text-ocp-text-secondary mb-6 reveal">Consulting focus on mechanical integrity and energy architecture.</p>
+              
+              <div class="grid md:grid-cols-3 gap-6 text-sm reveal delay-100">
+                <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-5">
+                  <h3 class="font-semibold text-ocp-navy mb-2">Rack &amp; manifold design</h3>
+                  <ul class="list-disc list-inside text-xs text-ocp-text-secondary space-y-1">
+                    <li>Mechanical reinforcement for ORV3/ORW.</li>
+                    <li>Reference manifold layouts and hose routing.</li>
+                    <li>Material guidance (copper, plating, elastomers).</li>
+                  </ul>
+                </div>
+                <!-- Empty placeholders for layout consistency -->
+                <div class="hidden md:block"></div>
+                <div class="hidden md:block"></div>
+              </div>
+
+              <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-6 mt-6 reveal delay-200">
+                <h3 class="font-semibold text-ocp-navy mb-2"><i class="fa-solid fa-hand-holding-dollar mr-2"></i>Export finance advisory – “EFS–LIS–SBLC”</h3>
+                <p class="text-xs text-ocp-text-secondary mb-2">
+                  For export projects, our partner AxiomDeta advises on trade finance structure. We recommend the "EFS-LIS-SBLC" model for 90-day payment terms, leveraging Singapore's Enterprise Financing Scheme and Loan Insurance Scheme to issue SBLCs as payment guarantees, minimizing interest costs and risk.
+                </p>
+              </div>
+            </div>
+          </section>
+
+        </main>
+        
+        <!-- CHINESE CONTENT - RACK & POWER SEGMENT -->
+        <main id="page-zh" class="flex-1 lang-page hidden">
+          <section data-section="overview" class="bg-gradient-to-b from-white to-ocp-bg py-10 sm:py-16">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-[1.2fr,1fr] gap-10 items-start">
+              <div class="reveal">
+                <p class="text-xs font-semibold tracking-[0.2em] text-ocp-green uppercase mb-3">
+                  OCP · 48V → 800V HVDC · 液冷
+                </p>
+                <h1 class="text-3xl sm:text-4xl lg:text-5xl font-semibold text-ocp-navy leading-tight mb-4">
+                  AI / HPC 30–100&nbsp;kW 機櫃<br class="hidden sm:block" />
+                  液冷藍圖。
+                </h1>
+                <p class="text-sm sm:text-base text-ocp-text-secondary mb-4 leading-relaxed">
+                  本單頁簡報總結 DCDeepTech 對 AI/HPC <span class="font-semibold text-ocp-navy">機櫃級液冷</span> 的諮詢觀點：
+                  如何連接冷卻塔、冰水機、CDU 和機櫃；如何選擇 <span class="font-semibold text-ocp-navy">DLC、RDHx 和浸沒式</span>；以及如何將 OCP 式設計轉化為可靠的 30–100&nbsp;kW 液冷機櫃。
+                </p>
+                <div class="flex flex-wrap gap-3 mb-8">
+                  <button onclick="scrollToSection('cooling-content')" class="inline-flex items-center px-5 py-2.5 rounded-full bg-ocp-navy text-white text-sm shadow-ocp hover:bg-opacity-90 transition-all transform hover:scale-105">
+                    查看冷卻迴路圖
+                  </button>
+                  <button onclick="scrollToSection('contact')" class="inline-flex items-center px-5 py-2.5 rounded-full border border-ocp-navy text-ocp-navy text-sm hover:bg-ocp-bg transition-all">
+                    聯絡我們的團隊
+                  </button>
+                </div>
+              </div>
+
+              <!-- Right Column: Stats & FAQ Preview -->
+              <div class="space-y-5 reveal delay-200">
+                <div class="grid grid-cols-2 gap-3">
+                  <div class="bg-white rounded-xl border border-ocp-border p-4 shadow-sm">
+                    <div class="text-[0.65rem] text-ocp-text-secondary uppercase mb-1">機櫃密度</div>
+                    <div class="font-bold text-ocp-navy text-lg">30–100&nbsp;kW</div>
+                  </div>
+                  <div class="bg-white rounded-xl border border-ocp-border p-4 shadow-sm">
+                    <div class="text-[0.65rem] text-ocp-text-secondary uppercase mb-1">電源架構</div>
+                    <div class="font-bold text-ocp-navy text-lg">800V HVDC</div>
+                  </div>
+                  <div class="bg-white rounded-xl border border-ocp-border p-4 shadow-sm">
+                    <div class="text-[0.65rem] text-ocp-text-secondary uppercase mb-1">冷卻</div>
+                    <div class="font-bold text-ocp-navy text-lg">DLC / RDHx</div>
+                  </div>
+                  <div class="bg-white rounded-xl border border-ocp-border p-4 shadow-sm">
+                    <div class="text-[0.65rem] text-ocp-text-secondary uppercase mb-1">目標 PUE</div>
+                    <div class="font-bold text-ocp-navy text-lg text-ocp-green">&lt; 1.15</div>
+                  </div>
+                </div>
+
+                <div class="bg-white rounded-ocp border border-ocp-border shadow-ocp p-6">
+                  <div class="text-[0.65rem] uppercase tracking-[0.2em] text-ocp-text-secondary mb-3">
+                    我們常見的諮詢問題
+                  </div>
+                  <ul class="space-y-2 text-sm text-ocp-text-secondary">
+                    <li class="flex items-start gap-2"><i class="fa-solid fa-check text-ocp-green mt-1"></i><span>如何將機櫃連接到建築物的冰水機迴路？</span></li>
+                    <li class="flex items-start gap-2"><i class="fa-solid fa-check text-ocp-green mt-1"></i><span>何時應使用 DLC、RDHx 或浸沒式冷卻？</span></li>
+                    <li class="flex items-start gap-2"><i class="fa-solid fa-check text-ocp-green mt-1"></i><span>「良好」的 CDU 和歧管設計是什麼樣子？</span></li>
+                    <li class="flex items-start gap-2"><i class="fa-solid fa-check text-ocp-green mt-1"></i><span>我們如何安全地監控、警報和維護液體迴路？</span></li>
+                  </ul>
+                </div>
+              </div>
+
+              <!-- *** INTERACTIVE SIMULATOR (ZH) - Moved below side content for mobile flow *** -->
+              <div class="lg:col-span-2 sim-container shadow-ocp reveal delay-100 state-48v mt-10" id="sim-zh">
+                <div class="flex justify-between items-center mb-4">
+                  <h3 class="font-semibold text-ocp-navy flex items-center gap-2">
+                    <i class="fa-solid fa-bolt text-ocp-green"></i> 能源架構模擬器
+                  </h3>
+                  <div class="flex gap-2 bg-ocp-bg p-1 rounded-lg">
+                    <button class="text-xs px-3 py-1 rounded-md font-semibold transition-colors active-btn" id="btn-48v-zh" onclick="toggleSimulator('zh', '48v')">48V 舊制</button>
+                    <button class="text-xs px-3 py-1 rounded-md font-semibold transition-colors inactive-btn" id="btn-800v-zh" onclick="toggleSimulator('zh', '800v')">800V HVDC</button>
+                  </div>
+                </div>
+                
+                <!-- Visual Area -->
+                <div class="relative bg-gray-50 rounded-lg p-4 border border-gray-200 min-h-[140px] flex flex-col justify-center">
+                  <div class="text-xs text-gray-400 absolute top-2 left-2 uppercase tracking-wider">導體截面積</div>
+                  <div class="flex items-center gap-4">
+                      <div class="flex-1">
+                        <!-- The Animated Cable -->
+                        <div class="cable-visual shadow-lg">
+                          <span class="z-10 relative text-white/90 text-xs uppercase tracking-widest">銅排</span>
+                        </div>
+                      </div>
+                      <div class="w-32 text-right">
+                        <div class="text-xs text-gray-500">電流 (安培)</div>
+                        <div class="text-2xl font-bold font-mono text-ocp-navy sim-amps">2083 A</div>
+                      </div>
+                  </div>
+                  <div class="mt-3 flex items-center gap-2 text-xs font-bold sim-status text-red-600">
+                      <i class="fa-solid fa-triangle-exclamation"></i>
+                      <span>I²R 嚴重熱損 (銅的暴政)</span>
+                  </div>
+                </div>
+
+                <!-- Metrics Grid -->
+                <div class="grid grid-cols-3 gap-4 mt-4 text-center text-xs">
+                  <div class="bg-gray-50 p-2 rounded border border-gray-100">
+                      <div class="text-gray-400 mb-1">機櫃功率</div>
+                      <div class="font-bold text-ocp-navy">100,000 W</div>
+                  </div>
+                  <div class="bg-gray-50 p-2 rounded border border-gray-100">
+                      <div class="text-gray-400 mb-1">線路損耗</div>
+                      <div class="font-bold sim-loss text-red-600">極高</div>
+                  </div>
+                  <div class="bg-gray-50 p-2 rounded border border-gray-100">
+                      <div class="text-gray-400 mb-1">效率</div>
+                      <div class="font-bold sim-eff text-red-600">低</div>
+                  </div>
+                </div>
+              </div>
+              <!-- *** END SIMULATOR ZH *** -->
+
+            </div>
+          </section>
+          
+          <!-- NEW SST + FLYWHEEL SECTION (ZH) -->
+          <section data-section="power-solutions" class="py-10 sm:py-16 bg-white">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+              <h2 class="text-2xl sm:text-3xl font-semibold text-ocp-navy mb-3 reveal">進階電力解決方案：SST + 飛輪</h2>
+              <p class="text-sm text-ocp-text-secondary mb-6 reveal">整合固態變壓器 (SST) 和飛輪儲能，為 AI/HPC 數據中心提供無與倫比的效率和動態響應。</p>
+              
+              <div class="grid md:grid-cols-3 gap-6 text-sm reveal delay-100">
+                <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-5">
+                  <h3 class="font-semibold text-ocp-navy mb-2 flex items-center gap-2"><i class="fa-solid fa-bolt-lightning text-yellow-600"></i> SST：高效電力轉換</h3>
+                  <ul class="list-disc list-inside text-xs text-ocp-text-secondary space-y-1">
+                    <li>高頻電力電子技術（基於 SiC）。</li>
+                    <li>端到端效率高達 99\%。</li>
+                    <li>雙向能量流動與深度電能質量調控。</li>
+                  </ul>
+                </div>
+                <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-5">
+                  <h3 class="font-semibold text-ocp-navy mb-2 flex items-center gap-2"><i class="fa-solid fa-infinity text-blue-500"></i> 飛輪：即時、安全、超長壽命 UPS</h3>
+                  <ul class="list-disc list-inside text-xs text-ocp-text-secondary space-y-1">
+                    <li>微秒至毫秒級響應速度。</li>
+                    <li>本質安全，無熱失控風險。</li>
+                    <li>超長壽命（>20 年），無限循環次數。</li>
+                    <li>環境耐受性強（不受濕度/溫度影響）。</li>
+                  </ul>
+                </div>
+                <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-5">
+                  <h3 class="font-semibold text-ocp-navy mb-2 flex items-center gap-2"><i class="fa-solid fa-fire-extinguisher text-ocp-green"></i> AI 集群系統優勢</h3>
+                  <ul class="list-disc list-inside text-xs text-ocp-text-secondary space-y-1">
+                    <li>超快速動態調節，應對 AI/GPU 瞬態負載。</li>
+                    <li>高功率密度（800-2800kW 衝擊容忍）。</li>
+                    <li>PUE 降低：整體系統效率高達 99\%。</li>
+                    <li>綠色永續：無需化學電池。</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </section>
+          <!-- END NEW SST + FLYWHEEL SECTION -->
+
+          <!-- SHOWROOM ZH -->
+          <section data-section="showroom" class="py-12 bg-ocp-navy text-white relative overflow-hidden reveal">
+            <div class="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-ocp-green opacity-10 rounded-full blur-3xl"></div>
+            <div class="max-w-6xl mx-auto px-4 relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+              <div class="md:w-2/3">
+                <div class="flex items-center gap-2 mb-2"><span class="px-2 py-1 text-[10px] font-bold bg-ocp-green text-ocp-navy rounded uppercase tracking-wider">New</span></div>
+                <h2 class="text-2xl sm:text-3xl font-bold mb-4">全球 24/7 數位展廳</h2>
+                <p class="text-gray-300 text-sm max-w-2xl">走進我們的虛擬諮詢空間。直接從您的瀏覽器探索液冷 ORV3 機櫃、CDU 管線配置的 3D 模型，並預覽 AI 基礎設施的未來。</p>
+              </div>
+              <div class="md:w-1/3 flex justify-center md:justify-end">
+                <a href="https://dcdeeptech.com/showroom" target="_blank" class="group relative inline-flex items-center gap-3 px-6 py-3 bg-white text-ocp-navy rounded-full font-semibold transition-all hover:bg-ocp-green hover:text-white shadow-[0_0_20px_rgba(101,194,60,0.3)]">
+                  <span>進入展廳</span> <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                </a>
+              </div>
+            </div>
+          </section>
+
+          <!-- PRODUCTS (Rack and Manifold Design & Finance) -->
+          <section data-section="products-p1" class="py-10 sm:py-16 bg-white">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+              <h2 class="text-2xl sm:text-3xl font-semibold text-ocp-navy mb-3 reveal">機櫃與電源服務</h2>
+              <p class="text-sm text-ocp-text-secondary mb-6 reveal">諮詢重點：機械結構完整性與能源架構。</p>
+              <div class="grid md:grid-cols-3 gap-6 text-sm reveal delay-100">
+                <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-5">
+                  <h3 class="font-semibold text-ocp-navy mb-2">機櫃與歧管設計</h3>
+                  <ul class="list-disc list-inside text-xs text-ocp-text-secondary space-y-1">
+                    <li>ORV3/ORW 的機械加固。</li>
+                    <li>參考歧管佈局和軟管走線。</li>
+                    <li>材料指導（銅、電鍍、彈性體）。</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-6 mt-6 reveal delay-200">
+                <h4 class="font-semibold text-ocp-navy mb-2"><i class="fa-solid fa-hand-holding-dollar mr-2"></i>出口金融顧問 – 「EFS–LIS–SBLC」</h4>
+                <p class="text-xs text-ocp-text-secondary">針對出口專案，我們的合作夥伴 AxiomDeta 提供貿易金融結構諮詢。我們建議使用「EFS-LIS-SBLC」模式以實現 90 天付款條款，利用新加坡的企業融資計畫和貸款保險，開立 SBLC 作為付款保證，將利息成本和風險降至最低。</p>
+              </div>
+            </div>
+          </section>
+        </main>
+      </section>
+
+      <!-- ======================================================================= -->
+      <!-- SECTION 2: COOLING -->
+      <!-- ======================================================================= -->
+      <section id="cooling-content" data-section="cooling-content" class="pt-10 sm:pt-16">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl sm:text-4xl font-bold text-ocp-navy mb-8 text-center border-b pb-4">
+                Cooling
+            </h2>
+        </div>
+
+        <!-- SYSTEM SECTION (EN) -->
+        <main id="page-en" class="flex-1 lang-page">
+          <section data-section="system" class="py-10 sm:py-16 bg-white">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+              <h2 class="text-2xl sm:text-3xl font-semibold text-ocp-navy mb-3 reveal">
+                1. Cooling loop – from cooling tower to rack CDU
+              </h2>
+              <p class="text-sm text-ocp-text-secondary mb-6 reveal">
+                A modern liquid-cooled AI rack is part of a three-stage cooling chain:
+                <span class="font-semibold">cooling tower and condenser water</span>,
+                <span class="font-semibold">chiller and facility water system (FWS)</span>,
+                and the <span class="font-semibold">technology cooling system (TCS)</span> that serves CDUs and racks.
+              </p>
+
+              <div class="grid md:grid-cols-2 gap-6 items-center mb-8 reveal delay-100">
+                <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-4">
+                  <img src="https://raw.githubusercontent.com/luoxisg/dcdeeptech/main/image/coolingpic.png" alt="Data center cooling loop with cooling tower, chiller, CDU and racks" class="w-full rounded-lg mb-3 shadow-sm" />
+                  <p class="text-xs text-ocp-text-secondary">
+                    Cooling tower and chiller provide cold water to the Facility Water System (FWS). CDUs couple FWS to the rack coolant loop.
+                  </p>
+                </div>
+                <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-6">
+                  <h3 class="font-semibold text-ocp-navy mb-3">Key design points</h3>
+                  <ul class="list-disc list-inside text-sm text-ocp-text-secondary space-y-2">
+                    <li>Clearly separate <span class="font-semibold">CWS / FWS / TCS</span> to simplify ownership.</li>
+                    <li>Size CDUs for realistic IT load, not just nameplate power.</li>
+                    <li>Plan isolation valves and bypass paths for safe maintenance.</li>
+                    <li>Instrument temperature, pressure and flow at CDU inlets and outlets for predictive maintenance.</li>
+                  </ul>
                 </div>
               </div>
               
-              <!-- Visual Area -->
-              <div class="relative bg-gray-50 rounded-lg p-4 border border-gray-200 min-h-[140px] flex flex-col justify-center">
-                 <div class="text-xs text-gray-400 absolute top-2 left-2 uppercase tracking-wider">Conductor Cross-Section</div>
-                 
-                 <div class="flex items-center gap-4">
-                    <div class="flex-1">
-                      <!-- The Animated Cable -->
-                      <div class="cable-visual shadow-lg">
-                         <span class="z-10 relative text-white/90 text-xs uppercase tracking-widest">Copper Busbar</span>
-                      </div>
-                    </div>
-                    <div class="w-32 text-right">
-                       <div class="text-xs text-gray-500">Current (Amps)</div>
-                       <div class="text-2xl font-bold font-mono text-ocp-navy sim-amps">2083 A</div>
-                    </div>
-                 </div>
-
-                 <!-- Warning/Success Message -->
-                 <div class="mt-3 flex items-center gap-2 text-xs font-bold sim-status text-red-600">
-                    <i class="fa-solid fa-triangle-exclamation"></i>
-                    <span>Critical I²R Heat Loss (Tyranny of Copper)</span>
-                 </div>
-              </div>
-
-              <!-- Metrics Grid -->
-              <div class="grid grid-cols-3 gap-4 mt-4 text-center text-xs">
-                 <div class="bg-gray-50 p-2 rounded border border-gray-100">
-                    <div class="text-gray-400 mb-1">Rack Power</div>
-                    <div class="font-bold text-ocp-navy">100,000 W</div>
-                 </div>
-                 <div class="bg-gray-50 p-2 rounded border border-gray-100">
-                    <div class="text-gray-400 mb-1">Line Loss</div>
-                    <div class="font-bold sim-loss text-red-600">EXTREME</div>
-                 </div>
-                 <div class="bg-gray-50 p-2 rounded border border-gray-100">
-                    <div class="text-gray-400 mb-1">Efficiency</div>
-                    <div class="font-bold sim-eff text-red-600">Low</div>
-                 </div>
+              <div class="grid md:grid-cols-2 gap-6 items-center reveal delay-200">
+                <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-4">
+                  <img src="https://raw.githubusercontent.com/luoxisg/dcdeeptech/main/image/IMM.png" alt="Immersion fluid" class="w-full rounded-lg mb-3 shadow-sm" />
+                  <p class="text-xs text-ocp-text-secondary">For immersion, we work with OCP-inspired dielectric fluids suitable for multi-year operation.</p>
+                </div>
+                <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-6">
+                  <h3 class="font-semibold text-ocp-navy mb-3">Immersion-specific considerations</h3>
+                  <ul class="list-disc list-inside text-sm text-ocp-text-secondary space-y-2">
+                    <li>Evaluate fluid lifetime, compatibility with plastics/seals.</li>
+                    <li>Design tanks and service tools for safe lifting of heavy servers.</li>
+                    <li>Plan fluid monitoring (moisture, particles, acidity).</li>
+                  </ul>
+                </div>
               </div>
             </div>
-            <!-- *** END SIMULATOR *** -->
+          </section>
 
-          </div>
-
-          <!-- Right Column: Stats & FAQ Preview -->
-          <div class="space-y-5 reveal delay-200">
-            <div class="grid grid-cols-2 gap-3">
-              <div class="bg-white rounded-xl border border-ocp-border p-4 shadow-sm">
-                <div class="text-[0.65rem] text-ocp-text-secondary uppercase mb-1">Rack density</div>
-                <div class="font-bold text-ocp-navy text-lg">30–100&nbsp;kW</div>
-              </div>
-              <div class="bg-white rounded-xl border border-ocp-border p-4 shadow-sm">
-                <div class="text-[0.65rem] text-ocp-text-secondary uppercase mb-1">Power Arch</div>
-                <div class="font-bold text-ocp-navy text-lg">800V HVDC</div>
-              </div>
-              <div class="bg-white rounded-xl border border-ocp-border p-4 shadow-sm">
-                <div class="text-[0.65rem] text-ocp-text-secondary uppercase mb-1">Cooling</div>
-                <div class="font-bold text-ocp-navy text-lg">DLC / RDHx</div>
-              </div>
-              <div class="bg-white rounded-xl border border-ocp-border p-4 shadow-sm">
-                <div class="text-[0.65rem] text-ocp-text-secondary uppercase mb-1">Target PUE</div>
-                <div class="font-bold text-ocp-navy text-lg text-ocp-green">&lt; 1.15</div>
+          <!-- OPTIONS SECTION (EN) -->
+          <section data-section="options" class="py-10 sm:py-16 bg-ocp-bg">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+              <h2 class="text-2xl sm:text-3xl font-semibold text-ocp-navy mb-3 reveal">
+                2. Liquid cooling options
+              </h2>
+              <p class="text-sm text-ocp-text-secondary mb-6 reveal">At 100kW+ per rack, air is not enough. We evaluate three topologies.</p>
+              <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-5 text-sm reveal delay-100">
+                <div class="bg-white rounded-ocp border border-ocp-border p-5 hover:shadow-lg transition-shadow">
+                  <h3 class="font-semibold text-ocp-navy mb-2"><i class="fa-solid fa-microchip text-blue-500 mr-2"></i>Direct-to-Chip (DLC)</h3>
+                  <p class="text-ocp-text-secondary text-xs">Coolant flows through cold plates on CPUs/GPUs. Most precise. Requires robust manifolds.</p>
+                </div>
+                <div class="bg-white rounded-ocp border border-ocp-border p-5 hover:shadow-lg transition-shadow">
+                  <h3 class="font-semibold text-ocp-navy mb-2"><i class="fa-solid fa-door-closed text-ocp-green mr-2"></i>RDHx</h3>
+                  <p class="text-ocp-text-secondary text-xs">Liquid-cooled radiator on the rear door. Ideal for upgrading existing rooms without touching servers.</p>
+                </div>
+                <div class="bg-white rounded-ocp border border-ocp-border p-5 hover:shadow-lg transition-shadow">
+                  <h3 class="font-semibold text-ocp-navy mb-2"><i class="fa-solid fa-water text-cyan-500 mr-2"></i>Immersion</h3>
+                  <p class="text-ocp-text-secondary text-xs">Submerged servers in dielectric fluid. High efficiency but complex service model.</p>
+                </div>
+                <div class="bg-white rounded-ocp border border-ocp-border p-5 hover:shadow-lg transition-shadow">
+                  <h3 class="font-semibold text-ocp-navy mb-2"><i class="fa-solid fa-pump-medical text-gray-500 mr-2"></i>CDU</h3>
+                  <p class="text-ocp-text-secondary text-xs">The "heart" connecting facility water to rack coolant. Controls temp, pressure and flow.</p>
+                </div>
               </div>
             </div>
+          </section>
 
-            <div class="bg-white rounded-ocp border border-ocp-border shadow-ocp p-6">
-              <div class="text-[0.65rem] uppercase tracking-[0.2em] text-ocp-text-secondary mb-3">
-                Typical questions we answer
+          <!-- PRODUCTS SECTION (CDU & Loop and Monitoring) -->
+          <section data-section="products-p2" class="py-10 sm:py-16 bg-white">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+              <h2 class="text-2xl sm:text-3xl font-semibold text-ocp-navy mb-3 reveal">CDU & Loop Engineering Services</h2>
+              <p class="text-sm text-ocp-text-secondary mb-6 reveal">We provide a design-and-blueprint package for rack vendors and operators.</p>
+              
+              <div class="grid md:grid-cols-3 gap-6 text-sm reveal delay-100">
+                <!-- Rack & manifold design (from P1) is skipped here -->
+                <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-5">
+                  <h3 class="font-semibold text-ocp-navy mb-2">CDU &amp; loop engineering</h3>
+                  <ul class="list-disc list-inside text-xs text-ocp-text-secondary space-y-1">
+                    <li>CDU sizing for AI loads & redundancy (N+1).</li>
+                    <li>Hydraulic calculations (pressure/head).</li>
+                    <li>Alarm logic for leaks and flow loss.</li>
+                  </ul>
+                </div>
+                <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-5">
+                  <h3 class="font-semibold text-ocp-navy mb-2">Monitoring &amp; predictive</h3>
+                  <ul class="list-disc list-inside text-xs text-ocp-text-secondary space-y-1">
+                    <li>Sensor set placement (T, P, Flow).</li>
+                    <li>Dashboards for operators and OEMs.</li>
+                    <li>AI-driven anomaly detection models.</li>
+                  </ul>
+                </div>
+                <!-- Adding an empty placeholder div to keep the layout of three cards -->
+                <div class="hidden md:block"></div> 
               </div>
-              <ul class="space-y-2 text-sm text-ocp-text-secondary">
-                <li class="flex items-start gap-2"><i class="fa-solid fa-check text-ocp-green mt-1"></i><span>How do I connect my racks to the building chiller loop?</span></li>
-                <li class="flex items-start gap-2"><i class="fa-solid fa-check text-ocp-green mt-1"></i><span>When should I use DLC vs RDHx vs immersion?</span></li>
-                <li class="flex items-start gap-2"><i class="fa-solid fa-check text-ocp-green mt-1"></i><span>What does a “good” CDU and manifold design look like?</span></li>
-                <li class="flex items-start gap-2"><i class="fa-solid fa-check text-ocp-green mt-1"></i><span>How do we monitor, alarm and maintain the liquid loop safely?</span></li>
-              </ul>
             </div>
-          </div>
-        </div>
+          </section>
+        </main>
+
+        <!-- SYSTEM SECTION (ZH) -->
+        <main id="page-zh" class="flex-1 lang-page hidden">
+          <section data-section="system" class="py-10 sm:py-16 bg-white">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+              <h2 class="text-2xl sm:text-3xl font-semibold text-ocp-navy mb-6 reveal">1. 冷卻迴路 – 從冷卻塔到機櫃 CDU</h2>
+              <p class="text-sm text-ocp-text-secondary mb-6 reveal">
+                現代液冷 AI 機櫃是三階段冷卻鏈的一部分：
+                <span class="font-semibold">冷卻塔和冷凝水</span>、
+                <span class="font-semibold">冰水機與設施水系統 (FWS)</span>，
+                以及服務於 CDU 和機櫃的 <span class="font-semibold">技術冷卻系統 (TCS)</span>。
+              </p>
+
+              <div class="grid md:grid-cols-2 gap-6 items-center mb-8 reveal delay-100">
+                <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-4">
+                  <img src="https://raw.githubusercontent.com/luoxisg/dcdeeptech/main/image/coolingpic.png" alt="Data center cooling loop with cooling tower, chiller, CDU and racks" class="w-full rounded-lg mb-3 shadow-sm" />
+                  <p class="text-xs text-ocp-text-secondary">
+                    冷卻塔和冰水機提供冷水給設施水系統 (FWS)。CDU 將 FWS 與機櫃冷卻迴路耦合。
+                  </p>
+                </div>
+                <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-6">
+                  <h3 class="font-semibold text-ocp-navy mb-3">關鍵設計要點</h3>
+                  <ul class="list-disc list-inside text-sm text-ocp-text-secondary space-y-2">
+                    <li>清楚區分 <span class="font-semibold">CWS / FWS / TCS</span>，以簡化所有權。</li>
+                    <li>CDU 尺寸應以實際 IT 負載為準，而非僅標稱功率。</li>
+                    <li>規劃隔離閥和旁路路徑，確保安全維護。</li>
+                    <li>在 CDU 入口和出口測量溫度、壓力與流量，用於預測性維護。</li>
+                  </ul>
+                </div>
+              </div>
+              
+              <div class="grid md:grid-cols-2 gap-6 items-center reveal delay-200">
+                <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-4">
+                  <img src="https://raw.githubusercontent.com/luoxisg/dcdeeptech/main/image/IMM.PNG" alt="Immersion fluid" class="w-full rounded-lg mb-3 shadow-sm" />
+                  <p class="text-xs text-ocp-text-secondary">對於浸沒式，我們與 OCP 啟發的介電液合作，適合多年運行。</p>
+                </div>
+                <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-6">
+                  <h3 class="font-semibold text-ocp-navy mb-3">浸沒式專屬考量</h3>
+                  <ul class="list-disc list-inside text-sm text-ocp-text-secondary space-y-2">
+                    <li>評估流體壽命，與塑膠/密封件的相容性。</li>
+                    <li>設計液槽和服務工具，用於安全吊裝重型伺服器。</li>
+                    <li>規劃流體監測（濕度、顆粒、酸度）。</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- OPTIONS -->
+          <section data-section="options" class="py-10 sm:py-16 bg-ocp-bg">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+              <h2 class="text-2xl sm:text-3xl font-semibold text-ocp-navy mb-6 reveal">2. 液冷選項</h2>
+              <p class="text-sm text-ocp-text-secondary mb-6 reveal">當機櫃功率超過 100kW+ 時，空氣冷卻已不足夠。我們評估三種拓樸結構。</p>
+              <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-5 text-sm reveal delay-100">
+                <div class="bg-white rounded-ocp border border-ocp-border p-5 hover:shadow-lg transition-shadow">
+                  <h3 class="font-semibold text-ocp-navy mb-2"><i class="fa-solid fa-microchip text-blue-500 mr-2"></i>芯片直冷 (DLC)</h3>
+                  <p class="text-ocp-text-secondary text-xs">冷卻液流經 CPU/GPU 上的冷板。最精確。需要強固的歧管。</p>
+                </div>
+                <div class="bg-white rounded-ocp border border-ocp-border p-5 hover:shadow-lg transition-shadow">
+                  <h3 class="font-semibold text-ocp-navy mb-2"><i class="fa-solid fa-door-closed text-ocp-green mr-2"></i>RDHx (背門式熱交換器)</h3>
+                  <p class="text-ocp-text-secondary text-xs">液冷散熱器安裝在機櫃背門上。是升級現有不碰觸伺服器的機房的理想選擇。</p>
+                </div>
+                <div class="bg-white rounded-ocp border border-ocp-border p-5 hover:shadow-lg transition-shadow">
+                  <h3 class="font-semibold text-ocp-navy mb-2"><i class="fa-solid fa-water text-cyan-500 mr-2"></i>浸沒式</h3>
+                  <p class="text-ocp-text-secondary text-xs">將伺服器浸沒在介電液中。效率極高，但服務模式複雜。</p>
+                </div>
+                <div class="bg-white rounded-ocp border border-ocp-border p-5 hover:shadow-lg transition-shadow">
+                  <h3 class="font-semibold text-ocp-navy mb-2"><i class="fa-solid fa-pump-medical text-gray-500 mr-2"></i>CDU (冷卻分配單元)</h3>
+                  <p class="text-ocp-text-secondary text-xs">連接設施用水到機櫃冷卻液的「心臟」。控制溫度、壓力與流量。</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- PRODUCTS (CDU & Loop and Monitoring) -->
+          <section data-section="products-p2" class="py-10 sm:py-16 bg-white">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+              <h2 class="text-2xl sm:text-3xl font-semibold text-ocp-navy mb-3 reveal">CDU 與冷卻迴路工程服務</h2>
+              <p class="text-sm text-ocp-text-secondary mb-6 reveal">我們為機櫃供應商和營運商提供設計和藍圖套件。</p>
+              <div class="grid md:grid-cols-3 gap-6 text-sm reveal delay-100">
+                <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-5">
+                  <h3 class="font-semibold text-ocp-navy mb-2">CDU 與迴路工程</h3>
+                  <ul class="list-disc list-inside text-xs text-ocp-text-secondary space-y-1">
+                    <li>CDU 尺寸設計，考慮 AI 負載與冗餘 (N+1)。</li>
+                    <li>水力計算（壓力/揚程）。</li>
+                    <li>洩漏與流量損失的警報邏輯。</li>
+                  </ul>
+                </div>
+                <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-5">
+                  <h3 class="font-semibold text-ocp-navy mb-2">監控與預測性維護</h3>
+                  <ul class="list-disc list-inside text-xs text-ocp-text-secondary space-y-1">
+                    <li>感測器組件佈局（溫度、壓力、流量）。</li>
+                    <li>供營運商和 OEM 使用的儀表板。</li>
+                    <li>AI 驅動的異常偵測模型。</li>
+                  </ul>
+                </div>
+                <!-- Empty placeholder div -->
+                <div class="hidden md:block"></div> 
+              </div>
+            </div>
+          </section>
+        </main>
       </section>
 
-      <!-- SHOWROOM SECTION (EN) -->
-      <section data-section="showroom" class="py-12 bg-ocp-navy text-white relative overflow-hidden reveal">
-        <div class="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-ocp-green opacity-10 rounded-full blur-3xl"></div>
-        <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-64 h-64 bg-blue-500 opacity-10 rounded-full blur-3xl"></div>
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
-          <div class="md:w-2/3">
-             <div class="flex items-center gap-2 mb-2">
-                <span class="px-2 py-1 text-[10px] font-bold bg-ocp-green text-ocp-navy rounded uppercase tracking-wider">New</span>
-                <span class="text-xs text-ocp-green-soft uppercase tracking-widest">Immersive Experience</span>
-             </div>
-             <h2 class="text-2xl sm:text-3xl font-bold mb-4">Global 24/7 Digital Showroom</h2>
-             <p class="text-gray-300 text-sm sm:text-base max-w-2xl">
-               Step into our virtual consulting space. Explore 3D models of liquid-cooled ORV3 racks, examine CDU piping configurations, and visualize the future of AI infrastructure directly from your browser.
-             </p>
-          </div>
-          <div class="md:w-1/3 flex justify-center md:justify-end">
-            <a href="https://dcdeeptech.com/showroom" target="_blank" class="group relative inline-flex items-center gap-3 px-6 py-3 bg-white text-ocp-navy rounded-full font-semibold transition-all hover:bg-ocp-green hover:text-white shadow-[0_0_20px_rgba(46,204,113,0.3)]">
-              <span>Enter Showroom</span>
-              <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
-            </a>
-          </div>
-        </div>
-      </section>
-
-      <!-- SYSTEM SECTION -->
-      <section data-section="system" class="py-10 sm:py-16 bg-white">
+      <!-- ======================================================================= -->
+      <!-- SECTION 3: FIBER / CONNECTIVITY -->
+      <!-- ======================================================================= -->
+      <section id="fiber-content" data-section="fiber-content" class="pt-10 sm:pt-16">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 class="text-2xl sm:text-3xl font-semibold text-ocp-navy mb-3 reveal">
-            1. Cooling loop – from cooling tower to rack CDU
-          </h2>
-          <p class="text-sm text-ocp-text-secondary mb-6 reveal">
-            A modern liquid-cooled AI rack is part of a three-stage cooling chain:
-            <span class="font-semibold">cooling tower and condenser water</span>,
-            <span class="font-semibold">chiller and facility water system (FWS)</span>,
-            and the <span class="font-semibold">technology cooling system (TCS)</span> that serves CDUs and racks.
-          </p>
+            <h2 class="text-3xl sm:text-4xl font-bold text-ocp-navy mb-8 text-center border-b pb-4">
+                Fiber / Connectivity
+            </h2>
+        </div>
 
-          <div class="grid md:grid-cols-2 gap-6 items-center mb-8 reveal delay-100">
-            <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-4">
-              <img src="https://raw.githubusercontent.com/luoxisg/dcdeeptech/main/image/coolingpic.png" alt="Data center cooling loop with cooling tower, chiller, CDU and racks" class="w-full rounded-lg mb-3 shadow-sm" />
-              <p class="text-xs text-ocp-text-secondary">
-                Cooling tower and chiller provide cold water to the Facility Water System (FWS). CDUs couple FWS to the rack coolant loop.
+        <!-- NEW: EXPANDED BEAM OPTICAL SECTION (EN) -->
+        <main id="page-en" class="flex-1 lang-page">
+          <section data-section="expanded-beam" class="py-10 sm:py-16 bg-ocp-bg">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+              <h2 class="text-2xl sm:text-3xl font-semibold text-ocp-navy mb-3 reveal">1. Expanded Beam Optical Interconnect</h2>
+              <p class="text-sm text-ocp-text-secondary mb-6 reveal">Optimizing fiber connectivity for hyperscale AI clusters by minimizing maintenance downtime.</p>
+
+              <div class="grid md:grid-cols-2 gap-6 reveal delay-100">
+                  <div class="bg-white rounded-ocp border border-ocp-border p-5 shadow-lg">
+                      <h3 class="font-semibold text-ocp-navy mb-2 flex items-center gap-2"><i class="fa-solid fa-lightbulb text-yellow-500"></i> Non-Contact Optical Coupling</h3>
+                      <p class="text-ocp-text-secondary text-xs">
+                        The innovative ferrule expands the light beam across an air gap, eliminating physical contact between fiber ends. This drastically reduces sensitivity to dust and contamination, a major cause of signal degradation and maintenance in traditional systems.
+                      </p>
+                  </div>
+                  <div class="bg-white rounded-ocp border border-ocp-border p-5 shadow-lg">
+                      <h3 class="font-semibold text-ocp-navy mb-2 flex items-center gap-2"><i class="fa-solid fa-gauge-high text-red-500"></i> Accelerating Deployment Speed</h3>
+                      <p class="text-ocp-text-secondary text-xs">
+                        The reduced sensitivity to contamination allows for faster, virtually inspection-free deployment. Installation time per connector can be reduced by over 85\% compared to traditional methods, which is critical for scaling large AI/HPC infrastructures.
+                      </p>
+                  </div>
+              </div>
+            </div>
+          </section>
+          
+          <!-- NEW: SYNERGY SECTION (EN) -->
+          <section data-section="synergy" class="py-10 sm:py-16 bg-white">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+              <h2 class="text-2xl sm:text-3xl font-semibold text-ocp-navy mb-3 reveal">2. Synergy with Next-Gen DC Architecture</h2>
+              <p class="text-sm text-ocp-text-secondary mb-6 reveal">Optical interconnect technology provides key co-benefits when integrated with advanced power (SST/Flywheel) and thermal systems.</p>
+              
+              <div class="grid md:grid-cols-2 gap-6 text-sm reveal delay-100">
+                  <!-- TDC 2.0 (High Temp/Humidity) -->
+                  <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-5">
+                      <h3 class="font-semibold text-ocp-navy mb-2 flex items-center gap-2"><i class="fa-solid fa-cloud-rain text-blue-600"></i> High-Temp/Humidity Environments</h3>
+                      <ul class="list-disc list-inside text-xs text-ocp-text-secondary space-y-1">
+                        <li>**Contamination Resistance:** Non-contact optics prevent signal degradation from condensation and dust common in hot, humid airflow.</li>
+                        <li>**Dual Assurance:** Advanced power systems ensure uninterrupted operation in high heat, while robust fiber maintains signal integrity regardless of ambient humidity, supporting reliable operation in "harsh environments."</li>
+                      </ul>
+                  </div>
+                  <!-- Unibody / Immersion (Liquid Cooling) -->
+                  <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-5">
+                      <h3 class="font-semibold text-ocp-navy mb-2 flex items-center gap-2"><i class="fa-solid fa-sink text-cyan-600"></i> Liquid Cooling & Immersion</h3>
+                      <ul class="list-disc list-inside text-xs text-ocp-text-secondary space-y-1">
+                        <li>**Blind Mating / Ease of Service:** Non-contact design is ideal for liquid-cooled environments and compact spaces, enabling reliable blind-mating during liquid-loop maintenance.</li>
+                        <li>**High Density & Safety:** While advanced power protects chip power supply, superior fiber solutions address high-density cabling and signal routing challenges in liquid-cooled racks.</li>
+                      </ul>
+                  </div>
+                  <!-- DCHX (New Air Cooling) -->
+                  <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-5">
+                      <h3 class="font-semibold text-ocp-navy mb-2 flex items-center gap-2"><i class="fa-solid fa-fan text-gray-600"></i> Advanced Air Cooling (DCHX)</h3>
+                      <ul class="list-disc list-inside text-xs text-ocp-text-secondary space-y-1">
+                        <li>**Improved Airflow:** Optical cables are often thinner and support extremely high-density routing, reducing cable pile-up at the rear of the rack. This minimizes airflow resistance and boosts DCHX cooling efficiency.</li>
+                        <li>**PUE Contribution:** Reduced fan energy consumption (due to better airflow) and reduced cooling load (due to high temperature tolerance) both directly contribute to achieving PUE targets below 1.2.</li>
+                      </ul>
+                  </div>
+                  <!-- Digital Twin (Digital Twin) -->
+                  <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-5">
+                      <h3 class="font-semibold text-ocp-navy mb-2 flex items-center gap-2"><i class="fa-solid fa-cube text-purple-600"></i> Digital Twin & Autonomous Ops</h3>
+                      <ul class="list-disc list-inside text-xs text-ocp-text-secondary space-y-1">
+                        <li>**High-Speed Data Pipeline:** AI models demand massive data throughput. Advanced optical interconnects support 400G/800G, ensuring real-time data transmission to AI engines for digital twin analysis.</li>
+                        <li>**Data Foundation:** High-speed, high-density fiber provides the data pipe, complementing the rich sensor data streams supplied by advanced power and CDU monitoring systems.</li>
+                      </ul>
+                  </div>
+              </div>
+            </div>
+          </section>
+          <!-- END SYNERGY SECTION -->
+
+
+          <!-- QUANTUM READY (EN) -->
+          <section data-section="quantum" class="py-10 sm:py-16 bg-ocp-bg">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+              <h2 class="text-2xl sm:text-3xl font-semibold text-ocp-navy mb-3 reveal">3. Quantum-ready &amp; Software-defined</h2>
+              <div class="space-y-3">
+                  <div class="bg-white rounded-ocp border border-ocp-border p-4">
+                      <h4 class="font-semibold text-ocp-navy text-sm">Quantum-ready rack blueprint</h4>
+                      <p class="text-xs text-ocp-text-secondary mt-1">Today's 800V HVDC and liquid cooling work lays the foundation for future quantum systems requiring ultra-stable power and thermal management.</p>
+                  </div>
+                  <div class="bg-white rounded-ocp border border-ocp-border p-4">
+                      <h4 class="font-semibold text-ocp-navy text-sm">Autonomous monitoring software</h4>
+                      <p class="text-xs text-ocp-text-secondary mt-1">Our long-term goal is software-defined operations: AI agents supervising a digital twin of the rack for a self-healing loop (predict -> decide -> execute).</p>
+                  </div>
+              </div>
+              <p class="text-sm text-ocp-text-secondary mt-6">
+                This section focuses on the future integration of high-speed connectivity, optics, and software-defined networks, which are critical for quantum and next-gen AI clusters.
               </p>
             </div>
-            <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-6">
-              <h3 class="font-semibold text-ocp-navy mb-3">Key design points</h3>
-              <ul class="list-disc list-inside text-sm text-ocp-text-secondary space-y-2">
-                <li>Clearly separate <span class="font-semibold">CWS / FWS / TCS</span> to simplify ownership.</li>
-                <li>Size CDUs for realistic IT load, not just nameplate power.</li>
-                <li>Plan isolation valves and bypass paths for safe maintenance.</li>
-                <li>Instrument temperature, pressure and flow at CDU inlets and outlets for predictive maintenance.</li>
-              </ul>
+          </section>
+        </main>
+        
+        <!-- NEW: EXPANDED BEAM OPTICAL SECTION (ZH) -->
+        <main id="page-zh" class="flex-1 lang-page hidden">
+          <section data-section="expanded-beam" class="py-10 sm:py-16 bg-ocp-bg">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+              <h2 class="text-2xl sm:text-3xl font-semibold text-ocp-navy mb-3 reveal">1. 擴束光學互連 (Expanded Beam Optical Interconnect)</h2>
+              <p class="text-sm text-ocp-text-secondary mb-6 reveal">優化超大規模 AI 集群的光纖連接，將維護停機時間降至最低。</p>
+
+              <div class="grid md:grid-cols-2 gap-6 reveal delay-100">
+                  <div class="bg-white rounded-ocp border border-ocp-border p-5 shadow-lg">
+                      <h3 class="font-semibold text-ocp-navy mb-2 flex items-center gap-2"><i class="fa-solid fa-lightbulb text-yellow-500"></i> 無物理接觸光學耦合</h3>
+                      <p class="text-xs text-ocp-text-secondary">
+                        創新的插芯通過空氣間隙擴大光束，消除了光纖端面之間的物理接觸。這顯著降低了對灰塵和污染的敏感度，這是傳統系統中信號衰減和維護的主要原因。
+                      </p>
+                  </div>
+                  <div class="bg-white rounded-ocp border border-ocp-border p-5 shadow-lg">
+                      <h3 class="font-semibold text-ocp-navy mb-2 flex items-center gap-2"><i class="fa-solid fa-gauge-high text-red-500"></i> 加速部署速度</h3>
+                      <p class="text-xs text-ocp-text-secondary">
+                        降低的污染敏感度使得部署更快，幾乎無需檢查。相比傳統方法，每個連接器的安裝時間可減少超過 85\%，這對於擴展大型 AI/HPC 基礎設施至關重要。
+                      </p>
+                  </div>
+              </div>
             </div>
-          </div>
+          </section>
           
-          <div class="grid md:grid-cols-2 gap-6 items-center reveal delay-200">
-            <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-4">
-               <img src="https://raw.githubusercontent.com/luoxisg/dcdeeptech/main/image/IMM.png" alt="Immersion fluid" class="w-full rounded-lg mb-3 shadow-sm" />
-               <p class="text-xs text-ocp-text-secondary">For immersion, we work with OCP-inspired dielectric fluids suitable for multi-year operation.</p>
+          <!-- NEW: SYNERGY SECTION (ZH) -->
+          <section data-section="synergy" class="py-10 sm:py-16 bg-white">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+              <h2 class="text-2xl sm:text-3xl font-semibold text-ocp-navy mb-3 reveal">2. 與新一代數據中心架構的協同作用</h2>
+              <p class="text-sm text-ocp-text-secondary mb-6 reveal">當光學互連技術與先進電源（SST/飛輪）和散熱系統整合時，可提供關鍵的協同效益。</p>
+              
+              <div class="grid md:grid-cols-2 gap-6 text-sm reveal delay-100">
+                  <!-- TDC 2.0 (High Temp/Humidity) -->
+                  <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-5">
+                      <h3 class="font-semibold text-ocp-navy mb-2 flex items-center gap-2"><i class="fa-solid fa-cloud-rain text-blue-600"></i> 高溫/高濕環境 (TDC 2.0)</h3>
+                      <ul class="list-disc list-inside text-xs text-ocp-text-secondary space-y-1">
+                        <li>**防塵防霉：** 非接觸光學介面在高濕熱氣流中，不會像傳統介面那樣容易因凝露或灰塵導致信號衰減。</li>
+                        <li>**雙重保險：** 先進的電源系統保障電力不因高溫中斷，堅固的光纖技術保障信號不因環境中斷。共同支持「惡劣環境運行」的論點。</li>
+                      </ul>
+                  </div>
+                  <!-- Unibody / Immersion (Liquid Cooling) -->
+                  <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-5">
+                      <h3 class="font-semibold text-ocp-navy mb-2 flex items-center gap-2"><i class="fa-solid fa-sink text-cyan-600"></i> 液冷與浸沒式 (Unibody / Immersion)</h3>
+                      <ul class="list-disc list-inside text-xs text-ocp-text-secondary space-y-1">
+                        <li>**盲插/易維護：** 光學互連的非接觸設計非常適合液冷環境（部分型號）或緊湊空間下的盲插操作。</li>
+                        <li>**高密度與安全：** 先進的電源技術保護芯片供電，優異的光纖解決了高密度布線的信號引出難題。</li>
+                      </ul>
+                  </div>
+                  <!-- DCHX (New Air Cooling) -->
+                  <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-5">
+                      <h3 class="font-semibold text-ocp-navy mb-2 flex items-center gap-2"><i class="fa-solid fa-fan text-gray-600"></i> 新型風冷 (DCHX)</h3>
+                      <ul class="list-disc list-inside text-xs text-ocp-text-secondary space-y-1">
+                        <li>**改善風道：** 光學介面支持極高密度的布線，且線纜通常更細，能減少機櫃背後的線纜堆積，減少風阻，提升 DCHX 的冷卻效率。</li>
+                        <li>**能效提升：** 光纖減少了風扇功耗（通暢風道），而先進電源技術支持耐高溫運行減少了空調功耗。兩者皆直接貢獻於 PUE &lt; 1.2 的目標。</li>
+                      </ul>
+                  </div>
+                  <!-- Digital Twin (Digital Twin) -->
+                  <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-5">
+                      <h3 class="font-semibold text-ocp-navy mb-2 flex items-center gap-2"><i class="fa-solid fa-cube text-purple-600"></i> 數位孿生與自主運維</h3>
+                      <ul class="list-disc list-inside text-xs text-ocp-text-secondary space-y-1">
+                        <li>**數據高速路：** 光學互連支持 400G/800G 高速互連，確保數據實時傳輸給計算引擎。</li>
+                        <li>**數據底座：** 高速、高密度光纖提供數據管道，與先進電源及 CDU 監控系統提供的豐富感測器數據流相互補充。</li>
+                      </ul>
+                  </div>
+              </div>
             </div>
-            <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-6">
-               <h3 class="font-semibold text-ocp-navy mb-3">Immersion-specific considerations</h3>
-               <ul class="list-disc list-inside text-sm text-ocp-text-secondary space-y-2">
-                 <li>Evaluate fluid lifetime, compatibility with plastics/seals.</li>
-                 <li>Design tanks and service tools for safe lifting of heavy servers.</li>
-                 <li>Plan fluid monitoring (moisture, particles, acidity).</li>
-               </ul>
+          </section>
+          <!-- END SYNERGY SECTION -->
+
+
+          <!-- QUANTUM READY (ZH) -->
+          <section data-section="quantum" class="py-10 sm:py-16 bg-ocp-bg">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+              <h2 class="text-2xl sm:text-3xl font-semibold text-ocp-navy mb-3 reveal">3. 量子就緒與軟體定義</h2>
+              <div class="space-y-3">
+                  <div class="bg-white rounded-ocp border border-ocp-border p-4">
+                      <h4 class="font-semibold text-ocp-navy text-sm">量子就緒機櫃藍圖</h4>
+                      <p class="text-xs text-ocp-text-secondary mt-1">今日的 800V HVDC 和液冷工作為未來需要超穩定電源和熱管理的量子系統奠定了基礎。</p>
+                  </div>
+                  <div class="bg-white rounded-ocp border border-ocp-border p-4">
+                      <h4 class="font-semibold text-ocp-navy text-sm">自主監控軟體</h4>
+                      <p class="text-xs text-ocp-text-secondary mt-1">我們的長期目標是軟體定義運營：AI 代理監控機櫃的數位孿生體，實現自我修復迴路（預測 -> 決策 -> 執行）。</p>
+                  </div>
+              </div>
+              <p class="text-sm text-ocp-text-secondary mt-6">
+                此部分專注於高速連接、光學元件和軟體定義網路的未來整合，這對於量子和下一代 AI 集群至關重要。
+              </p>
             </div>
-          </div>
-        </div>
+          </section>
+        </main>
       </section>
-
-      <!-- OPTIONS SECTION -->
-      <section data-section="options" class="py-10 sm:py-16 bg-ocp-bg">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 class="text-2xl sm:text-3xl font-semibold text-ocp-navy mb-3 reveal">
-            2. Liquid cooling options
-          </h2>
-          <p class="text-sm text-ocp-text-secondary mb-6 reveal">At 100kW+ per rack, air is not enough. We evaluate three topologies.</p>
-          <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-5 text-sm reveal delay-100">
-            <div class="bg-white rounded-ocp border border-ocp-border p-5 hover:shadow-lg transition-shadow">
-              <h3 class="font-semibold text-ocp-navy mb-2"><i class="fa-solid fa-microchip text-blue-500 mr-2"></i>Direct-to-Chip (DLC)</h3>
-              <p class="text-ocp-text-secondary text-xs">Coolant flows through cold plates on CPUs/GPUs. Most precise. Requires robust manifolds.</p>
-            </div>
-            <div class="bg-white rounded-ocp border border-ocp-border p-5 hover:shadow-lg transition-shadow">
-              <h3 class="font-semibold text-ocp-navy mb-2"><i class="fa-solid fa-door-closed text-green-500 mr-2"></i>RDHx</h3>
-              <p class="text-ocp-text-secondary text-xs">Liquid-cooled radiator on the rear door. Ideal for upgrading existing rooms without touching servers.</p>
-            </div>
-            <div class="bg-white rounded-ocp border border-ocp-border p-5 hover:shadow-lg transition-shadow">
-              <h3 class="font-semibold text-ocp-navy mb-2"><i class="fa-solid fa-water text-cyan-500 mr-2"></i>Immersion</h3>
-              <p class="text-ocp-text-secondary text-xs">Submerged servers in dielectric fluid. High efficiency but complex service model.</p>
-            </div>
-            <div class="bg-white rounded-ocp border border-ocp-border p-5 hover:shadow-lg transition-shadow">
-              <h3 class="font-semibold text-ocp-navy mb-2"><i class="fa-solid fa-pump-medical text-gray-500 mr-2"></i>CDU</h3>
-              <p class="text-ocp-text-secondary text-xs">The "heart" connecting facility water to rack coolant. Controls temp, pressure and flow.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- PRODUCTS SECTION -->
-      <section data-section="products" class="py-10 sm:py-16 bg-white">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 class="text-2xl sm:text-3xl font-semibold text-ocp-navy mb-3 reveal">3. Products &amp; Services</h2>
-          <p class="text-sm text-ocp-text-secondary mb-6 reveal">We provide a design-and-blueprint package for rack vendors and operators.</p>
-          
-          <div class="grid md:grid-cols-3 gap-6 text-sm reveal delay-100">
-            <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-5">
-              <h3 class="font-semibold text-ocp-navy mb-2">Rack &amp; manifold design</h3>
-              <ul class="list-disc list-inside text-xs text-ocp-text-secondary space-y-1">
-                <li>Mechanical reinforcement for ORV3/ORW.</li>
-                <li>Reference manifold layouts and hose routing.</li>
-                <li>Material guidance (copper, plating, elastomers).</li>
-              </ul>
-            </div>
-            <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-5">
-              <h3 class="font-semibold text-ocp-navy mb-2">CDU &amp; loop engineering</h3>
-              <ul class="list-disc list-inside text-xs text-ocp-text-secondary space-y-1">
-                <li>CDU sizing for AI loads & redundancy (N+1).</li>
-                <li>Hydraulic calculations (pressure/head).</li>
-                <li>Alarm logic for leaks and flow loss.</li>
-              </ul>
-            </div>
-            <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-5">
-              <h3 class="font-semibold text-ocp-navy mb-2">Monitoring &amp; predictive</h3>
-              <ul class="list-disc list-inside text-xs text-ocp-text-secondary space-y-1">
-                <li>Sensor set placement (T, P, Flow).</li>
-                <li>Dashboards for operators and OEMs.</li>
-                <li>AI-driven anomaly detection models.</li>
-              </ul>
-            </div>
-          </div>
-
-          <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-6 mt-6 reveal delay-200">
-            <h3 class="font-semibold text-ocp-navy mb-2"><i class="fa-solid fa-hand-holding-dollar mr-2"></i>Export finance advisory – “EFS–LIS–SBLC”</h3>
-            <p class="text-xs text-ocp-text-secondary mb-2">
-              For export projects, our partner AxiomDeta advises on trade finance structure. We recommend the "EFS-LIS-SBLC" model for 90-day payment terms, leveraging Singapore's Enterprise Financing Scheme and Loan Insurance Scheme to issue SBLCs as payment guarantees, minimizing interest costs and risk.
-            </p>
-          </div>
-          
-          <div class="mt-10 reveal">
-             <h2 class="text-2xl sm:text-3xl font-semibold text-ocp-navy mb-3">4. Quantum-ready &amp; Software-defined</h2>
-             <div class="space-y-3">
-                <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-4">
-                   <h4 class="font-semibold text-ocp-navy text-sm">Quantum-ready rack blueprint</h4>
-                   <p class="text-xs text-ocp-text-secondary mt-1">Today's 800V HVDC and liquid cooling work lays the foundation for future quantum systems requiring ultra-stable power and thermal management.</p>
-                </div>
-                <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-4">
-                   <h4 class="font-semibold text-ocp-navy text-sm">Autonomous monitoring software</h4>
-                   <p class="text-xs text-ocp-text-secondary mt-1">Our long-term goal is software-defined operations: AI agents supervising a digital twin of the rack for a self-healing loop (predict -> decide -> execute).</p>
-                </div>
-             </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- DOWNLOADS -->
-      <section data-section="downloads" class="py-10 sm:py-16 bg-ocp-bg">
+      
+      <!-- ======================================================================= -->
+      <!-- NEW GLOBAL DOWNLOADS SECTION (Combined) -->
+      <!-- ======================================================================= -->
+      <section id="downloads-content" data-section="downloads-content" class="py-10 sm:py-16 bg-ocp-bg">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 reveal">
-          <h2 class="text-2xl sm:text-3xl font-semibold text-ocp-navy mb-3">5. Downloads</h2>
-          <div class="grid md:grid-cols-3 gap-5 text-sm mt-6">
-            <div class="bg-white rounded-ocp border border-ocp-border p-5 hover:-translate-y-1 transition-transform">
-              <div class="font-semibold text-ocp-navy mb-1"><i class="fa-regular fa-file-pdf text-red-500 mr-2"></i>CDU Self-Qualification</div> 
-              <p class="text-xs text-ocp-text-secondary mb-2">NVIDIA's CDU Self-Qualification Guideline.</p> 
+          <h2 class="text-3xl sm:text-4xl font-bold text-ocp-navy mb-8 text-center border-b pb-4">
+            Downloads
+          </h2>
+
+          <main id="downloads-page-en" class="lang-page grid md:grid-cols-3 gap-5 text-sm mt-6">
+            <h3 class="md:col-span-3 text-xl font-semibold text-ocp-navy mb-4">Rack, Power & Cooling Specifications</h3>
+            
+            <!-- 1. OCP PDU Specification (Rack & Power) -->
+            <div class="bg-white rounded-ocp border border-ocp-border p-5 hover:-translate-y-1 transition-transform shadow-md">
+              <div class="font-semibold text-ocp-navy mb-1 flex items-center"><i class="fa-solid fa-plug text-ocp-navy mr-2"></i> OCP PDU Specification</div> 
+              <p class="text-xs text-ocp-text-secondary mb-3">OCP Facebook Open Rack V2 PDU Specification (230V AC version).</p> 
+              <a href="https://raw.githubusercontent.com/luoxisg/dcdeeptech/main/downloads/OCP Facebook Open Rack V2 EU 230V AC PDU Specification REV01.pdf" class="text-ocp-green text-xs underline break-all font-bold">Download PDF</a>
+            </div>
+            
+            <!-- 2. CDU Self-Qualification (Cooling) -->
+            <div class="bg-white rounded-ocp border border-ocp-border p-5 hover:-translate-y-1 transition-transform shadow-md">
+              <div class="font-semibold text-ocp-navy mb-1 flex items-center"><i class="fa-solid fa-snowflake text-blue-500 mr-2"></i> CDU Self-Qualification</div> 
+              <p class="text-xs text-ocp-text-secondary mb-3">NVIDIA's CDU Self-Qualification Guideline for cooling systems.</p> 
               <a href="https://raw.githubusercontent.com/luoxisg/dcdeeptech/main/downloads/NV-CDU Self-Qualification Guideline Rev 1.pdf" class="text-ocp-green text-xs underline break-all font-bold">Download PDF</a>
             </div>
-            <div class="bg-white rounded-ocp border border-ocp-border p-5 hover:-translate-y-1 transition-transform">
-              <div class="font-semibold text-ocp-navy mb-1"><i class="fa-regular fa-file-pdf text-red-500 mr-2"></i>OCP PDU Specification</div> 
-              <p class="text-xs text-ocp-text-secondary mb-2">OCP Facebook Open Rack V2 PDU Specification.</p> 
+            
+            <!-- 3. CDU & Loop Checklist (Cooling) -->
+            <div class="bg-white rounded-ocp border border-ocp-border p-5 hover:-translate-y-1 transition-transform shadow-md">
+              <div class="font-semibold text-ocp-navy mb-1 flex items-center"><i class="fa-solid fa-list-check text-ocp-green mr-2"></i> CDU &amp; Loop Checklist</div>
+              <p class="text-xs text-ocp-text-secondary mb-3">Engineering checklist for safe and efficient CDU selection and loop design.</p>
               <a href="https://raw.githubusercontent.com/luoxisg/dcdeeptech/main/downloads/CDU Requirements Document Rev 1.pdf" class="text-ocp-green text-xs underline break-all font-bold">Download PDF</a>
             </div>
-            <div class="bg-white rounded-ocp border border-ocp-border p-5 hover:-translate-y-1 transition-transform">
-              <div class="font-semibold text-ocp-navy mb-1"><i class="fa-regular fa-file-pdf text-red-500 mr-2"></i>CDU &amp; Loop Checklist</div>
-              <p class="text-xs text-ocp-text-secondary mb-2">Engineering checklist for CDU selection.</p>
-              <a href="https://raw.githubusercontent.com/luoxisg/dcdeeptech/main/downloads/CDU Requirements Document Rev 1.pdf" class="text-ocp-green text-xs underline break-all font-bold">Download PDF</a>
-            </div>
-          </div>
-        </div>
-      </section>
+          </main>
 
-      <!-- FAQ SECTION (FULL 9 QUESTIONS) -->
-      <section data-section="faq" class="py-10 sm:py-16 bg-white">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 reveal">
-          <h2 class="text-2xl sm:text-3xl font-semibold text-ocp-navy mb-3">6. Technical FAQ</h2>
-          <p class="text-sm text-ocp-text-secondary mb-8">Comprehensive answers for OCP deployment.</p>
-          
-          <div class="space-y-3">
-            <!-- Q1 -->
-            <div class="bg-ocp-bg rounded-ocp border border-ocp-border overflow-hidden">
-              <button class="faq-question w-full flex justify-between items-center text-left p-4 sm:p-5 hover:bg-gray-50 cursor-pointer">
-                <span class="font-semibold text-ocp-navy text-sm sm:text-base">Q1: Why move from 48V to 800V HVDC?</span>
-                <svg class="faq-icon w-5 h-5 text-ocp-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-              </button>
-              <div class="faq-answer hidden p-5 pt-0 text-sm text-ocp-text-secondary border-t border-ocp-border mt-2">
-                <p>Efficiency and physics. Delivering 100kW at 48V requires ~2083 Amps. According to Joule's Law ($P=I^2R$), this creates massive heat loss. Moving to 800V reduces current to ~125 Amps (a 94% reduction), slashing resistive losses by >99% and enabling thinner, cheaper cables.</p>
-              </div>
-            </div>
-            <!-- Q2 -->
-            <div class="bg-ocp-bg rounded-ocp border border-ocp-border overflow-hidden">
-              <button class="faq-question w-full flex justify-between items-center text-left p-4 sm:p-5 hover:bg-gray-50 cursor-pointer">
-                <span class="font-semibold text-ocp-navy text-sm sm:text-base">Q2: Structural requirements for liquid cooling (ORV3)?</span>
-                <svg class="faq-icon w-5 h-5 text-ocp-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-              </button>
-              <div class="faq-answer hidden p-5 pt-0 text-sm text-ocp-text-secondary border-t border-ocp-border mt-2">
-                <p>Liquid is heavy. A fully populated rack handles static fluid weight plus dynamic stress from blind-mate connectors. ORV3 specs require "Web Stiffeners" on vertical posts and reinforced welding to prevent frame warping.</p>
-              </div>
-            </div>
-            <!-- Q3 -->
-            <div class="bg-ocp-bg rounded-ocp border border-ocp-border overflow-hidden">
-              <button class="faq-question w-full flex justify-between items-center text-left p-4 sm:p-5 hover:bg-gray-50 cursor-pointer">
-                <span class="font-semibold text-ocp-navy text-sm sm:text-base">Q3: How to handle ORW (Open Rack Wide) weight?</span>
-                <svg class="faq-icon w-5 h-5 text-ocp-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-              </button>
-              <div class="faq-answer hidden p-5 pt-0 text-sm text-ocp-text-secondary border-t border-ocp-border mt-2">
-                <p>Megawatt-class racks weigh 3500kg+. Traditional casters will fail. ORW racks use "Support Bases" and require "Lift-and-Place" logistics using industrial gantries via top lift points.</p>
-              </div>
-            </div>
-            <!-- Q4 -->
-            <div class="bg-ocp-bg rounded-ocp border border-ocp-border overflow-hidden">
-              <button class="faq-question w-full flex justify-between items-center text-left p-4 sm:p-5 hover:bg-gray-50 cursor-pointer">
-                <span class="font-semibold text-ocp-navy text-sm sm:text-base">Q4: Why a 48-hour salt fog test?</span>
-                <svg class="faq-icon w-5 h-5 text-ocp-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-              </button>
-              <div class="faq-answer hidden p-5 pt-0 text-sm text-ocp-text-secondary border-t border-ocp-border mt-2">
-                <p>To ensure grounding integrity in non-sterile DC environments. ASTMB117 ensures grounding points don't corrode over 10 years, preventing fatal safety failures during HVDC short circuits.</p>
-              </div>
-            </div>
-            <!-- Q5 -->
-            <div class="bg-ocp-bg rounded-ocp border border-ocp-border overflow-hidden">
-              <button class="faq-question w-full flex justify-between items-center text-left p-4 sm:p-5 hover:bg-gray-50 cursor-pointer">
-                <span class="font-semibold text-ocp-navy text-sm sm:text-base">Q5: What is a "21-to-19 inch" conversion adapter?</span>
-                <svg class="faq-icon w-5 h-5 text-ocp-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-              </button>
-              <div class="faq-answer hidden p-5 pt-0 text-sm text-ocp-text-secondary border-t border-ocp-border mt-2">
-                <p>A bracket allowing standard 19" switches/servers to mount inside a modern 21" OCP rack, enabling brownfield migration without replacing all IT equipment.</p>
-              </div>
-            </div>
-            <!-- Q6 -->
-            <div class="bg-ocp-bg rounded-ocp border border-ocp-border overflow-hidden">
-              <button class="faq-question w-full flex justify-between items-center text-left p-4 sm:p-5 hover:bg-gray-50 cursor-pointer">
-                <span class="font-semibold text-ocp-navy text-sm sm:text-base">Q6: Advantage of 48V busbar over cable PDUs?</span>
-                <svg class="faq-icon w-5 h-5 text-ocp-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-              </button>
-              <div class="faq-answer hidden p-5 pt-0 text-sm text-ocp-text-secondary border-t border-ocp-border mt-2">
-                <p>Eliminates cable clutter ("Cable Mess"), improves airflow, reduces setup time, and increases reliability by reducing physical connection points via blind-mating.</p>
-              </div>
-            </div>
-            <!-- Q7 -->
-            <div class="bg-ocp-bg rounded-ocp border border-ocp-border overflow-hidden">
-              <button class="faq-question w-full flex justify-between items-center text-left p-4 sm:p-5 hover:bg-gray-50 cursor-pointer">
-                <span class="font-semibold text-ocp-navy text-sm sm:text-base">Q7: Why does ORV3 use a 48mm "OpenU" unit?</span>
-                <svg class="faq-icon w-5 h-5 text-ocp-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-              </button>
-              <div class="faq-answer hidden p-5 pt-0 text-sm text-ocp-text-secondary border-t border-ocp-border mt-2">
-                <p>Standard 1U is 44.45mm. ORV3's 48mm OpenU adds ~3.5mm vertical space, significantly improving airflow volume for taller heatsinks and larger fans needed for high-TDP chips.</p>
-              </div>
-            </div>
-            <!-- Q8 -->
-            <div class="bg-ocp-bg rounded-ocp border border-ocp-border overflow-hidden">
-              <button class="faq-question w-full flex justify-between items-center text-left p-4 sm:p-5 hover:bg-gray-50 cursor-pointer">
-                <span class="font-semibold text-ocp-navy text-sm sm:text-base">Q8: Are "Tin Whiskers" really that dangerous?</span>
-                <svg class="faq-icon w-5 h-5 text-ocp-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-              </button>
-              <div class="faq-answer hidden p-5 pt-0 text-sm text-ocp-text-secondary border-t border-ocp-border mt-2">
-                <p>Yes, in HVDC systems. Microscopic tin filaments can bridge gaps. At 800V, a single whisker can cause a catastrophic arc flash. OCP mandates silver plating to prevent this.</p>
-              </div>
-            </div>
-            <!-- Q9 -->
-            <div class="bg-ocp-bg rounded-ocp border border-ocp-border overflow-hidden">
-              <button class="faq-question w-full flex justify-between items-center text-left p-4 sm:p-5 hover:bg-gray-50 cursor-pointer">
-                <span class="font-semibold text-ocp-navy text-sm sm:text-base">Q9: Is "Greenfield" required for OCP?</span>
-                <svg class="faq-icon w-5 h-5 text-ocp-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-              </button>
-              <div class="faq-answer hidden p-5 pt-0 text-sm text-ocp-text-secondary border-t border-ocp-border mt-2">
-                <p>No. We provide retrofit kits (adapters, CDUs, raised floor reinforcements) to deploy high-density OCP racks into existing "brownfield" data centers.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+          <main id="downloads-page-zh" class="lang-page hidden grid md:grid-cols-3 gap-5 text-sm mt-6">
+            <h3 class="md:col-span-3 text-xl font-semibold text-ocp-navy mb-4">機櫃、電源與冷卻規格書</h3>
 
-      <!-- ABOUT & CONTACT (EN) -->
-      <section data-section="about" class="py-10 sm:py-16 bg-ocp-bg">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 reveal">
-          <h2 class="text-2xl sm:text-3xl font-semibold text-ocp-navy mb-3 text-center">About DCDeepTech</h2>
-          <div class="bg-white rounded-ocp border border-ocp-border shadow-ocp p-6 text-center">
-            <p class="text-ocp-text-secondary text-sm">
-              Founded by senior engineers and financial experts, we serve the OCP ecosystem through DeepTech consulting, supply chain finance solutions, and global marketing. We act as a neutral design office bridging OCP specs and real-world deployment.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <section data-section="contact" class="py-10 sm:py-16 bg-white">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 reveal">
-          <div class="bg-ocp-bg rounded-ocp shadow-ocp border border-ocp-border p-6 sm:p-8"> 
-            <h2 class="text-2xl sm:text-3xl font-semibold text-center text-ocp-navy mb-3">7. Contact DCDeepTech</h2>
-            <p class="text-center text-sm text-ocp-text-secondary mb-6">Ready to discuss your liquid cooling or OCP rack project?</p>
-            <div class="grid sm:grid-cols-2 gap-5 mb-6 text-sm">
-              <a href="#" class="bg-white rounded-ocp border border-ocp-border p-4 flex items-start gap-3 contact-card-hover cursor-pointer group">
-                <div class="w-9 h-9 rounded-lg bg-ocp-green-soft flex-shrink-0 flex items-center justify-center group-hover:bg-ocp-green group-hover:text-white transition-colors"><i class="fa-solid fa-location-dot text-lg text-ocp-green group-hover:text-white"></i></div>
-                <div><div class="font-semibold text-ocp-navy mb-1">Address</div><p class="text-xs text-ocp-text-secondary">71 Ayer Rajah Crescent, #02-01<br>Singapore 139951</p></div>
-              </a>
-              <a href="mailto:info@DCdeeptech.com" class="bg-white rounded-ocp border border-ocp-border p-4 flex items-start gap-3 contact-card-hover cursor-pointer group">
-                <div class="w-9 h-9 rounded-lg bg-ocp-green-soft flex-shrink-0 flex items-center justify-center group-hover:bg-ocp-green group-hover:text-white transition-colors"><i class="fa-solid fa-envelope text-lg text-ocp-green group-hover:text-white"></i></div>
-                <div><div class="font-semibold text-ocp-navy mb-1">Email</div><p class="text-ocp-green underline">info@DCdeeptech.com</p></div>
-              </a>
-              <a href="#" class="bg-white rounded-ocp border border-ocp-border p-4 flex items-start gap-3 contact-card-hover cursor-pointer group">
-                <div class="w-9 h-9 rounded-lg bg-ocp-green-soft flex-shrink-0 flex items-center justify-center group-hover:bg-ocp-green group-hover:text-white transition-colors"><i class="fa-brands fa-whatsapp text-xl text-ocp-green group-hover:text-white"></i></div>
-                <div><div class="font-semibold text-ocp-navy mb-1">WhatsApp</div><p class="text-ocp-green font-medium">+65 8378 5068</p></div>
-              </a>
-              <div class="bg-white rounded-ocp border border-ocp-border p-4 flex items-start gap-3">
-                <div class="w-9 h-9 rounded-lg bg-ocp-green-soft flex-shrink-0 flex items-center justify-center"><i class="fa-solid fa-globe text-lg text-ocp-green"></i></div>
-                <div><div class="font-semibold text-ocp-navy mb-1">Region</div><p class="text-xs text-ocp-text-secondary">Singapore, Taiwan, ASEAN, Brazil.</p></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-    </main>
-
-
-    <!-- =========================== CHINESE CONTENT (COMPLETE) =========================== -->
-    <main id="page-zh" class="flex-1 lang-page hidden">
-      <section data-section="overview" class="bg-gradient-to-b from-white to-ocp-bg py-10 sm:py-16">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-[1.2fr,1fr] gap-10 items-start">
-          <div class="reveal">
-            <p class="text-xs font-semibold tracking-[0.2em] text-ocp-green uppercase mb-3">
-              OCP · 48V → 800V HVDC · 液冷
-            </p>
-            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-semibold text-ocp-navy leading-tight mb-4">
-              30–100&nbsp;kW AI / HPC 機櫃<br class="hidden sm:block" />
-              液冷產品與方案一頁版。
-            </h1>
-            <p class="text-sm sm:text-base text-ocp-text-secondary mb-4 leading-relaxed">
-              本簡報總結 DCDeepTech 對 <span class="font-semibold text-ocp-navy">機櫃級液冷</span> 的觀點：
-              整合冷卻塔與 CDU，選擇 <span class="font-semibold text-ocp-navy">DLC / RDHx / 浸沒式</span>，並打造安全的 OCP 機櫃。
-            </p>
-            <div class="flex flex-wrap gap-3 mb-8">
-              <button onclick="scrollToSection('system')" class="inline-flex items-center px-5 py-2.5 rounded-full bg-ocp-navy text-white text-sm shadow-ocp hover:bg-opacity-90 transition-all">
-                查看冷卻環路
-              </button>
-              <button onclick="scrollToSection('contact')" class="inline-flex items-center px-5 py-2.5 rounded-full border border-ocp-navy text-ocp-navy text-sm hover:bg-ocp-bg transition-all">
-                聯絡顧問
-              </button>
+            <!-- 1. OCP PDU 規格書 (Rack & Power) -->
+            <div class="bg-white rounded-ocp border border-ocp-border p-5 hover:-translate-y-1 transition-transform shadow-md">
+              <div class="font-semibold text-ocp-navy mb-1 flex items-center"><i class="fa-solid fa-plug text-ocp-navy mr-2"></i> OCP PDU 規格書</div> 
+              <p class="text-xs text-ocp-text-secondary mb-3">OCP Facebook Open Rack V2 PDU 規格書 (230V AC 版本)。</p> 
+              <a href="https://raw.githubusercontent.com/luoxisg/dcdeeptech/main/downloads/OCP Facebook Open Rack V2 EU 230V AC PDU Specification REV01.pdf" class="text-ocp-green text-xs underline break-all font-bold">下載 PDF</a>
             </div>
             
-            <!-- *** INTERACTIVE SIMULATOR (ZH) *** -->
-            <div class="sim-container shadow-ocp reveal delay-100 state-48v" id="sim-zh">
-              <div class="flex justify-between items-center mb-4">
-                <h3 class="font-semibold text-ocp-navy flex items-center gap-2">
-                  <i class="fa-solid fa-bolt text-ocp-green"></i> 能源架構模擬器
-                </h3>
-                <div class="flex gap-2 bg-ocp-bg p-1 rounded-lg">
-                  <button class="text-xs px-3 py-1 rounded-md font-semibold transition-colors active-btn" id="btn-48v-zh" onclick="toggleSimulator('zh', '48v')">48V 舊制</button>
-                  <button class="text-xs px-3 py-1 rounded-md font-semibold transition-colors inactive-btn" id="btn-800v-zh" onclick="toggleSimulator('zh', '800v')">800V HVDC</button>
+            <!-- 2. CDU 自我鑑定指南 (Cooling) -->
+            <div class="bg-white rounded-ocp border border-ocp-border p-5 hover:-translate-y-1 transition-transform shadow-md">
+              <div class="font-semibold text-ocp-navy mb-1 flex items-center"><i class="fa-solid fa-snowflake text-blue-500 mr-2"></i> CDU 自我鑑定指南</div> 
+              <p class="text-xs text-ocp-text-secondary mb-3">NVIDIA 針對冷卻系統的 CDU 自我鑑定指南。</p> 
+              <a href="https://raw.githubusercontent.com/luoxisg/dcdeeptech/main/downloads/NV-CDU Self-Qualification Guideline Rev 1.pdf" class="text-ocp-green text-xs underline break-all font-bold">下載 PDF</a>
+            </div>
+            
+            <!-- 3. CDU & 迴路清單 (Cooling) -->
+            <div class="bg-white rounded-ocp border border-ocp-border p-5 hover:-translate-y-1 transition-transform shadow-md">
+              <div class="font-semibold text-ocp-navy mb-1 flex items-center"><i class="fa-solid fa-list-check text-ocp-green mr-2"></i> CDU &amp; 迴路清單</div>
+              <p class="text-xs text-ocp-text-secondary mb-3">用於安全高效的 CDU 選型和迴路設計的工程核對清單。</p>
+              <a href="https://raw.githubusercontent.com/luoxisg/dcdeeptech/main/downloads/CDU Requirements Document Rev 1.pdf" class="text-ocp-green text-xs underline break-all font-bold">下載 PDF</a>
+            </div>
+          </main>
+        </div>
+      </section>
+      
+      <!-- ======================================================================= -->
+      <!-- GLOBAL FAQ SECTION (Combined Q1-Q9) -->
+      <!-- ======================================================================= -->
+      <section id="faq-content" data-section="faq-content" class="py-10 sm:py-16 bg-white">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 reveal">
+          <h2 class="text-3xl sm:text-4xl font-bold text-ocp-navy mb-8 text-center border-b pb-4">
+            Technical FAQ
+          </h2>
+          
+          <main id="faq-page-en" class="lang-page">
+            <h3 class="text-xl font-semibold text-ocp-navy mb-4">Structural, Electrical, and Deployment Questions (Q1-Q9)</h3>
+            <div class="space-y-3">
+              <!-- Q1: 48V to 800V -->
+              <div class="bg-ocp-bg rounded-ocp border border-ocp-border overflow-hidden">
+                <button class="faq-question w-full flex justify-between items-center text-left p-4 sm:p-5 hover:bg-gray-50 cursor-pointer">
+                  <span class="font-semibold text-ocp-navy text-sm sm:text-base">Q1: Why move from 48V to 800V HVDC?</span>
+                  <svg class="faq-icon w-5 h-5 text-ocp-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div class="faq-answer hidden p-5 pt-0 text-sm text-ocp-text-secondary border-t border-ocp-border mt-2">
+                  <p>Efficiency and physics. Delivering 100kW at 48V requires ~2083 Amps. According to Joule's Law ($P=I^2R$), this creates massive heat loss. Moving to 800V reduces current to ~125 Amps (a 94% reduction), slashing resistive losses by >99% and enabling thinner, cheaper cables.</p>
                 </div>
               </div>
-              
-              <!-- Visual Area -->
-              <div class="relative bg-gray-50 rounded-lg p-4 border border-gray-200 min-h-[140px] flex flex-col justify-center">
-                 <div class="text-xs text-gray-400 absolute top-2 left-2 uppercase tracking-wider">線纜截面可視化</div>
-                 <div class="flex items-center gap-4">
-                    <div class="flex-1">
-                      <div class="cable-visual shadow-lg">
-                        <span class="z-10 relative text-white/90 text-xs uppercase tracking-widest">導體銅排</span>
-                      </div>
-                    </div>
-                    <div class="w-32 text-right">
-                       <div class="text-xs text-gray-500">所需電流</div>
-                       <div class="text-2xl font-bold font-mono text-ocp-navy sim-amps">2083 A</div>
-                    </div>
-                 </div>
-                 <div class="mt-3 flex items-center gap-2 text-xs font-bold sim-status text-red-600">
-                    <i class="fa-solid fa-triangle-exclamation"></i>
-                    <span>I²R 嚴重熱損 (銅的暴政)</span>
-                 </div>
+              <!-- Q2: Structural requirements (ORV3) -->
+              <div class="bg-ocp-bg rounded-ocp border border-ocp-border overflow-hidden">
+                <button class="faq-question w-full flex justify-between items-center text-left p-4 sm:p-5 hover:bg-gray-50 cursor-pointer">
+                  <span class="font-semibold text-ocp-navy text-sm sm:text-base">Q2: Structural requirements for liquid cooling (ORV3)?</span>
+                  <svg class="faq-icon w-5 h-5 text-ocp-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div class="faq-answer hidden p-5 pt-0 text-sm text-ocp-text-secondary border-t border-ocp-border mt-2">
+                  <p>Liquid is heavy. A fully populated rack handles static fluid weight plus dynamic stress from blind-mate connectors. ORV3 specs require "Web Stiffeners" on vertical posts and reinforced welding to prevent frame warping.</p>
+                </div>
               </div>
-
-              <!-- Metrics Grid -->
-              <div class="grid grid-cols-3 gap-4 mt-4 text-center text-xs">
-                 <div class="bg-gray-50 p-2 rounded border border-gray-100">
-                    <div class="text-gray-400 mb-1">機櫃功率</div>
-                    <div class="font-bold text-ocp-navy">100,000 W</div>
-                 </div>
-                 <div class="bg-gray-50 p-2 rounded border border-gray-100">
-                    <div class="text-gray-400 mb-1">能源損耗</div>
-                    <div class="font-bold sim-loss text-red-600">極高</div>
-                 </div>
-                 <div class="bg-gray-50 p-2 rounded border border-gray-100">
-                    <div class="text-gray-400 mb-1">傳輸效率</div>
-                    <div class="font-bold sim-eff text-red-600">低</div>
-                 </div>
+              <!-- Q3: ORW weight -->
+              <div class="bg-ocp-bg rounded-ocp border border-ocp-border overflow-hidden">
+                <button class="faq-question w-full flex justify-between items-center text-left p-4 sm:p-5 hover:bg-gray-50 cursor-pointer">
+                  <span class="font-semibold text-ocp-navy text-sm sm:text-base">Q3: How to handle ORW (Open Rack Wide) weight?</span>
+                  <svg class="faq-icon w-5 h-5 text-ocp-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div class="faq-answer hidden p-5 pt-0 text-sm text-ocp-text-secondary border-t border-ocp-border mt-2">
+                  <p>Megawatt-class racks weigh 3500kg+. Traditional casters will fail. ORW racks use "Support Bases" and require "Lift-and-Place" logistics using industrial gantries via top lift points.</p>
+                </div>
+              </div>
+              <!-- Q4: Salt fog test -->
+              <div class="bg-ocp-bg rounded-ocp border border-ocp-border overflow-hidden">
+                <button class="faq-question w-full flex justify-between items-center text-left p-4 sm:p-5 hover:bg-gray-50 cursor-pointer">
+                  <span class="font-semibold text-ocp-navy text-sm sm:text-base">Q4: Why a 48-hour salt fog test?</span>
+                  <svg class="faq-icon w-5 h-5 text-ocp-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div class="faq-answer hidden p-5 pt-0 text-sm text-ocp-text-secondary border-t border-ocp-border mt-2">
+                  <p>To ensure grounding integrity in non-sterile DC environments. ASTMB117 ensures grounding points don't corrode over 10 years, preventing fatal safety failures during HVDC short circuits.</p>
+                </div>
+              </div>
+              <!-- Q5: 21-to-19 inch adapter -->
+              <div class="bg-ocp-bg rounded-ocp border border-ocp-border overflow-hidden">
+                <button class="faq-question w-full flex justify-between items-center text-left p-4 sm:p-5 hover:bg-gray-50 cursor-pointer">
+                  <span class="font-semibold text-ocp-navy text-sm sm:text-base">Q5: What is a "21-to-19 inch" conversion adapter?</span>
+                  <svg class="faq-icon w-5 h-5 text-ocp-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div class="faq-answer hidden p-5 pt-0 text-sm text-ocp-text-secondary border-t border-ocp-border mt-2">
+                  <p>A bracket allowing standard 19" switches/servers to mount inside a modern 21" OCP rack, enabling brownfield migration without replacing all IT equipment.</p>
+                </div>
+              </div>
+              <!-- Q6: 48V busbar -->
+              <div class="bg-ocp-bg rounded-ocp border border-ocp-border overflow-hidden">
+                <button class="faq-question w-full flex justify-between items-center text-left p-4 sm:p-5 hover:bg-gray-50 cursor-pointer">
+                  <span class="font-semibold text-ocp-navy text-sm sm:text-base">Q6: Advantage of 48V busbar over cable PDUs?</span>
+                  <svg class="faq-icon w-5 h-5 text-ocp-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div class="faq-answer hidden p-5 pt-0 text-sm text-ocp-text-secondary border-t border-ocp-border mt-2">
+                  <p>Eliminates cable clutter ("Cable Mess"), improves airflow, reduces setup time, and increases reliability by reducing physical connection points via blind-mating.</p>
+                </div>
+              </div>
+              <!-- Q7: OpenU unit -->
+              <div class="bg-ocp-bg rounded-ocp border border-ocp-border overflow-hidden">
+                <button class="faq-question w-full flex justify-between items-center text-left p-4 sm:p-5 hover:bg-gray-50 cursor-pointer">
+                  <span class="font-semibold text-ocp-navy text-sm sm:text-base">Q7: Why does ORV3 use a 48mm "OpenU" unit?</span>
+                  <svg class="faq-icon w-5 h-5 text-ocp-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div class="faq-answer hidden p-5 pt-0 text-sm text-ocp-text-secondary border-t border-ocp-border mt-2">
+                  <p>Standard 1U is 44.45mm. ORV3's 48mm OpenU adds ~3.5mm vertical space, significantly improving airflow volume for taller heatsinks and larger fans needed for high-TDP chips.</p>
+                </div>
+              </div>
+              <!-- Q8: Tin Whiskers -->
+              <div class="bg-ocp-bg rounded-ocp border border-ocp-border overflow-hidden">
+                <button class="faq-question w-full flex justify-between items-center text-left p-4 sm:p-5 hover:bg-gray-50 cursor-pointer">
+                  <span class="font-semibold text-ocp-navy text-sm sm:text-base">Q8: Are "Tin Whiskers" really that dangerous?</span>
+                  <svg class="faq-icon w-5 h-5 text-ocp-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div class="faq-answer hidden p-5 pt-0 text-sm text-ocp-text-secondary border-t border-ocp-border mt-2">
+                  <p>Yes, in HVDC systems. Microscopic tin filaments can bridge gaps. At 800V, a single whisker can cause a catastrophic arc flash. OCP mandates silver plating to prevent this.</p>
+                </div>
+              </div>
+              <!-- Q9: Greenfield vs Brownfield -->
+              <div class="bg-ocp-bg rounded-ocp border border-ocp-border overflow-hidden">
+                <button class="faq-question w-full flex justify-between items-center text-left p-4 sm:p-5 hover:bg-gray-50 cursor-pointer">
+                  <span class="font-semibold text-ocp-navy text-sm sm:text-base">Q9: Is "Greenfield" required for OCP?</span>
+                  <svg class="faq-icon w-5 h-5 text-ocp-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div class="faq-answer hidden p-5 pt-0 text-sm text-ocp-text-secondary border-t border-ocp-border mt-2">
+                  <p>No. We provide retrofit kits (adapters, CDUs, raised floor reinforcements) to deploy high-density OCP racks into existing "brownfield" data centers.</p>
+                </div>
               </div>
             </div>
-            <!-- *** END SIMULATOR ZH *** -->
+          </main>
+          
+          <main id="faq-page-zh" class="lang-page hidden">
+            <h3 class="text-xl font-semibold text-ocp-navy mb-4">結構、電氣與部署問題 (Q1-Q9)</h3>
+            <div class="space-y-3">
+              <!-- Q1 -->
+              <div class="bg-ocp-bg rounded-ocp border border-ocp-border overflow-hidden">
+                <button class="faq-question w-full flex justify-between items-center text-left p-4 sm:p-5 hover:bg-gray-50 cursor-pointer">
+                  <span class="font-semibold text-ocp-navy text-sm sm:text-base">Q1: 為什麼從 48V 轉向 800V HVDC？</span>
+                  <svg class="faq-icon w-5 h-5 text-ocp-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div class="faq-answer hidden p-5 pt-0 text-sm text-ocp-text-secondary border-t border-ocp-border mt-2">
+                  <p>為了效率和物理定律。在 48V 下傳輸 100kW 需要約 2083 安培電流。根據焦耳定律 ($P=I^2R$)，這會產生巨大的熱損。升級到 800V 可將電流降至約 125 安培（減少 94%），將電阻損耗削減 >99%，並允許使用更薄、更便宜的電纜。</p>
+                </div>
+              </div>
+              <!-- Q2 -->
+              <div class="bg-ocp-bg rounded-ocp border border-ocp-border overflow-hidden">
+                <button class="faq-question w-full flex justify-between items-center text-left p-4 sm:p-5 hover:bg-gray-50 cursor-pointer">
+                  <span class="font-semibold text-ocp-navy text-sm sm:text-base">Q2: 液冷 (ORV3) 對結構有何要求？</span>
+                  <svg class="faq-icon w-5 h-5 text-ocp-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div class="faq-answer hidden p-5 pt-0 text-sm text-ocp-text-secondary border-t border-ocp-border mt-2">
+                  <p>液體很重。一個滿載的機櫃需要承受靜態流體重量以及盲插接頭產生的動態應力。ORV3 規範要求在垂直立柱上使用「腹板加強筋」並加強焊接，以防止機架變形。</p>
+                </div>
+              </div>
+              <!-- Q3 -->
+              <div class="bg-ocp-bg rounded-ocp border border-ocp-border overflow-hidden">
+                <button class="faq-question w-full flex justify-between items-center text-left p-4 sm:p-5 hover:bg-gray-50 cursor-pointer">
+                  <span class="font-semibold text-ocp-navy text-sm sm:text-base">Q3: 如何處理 ORW (開放式加寬機櫃) 的重量？</span>
+                  <svg class="faq-icon w-5 h-5 text-ocp-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div class="faq-answer hidden p-5 pt-0 text-sm text-ocp-text-secondary border-t border-ocp-border mt-2">
+                  <p>兆瓦級機櫃的重量超過 3500kg。傳統的腳輪會失效。ORW 機櫃使用「支撐底座」，並需要通過頂部吊點使用工業龍門架進行「吊裝定位」物流操作。</p>
+                </div>
+              </div>
+              <!-- Q4 -->
+              <div class="bg-ocp-bg rounded-ocp border border-ocp-border overflow-hidden">
+                <button class="faq-question w-full flex justify-between items-center text-left p-4 sm:p-5 hover:bg-gray-50 cursor-pointer">
+                  <span class="font-semibold text-ocp-navy text-sm sm:text-base">Q4: 為什麼要進行 48 小時鹽霧測試？</span>
+                  <svg class="faq-icon w-5 h-5 text-ocp-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div class="faq-answer hidden p-5 pt-0 text-sm text-ocp-text-secondary border-t border-ocp-border mt-2">
+                  <p>為確保在非無菌數據中心環境中的接地完整性。ASTMB117 確保接地點在超過 10 年內不會腐蝕，防止 HVDC 短路期間發生致命的安全故障。</p>
+                </div>
+              </div>
+              <!-- Q5 -->
+              <div class="bg-ocp-bg rounded-ocp border border-ocp-border overflow-hidden">
+                <button class="faq-question w-full flex justify-between items-center text-left p-4 sm:p-5 hover:bg-gray-50 cursor-pointer">
+                  <span class="font-semibold text-ocp-navy text-sm sm:text-base">Q5: 什麼是「21 轉 19 英寸」轉換適配器？</span>
+                  <svg class="faq-icon w-5 h-5 text-ocp-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div class="faq-answer hidden p-5 pt-0 text-sm text-ocp-text-secondary border-t border-ocp-border mt-2">
+                  <p>一個支架，允許標準 19 英寸交換器/伺服器安裝到現代 21 英寸 OCP 機櫃內部，從而實現無需替換所有 IT 設備的棕地遷移。</p>
+                </div>
+              </div>
+              <!-- Q6 -->
+              <div class="bg-ocp-bg rounded-ocp border border-ocp-border overflow-hidden">
+                <button class="faq-question w-full flex justify-between items-center text-left p-4 sm:p-5 hover:bg-gray-50 cursor-pointer">
+                  <span class="font-semibold text-ocp-navy text-sm sm:text-base">Q6: 48V 銅排相比線纜 PDU 有何優勢？</span>
+                  <svg class="faq-icon w-5 h-5 text-ocp-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div class="faq-answer hidden p-5 pt-0 text-sm text-ocp-text-secondary border-t border-ocp-border mt-2">
+                  <p>消除了線纜雜亂（「線纜混亂」），改善了氣流，縮短了設置時間，並通過減少盲插連接點提高了可靠性。</p>
+                </div>
+              </div>
+              <!-- Q7 -->
+              <div class="bg-ocp-bg rounded-ocp border border-ocp-border overflow-hidden">
+                <button class="faq-question w-full flex justify-between items-center text-left p-4 sm:p-5 hover:bg-gray-50 cursor-pointer">
+                  <span class="font-semibold text-ocp-navy text-sm sm:text-base">Q7: 為什麼 ORV3 使用 48mm 的「OpenU」單元？</span>
+                  <svg class="faq-icon w-5 h-5 text-ocp-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div class="faq-answer hidden p-5 pt-0 text-sm text-ocp-text-secondary border-t border-ocp-border mt-2">
+                  <p>標準 1U 為 44.45mm。ORV3 的 48mm OpenU 增加了約 3.5mm 的垂直空間，顯著提高了氣流體積，適用於高 TDP 晶片所需更高的散熱器和更大的風扇。</p>
+                </div>
+              </div>
+              <!-- Q8 -->
+              <div class="bg-ocp-bg rounded-ocp border border-ocp-border overflow-hidden">
+                <button class="faq-question w-full flex justify-between items-center text-left p-4 sm:p-5 hover:bg-gray-50 cursor-pointer">
+                  <span class="font-semibold text-ocp-navy text-sm sm:text-base">Q8: 「錫鬚」(Tin Whiskers) 真的那麼危險嗎？</span>
+                  <svg class="faq-icon w-5 h-5 text-ocp-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div class="faq-answer hidden p-5 pt-0 text-sm text-ocp-text-secondary border-t border-ocp-border mt-2">
+                  <p>是的，在 HVDC 系統中。微小的錫絲可以橋接間隙。在 800V 下，一根錫鬚可能導致災難性的電弧閃光。OCP 要求鍍銀以防止這種情況。</p>
+                </div>
+              </div>
+              <!-- Q9: Greenfield vs Brownfield -->
+              <div class="bg-ocp-bg rounded-ocp border border-ocp-border overflow-hidden">
+                <button class="faq-question w-full flex justify-between items-center text-left p-4 sm:p-5 hover:bg-gray-50 cursor-pointer">
+                  <span class="font-semibold text-ocp-navy text-sm sm:text-base">Q9: 部署 OCP 是否必須新建機房 ("Greenfield")？</span>
+                  <svg class="faq-icon w-5 h-5 text-ocp-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div class="faq-answer hidden p-5 pt-0 text-sm text-ocp-text-secondary border-t border-ocp-border mt-2">
+                  <p>不。我們提供改造套件（適配器、CDU、高架地板加固），以將高密度 OCP 機櫃部署到現有的「棕地」數據中心。</p>
+                </div>
+              </div>
+            </div>
+          </main>
 
+        </div>
+      </section>
+
+
+      <!-- ======================================================================= -->
+      <!-- GLOBAL FOOTER CONTENT (Contact, About, Links) -->
+      <!-- ======================================================================= -->
+      
+      <!-- CONTACT -->
+      <section data-section="contact" id="contact" class="py-10 sm:py-16 bg-ocp-bg">
+        <!-- EN -->
+        <div id="contact-en" class="lang-page">
+          <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 reveal">
+            <div class="bg-white rounded-ocp shadow-ocp border border-ocp-border p-6 sm:p-8"> 
+              <h2 class="text-2xl sm:text-3xl font-semibold text-center text-ocp-navy mb-3"> Contact DCDeepTech</h2>
+              <p class="text-center text-sm text-ocp-text-secondary mb-6">Ready to discuss your liquid cooling or OCP rack project?</p>
+              <div class="grid sm:grid-cols-2 gap-5 mb-6 text-sm">
+                <a href="#" class="bg-ocp-bg rounded-ocp border border-ocp-border p-4 flex items-start gap-3 contact-card-hover cursor-pointer group">
+                  <div class="w-9 h-9 rounded-lg bg-ocp-green-soft flex-shrink-0 flex items-center justify-center group-hover:bg-ocp-green group-hover:text-white transition-colors"><i class="fa-solid fa-location-dot text-lg text-ocp-green group-hover:text-white"></i></div>
+                  <div><div class="font-semibold text-ocp-navy mb-1">Address</div><p class="text-xs text-ocp-text-secondary">71 Ayer Rajah Crescent, #02-01<br>Singapore 139951</p></div>
+                </a>
+                <a href="mailto:info@DCdeeptech.com" class="bg-ocp-bg rounded-ocp border border-ocp-border p-4 flex items-start gap-3 contact-card-hover cursor-pointer group">
+                  <div class="w-9 h-9 rounded-lg bg-ocp-green-soft flex-shrink-0 flex items-center justify-center group-hover:bg-ocp-green group-hover:text-white transition-colors"><i class="fa-solid fa-envelope text-lg text-ocp-green group-hover:text-white"></i></div>
+                  <div><div class="font-semibold text-ocp-navy mb-1">Email</div><p class="text-ocp-green underline">info@DCdeeptech.com</p></div>
+                </a>
+                <a href="#" class="bg-ocp-bg rounded-ocp border border-ocp-border p-4 flex items-start gap-3 contact-card-hover cursor-pointer group">
+                  <div class="w-9 h-9 rounded-lg bg-ocp-green-soft flex-shrink-0 flex items-center justify-center group-hover:bg-ocp-green group-hover:text-white transition-colors"><i class="fa-brands fa-whatsapp text-xl text-ocp-green group-hover:text-white"></i></div>
+                  <div><div class="font-semibold text-ocp-navy mb-1">WhatsApp</div><p class="text-ocp-green font-medium">+65 8378 5068</p></div>
+                </a>
+                <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-4 flex items-start gap-3">
+                  <div class="w-9 h-9 rounded-lg bg-ocp-green-soft flex-shrink-0 flex items-center justify-center"><i class="fa-solid fa-globe text-lg text-ocp-green"></i></div>
+                  <div><div class="font-semibold text-ocp-navy mb-1">Region</div><p class="text-xs text-ocp-text-secondary">Singapore, Taiwan, ASEAN, Brazil.</p></div>
+                </div>
+              </div>
+            </div>
           </div>
-
-          <!-- Right Column -->
-          <div class="space-y-5 reveal delay-200">
-             <div class="grid grid-cols-2 gap-3">
-              <div class="bg-white rounded-xl border border-ocp-border p-4 shadow-sm">
-                <div class="text-[0.65rem] text-ocp-text-secondary uppercase mb-1">機櫃密度</div>
-                <div class="font-bold text-ocp-navy text-lg">30–100&nbsp;kW</div>
+        </div>
+        <!-- ZH -->
+        <div id="contact-zh" class="lang-page hidden">
+          <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 reveal">
+            <div class="bg-white rounded-ocp shadow-ocp border border-ocp-border p-6 sm:p-8"> 
+              <h2 class="text-2xl sm:text-3xl font-semibold text-center text-ocp-navy mb-3"> 聯絡 DCDeepTech</h2>
+              <p class="text-center text-sm text-ocp-text-secondary mb-6">準備好討論您的液冷或 OCP 機櫃項目了嗎？</p>
+              <div class="grid sm:grid-cols-2 gap-5 mb-6 text-sm">
+                <a href="#" class="bg-ocp-bg rounded-ocp border border-ocp-border p-4 flex items-start gap-3 contact-card-hover cursor-pointer group">
+                  <div class="w-10 h-10 rounded-lg bg-ocp-green-soft flex-shrink-0 flex items-center justify-center group-hover:bg-ocp-green group-hover:text-white transition-colors"><i class="fa-solid fa-location-dot text-lg text-ocp-green group-hover:text-white"></i></div>
+                  <div><div class="font-semibold text-ocp-navy mb-1">地址</div><p class="text-xs text-ocp-text-secondary">71 Ayer Rajah Crescent, #02-01<br>Singapore 139951</p></div>
+                </a>
+                <a href="mailto:info@dcdeeptech.com" class="bg-ocp-bg rounded-ocp border border-ocp-border p-4 flex items-start gap-3 contact-card-hover cursor-pointer group">
+                  <div class="w-10 h-10 rounded-lg bg-ocp-green-soft flex-shrink-0 flex items-center justify-center group-hover:bg-ocp-green group-hover:text-white transition-colors"><i class="fa-solid fa-envelope text-lg text-ocp-green group-hover:text-white"></i></div>
+                  <div><div class="font-semibold text-ocp-navy mb-1">電子郵件</div><p class="text-ocp-green underline">info@dcdeeptech.com</p></div>
+                </a>
+                <a href="#" class="bg-ocp-bg rounded-ocp border border-ocp-border p-4 flex items-start gap-3 contact-card-hover cursor-pointer group">
+                  <div class="w-10 h-10 rounded-lg bg-ocp-green-soft flex-shrink-0 flex items-center justify-center group-hover:bg-ocp-green group-hover:text-white transition-colors"><i class="fa-brands fa-whatsapp text-xl text-ocp-green group-hover:text-white"></i></div>
+                  <div><div class="font-semibold text-ocp-navy mb-1">WhatsApp</div><p class="text-ocp-green font-medium">+65 8378 5068</p></div>
+                </a>
+                <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-4 flex items-start gap-3">
+                  <div class="w-10 h-10 rounded-lg bg-ocp-green-soft flex-shrink-0 flex items-center justify-center"><i class="fa-solid fa-globe text-lg text-ocp-green"></i></div>
+                  <div><div class="font-semibold text-ocp-navy mb-1">地區</div><p class="text-xs text-ocp-text-secondary">Singapore, Taiwan, ASEAN, Brazil.</p></div>
+                </div>
               </div>
-              <div class="bg-white rounded-xl border border-ocp-border p-4 shadow-sm">
-                <div class="text-[0.65rem] text-ocp-text-secondary uppercase mb-1">供電架構</div>
-                <div class="font-bold text-ocp-navy text-lg">800V HVDC</div>
-              </div>
-              <div class="bg-white rounded-xl border border-ocp-border p-4 shadow-sm">
-                <div class="text-[0.65rem] text-ocp-text-secondary uppercase mb-1">冷卻拓樸</div>
-                <div class="font-bold text-ocp-navy text-lg">DLC / RDHx</div>
-              </div>
-              <div class="bg-white rounded-xl border border-ocp-border p-4 shadow-sm">
-                <div class="text-[0.65rem] text-ocp-text-secondary uppercase mb-1">目標 PUE</div>
-                <div class="font-bold text-ocp-navy text-lg text-ocp-green">&lt; 1.15</div>
-              </div>
-            </div>
-            <div class="bg-white rounded-ocp border border-ocp-border shadow-ocp p-6">
-              <div class="text-[0.65rem] uppercase tracking-[0.2em] text-ocp-text-secondary mb-3">常見諮詢問題</div>
-              <ul class="space-y-2 text-sm text-ocp-text-secondary">
-                <li class="flex items-start gap-2"><i class="fa-solid fa-check text-ocp-green mt-1"></i><span>水路如何銜接既有冰水系統？</span></li>
-                <li class="flex items-start gap-2"><i class="fa-solid fa-check text-ocp-green mt-1"></i><span>DLC、RDHx 與浸沒式選擇？</span></li>
-                <li class="flex items-start gap-2"><i class="fa-solid fa-check text-ocp-green mt-1"></i><span>CDU 與歧管設計標準？</span></li>
-                <li class="flex items-start gap-2"><i class="fa-solid fa-check text-ocp-green mt-1"></i><span>800V 安全監控與防漏？</span></li>
-              </ul>
             </div>
           </div>
         </div>
       </section>
-
-      <!-- SHOWROOM ZH -->
-      <section data-section="showroom" class="py-12 bg-ocp-navy text-white relative overflow-hidden reveal">
-        <div class="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-ocp-green opacity-10 rounded-full blur-3xl"></div>
-        <div class="max-w-6xl mx-auto px-4 relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
-          <div class="md:w-2/3">
-             <div class="flex items-center gap-2 mb-2"><span class="px-2 py-1 text-[10px] font-bold bg-ocp-green text-ocp-navy rounded uppercase tracking-wider">New</span></div>
-             <h2 class="text-2xl sm:text-3xl font-bold mb-4">全球24/7日不落數字展廳</h2>
-             <p class="text-gray-300 text-sm max-w-2xl">隨時隨地體驗。在互動式虛擬環境中查看 ORV3 液冷機櫃、液路歧管與電源櫃的 3D 模型。</p>
-          </div>
-          <div class="md:w-1/3 flex justify-center md:justify-end">
-            <a href="https://dcdeeptech.com/showroom" target="_blank" class="group relative inline-flex items-center gap-3 px-6 py-3 bg-white text-ocp-navy rounded-full font-semibold transition-all hover:bg-ocp-green hover:text-white shadow-[0_0_20px_rgba(46,204,113,0.3)]">
-              <span>進入展廳</span> <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
-            </a>
-          </div>
-        </div>
-      </section>
-
-      <!-- SYSTEM -->
-      <section data-section="system" class="py-10 sm:py-16 bg-white">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 class="text-2xl sm:text-3xl font-semibold text-ocp-navy mb-6 reveal">1. 冷卻環路架構</h2>
-          <div class="grid md:grid-cols-2 gap-6 items-center mb-8 reveal delay-100">
-            <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-4">
-              <img src="https://raw.githubusercontent.com/luoxisg/dcdeeptech/main/image/coolingpic.png" alt="冷卻環路" class="w-full rounded-lg mb-3 shadow-sm" />
-              <p class="text-xs text-ocp-text-secondary">
-                冷卻塔與冰水機提供冷卻水給建築 FWS。CDU 將 FWS 與機櫃冷卻迴路耦合。
+      
+      <!-- ABOUT -->
+      <section data-section="about" class="py-10 sm:py-16 bg-white">
+        <!-- EN -->
+        <div id="about-en" class="lang-page">
+          <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 reveal">
+            <h2 class="text-2xl sm:text-3xl font-semibold text-ocp-navy mb-3 text-center">About DCDeepTech</h2>
+            <div class="bg-ocp-bg rounded-ocp border border-ocp-border shadow-ocp p-6 text-center">
+              <p class="text-ocp-text-secondary text-sm">
+                Founded by senior engineers and financial experts, we serve the OCP ecosystem through DeepTech consulting, supply chain finance solutions, and global marketing. We act as a neutral design office bridging OCP specs and real-world deployment.
               </p>
             </div>
-            <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-6">
-              <h3 class="font-semibold text-ocp-navy mb-3">設計重點</h3>
-              <ul class="list-disc list-inside text-sm text-ocp-text-secondary space-y-2">
-                <li>清楚區分 CWS / FWS / TCS 環路。</li>
-                <li>CDU 容量應以實際 IT 負載為準。</li>
-                <li>預留隔離閥與旁路方便檢修。</li>
-                <li>在進出口設置溫度、壓力與流量監測。</li>
-              </ul>
-            </div>
           </div>
-          <div class="grid md:grid-cols-2 gap-6 items-center reveal delay-200">
-            <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-4">
-               <img src="https://raw.githubusercontent.com/luoxisg/dcdeeptech/main/image/IMM.PNG" alt="Immersion" class="w-full rounded-lg mb-3 shadow-sm" />
-               <p class="text-xs text-ocp-text-secondary">OCP Inspired 介電液，具備高閃點與嚴格潔淨度管控。</p>
-            </div>
-            <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-6">
-               <h3 class="font-semibold text-ocp-navy mb-3">浸沒式考量</h3>
-               <ul class="list-disc list-inside text-sm text-ocp-text-secondary space-y-2">
-                 <li>評估工作液壽命與相容性。</li>
-                 <li>規劃重型伺服器吊掛工具。</li>
-                 <li>監測含水量與微粒。</li>
-               </ul>
+        </div>
+        <!-- ZH -->
+        <div id="about-zh" class="lang-page hidden">
+          <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 reveal">
+            <h2 class="text-2xl sm:text-3xl font-semibold text-ocp-navy mb-3 text-center">關於 DCDeepTech</h2>
+            <div class="bg-ocp-bg rounded-ocp border border-ocp-border shadow-ocp p-6 text-center">
+              <p class="text-ocp-text-secondary text-sm">由資深工程師和金融專家創立，我們透過深度技術諮詢、供應鏈金融解決方案和全球營銷，服務 OCP 生態系統。我們作為中立的設計辦公室，彌合 OCP 規範與實際部署之間的差距。</p>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- OPTIONS -->
-      <section data-section="options" class="py-10 sm:py-16 bg-ocp-bg">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 class="text-2xl sm:text-3xl font-semibold text-ocp-navy mb-6 reveal">2. 液冷拓樸選擇</h2>
-          <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-5 text-sm reveal delay-100">
-            <div class="bg-white rounded-ocp border border-ocp-border p-5 hover:shadow-lg transition-shadow">
-              <h3 class="font-semibold text-ocp-navy mb-2"><i class="fa-solid fa-microchip text-blue-500 mr-2"></i>芯片直冷 (DLC)</h3>
-              <p class="text-ocp-text-secondary text-xs">效率最高。需穩健歧管與加強結構。</p>
-            </div>
-            <div class="bg-white rounded-ocp border border-ocp-border p-5 hover:shadow-lg transition-shadow">
-              <h3 class="font-semibold text-ocp-navy mb-2"><i class="fa-solid fa-door-closed text-green-500 mr-2"></i>RDHx</h3>
-              <p class="text-ocp-text-secondary text-xs">後門熱交換器。適合既有機房升級。</p>
-            </div>
-            <div class="bg-white rounded-ocp border border-ocp-border p-5 hover:shadow-lg transition-shadow">
-              <h3 class="font-semibold text-ocp-navy mb-2"><i class="fa-solid fa-water text-cyan-500 mr-2"></i>浸沒式</h3>
-              <p class="text-ocp-text-secondary text-xs">整機浸泡。熱性能優異但維護複雜。</p>
-            </div>
-            <div class="bg-white rounded-ocp border border-ocp-border p-5 hover:shadow-lg transition-shadow">
-              <h3 class="font-semibold text-ocp-navy mb-2"><i class="fa-solid fa-pump-medical text-gray-500 mr-2"></i>CDU</h3>
-              <p class="text-ocp-text-secondary text-xs">核心心臟。控制溫度、壓力與流量。</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- PRODUCTS -->
-      <section data-section="products" class="py-10 sm:py-16 bg-white">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 class="text-2xl sm:text-3xl font-semibold text-ocp-navy mb-3 reveal">3. 產品藍圖與顧問</h2>
-          <p class="text-sm text-ocp-text-secondary mb-6 reveal">我們提供設計藍圖、CDU 工程與軟體方案。</p>
-          <div class="grid md:grid-cols-3 gap-6 text-sm reveal delay-100">
-             <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-5">
-               <h3 class="font-semibold text-ocp-navy mb-2">機櫃設計</h3>
-               <ul class="list-disc list-inside text-xs text-ocp-text-secondary space-y-1">
-                 <li>ORV3 / ORW 結構加強。</li>
-                 <li>歧管佈局與軟管走線。</li>
-               </ul>
-             </div>
-             <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-5">
-               <h3 class="font-semibold text-ocp-navy mb-2">CDU 工程</h3>
-               <ul class="list-disc list-inside text-xs text-ocp-text-secondary space-y-1">
-                 <li>冗餘需求 (N+1) 規模設計。</li>
-                 <li>壓降與流量水力計算。</li>
-               </ul>
-             </div>
-             <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-5">
-               <h3 class="font-semibold text-ocp-navy mb-2">智能監控</h3>
-               <ul class="list-disc list-inside text-xs text-ocp-text-secondary space-y-1">
-                 <li>感測器佈局。</li>
-                 <li>異常偵測 AI 模型。</li>
-               </ul>
-             </div>
-          </div>
-          <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-6 mt-6 reveal delay-200">
-            <h4 class="font-semibold text-ocp-navy mb-2"><i class="fa-solid fa-hand-holding-dollar mr-2"></i>金融諮詢：90 天帳期「EFS–LIS–SBLC」</h4>
-            <p class="text-xs text-ocp-text-secondary">針對出口專案，AxiomDeta 建議使用 EFS–LIS–SBLC 模型。利用新加坡企業融資計畫 (EFS) 與貸款保險 (LIS) 降低風險，並開立 SBLC 作為工廠付款保證。</p>
-          </div>
-          <div class="mt-10 reveal">
-             <h2 class="text-2xl sm:text-3xl font-semibold text-ocp-navy mb-3">4. 量子計算與自治運維</h2>
-             <div class="space-y-3">
-                <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-4">
-                   <h4 class="font-semibold text-ocp-navy text-sm">量子機櫃與供電基座</h4>
-                   <p class="text-xs text-ocp-text-secondary mt-1">HVDC 與液冷技術是量子計算的基礎。我們正將電力電子與流體力學的經驗移植，為未來的量子機櫃與低溫系統做好準備。</p>
-                </div>
-                <div class="bg-ocp-bg rounded-ocp border border-ocp-border p-4">
-                   <h4 class="font-semibold text-ocp-navy text-sm">智能監控與預測性維護</h4>
-                   <p class="text-xs text-ocp-text-secondary mt-1">我們的目標是軟體定義運維：利用數位分身與 AI 智能體，形成監測 → 預測 → 決策的自癒式閉環。</p>
-                </div>
-             </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- DOWNLOADS -->
-      <section data-section="downloads" class="py-10 sm:py-16 bg-ocp-bg">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 reveal">
-           <h2 class="text-2xl sm:text-3xl font-semibold text-ocp-navy mb-3">5. 下載資源</h2>
-           <div class="grid md:grid-cols-3 gap-5 text-sm mt-6">
-             <div class="bg-white rounded-ocp border border-ocp-border p-5 hover:-translate-y-1 transition-transform">
-               <div class="font-semibold text-ocp-navy mb-1"><i class="fa-regular fa-file-pdf text-red-500 mr-2"></i>CDU 自我鑑定指南</div>
-               <a href="https://raw.githubusercontent.com/luoxisg/dcdeeptech/main/downloads/NV-CDU Self-Qualification Guideline Rev 1.pdf" class="text-ocp-green text-xs font-bold hover:underline">下載 PDF</a>
-             </div>
-             <div class="bg-white rounded-ocp border border-ocp-border p-5 hover:-translate-y-1 transition-transform">
-               <div class="font-semibold text-ocp-navy mb-1"><i class="fa-regular fa-file-pdf text-red-500 mr-2"></i>OCP PDU 規格書</div>
-               <a href="https://raw.githubusercontent.com/luoxisg/dcdeeptech/main/downloads/OCP Facebook Open Rack V2 EU 230V AC PDU Specification REV01.pdf" class="text-ocp-green text-xs font-bold hover:underline">下載 PDF</a>
-             </div>
-             <div class="bg-white rounded-ocp border border-ocp-border p-5 hover:-translate-y-1 transition-transform">
-               <div class="font-semibold text-ocp-navy mb-1"><i class="fa-regular fa-file-pdf text-red-500 mr-2"></i>CDU 需求文件</div>
-               <a href="https://raw.githubusercontent.com/luoxisg/dcdeeptech/main/downloads/CDU Requirements Document Rev 1.pdf" class="text-ocp-green text-xs font-bold hover:underline">下載 PDF</a>
-             </div>
-           </div>
-        </div>
-      </section>
-
-      <!-- FAQ SECTION ZH (FULL 9 QUESTIONS - RESTORED) -->
-      <section data-section="faq" class="py-10 sm:py-16 bg-white">
+      <!-- USEFUL LINKS - MOVED TO THE VERY END -->
+      <section data-section="links" class="py-10 sm:py-16 bg-ocp-bg">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 reveal">
-          <h2 class="text-2xl sm:text-3xl font-semibold text-ocp-navy mb-3">6. 技術 FAQ</h2>
-          <p class="text-sm text-ocp-text-secondary mb-8">常見技術問題詳解。</p>
-          
-          <div class="space-y-3">
-            <!-- Q1 -->
-            <div class="bg-ocp-bg rounded-ocp border border-ocp-border overflow-hidden">
-              <button class="faq-question w-full flex justify-between items-center text-left p-4 sm:p-5 hover:bg-gray-50 cursor-pointer">
-                <span class="font-semibold text-ocp-navy text-sm sm:text-base">Q1: 為什麼從 48V 轉向 800V HVDC？</span>
-                <svg class="faq-icon w-5 h-5 text-ocp-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-              </button>
-              <div class="faq-answer hidden p-5 pt-0 text-sm text-ocp-text-secondary border-t border-ocp-border mt-2">
-                <p>為了效率。在 48V 下傳輸 100kW 需要 2083A 電流，熱損驚人。升級到 800V 將電流降至 125A（減少 94%），使線損降低 99% 以上。</p>
-              </div>
+          <!-- EN -->
+          <div id="links-en" class="lang-page">
+            <h2 class="text-2xl sm:text-3xl font-semibold text-ocp-navy mb-6">Useful Links</h2>
+            <div class="grid md:grid-cols-2 gap-4 text-sm">
+                <a href="https://www.axiomdeta.com/" target="_blank" class="bg-white rounded-lg border border-ocp-border p-4 flex items-center gap-3 hover:shadow-md transition-shadow">
+                    <i class="fa-solid fa-money-check-dollar text-xl text-ocp-green"></i>
+                    <div><div class="font-semibold text-ocp-navy">AxiomDeta (Engineering Delivery & Manufacturing)</div><p class="text-xs text-ocp-text-secondary">www.axiomdeta.com</p></div>
+                </a>
+                <a href="http://www.honghuienergy.cn/en/" target="_blank" class="bg-white rounded-lg border border-ocp-border p-4 flex items-center gap-3 hover:shadow-md transition-shadow">
+                    <i class="fa-solid fa-wind text-xl text-blue-500"></i>
+                    <div><div class="font-semibold text-ocp-navy">HHE (Power Solutions)</div><p class="text-xs text-ocp-text-secondary">www.honghuienergy.cn/en/</p></div>
+                </a>
+                <a href="https://www.3m.com/3M/en_US/p/c/electronics-components/interconnect-products/expanded-beam-optical-solutions/expanded-beam-optical-ferrules/i/electronics/data-center/" target="_blank" class="bg-white rounded-lg border border-ocp-border p-4 flex items-center gap-3 hover:shadow-md transition-shadow">
+                    <i class="fa-solid fa-link text-xl text-red-500"></i>
+                    <div><div class="font-semibold text-ocp-navy">3M (Expanded Beam Optical)</div><p class="text-xs text-ocp-text-secondary">3m.com/3M/en_US/p/c/electronics-components...</p></div>
+                </a>
+                <a href="https://www.opencompute.org/" target="_blank" class="bg-white rounded-lg border border-ocp-border p-4 flex items-center gap-3 hover:shadow-md transition-shadow">
+                    <i class="fa-solid fa-network-wired text-xl text-ocp-navy"></i>
+                    <div><div class="font-semibold text-ocp-navy">OCP (Open Compute Project)</div><p class="text-xs text-ocp-text-secondary">www.opencompute.org/</p></div>
+                </a>
             </div>
-            <!-- Q2 -->
-            <div class="bg-ocp-bg rounded-ocp border border-ocp-border overflow-hidden">
-              <button class="faq-question w-full flex justify-between items-center text-left p-4 sm:p-5 hover:bg-gray-50 cursor-pointer">
-                <span class="font-semibold text-ocp-navy text-sm sm:text-base">Q2: 液冷 (ORV3) 對結構有何要求？</span>
-                <svg class="faq-icon w-5 h-5 text-ocp-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-              </button>
-              <div class="faq-answer hidden p-5 pt-0 text-sm text-ocp-text-secondary border-t border-ocp-border mt-2">
-                <p>液體很重。機櫃需承受靜態重量及盲插接頭的推力。OCP 規範要求垂直立柱增加「腹板加強筋」以防變形。</p>
-              </div>
-            </div>
-            <!-- Q3 -->
-            <div class="bg-ocp-bg rounded-ocp border border-ocp-border overflow-hidden">
-              <button class="faq-question w-full flex justify-between items-center text-left p-4 sm:p-5 hover:bg-gray-50 cursor-pointer">
-                <span class="font-semibold text-ocp-navy text-sm sm:text-base">Q3: 如何處理 ORW (加寬機櫃) 的超重問題？</span>
-                <svg class="faq-icon w-5 h-5 text-ocp-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-              </button>
-              <div class="faq-answer hidden p-5 pt-0 text-sm text-ocp-text-secondary border-t border-ocp-border mt-2">
-                <p>兆瓦級機櫃重達 3500kg。需使用「支撐底座」分散負載，並透過頂部吊點進行工業級「吊裝定位」。</p>
-              </div>
-            </div>
-            <!-- Q4 -->
-            <div class="bg-ocp-bg rounded-ocp border border-ocp-border overflow-hidden">
-              <button class="faq-question w-full flex justify-between items-center text-left p-4 sm:p-5 hover:bg-gray-50 cursor-pointer">
-                <span class="font-semibold text-ocp-navy text-sm sm:text-base">Q4: 為什麼要進行 48 小時鹽霧測試？</span>
-                <svg class="faq-icon w-5 h-5 text-ocp-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-              </button>
-              <div class="faq-answer hidden p-5 pt-0 text-sm text-ocp-text-secondary border-t border-ocp-border mt-2">
-                <p>確保接地完整性。ASTMB117 測試確保接地點在 10 年內不腐蝕，防止 HVDC 系統發生安全事故。</p>
-              </div>
-            </div>
-            <!-- Q5 -->
-            <div class="bg-ocp-bg rounded-ocp border border-ocp-border overflow-hidden">
-              <button class="faq-question w-full flex justify-between items-center text-left p-4 sm:p-5 hover:bg-gray-50 cursor-pointer">
-                <span class="font-semibold text-ocp-navy text-sm sm:text-base">Q5: 什麼是「21 轉 19 英寸」轉換適配器？</span>
-                <svg class="faq-icon w-5 h-5 text-ocp-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-              </button>
-              <div class="faq-answer hidden p-5 pt-0 text-sm text-ocp-text-secondary border-t border-ocp-border mt-2">
-                <p>OCP 機櫃寬 21 英寸。適配器允許在其中安裝標準 19 英寸設備，實現舊機房的漸進式升級。</p>
-              </div>
-            </div>
-            <!-- Q6 -->
-            <div class="bg-ocp-bg rounded-ocp border border-ocp-border overflow-hidden">
-              <button class="faq-question w-full flex justify-between items-center text-left p-4 sm:p-5 hover:bg-gray-50 cursor-pointer">
-                <span class="font-semibold text-ocp-navy text-sm sm:text-base">Q6: 48V 母線 (Busbar) 相比 PDU 有何優勢？</span>
-                <svg class="faq-icon w-5 h-5 text-ocp-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-              </button>
-              <div class="faq-answer hidden p-5 pt-0 text-sm text-ocp-text-secondary border-t border-ocp-border mt-2">
-                <p>消除「線纜亂麻」，改善氣流，並透過盲插減少物理連接點，提高可靠性。</p>
-              </div>
-            </div>
-            <!-- Q7 -->
-            <div class="bg-ocp-bg rounded-ocp border border-ocp-border overflow-hidden">
-              <button class="faq-question w-full flex justify-between items-center text-left p-4 sm:p-5 hover:bg-gray-50 cursor-pointer">
-                <span class="font-semibold text-ocp-navy text-sm sm:text-base">Q7: 為什麼 ORV3 使用 48mm "OpenU" 單位？</span>
-                <svg class="faq-icon w-5 h-5 text-ocp-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-              </button>
-              <div class="faq-answer hidden p-5 pt-0 text-sm text-ocp-text-secondary border-t border-ocp-border mt-2">
-                <p>標準 1U 為 44.45mm。ORV3 增加到 48mm，為高效散熱器和風扇提供關鍵的垂直空間。</p>
-              </div>
-            </div>
-            <!-- Q8 -->
-            <div class="bg-ocp-bg rounded-ocp border border-ocp-border overflow-hidden">
-              <button class="faq-question w-full flex justify-between items-center text-left p-4 sm:p-5 hover:bg-gray-50 cursor-pointer">
-                <span class="font-semibold text-ocp-navy text-sm sm:text-base">Q8: 錫鬚 (Tin Whiskers) 真的很危險嗎？</span>
-                <svg class="faq-icon w-5 h-5 text-ocp-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-              </button>
-              <div class="faq-answer hidden p-5 pt-0 text-sm text-ocp-text-secondary border-t border-ocp-border mt-2">
-                <p>在 800V 高壓下，微小的錫鬚可能引發災難性電弧。OCP 強制要求使用鍍銀或合金來防止此問題。</p>
-              </div>
-            </div>
-            <!-- Q9 -->
-            <div class="bg-ocp-bg rounded-ocp border border-ocp-border overflow-hidden">
-              <button class="faq-question w-full flex justify-between items-center text-left p-4 sm:p-5 hover:bg-gray-50 cursor-pointer">
-                <span class="font-semibold text-ocp-navy text-sm sm:text-base">Q9: 部署 OCP 是否必須新建機房 (Greenfield)？</span>
-                <svg class="faq-icon w-5 h-5 text-ocp-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-              </button>
-              <div class="faq-answer hidden p-5 pt-0 text-sm text-ocp-text-secondary border-t border-ocp-border mt-2">
-                <p>不需要。我們提供改裝套件（適配器、CDU、地板加固），協助舊機房（Brownfield）升級部署 OCP。</p>
-              </div>
+          </div>
+
+          <!-- ZH -->
+          <div id="links-zh" class="lang-page hidden">
+            <h2 class="text-2xl sm:text-3xl font-semibold text-ocp-navy mb-6">有用連結 (Useful Links)</h2>
+            <div class="grid md:grid-cols-2 gap-4 text-sm">
+                <a href="https://www.axiomdeta.com/" target="_blank" class="bg-white rounded-lg border border-ocp-border p-4 flex items-center gap-3 hover:shadow-md transition-shadow">
+                    <i class="fa-solid fa-money-check-dollar text-xl text-ocp-green"></i>
+                    <div><div class="font-semibold text-ocp-navy">AxiomDeta (工程交付與製造)</div><p class="text-xs text-ocp-text-secondary">www.axiomdeta.com</p></div>
+                </a>
+                <a href="http://www.honghuienergy.cn/en/" target="_blank" class="bg-white rounded-lg border border-ocp-border p-4 flex items-center gap-3 hover:shadow-md transition-shadow">
+                    <i class="fa-solid fa-wind text-xl text-blue-500"></i>
+                    <div><div class="font-semibold text-ocp-navy">HHE (能源解決方案)</div><p class="text-xs text-ocp-text-secondary">http://www.honghuienergy.cn/en/</p></div>
+                </a>
+                <a href="https://www.3m.com/3M/en_US/p/c/electronics-components/interconnect-products/expanded-beam-optical-solutions/expanded-beam-optical-ferrules/i/electronics/data-center/" target="_blank" class="bg-white rounded-lg border border-ocp-border p-4 flex items-center gap-3 hover:shadow-md transition-shadow">
+                    <i class="fa-solid fa-link text-xl text-red-500"></i>
+                    <div><div class="font-semibold text-ocp-navy">3M (擴束光學連接器)</div><p class="text-xs text-ocp-text-secondary">3m.com/3M/en_US/p/c/electronics-components...</p></div>
+                </a>
+                <a href="https://www.opencompute.org/" target="_blank" class="bg-white rounded-lg border border-ocp-border p-4 flex items-center gap-3 hover:shadow-md transition-shadow">
+                    <i class="fa-solid fa-network-wired text-xl text-ocp-navy"></i>
+                    <div><div class="font-semibold text-ocp-navy">OCP (開放計算項目)</div><p class="text-xs text-ocp-text-secondary">www.opencompute.org/</p></div>
+                </a>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- ABOUT & CONTACT (ZH) -->
-      <section data-section="about" class="py-10 sm:py-16 bg-ocp-bg">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 reveal">
-          <h2 class="text-2xl sm:text-3xl font-semibold text-ocp-navy mb-3 text-center">關於 DCDeepTech</h2>
-          <div class="bg-white rounded-ocp border border-ocp-border shadow-ocp p-6 text-center">
-            <p class="text-ocp-text-secondary text-sm">由頂尖工程師與財務專家創立，專注於 DeepTech 諮詢、供應鏈金融與全球營銷。</p>
-          </div>
-        </div>
-      </section>
-
-      <section data-section="contact" class="py-10 sm:py-16 bg-white">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 reveal">
-          <div class="bg-ocp-bg rounded-ocp shadow-ocp border border-ocp-border p-6 sm:p-8"> 
-            <h2 class="text-2xl sm:text-3xl font-semibold text-center text-ocp-navy mb-3">7. 聯絡顧問團隊</h2>
-            <div class="grid sm:grid-cols-2 gap-5 mb-6 text-sm mt-8">
-              <a href="#" class="bg-white rounded-ocp border border-ocp-border p-4 flex items-start gap-3 contact-card-hover cursor-pointer group">
-                <div class="w-10 h-10 rounded-lg bg-ocp-green-soft flex-shrink-0 flex items-center justify-center group-hover:bg-ocp-green group-hover:text-white transition-colors"><i class="fa-solid fa-location-dot text-lg text-ocp-green group-hover:text-white"></i></div>
-                <div><div class="font-semibold text-ocp-navy mb-1">辦公室地址</div><p class="text-xs text-ocp-text-secondary">Singapore 139951</p></div>
-              </a>
-              <a href="mailto:info@dcdeeptech.com" class="bg-white rounded-ocp border border-ocp-border p-4 flex items-start gap-3 contact-card-hover cursor-pointer group">
-                <div class="w-10 h-10 rounded-lg bg-ocp-green-soft flex-shrink-0 flex items-center justify-center group-hover:bg-ocp-green group-hover:text-white transition-colors"><i class="fa-solid fa-envelope text-lg text-ocp-green group-hover:text-white"></i></div>
-                <div><div class="font-semibold text-ocp-navy mb-1">Email</div><p class="text-ocp-green underline">info@dcdeeptech.com</p></div>
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
-    </main>
+    </div> <!-- End page-content wrapper -->
 
     <footer class="bg-ocp-navy text-white py-8 text-xs border-t border-gray-700">
       <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -1046,19 +1504,24 @@
   <script>
     // Language Switching
     function setLanguage(lang) {
-      const en = document.getElementById('page-en');
-      const zh = document.getElementById('page-zh');
+      // Hide all content blocks of the opposite language
+      const otherLang = lang === 'en' ? 'zh' : 'en';
+      document.querySelectorAll(`.lang-page`).forEach(el => {
+          if (el.id.includes(otherLang)) el.classList.add('hidden');
+      });
+
+      // Show all content blocks of the selected language
+      document.querySelectorAll(`.lang-page`).forEach(el => {
+          if (el.id.includes(lang)) el.classList.remove('hidden');
+      });
+
       const btnEn = document.getElementById('btn-en');
       const btnZh = document.getElementById('btn-zh');
 
       if (lang === 'en') {
-        zh.classList.add('hidden');
-        en.classList.remove('hidden');
         btnEn.classList.add('lang-toggle-active');
         btnZh.classList.remove('lang-toggle-active');
       } else {
-        en.classList.add('hidden');
-        zh.classList.remove('hidden');
         btnEn.classList.remove('lang-toggle-active');
         btnZh.classList.add('lang-toggle-active');
       }
@@ -1067,16 +1530,19 @@
 
     // Navigation Scroll
     function scrollToSection(sectionKey) {
-      const visiblePage = document.querySelector('.lang-page:not(.hidden)');
-      if (!visiblePage) return;
-      const target = visiblePage.querySelector('[data-section="' + sectionKey + '"]');
+      const target = document.querySelector('[data-section="' + sectionKey + '"]');
       if (target) {
         const header = document.getElementById('main-header');
-        const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - (header ? header.offsetHeight : 0) - 16; 
+        const headerHeight = header ? header.offsetHeight : 0;
+        // Adjust scroll position to account for the sticky header
+        const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - headerHeight - 16; 
         window.scrollTo({ top: targetPosition, behavior: 'smooth' });
       }
       const mobileMenu = document.getElementById('mobile-menu');
       if (mobileMenu && !mobileMenu.classList.contains('hidden')) toggleMobileMenu();
+
+      // Immediately set the active class on click for instant feedback
+      updateActiveNav(sectionKey);
     }
 
     // Mobile Menu
@@ -1091,13 +1557,91 @@
       }
     }
 
+    // --- NEW Active Navigation Logic for Prominence ---
+    function updateActiveNav(forceActiveSectionId = null) {
+        const sections = ['rack-power-content', 'cooling-content', 'fiber-content', 'downloads-content', 'faq-content', 'contact', 'about', 'links'];
+        const headerHeight = document.getElementById('main-header').offsetHeight;
+        let currentActive = null;
+
+        // Determine which section is currently in view (use an offset for better usability)
+        for (let i = 0; i < sections.length; i++) {
+            const sectionId = sections[i];
+            const section = document.getElementById(sectionId);
+            if (section) {
+                const rect = section.getBoundingClientRect();
+                // Check if the top of the section is just below the header
+                if (rect.top <= headerHeight + 50) { 
+                    currentActive = sectionId;
+                }
+            }
+        }
+        
+        // If the user is near the bottom, highlight the contact button
+        const scrollPosition = window.scrollY + window.innerHeight;
+        const documentHeight = document.documentElement.scrollHeight;
+        const isNearBottom = (documentHeight - scrollPosition) < 300; // 300px from the bottom
+
+        // Apply active class
+        document.querySelectorAll('.nav-btn, .contact-button').forEach(btn => {
+            btn.classList.remove('is-active');
+        });
+        
+        const contactBtn = document.querySelector('.contact-button');
+        
+        if (isNearBottom && contactBtn) {
+            contactBtn.classList.add('is-active');
+        } else {
+            // Map the current active content section to the top navigation buttons
+            const navMap = {
+                'rack-power-content': 'rack-power-content',
+                'cooling-content': 'cooling-content',
+                'fiber-content': 'fiber-content',
+                'downloads-content': 'downloads-content',
+                'faq-content': 'downloads-content', // FAQ is close to Downloads, map it there
+                'contact': 'contact',
+                'about': 'contact',
+                'links': 'contact',
+            };
+            
+            let targetNavId = navMap[currentActive] || navMap[forceActiveSectionId];
+            
+            if (targetNavId) {
+                 if (targetNavId === 'contact') {
+                    // Highlight Contact Us button
+                    contactBtn?.classList.add('is-active');
+                 } else {
+                    // Highlight content menu button
+                    const navBtn = document.querySelector(`.nav-btn[data-menu-id="${targetNavId}"]`);
+                    navBtn?.classList.add('is-active');
+                 }
+            }
+        }
+    }
+    // --- END NEW Active Navigation Logic ---
+
+
     // Accordion Logic
     function setupAccordions() {
       document.querySelectorAll('.faq-question').forEach(question => {
         question.addEventListener('click', () => {
           const answer = question.nextElementSibling;
           const icon = question.querySelector('.faq-icon');
-          if (answer.classList.contains('hidden')) {
+          const isHidden = answer.classList.contains('hidden');
+
+          // Close all other open answers on the current visible page
+          const visiblePage = document.querySelector('#faq-content .lang-page:not(.hidden)');
+          if (visiblePage) {
+            visiblePage.querySelectorAll('.faq-answer').forEach(ans => {
+                if (ans !== answer && !ans.classList.contains('hidden')) {
+                    ans.classList.add('hidden');
+                    ans.previousElementSibling.querySelector('.faq-icon').classList.remove('rotate-180');
+                }
+            });
+          }
+
+
+          // Toggle current answer
+          if (isHidden) {
             answer.classList.remove('hidden');
             if(icon) icon.classList.add('rotate-180');
           } else {
@@ -1116,11 +1660,17 @@
         const elementTop = reveal.getBoundingClientRect().top;
         if (elementTop < windowHeight - 50) reveal.classList.add('active');
       });
+      
+      // Update active nav on scroll
+      updateActiveNav();
     }
 
     // Simulator Logic
     function toggleSimulator(lang, mode) {
       const container = document.getElementById('sim-' + lang);
+      // Guard clause in case simulator element is not in the current view (e.g., cooling section is active)
+      if (!container) return; 
+
       const btn48 = document.getElementById('btn-48v-' + lang);
       const btn800 = document.getElementById('btn-800v-' + lang);
       
@@ -1139,15 +1689,21 @@
         btn800.classList.add('inactive-btn');
 
         ampEl.innerText = "2083 A";
-        lossEl.innerText = lang === 'en' ? "EXTREME" : "極高";
-        effEl.innerText = lang === 'en' ? "Low" : "低";
+        
+        if (lang === 'en') {
+          lossEl.innerText = "EXTREME";
+          effEl.innerText = "Low";
+          statusEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i><span>Critical I²R Heat Loss (Tyranny of Copper)</span>';
+        } else {
+          lossEl.innerText = "極高";
+          effEl.innerText = "低";
+          statusEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i><span>I²R 嚴重熱損 (銅的暴政)</span>';
+        }
+        
         effEl.className = "font-bold sim-eff text-red-600";
         lossEl.className = "font-bold sim-loss text-red-600";
-        
         statusEl.className = "mt-3 flex items-center gap-2 text-xs font-bold sim-status text-red-600";
-        statusEl.innerHTML = lang === 'en' 
-          ? '<i class="fa-solid fa-triangle-exclamation"></i><span>Critical I²R Heat Loss (Tyranny of Copper)</span>'
-          : '<i class="fa-solid fa-triangle-exclamation"></i><span>I²R 嚴重熱損 (銅的暴政)</span>';
+
 
       } else {
         container.classList.remove('state-48v');
@@ -1159,15 +1715,20 @@
         btn48.classList.add('inactive-btn');
 
         ampEl.innerText = "125 A";
-        lossEl.innerText = lang === 'en' ? "Minimal" : "極低";
-        effEl.innerText = lang === 'en' ? ">99.7%" : ">99.7%";
+        
+        if (lang === 'en') {
+          lossEl.innerText = "Minimal";
+          effEl.innerText = ">99.7%";
+          statusEl.innerHTML = '<i class="fa-solid fa-check-circle"></i><span>Optimized for High Density</span>';
+        } else {
+          lossEl.innerText = "極低";
+          effEl.innerText = ">99.7%";
+          statusEl.innerHTML = '<i class="fa-solid fa-check-circle"></i><span>高密度優化架構</span>';
+        }
+
         effEl.className = "font-bold sim-eff text-ocp-green";
         lossEl.className = "font-bold sim-loss text-ocp-green";
-        
         statusEl.className = "mt-3 flex items-center gap-2 text-xs font-bold sim-status text-ocp-green";
-        statusEl.innerHTML = lang === 'en' 
-          ? '<i class="fa-solid fa-check-circle"></i><span>Optimized for High Density</span>'
-          : '<i class="fa-solid fa-check-circle"></i><span>高密度優化架構</span>';
       }
     }
 
@@ -1175,6 +1736,13 @@
       setupAccordions();
       window.addEventListener('scroll', handleScrollAnimation);
       handleScrollAnimation();
+      
+      // Initially set the correct language state (default to EN/lang-toggle-active)
+      // and scroll to the first new section.
+      setLanguage(document.getElementById('btn-en').classList.contains('lang-toggle-active') ? 'en' : 'zh');
+      // Set initial active state and scroll to the top of the first section
+      updateActiveNav('rack-power-content');
+      scrollToSection('rack-power-content');
     });
   </script>
 </body>
