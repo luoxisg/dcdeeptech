@@ -1,429 +1,479 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { 
-  Globe, 
-  Cpu, 
-  Zap, 
-  Network, 
-  Building2, 
-  BarChart3, 
-  FileText, 
-  Menu, 
-  X, 
-  ArrowRight, 
-  Wind, 
-  Thermometer, 
-  ShieldCheck, 
-  Anchor, 
-  Layers,
-  MapPin,
-  Mail,
-  Server,
-  Droplets,
-  Cable,
-  Phone,
-  Users
-} from 'lucide-react';
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DCDeepTech - Tropical Native AI Infrastructure</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Babel (用于在浏览器中编译 JSX) -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-// --- Animation Hook ---
-// Simple hook to trigger animations when elements enter viewport
-const useOnScreen = (ref, rootMargin = "0px") => {
-  const [isIntersecting, setIntersecting] = useState(false);
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIntersecting(true);
-          observer.unobserve(entry.target); // Only trigger once
+    <!-- Import Map (定义模块来源) -->
+    <script type="importmap">
+    {
+        "imports": {
+            "react": "https://esm.sh/react@18.2.0",
+            "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
+            "lucide-react": "https://esm.sh/lucide-react@0.263.1"
         }
-      },
-      { rootMargin }
-    );
-    if (ref.current) {
-      observer.observe(ref.current);
     }
-    return () => {
-      if (ref.current) observer.unobserve(ref.current);
-    };
-  }, [ref, rootMargin]);
-  return isIntersecting;
-};
+    </script>
+    
+    <!-- 自定义样式 -->
+    <style>
+        /* 淡入动画关键帧 */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translate3d(0, -20px, 0);
+            }
+            to {
+                opacity: 1;
+                transform: translate3d(0, 0, 0);
+            }
+        }
+        .animate-fade-in-down {
+            animation: fadeInDown 0.3s ease-out forwards;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body class="bg-[#F8F8F8]">
+    <div id="root"></div>
 
-// FadeIn Component Wrapper
-const FadeIn = ({ children, delay = 0, className = "" }) => {
-  const ref = useRef();
-  const isVisible = useOnScreen(ref, "-50px");
-  
-  return (
-    <div
-      ref={ref}
-      className={`transition-all duration-1000 ease-out transform ${
-        isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
-      } ${className}`}
-      style={{ transitionDelay: `${delay}ms` }}
-    >
-      {children}
-    </div>
-  );
-};
+    <!-- React 代码 -->
+    <script type="text/babel" data-type="module">
+        import React, { useState, useEffect, useRef } from 'react';
+        import { createRoot } from 'react-dom/client';
+        import { 
+          Globe, 
+          Cpu, 
+          Zap, 
+          Network, 
+          Building2, 
+          BarChart3, 
+          FileText, 
+          Menu, 
+          X, 
+          ArrowRight, 
+          Wind, 
+          Thermometer, 
+          ShieldCheck, 
+          Anchor, 
+          Layers,
+          MapPin,
+          Mail,
+          Server,
+          Droplets,
+          Cable,
+          Phone,
+          Users
+        } from 'lucide-react';
 
-// --- Data & Translations ---
-const content = {
-  en: {
-    nav: {
-      home: "Home",
-      solutions: "Solutions",
-      ocp: "OCP Column",
-      projects: "Market Prospects",
-      ecosystem: "Ecosystem",
-      capital: "Capital",
-      insights: "Insights",
-      contact: "Contact Us"
-    },
-    hero: {
-      title: "Defining the Physics of Tropical AI Infrastructure",
-      subtitle: "High-density, energy-resilient, and capital-efficient data centers engineered specifically for the tropical climate.",
-      cta: "Explore Solutions",
-      stats: [
-        { value: "< 1.2", label: "PUE in Tropics" },
-        { value: "> 100kW", label: "Per Rack Ready" },
-        { value: "0", label: "Chemical Batteries" }
-      ]
-    },
-    solutions: {
-      title: "DeepTech Solutions",
-      subtitle: "The Five-Pillar Architecture for Tropical Resilience",
-      items: [
-        {
-          title: "Direct-to-Chip Cooling",
-          desc: "High-efficiency cold plate technology optimized for NVIDIA Blackwell architecture.",
-          icon: <Thermometer className="w-6 h-6" />,
-          tag: "Thermal"
-        },
-        {
-          title: "Immersion Cooling Roadmap",
-          desc: "Future-proof single/two-phase immersion cooling to eliminate fan energy consumption.",
-          icon: <Wind className="w-6 h-6" />,
-          tag: "Thermal"
-        },
-        {
-          title: "Tropical Optimization",
-          desc: "MOF-based dehumidification and high-temp operation strategies (collab with NUS).",
-          icon: <Zap className="w-6 h-6" />,
-          tag: "Thermal"
-        },
-        {
-          title: "Flywheel Energy Storage",
-          desc: "HHE magnetic levitation flywheels. Millisecond response, wide temp range (0-40°C), no chemical degradation.",
-          icon: <Zap className="w-6 h-6" />,
-          tag: "Power"
-        },
-        {
-          title: "Solid State Transformers (SST)",
-          desc: "SiC-based SSTs for medium voltage direct connection and superior power quality governance.",
-          icon: <Cpu className="w-6 h-6" />,
-          tag: "Power"
-        },
-        {
-          title: "OCP Open Rack v3",
-          desc: "21-inch standard racks supporting 48V DC busbar and blind-mate connections.",
-          icon: <Layers className="w-6 h-6" />,
-          tag: "Connectivity"
-        },
-        {
-          title: "Expanded Beam Optics",
-          desc: "3M EBO dust-resistant fiber technology, solving optical failure in high-dust tropical environments.",
-          icon: <Network className="w-6 h-6" />,
-          tag: "Connectivity"
-        }
-      ]
-    },
-    ocp: {
-      title: "OCP Technical Column",
-      subtitle: "Engineering Deep Dive: Rack, Cooling & Fiber",
-      sections: [
-        {
-          id: "rack-power",
-          title: "Rack & Power (ORV3)",
-          icon: <Server className="w-8 h-8" />,
-          features: [
-            "48V → 800V HVDC: Reducing copper loss by >99% for 100kW+ racks.",
-            "ORV3 Mechanicals: Reinforced frames & blind-mate busbars.",
-            "Shelf Power: High-density power shelves eliminating cable clutter."
-          ]
-        },
-        {
-          id: "cooling",
-          title: "Advanced Cooling",
-          icon: <Droplets className="w-8 h-8" />,
-          features: [
-            "DLC & RDHx: Direct-to-Chip cold plates and Rear Door Heat Exchangers.",
-            "CDU Engineering: Coolant Distribution Units sizing and loop design.",
-            "Immersion Ready: Tank compatibility for dielectric fluids."
-          ]
-        },
-        {
-          id: "fiber",
-          title: "Fiber Connectivity",
-          icon: <Cable className="w-8 h-8" />,
-          features: [
-            "Expanded Beam Optics: Non-contact coupling for high dust resistance.",
-            "Blind-Mate Optical: Critical for liquid-cooled rack maintenance.",
-            "High Density: Supporting 400G/800G interconnects in tight spaces."
-          ]
-        }
-      ]
-    },
-    projects: {
-      title: "Market Prospects",
-      subtitle: "Validated by Government & Research Institutions",
-      list: [
-        {
-          title: "STDCT 2.0 (Jurong Island)",
-          desc: "Sustainable Tropical Data Center Testbed in partnership with JTC & NUS. Hydrogen-Ready verification.",
-          loc: "Singapore"
-        },
-        {
-          title: "Johor AI Foundry",
-          desc: "Large-scale AI training cluster utilizing JS-SEZ policies. Cross-border compute scheduling.",
-          loc: "Malaysia"
-        },
-        {
-          title: "Urban Inference Nodes",
-          desc: "High-frequency trading and low-latency inference centers in CBD. BCA Green Mark Platinum.",
-          loc: "Singapore"
-        }
-      ]
-    },
-    ecosystem: {
-      title: "The Ecosystem",
-      subtitle: "Full-Stack Delivery Capability",
-      roles: [
-        {
-          role: "THE BRAIN",
-          name: "DCDeepTech",
-          desc: "Capital, Compliance, Strategy & Digital Twin.",
-          color: "bg-blue-600"
-        },
-        {
-          role: "THE BODY",
-          name: "AxiomDeta",
-          desc: "Infrastructure Delivery, OCP Prefabrication & Turnkey Integration. SZHDCG Shenzhen Manufacturing Base, Strategic Partnership with HHE.",
-          color: "bg-slate-600"
-        },
-        {
-          role: "THE HEART",
-          name: "HHE JV",
-          desc: "Energy Technology (Flywheel & SST) ensuring physical safety.",
-          color: "bg-emerald-600"
-        }
-      ]
-    },
-    capital: {
-      title: "Capital & Governance",
-      subtitle: "Professional Structure for Institutional Investors",
-      cards: [
-        {
-          title: "QFLP Structure",
-          desc: "Cross-border capital channel supporting bidirectional RMB/USD flow via Singapore."
-        },
-        {
-          title: "Asset Recycling",
-          desc: "Develop-Hold-Operate-Securitize loop with future REITs exit pathways."
-        },
-        {
-          title: "ESG & Sustainability",
-          desc: "Commitment to PUE < 1.3, CRESS green energy procurement, and carbon-neutral operations."
-        }
-      ]
-    },
-    insights: {
-      title: "Insights & Resources",
-      items: [
-        "White Paper: Feasibility of Flywheel Storage in Tropical DCs",
-        "Technical Report: EBO Optics in OCP Architecture",
-        "Policy Brief: IMDA Green DC Roadmap & DC-CFA"
-      ]
-    },
-    contact: {
-      title: "Contact DCDeepTech",
-      subtitle: "Ready to discuss your liquid cooling or OCP rack project?",
-      address: { label: "Address", val: "71 Ayer Rajah Crescent, #02-01, Singapore 139951" },
-      email: { label: "Email", val: "info@DCdeeptech.com" },
-      whatsapp: { label: "WhatsApp", val: "+65 8378 5068" },
-      region: { label: "Region", val: "Singapore, Taiwan, ASEAN, Brazil." },
-      aboutTitle: "About DCDeepTech",
-      aboutText: "Founded by senior engineers and financial experts, we serve the OCP ecosystem through DeepTech consulting, supply chain finance solutions, and global marketing. We act as a neutral design office bridging OCP specs and real-world deployment."
-    },
-    footer: {
-      rights: "© 2025 DCDeepTech. All Rights Reserved."
-    }
-  },
-  zh: {
-    nav: {
-      home: "首頁",
-      solutions: "解決方案",
-      ocp: "OCP 專欄",
-      projects: "市場前景",
-      ecosystem: "平台生態",
-      capital: "資本合規",
-      insights: "洞察資源",
-      contact: "聯繫我們"
-    },
-    hero: {
-      title: "定義熱帶 AI 基礎設施的物理範式",
-      subtitle: "專為熱帶氣候工程設計的高密度、能源韌性與資本高效的數據中心。",
-      cta: "探索解決方案",
-      stats: [
-        { value: "< 1.2", label: "熱帶 PUE" },
-        { value: "> 100kW", label: "單機櫃功率" },
-        { value: "0", label: "化學電池依賴" }
-      ]
-    },
-    solutions: {
-      title: "DeepTech 解決方案",
-      subtitle: "應對物理挑戰的「五位一體」架構",
-      items: [
-        {
-          title: "Direct-to-Chip (D2C)",
-          desc: "針對 GPU 集群的高效冷板技術，適配 NVIDIA Blackwell 架構。",
-          icon: <Thermometer className="w-6 h-6" />,
-          tag: "Thermal"
-        },
-        {
-          title: "浸沒式冷卻路線圖",
-          desc: "面向未來的單相/雙相浸沒式冷卻，徹底消除風扇能耗。",
-          icon: <Wind className="w-6 h-6" />,
-          tag: "Thermal"
-        },
-        {
-          title: "熱帶優化策略",
-          desc: "結合 MOF 材料的除濕與高溫運行策略（與 NUS 合作成果）。",
-          icon: <Zap className="w-6 h-6" />,
-          tag: "Thermal"
-        },
-        {
-          title: "飛輪儲能 (Flywheel)",
-          desc: "利用 HHE 磁懸浮飛輪技術，提供毫秒級響應和寬溫域運行（0-40°C），替代化學電池。",
-          icon: <Zap className="w-6 h-6" />,
-          tag: "Power"
-        },
-        {
-          title: "固態變壓器 (SST)",
-          desc: "基於 SiC 的固態變壓器，實現中壓直掛與電能質量治理。",
-          icon: <Cpu className="w-6 h-6" />,
-          tag: "Power"
-        },
-        {
-          title: "OCP Open Rack v3",
-          desc: "21英寸標準化機櫃，支持 48V DC 母排直供與盲插（Blind-mate）。",
-          icon: <Layers className="w-6 h-6" />,
-          tag: "Connectivity"
-        },
-        {
-          title: "EBO 擴束光纖技術",
-          desc: "3M 抗塵擴束光學技術，解決熱帶高塵環境下的光互連失效問題。",
-          icon: <Network className="w-6 h-6" />,
-          tag: "Connectivity"
-        }
-      ]
-    },
-    ocp: {
-      title: "OCP 技術專欄",
-      subtitle: "工程深度解析：機櫃、散熱與光纖",
-      sections: [
-        {
-          id: "rack-power",
-          title: "機櫃與電源 (Rack & Power)",
-          icon: <Server className="w-8 h-8" />,
-          features: [
-            "48V → 800V HVDC：將 100kW+ 機櫃的銅損降低 >99%。",
-            "ORV3 機械結構：增強型框架與盲插母排 (Blind-mate Busbar)。",
-            "Power Shelves：高密度電源架構，消除傳統線纜混亂。"
-          ]
-        },
-        {
-          id: "cooling",
-          title: "先進散熱 (Cooling)",
-          icon: <Droplets className="w-8 h-8" />,
-          features: [
-            "DLC & RDHx：芯片直冷冷板與背門熱交換器。",
-            "CDU 工程：冷卻液分配單元選型與迴路設計。",
-            "浸沒式就緒：兼容介電液的液槽設計與維護方案。"
-          ]
-        },
-        {
-          id: "fiber",
-          title: "光纖互連 (Fiber)",
-          icon: <Cable className="w-8 h-8" />,
-          features: [
-            "擴束光學技術 (EBO)：非接觸式耦合，實現極致抗塵。",
-            "盲插光學：液冷機櫃維護的關鍵技術。",
-            "高密度互連：支持狹窄空間內的 400G/800G 高速傳輸。"
-          ]
-        }
-      ]
-    },
-    projects: {
-      title: "市場前景",
-      subtitle: "政府與頂尖科研機構的深度綁定與驗證",
-      list: [
-        {
-          title: "STDCT 2.0 (裕廊島)",
-          desc: "與 JTC 和 NUS 合作的可持續熱帶數據中心測試床。氫能就緒與微電網集成。",
-          loc: "Singapore"
-        },
-        {
-          title: "Johor AI Foundry (柔佛智算基地)",
-          desc: "利用柔佛-新加坡經濟特區 (JS-SEZ) 政策，構建大規模 AI 訓練集群。前店後廠模式。",
-          loc: "Malaysia"
-        },
-        {
-          title: "Urban Inference Nodes (城市推理節點)",
-          desc: "位於新加坡的高頻交易與低延遲推理中心，符合 BCA Green Mark Platinum 標準。",
-          loc: "Singapore"
-        }
-      ]
-    },
-    ecosystem: {
-      title: "平台生態體系",
-      subtitle: "全產業鏈交付能力",
-      roles: [
-        {
-          role: "大腦 (THE BRAIN)",
-          name: "DCDeepTech",
-          desc: "資本、合規、戰略頂層設計與數字孿生。",
-          color: "bg-blue-600"
-        },
-        {
-          role: "軀干 (THE BODY)",
-          name: "AxiomDeta",
-          desc: "基礎設施交付，OCP 預製化生產與系統集成。SZHDCG 深圳製造基地，戰略合作 HHE。",
-          color: "bg-slate-600"
-        },
-        {
-          role: "心臟 (THE HEART)",
-          name: "HHE JV",
-          desc: "能源技術（飛輪儲能與 SST），保障物理安全。",
-          color: "bg-emerald-600"
-        }
-      ]
-    },
-    capital: {
-      title: "資本與合規",
-      subtitle: "面向機構投資者與家族辦公室的專業架構",
-      cards: [
-        {
-          title: "QFLP 投資架構",
-          desc: "利用新加坡 QFLP 架構打通跨境資本，支持人民幣與美元的雙向流動。"
-        },
-        {
-          title: "資產循環 (Asset Recycling)",
-          desc: "「開發-持有-運營-證券化」的資產管理閉環，對接 REITs 退出路徑。"
-        },
-        {
-          title: "ESG 與可持續發展",
-          desc: "承諾 PUE < 1.3，利用 CRESS 政策採購綠電，實現碳中和運營。"
-        }
+        // --- Animation Hook ---
+        const useOnScreen = (ref, rootMargin = "0px") => {
+          const [isIntersecting, setIntersecting] = useState(false);
+          useEffect(() => {
+            const observer = new IntersectionObserver(
+              ([entry]) => {
+                if (entry.isIntersecting) {
+                  setIntersecting(true);
+                  observer.unobserve(entry.target); 
+                }
+              },
+              { rootMargin }
+            );
+            if (ref.current) {
+              observer.observe(ref.current);
+            }
+            return () => {
+              if (ref.current) observer.unobserve(ref.current);
+            };
+          }, [ref, rootMargin]);
+          return isIntersecting;
+        };
+
+        // FadeIn Component Wrapper
+        const FadeIn = ({ children, delay = 0, className = "" }) => {
+          const ref = useRef();
+          const isVisible = useOnScreen(ref, "-30px");
+          
+          return (
+            <div
+              ref={ref}
+              className={`transition-all duration-1000 ease-out transform ${
+                isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
+              } ${className}`}
+              style={{ transitionDelay: `${delay}ms` }}
+            >
+              {children}
+            </div>
+          );
+        };
+
+        // --- Data & Translations ---
+        const content = {
+          en: {
+            nav: {
+              home: "Home",
+              solutions: "Solutions",
+              ocp: "OCP Column",
+              projects: "Market Prospects",
+              ecosystem: "Ecosystem",
+              capital: "Capital",
+              insights: "Insights",
+              contact: "Contact Us"
+            },
+            hero: {
+              title: "Defining the Physics of Tropical AI Infrastructure",
+              subtitle: "High-density, energy-resilient, and capital-efficient data centers engineered specifically for the tropical climate.",
+              cta: "Explore Solutions",
+              stats: [
+                { value: "< 1.2", label: "PUE in Tropics" },
+                { value: "> 100kW", label: "Per Rack Ready" },
+                { value: "0", label: "Chemical Batteries" }
+              ]
+            },
+            solutions: {
+              title: "DeepTech Solutions",
+              subtitle: "The Five-Pillar Architecture for Tropical Resilience",
+              items: [
+                {
+                  title: "Direct-to-Chip Cooling",
+                  desc: "High-efficiency cold plate technology optimized for NVIDIA Blackwell architecture.",
+                  icon: <Thermometer className="w-6 h-6" />,
+                  tag: "Thermal"
+                },
+                {
+                  title: "Immersion Cooling Roadmap",
+                  desc: "Future-proof single/two-phase immersion cooling to eliminate fan energy consumption.",
+                  icon: <Wind className="w-6 h-6" />,
+                  tag: "Thermal"
+                },
+                {
+                  title: "Tropical Optimization",
+                  desc: "MOF-based dehumidification and high-temp operation strategies (collab with NUS).",
+                  icon: <Zap className="w-6 h-6" />,
+                  tag: "Thermal"
+                },
+                {
+                  title: "Flywheel Energy Storage",
+                  desc: "HHE magnetic levitation flywheels. Millisecond response, wide temp range (0-40°C), no chemical degradation.",
+                  icon: <Zap className="w-6 h-6" />,
+                  tag: "Power"
+                },
+                {
+                  title: "Solid State Transformers (SST)",
+                  desc: "SiC-based SSTs for medium voltage direct connection and superior power quality governance.",
+                  icon: <Cpu className="w-6 h-6" />,
+                  tag: "Power"
+                },
+                {
+                  title: "OCP Open Rack v3",
+                  desc: "21-inch standard racks supporting 48V DC busbar and blind-mate connections.",
+                  icon: <Layers className="w-6 h-6" />,
+                  tag: "Connectivity"
+                },
+                {
+                  title: "Expanded Beam Optics",
+                  desc: "3M EBO dust-resistant fiber technology, solving optical failure in high-dust tropical environments.",
+                  icon: <Network className="w-6 h-6" />,
+                  tag: "Connectivity"
+                }
+              ]
+            },
+            ocp: {
+              title: "OCP Technical Column",
+              subtitle: "Engineering Deep Dive: Rack, Cooling & Fiber",
+              sections: [
+                {
+                  id: "rack-power",
+                  title: "Rack & Power (ORV3)",
+                  icon: <Server className="w-8 h-8" />,
+                  features: [
+                    "48V → 800V HVDC: Reducing copper loss by >99% for 100kW+ racks.",
+                    "ORV3 Mechanicals: Reinforced frames & blind-mate busbars.",
+                    "Shelf Power: High-density power shelves eliminating cable clutter."
+                  ]
+                },
+                {
+                  id: "cooling",
+                  title: "Advanced Cooling",
+                  icon: <Droplets className="w-8 h-8" />,
+                  features: [
+                    "DLC & RDHx: Direct-to-Chip cold plates and Rear Door Heat Exchangers.",
+                    "CDU Engineering: Coolant Distribution Units sizing and loop design.",
+                    "Immersion Ready: Tank compatibility for dielectric fluids."
+                  ]
+                },
+                {
+                  id: "fiber",
+                  title: "Fiber Connectivity",
+                  icon: <Cable className="w-8 h-8" />,
+                  features: [
+                    "Expanded Beam Optics: Non-contact coupling for high dust resistance.",
+                    "Blind-Mate Optical: Critical for liquid-cooled rack maintenance.",
+                    "High Density: Supporting 400G/800G interconnects in tight spaces."
+                  ]
+                }
+              ]
+            },
+            projects: {
+              title: "Market Prospects",
+              subtitle: "Validated by Government & Research Institutions",
+              list: [
+                {
+                  title: "STDCT 2.0 (Jurong Island)",
+                  desc: "Sustainable Tropical Data Center Testbed in partnership with JTC & NUS. Hydrogen-Ready verification.",
+                  loc: "Singapore"
+                },
+                {
+                  title: "Johor AI Foundry",
+                  desc: "Large-scale AI training cluster utilizing JS-SEZ policies. Cross-border compute scheduling.",
+                  loc: "Malaysia"
+                },
+                {
+                  title: "Urban Inference Nodes",
+                  desc: "High-frequency trading and low-latency inference centers in CBD. BCA Green Mark Platinum.",
+                  loc: "Singapore"
+                }
+              ]
+            },
+            ecosystem: {
+              title: "The Ecosystem",
+              subtitle: "Full-Stack Delivery Capability",
+              roles: [
+                {
+                  role: "THE BRAIN",
+                  name: "DCDeepTech",
+                  desc: "Capital, Compliance, Strategy & Digital Twin.",
+                  color: "bg-blue-600"
+                },
+                {
+                  role: "THE BODY",
+                  name: "AxiomDeta",
+                  desc: "Infrastructure Delivery, OCP Prefabrication & Turnkey Integration. SZHDCG Shenzhen Manufacturing Base, Strategic Partnership with HHE.",
+                  color: "bg-slate-600"
+                },
+                {
+                  role: "THE HEART",
+                  name: "HHE JV",
+                  desc: "Energy Technology (Flywheel & SST) ensuring physical safety.",
+                  color: "bg-emerald-600"
+                }
+              ]
+            },
+            capital: {
+              title: "Capital & Governance",
+              subtitle: "Professional Structure for Institutional Investors",
+              cards: [
+                {
+                  title: "QFLP Structure",
+                  desc: "Cross-border capital channel supporting bidirectional RMB/USD flow via Singapore."
+                },
+                {
+                  title: "Asset Recycling",
+                  desc: "Develop-Hold-Operate-Securitize loop with future REITs exit pathways."
+                },
+                {
+                  title: "ESG & Sustainability",
+                  desc: "Commitment to PUE < 1.3, CRESS green energy procurement, and carbon-neutral operations."
+                }
+              ]
+            },
+            insights: {
+              title: "Insights & Resources",
+              items: [
+                "White Paper: Feasibility of Flywheel Storage in Tropical DCs",
+                "Technical Report: EBO Optics in OCP Architecture",
+                "Policy Brief: IMDA Green DC Roadmap & DC-CFA"
+              ]
+            },
+            contact: {
+              title: "Contact DCDeepTech",
+              subtitle: "Ready to discuss your liquid cooling or OCP rack project?",
+              address: { label: "Address", val: "71 Ayer Rajah Crescent, #02-01, Singapore 139951" },
+              email: { label: "Email", val: "info@DCdeeptech.com" },
+              whatsapp: { label: "WhatsApp", val: "+65 8378 5068" },
+              region: { label: "Region", val: "Singapore, Taiwan, ASEAN, Brazil." },
+              aboutTitle: "About DCDeepTech",
+              aboutText: "Founded by senior engineers and financial experts, we serve the OCP ecosystem through DeepTech consulting, supply chain finance solutions, and global marketing. We act as a neutral design office bridging OCP specs and real-world deployment."
+            },
+            footer: {
+              rights: "© 2025 DCDeepTech. All Rights Reserved."
+            }
+          },
+          zh: {
+            nav: {
+              home: "首頁",
+              solutions: "解決方案",
+              ocp: "OCP 專欄",
+              projects: "市場前景",
+              ecosystem: "平台生態",
+              capital: "資本合規",
+              insights: "洞察資源",
+              contact: "聯絡我們"
+            },
+            hero: {
+              title: "定義熱帶 AI 基礎設施的物理範式",
+              subtitle: "專為熱帶氣候工程設計的高密度、能源韌性與資本高效的數據中心。",
+              cta: "探索解決方案",
+              stats: [
+                { value: "< 1.2", label: "熱帶 PUE" },
+                { value: "> 100kW", label: "單機櫃功率" },
+                { value: "0", label: "化學電池依賴" }
+              ]
+            },
+            solutions: {
+              title: "DeepTech 解決方案",
+              subtitle: "應對物理挑戰的「五位一體」架構",
+              items: [
+                {
+                  title: "Direct-to-Chip (D2C)",
+                  desc: "針對 GPU 集群的高效冷板技術，適配 NVIDIA Blackwell 架構。",
+                  icon: <Thermometer className="w-6 h-6" />,
+                  tag: "Thermal"
+                },
+                {
+                  title: "浸沒式冷卻路線圖",
+                  desc: "面向未來的單相/雙相浸沒式冷卻，徹底消除風扇能耗。",
+                  icon: <Wind className="w-6 h-6" />,
+                  tag: "Thermal"
+                },
+                {
+                  title: "熱帶優化策略",
+                  desc: "結合 MOF 材料的除濕與高溫運行策略（與 NUS 合作成果）。",
+                  icon: <Zap className="w-6 h-6" />,
+                  tag: "Thermal"
+                },
+                {
+                  title: "飛輪儲能 (Flywheel)",
+                  desc: "利用 HHE 磁懸浮飛輪技術，提供毫秒級響應和寬溫域運行（0-40°C），替代化學電池。",
+                  icon: <Zap className="w-6 h-6" />,
+                  tag: "Power"
+                },
+                {
+                  title: "固態變壓器 (SST)",
+                  desc: "基於 SiC 的固態變壓器，實現中壓直掛與電能質量治理。",
+                  icon: <Cpu className="w-6 h-6" />,
+                  tag: "Power"
+                },
+                {
+                  title: "OCP Open Rack v3",
+                  desc: "21英寸標準化機櫃，支持 48V DC 母排直供與盲插（Blind-mate）。",
+                  icon: <Layers className="w-6 h-6" />,
+                  tag: "Connectivity"
+                },
+                {
+                  title: "EBO 擴束光纖技術",
+                  desc: "3M 抗塵擴束光學技術，解決熱帶高塵環境下的光互連失效問題。",
+                  icon: <Network className="w-6 h-6" />,
+                  tag: "Connectivity"
+                }
+              ]
+            },
+            ocp: {
+              title: "OCP 技術專欄",
+              subtitle: "工程深度解析：機櫃、散熱與光纖",
+              sections: [
+                {
+                  id: "rack-power",
+                  title: "機櫃與電源 (Rack & Power)",
+                  icon: <Server className="w-8 h-8" />,
+                  features: [
+                    "48V → 800V HVDC：將 100kW+ 機櫃的銅損降低 >99%。",
+                    "ORV3 機械結構：增強型框架與盲插匯流排 (Blind-mate Busbar)。",
+                    "Power Shelves：高密度電源架構，消除傳統線纜混亂。"
+                  ]
+                },
+                {
+                  id: "cooling",
+                  title: "先進散熱 (Cooling)",
+                  icon: <Droplets className="w-8 h-8" />,
+                  features: [
+                    "DLC & RDHx：晶片直冷冷板與背門熱交換器。",
+                    "CDU 工程：冷卻液分配單元選型與迴路設計。",
+                    "浸沒式就緒：兼容介電液的液槽設計與維護方案。"
+                  ]
+                },
+                {
+                  id: "fiber",
+                  title: "光纖互連 (Fiber)",
+                  icon: <Cable className="w-8 h-8" />,
+                  features: [
+                    "擴束光學技術 (EBO)：非接觸式耦合，實現極致抗塵。",
+                    "盲插光學：液冷機櫃維護的關鍵技術。",
+                    "高密度互連：支持狹窄空間內的 400G/800G 高速傳輸。"
+                  ]
+                }
+              ]
+            },
+            projects: {
+              title: "市場前景",
+              subtitle: "政府與頂尖科研機構的深度綁定與驗證",
+              list: [
+                {
+                  title: "STDCT 2.0 (裕廊島)",
+                  desc: "與 JTC 和 NUS 合作的可持續熱帶數據中心測試床。氫能就緒與微電網集成。",
+                  loc: "Singapore"
+                },
+                {
+                  title: "Johor AI Foundry (柔佛智算基地)",
+                  desc: "利用柔佛-新加坡經濟特區 (JS-SEZ) 政策，構建大規模 AI 訓練集群。前店後廠模式。",
+                  loc: "Malaysia"
+                },
+                {
+                  title: "Urban Inference Nodes (城市推理節點)",
+                  desc: "位於新加坡的高頻交易與低延遲推理中心，符合 BCA Green Mark Platinum 標準。",
+                  loc: "Singapore"
+                }
+              ]
+            },
+            ecosystem: {
+              title: "平台生態體系",
+              subtitle: "全產業鏈交付能力",
+              roles: [
+                {
+                  role: "大腦 (THE BRAIN)",
+                  name: "DCDeepTech",
+                  desc: "資本、合規、戰略頂層設計與數位孿生。",
+                  color: "bg-blue-600"
+                },
+                {
+                  role: "軀干 (THE BODY)",
+                  name: "AxiomDeta",
+                  desc: "基礎設施交付，OCP 預製化生產與系統集成。SZHDCG 深圳製造基地，戰略合作 HHE。",
+                  color: "bg-slate-600"
+                },
+                {
+                  role: "心臟 (THE HEART)",
+                  name: "HHE JV",
+                  desc: "能源技術（飛輪儲能與 SST），保障物理安全。",
+                  color: "bg-emerald-600"
+                }
+              ]
+            },
+            capital: {
+              title: "資本與合規",
+              subtitle: "面向機構投資者與家族辦公室的專業架構",
+              cards: [
+                {
+                  title: "QFLP 投資架構",
+                  desc: "利用新加坡 QFLP 架構打通跨境資本，支持人民幣與美元的雙向流動。"
+                },
+                {
+                  title: "資產循環 (Asset Recycling)",
+                  desc: "「開發-持有-營運-證券化」的資產管理閉環，對接 REITs 退出路徑。"
+                },
+                {
+                  title: "ESG 與可持續發展",
+                  desc: "承諾 PUE < 1.3，利用 CRESS 政策採購綠電，實現碳中和營運。"
+                }
       ]
     },
     insights: {
@@ -435,14 +485,14 @@ const content = {
       ]
     },
     contact: {
-      title: "聯繫 DCDeepTech",
-      subtitle: "準備好討論您的液冷或 OCP 機櫃項目了嗎？",
+      title: "聯絡 DCDeepTech",
+      subtitle: "準備好討論您的液冷或 OCP 機櫃專案了嗎？",
       address: { label: "地址", val: "71 Ayer Rajah Crescent, #02-01, Singapore 139951" },
       email: { label: "電子郵件", val: "info@DCdeeptech.com" },
       whatsapp: { label: "WhatsApp", val: "+65 8378 5068" },
       region: { label: "區域", val: "新加坡, 台灣, 東盟, 巴西。" },
       aboutTitle: "關於 DCDeepTech",
-      aboutText: "由資深工程師和金融專家創立，我們透過深度技術諮詢、供應鏈金融解決方案和全球營銷，服務 OCP 生態系統。我們作為中立的設計辦公室，彌合 OCP 規範與實際部署之間的差距。"
+      aboutText: "由資深工程師和金融專家創立，我們透過深度技術諮詢、供應鏈金融解決方案和全球行銷，服務 OCP 生態系統。我們作為中立的設計辦公室，彌合 OCP 規範與實際部署之間的差距。"
     },
     footer: {
       rights: "© 2025 DCDeepTech. 保留所有權利。"
@@ -495,7 +545,7 @@ const Navbar = ({ lang, setLang, t }) => {
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="lg:hidden bg-white border-b border-[#DDDDDD] shadow-lg absolute w-full left-0 animate-fade-in-down">
+        <div className="lg:hidden bg-white border-b border-[#DDDDDD] shadow-lg absolute w-full left-0 animate-fade-in-down top-16">
           <div className="px-4 pt-2 pb-6 space-y-1">
              {['home', 'solutions', 'ocp', 'projects', 'ecosystem', 'capital', 'contact'].map((item) => (
                 <a key={item} href={`#${item}`} onClick={() => setIsOpen(false)} className="text-[#012169] hover:text-[#65C23C] hover:bg-[#F8F8F8] block px-3 py-3 rounded-md text-base font-bold border-b border-gray-100 last:border-0">
@@ -865,4 +915,6 @@ const App = () => {
   );
 };
 
-export default App;
+const container = document.getElementById('root');
+const root = createRoot(container);
+root.render(<App />);
