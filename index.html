@@ -1,0 +1,868 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { 
+  Globe, 
+  Cpu, 
+  Zap, 
+  Network, 
+  Building2, 
+  BarChart3, 
+  FileText, 
+  Menu, 
+  X, 
+  ArrowRight, 
+  Wind, 
+  Thermometer, 
+  ShieldCheck, 
+  Anchor, 
+  Layers,
+  MapPin,
+  Mail,
+  Server,
+  Droplets,
+  Cable,
+  Phone,
+  Users
+} from 'lucide-react';
+
+// --- Animation Hook ---
+// Simple hook to trigger animations when elements enter viewport
+const useOnScreen = (ref, rootMargin = "0px") => {
+  const [isIntersecting, setIntersecting] = useState(false);
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIntersecting(true);
+          observer.unobserve(entry.target); // Only trigger once
+        }
+      },
+      { rootMargin }
+    );
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
+    return () => {
+      if (ref.current) observer.unobserve(ref.current);
+    };
+  }, [ref, rootMargin]);
+  return isIntersecting;
+};
+
+// FadeIn Component Wrapper
+const FadeIn = ({ children, delay = 0, className = "" }) => {
+  const ref = useRef();
+  const isVisible = useOnScreen(ref, "-50px");
+  
+  return (
+    <div
+      ref={ref}
+      className={`transition-all duration-1000 ease-out transform ${
+        isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
+      } ${className}`}
+      style={{ transitionDelay: `${delay}ms` }}
+    >
+      {children}
+    </div>
+  );
+};
+
+// --- Data & Translations ---
+const content = {
+  en: {
+    nav: {
+      home: "Home",
+      solutions: "Solutions",
+      ocp: "OCP Column",
+      projects: "Market Prospects",
+      ecosystem: "Ecosystem",
+      capital: "Capital",
+      insights: "Insights",
+      contact: "Contact Us"
+    },
+    hero: {
+      title: "Defining the Physics of Tropical AI Infrastructure",
+      subtitle: "High-density, energy-resilient, and capital-efficient data centers engineered specifically for the tropical climate.",
+      cta: "Explore Solutions",
+      stats: [
+        { value: "< 1.2", label: "PUE in Tropics" },
+        { value: "> 100kW", label: "Per Rack Ready" },
+        { value: "0", label: "Chemical Batteries" }
+      ]
+    },
+    solutions: {
+      title: "DeepTech Solutions",
+      subtitle: "The Five-Pillar Architecture for Tropical Resilience",
+      items: [
+        {
+          title: "Direct-to-Chip Cooling",
+          desc: "High-efficiency cold plate technology optimized for NVIDIA Blackwell architecture.",
+          icon: <Thermometer className="w-6 h-6" />,
+          tag: "Thermal"
+        },
+        {
+          title: "Immersion Cooling Roadmap",
+          desc: "Future-proof single/two-phase immersion cooling to eliminate fan energy consumption.",
+          icon: <Wind className="w-6 h-6" />,
+          tag: "Thermal"
+        },
+        {
+          title: "Tropical Optimization",
+          desc: "MOF-based dehumidification and high-temp operation strategies (collab with NUS).",
+          icon: <Zap className="w-6 h-6" />,
+          tag: "Thermal"
+        },
+        {
+          title: "Flywheel Energy Storage",
+          desc: "HHE magnetic levitation flywheels. Millisecond response, wide temp range (0-40°C), no chemical degradation.",
+          icon: <Zap className="w-6 h-6" />,
+          tag: "Power"
+        },
+        {
+          title: "Solid State Transformers (SST)",
+          desc: "SiC-based SSTs for medium voltage direct connection and superior power quality governance.",
+          icon: <Cpu className="w-6 h-6" />,
+          tag: "Power"
+        },
+        {
+          title: "OCP Open Rack v3",
+          desc: "21-inch standard racks supporting 48V DC busbar and blind-mate connections.",
+          icon: <Layers className="w-6 h-6" />,
+          tag: "Connectivity"
+        },
+        {
+          title: "Expanded Beam Optics",
+          desc: "3M EBO dust-resistant fiber technology, solving optical failure in high-dust tropical environments.",
+          icon: <Network className="w-6 h-6" />,
+          tag: "Connectivity"
+        }
+      ]
+    },
+    ocp: {
+      title: "OCP Technical Column",
+      subtitle: "Engineering Deep Dive: Rack, Cooling & Fiber",
+      sections: [
+        {
+          id: "rack-power",
+          title: "Rack & Power (ORV3)",
+          icon: <Server className="w-8 h-8" />,
+          features: [
+            "48V → 800V HVDC: Reducing copper loss by >99% for 100kW+ racks.",
+            "ORV3 Mechanicals: Reinforced frames & blind-mate busbars.",
+            "Shelf Power: High-density power shelves eliminating cable clutter."
+          ]
+        },
+        {
+          id: "cooling",
+          title: "Advanced Cooling",
+          icon: <Droplets className="w-8 h-8" />,
+          features: [
+            "DLC & RDHx: Direct-to-Chip cold plates and Rear Door Heat Exchangers.",
+            "CDU Engineering: Coolant Distribution Units sizing and loop design.",
+            "Immersion Ready: Tank compatibility for dielectric fluids."
+          ]
+        },
+        {
+          id: "fiber",
+          title: "Fiber Connectivity",
+          icon: <Cable className="w-8 h-8" />,
+          features: [
+            "Expanded Beam Optics: Non-contact coupling for high dust resistance.",
+            "Blind-Mate Optical: Critical for liquid-cooled rack maintenance.",
+            "High Density: Supporting 400G/800G interconnects in tight spaces."
+          ]
+        }
+      ]
+    },
+    projects: {
+      title: "Market Prospects",
+      subtitle: "Validated by Government & Research Institutions",
+      list: [
+        {
+          title: "STDCT 2.0 (Jurong Island)",
+          desc: "Sustainable Tropical Data Center Testbed in partnership with JTC & NUS. Hydrogen-Ready verification.",
+          loc: "Singapore"
+        },
+        {
+          title: "Johor AI Foundry",
+          desc: "Large-scale AI training cluster utilizing JS-SEZ policies. Cross-border compute scheduling.",
+          loc: "Malaysia"
+        },
+        {
+          title: "Urban Inference Nodes",
+          desc: "High-frequency trading and low-latency inference centers in CBD. BCA Green Mark Platinum.",
+          loc: "Singapore"
+        }
+      ]
+    },
+    ecosystem: {
+      title: "The Ecosystem",
+      subtitle: "Full-Stack Delivery Capability",
+      roles: [
+        {
+          role: "THE BRAIN",
+          name: "DCDeepTech",
+          desc: "Capital, Compliance, Strategy & Digital Twin.",
+          color: "bg-blue-600"
+        },
+        {
+          role: "THE BODY",
+          name: "AxiomDeta",
+          desc: "Infrastructure Delivery, OCP Prefabrication & Turnkey Integration. SZHDCG Shenzhen Manufacturing Base, Strategic Partnership with HHE.",
+          color: "bg-slate-600"
+        },
+        {
+          role: "THE HEART",
+          name: "HHE JV",
+          desc: "Energy Technology (Flywheel & SST) ensuring physical safety.",
+          color: "bg-emerald-600"
+        }
+      ]
+    },
+    capital: {
+      title: "Capital & Governance",
+      subtitle: "Professional Structure for Institutional Investors",
+      cards: [
+        {
+          title: "QFLP Structure",
+          desc: "Cross-border capital channel supporting bidirectional RMB/USD flow via Singapore."
+        },
+        {
+          title: "Asset Recycling",
+          desc: "Develop-Hold-Operate-Securitize loop with future REITs exit pathways."
+        },
+        {
+          title: "ESG & Sustainability",
+          desc: "Commitment to PUE < 1.3, CRESS green energy procurement, and carbon-neutral operations."
+        }
+      ]
+    },
+    insights: {
+      title: "Insights & Resources",
+      items: [
+        "White Paper: Feasibility of Flywheel Storage in Tropical DCs",
+        "Technical Report: EBO Optics in OCP Architecture",
+        "Policy Brief: IMDA Green DC Roadmap & DC-CFA"
+      ]
+    },
+    contact: {
+      title: "Contact DCDeepTech",
+      subtitle: "Ready to discuss your liquid cooling or OCP rack project?",
+      address: { label: "Address", val: "71 Ayer Rajah Crescent, #02-01, Singapore 139951" },
+      email: { label: "Email", val: "info@DCdeeptech.com" },
+      whatsapp: { label: "WhatsApp", val: "+65 8378 5068" },
+      region: { label: "Region", val: "Singapore, Taiwan, ASEAN, Brazil." },
+      aboutTitle: "About DCDeepTech",
+      aboutText: "Founded by senior engineers and financial experts, we serve the OCP ecosystem through DeepTech consulting, supply chain finance solutions, and global marketing. We act as a neutral design office bridging OCP specs and real-world deployment."
+    },
+    footer: {
+      rights: "© 2025 DCDeepTech. All Rights Reserved."
+    }
+  },
+  zh: {
+    nav: {
+      home: "首頁",
+      solutions: "解決方案",
+      ocp: "OCP 專欄",
+      projects: "市場前景",
+      ecosystem: "平台生態",
+      capital: "資本合規",
+      insights: "洞察資源",
+      contact: "聯繫我們"
+    },
+    hero: {
+      title: "定義熱帶 AI 基礎設施的物理範式",
+      subtitle: "專為熱帶氣候工程設計的高密度、能源韌性與資本高效的數據中心。",
+      cta: "探索解決方案",
+      stats: [
+        { value: "< 1.2", label: "熱帶 PUE" },
+        { value: "> 100kW", label: "單機櫃功率" },
+        { value: "0", label: "化學電池依賴" }
+      ]
+    },
+    solutions: {
+      title: "DeepTech 解決方案",
+      subtitle: "應對物理挑戰的「五位一體」架構",
+      items: [
+        {
+          title: "Direct-to-Chip (D2C)",
+          desc: "針對 GPU 集群的高效冷板技術，適配 NVIDIA Blackwell 架構。",
+          icon: <Thermometer className="w-6 h-6" />,
+          tag: "Thermal"
+        },
+        {
+          title: "浸沒式冷卻路線圖",
+          desc: "面向未來的單相/雙相浸沒式冷卻，徹底消除風扇能耗。",
+          icon: <Wind className="w-6 h-6" />,
+          tag: "Thermal"
+        },
+        {
+          title: "熱帶優化策略",
+          desc: "結合 MOF 材料的除濕與高溫運行策略（與 NUS 合作成果）。",
+          icon: <Zap className="w-6 h-6" />,
+          tag: "Thermal"
+        },
+        {
+          title: "飛輪儲能 (Flywheel)",
+          desc: "利用 HHE 磁懸浮飛輪技術，提供毫秒級響應和寬溫域運行（0-40°C），替代化學電池。",
+          icon: <Zap className="w-6 h-6" />,
+          tag: "Power"
+        },
+        {
+          title: "固態變壓器 (SST)",
+          desc: "基於 SiC 的固態變壓器，實現中壓直掛與電能質量治理。",
+          icon: <Cpu className="w-6 h-6" />,
+          tag: "Power"
+        },
+        {
+          title: "OCP Open Rack v3",
+          desc: "21英寸標準化機櫃，支持 48V DC 母排直供與盲插（Blind-mate）。",
+          icon: <Layers className="w-6 h-6" />,
+          tag: "Connectivity"
+        },
+        {
+          title: "EBO 擴束光纖技術",
+          desc: "3M 抗塵擴束光學技術，解決熱帶高塵環境下的光互連失效問題。",
+          icon: <Network className="w-6 h-6" />,
+          tag: "Connectivity"
+        }
+      ]
+    },
+    ocp: {
+      title: "OCP 技術專欄",
+      subtitle: "工程深度解析：機櫃、散熱與光纖",
+      sections: [
+        {
+          id: "rack-power",
+          title: "機櫃與電源 (Rack & Power)",
+          icon: <Server className="w-8 h-8" />,
+          features: [
+            "48V → 800V HVDC：將 100kW+ 機櫃的銅損降低 >99%。",
+            "ORV3 機械結構：增強型框架與盲插母排 (Blind-mate Busbar)。",
+            "Power Shelves：高密度電源架構，消除傳統線纜混亂。"
+          ]
+        },
+        {
+          id: "cooling",
+          title: "先進散熱 (Cooling)",
+          icon: <Droplets className="w-8 h-8" />,
+          features: [
+            "DLC & RDHx：芯片直冷冷板與背門熱交換器。",
+            "CDU 工程：冷卻液分配單元選型與迴路設計。",
+            "浸沒式就緒：兼容介電液的液槽設計與維護方案。"
+          ]
+        },
+        {
+          id: "fiber",
+          title: "光纖互連 (Fiber)",
+          icon: <Cable className="w-8 h-8" />,
+          features: [
+            "擴束光學技術 (EBO)：非接觸式耦合，實現極致抗塵。",
+            "盲插光學：液冷機櫃維護的關鍵技術。",
+            "高密度互連：支持狹窄空間內的 400G/800G 高速傳輸。"
+          ]
+        }
+      ]
+    },
+    projects: {
+      title: "市場前景",
+      subtitle: "政府與頂尖科研機構的深度綁定與驗證",
+      list: [
+        {
+          title: "STDCT 2.0 (裕廊島)",
+          desc: "與 JTC 和 NUS 合作的可持續熱帶數據中心測試床。氫能就緒與微電網集成。",
+          loc: "Singapore"
+        },
+        {
+          title: "Johor AI Foundry (柔佛智算基地)",
+          desc: "利用柔佛-新加坡經濟特區 (JS-SEZ) 政策，構建大規模 AI 訓練集群。前店後廠模式。",
+          loc: "Malaysia"
+        },
+        {
+          title: "Urban Inference Nodes (城市推理節點)",
+          desc: "位於新加坡的高頻交易與低延遲推理中心，符合 BCA Green Mark Platinum 標準。",
+          loc: "Singapore"
+        }
+      ]
+    },
+    ecosystem: {
+      title: "平台生態體系",
+      subtitle: "全產業鏈交付能力",
+      roles: [
+        {
+          role: "大腦 (THE BRAIN)",
+          name: "DCDeepTech",
+          desc: "資本、合規、戰略頂層設計與數字孿生。",
+          color: "bg-blue-600"
+        },
+        {
+          role: "軀干 (THE BODY)",
+          name: "AxiomDeta",
+          desc: "基礎設施交付，OCP 預製化生產與系統集成。SZHDCG 深圳製造基地，戰略合作 HHE。",
+          color: "bg-slate-600"
+        },
+        {
+          role: "心臟 (THE HEART)",
+          name: "HHE JV",
+          desc: "能源技術（飛輪儲能與 SST），保障物理安全。",
+          color: "bg-emerald-600"
+        }
+      ]
+    },
+    capital: {
+      title: "資本與合規",
+      subtitle: "面向機構投資者與家族辦公室的專業架構",
+      cards: [
+        {
+          title: "QFLP 投資架構",
+          desc: "利用新加坡 QFLP 架構打通跨境資本，支持人民幣與美元的雙向流動。"
+        },
+        {
+          title: "資產循環 (Asset Recycling)",
+          desc: "「開發-持有-運營-證券化」的資產管理閉環，對接 REITs 退出路徑。"
+        },
+        {
+          title: "ESG 與可持續發展",
+          desc: "承諾 PUE < 1.3，利用 CRESS 政策採購綠電，實現碳中和運營。"
+        }
+      ]
+    },
+    insights: {
+      title: "洞察與資源",
+      items: [
+        "白皮書：《熱帶數據中心飛輪儲能可行性分析》",
+        "技術報告：《EBO 擴束光學在 OCP 架構中的應用》",
+        "政策解讀：IMDA Green DC Roadmap 與 DC-CFA 政策"
+      ]
+    },
+    contact: {
+      title: "聯繫 DCDeepTech",
+      subtitle: "準備好討論您的液冷或 OCP 機櫃項目了嗎？",
+      address: { label: "地址", val: "71 Ayer Rajah Crescent, #02-01, Singapore 139951" },
+      email: { label: "電子郵件", val: "info@DCdeeptech.com" },
+      whatsapp: { label: "WhatsApp", val: "+65 8378 5068" },
+      region: { label: "區域", val: "新加坡, 台灣, 東盟, 巴西。" },
+      aboutTitle: "關於 DCDeepTech",
+      aboutText: "由資深工程師和金融專家創立，我們透過深度技術諮詢、供應鏈金融解決方案和全球營銷，服務 OCP 生態系統。我們作為中立的設計辦公室，彌合 OCP 規範與實際部署之間的差距。"
+    },
+    footer: {
+      rights: "© 2025 DCDeepTech. 保留所有權利。"
+    }
+  }
+};
+
+// --- Components ---
+
+const Navbar = ({ lang, setLang, t }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <nav className="fixed w-full z-50 bg-white/95 backdrop-blur-md border-b border-[#DDDDDD] shadow-sm transition-all duration-300">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16 md:h-20">
+          <div className="flex-shrink-0 flex items-center gap-2">
+            <div className="h-8 md:h-10 w-auto object-contain">
+               <img src="https://raw.githubusercontent.com/luoxisg/dcdeeptech/main/image/DCdeeptech_logo-removebg-preview.png" alt="DCDeepTech Logo" className="h-full w-auto" />
+            </div>
+            <span className="text-lg md:text-2xl font-bold text-[#012169] tracking-wider ml-1">
+              DCDeepTech
+            </span>
+          </div>
+          
+          <div className="hidden lg:block">
+            <div className="ml-10 flex items-baseline space-x-4">
+              {['home', 'solutions', 'ocp', 'projects', 'ecosystem', 'capital', 'contact'].map((item) => (
+                <a key={item} href={`#${item}`} className="text-[#4B5563] hover:text-[#012169] hover:bg-[#F8F8F8] hover:border-b-2 hover:border-[#65C23C] transition-all px-3 py-4 text-xs lg:text-sm font-bold uppercase tracking-wide">
+                  {t.nav[item]}
+                </a>
+              ))}
+              <button 
+                onClick={() => setLang(lang === 'en' ? 'zh' : 'en')}
+                className="flex items-center text-[#012169] border border-[#DDDDDD] px-3 py-1 rounded-full text-xs font-bold hover:bg-[#F8F8F8] transition ml-2"
+              >
+                <Globe className="w-3 h-3 mr-1 text-[#65C23C]" />
+                {lang === 'en' ? '繁體' : 'EN'}
+              </button>
+            </div>
+          </div>
+
+          <div className="-mr-2 flex lg:hidden">
+            <button onClick={() => setIsOpen(!isOpen)} className="text-[#012169] p-2 hover:bg-[#F8F8F8] rounded-md transition">
+              {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Menu */}
+      {isOpen && (
+        <div className="lg:hidden bg-white border-b border-[#DDDDDD] shadow-lg absolute w-full left-0 animate-fade-in-down">
+          <div className="px-4 pt-2 pb-6 space-y-1">
+             {['home', 'solutions', 'ocp', 'projects', 'ecosystem', 'capital', 'contact'].map((item) => (
+                <a key={item} href={`#${item}`} onClick={() => setIsOpen(false)} className="text-[#012169] hover:text-[#65C23C] hover:bg-[#F8F8F8] block px-3 py-3 rounded-md text-base font-bold border-b border-gray-100 last:border-0">
+                  {t.nav[item]}
+                </a>
+              ))}
+              <div className="pt-4 mt-2 border-t border-gray-100">
+                <button 
+                  onClick={() => { setLang(lang === 'en' ? 'zh' : 'en'); setIsOpen(false); }}
+                  className="w-full flex items-center justify-center text-[#012169] bg-[#F8F8F8] px-3 py-3 rounded-lg text-base font-bold"
+                >
+                  <Globe className="w-4 h-4 mr-2 text-[#65C23C]" />
+                  {lang === 'en' ? '切換至 繁體中文' : 'Switch to English'}
+                </button>
+              </div>
+          </div>
+        </div>
+      )}
+    </nav>
+  );
+};
+
+const Hero = ({ t }) => (
+  <section id="home" className="relative pt-28 pb-16 lg:pt-48 lg:pb-32 overflow-hidden bg-gradient-to-b from-white to-[#F8F8F8]">
+    <FadeIn>
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div className="inline-block mb-6 px-3 py-1 rounded-full border border-[#65C23C] bg-[#E9F5E3] text-[#012169] text-xs font-bold tracking-wider uppercase shadow-sm">
+          Tropical Native Infrastructure
+        </div>
+        <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold text-[#012169] tracking-tight mb-6 leading-tight">
+          {t.hero.title}
+        </h1>
+        <p className="mt-4 text-base sm:text-lg md:text-xl text-[#4B5563] max-w-3xl mx-auto mb-10 leading-relaxed px-2">
+          {t.hero.subtitle}
+        </p>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-4xl mx-auto mb-12 px-2">
+          {t.hero.stats.map((stat, idx) => (
+            <div key={idx} className="p-4 sm:p-6 rounded-xl bg-white border border-[#DDDDDD] shadow-sm hover:shadow-lg transition duration-300">
+              <div className="text-2xl sm:text-3xl font-bold text-[#012169] mb-1">{stat.value}</div>
+              <div className="text-[10px] sm:text-xs text-[#65C23C] font-bold uppercase tracking-wider">{stat.label}</div>
+            </div>
+          ))}
+        </div>
+
+        <a href="#solutions" className="inline-flex items-center px-6 py-3 sm:px-8 sm:py-3 border border-transparent text-sm sm:text-base font-bold rounded-full text-white bg-[#012169] hover:bg-opacity-90 transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5">
+          {t.hero.cta}
+          <ArrowRight className="ml-2 w-4 h-4 sm:w-5 sm:h-5" />
+        </a>
+      </div>
+    </FadeIn>
+  </section>
+);
+
+const Solutions = ({ t }) => (
+  <section id="solutions" className="py-16 sm:py-24 bg-white relative border-t border-[#DDDDDD]">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <FadeIn>
+        <div className="text-center mb-12 sm:mb-16">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#012169] mb-4">{t.solutions.title}</h2>
+          <p className="text-base sm:text-lg text-[#4B5563] px-2">{t.solutions.subtitle}</p>
+          <div className="mt-4 inline-flex items-center space-x-2 text-xs sm:text-sm text-[#4B5563] bg-[#F8F8F8] px-3 py-1 rounded-full border border-[#DDDDDD]">
+            <ShieldCheck className="w-3 h-3 sm:w-4 sm:h-4 text-[#65C23C]" />
+            <span>OCP Compliant Standard</span>
+          </div>
+        </div>
+      </FadeIn>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+        {t.solutions.items.map((item, idx) => (
+          <FadeIn key={idx} delay={idx * 100}>
+            <div className="group relative p-6 bg-[#F8F8F8] rounded-[1.25rem] border border-[#DDDDDD] hover:border-[#65C23C] transition-all duration-300 hover:-translate-y-1 hover:shadow-lg h-full">
+              <div className="flex items-center mb-4 justify-between">
+                <div className="p-3 rounded-lg bg-white border border-[#DDDDDD] text-[#012169] group-hover:text-[#65C23C] transition-colors shadow-sm">
+                  {item.icon}
+                </div>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#012169] bg-white border border-[#DDDDDD] px-2 py-1 rounded">
+                  {item.tag}
+                </span>
+              </div>
+              <h3 className="text-lg sm:text-xl font-bold text-[#012169] mb-3">{item.title}</h3>
+              <p className="text-[#4B5563] text-sm leading-relaxed">
+                {item.desc}
+              </p>
+            </div>
+          </FadeIn>
+        ))}
+      </div>
+    </div>
+  </section>
+);
+
+const OCPSection = ({ t }) => (
+  <section id="ocp" className="py-16 sm:py-24 bg-[#F0F4F8] border-t border-[#DDDDDD]">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <FadeIn>
+        <div className="text-center mb-12 sm:mb-16">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#012169] mb-4">{t.ocp.title}</h2>
+          <p className="text-base sm:text-lg text-[#4B5563] px-2">{t.ocp.subtitle}</p>
+        </div>
+      </FadeIn>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+        {t.ocp.sections.map((section, idx) => (
+          <FadeIn key={idx} delay={idx * 100}>
+            <div className="bg-white rounded-[1.25rem] p-6 sm:p-8 border border-[#DDDDDD] shadow-sm hover:shadow-lg transition-all duration-300 h-full">
+              <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-[#E9F5E3] flex items-center justify-center text-[#012169] mb-6 border border-[#65C23C]">
+                {section.icon}
+              </div>
+              <h3 className="text-lg sm:text-xl font-bold text-[#012169] mb-4">{section.title}</h3>
+              <ul className="space-y-3">
+                {section.features.map((feature, fIdx) => (
+                  <li key={fIdx} className="flex items-start">
+                    <ArrowRight className="w-4 h-4 text-[#65C23C] mr-2 mt-1 flex-shrink-0" />
+                    <span className="text-[#4B5563] text-sm leading-snug">{feature}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </FadeIn>
+        ))}
+      </div>
+    </div>
+  </section>
+);
+
+const Projects = ({ t }) => (
+  <section id="projects" className="py-16 sm:py-24 bg-[#F8F8F8] border-t border-[#DDDDDD]">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <FadeIn>
+        <div className="mb-12 sm:mb-16 text-center md:text-left">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#012169] mb-4">{t.projects.title}</h2>
+          <p className="text-base sm:text-lg text-[#4B5563] md:border-l-4 md:border-[#65C23C] md:pl-4 inline-block">
+            {t.projects.subtitle}
+          </p>
+        </div>
+      </FadeIn>
+
+      <div className="space-y-6">
+        {t.projects.list.map((project, idx) => (
+          <FadeIn key={idx} delay={idx * 100}>
+            <div className="bg-white rounded-[1.25rem] p-6 sm:p-8 border border-[#DDDDDD] hover:border-[#012169] transition-colors flex flex-col md:flex-row gap-6 items-start shadow-sm hover:shadow-md">
+               <div className="flex-shrink-0">
+                 <div className="w-12 h-12 rounded-full bg-[#E9F5E3] flex items-center justify-center border border-[#65C23C] text-[#012169] font-bold text-lg">
+                   0{idx + 1}
+                 </div>
+               </div>
+               <div className="flex-grow">
+                 <div className="flex flex-col md:flex-row md:items-center justify-between mb-2">
+                   <h3 className="text-lg sm:text-xl font-bold text-[#012169]">{project.title}</h3>
+                   <span className="flex items-center text-xs font-semibold text-[#4B5563] mt-2 md:mt-0 bg-[#F0F4F8] px-2 py-1 rounded">
+                     <MapPin className="w-3 h-3 mr-1 text-[#65C23C]" /> {project.loc}
+                   </span>
+                 </div>
+                 <p className="text-[#4B5563] text-sm sm:text-base leading-relaxed">{project.desc}</p>
+               </div>
+            </div>
+          </FadeIn>
+        ))}
+      </div>
+    </div>
+  </section>
+);
+
+const Ecosystem = ({ t }) => (
+  <section id="ecosystem" className="py-16 sm:py-24 bg-white border-t border-[#DDDDDD]">
+     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <FadeIn>
+        <div className="text-center mb-12 sm:mb-16">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#012169] mb-4">{t.ecosystem.title}</h2>
+          <p className="text-base sm:text-lg text-[#4B5563] px-2">{t.ecosystem.subtitle}</p>
+        </div>
+      </FadeIn>
+
+      <div className="relative">
+        {/* Connecting Lines (Desktop only) */}
+        <div className="absolute top-1/2 left-0 w-full h-px bg-[#DDDDDD] -translate-y-1/2 hidden md:block z-0"></div>
+        <div className="absolute left-1/2 top-0 w-px h-full bg-[#DDDDDD] -translate-x-1/2 hidden md:block z-0"></div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-10 relative z-10 justify-items-center">
+          {t.ecosystem.roles.map((role, idx) => (
+            <FadeIn key={idx} delay={idx * 150} className="w-full">
+              <div className="p-6 sm:p-8 rounded-[1.25rem] bg-[#F8F8F8] border border-[#DDDDDD] hover:border-[#65C23C] hover:bg-white hover:shadow-lg transition-all w-full h-full">
+                <div className="flex items-center space-x-4 mb-4">
+                  <span className={`px-3 py-1 rounded text-[10px] sm:text-xs font-bold text-white uppercase tracking-widest ${role.color.replace('bg-', 'bg-opacity-90 bg-')}`}>
+                    {role.role}
+                  </span>
+                </div>
+                
+                <h3 className="text-lg sm:text-xl font-bold text-[#012169] mb-2">{role.name}</h3>
+                <p className="text-[#4B5563] text-sm leading-relaxed">{role.desc}</p>
+              </div>
+            </FadeIn>
+          ))}
+        </div>
+        
+        {/* Central Hub Graphic */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 sm:w-16 sm:h-16 bg-white rounded-full border-4 border-[#DDDDDD] hidden md:flex items-center justify-center z-20 shadow-sm">
+          <div className="w-2 h-2 sm:w-3 sm:h-3 bg-[#65C23C] rounded-full animate-pulse"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+);
+
+const Capital = ({ t }) => (
+  <section id="capital" className="py-16 sm:py-24 bg-[#F8F8F8] border-t border-[#DDDDDD]">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <FadeIn>
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12">
+          <div>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#012169] mb-4">{t.capital.title}</h2>
+            <p className="text-[#4B5563] max-w-xl text-base sm:text-lg">{t.capital.subtitle}</p>
+          </div>
+          <div className="mt-6 md:mt-0">
+            <a href="#contact" className="text-[#012169] font-bold flex items-center hover:underline text-sm sm:text-base">
+               Investor Login <ArrowRight className="w-4 h-4 ml-2 text-[#65C23C]" />
+            </a>
+          </div>
+        </div>
+      </FadeIn>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+        {t.capital.cards.map((card, idx) => (
+          <FadeIn key={idx} delay={idx * 100}>
+            <div className="bg-white p-6 sm:p-8 rounded-[1.25rem] border border-[#DDDDDD] shadow-sm hover:shadow-lg hover:border-[#012169] transition-all h-full">
+               <div className="w-10 h-10 sm:w-12 sm:h-12 bg-[#E9F5E3] rounded-lg flex items-center justify-center mb-6 text-[#012169]">
+                 {idx === 0 ? <BarChart3 className="w-5 h-5 sm:w-6 sm:h-6" /> : idx === 1 ? <Building2 className="w-5 h-5 sm:w-6 sm:h-6" /> : <Globe className="w-5 h-5 sm:w-6 sm:h-6" />}
+               </div>
+               <h3 className="text-lg font-bold text-[#012169] mb-3">{card.title}</h3>
+               <p className="text-[#4B5563] text-sm leading-relaxed">{card.desc}</p>
+            </div>
+          </FadeIn>
+        ))}
+      </div>
+    </div>
+  </section>
+);
+
+const Insights = ({ t }) => (
+  <section id="insights" className="py-16 sm:py-20 bg-white border-t border-[#DDDDDD]">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <FadeIn>
+        <h2 className="text-2xl font-bold text-[#012169] mb-8">{t.insights.title}</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+          {t.insights.items.map((item, idx) => (
+            <div key={idx} className="flex items-start space-x-4 p-5 rounded-[1.25rem] bg-[#F8F8F8] border border-[#DDDDDD] hover:border-[#65C23C] hover:bg-white transition cursor-pointer group shadow-sm">
+              <FileText className="w-5 h-5 text-[#4B5563] group-hover:text-[#65C23C] flex-shrink-0 mt-1" />
+              <span className="text-[#012169] font-bold text-sm leading-snug">{item}</span>
+            </div>
+          ))}
+        </div>
+      </FadeIn>
+    </div>
+  </section>
+);
+
+const Contact = ({ t }) => (
+  <section id="contact" className="py-16 sm:py-24 bg-[#F8F8F8] border-t border-[#DDDDDD]">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <FadeIn>
+        <div className="grid md:grid-cols-2 gap-8 sm:gap-12 items-start">
+          
+          {/* Contact Info */}
+          <div>
+            <h2 className="text-2xl sm:text-3xl font-bold text-[#012169] mb-3">{t.contact.title}</h2>
+            <p className="text-[#4B5563] mb-8 text-sm sm:text-base">{t.contact.subtitle}</p>
+            
+            <div className="space-y-6">
+              <div className="flex items-start">
+                <div className="w-10 h-10 rounded-lg bg-[#E9F5E3] flex items-center justify-center text-[#65C23C] flex-shrink-0 mr-4">
+                  <MapPin className="w-5 h-5" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-[#012169] text-sm uppercase tracking-wide">{t.contact.address.label}</h4>
+                  <p className="text-[#4B5563] text-sm mt-1">{t.contact.address.val}</p>
+                </div>
+              </div>
+
+              <div className="flex items-start">
+                <div className="w-10 h-10 rounded-lg bg-[#E9F5E3] flex items-center justify-center text-[#65C23C] flex-shrink-0 mr-4">
+                  <Mail className="w-5 h-5" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-[#012169] text-sm uppercase tracking-wide">{t.contact.email.label}</h4>
+                  <a href={`mailto:${t.contact.email.val}`} className="text-[#65C23C] text-sm mt-1 hover:underline break-all">{t.contact.email.val}</a>
+                </div>
+              </div>
+
+              <div className="flex items-start">
+                 <div className="w-10 h-10 rounded-lg bg-[#E9F5E3] flex items-center justify-center text-[#65C23C] flex-shrink-0 mr-4">
+                  <Phone className="w-5 h-5" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-[#012169] text-sm uppercase tracking-wide">{t.contact.whatsapp.label}</h4>
+                  <p className="text-[#4B5563] text-sm mt-1">{t.contact.whatsapp.val}</p>
+                </div>
+              </div>
+
+              <div className="flex items-start">
+                 <div className="w-10 h-10 rounded-lg bg-[#E9F5E3] flex items-center justify-center text-[#65C23C] flex-shrink-0 mr-4">
+                  <Globe className="w-5 h-5" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-[#012169] text-sm uppercase tracking-wide">{t.contact.region.label}</h4>
+                  <p className="text-[#4B5563] text-sm mt-1">{t.contact.region.val}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* About Info */}
+          <div className="bg-white p-6 sm:p-8 rounded-[1.25rem] border border-[#DDDDDD] shadow-sm hover:shadow-md transition-shadow">
+            <div className="flex items-center gap-3 mb-6">
+               <div className="w-10 h-10 rounded-lg bg-[#012169] flex items-center justify-center text-white">
+                  <Users className="w-5 h-5" />
+               </div>
+               <h3 className="text-xl font-bold text-[#012169]">{t.contact.aboutTitle}</h3>
+            </div>
+            <p className="text-[#4B5563] leading-relaxed text-sm">
+              {t.contact.aboutText}
+            </p>
+          </div>
+
+        </div>
+      </FadeIn>
+    </div>
+  </section>
+);
+
+const Footer = ({ t }) => (
+  <footer className="bg-[#012169] py-8 text-white border-t border-[#1e3a8a]">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
+      <div className="flex items-center gap-2">
+           <img src="https://raw.githubusercontent.com/luoxisg/dcdeeptech/main/image/DCdeeptech_logo-removebg-preview.png" alt="Logo" className="h-6 w-auto brightness-0 invert" />
+           <span className="text-lg font-bold tracking-wider">DCDeepTech</span>
+      </div>
+      <p className="text-gray-300 text-xs text-center md:text-right">{t.footer.rights}</p>
+    </div>
+  </footer>
+);
+
+// --- Main App ---
+
+const App = () => {
+  const [lang, setLang] = useState('en');
+  const t = content[lang];
+
+  useEffect(() => {
+    // Smooth scroll behavior
+    document.documentElement.style.scrollBehavior = 'smooth';
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-[#F8F8F8] font-sans selection:bg-[#E9F5E3] selection:text-[#012169]">
+      <Navbar lang={lang} setLang={setLang} t={t} />
+      <Hero t={t} />
+      <Solutions t={t} />
+      <OCPSection t={t} />
+      <Projects t={t} />
+      <Ecosystem t={t} />
+      <Capital t={t} />
+      <Insights t={t} />
+      <Contact t={t} />
+      <Footer t={t} />
+    </div>
+  );
+};
+
+export default App;
