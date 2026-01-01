@@ -1,4 +1,5 @@
- <!DOCTYPE html>
+ 
+<!DOCTYPE html>
 <html lang="zh" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
@@ -573,15 +574,15 @@
                     title: '收益测算模拟器',
                     desc: '基于 H100 集群部署模型，调整参数以查看预计回报。',
                     disclaimer: '*仅供演示，不构成投资建议。',
-                    labels: { investment: '总资产投入 (USD)', leverage: 'EFS 债务杠杆比例', utilization: '算力利用率 (Utilization)', equity: '权益投入 (Equity)', cashflow: '年度净现金流', coc: '预计现金回报率 (CoC)', comparison: '优于传统 REITs (5-7%)' }
+                    labels: { investment: '总资产投入 (USD)', leverage: 'EFS Debt Leverage Ratio', utilization: '算力利用率 (Utilization)', equity: '权益投入 (Equity)', cashflow: '年度净现金流', coc: '预计现金回报率 (CoC)', comparison: '优于传统 REITs (5-7%)' }
                 },
                 services: {
                     subtitle: 'LIFECYCLE MANAGEMENT',
                     title: '全周期价值创造',
                     items: [
-                        { title: "01. 架构咨询", desc: "VCC 基金设立, EFS 融资申请, 模型搭建" },
-                        { title: "02. 采购与合规", desc: "ReData 资质获取, 供应链谈判, 零税负进口" },
-                        { title: "03. 技术运维", desc: "L1/L2 支持, 7x24 监控, 算力调度优化" },
+                        { title: "01. Structuring Advisory", desc: "VCC 基金设立, EFS 融资申请, 模型搭建" },
+                        { title: "02. Procurement & Compliance", desc: "ReData Qualification, Supply Chain Negotiation, Zero-Tax Import" },
+                        { title: "03. Technical Operations", desc: "L1/L2 支持, 7x24 监控, 算力调度优化" },
                         { title: "04. 退出机制", desc: "资产残值管理, 二手市场转售, 收益清算" },
                     ]
                 },
@@ -720,17 +721,20 @@
             // Update Nodes
             document.querySelectorAll('.strategy-node').forEach(node => {
                 const step = parseInt(node.getAttribute('data-step'));
+                
+                // Get icon (could be i or svg depending on if lucide ran)
+                const icon = node.querySelector('i') || node.querySelector('svg');
+
                 if (step === stepId) {
                     node.classList.add('active', 'bg-blue-900/40', 'scale-110', 'border-blue-500', 'opacity-100');
                     node.classList.remove('opacity-60', 'bg-slate-900', 'border-slate-700');
                     // Change icon color
-                    node.querySelector('i').classList.add('text-white');
+                    if (icon) icon.classList.add('text-white');
                 } else {
                     node.classList.remove('active', 'bg-blue-900/40', 'scale-110', 'border-blue-500', 'opacity-100');
                     node.classList.add('opacity-60', 'bg-slate-900', 'border-slate-700');
-                     // Reset icon color (hacky but simple)
-                    const icon = node.querySelector('i');
-                    icon.classList.remove('text-white');
+                     // Reset icon color
+                    if (icon) icon.classList.remove('text-white');
                 }
             });
 
