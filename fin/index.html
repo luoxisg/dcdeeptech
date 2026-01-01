@@ -1,662 +1,741 @@
-<!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DCDEEPTECH | Bridging Capital & Compute</title>
-    <meta name="description" content="The AI Infrastructure Pipeline from Singapore to Brazil.">
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Google Fonts: Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Phosphor Icons (Lightweight Icons) -->
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+import React, { useState, useEffect } from 'react';
+import { 
+  Building2, 
+  Globe, 
+  TrendingUp, 
+  ShieldCheck, 
+  Server, 
+  Zap, 
+  ArrowRight, 
+  BarChart3, 
+  PieChart, 
+  Lock, 
+  Menu, 
+  X, 
+  Database,
+  Briefcase,
+  CheckCircle2
+} from 'lucide-react';
 
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                    colors: {
-                        slate: {
-                            850: '#151e2e',
-                            900: '#0f172a',
-                            950: '#020617',
-                        },
-                        cyan: {
-                            400: '#22d3ee',
-                            500: '#06b6d4',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
+// --- Translations ---
 
-    <style>
-        /* Language Toggling Logic */
-        body.lang-en .lang-cn { display: none !important; }
-        body.lang-cn .lang-en { display: none !important; }
-        
-        /* Custom Utilities */
-        .glass-nav {
-            background-color: rgba(2, 6, 23, 0.85);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(30, 41, 59, 0.5);
+const translations = {
+  zh: {
+    nav: {
+      items: ['战略模型', '核心优势', '服务体系', '投资回报'],
+      login: 'LP 门户登录',
+      logo_subtitle: '深科技'
+    },
+    hero: {
+      badge: '新加坡资金 × 巴西算力资产',
+      title_prefix: '定义跨境',
+      title_highlight: 'AI 基础设施',
+      title_suffix: '的新资产范式',
+      desc: 'DCDEEPTECH 通过独特的轻资产运营模式，连接低成本资本与高回报算力资产。利用政策套利与技术专长，为 LP 创造超越传统 REITs 的 Alpha 收益。',
+      btn_primary: '探索投资模型',
+      btn_secondary: '下载研究报告 (PDF)',
+      stats: [
+        { label: '目标 IRR', value: '>20%' },
+        { label: '税务节省 (ReData)', value: '40%+' },
+        { label: '融资成本 (EFS)', value: '<6%' },
+        { label: '能源结构', value: '100% 绿色' },
+      ]
+    },
+    strategy: {
+      subtitle: 'STRATEGIC ARBITRAGE',
+      title: '跨境套利核心模型',
+      center_text: '轻资产运营\n(合规/运维/风控)',
+      steps: [
+        { id: 1, title: "资本形成 (新加坡)", desc: "利用 EFS-Trade Loan 与 VCC 架构，获取低息资金与灵活的基金结构。", highlight: "SORA + 2% 融资成本" },
+        { id: 2, title: "资产购置 & ReData", desc: "采购 H100/H200 集群，利用巴西 ReData 政策豁免联邦税，降低 CAPEX。", highlight: "节省 ~45% 落地成本" },
+        { id: 3, title: "部署与运营 (巴西)", desc: "部署于绿色能源数据中心，提供 MSP 级运维，确保高在线率。", highlight: "清洁能源溢价" },
+        { id: 4, title: "价值分配", desc: "算力租赁产生美元现金流，通过 VCC 分红回流 LP，享受双边税收协定。", highlight: "美元收益，税收优化" }
+      ]
+    },
+    advantages: {
+      subtitle: 'WHY US',
+      title: '无法复制的竞争壁垒',
+      cards: [
+        {
+          title: "ReData 税务护城河",
+          desc: "充分利用巴西《数据中心服务特别税收制度》(ReData)，暂停联邦税（II, IPI, PIS/COFINS）。",
+          points: ["节省 80%-100% 进口税费", "IRR 提升显著"]
+        },
+        {
+          title: "EFS 融资杠杆",
+          desc: "基于新加坡企业融资计划 (EFS)，通过政府分担风险机制获得低息贷款，极大优化资本结构。",
+          points: ["政府风险分担高达 50-70%", "极具竞争力的资本成本"]
+        },
+        {
+          title: "ESG 与 溢价市场",
+          desc: "巴西拥有全球最清洁的能源矩阵之一。ReData 要求使用可再生能源，完美契合全球 ESG 投资标准。",
+          points: ["100% 水电/可再生能源", "LGPD 数据主权带来的区域溢价"]
         }
-        
-        .text-glow {
-            text-shadow: 0 0 20px rgba(34, 211, 238, 0.3);
+      ]
+    },
+    roi: {
+      subtitle: 'FINANCIAL SIMULATION',
+      title: '收益测算模拟器',
+      desc: '基于 H100 集群部署模型，调整参数以查看预计回报。',
+      disclaimer: '*仅供演示，不构成投资建议。',
+      labels: {
+        investment: '总资产投入 (USD)',
+        leverage: 'EFS 债务杠杆比例',
+        utilization: '算力利用率 (Utilization)',
+        equity: '权益投入 (Equity)',
+        cashflow: '年度净现金流',
+        coc: '预计现金回报率 (CoC)',
+        comparison: '优于传统 REITs (5-7%)'
+      }
+    },
+    services: {
+      subtitle: 'LIFECYCLE MANAGEMENT',
+      title: '全周期价值创造',
+      items: [
+        { title: "01. 架构咨询", desc: "VCC 基金设立, EFS 融资申请, 模型搭建" },
+        { title: "02. 采购与合规", desc: "ReData 资质获取, 供应链谈判, 零税负进口" },
+        { title: "03. 技术运维", desc: "L1/L2 支持, 7x24 监控, 算力调度优化" },
+        { title: "04. 退出机制", desc: "资产残值管理, 二手市场转售, 收益清算" },
+      ]
+    },
+    footer: {
+      desc: '连接新加坡资本与巴西数字资产的战略合作伙伴。专注于为重资产投资者提供轻资产运营、合规与技术管理服务。',
+      services_title: '服务',
+      services_list: ['资本结构咨询', 'ReData 合规申请', '算力进出口物流', 'MSP 运维管理'],
+      contact_title: '联系我们',
+      copyright: '© 2026 DCDEEPTECH PTE. LTD. All rights reserved. 本网站仅供信息参考，不构成财务建议。'
+    },
+    login: {
+      title: 'LP 投资者门户',
+      subtitle: '访问实时仪表盘、月度运营报告及财务报表',
+      email: '企业邮箱',
+      code: '访问代码',
+      btn: '安全登录',
+      request: '申请访问权限'
+    }
+  },
+  en: {
+    nav: {
+      items: ['Strategic Model', 'Key Advantages', 'Services', 'ROI Analysis'],
+      login: 'LP Portal Login',
+      logo_subtitle: 'DEEPTECH'
+    },
+    hero: {
+      badge: 'Singapore Capital × Brazil Compute Assets',
+      title_prefix: 'Defining the New',
+      title_highlight: 'Cross-Border AI Infrastructure',
+      title_suffix: 'Asset Paradigm',
+      desc: 'DCDEEPTECH bridges low-cost capital with high-yield compute assets through a unique asset-light operating model. We leverage policy arbitrage and technical expertise to generate Alpha returns for LPs that outperform traditional REITs.',
+      btn_primary: 'Explore Model',
+      btn_secondary: 'Download Report (PDF)',
+      stats: [
+        { label: 'Target IRR', value: '>20%' },
+        { label: 'Tax Savings (ReData)', value: '40%+' },
+        { label: 'Financing Cost (EFS)', value: '<6%' },
+        { label: 'Energy Mix', value: '100% Green' },
+      ]
+    },
+    strategy: {
+      subtitle: 'STRATEGIC ARBITRAGE',
+      title: 'Core Cross-Border Arbitrage Model',
+      center_text: 'Asset-Light Ops\n(Compliance/O&M/Risk)',
+      steps: [
+        { id: 1, title: "Capital Formation (SG)", desc: "Leveraging EFS-Trade Loans and VCC structures to secure low-interest capital and flexible fund architecture.", highlight: "SORA + 2% Cost of Debt" },
+        { id: 2, title: "Asset Acquisition & ReData", desc: "Procuring H100/H200 clusters, utilizing Brazil's ReData policy to exempt federal taxes and lower CAPEX.", highlight: "Save ~45% Landed Cost" },
+        { id: 3, title: "Deployment & Ops (Brazil)", desc: "Deployed in green energy data centers with MSP-grade O&M to ensure high availability.", highlight: "Green Energy Premium" },
+        { id: 4, title: "Value Distribution", desc: "Compute leasing generates USD cash flow, distributed back to LPs via VCC, benefiting from bilateral tax treaties.", highlight: "USD Yields, Tax Optimized" }
+      ]
+    },
+    advantages: {
+      subtitle: 'WHY US',
+      title: 'Unreplicable Competitive Moats',
+      cards: [
+        {
+          title: "ReData Tax Moat",
+          desc: "Fully leveraging Brazil's Special Regime for Data Centers (ReData) to suspend federal taxes (II, IPI, PIS/COFINS).",
+          points: ["Save 80%-100% on Import Duties", "Significant IRR Uplift"]
+        },
+        {
+          title: "EFS Financing Leverage",
+          desc: "Based on Singapore's Enterprise Financing Scheme (EFS), utilizing government risk-sharing to secure low-interest loans and optimize capital structure.",
+          points: ["Gov Risk Sharing up to 50-70%", "Highly Competitive Cost of Capital"]
+        },
+        {
+          title: "ESG & Premium Market",
+          desc: "Brazil boasts one of the cleanest energy matrices globally. ReData requires renewable energy use, aligning perfectly with global ESG standards.",
+          points: ["100% Hydro/Renewable Energy", "Regional Premium via LGPD Data Sovereignty"]
         }
-        
-        .gradient-text {
-            background: linear-gradient(to right, #22d3ee, #3b82f6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+      ]
+    },
+    roi: {
+      subtitle: 'FINANCIAL SIMULATION',
+      title: 'Return Simulation',
+      desc: 'Based on H100 cluster deployment models. Adjust parameters to view projected returns.',
+      disclaimer: '*For demonstration only, not financial advice.',
+      labels: {
+        investment: 'Total Asset Investment (USD)',
+        leverage: 'EFS Debt Leverage Ratio',
+        utilization: 'Compute Utilization',
+        equity: 'Equity Contribution',
+        cashflow: 'Annual Net Cash Flow',
+        coc: 'Projected Cash-on-Cash (CoC)',
+        comparison: 'Outperforms Traditional REITs (5-7%)'
+      }
+    },
+    services: {
+      subtitle: 'LIFECYCLE MANAGEMENT',
+      title: 'Full Lifecycle Value Creation',
+      items: [
+        { title: "01. Structuring Advisory", desc: "VCC Fund Setup, EFS Application, Model Building" },
+        { title: "02. Procurement & Compliance", desc: "ReData Qualification, Supply Chain Negotiation, Zero-Tax Import" },
+        { title: "03. Technical Operations", desc: "L1/L2 Support, 24/7 Monitoring, Scheduler Optimization" },
+        { title: "04. Exit Mechanism", desc: "Residual Value Mgmt, Secondary Market Resale, Yield Liquidation" },
+      ]
+    },
+    footer: {
+      desc: 'Strategic partner connecting Singaporean capital with Brazilian digital assets. Focusing on asset-light operations, compliance, and technical management for heavy-asset investors.',
+      services_title: 'Services',
+      services_list: ['Capital Structuring', 'ReData Compliance', 'Compute Logistics', 'MSP Operations'],
+      contact_title: 'Contact Us',
+      copyright: '© 2026 DCDEEPTECH PTE. LTD. All rights reserved. This website is for informational purposes only and does not constitute financial advice.'
+    },
+    login: {
+      title: 'LP Investor Portal',
+      subtitle: 'Access real-time dashboards, monthly operational reports, and financial statements.',
+      email: 'Corporate Email',
+      code: 'Access Code',
+      btn: 'Secure Login',
+      request: 'Request Access'
+    }
+  }
+};
 
-        /* Hide scrollbar for clean look */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #020617; 
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #1e293b; 
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #334155; 
-        }
-    </style>
-</head>
-<body class="bg-slate-950 text-slate-200 font-sans lang-en selection:bg-cyan-500/30">
+// --- Components ---
 
-    <!-- Navigation -->
-    <nav id="navbar" class="fixed w-full z-50 transition-all duration-300 bg-transparent py-4">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-12">
-                <!-- Logo -->
-                <div class="flex-shrink-0 flex items-center gap-2 cursor-pointer" onclick="window.scrollTo(0,0)">
-                    <i class="ph-fill ph-hard-drives text-cyan-400 text-3xl"></i>
-                    <span class="font-bold text-xl tracking-wider text-white">DCDEEPTECH</span>
-                </div>
+const Button = ({ children, variant = 'primary', className = '', onClick }) => {
+  const baseStyle = "px-6 py-3 rounded-lg font-medium transition-all duration-300 transform hover:-translate-y-0.5";
+  const variants = {
+    primary: "bg-blue-600 hover:bg-blue-500 text-white shadow-lg hover:shadow-blue-500/30",
+    secondary: "bg-slate-800 hover:bg-slate-700 text-white border border-slate-700",
+    outline: "bg-transparent border border-blue-400 text-blue-400 hover:bg-blue-400/10",
+    ghost: "bg-transparent text-slate-300 hover:text-white hover:bg-slate-800"
+  };
+  
+  return (
+    <button onClick={onClick} className={`${baseStyle} ${variants[variant]} ${className}`}>
+      {children}
+    </button>
+  );
+};
 
-                <!-- Desktop Menu -->
-                <div class="hidden md:block">
-                    <div class="ml-10 flex items-baseline space-x-6">
-                        <a href="#home" class="hover:text-cyan-400 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
-                            <span class="lang-en">Home</span><span class="lang-cn">首页</span>
-                        </a>
-                        <a href="#model" class="hover:text-cyan-400 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
-                            <span class="lang-en">The Model</span><span class="lang-cn">商业模式</span>
-                        </a>
-                        <a href="#solutions" class="hover:text-cyan-400 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
-                            <span class="lang-en">Services</span><span class="lang-cn">服务体系</span>
-                        </a>
-                        <a href="#hardware" class="hover:text-cyan-400 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
-                            <span class="lang-en">Hardware</span><span class="lang-cn">核心硬件</span>
-                        </a>
-                        <a href="#investors" class="hover:text-cyan-400 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
-                            <span class="lang-en">Investors</span><span class="lang-cn">投资者</span>
-                        </a>
-                        <a href="#guidelines" class="hover:text-cyan-400 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
-                            <span class="lang-en">Guidelines</span><span class="lang-cn">运营指引</span>
-                        </a>
-                        <a href="#contact" class="bg-cyan-600 hover:bg-cyan-500 text-white px-4 py-2 rounded-md text-sm font-medium transition-all shadow-[0_0_15px_rgba(6,182,212,0.4)]">
-                            <span class="lang-en">Contact</span><span class="lang-cn">联系我们</span>
-                        </a>
-                    </div>
-                </div>
+const Card = ({ children, className = '' }) => (
+  <div className={`bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-xl p-6 hover:border-blue-500/50 transition-colors duration-300 ${className}`}>
+    {children}
+  </div>
+);
 
-                <!-- Lang Switch & Mobile Toggle -->
-                <div class="flex items-center gap-4">
-                    <button id="langToggle" class="flex items-center gap-1 text-slate-300 hover:text-white transition-colors border border-slate-700 rounded px-2 py-1 cursor-pointer">
-                        <i class="ph ph-globe text-lg"></i>
-                        <span id="langLabel" class="uppercase text-xs font-bold">EN</span>
-                    </button>
-                    
-                    <div class="-mr-2 flex md:hidden">
-                        <button id="mobileMenuBtn" class="inline-flex items-center justify-center p-2 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 focus:outline-none">
-                            <i class="ph ph-list text-2xl"></i>
-                        </button>
-                    </div>
-                </div>
+const SectionTitle = ({ subtitle, title, align = 'center' }) => (
+  <div className={`mb-12 ${align === 'left' ? 'text-left' : 'text-center'}`}>
+    <span className="text-blue-400 font-semibold tracking-wider uppercase text-sm">{subtitle}</span>
+    <h2 className="text-3xl md:text-4xl font-bold text-white mt-2 leading-tight">{title}</h2>
+    <div className={`h-1 w-20 bg-blue-600 mt-4 rounded-full ${align === 'left' ? '' : 'mx-auto'}`}></div>
+  </div>
+);
+
+// --- Sections ---
+
+const Navbar = ({ scrolled, onLoginClick, lang, setLang }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const t = translations[lang].nav;
+  
+  // Map items to anchor links
+  const anchors = ['#StrategicModel', '#Advantages', '#Services', '#ROI'];
+
+  const toggleLang = () => {
+    setLang(lang === 'zh' ? 'en' : 'zh');
+  };
+
+  return (
+    <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-slate-950/90 backdrop-blur-md border-b border-slate-800 py-3' : 'bg-transparent py-5'}`}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+        <div className="flex items-center space-x-2">
+          <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-600/20">
+            <Database className="text-white w-6 h-6" />
+          </div>
+          <span className="text-2xl font-bold text-white tracking-tight">DC<span className="text-blue-500">DEEPTECH</span></span>
+        </div>
+
+        {/* Desktop Menu */}
+        <div className="hidden md:flex items-center space-x-6">
+          {t.items.map((item, index) => (
+            <a key={index} href={anchors[index]} className="text-slate-300 hover:text-white text-sm font-medium transition-colors">
+              {item}
+            </a>
+          ))}
+          
+          <div className="h-6 w-px bg-slate-700 mx-2"></div>
+          
+          <button 
+            onClick={toggleLang}
+            className="flex items-center space-x-1 text-slate-300 hover:text-white transition-colors text-sm font-medium"
+          >
+            <Globe className="w-4 h-4" />
+            <span>{lang === 'zh' ? 'EN' : '中'}</span>
+          </button>
+
+          <Button variant="primary" className="py-2 px-4 text-sm" onClick={onLoginClick}>
+            {t.login}
+          </Button>
+        </div>
+
+        {/* Mobile Menu Button */}
+        <div className="md:hidden flex items-center space-x-4">
+          <button 
+            onClick={toggleLang}
+            className="flex items-center space-x-1 text-slate-300 hover:text-white"
+          >
+            <Globe className="w-5 h-5" />
+            <span className="text-sm font-bold">{lang.toUpperCase()}</span>
+          </button>
+          <button onClick={() => setIsOpen(!isOpen)} className="text-white p-2">
+            {isOpen ? <X /> : <Menu />}
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile Menu */}
+      {isOpen && (
+        <div className="md:hidden bg-slate-900 border-b border-slate-800 absolute w-full shadow-2xl">
+          <div className="px-4 pt-2 pb-6 space-y-2">
+            {t.items.map((item, index) => (
+              <a 
+                key={index} 
+                href={anchors[index]} 
+                onClick={() => setIsOpen(false)}
+                className="block px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-md"
+              >
+                {item}
+              </a>
+            ))}
+            <div className="pt-4 border-t border-slate-800 mt-2">
+              <Button variant="primary" className="w-full" onClick={onLoginClick}>{t.login}</Button>
             </div>
+          </div>
         </div>
-
-        <!-- Mobile Menu (Hidden by default) -->
-        <div id="mobileMenu" class="hidden md:hidden absolute top-0 left-0 w-full h-screen bg-slate-950 flex flex-col pt-24 px-6 space-y-6 z-40 transition-opacity">
-            <button id="closeMenuBtn" class="absolute top-6 right-6 text-slate-400 hover:text-white">
-                <i class="ph ph-x text-3xl"></i>
-            </button>
-            <a href="#home" class="mobile-link text-2xl font-semibold text-slate-300 hover:text-cyan-400"><span class="lang-en">Home</span><span class="lang-cn">首页</span></a>
-            <a href="#model" class="mobile-link text-2xl font-semibold text-slate-300 hover:text-cyan-400"><span class="lang-en">The Model</span><span class="lang-cn">商业模式</span></a>
-            <a href="#solutions" class="mobile-link text-2xl font-semibold text-slate-300 hover:text-cyan-400"><span class="lang-en">Services</span><span class="lang-cn">服务体系</span></a>
-            <a href="#hardware" class="mobile-link text-2xl font-semibold text-slate-300 hover:text-cyan-400"><span class="lang-en">Hardware</span><span class="lang-cn">核心硬件</span></a>
-            <a href="#guidelines" class="mobile-link text-2xl font-semibold text-slate-300 hover:text-cyan-400"><span class="lang-en">Guidelines</span><span class="lang-cn">运营指引</span></a>
-            <a href="#contact" class="mobile-link text-2xl font-semibold text-cyan-500 hover:text-cyan-300"><span class="lang-en">Contact Us</span><span class="lang-cn">联系我们</span></a>
-        </div>
+      )}
     </nav>
+  );
+};
 
-    <!-- Hero Section -->
-    <section id="home" class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
-        <!-- Abstract BG -->
-        <div class="absolute top-0 left-0 w-full h-full overflow-hidden -z-10">
-            <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-cyan-500/10 rounded-full blur-[100px] animate-pulse"></div>
-            <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-600/10 rounded-full blur-[100px]"></div>
+const Hero = ({ lang }) => {
+  const t = translations[lang].hero;
+
+  return (
+    <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-slate-950 pt-20">
+      {/* Background Elements */}
+      <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1558494949-ef526b0042a0?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')] bg-cover bg-center opacity-10"></div>
+      <div className="absolute inset-0 bg-gradient-to-b from-slate-950/80 via-slate-950/90 to-slate-950"></div>
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl animate-pulse"></div>
+      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-indigo-600/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center z-10">
+        <div className="inline-flex items-center space-x-2 bg-slate-800/50 rounded-full px-4 py-1.5 mb-8 border border-slate-700 animate-fade-in-up">
+          <span className="flex h-2 w-2 rounded-full bg-green-400"></span>
+          <span className="text-slate-300 text-xs font-medium tracking-wide">{t.badge}</span>
+        </div>
+        
+        <h1 className="text-4xl md:text-7xl font-bold text-white mb-6 leading-tight tracking-tight">
+          {t.title_prefix} <br className="md:hidden" />
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">{t.title_highlight}</span><br />
+          {t.title_suffix}
+        </h1>
+        
+        <p className="mt-6 text-xl text-slate-400 max-w-3xl mx-auto leading-relaxed">
+          {t.desc}
+        </p>
+        
+        <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
+          <Button variant="primary" className="flex items-center justify-center gap-2">
+            {t.btn_primary} <ArrowRight className="w-4 h-4" />
+          </Button>
+          <Button variant="secondary" className="flex items-center justify-center gap-2">
+            {t.btn_secondary} <Briefcase className="w-4 h-4" />
+          </Button>
         </div>
 
-        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center z-10">
-            <h1 class="text-4xl md:text-6xl font-extrabold gradient-text mb-6 leading-tight">
-                <span class="lang-en">Bridging Capital & Compute:<br>The AI Infrastructure Pipeline from Singapore to Brazil.</span>
-                <span class="lang-cn">资本与算力的跨洋桥梁：<br>连接新加坡金融枢纽与巴西AI蓝海。</span>
-            </h1>
-            <p class="mt-4 max-w-3xl mx-auto text-xl text-slate-400">
-                <span class="lang-en">DCDEEPTECH, in strategic partnership with AxiomDeta, transforms high-performance AI hardware into flexible OpEx services for Latin America's fastest-growing digital economy.</span>
-                <span class="lang-cn">DCDEEPTECH 携手 AxiomDeta，将高性能AI硬件转化为灵活的运营支出服务（OpEx），赋能拉美增长最快的数字经济体。</span>
-            </p>
-            <div class="mt-10">
-                <a href="#model" class="inline-flex items-center px-8 py-3 border border-transparent text-base font-medium rounded-full shadow-sm text-slate-950 bg-cyan-400 hover:bg-cyan-300 transition-all shadow-[0_0_20px_rgba(34,211,238,0.3)] hover:scale-105">
-                    <span class="lang-en">Explore HaaS Model</span><span class="lang-cn">探索HaaS模式</span>
-                    <i class="ph-bold ph-arrow-right ml-2"></i>
-                </a>
+        {/* Stats Strip */}
+        <div className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-8 border-t border-slate-800 pt-8">
+          {t.stats.map((stat, idx) => (
+            <div key={idx} className="text-center">
+              <div className="text-3xl font-bold text-white">{stat.value}</div>
+              <div className="text-sm text-slate-500 mt-1">{stat.label}</div>
             </div>
+          ))}
         </div>
-    </section>
+      </div>
+    </div>
+  );
+};
 
-    <!-- Value Props -->
-    <section class="py-24 bg-slate-950 border-t border-slate-900">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl font-bold text-white tracking-tight">
-                    <span class="lang-en">Core Value Proposition</span><span class="lang-cn">核心价值主张</span>
-                </h2>
+const StrategyModel = ({ lang }) => {
+  const [activeStep, setActiveStep] = useState(1);
+  const t = translations[lang].strategy;
+  
+  const icons = {
+    1: <Building2 className="w-8 h-8 text-blue-400" />,
+    2: <Server className="w-8 h-8 text-indigo-400" />,
+    3: <Zap className="w-8 h-8 text-green-400" />,
+    4: <TrendingUp className="w-8 h-8 text-yellow-400" />
+  };
+
+  return (
+    <section id="StrategicModel" className="py-24 bg-slate-900 relative">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <SectionTitle subtitle={t.subtitle} title={t.title} />
+        
+        <div className="grid md:grid-cols-2 gap-12 items-center">
+          {/* Interactive Graphic Side */}
+          <div className="relative h-[500px] bg-slate-800/30 rounded-2xl border border-slate-700/50 p-8 flex flex-col items-center justify-center">
+            {/* Connecting Lines */}
+            <div className="absolute inset-0 pointer-events-none">
+              <svg className="w-full h-full">
+                <path d="M100 100 Q 400 50 700 100" fill="none" stroke={activeStep >= 2 ? "#3b82f6" : "#1e293b"} strokeWidth="2" strokeDasharray="5,5" className="animate-pulse" />
+                <path d="M700 100 Q 750 300 700 500" fill="none" stroke={activeStep >= 3 ? "#3b82f6" : "#1e293b"} strokeWidth="2" strokeDasharray="5,5" />
+                <path d="M700 500 Q 400 550 100 500" fill="none" stroke={activeStep >= 4 ? "#3b82f6" : "#1e293b"} strokeWidth="2" strokeDasharray="5,5" />
+                <path d="M100 500 Q 50 300 100 100" fill="none" stroke="#3b82f6" strokeWidth="2" strokeDasharray="5,5" strokeOpacity="0.3" />
+              </svg>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
-                <!-- Card 1 -->
-                <div class="p-8 bg-slate-900/50 rounded-2xl border border-slate-800 hover:border-cyan-500/50 transition-all hover:-translate-y-1">
-                    <div class="mb-4"><i class="ph-duotone ph-trend-up text-cyan-400 text-4xl"></i></div>
-                    <h3 class="text-xl font-bold text-white mb-3">
-                        <span class="lang-en">Financial Arbitrage</span><span class="lang-cn">金融套利</span>
+
+            {/* Central Hub */}
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-slate-900 rounded-full border-2 border-blue-500/30 flex flex-col items-center justify-center z-10 shadow-[0_0_50px_rgba(59,130,246,0.2)]">
+              <div className="text-blue-500 font-bold text-xl">DCDEEPTECH</div>
+              <div className="text-xs text-slate-400 mt-2 text-center px-4 whitespace-pre-line leading-tight">
+                {t.center_text}
+              </div>
+            </div>
+
+            {/* Orbital Nodes */}
+            {t.steps.map((step, idx) => {
+               // Calculate position based on index (simplified corners)
+               const posStyles = [
+                 "top-10 left-10",
+                 "top-10 right-10",
+                 "bottom-10 right-10",
+                 "bottom-10 left-10"
+               ];
+               
+               return (
+                <div 
+                  key={step.id}
+                  className={`absolute ${posStyles[idx]} p-4 rounded-xl border transition-all duration-500 cursor-pointer ${activeStep === step.id ? 'bg-blue-900/40 border-blue-500 scale-110' : 'bg-slate-900 border-slate-700 opacity-60'}`}
+                  onClick={() => setActiveStep(step.id)}
+                >
+                  {React.cloneElement(icons[step.id], { className: `w-6 h-6 mb-2 ${activeStep === step.id ? 'text-white' : 'text-slate-500'}` })}
+                  <div className="text-xs font-bold text-slate-200">{step.title.split(' ')[0]}</div>
+                </div>
+               );
+            })}
+          </div>
+
+          {/* Text Content Side */}
+          <div className="space-y-6">
+            {t.steps.map((step) => (
+              <div 
+                key={step.id}
+                onClick={() => setActiveStep(step.id)}
+                className={`p-6 rounded-xl border cursor-pointer transition-all duration-300 ${activeStep === step.id ? 'bg-slate-800 border-blue-500 shadow-lg' : 'bg-transparent border-transparent hover:bg-slate-800/50'}`}
+              >
+                <div className="flex items-start gap-4">
+                  <div className={`p-3 rounded-lg ${activeStep === step.id ? 'bg-blue-500/20' : 'bg-slate-800'}`}>
+                    {icons[step.id]}
+                  </div>
+                  <div>
+                    <h3 className={`text-lg font-bold ${activeStep === step.id ? 'text-white' : 'text-slate-400'}`}>
+                      {step.title}
                     </h3>
-                    <p class="text-slate-400 leading-relaxed">
-                        <span class="lang-en">Utilizing Singapore’s low cost of capital (<5.5%) to serve Brazil’s high-yield market (>25%), generating superior risk-adjusted returns.</span>
-                        <span class="lang-cn">利用新加坡的低资金成本（<5.5%）服务巴西的高收益市场（>25%），创造卓越的风险调整后回报。</span>
+                    <p className="text-slate-400 text-sm mt-2 leading-relaxed">
+                      {step.desc}
                     </p>
+                    {activeStep === step.id && (
+                      <div className="mt-3 inline-block px-3 py-1 rounded-full bg-blue-900/50 border border-blue-500/30 text-xs text-blue-300 font-medium">
+                        🚀 {lang === 'zh' ? '核心优势' : 'Advantage'}: {step.highlight}
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <!-- Card 2 -->
-                <div class="p-8 bg-slate-900/50 rounded-2xl border border-slate-800 hover:border-cyan-500/50 transition-all hover:-translate-y-1">
-                    <div class="mb-4"><i class="ph-duotone ph-file-text text-cyan-400 text-4xl"></i></div>
-                    <h3 class="text-xl font-bold text-white mb-3">
-                        <span class="lang-en">Tax Efficiency</span><span class="lang-cn">税务优化</span>
-                    </h3>
-                    <p class="text-slate-400 leading-relaxed">
-                        <span class="lang-en">Maximizing the Singapore-Brazil Double Taxation Agreement to lower WHT on equipment leasing to 10%.</span>
-                        <span class="lang-cn">充分利用新加坡-巴西双重征税协定（DTA），将设备租赁预扣税降至10%。</span>
-                    </p>
-                </div>
-                <!-- Card 3 -->
-                <div class="p-8 bg-slate-900/50 rounded-2xl border border-slate-800 hover:border-cyan-500/50 transition-all hover:-translate-y-1">
-                    <div class="mb-4"><i class="ph-duotone ph-cpu text-cyan-400 text-4xl"></i></div>
-                    <h3 class="text-xl font-bold text-white mb-3">
-                        <span class="lang-en">Technology Edge</span><span class="lang-cn">技术优势</span>
-                    </h3>
-                    <p class="text-slate-400 leading-relaxed">
-                        <span class="lang-en">Deploying AxiomDeta’s industrial-grade, liquid-cooled AI servers designed for tropical climates and high-density compute.</span>
-                        <span class="lang-cn">部署AxiomDeta专为热带气候和高密度计算设计的工业级液冷AI服务器。</span>
-                    </p>
-                </div>
-            </div>
+              </div>
+            ))}
+          </div>
         </div>
+      </div>
     </section>
+  );
+};
 
-    <!-- The Model -->
-    <section id="model" class="py-24 bg-gradient-to-b from-slate-950 to-slate-900">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl font-bold text-white tracking-tight">
-                    <span class="lang-en">The Singapore-Brazil Compute Corridor</span><span class="lang-cn">新加坡-巴西算力走廊</span>
-                </h2>
-            </div>
-            <div class="relative">
-                <!-- Line -->
-                <div class="hidden md:block absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-slate-800"></div>
-                
-                <div class="space-y-12">
-                    <!-- Step 1 -->
-                    <div class="relative flex items-center justify-start md:mr-auto">
-                        <div class="w-full md:w-5/12 p-6 rounded-xl border border-slate-800 bg-slate-950 shadow-xl z-10 relative md:mr-auto">
-                            <div class="absolute top-6 right-6 text-5xl font-bold text-slate-800/50 -z-10">1</div>
-                            <h3 class="text-lg font-bold text-cyan-400 mb-2">
-                                <span class="lang-en">Capital Formation (SG)</span><span class="lang-cn">资金募集 (新加坡)</span>
-                            </h3>
-                            <p class="text-slate-400">
-                                <span class="lang-en">Raising low-cost capital via Family Offices & Enterprise Singapore's EFS-VD scheme.</span>
-                                <span class="lang-cn">通过家族办公室及企业发展局 EFS-VD 计划募集低成本资金。</span>
-                            </p>
-                        </div>
-                        <div class="hidden md:block absolute left-1/2 transform -translate-x-1/2 w-4 h-4 bg-cyan-500 rounded-full shadow-[0_0_10px_rgba(6,182,212,0.5)]"></div>
-                    </div>
-                    <!-- Step 2 -->
-                    <div class="relative flex items-center justify-end md:ml-auto">
-                         <div class="hidden md:block absolute left-1/2 transform -translate-x-1/2 w-4 h-4 bg-cyan-500 rounded-full shadow-[0_0_10px_rgba(6,182,212,0.5)]"></div>
-                        <div class="w-full md:w-5/12 p-6 rounded-xl border border-slate-800 bg-slate-950 shadow-xl z-10 relative md:ml-auto">
-                            <div class="absolute top-6 right-6 text-5xl font-bold text-slate-800/50 -z-10">2</div>
-                            <h3 class="text-lg font-bold text-cyan-400 mb-2">
-                                <span class="lang-en">Asset Acquisition</span><span class="lang-cn">资产收购</span>
-                            </h3>
-                            <p class="text-slate-400">
-                                <span class="lang-en">Strategic procurement of high-performance GPU clusters from AxiomDeta/Toploong at OEM pricing.</span>
-                                <span class="lang-cn">以OEM价格从 AxiomDeta/拓普龙 战略采购高性能 GPU 集群。</span>
-                            </p>
-                        </div>
-                    </div>
-                    <!-- Step 3 -->
-                    <div class="relative flex items-center justify-start md:mr-auto">
-                        <div class="w-full md:w-5/12 p-6 rounded-xl border border-slate-800 bg-slate-950 shadow-xl z-10 relative md:mr-auto">
-                            <div class="absolute top-6 right-6 text-5xl font-bold text-slate-800/50 -z-10">3</div>
-                            <h3 class="text-lg font-bold text-cyan-400 mb-2">
-                                <span class="lang-en">Cross-Border Logistics</span><span class="lang-cn">跨境物流 (DDP)</span>
-                            </h3>
-                            <p class="text-slate-400">
-                                <span class="lang-en">Managing 'Custo Brasil' via Ex-Tarifário tax exemptions and IoR services.</span>
-                                <span class="lang-cn">通过 Ex-Tarifário 关税豁免及 IoR 服务，无缝解决“巴西成本”与清关壁垒。</span>
-                            </p>
-                        </div>
-                        <div class="hidden md:block absolute left-1/2 transform -translate-x-1/2 w-4 h-4 bg-cyan-500 rounded-full shadow-[0_0_10px_rgba(6,182,212,0.5)]"></div>
-                    </div>
-                    <!-- Step 4 -->
-                    <div class="relative flex items-center justify-end md:ml-auto">
-                         <div class="hidden md:block absolute left-1/2 transform -translate-x-1/2 w-4 h-4 bg-cyan-500 rounded-full shadow-[0_0_10px_rgba(6,182,212,0.5)]"></div>
-                        <div class="w-full md:w-5/12 p-6 rounded-xl border border-slate-800 bg-slate-950 shadow-xl z-10 relative md:ml-auto">
-                            <div class="absolute top-6 right-6 text-5xl font-bold text-slate-800/50 -z-10">4</div>
-                            <h3 class="text-lg font-bold text-cyan-400 mb-2">
-                                <span class="lang-en">HaaS Deployment (BR)</span><span class="lang-cn">HaaS 部署 (巴西)</span>
-                            </h3>
-                            <p class="text-slate-400">
-                                <span class="lang-en">Leasing to Tier-1 Brazilian enterprises on 36-month contracts, converting CapEx to OpEx.</span>
-                                <span class="lang-cn">向巴西头部企业提供36个月租赁合同，将资本支出转化为运营支出。</span>
-                            </p>
-                        </div>
-                    </div>
+const Advantages = ({ lang }) => {
+  const t = translations[lang].advantages;
+  const icons = [ShieldCheck, Building2, Zap];
+
+  return (
+    <section id="Advantages" className="py-24 bg-slate-950">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <SectionTitle subtitle={t.subtitle} title={t.title} />
+        
+        <div className="grid md:grid-cols-3 gap-8">
+          {t.cards.map((card, idx) => {
+            const Icon = icons[idx];
+            return (
+              <Card key={idx} className="hover:bg-slate-800/80">
+                <div className="h-12 w-12 bg-blue-600/20 rounded-lg flex items-center justify-center mb-6">
+                  <Icon className="text-blue-500 w-6 h-6" />
                 </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Solutions (Refactored for SG/BR Split) -->
-    <section id="solutions" class="py-24 bg-slate-950">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-3xl font-bold text-white text-center mb-16">
-                <span class="lang-en">Our Services by Region</span><span class="lang-cn">区域服务体系</span>
-            </h2>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <!-- Singapore Card -->
-                <div class="group relative p-1 rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 transition-all duration-300">
-                    <div class="h-full bg-slate-900 rounded-xl p-8 relative overflow-hidden">
-                        <!-- Background Icon -->
-                        <i class="ph-duotone ph-bank text-slate-800 text-9xl absolute -bottom-4 -right-4 opacity-20 transform rotate-12 group-hover:scale-110 transition-transform"></i>
-                        
-                        <div class="flex items-center gap-3 mb-6 relative z-10">
-                            <div class="w-12 h-12 rounded-full bg-cyan-500/20 flex items-center justify-center border border-cyan-500/30">
-                                <i class="ph-fill ph-flag text-cyan-400 text-2xl"></i>
-                            </div>
-                            <div>
-                                <h3 class="text-sm font-bold text-cyan-400 uppercase tracking-widest">
-                                    <span class="lang-en">Singapore Node</span><span class="lang-cn">新加坡节点</span>
-                                </h3>
-                                <div class="text-xs text-slate-500 font-mono">Financial & Strategic Hub</div>
-                            </div>
-                        </div>
-
-                        <h4 class="text-2xl font-bold text-white mb-4 relative z-10">
-                            <span class="lang-en">Capital & Asset Structuring</span><span class="lang-cn">资本与资产构建服务</span>
-                        </h4>
-                        
-                        <p class="text-slate-400 mb-8 relative z-10">
-                            <span class="lang-en">Acting as the global headquarters, we structure high-yield asset-backed investment products for family offices and institutional investors, leveraging Singapore's financial ecosystem.</span>
-                            <span class="lang-cn">作为全球总部，我们利用新加坡的金融生态系统，为家族办公室和机构投资者构建高收益的资产支持投资产品。</span>
-                        </p>
-
-                        <ul class="space-y-3 relative z-10">
-                            <li class="flex items-start text-slate-300">
-                                <i class="ph-bold ph-check text-cyan-400 mt-1 mr-3"></i>
-                                <div>
-                                    <strong class="block text-white text-sm"><span class="lang-en">Asset Management</span><span class="lang-cn">资产管理</span></strong>
-                                    <span class="text-xs text-slate-500"><span class="lang-en">Fund setup & GPU asset holding</span><span class="lang-cn">基金设立与GPU资产持有</span></span>
-                                </div>
-                            </li>
-                            <li class="flex items-start text-slate-300">
-                                <i class="ph-bold ph-check text-cyan-400 mt-1 mr-3"></i>
-                                <div>
-                                    <strong class="block text-white text-sm"><span class="lang-en">Global Procurement</span><span class="lang-cn">全球采购中心</span></strong>
-                                    <span class="text-xs text-slate-500"><span class="lang-en">OEM negotiation & supply chain</span><span class="lang-cn">OEM谈判与供应链管理</span></span>
-                                </div>
-                            </li>
-                            <li class="flex items-start text-slate-300">
-                                <i class="ph-bold ph-check text-cyan-400 mt-1 mr-3"></i>
-                                <div>
-                                    <strong class="block text-white text-sm"><span class="lang-en">Financial Structuring</span><span class="lang-cn">金融架构设计</span></strong>
-                                    <span class="text-xs text-slate-500"><span class="lang-en">Tax optimization & DTA utilization</span><span class="lang-cn">税务优化与DTA协定利用</span></span>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
-                <!-- Brazil Card -->
-                <div class="group relative p-1 rounded-2xl bg-gradient-to-br from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500 transition-all duration-300">
-                    <div class="h-full bg-slate-900 rounded-xl p-8 relative overflow-hidden">
-                         <!-- Background Icon -->
-                         <i class="ph-duotone ph-hard-drives text-slate-800 text-9xl absolute -bottom-4 -right-4 opacity-20 transform -rotate-12 group-hover:scale-110 transition-transform"></i>
-
-                        <div class="flex items-center gap-3 mb-6 relative z-10">
-                            <div class="w-12 h-12 rounded-full bg-green-500/20 flex items-center justify-center border border-green-500/30">
-                                <i class="ph-fill ph-flag text-green-400 text-2xl"></i>
-                            </div>
-                            <div>
-                                <h3 class="text-sm font-bold text-green-400 uppercase tracking-widest">
-                                    <span class="lang-en">Brazil Node</span><span class="lang-cn">巴西节点</span>
-                                </h3>
-                                <div class="text-xs text-slate-500 font-mono">Operational & Compute Hub</div>
-                            </div>
-                        </div>
-
-                        <h4 class="text-2xl font-bold text-white mb-4 relative z-10">
-                            <span class="lang-en">HaaS & Infrastructure Ops</span><span class="lang-cn">HaaS 与基础设施运营</span>
-                        </h4>
-                        
-                        <p class="text-slate-400 mb-8 relative z-10">
-                            <span class="lang-en">The operational engine delivering turnkey AI compute solutions to Latin American enterprises. Transforming CapEx into OpEx through our high-performance server fleet.</span>
-                            <span class="lang-cn">向拉美企业提供交钥匙AI算力解决方案的运营引擎。通过我们的高性能服务器集群，将客户的资本支出转化为运营支出。</span>
-                        </p>
-
-                        <ul class="space-y-3 relative z-10">
-                            <li class="flex items-start text-slate-300">
-                                <i class="ph-bold ph-check text-green-400 mt-1 mr-3"></i>
-                                <div>
-                                    <strong class="block text-white text-sm"><span class="lang-en">Compute Leasing (HaaS)</span><span class="lang-cn">算力租赁 (HaaS)</span></strong>
-                                    <span class="text-xs text-slate-500"><span class="lang-en">Flexible contracts for Enterprises</span><span class="lang-cn">面向企业的灵活租赁合同</span></span>
-                                </div>
-                            </li>
-                            <li class="flex items-start text-slate-300">
-                                <i class="ph-bold ph-check text-green-400 mt-1 mr-3"></i>
-                                <div>
-                                    <strong class="block text-white text-sm"><span class="lang-en">Data Center Operations</span><span class="lang-cn">数据中心运维</span></strong>
-                                    <span class="text-xs text-slate-500"><span class="lang-en">Liquid cooling & uptime management</span><span class="lang-cn">液冷维护与在线率管理</span></span>
-                                </div>
-                            </li>
-                            <li class="flex items-start text-slate-300">
-                                <i class="ph-bold ph-check text-green-400 mt-1 mr-3"></i>
-                                <div>
-                                    <strong class="block text-white text-sm"><span class="lang-en">Import & Compliance</span><span class="lang-cn">进口与合规</span></strong>
-                                    <span class="text-xs text-slate-500"><span class="lang-en">IoR services & tax handling</span><span class="lang-cn">登记进口商(IoR)与税务处理</span></span>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Hardware -->
-    <section id="hardware" class="py-24 bg-slate-900 border-y border-slate-800">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col md:flex-row items-center gap-12">
-                <div class="flex-1">
-                    <h2 class="text-3xl font-bold text-white mb-2">
-                        <span class="lang-en">Core Hardware</span><span class="lang-cn">核心硬件</span>
-                    </h2>
-                    <h3 class="text-xl text-cyan-400 mb-6">
-                        <span class="lang-en">AxiomDeta 8162 Liquid-Cooled AI Platform</span><span class="lang-cn">AxiomDeta 8162 液冷AI平台</span>
-                    </h3>
-                    
-                    <ul class="space-y-3 mb-8 text-slate-300">
-                        <li class="flex items-center"><i class="ph-fill ph-check-circle text-green-400 mr-3"></i><span class="lang-en">Dual Intel Xeon</span><span class="lang-cn">双路 Intel Xeon</span></li>
-                        <li class="flex items-center"><i class="ph-fill ph-check-circle text-green-400 mr-3"></i><span class="lang-en">8x NVIDIA GPU Support</span><span class="lang-cn">支持8卡 NVIDIA GPU</span></li>
-                        <li class="flex items-center"><i class="ph-fill ph-check-circle text-green-400 mr-3"></i><span class="lang-en">Closed-Loop Liquid Cooling</span><span class="lang-cn">闭环液冷系统</span></li>
-                        <li class="flex items-center"><i class="ph-fill ph-check-circle text-green-400 mr-3"></i><span class="lang-en">&lt;50dB Noise Level (Office Ready)</span><span class="lang-cn">&lt;50dB 噪音水平（适合办公室部署）</span></li>
-                    </ul>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <div class="bg-slate-800 p-4 rounded-lg text-center border border-slate-700">
-                            <div class="text-cyan-400 font-bold mb-1"><span class="lang-en">Fintech</span><span class="lang-cn">金融科技</span></div>
-                            <div class="text-xs text-slate-400"><span class="lang-en">High-Frequency Trading</span><span class="lang-cn">高频交易与反欺诈</span></div>
-                        </div>
-                        <div class="bg-slate-800 p-4 rounded-lg text-center border border-slate-700">
-                            <div class="text-cyan-400 font-bold mb-1"><span class="lang-en">Oil & Gas</span><span class="lang-cn">石油与天然气</span></div>
-                            <div class="text-xs text-slate-400"><span class="lang-en">Seismic Interpretation</span><span class="lang-cn">地震数据解释</span></div>
-                        </div>
-                        <div class="bg-slate-800 p-4 rounded-lg text-center border border-slate-700">
-                            <div class="text-cyan-400 font-bold mb-1"><span class="lang-en">Smart City</span><span class="lang-cn">智慧城市</span></div>
-                            <div class="text-xs text-slate-400"><span class="lang-en">Real-time Video Analytics</span><span class="lang-cn">实时视频分析</span></div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="flex-1 relative w-full">
-                    <div class="aspect-video bg-gradient-to-br from-slate-800 to-slate-950 rounded-lg border border-slate-700 flex items-center justify-center relative overflow-hidden group">
-                        <!-- Placeholder Image -->
-                        <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1591405351990-4726e331f141?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80')] bg-cover bg-center opacity-40 mix-blend-overlay"></div>
-                        <div class="z-10 text-center">
-                            <i class="ph-duotone ph-hard-drives text-cyan-500 text-6xl mx-auto mb-4 animate-pulse"></i>
-                            <span class="block text-sm font-mono text-cyan-300">AxiomDeta 8162</span>
-                        </div>
-                        <div class="absolute inset-0 bg-cyan-500/5 group-hover:bg-cyan-500/10 transition-colors duration-500"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Guidelines (New Section) -->
-    <section id="guidelines" class="py-24 bg-slate-950 relative overflow-hidden">
-        <div class="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
-
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl font-bold text-white">
-                    <span class="lang-en">Operational & Financial Guidelines</span><span class="lang-cn">运营与合作指引</span>
-                </h2>
-                <p class="text-slate-400 mt-2">
-                    <span class="lang-en">Internal Actions & External Cooperation Protocols</span><span class="lang-cn">内部风控与外部金融机构合作规范</span>
+                <h3 className="text-xl font-bold text-white mb-4">{card.title}</h3>
+                <p className="text-slate-400 text-sm leading-relaxed mb-4">
+                  {card.desc}
                 </p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
-                <!-- Internal Actions -->
-                <div class="bg-slate-900/80 p-8 rounded-2xl border-l-4 border-cyan-500 backdrop-blur-sm">
-                    <div class="flex items-center gap-3 mb-6">
-                        <i class="ph-duotone ph-anchor text-cyan-400 text-3xl"></i>
-                        <h3 class="text-xl font-bold text-white">
-                            <span class="lang-en">Internal Actions</span><span class="lang-cn">内部行动指引</span>
-                        </h3>
-                    </div>
-                    <ul class="space-y-4 text-slate-300">
-                        <li class="flex items-start"><span class="w-2 h-2 mt-2 bg-cyan-500 rounded-full mr-3 flex-shrink-0"></span><span class="lang-en">Rigorous Due Diligence on Brazilian Lessees (Credit Rating >BB).</span><span class="lang-cn">严格的承租人尽职调查 (巴西企业信用评级 >BB)。</span></li>
-                        <li class="flex items-start"><span class="w-2 h-2 mt-2 bg-cyan-500 rounded-full mr-3 flex-shrink-0"></span><span class="lang-en">Real-time Asset Tracking via IoT sensors in AxiomDeta chassis.</span><span class="lang-cn">通过 AxiomDeta 机箱内的 IoT 传感器进行实时资产追踪。</span></li>
-                        <li class="flex items-start"><span class="w-2 h-2 mt-2 bg-cyan-500 rounded-full mr-3 flex-shrink-0"></span><span class="lang-en">Preventative Maintenance Schedule coordinated with local specialized MSPs.</span><span class="lang-cn">与当地专业 MSP 协调执行预防性维护计划。</span></li>
-                        <li class="flex items-start"><span class="w-2 h-2 mt-2 bg-cyan-500 rounded-full mr-3 flex-shrink-0"></span><span class="lang-en">Strict KYC/AML compliance for all incoming capital flows.</span><span class="lang-cn">对所有流入资金执行严格的 KYC/AML 合规审查。</span></li>
-                    </ul>
-                </div>
-
-                <!-- External Cooperation -->
-                <div class="bg-slate-900/80 p-8 rounded-2xl border-l-4 border-blue-500 backdrop-blur-sm">
-                    <div class="flex items-center gap-3 mb-6">
-                        <i class="ph-duotone ph-briefcase text-blue-400 text-3xl"></i>
-                        <h3 class="text-xl font-bold text-white">
-                            <span class="lang-en">Financial Institution Cooperation</span><span class="lang-cn">外部金融机构合作</span>
-                        </h3>
-                    </div>
-                    <ul class="space-y-4 text-slate-300">
-                        <li class="flex items-start"><span class="w-2 h-2 mt-2 bg-blue-500 rounded-full mr-3 flex-shrink-0"></span><span class="lang-en">Banking: Leveraging green financing loans for energy-efficient liquid cooling tech.</span><span class="lang-cn">银行合作：利用液冷技术的节能特性申请绿色融资贷款。</span></li>
-                        <li class="flex items-start"><span class="w-2 h-2 mt-2 bg-blue-500 rounded-full mr-3 flex-shrink-0"></span><span class="lang-en">Hedging: Partnership with SGX clearing members for BRL/USD/SGD FX swaps.</span><span class="lang-cn">对冲策略：与 SGX 清算会员合作，执行 BRL/USD/SGD 掉期交易。</span></li>
-                        <li class="flex items-start"><span class="w-2 h-2 mt-2 bg-blue-500 rounded-full mr-3 flex-shrink-0"></span><span class="lang-en">Insurance: Comprehensive policy covering cross-border transit and data center static risk.</span><span class="lang-cn">保险覆盖：全面的跨境运输保险及数据中心静态风险保险。</span></li>
-                        <li class="flex items-start"><span class="w-2 h-2 mt-2 bg-blue-500 rounded-full mr-3 flex-shrink-0"></span><span class="lang-en">Reporting: Quarterly transparent audits for Family Office LPs and Enterprise SG.</span><span class="lang-cn">透明报告：为家族办公室 LP 和企业发展局提供季度审计报告。</span></li>
-                    </ul>
-                </div>
-            </div>
+                <ul className="space-y-2">
+                  {card.points.map((point, pIdx) => (
+                    <li key={pIdx} className="flex items-center text-sm text-slate-300">
+                      <CheckCircle2 className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
+                      <span>{point}</span>
+                    </li>
+                  ))}
+                </ul>
+              </Card>
+            );
+          })}
         </div>
+      </div>
     </section>
+  );
+};
 
-    <!-- Investors -->
-    <section id="investors" class="py-24 bg-slate-900">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-3xl font-bold text-white text-center mb-16">
-                <span class="lang-en">Digital Infrastructure as an Asset Class</span><span class="lang-cn">数字基础设施资产类别</span>
-            </h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="text-center p-6">
-                    <div class="w-16 h-16 mx-auto bg-slate-800 rounded-full flex items-center justify-center mb-6 border border-slate-700 shadow-[0_0_15px_rgba(0,0,0,0.3)]">
-                        <i class="ph-duotone ph-chart-line-up text-green-400 text-3xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-white mb-2">
-                        <span class="lang-en">Stable Yields</span><span class="lang-cn">稳定收益</span>
-                    </h3>
-                    <p class="text-slate-400">
-                        <span class="lang-en">Long-term lease contracts backed by credit-worthy Brazilian corporates.</span><span class="lang-cn">由高信用评级的巴西企业支持的长期租赁合同。</span>
-                    </p>
-                </div>
-                <div class="text-center p-6">
-                    <div class="w-16 h-16 mx-auto bg-slate-800 rounded-full flex items-center justify-center mb-6 border border-slate-700 shadow-[0_0_15px_rgba(0,0,0,0.3)]">
-                        <i class="ph-duotone ph-shield-check text-blue-400 text-3xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-white mb-2">
-                        <span class="lang-en">Asset-Backed</span><span class="lang-cn">资产担保</span>
-                    </h3>
-                    <p class="text-slate-400">
-                        <span class="lang-en">Investment secured by physical GPU hardware with high residual value.</span><span class="lang-cn">投资由具有高残值的物理 GPU 硬件担保。</span>
-                    </p>
-                </div>
-                <div class="text-center p-6">
-                    <div class="w-16 h-16 mx-auto bg-slate-800 rounded-full flex items-center justify-center mb-6 border border-slate-700 shadow-[0_0_15px_rgba(0,0,0,0.3)]">
-                        <i class="ph-duotone ph-currency-dollar text-yellow-400 text-3xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-white mb-2">
-                        <span class="lang-en">Currency Hedged</span><span class="lang-cn">汇率对冲</span>
-                    </h3>
-                    <p class="text-slate-400">
-                        <span class="lang-en">SGX-B3 futures utilized to mitigate BRL volatility.</span><span class="lang-cn">利用 SGX-B3 期货工具规避雷亚尔波动风险。</span>
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
+const ROICalculator = ({ lang }) => {
+  const t = translations[lang].roi;
+  const [investment, setInvestment] = useState(5000000);
+  const [leverage, setLeverage] = useState(70);
+  const [utilization, setUtilization] = useState(85);
+  
+  // Simplified calculation logic based on report
+  const equity = investment * ((100 - leverage) / 100);
+  const debt = investment * (leverage / 100);
+  const annualRevenue = investment * 0.45 * (utilization / 100); // Assumed yield logic
+  const operationalCosts = annualRevenue * 0.25; // DCDEEPTECH Fees + Power
+  const interest = debt * 0.055; // 5.5% interest
+  const netIncome = annualRevenue - operationalCosts - interest;
+  const coc = (netIncome / equity) * 100;
 
-    <!-- Footer -->
-    <footer id="contact" class="bg-slate-950 border-t border-slate-900 pt-16 pb-8">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 mb-12">
+  return (
+    <section id="ROI" className="py-24 bg-slate-900">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="bg-gradient-to-br from-blue-900/20 to-indigo-900/20 border border-blue-500/20 rounded-2xl p-8 md:p-12">
+          <div className="grid md:grid-cols-2 gap-12">
+            <div>
+              <SectionTitle subtitle={t.subtitle} title={t.title} align="left" />
+              <p className="text-slate-400 mb-8">
+                {t.desc}
+                <br /><span className="text-xs text-slate-500">{t.disclaimer}</span>
+              </p>
+
+              <div className="space-y-6">
                 <div>
-                    <div class="flex items-center gap-2 mb-6">
-                        <i class="ph-fill ph-hard-drives text-cyan-400 text-2xl"></i>
-                        <span class="font-bold text-xl text-white">DCDEEPTECH</span>
-                    </div>
-                    <div class="space-y-4 text-slate-400">
-                        <div>
-                            <h4 class="text-white font-semibold mb-1">
-                                <span class="lang-en">Singapore HQ</span><span class="lang-cn">新加坡总部</span>
-                            </h4>
-                            <p><span class="lang-en">Email:</span><span class="lang-cn">邮箱:</span> sg-invest@dcdeeptech.com</p>
-                        </div>
-                        <div>
-                            <h4 class="text-white font-semibold mb-1">
-                                <span class="lang-en">Brazil Operations</span><span class="lang-cn">巴西运营中心</span>
-                            </h4>
-                            <p>Avenida Paulista, São Paulo</p>
-                            <p><span class="lang-en">Email:</span><span class="lang-cn">邮箱:</span> br-sales@dcdeeptech.com</p>
-                        </div>
-                    </div>
+                  <div className="flex justify-between text-white mb-2">
+                    <label>{t.labels.investment}</label>
+                    <span className="font-mono">${(investment/1000000).toFixed(1)}M</span>
+                  </div>
+                  <input 
+                    type="range" min="1000000" max="20000000" step="500000"
+                    value={investment} onChange={(e) => setInvestment(Number(e.target.value))}
+                    className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer"
+                  />
                 </div>
-                <div class="flex flex-col justify-end">
-                    <div class="text-sm text-slate-500 border-t border-slate-900 pt-4">
-                        <p>
-                            <span class="lang-en">DCDEEPTECH is an exempt financial adviser under the Financial Advisers Act. This content is for informational purposes only.</span>
-                            <span class="lang-cn">DCDEEPTECH 是根据新加坡财务顾问法案豁免的财务顾问。本内容仅供参考。</span>
-                        </p>
-                        <p class="mt-2">© 2024 DCDEEPTECH PTE. LTD. All rights reserved.</p>
-                    </div>
+
+                <div>
+                  <div className="flex justify-between text-white mb-2">
+                    <label>{t.labels.leverage}</label>
+                    <span className="font-mono">{leverage}%</span>
+                  </div>
+                  <input 
+                    type="range" min="0" max="80" step="5"
+                    value={leverage} onChange={(e) => setLeverage(Number(e.target.value))}
+                    className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer"
+                  />
                 </div>
+
+                 <div>
+                  <div className="flex justify-between text-white mb-2">
+                    <label>{t.labels.utilization}</label>
+                    <span className="font-mono">{utilization}%</span>
+                  </div>
+                  <input 
+                    type="range" min="50" max="100" step="5"
+                    value={utilization} onChange={(e) => setUtilization(Number(e.target.value))}
+                    className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer"
+                  />
+                </div>
+              </div>
             </div>
+
+            <div className="bg-slate-950/50 rounded-xl p-6 border border-slate-800 flex flex-col justify-center">
+              <div className="grid grid-cols-2 gap-6 mb-8">
+                <div className="p-4 bg-slate-900 rounded-lg">
+                  <div className="text-xs text-slate-400 mb-1">{t.labels.equity}</div>
+                  <div className="text-xl font-mono text-white">${(equity/1000000).toFixed(2)}M</div>
+                </div>
+                <div className="p-4 bg-slate-900 rounded-lg">
+                  <div className="text-xs text-slate-400 mb-1">{t.labels.cashflow}</div>
+                  <div className="text-xl font-mono text-green-400">${(netIncome/1000).toFixed(0)}k</div>
+                </div>
+              </div>
+
+              <div className="text-center">
+                <div className="text-sm text-slate-400 mb-2">{t.labels.coc}</div>
+                <div className="text-6xl font-bold text-blue-500 tracking-tight">
+                  {coc.toFixed(1)}%
+                </div>
+                <div className="mt-4 inline-block px-4 py-1 bg-green-500/10 text-green-400 text-sm rounded-full border border-green-500/20">
+                  {t.labels.comparison}
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
+    </section>
+  );
+};
+
+const Services = ({ lang }) => {
+  const t = translations[lang].services;
+
+  return (
+    <section id="Services" className="py-24 bg-slate-950">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <SectionTitle subtitle={t.subtitle} title={t.title} />
+        <div className="grid md:grid-cols-4 gap-6">
+          {t.items.map((item, idx) => (
+            <div key={idx} className="border-l-2 border-slate-800 pl-6 hover:border-blue-500 transition-colors">
+              <h4 className="text-white font-bold text-lg mb-2">{item.title}</h4>
+              <p className="text-slate-500 text-sm">{item.desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+const Footer = ({ lang }) => {
+  const t = translations[lang].footer;
+  return (
+    <footer className="bg-slate-950 border-t border-slate-900 py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid md:grid-cols-4 gap-8">
+          <div className="col-span-1 md:col-span-2">
+            <div className="flex items-center space-x-2 mb-4">
+              <Database className="text-blue-600 w-6 h-6" />
+              <span className="text-xl font-bold text-white">DC<span className="text-blue-500">DEEPTECH</span></span>
+            </div>
+            <p className="text-slate-500 text-sm max-w-sm">
+              {t.desc}
+            </p>
+          </div>
+          
+          <div>
+            <h4 className="text-white font-semibold mb-4">{t.services_title}</h4>
+            <ul className="space-y-2 text-sm text-slate-500">
+              {t.services_list.map((item, idx) => <li key={idx}>{item}</li>)}
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="text-white font-semibold mb-4">{t.contact_title}</h4>
+            <ul className="space-y-2 text-sm text-slate-500">
+              <li>ir@dcdeeptech.com</li>
+              <li>Singapore HQ: Marina Bay Fin. Ctr.</li>
+              <li>Brazil Ops: São Paulo</li>
+            </ul>
+          </div>
+        </div>
+        <div className="border-t border-slate-900 mt-12 pt-8 text-center text-xs text-slate-600">
+          {t.copyright}
+        </div>
+      </div>
     </footer>
+  );
+};
 
-    <!-- JavaScript for Interactivity -->
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const body = document.body;
-            const langToggle = document.getElementById('langToggle');
-            const langLabel = document.getElementById('langLabel');
-            const navbar = document.getElementById('navbar');
-            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-            const closeMenuBtn = document.getElementById('closeMenuBtn');
-            const mobileMenu = document.getElementById('mobileMenu');
-            const mobileLinks = document.querySelectorAll('.mobile-link');
+// --- Login Modal ---
 
-            // 1. Language Toggle Logic
-            let currentLang = 'en';
-            
-            const titles = {
-                en: "DCDEEPTECH | Bridging Capital & Compute",
-                cn: "DCDEEPTECH | 连接资本与算力"
-            };
+const LoginModal = ({ isOpen, onClose, lang }) => {
+  if (!isOpen) return null;
+  const t = translations[lang].login;
 
-            langToggle.addEventListener('click', () => {
-                if (currentLang === 'en') {
-                    currentLang = 'cn';
-                    body.classList.remove('lang-en');
-                    body.classList.add('lang-cn');
-                    langLabel.textContent = 'CN';
-                    document.title = titles.cn;
-                } else {
-                    currentLang = 'en';
-                    body.classList.remove('lang-cn');
-                    body.classList.add('lang-en');
-                    langLabel.textContent = 'EN';
-                    document.title = titles.en;
-                }
-            });
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+      <div className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-md p-8 relative animate-fade-in-up">
+        <button onClick={onClose} className="absolute top-4 right-4 text-slate-500 hover:text-white">
+          <X className="w-5 h-5" />
+        </button>
+        
+        <div className="text-center mb-8">
+          <Lock className="w-10 h-10 text-blue-500 mx-auto mb-4" />
+          <h3 className="text-2xl font-bold text-white">{t.title}</h3>
+          <p className="text-slate-400 text-sm mt-2">{t.subtitle}</p>
+        </div>
 
-            // 2. Navbar Scroll Effect
-            window.addEventListener('scroll', () => {
-                if (window.scrollY > 50) {
-                    navbar.classList.add('glass-nav');
-                    navbar.classList.remove('py-4');
-                } else {
-                    navbar.classList.remove('glass-nav');
-                    navbar.classList.add('py-4');
-                }
-            });
+        <form className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-1">{t.email}</label>
+            <input type="email" className="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-blue-500 outline-none" placeholder="name@fund.com" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-1">{t.code}</label>
+            <input type="password" className="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-blue-500 outline-none" placeholder="••••••••" />
+          </div>
+          <Button variant="primary" className="w-full mt-4">{t.btn}</Button>
+        </form>
+        
+        <div className="mt-6 text-center">
+          <a href="#" className="text-xs text-blue-400 hover:underline">{t.request} &rarr;</a>
+        </div>
+      </div>
+    </div>
+  );
+};
 
-            // 3. Mobile Menu Logic
-            function toggleMenu() {
-                mobileMenu.classList.toggle('hidden');
-                document.body.classList.toggle('overflow-hidden'); // Prevent scrolling when menu is open
-            }
+// --- Main App Component ---
 
-            mobileMenuBtn.addEventListener('click', toggleMenu);
-            closeMenuBtn.addEventListener('click', toggleMenu);
+export default function App() {
+  const [scrolled, setScrolled] = useState(false);
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [lang, setLang] = useState('zh'); // Default to Chinese
 
-            // Close menu when clicking a link
-            mobileLinks.forEach(link => {
-                link.addEventListener('click', () => {
-                    if (!mobileMenu.classList.contains('hidden')) {
-                        toggleMenu();
-                    }
-                });
-            });
-        });
-    </script>
-</body>
-</html>
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 50);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  return (
+    <div className="bg-slate-950 min-h-screen text-slate-200 font-sans selection:bg-blue-500/30">
+      <Navbar 
+        scrolled={scrolled} 
+        onLoginClick={() => setIsLoginOpen(true)} 
+        lang={lang} 
+        setLang={setLang} 
+      />
+      
+      <main>
+        <Hero lang={lang} />
+        <StrategyModel lang={lang} />
+        <Advantages lang={lang} />
+        <ROICalculator lang={lang} />
+        <Services lang={lang} />
+      </main>
+
+      <Footer lang={lang} />
+      <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} lang={lang} />
+    </div>
+  );
+}
