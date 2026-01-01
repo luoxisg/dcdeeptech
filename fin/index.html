@@ -1,742 +1,875 @@
- 
-import React, { useState, useEffect } from 'react';
-import { 
-  Building2, 
-  Globe, 
-  TrendingUp, 
-  ShieldCheck, 
-  Server, 
-  Zap, 
-  ArrowRight, 
-  BarChart3, 
-  PieChart, 
-  Lock, 
-  Menu, 
-  X, 
-  Database,
-  Briefcase,
-  CheckCircle2
-} from 'lucide-react';
-
-// --- Translations ---
-
-const translations = {
-  zh: {
-    nav: {
-      items: ['战略模型', '核心优势', '服务体系', '投资回报'],
-      login: 'LP 门户登录',
-      logo_subtitle: '深科技'
-    },
-    hero: {
-      badge: '新加坡资金 × 巴西算力资产',
-      title_prefix: '定义跨境',
-      title_highlight: 'AI 基础设施',
-      title_suffix: '的新资产范式',
-      desc: 'DCDEEPTECH 通过独特的轻资产运营模式，连接低成本资本与高回报算力资产。利用政策套利与技术专长，为 LP 创造超越传统 REITs 的 Alpha 收益。',
-      btn_primary: '探索投资模型',
-      btn_secondary: '下载研究报告 (PDF)',
-      stats: [
-        { label: '目标 IRR', value: '>20%' },
-        { label: '税务节省 (ReData)', value: '40%+' },
-        { label: '融资成本 (EFS)', value: '<6%' },
-        { label: '能源结构', value: '100% 绿色' },
-      ]
-    },
-    strategy: {
-      subtitle: 'STRATEGIC ARBITRAGE',
-      title: '跨境套利核心模型',
-      center_text: '轻资产运营\n(合规/运维/风控)',
-      steps: [
-        { id: 1, title: "资本形成 (新加坡)", desc: "利用 EFS-Trade Loan 与 VCC 架构，获取低息资金与灵活的基金结构。", highlight: "SORA + 2% 融资成本" },
-        { id: 2, title: "资产购置 & ReData", desc: "采购 H100/H200 集群，利用巴西 ReData 政策豁免联邦税，降低 CAPEX。", highlight: "节省 ~45% 落地成本" },
-        { id: 3, title: "部署与运营 (巴西)", desc: "部署于绿色能源数据中心，提供 MSP 级运维，确保高在线率。", highlight: "清洁能源溢价" },
-        { id: 4, title: "价值分配", desc: "算力租赁产生美元现金流，通过 VCC 分红回流 LP，享受双边税收协定。", highlight: "美元收益，税收优化" }
-      ]
-    },
-    advantages: {
-      subtitle: 'WHY US',
-      title: '无法复制的竞争壁垒',
-      cards: [
-        {
-          title: "ReData 税务护城河",
-          desc: "充分利用巴西《数据中心服务特别税收制度》(ReData)，暂停联邦税（II, IPI, PIS/COFINS）。",
-          points: ["节省 80%-100% 进口税费", "IRR 提升显著"]
-        },
-        {
-          title: "EFS 融资杠杆",
-          desc: "基于新加坡企业融资计划 (EFS)，通过政府分担风险机制获得低息贷款，极大优化资本结构。",
-          points: ["政府风险分担高达 50-70%", "极具竞争力的资本成本"]
-        },
-        {
-          title: "ESG 与 溢价市场",
-          desc: "巴西拥有全球最清洁的能源矩阵之一。ReData 要求使用可再生能源，完美契合全球 ESG 投资标准。",
-          points: ["100% 水电/可再生能源", "LGPD 数据主权带来的区域溢价"]
+ <!DOCTYPE html>
+<html lang="zh" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DCDEEPTECH - AI Infrastructure Investment</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        slate: {
+                            850: '#151e2e',
+                            900: '#0f172a',
+                            950: '#020617', 
+                        }
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 0.5s ease-out',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
         }
-      ]
-    },
-    roi: {
-      subtitle: 'FINANCIAL SIMULATION',
-      title: '收益测算模拟器',
-      desc: '基于 H100 集群部署模型，调整参数以查看预计回报。',
-      disclaimer: '*仅供演示，不构成投资建议。',
-      labels: {
-        investment: '总资产投入 (USD)',
-        leverage: 'EFS 债务杠杆比例',
-        utilization: '算力利用率 (Utilization)',
-        equity: '权益投入 (Equity)',
-        cashflow: '年度净现金流',
-        coc: '预计现金回报率 (CoC)',
-        comparison: '优于传统 REITs (5-7%)'
-      }
-    },
-    services: {
-      subtitle: 'LIFECYCLE MANAGEMENT',
-      title: '全周期价值创造',
-      items: [
-        { title: "01. 架构咨询", desc: "VCC 基金设立, EFS 融资申请, 模型搭建" },
-        { title: "02. 采购与合规", desc: "ReData 资质获取, 供应链谈判, 零税负进口" },
-        { title: "03. 技术运维", desc: "L1/L2 支持, 7x24 监控, 算力调度优化" },
-        { title: "04. 退出机制", desc: "资产残值管理, 二手市场转售, 收益清算" },
-      ]
-    },
-    footer: {
-      desc: '连接新加坡资本与巴西数字资产的战略合作伙伴。专注于为重资产投资者提供轻资产运营、合规与技术管理服务。',
-      services_title: '服务',
-      services_list: ['资本结构咨询', 'ReData 合规申请', '算力进出口物流', 'MSP 运维管理'],
-      contact_title: '联系我们',
-      copyright: '© 2026 DCDEEPTECH PTE. LTD. All rights reserved. 本网站仅供信息参考，不构成财务建议。'
-    },
-    login: {
-      title: 'LP 投资者门户',
-      subtitle: '访问实时仪表盘、月度运营报告及财务报表',
-      email: '企业邮箱',
-      code: '访问代码',
-      btn: '安全登录',
-      request: '申请访问权限'
-    }
-  },
-  en: {
-    nav: {
-      items: ['Strategic Model', 'Key Advantages', 'Services', 'ROI Analysis'],
-      login: 'LP Portal Login',
-      logo_subtitle: 'DEEPTECH'
-    },
-    hero: {
-      badge: 'Singapore Capital × Brazil Compute Assets',
-      title_prefix: 'Defining the New',
-      title_highlight: 'Cross-Border AI Infrastructure',
-      title_suffix: 'Asset Paradigm',
-      desc: 'DCDEEPTECH bridges low-cost capital with high-yield compute assets through a unique asset-light operating model. We leverage policy arbitrage and technical expertise to generate Alpha returns for LPs that outperform traditional REITs.',
-      btn_primary: 'Explore Model',
-      btn_secondary: 'Download Report (PDF)',
-      stats: [
-        { label: 'Target IRR', value: '>20%' },
-        { label: 'Tax Savings (ReData)', value: '40%+' },
-        { label: 'Financing Cost (EFS)', value: '<6%' },
-        { label: 'Energy Mix', value: '100% Green' },
-      ]
-    },
-    strategy: {
-      subtitle: 'STRATEGIC ARBITRAGE',
-      title: 'Core Cross-Border Arbitrage Model',
-      center_text: 'Asset-Light Ops\n(Compliance/O&M/Risk)',
-      steps: [
-        { id: 1, title: "Capital Formation (SG)", desc: "Leveraging EFS-Trade Loans and VCC structures to secure low-interest capital and flexible fund architecture.", highlight: "SORA + 2% Cost of Debt" },
-        { id: 2, title: "Asset Acquisition & ReData", desc: "Procuring H100/H200 clusters, utilizing Brazil's ReData policy to exempt federal taxes and lower CAPEX.", highlight: "Save ~45% Landed Cost" },
-        { id: 3, title: "Deployment & Ops (Brazil)", desc: "Deployed in green energy data centers with MSP-grade O&M to ensure high availability.", highlight: "Green Energy Premium" },
-        { id: 4, title: "Value Distribution", desc: "Compute leasing generates USD cash flow, distributed back to LPs via VCC, benefiting from bilateral tax treaties.", highlight: "USD Yields, Tax Optimized" }
-      ]
-    },
-    advantages: {
-      subtitle: 'WHY US',
-      title: 'Unreplicable Competitive Moats',
-      cards: [
-        {
-          title: "ReData Tax Moat",
-          desc: "Fully leveraging Brazil's Special Regime for Data Centers (ReData) to suspend federal taxes (II, IPI, PIS/COFINS).",
-          points: ["Save 80%-100% on Import Duties", "Significant IRR Uplift"]
-        },
-        {
-          title: "EFS Financing Leverage",
-          desc: "Based on Singapore's Enterprise Financing Scheme (EFS), utilizing government risk-sharing to secure low-interest loans and optimize capital structure.",
-          points: ["Gov Risk Sharing up to 50-70%", "Highly Competitive Cost of Capital"]
-        },
-        {
-          title: "ESG & Premium Market",
-          desc: "Brazil boasts one of the cleanest energy matrices globally. ReData requires renewable energy use, aligning perfectly with global ESG standards.",
-          points: ["100% Hydro/Renewable Energy", "Regional Premium via LGPD Data Sovereignty"]
+    </script>
+    <style>
+        body {
+            background-color: #020617; /* slate-950 */
+            color: #e2e8f0; /* slate-200 */
         }
-      ]
-    },
-    roi: {
-      subtitle: 'FINANCIAL SIMULATION',
-      title: 'Return Simulation',
-      desc: 'Based on H100 cluster deployment models. Adjust parameters to view projected returns.',
-      disclaimer: '*For demonstration only, not financial advice.',
-      labels: {
-        investment: 'Total Asset Investment (USD)',
-        leverage: 'EFS Debt Leverage Ratio',
-        utilization: 'Compute Utilization',
-        equity: 'Equity Contribution',
-        cashflow: 'Annual Net Cash Flow',
-        coc: 'Projected Cash-on-Cash (CoC)',
-        comparison: 'Outperforms Traditional REITs (5-7%)'
-      }
-    },
-    services: {
-      subtitle: 'LIFECYCLE MANAGEMENT',
-      title: 'Full Lifecycle Value Creation',
-      items: [
-        { title: "01. Structuring Advisory", desc: "VCC Fund Setup, EFS Application, Model Building" },
-        { title: "02. Procurement & Compliance", desc: "ReData Qualification, Supply Chain Negotiation, Zero-Tax Import" },
-        { title: "03. Technical Operations", desc: "L1/L2 Support, 24/7 Monitoring, Scheduler Optimization" },
-        { title: "04. Exit Mechanism", desc: "Residual Value Mgmt, Secondary Market Resale, Yield Liquidation" },
-      ]
-    },
-    footer: {
-      desc: 'Strategic partner connecting Singaporean capital with Brazilian digital assets. Focusing on asset-light operations, compliance, and technical management for heavy-asset investors.',
-      services_title: 'Services',
-      services_list: ['Capital Structuring', 'ReData Compliance', 'Compute Logistics', 'MSP Operations'],
-      contact_title: 'Contact Us',
-      copyright: '© 2026 DCDEEPTECH PTE. LTD. All rights reserved. This website is for informational purposes only and does not constitute financial advice.'
-    },
-    login: {
-      title: 'LP Investor Portal',
-      subtitle: 'Access real-time dashboards, monthly operational reports, and financial statements.',
-      email: 'Corporate Email',
-      code: 'Access Code',
-      btn: 'Secure Login',
-      request: 'Request Access'
-    }
-  }
-};
+        /* Custom range slider styling */
+        input[type=range] {
+            -webkit-appearance: none; 
+            background: transparent; 
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: #3b82f6;
+            cursor: pointer;
+            margin-top: -6px; 
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: #334155;
+            border-radius: 2px;
+        }
+        .strategy-node.active {
+            background-color: rgba(30, 58, 138, 0.4);
+            border-color: #3b82f6;
+            transform: scale(1.1);
+        }
+        .strategy-path {
+            transition: stroke 0.5s ease;
+        }
+        .strategy-step-card.active {
+            background-color: #1e293b;
+            border-color: #3b82f6;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .strategy-step-card.active h3 {
+            color: white;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-blue-500/30">
 
-// --- Components ---
-
-const Button = ({ children, variant = 'primary', className = '', onClick }) => {
-  const baseStyle = "px-6 py-3 rounded-lg font-medium transition-all duration-300 transform hover:-translate-y-0.5";
-  const variants = {
-    primary: "bg-blue-600 hover:bg-blue-500 text-white shadow-lg hover:shadow-blue-500/30",
-    secondary: "bg-slate-800 hover:bg-slate-700 text-white border border-slate-700",
-    outline: "bg-transparent border border-blue-400 text-blue-400 hover:bg-blue-400/10",
-    ghost: "bg-transparent text-slate-300 hover:text-white hover:bg-slate-800"
-  };
-  
-  return (
-    <button onClick={onClick} className={`${baseStyle} ${variants[variant]} ${className}`}>
-      {children}
-    </button>
-  );
-};
-
-const Card = ({ children, className = '' }) => (
-  <div className={`bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-xl p-6 hover:border-blue-500/50 transition-colors duration-300 ${className}`}>
-    {children}
-  </div>
-);
-
-const SectionTitle = ({ subtitle, title, align = 'center' }) => (
-  <div className={`mb-12 ${align === 'left' ? 'text-left' : 'text-center'}`}>
-    <span className="text-blue-400 font-semibold tracking-wider uppercase text-sm">{subtitle}</span>
-    <h2 className="text-3xl md:text-4xl font-bold text-white mt-2 leading-tight">{title}</h2>
-    <div className={`h-1 w-20 bg-blue-600 mt-4 rounded-full ${align === 'left' ? '' : 'mx-auto'}`}></div>
-  </div>
-);
-
-// --- Sections ---
-
-const Navbar = ({ scrolled, onLoginClick, lang, setLang }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const t = translations[lang].nav;
-  
-  // Map items to anchor links
-  const anchors = ['#StrategicModel', '#Advantages', '#Services', '#ROI'];
-
-  const toggleLang = () => {
-    setLang(lang === 'zh' ? 'en' : 'zh');
-  };
-
-  return (
-    <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-slate-950/90 backdrop-blur-md border-b border-slate-800 py-3' : 'bg-transparent py-5'}`}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-        <div className="flex items-center space-x-2">
-          <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-600/20">
-            <Database className="text-white w-6 h-6" />
-          </div>
-          <span className="text-2xl font-bold text-white tracking-tight">DC<span className="text-blue-500">DEEPTECH</span></span>
-        </div>
-
-        {/* Desktop Menu */}
-        <div className="hidden md:flex items-center space-x-6">
-          {t.items.map((item, index) => (
-            <a key={index} href={anchors[index]} className="text-slate-300 hover:text-white text-sm font-medium transition-colors">
-              {item}
-            </a>
-          ))}
-          
-          <div className="h-6 w-px bg-slate-700 mx-2"></div>
-          
-          <button 
-            onClick={toggleLang}
-            className="flex items-center space-x-1 text-slate-300 hover:text-white transition-colors text-sm font-medium"
-          >
-            <Globe className="w-4 h-4" />
-            <span>{lang === 'zh' ? 'EN' : '中'}</span>
-          </button>
-
-          <Button variant="primary" className="py-2 px-4 text-sm" onClick={onLoginClick}>
-            {t.login}
-          </Button>
-        </div>
-
-        {/* Mobile Menu Button */}
-        <div className="md:hidden flex items-center space-x-4">
-          <button 
-            onClick={toggleLang}
-            className="flex items-center space-x-1 text-slate-300 hover:text-white"
-          >
-            <Globe className="w-5 h-5" />
-            <span className="text-sm font-bold">{lang.toUpperCase()}</span>
-          </button>
-          <button onClick={() => setIsOpen(!isOpen)} className="text-white p-2">
-            {isOpen ? <X /> : <Menu />}
-          </button>
-        </div>
-      </div>
-
-      {/* Mobile Menu */}
-      {isOpen && (
-        <div className="md:hidden bg-slate-900 border-b border-slate-800 absolute w-full shadow-2xl">
-          <div className="px-4 pt-2 pb-6 space-y-2">
-            {t.items.map((item, index) => (
-              <a 
-                key={index} 
-                href={anchors[index]} 
-                onClick={() => setIsOpen(false)}
-                className="block px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-md"
-              >
-                {item}
-              </a>
-            ))}
-            <div className="pt-4 border-t border-slate-800 mt-2">
-              <Button variant="primary" className="w-full" onClick={onLoginClick}>{t.login}</Button>
+    <!-- Navbar -->
+    <nav id="navbar" class="fixed w-full z-50 transition-all duration-300 py-5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+            <!-- Logo -->
+            <div class="flex items-center space-x-2">
+                <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-600/20">
+                    <i data-lucide="database" class="text-white w-6 h-6"></i>
+                </div>
+                <span class="text-2xl font-bold text-white tracking-tight">DC<span class="text-blue-500">DEEPTECH</span></span>
             </div>
-          </div>
+
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex items-center space-x-6">
+                <a href="#StrategicModel" class="nav-item text-slate-300 hover:text-white text-sm font-medium transition-colors" data-i18n="nav.items.0">战略模型</a>
+                <a href="#Advantages" class="nav-item text-slate-300 hover:text-white text-sm font-medium transition-colors" data-i18n="nav.items.1">核心优势</a>
+                <a href="#Services" class="nav-item text-slate-300 hover:text-white text-sm font-medium transition-colors" data-i18n="nav.items.2">服务体系</a>
+                <a href="#ROI" class="nav-item text-slate-300 hover:text-white text-sm font-medium transition-colors" data-i18n="nav.items.3">投资回报</a>
+                
+                <div class="h-6 w-px bg-slate-700 mx-2"></div>
+                
+                <button id="lang-toggle-desktop" class="flex items-center space-x-1 text-slate-300 hover:text-white transition-colors text-sm font-medium">
+                    <i data-lucide="globe" class="w-4 h-4"></i>
+                    <span id="lang-label-desktop">EN</span>
+                </button>
+
+                <button onclick="openLoginModal()" class="bg-blue-600 hover:bg-blue-500 text-white shadow-lg hover:shadow-blue-500/30 px-4 py-2 rounded-lg text-sm font-medium transition-all transform hover:-translate-y-0.5" data-i18n="nav.login">
+                    LP 门户登录
+                </button>
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <div class="md:hidden flex items-center space-x-4">
+                <button id="lang-toggle-mobile" class="flex items-center space-x-1 text-slate-300 hover:text-white">
+                    <i data-lucide="globe" class="w-5 h-5"></i>
+                    <span id="lang-label-mobile" class="text-sm font-bold">EN</span>
+                </button>
+                <button id="mobile-menu-btn" class="text-white p-2">
+                    <i data-lucide="menu"></i>
+                </button>
+            </div>
         </div>
-      )}
+
+        <!-- Mobile Menu (Hidden by default) -->
+        <div id="mobile-menu" class="hidden md:hidden bg-slate-900 border-b border-slate-800 absolute w-full shadow-2xl">
+            <div class="px-4 pt-2 pb-6 space-y-2">
+                <a href="#StrategicModel" class="block px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-md" data-i18n="nav.items.0">战略模型</a>
+                <a href="#Advantages" class="block px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-md" data-i18n="nav.items.1">核心优势</a>
+                <a href="#Services" class="block px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-md" data-i18n="nav.items.2">服务体系</a>
+                <a href="#ROI" class="block px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-md" data-i18n="nav.items.3">投资回报</a>
+                <div class="pt-4 border-t border-slate-800 mt-2">
+                    <button onclick="openLoginModal()" class="w-full bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg" data-i18n="nav.login">LP 门户登录</button>
+                </div>
+            </div>
+        </div>
     </nav>
-  );
-};
 
-const Hero = ({ lang }) => {
-  const t = translations[lang].hero;
+    <main>
+        <!-- Hero Section -->
+        <div class="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+            <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1558494949-ef526b0042a0?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')] bg-cover bg-center opacity-10"></div>
+            <div class="absolute inset-0 bg-gradient-to-b from-slate-950/80 via-slate-950/90 to-slate-950"></div>
+            <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl animate-pulse-slow"></div>
+            <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-indigo-600/20 rounded-full blur-3xl animate-pulse-slow" style="animation-delay: 1s;"></div>
 
-  return (
-    <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-slate-950 pt-20">
-      {/* Background Elements */}
-      <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1558494949-ef526b0042a0?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')] bg-cover bg-center opacity-10"></div>
-      <div className="absolute inset-0 bg-gradient-to-b from-slate-950/80 via-slate-950/90 to-slate-950"></div>
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl animate-pulse"></div>
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-indigo-600/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
-
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center z-10">
-        <div className="inline-flex items-center space-x-2 bg-slate-800/50 rounded-full px-4 py-1.5 mb-8 border border-slate-700 animate-fade-in-up">
-          <span className="flex h-2 w-2 rounded-full bg-green-400"></span>
-          <span className="text-slate-300 text-xs font-medium tracking-wide">{t.badge}</span>
-        </div>
-        
-        <h1 className="text-4xl md:text-7xl font-bold text-white mb-6 leading-tight tracking-tight">
-          {t.title_prefix} <br className="md:hidden" />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">{t.title_highlight}</span><br />
-          {t.title_suffix}
-        </h1>
-        
-        <p className="mt-6 text-xl text-slate-400 max-w-3xl mx-auto leading-relaxed">
-          {t.desc}
-        </p>
-        
-        <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
-          <Button variant="primary" className="flex items-center justify-center gap-2">
-            {t.btn_primary} <ArrowRight className="w-4 h-4" />
-          </Button>
-          <Button variant="secondary" className="flex items-center justify-center gap-2">
-            {t.btn_secondary} <Briefcase className="w-4 h-4" />
-          </Button>
-        </div>
-
-        {/* Stats Strip */}
-        <div className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-8 border-t border-slate-800 pt-8">
-          {t.stats.map((stat, idx) => (
-            <div key={idx} className="text-center">
-              <div className="text-3xl font-bold text-white">{stat.value}</div>
-              <div className="text-sm text-slate-500 mt-1">{stat.label}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const StrategyModel = ({ lang }) => {
-  const [activeStep, setActiveStep] = useState(1);
-  const t = translations[lang].strategy;
-  
-  const icons = {
-    1: <Building2 className="w-8 h-8 text-blue-400" />,
-    2: <Server className="w-8 h-8 text-indigo-400" />,
-    3: <Zap className="w-8 h-8 text-green-400" />,
-    4: <TrendingUp className="w-8 h-8 text-yellow-400" />
-  };
-
-  return (
-    <section id="StrategicModel" className="py-24 bg-slate-900 relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <SectionTitle subtitle={t.subtitle} title={t.title} />
-        
-        <div className="grid md:grid-cols-2 gap-12 items-center">
-          {/* Interactive Graphic Side */}
-          <div className="relative h-[500px] bg-slate-800/30 rounded-2xl border border-slate-700/50 p-8 flex flex-col items-center justify-center">
-            {/* Connecting Lines */}
-            <div className="absolute inset-0 pointer-events-none">
-              <svg className="w-full h-full">
-                <path d="M100 100 Q 400 50 700 100" fill="none" stroke={activeStep >= 2 ? "#3b82f6" : "#1e293b"} strokeWidth="2" strokeDasharray="5,5" className="animate-pulse" />
-                <path d="M700 100 Q 750 300 700 500" fill="none" stroke={activeStep >= 3 ? "#3b82f6" : "#1e293b"} strokeWidth="2" strokeDasharray="5,5" />
-                <path d="M700 500 Q 400 550 100 500" fill="none" stroke={activeStep >= 4 ? "#3b82f6" : "#1e293b"} strokeWidth="2" strokeDasharray="5,5" />
-                <path d="M100 500 Q 50 300 100 100" fill="none" stroke="#3b82f6" strokeWidth="2" strokeDasharray="5,5" strokeOpacity="0.3" />
-              </svg>
-            </div>
-
-            {/* Central Hub */}
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-slate-900 rounded-full border-2 border-blue-500/30 flex flex-col items-center justify-center z-10 shadow-[0_0_50px_rgba(59,130,246,0.2)]">
-              <div className="text-blue-500 font-bold text-xl">DCDEEPTECH</div>
-              <div className="text-xs text-slate-400 mt-2 text-center px-4 whitespace-pre-line leading-tight">
-                {t.center_text}
-              </div>
-            </div>
-
-            {/* Orbital Nodes */}
-            {t.steps.map((step, idx) => {
-               // Calculate position based on index (simplified corners)
-               const posStyles = [
-                 "top-10 left-10",
-                 "top-10 right-10",
-                 "bottom-10 right-10",
-                 "bottom-10 left-10"
-               ];
-               
-               return (
-                <div 
-                  key={step.id}
-                  className={`absolute ${posStyles[idx]} p-4 rounded-xl border transition-all duration-500 cursor-pointer ${activeStep === step.id ? 'bg-blue-900/40 border-blue-500 scale-110' : 'bg-slate-900 border-slate-700 opacity-60'}`}
-                  onClick={() => setActiveStep(step.id)}
-                >
-                  {React.cloneElement(icons[step.id], { className: `w-6 h-6 mb-2 ${activeStep === step.id ? 'text-white' : 'text-slate-500'}` })}
-                  <div className="text-xs font-bold text-slate-200">{step.title.split(' ')[0]}</div>
+            <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center z-10 animate-fade-in-up">
+                <div class="inline-flex items-center space-x-2 bg-slate-800/50 rounded-full px-4 py-1.5 mb-8 border border-slate-700">
+                    <span class="flex h-2 w-2 rounded-full bg-green-400"></span>
+                    <span class="text-slate-300 text-xs font-medium tracking-wide" data-i18n="hero.badge">新加坡资金 × 巴西算力资产</span>
                 </div>
-               );
-            })}
-          </div>
-
-          {/* Text Content Side */}
-          <div className="space-y-6">
-            {t.steps.map((step) => (
-              <div 
-                key={step.id}
-                onClick={() => setActiveStep(step.id)}
-                className={`p-6 rounded-xl border cursor-pointer transition-all duration-300 ${activeStep === step.id ? 'bg-slate-800 border-blue-500 shadow-lg' : 'bg-transparent border-transparent hover:bg-slate-800/50'}`}
-              >
-                <div className="flex items-start gap-4">
-                  <div className={`p-3 rounded-lg ${activeStep === step.id ? 'bg-blue-500/20' : 'bg-slate-800'}`}>
-                    {icons[step.id]}
-                  </div>
-                  <div>
-                    <h3 className={`text-lg font-bold ${activeStep === step.id ? 'text-white' : 'text-slate-400'}`}>
-                      {step.title}
-                    </h3>
-                    <p className="text-slate-400 text-sm mt-2 leading-relaxed">
-                      {step.desc}
-                    </p>
-                    {activeStep === step.id && (
-                      <div className="mt-3 inline-block px-3 py-1 rounded-full bg-blue-900/50 border border-blue-500/30 text-xs text-blue-300 font-medium">
-                        🚀 {lang === 'zh' ? '核心优势' : 'Advantage'}: {step.highlight}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-};
-
-const Advantages = ({ lang }) => {
-  const t = translations[lang].advantages;
-  const icons = [ShieldCheck, Building2, Zap];
-
-  return (
-    <section id="Advantages" className="py-24 bg-slate-950">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <SectionTitle subtitle={t.subtitle} title={t.title} />
-        
-        <div className="grid md:grid-cols-3 gap-8">
-          {t.cards.map((card, idx) => {
-            const Icon = icons[idx];
-            return (
-              <Card key={idx} className="hover:bg-slate-800/80">
-                <div className="h-12 w-12 bg-blue-600/20 rounded-lg flex items-center justify-center mb-6">
-                  <Icon className="text-blue-500 w-6 h-6" />
-                </div>
-                <h3 className="text-xl font-bold text-white mb-4">{card.title}</h3>
-                <p className="text-slate-400 text-sm leading-relaxed mb-4">
-                  {card.desc}
+                
+                <h1 class="text-4xl md:text-7xl font-bold text-white mb-6 leading-tight tracking-tight">
+                    <span data-i18n="hero.title_prefix">定义跨境</span> <br class="md:hidden" />
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400" data-i18n="hero.title_highlight">AI 基础设施</span><br />
+                    <span data-i18n="hero.title_suffix">的新资产范式</span>
+                </h1>
+                
+                <p class="mt-6 text-xl text-slate-400 max-w-3xl mx-auto leading-relaxed" data-i18n="hero.desc">
+                    DCDEEPTECH 通过独特的轻资产运营模式，连接低成本资本与高回报算力资产。利用政策套利与技术专长，为 LP 创造超越传统 REITs 的 Alpha 收益。
                 </p>
-                <ul className="space-y-2">
-                  {card.points.map((point, pIdx) => (
-                    <li key={pIdx} className="flex items-center text-sm text-slate-300">
-                      <CheckCircle2 className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                      <span>{point}</span>
-                    </li>
-                  ))}
-                </ul>
-              </Card>
-            );
-          })}
+                
+                <div class="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
+                    <button class="bg-blue-600 hover:bg-blue-500 text-white shadow-lg hover:shadow-blue-500/30 px-6 py-3 rounded-lg font-medium transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
+                        <span data-i18n="hero.btn_primary">探索投资模型</span> <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </button>
+                    <button class="bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 px-6 py-3 rounded-lg font-medium transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
+                        <span data-i18n="hero.btn_secondary">下载研究报告 (PDF)</span> <i data-lucide="briefcase" class="w-4 h-4"></i>
+                    </button>
+                </div>
+
+                <div class="mt-20 grid grid-cols-2 md:grid-cols-4 gap-8 border-t border-slate-800 pt-8">
+                    <div class="text-center">
+                        <div class="text-3xl font-bold text-white" data-i18n="hero.stats.0.value">>20%</div>
+                        <div class="text-sm text-slate-500 mt-1" data-i18n="hero.stats.0.label">目标 IRR</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-3xl font-bold text-white" data-i18n="hero.stats.1.value">40%+</div>
+                        <div class="text-sm text-slate-500 mt-1" data-i18n="hero.stats.1.label">税务节省 (ReData)</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-3xl font-bold text-white" data-i18n="hero.stats.2.value"><6%</div>
+                        <div class="text-sm text-slate-500 mt-1" data-i18n="hero.stats.2.label">融资成本 (EFS)</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-3xl font-bold text-white" data-i18n="hero.stats.3.value">100% Green</div>
+                        <div class="text-sm text-slate-500 mt-1" data-i18n="hero.stats.3.label">能源结构</div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-    </section>
-  );
-};
 
-const ROICalculator = ({ lang }) => {
-  const t = translations[lang].roi;
-  const [investment, setInvestment] = useState(5000000);
-  const [leverage, setLeverage] = useState(70);
-  const [utilization, setUtilization] = useState(85);
-  
-  // Simplified calculation logic based on report
-  const equity = investment * ((100 - leverage) / 100);
-  const debt = investment * (leverage / 100);
-  const annualRevenue = investment * 0.45 * (utilization / 100); // Assumed yield logic
-  const operationalCosts = annualRevenue * 0.25; // DCDEEPTECH Fees + Power
-  const interest = debt * 0.055; // 5.5% interest
-  const netIncome = annualRevenue - operationalCosts - interest;
-  const coc = (netIncome / equity) * 100;
+        <!-- Strategy Model Section -->
+        <section id="StrategicModel" class="py-24 bg-slate-900 relative">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="mb-12 text-center">
+                    <span class="text-blue-400 font-semibold tracking-wider uppercase text-sm" data-i18n="strategy.subtitle">STRATEGIC ARBITRAGE</span>
+                    <h2 class="text-3xl md:text-4xl font-bold text-white mt-2 leading-tight" data-i18n="strategy.title">跨境套利核心模型</h2>
+                    <div class="h-1 w-20 bg-blue-600 mt-4 rounded-full mx-auto"></div>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    <!-- Interactive Graphic -->
+                    <div class="relative h-[500px] bg-slate-800/30 rounded-2xl border border-slate-700/50 p-8 flex flex-col items-center justify-center">
+                        <!-- SVG Lines -->
+                        <div class="absolute inset-0 pointer-events-none">
+                            <svg class="w-full h-full">
+                                <path id="path-1" d="M100 100 Q 400 50 700 100" fill="none" stroke="#1e293b" stroke-width="2" stroke-dasharray="5,5" class="strategy-path" />
+                                <path id="path-2" d="M700 100 Q 750 300 700 500" fill="none" stroke="#1e293b" stroke-width="2" stroke-dasharray="5,5" class="strategy-path" />
+                                <path id="path-3" d="M700 500 Q 400 550 100 500" fill="none" stroke="#1e293b" stroke-width="2" stroke-dasharray="5,5" class="strategy-path" />
+                                <path id="path-4" d="M100 500 Q 50 300 100 100" fill="none" stroke="#3b82f6" stroke-width="2" stroke-dasharray="5,5" stroke-opacity="0.3" />
+                            </svg>
+                        </div>
 
-  return (
-    <section id="ROI" className="py-24 bg-slate-900">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-gradient-to-br from-blue-900/20 to-indigo-900/20 border border-blue-500/20 rounded-2xl p-8 md:p-12">
-          <div className="grid md:grid-cols-2 gap-12">
-            <div>
-              <SectionTitle subtitle={t.subtitle} title={t.title} align="left" />
-              <p className="text-slate-400 mb-8">
-                {t.desc}
-                <br /><span className="text-xs text-slate-500">{t.disclaimer}</span>
-              </p>
+                        <!-- Central Hub -->
+                        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-slate-900 rounded-full border-2 border-blue-500/30 flex flex-col items-center justify-center z-10 shadow-[0_0_50px_rgba(59,130,246,0.2)]">
+                            <div class="text-blue-500 font-bold text-xl">DCDEEPTECH</div>
+                            <div class="text-xs text-slate-400 mt-2 text-center px-4 whitespace-pre-line leading-tight" data-i18n="strategy.center_text">
+                                轻资产运营<br>(合规/运维/风控)
+                            </div>
+                        </div>
 
-              <div className="space-y-6">
+                        <!-- Nodes -->
+                        <div class="strategy-node absolute top-10 left-10 p-4 rounded-xl border border-slate-700 bg-slate-900 opacity-60 transition-all duration-500 cursor-pointer" onclick="setStrategyStep(1)" data-step="1">
+                            <i data-lucide="building-2" class="w-6 h-6 mb-2 text-blue-400"></i>
+                            <div class="text-xs font-bold text-slate-200">SG Capital</div>
+                        </div>
+                        <div class="strategy-node absolute top-10 right-10 p-4 rounded-xl border border-slate-700 bg-slate-900 opacity-60 transition-all duration-500 cursor-pointer" onclick="setStrategyStep(2)" data-step="2">
+                            <i data-lucide="server" class="w-6 h-6 mb-2 text-indigo-400"></i>
+                            <div class="text-xs font-bold text-slate-200">Hardware</div>
+                        </div>
+                        <div class="strategy-node absolute bottom-10 right-10 p-4 rounded-xl border border-slate-700 bg-slate-900 opacity-60 transition-all duration-500 cursor-pointer" onclick="setStrategyStep(3)" data-step="3">
+                            <i data-lucide="globe" class="w-6 h-6 mb-2 text-green-400"></i>
+                            <div class="text-xs font-bold text-slate-200">Brazil DC</div>
+                        </div>
+                        <div class="strategy-node absolute bottom-10 left-10 p-4 rounded-xl border border-slate-700 bg-slate-900 opacity-60 transition-all duration-500 cursor-pointer" onclick="setStrategyStep(4)" data-step="4">
+                            <i data-lucide="trending-up" class="w-6 h-6 mb-2 text-yellow-400"></i>
+                            <div class="text-xs font-bold text-slate-200">Returns</div>
+                        </div>
+                    </div>
+
+                    <!-- Steps Text -->
+                    <div class="space-y-6">
+                        <!-- Step 1 -->
+                        <div id="step-card-1" class="strategy-step-card p-6 rounded-xl border border-transparent transition-all duration-300 cursor-pointer hover:bg-slate-800/50" onclick="setStrategyStep(1)">
+                            <div class="flex items-start gap-4">
+                                <div class="p-3 rounded-lg bg-blue-500/20"><i data-lucide="building-2" class="w-6 h-6 text-blue-400"></i></div>
+                                <div>
+                                    <h3 class="text-lg font-bold text-slate-400 transition-colors" data-i18n="strategy.steps.0.title">资本形成 (新加坡)</h3>
+                                    <p class="text-slate-400 text-sm mt-2 leading-relaxed" data-i18n="strategy.steps.0.desc">利用 EFS-Trade Loan 与 VCC 架构，获取低息资金与灵活的基金结构。</p>
+                                    <div class="mt-3 hidden step-highlight inline-block px-3 py-1 rounded-full bg-blue-900/50 border border-blue-500/30 text-xs text-blue-300 font-medium">
+                                        🚀 <span class="advantage-label">核心优势</span>: <span data-i18n="strategy.steps.0.highlight">SORA + 2% 融资成本</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Step 2 -->
+                        <div id="step-card-2" class="strategy-step-card p-6 rounded-xl border border-transparent transition-all duration-300 cursor-pointer hover:bg-slate-800/50" onclick="setStrategyStep(2)">
+                            <div class="flex items-start gap-4">
+                                <div class="p-3 rounded-lg bg-slate-800"><i data-lucide="server" class="w-6 h-6 text-indigo-400"></i></div>
+                                <div>
+                                    <h3 class="text-lg font-bold text-slate-400 transition-colors" data-i18n="strategy.steps.1.title">资产购置 & ReData</h3>
+                                    <p class="text-slate-400 text-sm mt-2 leading-relaxed" data-i18n="strategy.steps.1.desc">采购 H100/H200 集群，利用巴西 ReData 政策豁免联邦税，降低 CAPEX。</p>
+                                    <div class="mt-3 hidden step-highlight inline-block px-3 py-1 rounded-full bg-blue-900/50 border border-blue-500/30 text-xs text-blue-300 font-medium">
+                                        🚀 <span class="advantage-label">核心优势</span>: <span data-i18n="strategy.steps.1.highlight">节省 ~45% 落地成本</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Step 3 -->
+                        <div id="step-card-3" class="strategy-step-card p-6 rounded-xl border border-transparent transition-all duration-300 cursor-pointer hover:bg-slate-800/50" onclick="setStrategyStep(3)">
+                            <div class="flex items-start gap-4">
+                                <div class="p-3 rounded-lg bg-slate-800"><i data-lucide="zap" class="w-6 h-6 text-green-400"></i></div>
+                                <div>
+                                    <h3 class="text-lg font-bold text-slate-400 transition-colors" data-i18n="strategy.steps.2.title">部署与运营 (巴西)</h3>
+                                    <p class="text-slate-400 text-sm mt-2 leading-relaxed" data-i18n="strategy.steps.2.desc">部署于绿色能源数据中心，提供 MSP 级运维，确保高在线率。</p>
+                                    <div class="mt-3 hidden step-highlight inline-block px-3 py-1 rounded-full bg-blue-900/50 border border-blue-500/30 text-xs text-blue-300 font-medium">
+                                        🚀 <span class="advantage-label">核心优势</span>: <span data-i18n="strategy.steps.2.highlight">清洁能源溢价</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Step 4 -->
+                        <div id="step-card-4" class="strategy-step-card p-6 rounded-xl border border-transparent transition-all duration-300 cursor-pointer hover:bg-slate-800/50" onclick="setStrategyStep(4)">
+                            <div class="flex items-start gap-4">
+                                <div class="p-3 rounded-lg bg-slate-800"><i data-lucide="trending-up" class="w-6 h-6 text-yellow-400"></i></div>
+                                <div>
+                                    <h3 class="text-lg font-bold text-slate-400 transition-colors" data-i18n="strategy.steps.3.title">价值分配</h3>
+                                    <p class="text-slate-400 text-sm mt-2 leading-relaxed" data-i18n="strategy.steps.3.desc">算力租赁产生美元现金流，通过 VCC 分红回流 LP，享受双边税收协定。</p>
+                                    <div class="mt-3 hidden step-highlight inline-block px-3 py-1 rounded-full bg-blue-900/50 border border-blue-500/30 text-xs text-blue-300 font-medium">
+                                        🚀 <span class="advantage-label">核心优势</span>: <span data-i18n="strategy.steps.3.highlight">美元收益，税收优化</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Advantages Section -->
+        <section id="Advantages" class="py-24 bg-slate-950">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="mb-12 text-center">
+                    <span class="text-blue-400 font-semibold tracking-wider uppercase text-sm" data-i18n="advantages.subtitle">WHY US</span>
+                    <h2 class="text-3xl md:text-4xl font-bold text-white mt-2 leading-tight" data-i18n="advantages.title">无法复制的竞争壁垒</h2>
+                    <div class="h-1 w-20 bg-blue-600 mt-4 rounded-full mx-auto"></div>
+                </div>
+                
+                <div class="grid md:grid-cols-3 gap-8">
+                    <!-- Card 1 -->
+                    <div class="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-xl p-6 hover:border-blue-500/50 transition-colors duration-300 hover:bg-slate-800/80">
+                        <div class="h-12 w-12 bg-blue-600/20 rounded-lg flex items-center justify-center mb-6">
+                            <i data-lucide="shield-check" class="text-blue-500 w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-4" data-i18n="advantages.cards.0.title">ReData 税务护城河</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-4" data-i18n="advantages.cards.0.desc">
+                            充分利用巴西《数据中心服务特别税收制度》(ReData)，暂停联邦税（II, IPI, PIS/COFINS）。
+                        </p>
+                        <ul class="space-y-2">
+                            <li class="flex items-center text-sm text-slate-300"><i data-lucide="check-circle-2" class="w-4 h-4 text-green-500 mr-2"></i><span data-i18n="advantages.cards.0.points.0">节省 80%-100% 进口税费</span></li>
+                            <li class="flex items-center text-sm text-slate-300"><i data-lucide="check-circle-2" class="w-4 h-4 text-green-500 mr-2"></i><span data-i18n="advantages.cards.0.points.1">IRR 提升显著</span></li>
+                        </ul>
+                    </div>
+                    <!-- Card 2 -->
+                    <div class="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-xl p-6 hover:border-blue-500/50 transition-colors duration-300 hover:bg-slate-800/80">
+                        <div class="h-12 w-12 bg-indigo-600/20 rounded-lg flex items-center justify-center mb-6">
+                            <i data-lucide="building-2" class="text-indigo-500 w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-4" data-i18n="advantages.cards.1.title">EFS 融资杠杆</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-4" data-i18n="advantages.cards.1.desc">
+                            基于新加坡企业融资计划 (EFS)，通过政府分担风险机制获得低息贷款，极大优化资本结构。
+                        </p>
+                        <ul class="space-y-2">
+                            <li class="flex items-center text-sm text-slate-300"><i data-lucide="check-circle-2" class="w-4 h-4 text-green-500 mr-2"></i><span data-i18n="advantages.cards.1.points.0">政府风险分担高达 50-70%</span></li>
+                            <li class="flex items-center text-sm text-slate-300"><i data-lucide="check-circle-2" class="w-4 h-4 text-green-500 mr-2"></i><span data-i18n="advantages.cards.1.points.1">极具竞争力的资本成本</span></li>
+                        </ul>
+                    </div>
+                    <!-- Card 3 -->
+                    <div class="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-xl p-6 hover:border-blue-500/50 transition-colors duration-300 hover:bg-slate-800/80">
+                        <div class="h-12 w-12 bg-green-600/20 rounded-lg flex items-center justify-center mb-6">
+                            <i data-lucide="zap" class="text-green-500 w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-4" data-i18n="advantages.cards.2.title">ESG 与 溢价市场</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-4" data-i18n="advantages.cards.2.desc">
+                            巴西拥有全球最清洁的能源矩阵之一。ReData 要求使用可再生能源，完美契合全球 ESG 投资标准。
+                        </p>
+                        <ul class="space-y-2">
+                            <li class="flex items-center text-sm text-slate-300"><i data-lucide="check-circle-2" class="w-4 h-4 text-green-500 mr-2"></i><span data-i18n="advantages.cards.2.points.0">100% 水电/可再生能源</span></li>
+                            <li class="flex items-center text-sm text-slate-300"><i data-lucide="check-circle-2" class="w-4 h-4 text-green-500 mr-2"></i><span data-i18n="advantages.cards.2.points.1">LGPD 数据主权带来的区域溢价</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ROI Calculator -->
+        <section id="ROI" class="py-24 bg-slate-900">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="bg-gradient-to-br from-blue-900/20 to-indigo-900/20 border border-blue-500/20 rounded-2xl p-8 md:p-12">
+                    <div class="grid md:grid-cols-2 gap-12">
+                        <div>
+                            <div class="mb-12 text-left">
+                                <span class="text-blue-400 font-semibold tracking-wider uppercase text-sm" data-i18n="roi.subtitle">FINANCIAL SIMULATION</span>
+                                <h2 class="text-3xl md:text-4xl font-bold text-white mt-2 leading-tight" data-i18n="roi.title">收益测算模拟器</h2>
+                                <div class="h-1 w-20 bg-blue-600 mt-4 rounded-full"></div>
+                            </div>
+                            <p class="text-slate-400 mb-8">
+                                <span data-i18n="roi.desc">基于 H100 集群部署模型，调整参数以查看预计回报。</span>
+                                <br /><span class="text-xs text-slate-500" data-i18n="roi.disclaimer">*仅供演示，不构成投资建议。</span>
+                            </p>
+            
+                            <div class="space-y-6">
+                                <div>
+                                    <div class="flex justify-between text-white mb-2">
+                                        <label data-i18n="roi.labels.investment">总资产投入 (USD)</label>
+                                        <span class="font-mono" id="val-investment">$5.0M</span>
+                                    </div>
+                                    <input type="range" id="input-investment" min="1000000" max="20000000" step="500000" value="5000000" class="w-full">
+                                </div>
+            
+                                <div>
+                                    <div class="flex justify-between text-white mb-2">
+                                        <label data-i18n="roi.labels.leverage">EFS 债务杠杆比例</label>
+                                        <span class="font-mono" id="val-leverage">70%</span>
+                                    </div>
+                                    <input type="range" id="input-leverage" min="0" max="80" step="5" value="70" class="w-full">
+                                </div>
+            
+                                <div>
+                                    <div class="flex justify-between text-white mb-2">
+                                        <label data-i18n="roi.labels.utilization">算力利用率 (Utilization)</label>
+                                        <span class="font-mono" id="val-utilization">85%</span>
+                                    </div>
+                                    <input type="range" id="input-utilization" min="50" max="100" step="5" value="85" class="w-full">
+                                </div>
+                            </div>
+                        </div>
+            
+                        <div class="bg-slate-950/50 rounded-xl p-6 border border-slate-800 flex flex-col justify-center">
+                            <div class="grid grid-cols-2 gap-6 mb-8">
+                                <div class="p-4 bg-slate-900 rounded-lg">
+                                    <div class="text-xs text-slate-400 mb-1" data-i18n="roi.labels.equity">权益投入 (Equity)</div>
+                                    <div class="text-xl font-mono text-white" id="out-equity">$1.50M</div>
+                                </div>
+                                <div class="p-4 bg-slate-900 rounded-lg">
+                                    <div class="text-xs text-slate-400 mb-1" data-i18n="roi.labels.cashflow">年度净现金流</div>
+                                    <div class="text-xl font-mono text-green-400" id="out-cashflow">$1048k</div>
+                                </div>
+                            </div>
+            
+                            <div class="text-center">
+                                <div class="text-sm text-slate-400 mb-2" data-i18n="roi.labels.coc">预计现金回报率 (CoC)</div>
+                                <div class="text-6xl font-bold text-blue-500 tracking-tight" id="out-coc">69.9%</div>
+                                <div class="mt-4 inline-block px-4 py-1 bg-green-500/10 text-green-400 text-sm rounded-full border border-green-500/20" data-i18n="roi.labels.comparison">
+                                    优于传统 REITs (5-7%)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Services Section -->
+        <section id="Services" class="py-24 bg-slate-950">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="mb-12 text-center">
+                    <span class="text-blue-400 font-semibold tracking-wider uppercase text-sm" data-i18n="services.subtitle">LIFECYCLE MANAGEMENT</span>
+                    <h2 class="text-3xl md:text-4xl font-bold text-white mt-2 leading-tight" data-i18n="services.title">全周期价值创造</h2>
+                    <div class="h-1 w-20 bg-blue-600 mt-4 rounded-full mx-auto"></div>
+                </div>
+                <div class="grid md:grid-cols-4 gap-6">
+                    <div class="border-l-2 border-slate-800 pl-6 hover:border-blue-500 transition-colors">
+                        <h4 class="text-white font-bold text-lg mb-2" data-i18n="services.items.0.title">01. 架构咨询</h4>
+                        <p class="text-slate-500 text-sm" data-i18n="services.items.0.desc">VCC 基金设立, EFS 融资申请, 模型搭建</p>
+                    </div>
+                    <div class="border-l-2 border-slate-800 pl-6 hover:border-blue-500 transition-colors">
+                        <h4 class="text-white font-bold text-lg mb-2" data-i18n="services.items.1.title">02. 采购与合规</h4>
+                        <p class="text-slate-500 text-sm" data-i18n="services.items.1.desc">ReData 资质获取, 供应链谈判, 零税负进口</p>
+                    </div>
+                    <div class="border-l-2 border-slate-800 pl-6 hover:border-blue-500 transition-colors">
+                        <h4 class="text-white font-bold text-lg mb-2" data-i18n="services.items.2.title">03. 技术运维</h4>
+                        <p class="text-slate-500 text-sm" data-i18n="services.items.2.desc">L1/L2 支持, 7x24 监控, 算力调度优化</p>
+                    </div>
+                    <div class="border-l-2 border-slate-800 pl-6 hover:border-blue-500 transition-colors">
+                        <h4 class="text-white font-bold text-lg mb-2" data-i18n="services.items.3.title">04. 退出机制</h4>
+                        <p class="text-slate-500 text-sm" data-i18n="services.items.3.desc">资产残值管理, 二手市场转售, 收益清算</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-950 border-t border-slate-900 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div class="col-span-1 md:col-span-2">
+                    <div class="flex items-center space-x-2 mb-4">
+                        <i data-lucide="database" class="text-blue-600 w-6 h-6"></i>
+                        <span class="text-xl font-bold text-white">DC<span class="text-blue-500">DEEPTECH</span></span>
+                    </div>
+                    <p class="text-slate-500 text-sm max-w-sm" data-i18n="footer.desc">
+                        连接新加坡资本与巴西数字资产的战略合作伙伴。专注于为重资产投资者提供轻资产运营、合规与技术管理服务。
+                    </p>
+                </div>
+                
                 <div>
-                  <div className="flex justify-between text-white mb-2">
-                    <label>{t.labels.investment}</label>
-                    <span className="font-mono">${(investment/1000000).toFixed(1)}M</span>
-                  </div>
-                  <input 
-                    type="range" min="1000000" max="20000000" step="500000"
-                    value={investment} onChange={(e) => setInvestment(Number(e.target.value))}
-                    className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer"
-                  />
+                    <h4 class="text-white font-semibold mb-4" data-i18n="footer.services_title">服务</h4>
+                    <ul class="space-y-2 text-sm text-slate-500" id="footer-services-list">
+                        <li>资本结构咨询</li>
+                        <li>ReData 合规申请</li>
+                        <li>算力进出口物流</li>
+                        <li>MSP 运维管理</li>
+                    </ul>
                 </div>
-
+    
                 <div>
-                  <div className="flex justify-between text-white mb-2">
-                    <label>{t.labels.leverage}</label>
-                    <span className="font-mono">{leverage}%</span>
-                  </div>
-                  <input 
-                    type="range" min="0" max="80" step="5"
-                    value={leverage} onChange={(e) => setLeverage(Number(e.target.value))}
-                    className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer"
-                  />
+                    <h4 class="text-white font-semibold mb-4" data-i18n="footer.contact_title">联系我们</h4>
+                    <ul class="space-y-2 text-sm text-slate-500">
+                        <li>ir@dcdeeptech.com</li>
+                        <li>Singapore HQ: Marina Bay Fin. Ctr.</li>
+                        <li>Brazil Ops: São Paulo</li>
+                    </ul>
                 </div>
-
-                 <div>
-                  <div className="flex justify-between text-white mb-2">
-                    <label>{t.labels.utilization}</label>
-                    <span className="font-mono">{utilization}%</span>
-                  </div>
-                  <input 
-                    type="range" min="50" max="100" step="5"
-                    value={utilization} onChange={(e) => setUtilization(Number(e.target.value))}
-                    className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer"
-                  />
-                </div>
-              </div>
             </div>
-
-            <div className="bg-slate-950/50 rounded-xl p-6 border border-slate-800 flex flex-col justify-center">
-              <div className="grid grid-cols-2 gap-6 mb-8">
-                <div className="p-4 bg-slate-900 rounded-lg">
-                  <div className="text-xs text-slate-400 mb-1">{t.labels.equity}</div>
-                  <div className="text-xl font-mono text-white">${(equity/1000000).toFixed(2)}M</div>
-                </div>
-                <div className="p-4 bg-slate-900 rounded-lg">
-                  <div className="text-xs text-slate-400 mb-1">{t.labels.cashflow}</div>
-                  <div className="text-xl font-mono text-green-400">${(netIncome/1000).toFixed(0)}k</div>
-                </div>
-              </div>
-
-              <div className="text-center">
-                <div className="text-sm text-slate-400 mb-2">{t.labels.coc}</div>
-                <div className="text-6xl font-bold text-blue-500 tracking-tight">
-                  {coc.toFixed(1)}%
-                </div>
-                <div className="mt-4 inline-block px-4 py-1 bg-green-500/10 text-green-400 text-sm rounded-full border border-green-500/20">
-                  {t.labels.comparison}
-                </div>
-              </div>
+            <div class="border-t border-slate-900 mt-12 pt-8 text-center text-xs text-slate-600" data-i18n="footer.copyright">
+                © 2026 DCDEEPTECH PTE. LTD. All rights reserved. 本网站仅供信息参考，不构成财务建议。
             </div>
-          </div>
         </div>
-      </div>
-    </section>
-  );
-};
-
-const Services = ({ lang }) => {
-  const t = translations[lang].services;
-
-  return (
-    <section id="Services" className="py-24 bg-slate-950">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <SectionTitle subtitle={t.subtitle} title={t.title} />
-        <div className="grid md:grid-cols-4 gap-6">
-          {t.items.map((item, idx) => (
-            <div key={idx} className="border-l-2 border-slate-800 pl-6 hover:border-blue-500 transition-colors">
-              <h4 className="text-white font-bold text-lg mb-2">{item.title}</h4>
-              <p className="text-slate-500 text-sm">{item.desc}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-};
-
-const Footer = ({ lang }) => {
-  const t = translations[lang].footer;
-  return (
-    <footer className="bg-slate-950 border-t border-slate-900 py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid md:grid-cols-4 gap-8">
-          <div className="col-span-1 md:col-span-2">
-            <div className="flex items-center space-x-2 mb-4">
-              <Database className="text-blue-600 w-6 h-6" />
-              <span className="text-xl font-bold text-white">DC<span className="text-blue-500">DEEPTECH</span></span>
-            </div>
-            <p className="text-slate-500 text-sm max-w-sm">
-              {t.desc}
-            </p>
-          </div>
-          
-          <div>
-            <h4 className="text-white font-semibold mb-4">{t.services_title}</h4>
-            <ul className="space-y-2 text-sm text-slate-500">
-              {t.services_list.map((item, idx) => <li key={idx}>{item}</li>)}
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="text-white font-semibold mb-4">{t.contact_title}</h4>
-            <ul className="space-y-2 text-sm text-slate-500">
-              <li>ir@dcdeeptech.com</li>
-              <li>Singapore HQ: Marina Bay Fin. Ctr.</li>
-              <li>Brazil Ops: São Paulo</li>
-            </ul>
-          </div>
-        </div>
-        <div className="border-t border-slate-900 mt-12 pt-8 text-center text-xs text-slate-600">
-          {t.copyright}
-        </div>
-      </div>
     </footer>
-  );
-};
 
-// --- Login Modal ---
-
-const LoginModal = ({ isOpen, onClose, lang }) => {
-  if (!isOpen) return null;
-  const t = translations[lang].login;
-
-  return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-      <div className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-md p-8 relative animate-fade-in-up">
-        <button onClick={onClose} className="absolute top-4 right-4 text-slate-500 hover:text-white">
-          <X className="w-5 h-5" />
-        </button>
-        
-        <div className="text-center mb-8">
-          <Lock className="w-10 h-10 text-blue-500 mx-auto mb-4" />
-          <h3 className="text-2xl font-bold text-white">{t.title}</h3>
-          <p className="text-slate-400 text-sm mt-2">{t.subtitle}</p>
+    <!-- Login Modal -->
+    <div id="login-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-md p-8 relative animate-fade-in-up">
+            <button onclick="closeLoginModal()" class="absolute top-4 right-4 text-slate-500 hover:text-white">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            
+            <div class="text-center mb-8">
+                <i data-lucide="lock" class="w-10 h-10 text-blue-500 mx-auto mb-4"></i>
+                <h3 class="text-2xl font-bold text-white" data-i18n="login.title">LP 投资者门户</h3>
+                <p class="text-slate-400 text-sm mt-2" data-i18n="login.subtitle">访问实时仪表盘、月度运营报告及财务报表</p>
+            </div>
+    
+            <form class="space-y-4" onsubmit="event.preventDefault();">
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-1" data-i18n="login.email">企业邮箱</label>
+                    <input type="email" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-blue-500 outline-none" placeholder="name@fund.com" />
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-1" data-i18n="login.code">访问代码</label>
+                    <input type="password" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-blue-500 outline-none" placeholder="••••••••" />
+                </div>
+                <button class="w-full mt-4 bg-blue-600 hover:bg-blue-500 text-white shadow-lg hover:shadow-blue-500/30 px-6 py-3 rounded-lg font-medium transition-all" data-i18n="login.btn">安全登录</button>
+            </form>
+            
+            <div class="mt-6 text-center">
+                <a href="#" class="text-xs text-blue-400 hover:underline"><span data-i18n="login.request">申请访问权限</span> &rarr;</a>
+            </div>
         </div>
-
-        <form className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1">{t.email}</label>
-            <input type="email" className="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-blue-500 outline-none" placeholder="name@fund.com" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1">{t.code}</label>
-            <input type="password" className="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-blue-500 outline-none" placeholder="••••••••" />
-          </div>
-          <Button variant="primary" className="w-full mt-4">{t.btn}</Button>
-        </form>
-        
-        <div className="mt-6 text-center">
-          <a href="#" className="text-xs text-blue-400 hover:underline">{t.request} &rarr;</a>
-        </div>
-      </div>
     </div>
-  );
-};
 
-// --- Main App Component ---
+    <script>
+        // --- Translations ---
+        const translations = {
+            zh: {
+                nav: { items: ['战略模型', '核心优势', '服务体系', '投资回报'], login: 'LP 门户登录' },
+                hero: {
+                    badge: '新加坡资金 × 巴西算力资产',
+                    title_prefix: '定义跨境',
+                    title_highlight: 'AI 基础设施',
+                    title_suffix: '的新资产范式',
+                    desc: 'DCDEEPTECH 通过独特的轻资产运营模式，连接低成本资本与高回报算力资产。利用政策套利与技术专长，为 LP 创造超越传统 REITs 的 Alpha 收益。',
+                    btn_primary: '探索投资模型',
+                    btn_secondary: '下载研究报告 (PDF)',
+                    stats: [
+                        { label: '目标 IRR', value: '>20%' },
+                        { label: '税务节省 (ReData)', value: '40%+' },
+                        { label: '融资成本 (EFS)', value: '<6%' },
+                        { label: '能源结构', value: '100% 绿色' },
+                    ]
+                },
+                strategy: {
+                    subtitle: 'STRATEGIC ARBITRAGE',
+                    title: '跨境套利核心模型',
+                    center_text: '轻资产运营\n(合规/运维/风控)',
+                    steps: [
+                        { title: "资本形成 (新加坡)", desc: "利用 EFS-Trade Loan 与 VCC 架构，获取低息资金与灵活的基金结构。", highlight: "SORA + 2% 融资成本" },
+                        { title: "资产购置 & ReData", desc: "采购 H100/H200 集群，利用巴西 ReData 政策豁免联邦税，降低 CAPEX。", highlight: "节省 ~45% 落地成本" },
+                        { title: "部署与运营 (巴西)", desc: "部署于绿色能源数据中心，提供 MSP 级运维，确保高在线率。", highlight: "清洁能源溢价" },
+                        { title: "价值分配", desc: "算力租赁产生美元现金流，通过 VCC 分红回流 LP，享受双边税收协定。", highlight: "美元收益，税收优化" }
+                    ]
+                },
+                advantages: {
+                    subtitle: 'WHY US',
+                    title: '无法复制的竞争壁垒',
+                    cards: [
+                        { title: "ReData 税务护城河", desc: "充分利用巴西《数据中心服务特别税收制度》(ReData)，暂停联邦税（II, IPI, PIS/COFINS）。", points: ["节省 80%-100% 进口税费", "IRR 提升显著"] },
+                        { title: "EFS 融资杠杆", desc: "基于新加坡企业融资计划 (EFS)，通过政府分担风险机制获得低息贷款，极大优化资本结构。", points: ["政府风险分担高达 50-70%", "极具竞争力的资本成本"] },
+                        { title: "ESG 与 溢价市场", desc: "巴西拥有全球最清洁的能源矩阵之一。ReData 要求使用可再生能源，完美契合全球 ESG 投资标准。", points: ["100% 水电/可再生能源", "LGPD 数据主权带来的区域溢价"] }
+                    ]
+                },
+                roi: {
+                    subtitle: 'FINANCIAL SIMULATION',
+                    title: '收益测算模拟器',
+                    desc: '基于 H100 集群部署模型，调整参数以查看预计回报。',
+                    disclaimer: '*仅供演示，不构成投资建议。',
+                    labels: { investment: '总资产投入 (USD)', leverage: 'EFS 债务杠杆比例', utilization: '算力利用率 (Utilization)', equity: '权益投入 (Equity)', cashflow: '年度净现金流', coc: '预计现金回报率 (CoC)', comparison: '优于传统 REITs (5-7%)' }
+                },
+                services: {
+                    subtitle: 'LIFECYCLE MANAGEMENT',
+                    title: '全周期价值创造',
+                    items: [
+                        { title: "01. 架构咨询", desc: "VCC 基金设立, EFS 融资申请, 模型搭建" },
+                        { title: "02. 采购与合规", desc: "ReData 资质获取, 供应链谈判, 零税负进口" },
+                        { title: "03. 技术运维", desc: "L1/L2 支持, 7x24 监控, 算力调度优化" },
+                        { title: "04. 退出机制", desc: "资产残值管理, 二手市场转售, 收益清算" },
+                    ]
+                },
+                footer: {
+                    desc: '连接新加坡资本与巴西数字资产的战略合作伙伴。专注于为重资产投资者提供轻资产运营、合规与技术管理服务。',
+                    services_title: '服务',
+                    services_list: ['资本结构咨询', 'ReData 合规申请', '算力进出口物流', 'MSP 运维管理'],
+                    contact_title: '联系我们',
+                    copyright: '© 2026 DCDEEPTECH PTE. LTD. All rights reserved. 本网站仅供信息参考，不构成财务建议。'
+                },
+                login: { title: 'LP 投资者门户', subtitle: '访问实时仪表盘、月度运营报告及财务报表', email: '企业邮箱', code: '访问代码', btn: '安全登录', request: '申请访问权限' }
+            },
+            en: {
+                nav: { items: ['Strategic Model', 'Key Advantages', 'Services', 'ROI Analysis'], login: 'LP Portal Login' },
+                hero: {
+                    badge: 'Singapore Capital × Brazil Compute Assets',
+                    title_prefix: 'Defining the New',
+                    title_highlight: 'Cross-Border AI Infrastructure',
+                    title_suffix: 'Asset Paradigm',
+                    desc: 'DCDEEPTECH bridges low-cost capital with high-yield compute assets through a unique asset-light operating model. We leverage policy arbitrage and technical expertise to generate Alpha returns for LPs that outperform traditional REITs.',
+                    btn_primary: 'Explore Model',
+                    btn_secondary: 'Download Report (PDF)',
+                    stats: [
+                        { label: 'Target IRR', value: '>20%' },
+                        { label: 'Tax Savings (ReData)', value: '40%+' },
+                        { label: 'Financing Cost (EFS)', value: '<6%' },
+                        { label: 'Energy Mix', value: '100% Green' },
+                    ]
+                },
+                strategy: {
+                    subtitle: 'STRATEGIC ARBITRAGE',
+                    title: 'Core Cross-Border Arbitrage Model',
+                    center_text: 'Asset-Light Ops\n(Compliance/O&M/Risk)',
+                    steps: [
+                        { title: "Capital Formation (SG)", desc: "Leveraging EFS-Trade Loans and VCC structures to secure low-interest capital and flexible fund architecture.", highlight: "SORA + 2% Cost of Debt" },
+                        { title: "Asset Acquisition & ReData", desc: "Procuring H100/H200 clusters, utilizing Brazil's ReData policy to exempt federal taxes and lower CAPEX.", highlight: "Save ~45% Landed Cost" },
+                        { title: "Deployment & Ops (Brazil)", desc: "Deployed in green energy data centers with MSP-grade O&M to ensure high availability.", highlight: "Green Energy Premium" },
+                        { title: "Value Distribution", desc: "Compute leasing generates USD cash flow, distributed back to LPs via VCC, benefiting from bilateral tax treaties.", highlight: "USD Yields, Tax Optimized" }
+                    ]
+                },
+                advantages: {
+                    subtitle: 'WHY US',
+                    title: 'Unreplicable Competitive Moats',
+                    cards: [
+                        { title: "ReData Tax Moat", desc: "Fully leveraging Brazil's Special Regime for Data Centers (ReData) to suspend federal taxes (II, IPI, PIS/COFINS).", points: ["Save 80%-100% on Import Duties", "Significant IRR Uplift"] },
+                        { title: "EFS Financing Leverage", desc: "Based on Singapore's Enterprise Financing Scheme (EFS), utilizing government risk-sharing to secure low-interest loans and optimize capital structure.", points: ["Gov Risk Sharing up to 50-70%", "Highly Competitive Cost of Capital"] },
+                        { title: "ESG & Premium Market", desc: "Brazil boasts one of the cleanest energy matrices globally. ReData requires renewable energy use, aligning perfectly with global ESG standards.", points: ["100% Hydro/Renewable Energy", "Regional Premium via LGPD Data Sovereignty"] }
+                    ]
+                },
+                roi: {
+                    subtitle: 'FINANCIAL SIMULATION',
+                    title: 'Return Simulation',
+                    desc: 'Based on H100 cluster deployment models. Adjust parameters to view projected returns.',
+                    disclaimer: '*For demonstration only, not financial advice.',
+                    labels: { investment: 'Total Asset Investment (USD)', leverage: 'EFS Debt Leverage Ratio', utilization: 'Compute Utilization', equity: 'Equity Contribution', cashflow: 'Annual Net Cash Flow', coc: 'Projected Cash-on-Cash (CoC)', comparison: 'Outperforms Traditional REITs (5-7%)' }
+                },
+                services: {
+                    subtitle: 'LIFECYCLE MANAGEMENT',
+                    title: 'Full Lifecycle Value Creation',
+                    items: [
+                        { title: "01. Structuring Advisory", desc: "VCC Fund Setup, EFS Application, Model Building" },
+                        { title: "02. Procurement & Compliance", desc: "ReData Qualification, Supply Chain Negotiation, Zero-Tax Import" },
+                        { title: "03. Technical Operations", desc: "L1/L2 Support, 24/7 Monitoring, Scheduler Optimization" },
+                        { title: "04. Exit Mechanism", desc: "Residual Value Mgmt, Secondary Market Resale, Yield Liquidation" },
+                    ]
+                },
+                footer: {
+                    desc: 'Strategic partner connecting Singaporean capital with Brazilian digital assets. Focusing on asset-light operations, compliance, and technical management for heavy-asset investors.',
+                    services_title: 'Services',
+                    services_list: ['Capital Structuring', 'ReData Compliance', 'Compute Logistics', 'MSP Operations'],
+                    contact_title: 'Contact Us',
+                    copyright: '© 2026 DCDEEPTECH PTE. LTD. All rights reserved. This website is for informational purposes only and does not constitute financial advice.'
+                },
+                login: { title: 'LP Investor Portal', subtitle: 'Access real-time dashboards, monthly operational reports, and financial statements.', email: 'Corporate Email', code: 'Access Code', btn: 'Secure Login', request: 'Request Access' }
+            }
+        };
 
-export default function App() {
-  const [scrolled, setScrolled] = useState(false);
-  const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [lang, setLang] = useState('zh'); // Default to Chinese
+        // --- State ---
+        let currentLang = 'zh';
+        let activeStrategyStep = 1;
 
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+        // --- Init ---
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            initNavbar();
+            initStrategy();
+            initROI();
+            initLanguage();
+            initMobileMenu();
+        });
 
-  return (
-    <div className="bg-slate-950 min-h-screen text-slate-200 font-sans selection:bg-blue-500/30">
-      <Navbar 
-        scrolled={scrolled} 
-        onLoginClick={() => setIsLoginOpen(true)} 
-        lang={lang} 
-        setLang={setLang} 
-      />
-      
-      <main>
-        <Hero lang={lang} />
-        <StrategyModel lang={lang} />
-        <Advantages lang={lang} />
-        <ROICalculator lang={lang} />
-        <Services lang={lang} />
-      </main>
+        // --- Navbar Logic ---
+        function initNavbar() {
+            window.addEventListener('scroll', () => {
+                const navbar = document.getElementById('navbar');
+                if (window.scrollY > 50) {
+                    navbar.classList.add('bg-slate-950/90', 'backdrop-blur-md', 'border-b', 'border-slate-800', 'py-3');
+                    navbar.classList.remove('py-5');
+                } else {
+                    navbar.classList.remove('bg-slate-950/90', 'backdrop-blur-md', 'border-b', 'border-slate-800', 'py-3');
+                    navbar.classList.add('py-5');
+                }
+            });
+        }
 
-      <Footer lang={lang} />
-      <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} lang={lang} />
-    </div>
-  );
-}
+        function initMobileMenu() {
+            const btn = document.getElementById('mobile-menu-btn');
+            const menu = document.getElementById('mobile-menu');
+            btn.addEventListener('click', () => {
+                menu.classList.toggle('hidden');
+            });
+            // Close menu on click link
+            menu.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    menu.classList.add('hidden');
+                });
+            });
+        }
+
+        // --- Login Modal ---
+        function openLoginModal() {
+            document.getElementById('login-modal').classList.remove('hidden');
+        }
+        function closeLoginModal() {
+            document.getElementById('login-modal').classList.add('hidden');
+        }
+
+        // --- Strategy Model Logic ---
+        function initStrategy() {
+            setStrategyStep(1);
+        }
+
+        function setStrategyStep(stepId) {
+            activeStrategyStep = stepId;
+            
+            // Update Nodes
+            document.querySelectorAll('.strategy-node').forEach(node => {
+                const step = parseInt(node.getAttribute('data-step'));
+                if (step === stepId) {
+                    node.classList.add('active', 'bg-blue-900/40', 'scale-110', 'border-blue-500', 'opacity-100');
+                    node.classList.remove('opacity-60', 'bg-slate-900', 'border-slate-700');
+                    // Change icon color
+                    node.querySelector('i').classList.add('text-white');
+                } else {
+                    node.classList.remove('active', 'bg-blue-900/40', 'scale-110', 'border-blue-500', 'opacity-100');
+                    node.classList.add('opacity-60', 'bg-slate-900', 'border-slate-700');
+                     // Reset icon color (hacky but simple)
+                    const icon = node.querySelector('i');
+                    icon.classList.remove('text-white');
+                }
+            });
+
+            // Update SVG Paths (Simple logic: if step >= path index, highlight it)
+            // Path 1 connects 1-2, Path 2 connects 2-3, Path 3 connects 3-4
+            document.getElementById('path-1').setAttribute('stroke', stepId >= 2 ? '#3b82f6' : '#1e293b');
+            document.getElementById('path-2').setAttribute('stroke', stepId >= 3 ? '#3b82f6' : '#1e293b');
+            document.getElementById('path-3').setAttribute('stroke', stepId >= 4 ? '#3b82f6' : '#1e293b');
+
+            // Update Text Cards
+            document.querySelectorAll('.strategy-step-card').forEach((card, idx) => {
+                const id = idx + 1;
+                const highlight = card.querySelector('.step-highlight');
+                const title = card.querySelector('h3');
+                
+                if (id === stepId) {
+                    card.classList.add('bg-slate-800', 'border-blue-500', 'shadow-lg');
+                    card.classList.remove('border-transparent');
+                    title.classList.add('text-white');
+                    title.classList.remove('text-slate-400');
+                    highlight.classList.remove('hidden');
+                } else {
+                    card.classList.remove('bg-slate-800', 'border-blue-500', 'shadow-lg');
+                    card.classList.add('border-transparent');
+                    title.classList.remove('text-white');
+                    title.classList.add('text-slate-400');
+                    highlight.classList.add('hidden');
+                }
+            });
+        }
+
+        // --- ROI Calculator Logic ---
+        function initROI() {
+            const inputs = ['input-investment', 'input-leverage', 'input-utilization'];
+            inputs.forEach(id => {
+                document.getElementById(id).addEventListener('input', calculateROI);
+            });
+            calculateROI();
+        }
+
+        function calculateROI() {
+            const investment = parseFloat(document.getElementById('input-investment').value);
+            const leverage = parseFloat(document.getElementById('input-leverage').value);
+            const utilization = parseFloat(document.getElementById('input-utilization').value);
+
+            // Display Inputs
+            document.getElementById('val-investment').textContent = '$' + (investment / 1000000).toFixed(1) + 'M';
+            document.getElementById('val-leverage').textContent = leverage + '%';
+            document.getElementById('val-utilization').textContent = utilization + '%';
+
+            // Calc
+            const equity = investment * ((100 - leverage) / 100);
+            const debt = investment * (leverage / 100);
+            const annualRevenue = investment * 0.45 * (utilization / 100);
+            const operationalCosts = annualRevenue * 0.25;
+            const interest = debt * 0.055;
+            const netIncome = annualRevenue - operationalCosts - interest;
+            const coc = (netIncome / equity) * 100;
+
+            // Display Outputs
+            document.getElementById('out-equity').textContent = '$' + (equity / 1000000).toFixed(2) + 'M';
+            document.getElementById('out-cashflow').textContent = '$' + (netIncome / 1000).toFixed(0) + 'k';
+            
+            const cocEl = document.getElementById('out-coc');
+            cocEl.textContent = isFinite(coc) ? coc.toFixed(1) + '%' : 'N/A';
+        }
+
+        // --- Language Switching ---
+        function initLanguage() {
+            document.getElementById('lang-toggle-desktop').addEventListener('click', toggleLang);
+            document.getElementById('lang-toggle-mobile').addEventListener('click', toggleLang);
+        }
+
+        function toggleLang() {
+            currentLang = currentLang === 'zh' ? 'en' : 'zh';
+            updateContent();
+            // Update Toggle Button Text
+            const labelText = currentLang === 'zh' ? 'EN' : '中';
+            document.getElementById('lang-label-desktop').textContent = labelText;
+            document.getElementById('lang-label-mobile').textContent = currentLang.toUpperCase();
+        }
+
+        function updateContent() {
+            const t = translations[currentLang];
+
+            // Helper to safe update text
+            const safeSetText = (selector, value) => {
+                const el = document.querySelector(selector);
+                if (el) el.textContent = value;
+            };
+
+            const safeSetHTML = (selector, value) => {
+                const el = document.querySelector(selector);
+                if (el) el.innerHTML = value;
+            }
+
+            // Using data-i18n attributes for simple text mapping
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                const keys = key.split('.');
+                let value = t;
+                keys.forEach(k => {
+                    if (value[k] === undefined) {
+                        // Handle array index access
+                        const intK = parseInt(k);
+                        if (!isNaN(intK) && Array.isArray(value)) {
+                            value = value[intK];
+                        } else {
+                            value = value[k];
+                        }
+                    } else {
+                        value = value[k];
+                    }
+                });
+                
+                if (typeof value === 'string') {
+                    // Special handling for HTML content (newlines etc)
+                    if (key.includes('center_text')) {
+                        el.innerHTML = value.replace('\n', '<br>');
+                    } else {
+                        el.textContent = value;
+                    }
+                }
+            });
+
+            // Special handling for Footer Services List (rebuild list)
+            const footerList = document.getElementById('footer-services-list');
+            footerList.innerHTML = '';
+            t.footer.services_list.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = item;
+                footerList.appendChild(li);
+            });
+
+            // Update Advantage Label in Strategy
+            document.querySelectorAll('.advantage-label').forEach(el => {
+                el.textContent = currentLang === 'zh' ? '核心优势' : 'Advantage';
+            });
+        }
+    </script>
+</body>
+</html>
