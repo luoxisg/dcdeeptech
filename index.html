@@ -3,926 +3,649 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DCDeepTech | Liquid-Cooled AI Compute & OCP Infrastructure</title>
-    <meta name="description" content="Provider of liquid-cooled AI compute infrastructure and OCP-aligned rack, power, and cooling systems. Engineered in Singapore.">
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Smart Mobility & Urban Infrastructure Analysis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Use Phosphor Icons for clean, academic look -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
-        /* --- CSS Reset & Variables --- */
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Noto+Serif+SC:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap');
+        
         :root {
-            --color-bg-body: #ffffff;
-            --color-bg-alt: #f8f9fa; /* OCP Light Gray */
-            --color-text-main: #333333;
-            --color-text-muted: #6c757d;
-            --color-primary: #212529; /* OCP Dark/Black */
-            --color-accent: #00A499; /* OCP Teal/Green */
-            --color-border: #dee2e6;
-            --font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            --container-width: 1200px;
-            --spacing-section: 100px;
-            --nav-height: 80px;
-            --transition-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
+            --primary: #0f172a; /* Slate 900 */
+            --accent: #0d9488; /* Teal 600 */
+            --bg-canvas: #f8fafc;
+            --safe-area-bottom: env(safe-area-inset-bottom);
         }
 
         body {
-            font-family: var(--font-family);
-            color: var(--color-text-main);
-            background-color: var(--color-bg-body);
-            line-height: 1.6;
+            font-family: 'Inter', 'Noto Serif SC', serif;
+            background-color: var(--bg-canvas);
+            color: #334155;
             -webkit-font-smoothing: antialiased;
-            overflow-x: hidden; /* Prevent horizontal scroll */
+            -webkit-tap-highlight-color: transparent;
         }
 
-        /* --- Animations Keyframes --- */
-        @keyframes slideUpFade {
-            from {
-                opacity: 0;
-                transform: translateY(40px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes shimmer {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
-
-        /* Utility Class for JS Scroll Reveal */
-        .reveal-on-scroll {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.8s var(--transition-smooth), transform 0.8s var(--transition-smooth);
-            will-change: opacity, transform;
-        }
-
-        .reveal-on-scroll.is-visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* Stagger delays for grid items */
-        .delay-100 { transition-delay: 0.1s; }
-        .delay-200 { transition-delay: 0.2s; }
-        .delay-300 { transition-delay: 0.3s; }
-
-        /* --- Typography --- */
-        h1, h2, h3, h4 {
-            color: var(--color-primary);
-            font-weight: 700;
-            margin-bottom: 1rem;
+        /* PhD Style Typography */
+        h1, h2, h3 {
+            font-family: 'Inter', 'Noto Serif SC', serif;
             letter-spacing: -0.02em;
         }
+        
+        .mono-text { font-family: 'JetBrains Mono', monospace; }
 
-        h1 {
-            font-size: 3.5rem;
-            line-height: 1.1;
-            margin-bottom: 1.5rem;
-        }
-
-        h2 {
-            font-size: 2.5rem;
-            margin-bottom: 3rem;
-            text-align: left;
-            position: relative;
-            padding-bottom: 1rem;
-            display: inline-block;
-        }
-
-        h2::after {
-            content: '';
-            position: absolute;
-            left: 0;
-            bottom: 0;
-            width: 0; /* Animate width */
-            height: 4px;
-            background-color: var(--color-accent);
-            transition: width 1s ease 0.2s;
-        }
-
-        h2.is-visible::after {
-            width: 80px;
-        }
-
-        h3 {
-            font-size: 1.35rem;
-            margin-bottom: 0.75rem;
-            color: var(--color-primary);
-        }
-
-        p {
-            margin-bottom: 1rem;
-            color: var(--color-text-muted);
-            font-size: 1.05rem;
-        }
-
-        /* --- Layout Utilities --- */
-        .container {
-            max-width: var(--container-width);
-            margin: 0 auto;
-            padding: 0 24px;
-        }
-
-        section {
-            padding: var(--spacing-section) 0;
-            position: relative;
-        }
-
-        .bg-alt {
-            background-color: var(--color-bg-alt);
-        }
-
-        .grid {
-            display: grid;
-            gap: 2rem;
-        }
-
-        .grid-3 { grid-template-columns: repeat(3, 1fr); }
-        .grid-2 { grid-template-columns: repeat(2, 1fr); }
-
-        /* --- Navigation --- */
-        header {
-            background-color: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(12px); /* Glassmorphism */
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(229, 231, 235, 0.5);
-            position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 1000;
-            height: var(--nav-height);
-            display: flex;
-            align-items: center;
-            transition: all 0.3s ease;
-        }
-
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-        }
-
-        .logo-container {
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-            gap: 12px;
-            z-index: 1001;
-        }
-
-        .logo-img {
-            height: 45px;
-            width: auto;
-            display: block;
-        }
-
-        .logo-text {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--color-primary);
-            letter-spacing: -0.03em;
-            text-transform: uppercase;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 2.5rem;
-            list-style: none;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: var(--color-text-main);
-            font-weight: 600;
-            font-size: 0.95rem;
-            position: relative;
-            transition: color 0.3s ease;
-        }
-
-        /* Nav Link Underline Animation */
-        .nav-links a::after {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 2px;
-            bottom: -4px;
-            left: 0;
-            background-color: var(--color-accent);
-            transition: width 0.3s ease;
-        }
-
-        .nav-links a:hover { color: var(--color-primary); }
-        .nav-links a:hover::after { width: 100%; }
-
-        .cta-button {
-            position: relative;
-            display: inline-block;
-            background-color: var(--color-accent);
-            color: white;
-            padding: 14px 32px;
-            text-decoration: none;
-            font-weight: 600;
-            border-radius: 4px;
-            transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
-            font-size: 1rem;
-            border: none;
-            cursor: pointer;
-            overflow: hidden;
-            z-index: 1;
-        }
-
-        /* Button Shine Effect */
-        .cta-button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(120deg, transparent, rgba(255,255,255,0.3), transparent);
-            transition: transform 0.6s;
-            z-index: -1;
-        }
-
-        .cta-button:hover {
-            background-color: #008f85;
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0, 164, 153, 0.2);
-        }
-
-        .cta-button:hover::before {
-            transform: translateX(200%);
-        }
-
-        .mobile-menu-btn {
-            display: none;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            color: var(--color-primary);
-            cursor: pointer;
-            z-index: 1001;
-        }
-
-        /* --- Hero Section --- */
-        #home {
-            min-height: 100vh; /* Full screen impact */
-            display: flex;
-            align-items: center;
-            background: radial-gradient(circle at 80% 20%, rgba(0, 164, 153, 0.05) 0%, rgba(255,255,255,0) 50%);
-            padding-top: var(--nav-height);
-        }
-
-        .hero-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 5rem;
-            align-items: center;
-        }
-
-        /* Initial Load Animations */
-        .hero-content > * {
+        /* Mobile Animations */
+        .page-transition {
+            animation: slideUpFade 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             opacity: 0;
-            animation: slideUpFade 0.8s var(--transition-smooth) forwards;
+            transform: translateY(10px);
         }
 
-        .hero-content .tagline { animation-delay: 0.1s; }
-        .hero-content h1 { animation-delay: 0.3s; }
-        .hero-content .hero-subhead { animation-delay: 0.5s; }
-        .hero-content .cta-button { animation-delay: 0.7s; }
-
-        .hero-image-wrapper {
-            position: relative;
-            width: 100%;
-            padding-bottom: 75%; /* 4:3 */
-            background-color: #f0f0f0;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            opacity: 0;
-            animation: fadeIn 1.2s ease forwards 0.6s; /* Delayed fade in */
-            border: 1px solid var(--color-border);
+        @keyframes slideUpFade {
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .hero-image {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 1.5s ease;
-        }
-        
-        .hero-image-wrapper:hover .hero-image {
-            transform: scale(1.05); /* Subtle zoom on hover */
-        }
+        .tap-scale:active { transform: scale(0.96); transition: transform 0.1s; }
 
-        .hero-subhead {
-            font-size: 1.25rem;
-            color: var(--color-text-muted);
-            margin-bottom: 2.5rem;
-            font-weight: 400;
-            max-width: 95%;
-        }
-
-        /* --- Cards & Content Blocks --- */
-        .card {
-            background: #fff;
-            padding: 2.5rem;
-            border: 1px solid var(--color-border);
-            border-radius: 8px;
-            transition: all 0.4s var(--transition-smooth);
-            height: 100%;
-            position: relative;
-            top: 0;
-        }
-
-        .card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 12px 30px rgba(0,0,0,0.08);
-            border-color: var(--color-accent);
-        }
-
-        .card-header {
-            margin-bottom: 1.5rem;
-            border-bottom: 1px solid var(--color-border);
-            padding-bottom: 1rem;
-        }
-
-        .card ul li {
-            list-style: none;
-            margin-bottom: 0.75rem;
-            padding-left: 1.5rem;
-            position: relative;
-            font-size: 0.95rem;
-            color: var(--color-text-muted);
-        }
-
-        .card ul li::before {
-            content: "•";
-            color: var(--color-accent);
-            position: absolute;
-            left: 0;
-            font-weight: bold;
-            font-size: 1.2em;
-            line-height: 1;
-        }
-
-        .tagline {
-            display: inline-block;
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
-            font-size: 0.85rem;
-            color: var(--color-accent);
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            background: rgba(0, 164, 153, 0.1);
-            padding: 6px 12px;
-            border-radius: 4px;
-        }
-
-        /* --- Specific Section Styles --- */
-        .singapore-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4rem;
-            align-items: center;
-        }
-
-        .singapore-image-wrapper {
-            position: relative;
-            width: 100%;
-            height: 400px;
-            background-color: #e0e0e0;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
-        }
-        
-        .singapore-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.8s ease;
-        }
-
-        .stat-block {
-            background: linear-gradient(135deg, var(--color-primary), #343a40);
-            color: white;
-            padding: 2.5rem;
-            border-radius: 8px;
-            margin-top: 2rem;
-            box-shadow: 0 10px 20px rgba(33, 37, 41, 0.2);
-        }
-        
-        .stat-block h4 {
-            color: var(--color-accent);
-            margin-bottom: 0.5rem;
-        }
-
-        /* Scenario List Animations */
-        .scenario-list {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 1.5rem;
-        }
-
-        .scenario-item {
-            display: flex;
-            align-items: flex-start;
-            padding: 2rem;
+        /* Components */
+        .academic-card {
             background: white;
-            border-left: 4px solid var(--color-border);
-            transition: all 0.3s ease;
-            cursor: default;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.05);
+            border-radius: 12px;
         }
 
-        .scenario-item:hover {
-            border-left-color: var(--color-accent);
-            background: #ffffff;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.06);
-            transform: translateX(10px); /* Slight slide right on hover */
-        }
-
-        .scenario-content h4 {
-            font-size: 1.2rem;
-            color: var(--color-text-main);
-            margin-bottom: 0.5rem;
-        }
-
-        /* --- Contact --- */
-        .contact-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4rem;
-        }
-
-        .contact-label {
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            color: var(--color-text-muted);
-            letter-spacing: 0.05em;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-        }
-
-        .contact-value {
-            font-size: 1.2rem;
-            color: var(--color-text-main);
-            font-weight: 500;
-        }
-
-        input, textarea, select {
+        .chart-wrapper {
+            position: relative;
+            height: 280px;
             width: 100%;
-            padding: 14px;
-            border: 1px solid var(--color-border);
-            border-radius: 4px;
-            font-family: inherit;
-            font-size: 1rem; /* 16px to prevent iOS zoom */
-            background: #fff;
-            transition: border-color 0.3s, box-shadow 0.3s;
         }
 
-        input:focus, textarea:focus, select:focus {
-            outline: none;
-            border-color: var(--color-accent);
-            box-shadow: 0 0 0 3px rgba(0, 164, 153, 0.15);
+        /* Mobile Slider Styling - Thicker for Thumb */
+        input[type=range] {
+            -webkit-appearance: none; 
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 24px;
+            width: 24px;
+            border-radius: 50%;
+            background: var(--accent);
+            margin-top: -10px;
+            box-shadow: 0 2px 6px rgba(13, 148, 136, 0.4);
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            height: 4px;
+            background: #cbd5e1;
+            border-radius: 2px;
         }
 
-        /* --- Footer --- */
-        footer {
-            background-color: var(--color-primary);
-            color: white;
-            padding: 5rem 0 3rem;
-            font-size: 0.95rem;
+        /* Bottom Nav Safe Area */
+        .bottom-nav-safe {
+            padding-bottom: calc(60px + var(--safe-area-bottom));
+        }
+        .nav-bar {
+            padding-bottom: var(--safe-area-bottom);
         }
 
-        .footer-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            padding-bottom: 2rem;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
-        }
-
-        .footer-nav a {
-            color: rgba(255,255,255,0.6);
-            text-decoration: none;
-            margin-left: 2rem;
-            transition: color 0.2s;
-        }
-
-        .footer-nav a:hover {
-            color: var(--color-accent);
-        }
-
-        .copyright {
-            color: rgba(255,255,255,0.4);
-            text-align: right;
-            font-size: 0.85rem;
-        }
-
-        /* --- Mobile Optimization & Responsive --- */
-        @media (max-width: 1024px) {
-            h1 { font-size: 2.8rem; }
-            .grid-3 { grid-template-columns: repeat(2, 1fr); }
-            .hero-grid { gap: 3rem; }
-            .container { padding: 0 30px; }
-        }
-
-        @media (max-width: 768px) {
-            :root {
-                --spacing-section: 60px; /* Tighter vertical spacing */
-            }
-
-            /* Mobile Nav */
-            .nav-links {
-                display: none;
-                position: fixed;
-                top: var(--nav-height);
-                left: 0;
-                width: 100%;
-                height: calc(100vh - var(--nav-height));
-                background: rgba(255,255,255,0.98);
-                backdrop-filter: blur(10px);
-                flex-direction: column;
-                justify-content: flex-start;
-                padding: 2rem;
-                gap: 0;
-                border-bottom: 1px solid var(--color-border);
-                overflow-y: auto;
-                animation: fadeIn 0.3s ease;
-            }
-
-            .nav-links.active { display: flex; }
-            
-            .nav-links li {
-                width: 100%;
-                opacity: 0;
-                transform: translateY(10px);
-                animation: slideUpFade 0.4s ease forwards;
-            }
-
-            /* Stagger mobile menu items */
-            .nav-links li:nth-child(1) { animation-delay: 0.1s; }
-            .nav-links li:nth-child(2) { animation-delay: 0.15s; }
-            .nav-links li:nth-child(3) { animation-delay: 0.2s; }
-            .nav-links li:nth-child(4) { animation-delay: 0.25s; }
-            .nav-links li:nth-child(5) { animation-delay: 0.3s; }
-            .nav-links li:nth-child(6) { animation-delay: 0.35s; }
-
-            .nav-links a { 
-                display: block;
-                padding: 1.25rem 0; 
-                font-size: 1.2rem;
-                border-bottom: 1px solid #f0f0f0; 
-                color: var(--color-primary);
-            }
-
-            .mobile-menu-btn { display: block; }
-
-            /* Mobile Layout Reflow */
-            .grid-3, .grid-2, .hero-grid, .singapore-content, .contact-grid, .footer-content { 
-                grid-template-columns: 1fr; 
-                gap: 2.5rem;
-            }
-
-            .footer-nav {
-                margin-top: 1.5rem;
-                display: flex;
-                flex-direction: column;
-                gap: 1rem;
-                width: 100%;
-            }
-
-            .footer-nav a { margin-left: 0; }
-            .copyright { text-align: left; }
-
-            /* Typography Scaling for Mobile */
-            h1 { font-size: 2.25rem; margin-bottom: 1rem; }
-            h2 { font-size: 1.8rem; margin-bottom: 2rem; }
-            
-            /* Order Swapping for Mobile: Image top if desired, or keep logic */
-            .hero-grid { display: flex; flex-direction: column; }
-            .hero-content { order: 2; text-align: left; }
-            .hero-image-wrapper { order: 1; padding-bottom: 60%; margin-bottom: 1rem; }
-
-            .singapore-content { display: flex; flex-direction: column; }
-            .singapore-image-wrapper { height: 250px; }
-
-            .scenario-item:hover { transform: none; } /* Disable hover slide on touch */
-        }
+        /* Hide scrollbar for horizontal scrolling */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body>
+<body class="flex flex-col h-screen overflow-hidden bg-slate-50 text-slate-800">
 
-    <!-- Header / Navigation -->
-    <header>
-        <div class="container">
-            <nav>
-                <a href="#" class="logo-container">
-                    <img src="https://raw.githubusercontent.com/luoxisg/dcdeeptech/main/image/DCdeeptech_logo-removebg-preview.png" alt="DCDeepTech Logo" class="logo-img">
-                    <span class="logo-text">DCDeepTech</span>
-                </a>
-                
-                <button class="mobile-menu-btn" onclick="toggleMenu()" aria-label="Toggle Menu">☰</button>
-                <ul class="nav-links" id="navLinks">
-                    <li><a href="#home">Home</a></li>
-                    <li><a href="#solutions">Solutions</a></li>
-                    <li><a href="#products">Products</a></li>
-                    <li><a href="#why-singapore">Why Singapore</a></li>
-                    <li><a href="#use-scenarios">Use Scenarios</a></li>
-                    <li><a href="#contact">Contact</a></li>
-                </ul>
-            </nav>
+    <!-- Top Bar (Mobile Optimized) -->
+    <header class="h-14 bg-white/90 backdrop-blur-md border-b border-slate-200 flex justify-between items-center px-4 fixed top-0 w-full z-30">
+        <div class="flex items-center space-x-2">
+            <div class="w-2 h-6 bg-teal-600 rounded-sm"></div>
+            <span class="font-bold text-sm text-slate-900 tracking-tight" data-i18n="appTitleShort">Strategic Analysis</span>
         </div>
+        <button id="lang-toggle" class="tap-scale flex items-center space-x-1 px-3 py-1.5 bg-slate-100 rounded-full text-xs font-semibold text-slate-700 border border-slate-200">
+            <i class="ph ph-translate text-base"></i>
+            <span id="lang-label">CN</span>
+        </button>
     </header>
 
-    <main>
-        <!-- Home / Hero Section -->
-        <section id="home">
-            <div class="container">
-                <div class="hero-grid">
-                    <div class="hero-content">
-                        <span class="tagline">Infrastructure Partner</span>
-                        <h1>Liquid-Cooled AI Compute & OCP Infrastructure</h1>
-                        <p class="hero-subhead">OCP-aligned racks, power and cooling systems, and liquid-cooled AI servers — engineered in Singapore for deployment across Southeast Asia and global markets.</p>
-                        <a href="#contact" class="cta-button">Request a Technical Discussion</a>
+    <!-- Main Content Area -->
+    <main class="flex-1 overflow-y-auto mt-14 bottom-nav-safe scroll-smooth" id="main-content">
+        
+        <!-- SECTION 1: DASHBOARD -->
+        <div id="dashboard" class="content-section px-4 py-6 space-y-6 page-transition">
+            <header>
+                <div class="text-[10px] font-bold text-teal-600 uppercase tracking-widest mb-1">Executive Brief</div>
+                <h2 class="text-2xl font-bold text-slate-900 leading-tight" data-i18n="execTitle">Strategic Abstract</h2>
+                <p class="text-slate-600 text-sm mt-3 leading-relaxed" data-i18n="execSummary">
+                    Feasibility study on 'End-to-End Turnkey' parking management for Johor. Leveraging local compute capital & BOO models to address fiscal leakage.
+                </p>
+            </header>
+
+            <!-- Horizontal Scroll Cards for Mobile -->
+            <div class="flex overflow-x-auto space-x-4 pb-4 -mx-4 px-4 no-scrollbar snap-x snap-mandatory">
+                <!-- KPI 1 -->
+                <div class="academic-card p-5 min-w-[85vw] md:min-w-[300px] snap-center border-l-4 border-teal-600">
+                    <div class="flex justify-between items-start">
+                        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest" data-i18n="kpi1Title">BENCHMARKS</div>
+                        <i class="ph ph-globe text-teal-600 text-xl"></i>
                     </div>
-                    <div class="hero-image-wrapper">
-                         <!-- Placeholder for 3D Rack Render or Server Image -->
-                        <img src="https://raw.githubusercontent.com/luoxisg/dcdeeptech/main/image/rackpowercooling.jpg" alt="Liquid Cooled OCP Rack" class="hero-image">
+                    <div class="mt-2 text-xl font-serif font-bold text-slate-800">Monash & Sutton</div>
+                    <div class="mt-2 text-xs text-slate-500 leading-relaxed" data-i18n="kpi1Desc">
+                        OECD cases (30+ yrs) validate fiscal stability of outsourcing.
+                    </div>
+                </div>
+                <!-- KPI 2 -->
+                <div class="academic-card p-5 min-w-[85vw] md:min-w-[300px] snap-center border-l-4 border-indigo-600">
+                    <div class="flex justify-between items-start">
+                        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest" data-i18n="kpi2Title">TECH ARBITRAGE</div>
+                        <i class="ph ph-cpu text-indigo-600 text-xl"></i>
+                    </div>
+                    <div class="mt-2 text-xl font-serif font-bold text-slate-800">Edge AI + CapEx</div>
+                    <div class="mt-2 text-xs text-slate-500 leading-relaxed" data-i18n="kpi2Desc">
+                        Asymmetric advantage via local compute & capital leverage.
                     </div>
                 </div>
             </div>
-        </section>
 
-        <!-- Solutions Section -->
-        <section id="solutions" class="bg-alt">
-            <div class="container">
-                <h2 class="reveal-on-scroll">Solutions for System Integrators</h2>
-                <div class="grid grid-3">
-                    <!-- Solution 1 -->
-                    <div class="card reveal-on-scroll delay-100">
-                        <div class="card-header">
-                            <h3>Edge & Industrial AI Compute</h3>
-                        </div>
-                        <p>High-reliability infrastructure designed for deployment in non-datacenter environments.</p>
-                        <ul>
-                            <li>Designed for traffic systems, industrial parks, utilities, and ports.</li>
-                            <li>Engineered for high temperature, dust, and humidity tolerance.</li>
-                            <li>Liquid cooling architecture enabling sealed, low-maintenance systems.</li>
-                        </ul>
-                    </div>
-
-                    <!-- Solution 2 -->
-                    <div class="card reveal-on-scroll delay-200">
-                        <div class="card-header">
-                            <h3>Private AI & Video Compute Clusters</h3>
-                        </div>
-                        <p>Density-optimized infrastructure for city-level or enterprise on-premise deployments.</p>
-                        <ul>
-                            <li>Ideal for power and space constrained environments.</li>
-                            <li>OCP-aligned rack architecture with integrated manifold systems.</li>
-                            <li>Supports high-density video analytics workloads.</li>
-                        </ul>
-                    </div>
-
-                    <!-- Solution 3 -->
-                    <div class="card reveal-on-scroll delay-300">
-                        <div class="card-header">
-                            <h3>Overseas & Regulated Projects</h3>
-                        </div>
-                        <p>Vendor-neutral infrastructure support for complex jurisdictional requirements.</p>
-                        <ul>
-                            <li>Meeting strict energy efficiency and PUE mandates.</li>
-                            <li>Aligned with ESG and corporate sustainability frameworks.</li>
-                            <li>Neutral, Singapore-based infrastructure provision.</li>
-                        </ul>
-                    </div>
+            <!-- Chart -->
+            <div class="academic-card p-5">
+                <h3 class="text-sm font-bold text-slate-800 mb-4" data-i18n="chartTrendTitle">Macro Trend</h3>
+                <div class="chart-wrapper">
+                    <canvas id="macroTrendChart"></canvas>
                 </div>
             </div>
-        </section>
 
-        <!-- Products Section -->
-        <section id="products">
-            <div class="container">
-                <h2 class="reveal-on-scroll">Infrastructure Products</h2>
-                <div class="grid grid-2">
-                    <!-- Product Group 1 -->
-                    <div class="card reveal-on-scroll delay-100">
-                        <div class="card-header">
-                            <h3>OCP-Aligned Rack, Power & Cooling</h3>
-                        </div>
-                        <ul>
-                            <li>ORv3/ORW compatible rack systems.</li>
-                            <li>High-density busbar power distribution systems.</li>
-                            <li>Integrated liquid cooling architecture (manifolds, CDUs).</li>
-                            <li>Modular, scalable, and field-serviceable design.</li>
-                        </ul>
+            <!-- Contact Card (Mobile Optimized) -->
+            <div class="academic-card p-4 bg-slate-800 text-white mt-4 relative overflow-hidden">
+                <div class="relative z-10 flex items-center justify-between">
+                    <div>
+                        <div class="text-[10px] text-slate-400 uppercase tracking-wide mb-1" data-i18n="contactHeader">PRINCIPAL ANALYST</div>
+                        <div class="font-bold text-lg">Ivan</div>
+                        <a href="mailto:ivan@dcdeeptech.com" class="text-xs text-teal-400 font-mono mt-1 block">ivan@dcdeeptech.com</a>
                     </div>
-
-                    <!-- Product Group 2 -->
-                    <div class="card reveal-on-scroll delay-200">
-                        <div class="card-header">
-                            <h3>Liquid-Cooled AI Servers</h3>
-                        </div>
-                        <ul>
-                            <li>Direct-to-Chip liquid cooling or hybrid air-liquid designs.</li>
-                            <li>Fanless or low-airflow configurations for acoustic dampening.</li>
-                            <li>Sealed chassis options for harsh edge environments.</li>
-                            <li>Compute-agnostic hardware design supporting various accelerators.</li>
-                        </ul>
+                    <div class="w-10 h-10 rounded-full bg-teal-600 flex items-center justify-center">
+                        <i class="ph ph-envelope-simple text-xl"></i>
                     </div>
                 </div>
-            </div>
-        </section>
-
-        <!-- Why Singapore Section -->
-        <section id="why-singapore" class="bg-alt">
-            <div class="container">
-                <h2 class="reveal-on-scroll">Why Singapore</h2>
-                <div class="singapore-content">
-                    <div class="text-block reveal-on-scroll delay-100">
-                        <p>DCDeepTech operates from Singapore, leveraging the nation's status as a neutral and trusted international hub. Our strategic location allows us to serve as a reliable base for system integrators deploying infrastructure across Southeast Asia and global markets.</p>
-                        <p>We adhere to Singapore’s rigorous standards for energy efficiency and sustainability. Our infrastructure solutions are designed to meet the increasing demand for Green Computing, ensuring compliance with regional ESG mandates and power efficiency regulations essential for modern AI deployments.</p>
-                        
-                        <div class="stat-block reveal-on-scroll delay-200">
-                            <h4>Regional Hub</h4>
-                            <p>Centralized engineering and logistics support for APAC deployments.</p>
-                            <br>
-                            <h4>Neutrality</h4>
-                            <p>Independent infrastructure vendor supporting diverse integration partners.</p>
-                        </div>
-                    </div>
-                    
-                    <div class="singapore-image-wrapper reveal-on-scroll delay-300">
-                        <img src="https://raw.githubusercontent.com/luoxisg/dcdeeptech/main/image/sg.jpg" alt="Singapore Infrastructure Hub" class="singapore-image">
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Use Scenarios Section -->
-        <section id="use-scenarios">
-            <div class="container">
-                <h2 class="reveal-on-scroll">Deployment Scenarios</h2>
-                <div class="scenario-list">
-                    <div class="scenario-item reveal-on-scroll">
-                        <div class="scenario-content">
-                            <h4>Smart Traffic & Urban Sensing</h4>
-                            <p>Deployment of sealed, liquid-cooled compute nodes in roadside cabinets and uncontrolled environments for real-time traffic analysis.</p>
-                        </div>
-                    </div>
-                    <div class="scenario-item reveal-on-scroll">
-                        <div class="scenario-content">
-                            <h4>Industrial Parks & Utilities</h4>
-                            <p>High-reliability infrastructure for predictive maintenance and monitoring in manufacturing zones and power generation sites.</p>
-                        </div>
-                    </div>
-                    <div class="scenario-item reveal-on-scroll">
-                        <div class="scenario-content">
-                            <h4>Ports & Energy Infrastructure</h4>
-                            <p>Ruggedized compute clusters managing logistics automation and energy grid balancing in maritime and critical infrastructure settings.</p>
-                        </div>
-                    </div>
-                    <div class="scenario-item reveal-on-scroll">
-                        <div class="scenario-content">
-                            <h4>Private AI & Video Analytics Clusters</h4>
-                            <p>Secure, on-premise compute racks for sensitive data processing within government or enterprise facilities.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Contact Section -->
-        <section id="contact" class="bg-alt">
-            <div class="container">
-                <h2 class="reveal-on-scroll">Contact DCDeepTech</h2>
-                <p class="reveal-on-scroll" style="margin-bottom: 3rem; color: var(--color-text-muted);">Ready to discuss your liquid cooling or OCP rack project?</p>
-                <div class="contact-grid">
-                    <div class="contact-details reveal-on-scroll delay-100">
-                        <div class="contact-info-block">
-                            <div class="contact-label">Address</div>
-                            <div class="contact-value">71 Ayer Rajah Crescent, #02-01<br>Singapore 139951</div>
-                        </div>
-                        <div class="contact-info-block">
-                            <div class="contact-label">Email</div>
-                            <div class="contact-value">info@DCdeeptech.com</div>
-                        </div>
-                        <div class="contact-info-block">
-                            <div class="contact-label">WhatsApp</div>
-                            <div class="contact-value">+65 8378 5068</div>
-                        </div>
-                        <div class="contact-info-block">
-                            <div class="contact-label">Region</div>
-                            <div class="contact-value">Singapore, Taiwan</div>
-                        </div>
-                    </div>
-                    
-                    <div class="contact-form-wrapper reveal-on-scroll delay-200">
-                        <form onsubmit="event.preventDefault(); alert('Thank you. A technical representative will contact you shortly.');">
-                            <div class="form-group">
-                                <label for="name" class="contact-label">Name</label>
-                                <input type="text" id="name" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="email" class="contact-label">Corporate Email</label>
-                                <input type="email" id="email" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="subject" class="contact-label">Subject</label>
-                                <select id="subject">
-                                    <option>Technical Partnership Inquiry</option>
-                                    <option>Infrastructure Specification Request</option>
-                                    <option>Project Consultation</option>
-                                </select>
-                            </div>
-                            <button type="submit" class="cta-button" style="width: 100%; margin-top: 1rem;">Submit Inquiry</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="logo-text" style="color: white;">DCDeepTech</div>
-                <div class="footer-nav">
-                    <a href="#home">Home</a>
-                    <a href="#solutions">Solutions</a>
-                    <a href="#products">Products</a>
-                    <a href="#contact">Contact</a>
-                </div>
-            </div>
-            <div class="copyright">
-                &copy; 2024 DCDeepTech Pte. Ltd. All rights reserved. <br>
-                Vendor-Neutral Infrastructure Provider.
+                <!-- Decoration -->
+                <div class="absolute -bottom-6 -right-6 w-24 h-24 bg-white/5 rounded-full"></div>
             </div>
         </div>
-    </footer>
 
+        <!-- SECTION 2: BENCHMARKS -->
+        <div id="benchmarks" class="content-section hidden px-4 py-6 space-y-6 page-transition">
+            <header>
+                <h2 class="text-2xl font-bold text-slate-900" data-i18n="benchTitle">Global Benchmarks</h2>
+                <p class="text-slate-600 text-sm mt-2" data-i18n="benchSub">Deconstructing paradigms from Aus, UK & NZ.</p>
+            </header>
+
+            <div id="benchmark-list" class="space-y-4">
+                <!-- Populated via JS -->
+            </div>
+        </div>
+
+        <!-- SECTION 3: JOHOR STUDY -->
+        <div id="johor-study" class="content-section hidden px-4 py-6 space-y-6 page-transition">
+            <header>
+                <h2 class="text-2xl font-bold text-slate-900" data-i18n="johorTitle">Johor Feasibility</h2>
+                <p class="text-slate-600 text-sm mt-2" data-i18n="johorSub">Structural inefficiencies vs. digital intervention.</p>
+            </header>
+
+            <!-- Interactive Accordion Style Cards -->
+            <div class="space-y-4">
+                <div class="academic-card p-5 border-l-4 border-rose-500">
+                    <h3 class="text-base font-bold text-slate-800 flex items-center mb-3">
+                        <i class="ph ph-warning-circle text-rose-500 mr-2 text-lg"></i>
+                        <span data-i18n="probTitle">Inefficiencies</span>
+                    </h3>
+                    <div class="space-y-4">
+                        <div>
+                            <div class="text-xs font-bold text-slate-900 uppercase mb-1" data-i18n="prob1Head">Informal Rent-Seeking</div>
+                            <p class="text-xs text-slate-600 leading-relaxed" data-i18n="prob1Text">'Jaga Kereta' causes direct revenue leakage and market failure.</p>
+                        </div>
+                        <div class="w-full h-px bg-slate-100"></div>
+                        <div>
+                            <div class="text-xs font-bold text-slate-900 uppercase mb-1" data-i18n="prob2Head">Enforcement Arbitrage</div>
+                            <p class="text-xs text-slate-600 leading-relaxed" data-i18n="prob2Text">Foreign vehicles enjoy 'immunity' without data protocols.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="academic-card p-5 border-l-4 border-teal-500">
+                    <h3 class="text-base font-bold text-slate-800 flex items-center mb-3">
+                        <i class="ph ph-lightbulb text-teal-500 mr-2 text-lg"></i>
+                        <span data-i18n="solTitle">Intervention</span>
+                    </h3>
+                    <div class="space-y-4">
+                        <div>
+                            <div class="text-xs font-bold text-slate-900 uppercase mb-1" data-i18n="sol1Head">Sovereign Edge Compute</div>
+                            <p class="text-xs text-slate-600 leading-relaxed" data-i18n="sol1Text">Inference at Edge bypasses data sovereignty & latency issues.</p>
+                        </div>
+                        <div class="w-full h-px bg-slate-100"></div>
+                        <div>
+                            <div class="text-xs font-bold text-slate-900 uppercase mb-1" data-i18n="sol2Head">BOO Structure</div>
+                            <p class="text-xs text-slate-600 leading-relaxed" data-i18n="sol2Text">Internalizing CapEx to improve municipal balance sheet.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="academic-card p-5">
+                    <h3 class="text-sm font-bold text-slate-800 mb-4 text-center" data-i18n="radarTitle">Capability Model</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="capabilityRadar"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 4: FINANCIAL MODEL -->
+        <div id="financial-model" class="content-section hidden px-4 py-6 space-y-6 page-transition">
+            <header>
+                <h2 class="text-2xl font-bold text-slate-900" data-i18n="finTitle">Sensitivity Model</h2>
+                <p class="text-slate-600 text-sm mt-2" data-i18n="finSub">Assessing marginal contribution of Tech Efficacy.</p>
+            </header>
+
+            <!-- Interactive Sliders -->
+            <div class="academic-card p-5 bg-white space-y-6">
+                <!-- Slider 1 -->
+                <div>
+                    <div class="flex justify-between mb-2">
+                        <label class="text-xs font-bold text-slate-700 uppercase">Total Spots</label>
+                        <span id="val-spots" class="text-xs font-mono font-bold text-teal-600 bg-teal-50 px-2 rounded">15,000</span>
+                    </div>
+                    <input type="range" id="sim-spots" min="1000" max="50000" step="1000" value="15000" class="w-full">
+                </div>
+                <!-- Slider 2 -->
+                <div>
+                    <div class="flex justify-between mb-2">
+                        <label class="text-xs font-bold text-slate-700 uppercase">Hourly Rate (MYR)</label>
+                        <span id="val-rate" class="text-xs font-mono font-bold text-teal-600 bg-teal-50 px-2 rounded">1.20</span>
+                    </div>
+                    <input type="range" id="sim-rate" min="0.5" max="5.0" step="0.1" value="1.2" class="w-full">
+                </div>
+                <!-- Slider 3 -->
+                <div>
+                    <div class="flex justify-between mb-2">
+                        <label class="text-xs font-bold text-slate-700 uppercase">Tech Delta (ΔE)</label>
+                        <span id="val-ai" class="text-xs font-mono font-bold text-teal-600 bg-teal-50 px-2 rounded">+40%</span>
+                    </div>
+                    <input type="range" id="sim-ai" min="0" max="150" step="10" value="40" class="w-full">
+                </div>
+            </div>
+
+            <!-- Result -->
+            <div class="academic-card p-5 text-center">
+                 <div class="text-[10px] text-slate-400 uppercase tracking-widest mb-1">Incremental Value (Delta)</div>
+                 <div id="revenue-delta" class="text-3xl font-serif font-bold text-teal-600">+ 0.0M</div>
+                 <div class="chart-wrapper mt-4 h-48">
+                    <canvas id="simChart"></canvas>
+                 </div>
+            </div>
+        </div>
+
+        <!-- SECTION 5: MATRIX -->
+        <div id="matrix" class="content-section hidden px-4 py-6 space-y-6 page-transition">
+            <header>
+                <h2 class="text-2xl font-bold text-slate-900" data-i18n="mapTitle">Implementation</h2>
+                <p class="text-slate-600 text-sm mt-2" data-i18n="mapSub">Deployment roadmap.</p>
+            </header>
+
+            <div class="relative border-l-2 border-slate-200 ml-4 space-y-8 py-2">
+                <!-- Phase 1 -->
+                <div class="ml-6 relative">
+                    <div class="absolute -left-[31px] top-1 w-3 h-3 rounded-full bg-white border-2 border-slate-400"></div>
+                    <h3 class="text-sm font-bold text-slate-800" data-i18n="ph1Title">Phase 1: Alliance (Q1-Q2)</h3>
+                    <div class="academic-card p-4 mt-2 bg-white">
+                        <p class="text-xs text-slate-600" data-i18n="ph1Desc">Sign MOU with potential partners.</p>
+                    </div>
+                </div>
+                <!-- Phase 2 -->
+                <div class="ml-6 relative">
+                    <div class="absolute -left-[31px] top-1 w-3 h-3 rounded-full bg-white border-2 border-teal-500"></div>
+                    <h3 class="text-sm font-bold text-teal-700" data-i18n="ph2Title">Phase 2: PoC (Q3)</h3>
+                    <div class="academic-card p-4 mt-2 bg-teal-50 border-teal-100">
+                        <p class="text-xs text-slate-600" data-i18n="ph2Desc">Johor CBD Pilot. Edge LPR tuning.</p>
+                    </div>
+                </div>
+                <!-- Phase 3 -->
+                <div class="ml-6 relative">
+                    <div class="absolute -left-[31px] top-1 w-3 h-3 rounded-full bg-white border-2 border-slate-400"></div>
+                    <h3 class="text-sm font-bold text-slate-800" data-i18n="ph3Title">Phase 3: Scale (Y2+)</h3>
+                    <div class="academic-card p-4 mt-2 bg-white">
+                        <p class="text-xs text-slate-600" data-i18n="ph3Desc">State-wide delivery. Asset Securitization.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bottom Navigation (The Thumb Zone) -->
+    <nav class="nav-bar fixed bottom-0 w-full bg-white border-t border-slate-200 flex justify-around items-center px-2 py-2 z-40 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+        <button class="nav-item active tap-scale flex flex-col items-center justify-center w-16 h-14 space-y-1 text-slate-400 transition-colors" data-target="dashboard">
+            <i class="ph ph-house text-2xl mb-0.5"></i>
+            <span class="text-[9px] font-medium">Summary</span>
+        </button>
+        <button class="nav-item tap-scale flex flex-col items-center justify-center w-16 h-14 space-y-1 text-slate-400 transition-colors" data-target="benchmarks">
+            <i class="ph ph-globe text-2xl mb-0.5"></i>
+            <span class="text-[9px] font-medium">Global</span>
+        </button>
+        <button class="nav-item tap-scale flex flex-col items-center justify-center w-16 h-14 space-y-1 text-slate-400 transition-colors" data-target="johor-study">
+            <i class="ph ph-map-pin text-2xl mb-0.5"></i>
+            <span class="text-[9px] font-medium">Johor</span>
+        </button>
+        <button class="nav-item tap-scale flex flex-col items-center justify-center w-16 h-14 space-y-1 text-slate-400 transition-colors" data-target="financial-model">
+            <i class="ph ph-chart-line-up text-2xl mb-0.5"></i>
+            <span class="text-[9px] font-medium">Model</span>
+        </button>
+        <button class="nav-item tap-scale flex flex-col items-center justify-center w-16 h-14 space-y-1 text-slate-400 transition-colors" data-target="matrix">
+            <i class="ph ph-steps text-2xl mb-0.5"></i>
+            <span class="text-[9px] font-medium">Roadmap</span>
+        </button>
+    </nav>
+
+    <!-- Logic Layer -->
     <script>
-        // Mobile Menu Toggle
-        function toggleMenu() {
-            const navLinks = document.getElementById('navLinks');
-            const btn = document.querySelector('.mobile-menu-btn');
-            navLinks.classList.toggle('active');
-            btn.innerHTML = navLinks.classList.contains('active') ? '✕' : '☰';
+        // --- PHD LEVEL DICTIONARY ---
+        const i18n = {
+            zh: {
+                appTitleShort: "城市基建分析",
+                contactHeader: "首席分析师 (PRINCIPAL)",
+                execTitle: "执行战略摘要",
+                execSummary: "本报告分析“端到端交钥匙”停车管理模式在柔佛市场的可行性。利用本地算力与BOO模式，解决财政流失。",
+                kpi1Title: "全球基准",
+                kpi1Desc: "OECD市场长期特许经营案例验证了外包的财政稳定性。",
+                kpi2Title: "技术套利",
+                kpi2Desc: "利用本地算力低延迟与资本杠杆构建非对称优势。",
+                chartTrendTitle: "宏观趋势：技术融合度",
+                benchTitle: "全球市场对标",
+                benchSub: "解构澳新与英国特许经营协议范式。",
+                johorTitle: "柔佛技术经济研究",
+                johorSub: "结构性低效与数字化干预分析。",
+                probTitle: "结构性失灵",
+                prob1Head: "非正规寻租",
+                prob1Text: "非法看车人导致市政收入直接流失。",
+                prob2Head: "跨境执法套利",
+                prob2Text: "缺乏数据协议导致跨境车辆享有违停豁免。",
+                solTitle: "技术干预",
+                sol1Head: "主权边缘计算",
+                sol1Text: "边缘推理规避数据主权与延迟风险。",
+                sol2Head: "BOO 资本结构",
+                sol2Text: "内部化CapEx，优化市政资产负债表。",
+                radarTitle: "能力多维评估",
+                finTitle: "财务敏感性模型",
+                finSub: "评估技术效能的边际贡献。",
+                mapTitle: "实施矩阵",
+                mapSub: "分阶段部署路线图。",
+                ph1Title: "Phase 1: 联盟 (Q1-Q2)",
+                ph1Desc: "与潜在合作伙伴签署MOU",
+                ph2Title: "Phase 2: 验证 (Q3)",
+                ph2Desc: "柔佛CBD试点，边缘LPR校准。",
+                ph3Title: "Phase 3: 交付 (Year 2+)",
+                ph3Desc: "全州部署，探索资产证券化。",
+                labels: {
+                    radar: ['成熟度', '资本', '协同', '主权', '合规', '低延迟'],
+                    simManual: '基准',
+                    simAI: '技术增强'
+                }
+            },
+            en: {
+                appTitleShort: "Strategic Analysis",
+                contactHeader: "PRINCIPAL ANALYST",
+                execTitle: "Strategic Abstract",
+                execSummary: "Feasibility study on 'Turnkey' parking for Johor. Leveraging local compute & BOO models to address leakage.",
+                kpi1Title: "GLOBAL BENCHMARKS",
+                kpi1Desc: "OECD cases validate fiscal stability of outsourcing.",
+                kpi2Title: "TECH ARBITRAGE",
+                kpi2Desc: "Asymmetric advantage via local compute & capital leverage.",
+                chartTrendTitle: "Macro Trend: Tech Integration",
+                benchTitle: "Global Benchmarks",
+                benchSub: "Deconstructing paradigms from Aus, UK & NZ.",
+                johorTitle: "Johor Feasibility",
+                johorSub: "Structural inefficiencies vs. digital intervention.",
+                probTitle: "Inefficiencies",
+                prob1Head: "Informal Rent-Seeking",
+                prob1Text: "'Jaga Kereta' causes direct revenue leakage.",
+                prob2Head: "Enforcement Arbitrage",
+                prob2Text: "Foreign vehicles enjoy 'immunity' without data protocols.",
+                solTitle: "Intervention",
+                sol1Head: "Sovereign Edge Compute",
+                sol1Text: "Inference at Edge bypasses data sovereignty issues.",
+                sol2Head: "BOO Structure",
+                sol2Text: "Internalizing CapEx to improve municipal balance sheet.",
+                radarTitle: "Capability Model",
+                finTitle: "Sensitivity Model",
+                finSub: "Assessing marginal contribution of Tech Efficacy.",
+                mapTitle: "Implementation",
+                mapSub: "Deployment roadmap.",
+                ph1Title: "Phase 1: Alliance (Q1-Q2)",
+                ph1Desc: "Sign MOU with potential partners.",
+                ph2Title: "Phase 2: PoC (Q3)",
+                ph2Desc: "Johor CBD Pilot. Edge LPR tuning.",
+                ph3Title: "Phase 3: Scale (Y2+)",
+                ph3Desc: "State-wide delivery. Asset Securitization.",
+                labels: {
+                    radar: ['Maturity', 'Capital', 'Synergy', 'Sovereignty', 'Compliance', 'Latency'],
+                    simManual: 'Baseline',
+                    simAI: 'Tech-Enabled'
+                }
+            }
+        };
+
+        // --- DATA STORE ---
+        const benchmarkData = [
+            {
+                id: 'aus',
+                name: { zh: 'Australia (Monash)', en: 'Australia (Monash)' },
+                details: {
+                    zh: '自1995年起采用外包。Tenix Solutions (现Duncan) 提供SLA驱动的合规管理，确立了“基础设施即服务”先例。',
+                    en: 'Outsourced since 1995. Tenix Solutions (Duncan) provides SLA-driven compliance, setting the "Infrastructure as a Service" precedent.'
+                }
+            },
+            {
+                id: 'uk',
+                name: { zh: 'UK (Saba/Sutton)', en: 'UK (Saba/Sutton)' },
+                details: {
+                    zh: '2026年Sutton合同展示了高技术权重。关键在于数字化平台与市政ERP系统的无缝集成。',
+                    en: 'The 2026 Sutton contract shows high tech weighting. Key lies in seamless integration of digital platforms with municipal ERPs.'
+                }
+            }
+        ];
+
+        let currentLang = 'en';
+        let charts = {};
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initApp();
+        });
+
+        function initApp() {
+            setupNavigation();
+            setupLangToggle();
+            initCharts();
+            renderBenchmarks();
+            initSim();
+            updateLanguageUI();
         }
 
-        // Close mobile menu when clicking a link
-        document.querySelectorAll('.nav-links a').forEach(link => {
-            link.addEventListener('click', () => {
-                document.getElementById('navLinks').classList.remove('active');
-                document.querySelector('.mobile-menu-btn').innerHTML = '☰';
-            });
-        });
+        // --- MOBILE NAVIGATION LOGIC ---
+        function setupNavigation() {
+            const navs = document.querySelectorAll('.nav-item');
+            const sections = document.querySelectorAll('.content-section');
 
-        // Scroll Reveal Animation (Intersection Observer)
-        document.addEventListener('DOMContentLoaded', () => {
-            const observerOptions = {
-                root: null,
-                rootMargin: '0px',
-                threshold: 0.1 // Trigger when 10% of element is visible
-            };
+            navs.forEach(nav => {
+                nav.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    // Update Icons Color
+                    navs.forEach(n => {
+                        n.classList.remove('text-teal-600', 'active');
+                        n.classList.add('text-slate-400');
+                    });
+                    nav.classList.remove('text-slate-400');
+                    nav.classList.add('text-teal-600', 'active');
+                    
+                    const target = nav.dataset.target;
+                    
+                    // Switch Section
+                    sections.forEach(s => {
+                        s.classList.add('hidden');
+                        s.classList.remove('page-transition');
+                    });
+                    
+                    const el = document.getElementById(target);
+                    el.classList.remove('hidden');
+                    // Re-trigger animation
+                    void el.offsetWidth; 
+                    el.classList.add('page-transition');
 
-            const observer = new IntersectionObserver((entries, observer) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('is-visible');
-                        observer.unobserve(entry.target); // Only animate once
-                    }
+                    // Scroll to top
+                    document.getElementById('main-content').scrollTop = 0;
                 });
-            }, observerOptions);
+            });
 
-            const revealElements = document.querySelectorAll('.reveal-on-scroll');
-            revealElements.forEach(el => observer.observe(el));
-        });
+            // Set initial active state style
+            const activeNav = document.querySelector('.nav-item.active');
+            if(activeNav) {
+                activeNav.classList.remove('text-slate-400');
+                activeNav.classList.add('text-teal-600');
+            }
+        }
+
+        function setupLangToggle() {
+            const btn = document.getElementById('lang-toggle');
+            btn.addEventListener('click', () => {
+                currentLang = currentLang === 'zh' ? 'en' : 'zh';
+                document.getElementById('lang-label').innerText = currentLang === 'zh' ? 'EN' : 'CN';
+                updateLanguageUI();
+            });
+        }
+
+        function updateLanguageUI() {
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.dataset.i18n;
+                if(i18n[currentLang][key]) el.innerText = i18n[currentLang][key];
+            });
+            updateCharts();
+            renderBenchmarks();
+            updateSim();
+        }
+
+        function initCharts() {
+            // Trend
+            const ctx1 = document.getElementById('macroTrendChart').getContext('2d');
+            charts.trend = new Chart(ctx1, {
+                type: 'line',
+                data: {
+                    labels: ['95', '05', '15', '25', '30'],
+                    datasets: [
+                        { label: 'Outsourcing', data: [20, 45, 70, 85, 92], borderColor: '#0f172a', backgroundColor: 'rgba(15, 23, 42, 0.05)', fill: true, tension: 0.4, pointRadius: 0 },
+                        { label: 'Tech', data: [5, 20, 45, 80, 95], borderColor: '#0d9488', borderDash: [5,5], tension: 0.4, pointRadius: 0 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { display: false }, x: { grid: { display: false } } }
+                }
+            });
+
+            // Radar
+            const ctx2 = document.getElementById('capabilityRadar').getContext('2d');
+            charts.radar = new Chart(ctx2, {
+                type: 'radar',
+                data: {
+                    labels: [],
+                    datasets: [
+                        { label: 'Trad', data: [90, 60, 40, 50, 60, 40], borderColor: '#94a3b8', borderWidth: 1, backgroundColor: 'rgba(148, 163, 184, 0.1)' },
+                        { label: 'Us', data: [50, 90, 95, 95, 90, 90], borderColor: '#0d9488', borderWidth: 2, backgroundColor: 'rgba(13, 148, 136, 0.2)' }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { r: { ticks: { display: false }, pointLabels: { font: { size: 10 } } } }
+                }
+            });
+
+            // Sim
+            const ctx3 = document.getElementById('simChart').getContext('2d');
+            charts.sim = new Chart(ctx3, {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        data: [0, 0],
+                        backgroundColor: ['#cbd5e1', '#0d9488'],
+                        borderRadius: 4,
+                        barThickness: 40
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { display: false }, x: { grid: { display: false } } }
+                }
+            });
+        }
+
+        function updateCharts() {
+            const l = i18n[currentLang].labels;
+            charts.radar.data.labels = l.radar;
+            charts.radar.update();
+            charts.sim.data.labels = [l.simManual, l.simAI];
+            charts.sim.update();
+        }
+
+        function renderBenchmarks() {
+            const list = document.getElementById('benchmark-list');
+            list.innerHTML = '';
+            benchmarkData.forEach(item => {
+                const el = document.createElement('div');
+                el.className = 'academic-card p-5 bg-white';
+                el.innerHTML = `
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="font-bold text-slate-800">${item.name[currentLang]}</h3>
+                        <i class="ph ph-arrow-right text-slate-300"></i>
+                    </div>
+                    <p class="text-xs text-slate-600 leading-relaxed">${item.details[currentLang]}</p>
+                `;
+                list.appendChild(el);
+            });
+        }
+
+        function initSim() {
+            ['sim-spots', 'sim-rate', 'sim-ai'].forEach(id => {
+                document.getElementById(id).addEventListener('input', updateSim);
+            });
+        }
+
+        function updateSim() {
+            const spots = parseInt(document.getElementById('sim-spots').value);
+            const rate = parseFloat(document.getElementById('sim-rate').value);
+            const efficiency = parseInt(document.getElementById('sim-ai').value);
+
+            document.getElementById('val-spots').innerText = (spots/1000).toFixed(0) + 'k';
+            document.getElementById('val-rate').innerText = rate.toFixed(2);
+            document.getElementById('val-ai').innerText = `+${efficiency}%`;
+
+            const opHours = 300 * 8;
+            const occ = 0.65;
+            const baseCap = 0.35;
+            
+            const pot = spots * opHours * occ * rate;
+            const manual = pot * baseCap;
+            const ai = pot * Math.min(0.98, baseCap * (1 + efficiency/100));
+            const delta = ai - manual;
+
+            document.getElementById('revenue-delta').innerText = `+ ${(delta/1000000).toFixed(1)}M`;
+
+            charts.sim.data.datasets[0].data = [manual, ai];
+            charts.sim.update();
+        }
+
     </script>
 </body>
 </html>
