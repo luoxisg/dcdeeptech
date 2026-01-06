@@ -1,445 +1,390 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
+ <!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Parking & Johor Project Analysis</title>
+    <title>Smart Mobility & Urban Infrastructure Analysis</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Inter:wght@300;400;500;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Noto+Serif+SC:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap');
         
+        :root {
+            --primary: #0f172a; /* Slate 900 */
+            --accent: #0d9488; /* Teal 600 */
+            --bg-canvas: #f8fafc;
+        }
+
         body {
-            font-family: 'Inter', 'Noto Sans SC', sans-serif;
-            background-color: #f8fafc; /* Slate 50 */
-            color: #334155; /* Slate 700 */
+            font-family: 'Inter', 'Noto Serif SC', serif;
+            background-color: var(--bg-canvas);
+            color: #334155;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* --- Animations --- */
+        /* PhD Style Typography */
+        h1, h2, h3 {
+            font-family: 'Inter', 'Noto Serif SC', serif;
+            letter-spacing: -0.02em;
+        }
+        
+        .mono-text {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Animations */
         @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translate3d(0, 20px, 0);
-            }
-            to {
-                opacity: 1;
-                transform: translate3d(0, 0, 0);
-            }
+            from { opacity: 0; transform: translate3d(0, 15px, 0); }
+            to { opacity: 1; transform: translate3d(0, 0, 0); }
         }
 
-        .animate-fade-in {
-            animation: fadeInUp 0.6s ease-out forwards;
-            opacity: 0; /* Initially hidden */
+        .animate-reveal {
+            animation: fadeInUp 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+            opacity: 0;
         }
-
+        
         .delay-100 { animation-delay: 0.1s; }
         .delay-200 { animation-delay: 0.2s; }
         .delay-300 { animation-delay: 0.3s; }
-        .delay-400 { animation-delay: 0.4s; }
 
-        .chart-container {
-            position: relative;
-            width: 100%;
-            height: 350px;
-            max-height: 400px;
+        /* Components */
+        .academic-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .academic-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+            border-color: #cbd5e1;
         }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #f1f5f9; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-
-        .nav-item {
-            transition: all 0.3s ease;
-        }
         .nav-item.active {
             background-color: #f1f5f9;
-            border-left: 4px solid #0f766e; /* Teal 700 */
+            border-right: 3px solid var(--accent);
             font-weight: 600;
-            color: #0f766e;
+            color: var(--primary);
         }
 
-        .card-hover {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        .chart-wrapper {
+            position: relative;
+            height: 320px;
+            width: 100%;
         }
-        .card-hover:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-        }
-        
-        .btn-primary {
-            background-color: #0f766e;
-            color: white;
-            transition: background-color 0.2s;
-        }
-        .btn-primary:hover {
-            background-color: #115e59;
-        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 4px; }
     </style>
-    <!-- 
-    Application Structure:
-    1. Sidebar: Navigation & Contact Info
-    2. Header: Language Toggle & Mobile Menu
-    3. Content Sections:
-       - Dashboard: Overview
-       - Global Benchmarks: Interactive Data from PDF
-       - Johor Analysis: Specific analysis of Johor market (New Request)
-       - Feasibility Sim: Financial calculator
-       - Roadmap: Strategic plan
-    -->
 </head>
-<body class="flex h-screen overflow-hidden bg-slate-50">
+<body class="flex h-screen overflow-hidden bg-slate-50 text-slate-800">
 
-    <!-- Sidebar Navigation -->
-    <aside id="sidebar" class="bg-white w-64 flex-shrink-0 border-r border-slate-200 hidden md:flex flex-col h-full z-20 transition-all duration-300 shadow-lg">
-        <div class="p-6 border-b border-slate-100">
-            <h1 class="text-xl font-bold text-slate-800 leading-tight" data-i18n="appTitle">战略分析平台</h1>
-            <p class="text-xs text-slate-500 mt-1" data-i18n="appSubtitle">柔佛州停车项目可行性研究</p>
+    <!-- Sidebar: Academic Report Style -->
+    <aside id="sidebar" class="bg-white w-72 flex-shrink-0 border-r border-slate-200 hidden md:flex flex-col h-full z-20 shadow-xl">
+        <div class="p-8 border-b border-slate-100 bg-slate-50">
+            <div class="text-xs font-bold text-teal-600 tracking-widest uppercase mb-2">Internal Research</div>
+            <h1 class="text-xl font-bold text-slate-900 leading-snug" data-i18n="appTitle">Urban Infrastructure &<br>Techno-Economic Analysis</h1>
+            <p class="text-xs text-slate-500 mt-3 font-serif italic" data-i18n="appSubtitle">Feasibility Study & Strategic Deployment for Johor Smart Parking</p>
         </div>
         
-        <div class="flex-1 overflow-y-auto py-4">
+        <div class="flex-1 overflow-y-auto py-6">
             <nav class="space-y-1">
-                <a href="#" class="nav-item active block px-6 py-3 text-sm text-slate-600 hover:bg-slate-50" data-target="dashboard">
-                    <span data-i18n="navDashboard">仪表盘概览</span>
+                <a href="#" class="nav-item active block px-8 py-3.5 text-sm text-slate-600 hover:bg-slate-50 transition-all" data-target="dashboard">
+                    <span data-i18n="navDash">Executive Strategic Abstract</span>
                 </a>
-                <a href="#" class="nav-item block px-6 py-3 text-sm text-slate-600 hover:bg-slate-50" data-target="global-benchmarks">
-                    <span data-i18n="navGlobal">全球市场对标</span>
+                <a href="#" class="nav-item block px-8 py-3.5 text-sm text-slate-600 hover:bg-slate-50 transition-all" data-target="benchmarks">
+                    <span data-i18n="navBench">Comparative Benchmarking</span>
                 </a>
-                <a href="#" class="nav-item block px-6 py-3 text-sm text-slate-600 hover:bg-slate-50" data-target="johor-analysis">
-                    <span data-i18n="navJohor">柔佛项目深度分析</span>
+                <a href="#" class="nav-item block px-8 py-3.5 text-sm text-slate-600 hover:bg-slate-50 transition-all" data-target="johor-study">
+                    <span data-i18n="navJohor">Johor Techno-Economic Study</span>
                 </a>
-                <a href="#" class="nav-item block px-6 py-3 text-sm text-slate-600 hover:bg-slate-50" data-target="feasibility-sim">
-                    <span data-i18n="navSim">财务模拟器</span>
+                <a href="#" class="nav-item block px-8 py-3.5 text-sm text-slate-600 hover:bg-slate-50 transition-all" data-target="financial-model">
+                    <span data-i18n="navModel">Financial Sensitivity Model</span>
                 </a>
-                <a href="#" class="nav-item block px-6 py-3 text-sm text-slate-600 hover:bg-slate-50" data-target="roadmap">
-                    <span data-i18n="navRoadmap">合作路径规划</span>
+                <a href="#" class="nav-item block px-8 py-3.5 text-sm text-slate-600 hover:bg-slate-50 transition-all" data-target="matrix">
+                    <span data-i18n="navMatrix">Implementation Matrix</span>
                 </a>
             </nav>
         </div>
 
-        <!-- Contact Info Section -->
-        <div class="p-5 border-t border-slate-100 bg-slate-50">
-            <div class="bg-white p-4 rounded-lg shadow-sm border border-slate-200 animate-fade-in delay-400">
-                <div class="flex items-center space-x-3 mb-2">
-                    <div class="w-8 h-8 rounded-full bg-teal-100 flex items-center justify-center text-teal-700">
-                        <span class="text-lg">📧</span>
-                    </div>
-                    <div>
-                        <div class="text-xs font-bold text-slate-700" data-i18n="contactTitle">项目联系人</div>
-                        <div class="text-xs text-slate-500">Ivan</div>
-                    </div>
+        <!-- Contact Module -->
+        <div class="p-6 border-t border-slate-100 bg-slate-50">
+            <div class="academic-card p-4 rounded-lg bg-white relative overflow-hidden group">
+                <div class="absolute top-0 right-0 w-16 h-16 bg-teal-50 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
+                <div class="relative z-10">
+                    <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1" data-i18n="contactHeader">PRINCIPAL ANALYST</div>
+                    <div class="font-bold text-slate-800 text-sm">Ivan</div>
+                    <a href="mailto:ivan@dcdeeptech.com" class="text-xs text-teal-700 hover:text-teal-900 font-medium mt-1 block mono-text">ivan@dcdeeptech.com</a>
+                    <div class="mt-2 text-[10px] text-slate-400">DC DeepTech Ventures</div>
                 </div>
-                <a href="mailto:ivan@dcdeeptech.com" class="block text-sm font-medium text-teal-700 hover:text-teal-900 break-all transition-colors">
-                    ivan@dcdeeptech.com
-                </a>
             </div>
         </div>
     </aside>
 
-    <!-- Main Content Wrapper -->
-    <div class="flex-1 flex flex-col overflow-hidden relative">
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col min-w-0 bg-slate-50/50">
         
-        <!-- Mobile Header -->
-        <header class="md:hidden bg-white shadow-sm p-4 flex justify-between items-center z-30">
-            <div class="font-bold text-lg text-slate-800" data-i18n="appTitleShort">智能停车分析</div>
-            <button id="mobile-menu-btn" class="text-slate-600 focus:outline-none p-2 rounded hover:bg-slate-100">
-                <span class="text-xl">☰</span>
-            </button>
+        <!-- Header -->
+        <header class="h-16 bg-white border-b border-slate-200 flex justify-between items-center px-6 md:px-8 shadow-sm z-10">
+            <div class="flex items-center md:hidden">
+                <button id="mobile-menu-btn" class="text-slate-600 mr-4">☰</button>
+                <span class="font-bold text-sm text-slate-800">Smart Mobility Analysis</span>
+            </div>
+            <div class="hidden md:block text-xs text-slate-400 mono-text">
+                REF: JOH-PRK-2026-V3 | CONFIDENTIAL
+            </div>
+            <div class="flex items-center space-x-4">
+                <button id="lang-toggle" class="flex items-center space-x-2 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 rounded text-xs font-semibold text-slate-700 transition-colors border border-slate-200">
+                    <span class="text-base">文/A</span>
+                    <span id="lang-label">Switch to 中文</span>
+                </button>
+            </div>
         </header>
 
-        <!-- Top Bar (Desktop) -->
-        <div class="hidden md:flex justify-between items-center p-4 bg-white border-b border-slate-200">
-            <div class="text-sm text-slate-500">
-                <span data-i18n="lastUpdated">最后更新: 2026年1月</span> | <span class="text-teal-600 font-medium">v2.1</span>
-            </div>
-            <button id="lang-toggle" class="flex items-center space-x-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-full text-sm font-medium transition-colors text-slate-700">
-                <span>🌐</span>
-                <span id="lang-label">English</span>
-            </button>
-        </div>
-
-        <!-- Scrollable Main Content -->
-        <main class="flex-1 overflow-y-auto p-4 md:p-8 relative" id="main-content">
+        <!-- Content Area -->
+        <main class="flex-1 overflow-y-auto p-6 md:p-10 scroll-smooth relative" id="main-content">
             
-            <!-- SECTION: DASHBOARD -->
-            <div id="dashboard" class="content-section space-y-6">
-                <header class="mb-8 animate-fade-in">
-                    <h2 class="text-3xl font-bold text-slate-800 tracking-tight" data-i18n="dashTitle">执行摘要</h2>
-                    <p class="text-slate-600 mt-2 max-w-3xl" data-i18n="dashSubtitle">基于澳新及欧美市场成熟经验，结合本地算力与资本优势，探索柔佛州停车管理交钥匙工程可行性。</p>
+            <!-- SECTION 1: DASHBOARD / EXECUTIVE ABSTRACT -->
+            <div id="dashboard" class="content-section max-w-6xl mx-auto space-y-8">
+                <header class="animate-reveal">
+                    <h2 class="text-3xl font-bold text-slate-900 mb-3" data-i18n="execTitle">Executive Strategic Abstract</h2>
+                    <p class="text-slate-600 max-w-4xl text-sm leading-relaxed" data-i18n="execSummary">
+                        This report analyzes the feasibility of introducing an 'End-to-End Turnkey' parking management model to the Johor market. Benchmarking against mature outsourcing models in ANZ and the UK, and leveraging local 'Compute Capital' advantages, we propose a digitization pathway based on the BOO (Build-Own-Operate) model to address fiscal leakage and optimize urban spatial governance.
+                    </p>
                 </header>
 
-                <!-- Key Metrics Grid -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-teal-500 card-hover animate-fade-in delay-100">
-                        <div class="text-xs font-bold text-slate-500 uppercase tracking-wider" data-i18n="card1Title">全球对标案例</div>
-                        <div class="mt-2 text-3xl font-extrabold text-slate-800">4+ <span class="text-base font-normal text-slate-500" data-i18n="card1Unit">核心市场</span></div>
-                        <p class="text-sm text-slate-600 mt-3 leading-relaxed" data-i18n="card1Desc">涵盖澳大利亚(Monash), 英国(Sutton), 新西兰(Auckland), 美国(Orange)。</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 animate-reveal delay-100">
+                    <!-- KPI Card 1 -->
+                    <div class="academic-card p-6 rounded-sm border-l-4 border-teal-600">
+                        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest" data-i18n="kpi1Title">GLOBAL BENCHMARKS</div>
+                        <div class="mt-2 text-2xl font-serif font-bold text-slate-800">Monash & Sutton</div>
+                        <div class="mt-3 text-xs text-slate-500 leading-relaxed" data-i18n="kpi1Desc">
+                            Long-term concession cases (30+ years) in OECD markets validate the fiscal stability and risk resilience of municipal service outsourcing.
+                        </div>
                     </div>
-                    <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-amber-500 card-hover animate-fade-in delay-200">
-                        <div class="text-xs font-bold text-slate-500 uppercase tracking-wider" data-i18n="card2Title">本地核心优势</div>
-                        <div class="mt-2 text-3xl font-extrabold text-slate-800">3 <span class="text-base font-normal text-slate-500" data-i18n="card2Unit">大支柱</span></div>
-                        <p class="text-sm text-slate-600 mt-3 leading-relaxed" data-i18n="card2Desc">本地算力 (AI/Compute) + 算法优化 + 资本储备。</p>
+                    <!-- KPI Card 2 -->
+                    <div class="academic-card p-6 rounded-sm border-l-4 border-indigo-600">
+                        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest" data-i18n="kpi2Title">TECH ARBITRAGE</div>
+                        <div class="mt-2 text-2xl font-serif font-bold text-slate-800">Edge AI + CapEx</div>
+                        <div class="mt-3 text-xs text-slate-500 leading-relaxed" data-i18n="kpi2Desc">
+                            Leveraging the low latency of local compute centers and high leverage of CapEx to build an asymmetric competitive advantage over traditional manual enforcement.
+                        </div>
                     </div>
-                    <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-indigo-500 card-hover animate-fade-in delay-300">
-                        <div class="text-xs font-bold text-slate-500 uppercase tracking-wider" data-i18n="card3Title">战略目标</div>
-                        <div class="mt-2 text-3xl font-extrabold text-slate-800">Turnkey <span class="text-base font-normal text-slate-500" data-i18n="card3Unit">交钥匙</span></div>
-                        <p class="text-sm text-slate-600 mt-3 leading-relaxed" data-i18n="card3Desc">引入国际运营经验，通过技术降本增效。</p>
+                    <!-- KPI Card 3 -->
+                    <div class="academic-card p-6 rounded-sm border-l-4 border-rose-600">
+                        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest" data-i18n="kpi3Title">FISCAL IMPACT</div>
+                        <div class="mt-2 text-2xl font-serif font-bold text-slate-800">Revenue Recovery</div>
+                        <div class="mt-3 text-xs text-slate-500 leading-relaxed" data-i18n="kpi3Desc">
+                            Projecting a 40-60% recovery of implicit fiscal revenue by eliminating informal economy rent-seeking ('Jaga Kereta') and cross-border enforcement loopholes.
+                        </div>
                     </div>
                 </div>
 
-                <!-- Market Trend Chart -->
-                <div class="bg-white p-6 rounded-xl shadow-sm animate-fade-in delay-400">
-                    <div class="flex justify-between items-center mb-4">
-                        <div>
-                            <h3 class="text-lg font-bold text-slate-800" data-i18n="chartTrendTitle">市场趋势：外包与技术融合</h3>
-                            <p class="text-sm text-slate-500" data-i18n="chartTrendSub">成熟市场（如澳洲Monash）长期采用外包模式，且技术权重逐年增加。</p>
-                        </div>
+                <!-- Macro Chart -->
+                <div class="academic-card p-8 rounded-sm animate-reveal delay-200">
+                    <div class="flex justify-between items-baseline mb-6">
+                        <h3 class="text-lg font-bold text-slate-800" data-i18n="chartTrendTitle">Macro Trend: Outsourcing Penetration vs. Tech Integration</h3>
+                        <span class="text-xs text-slate-400 mono-text">SOURCE: AGGREGATED MARKET DATA</span>
                     </div>
-                    <div class="chart-container">
-                        <canvas id="marketTrendChart"></canvas>
+                    <div class="chart-wrapper">
+                        <canvas id="macroTrendChart"></canvas>
+                    </div>
+                    <div class="mt-4 text-xs text-slate-500 italic border-l-2 border-slate-300 pl-3">
+                        <span data-i18n="chartNote">The chart indicates that as municipal budgets tighten, the relevance of G2B (Government to Business) outsourcing models rises significantly, with the tech stack's weight in contract value increasing annually.</span>
                     </div>
                 </div>
             </div>
 
-            <!-- SECTION: GLOBAL BENCHMARKS -->
-            <div id="global-benchmarks" class="content-section hidden space-y-6">
-                <header class="mb-6 animate-fade-in">
-                    <h2 class="text-2xl font-bold text-slate-800" data-i18n="benchTitle">全球市场对标分析</h2>
-                    <p class="text-slate-600 mt-2" data-i18n="benchSubtitle">深入剖析源报告中提到的澳大利亚、英国、新西兰及美国停车执法外包模式。</p>
+            <!-- SECTION 2: GLOBAL BENCHMARKS -->
+            <div id="benchmarks" class="content-section hidden max-w-6xl mx-auto space-y-8">
+                <header class="animate-reveal">
+                    <h2 class="text-3xl font-bold text-slate-900 mb-3" data-i18n="benchTitle">Comparative Market Analysis & Benchmarking</h2>
+                    <p class="text-slate-600 text-sm" data-i18n="benchSub">Deconstructing parking franchise agreements in Australia, UK, and NZ to extract best practice paradigms applicable to emerging markets.</p>
                 </header>
 
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-fade-in delay-100">
-                    <!-- List -->
-                    <div class="lg:col-span-1 bg-white rounded-xl shadow-sm overflow-hidden border border-slate-100">
-                        <div class="p-4 bg-slate-50 border-b border-slate-200 font-semibold text-slate-700" data-i18n="selectRegion">选择区域查看详情</div>
-                        <div id="benchmark-list" class="divide-y divide-slate-100">
-                            <!-- Populated by JS -->
-                        </div>
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 animate-reveal delay-100">
+                    <!-- Navigation List -->
+                    <div class="lg:col-span-4 space-y-2" id="benchmark-nav">
+                        <!-- Populated via JS -->
                     </div>
 
-                    <!-- Detail -->
-                    <div class="lg:col-span-2 bg-white rounded-xl shadow-sm p-6 border border-slate-100">
-                        <div id="benchmark-detail" class="h-full flex flex-col">
+                    <!-- Detail View -->
+                    <div class="lg:col-span-8">
+                        <div class="academic-card p-8 min-h-[500px] flex flex-col justify-between" id="benchmark-detail-container">
                             <!-- Dynamic Content -->
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- SECTION: JOHOR ANALYSIS (NEW) -->
-            <div id="johor-analysis" class="content-section hidden space-y-8">
-                <header class="mb-6 animate-fade-in">
-                    <h2 class="text-2xl font-bold text-slate-800" data-i18n="johorTitle">柔佛州停车项目深度分析</h2>
-                    <p class="text-slate-600 mt-2" data-i18n="johorSubtitle">针对柔佛新山(JB)及周边区域的痛点、机会与技术解决方案。</p>
+            <!-- SECTION 3: JOHOR DEEP DIVE (PhD Level) -->
+            <div id="johor-study" class="content-section hidden max-w-6xl mx-auto space-y-8">
+                <header class="animate-reveal">
+                    <h2 class="text-3xl font-bold text-slate-900 mb-3" data-i18n="johorTitle">Johor Techno-Economic Feasibility Study</h2>
+                    <p class="text-slate-600 text-sm" data-i18n="johorSub">Analyzing structural inefficiencies and the marginal benefit of digital intervention given Johor Bahru's (JB) unique geo-economic characteristics.</p>
                 </header>
 
-                <!-- 2-Column Layout for Analysis -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    
-                    <!-- Left: Pain Points & Market Context -->
-                    <div class="space-y-6 animate-fade-in delay-100">
-                        <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-red-400">
-                            <h3 class="flex items-center text-lg font-bold text-slate-800 mb-4">
-                                <span class="mr-2">🚨</span> <span data-i18n="johorPainTitle">核心痛点 (Pain Points)</span>
-                            </h3>
-                            <ul class="space-y-4">
-                                <li class="flex items-start">
-                                    <div class="flex-shrink-0 w-6 h-6 rounded bg-red-100 text-red-600 flex items-center justify-center text-xs font-bold mt-0.5">1</div>
-                                    <div class="ml-3">
-                                        <p class="font-medium text-slate-800" data-i18n="johorPain1T">非法看车人 (Jaga Kereta)</p>
-                                        <p class="text-sm text-slate-600 mt-1" data-i18n="johorPain1D">虽然官方有停车券/APP，但“看车人”现象严重，导致公众付费意愿低，且政府无法收到这部分收入。</p>
-                                    </div>
-                                </li>
-                                <li class="flex items-start">
-                                    <div class="flex-shrink-0 w-6 h-6 rounded bg-red-100 text-red-600 flex items-center justify-center text-xs font-bold mt-0.5">2</div>
-                                    <div class="ml-3">
-                                        <p class="font-medium text-slate-800" data-i18n="johorPain2T">执法效率低下</p>
-                                        <p class="text-sm text-slate-600 mt-1" data-i18n="johorPain2D">传统人工巡逻（开罚单）效率低，且面临执法人员安全风险和腐败风险。</p>
-                                    </div>
-                                </li>
-                                <li class="flex items-start">
-                                    <div class="flex-shrink-0 w-6 h-6 rounded bg-red-100 text-red-600 flex items-center justify-center text-xs font-bold mt-0.5">3</div>
-                                    <div class="ml-3">
-                                        <p class="font-medium text-slate-800" data-i18n="johorPain3T">新加坡车辆跨境执法难</p>
-                                        <p class="text-sm text-slate-600 mt-1" data-i18n="johorPain3D">大量新加坡车辆（高频高消费）违停难追责，缺乏跨境数据打通或有效的锁车/拖车联动机制。</p>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-
-                        <!-- Capability Radar (Moved here for context) -->
-                        <div class="bg-white p-6 rounded-xl shadow-sm">
-                            <h3 class="text-lg font-bold text-slate-800 mb-4" data-i18n="johorRadarTitle">竞争优势对比</h3>
-                            <div class="chart-container h-64">
-                                <canvas id="capabilityRadarChart"></canvas>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 animate-reveal delay-100">
+                    <!-- Problem Analysis -->
+                    <div class="academic-card p-8 border-t-4 border-rose-500">
+                        <h3 class="text-lg font-bold text-slate-800 mb-6 flex items-center">
+                            <span class="w-2 h-2 bg-rose-500 rounded-full mr-3"></span>
+                            <span data-i18n="probTitle">Structural Inefficiencies</span>
+                        </h3>
+                        
+                        <div class="space-y-6">
+                            <div>
+                                <h4 class="text-sm font-bold text-slate-900 uppercase tracking-wide mb-2" data-i18n="prob1Head">Informal Economy Rent-Seeking</h4>
+                                <p class="text-xs text-slate-600 leading-relaxed text-justify" data-i18n="prob1Text">
+                                    The 'Jaga Kereta' phenomenon is essentially the appropriation of public resources by the informal economy. This leads to direct municipal revenue leakage and disrupts the 'Pay-for-Service' social contract, causing market pricing mechanism failure.
+                                </p>
+                            </div>
+                            <hr class="border-slate-100">
+                            <div>
+                                <h4 class="text-sm font-bold text-slate-900 uppercase tracking-wide mb-2" data-i18n="prob2Head">Cross-Border Enforcement Arbitrage</h4>
+                                <p class="text-xs text-slate-600 leading-relaxed text-justify" data-i18n="prob2Text">
+                                    While Singaporean vehicles possess high spending power, they effectively enjoy 'parking immunity' due to the lack of Cross-border Data Protocols. This constitutes regulatory arbitrage, reducing turnover in high-value zones.
+                                </p>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Right: Solution & Strategy -->
-                    <div class="space-y-6 animate-fade-in delay-200">
-                        <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-teal-500">
-                            <h3 class="flex items-center text-lg font-bold text-slate-800 mb-4">
-                                <span class="mr-2">💡</span> <span data-i18n="johorSolTitle">技术解决方案 (Our Solution)</span>
-                            </h3>
-                            <div class="space-y-6">
-                                <div>
-                                    <h4 class="font-bold text-teal-700 text-sm uppercase tracking-wide mb-2" data-i18n="johorSol1T">本地化 AI 巡逻车 (LPR Patrol)</h4>
-                                    <p class="text-sm text-slate-600" data-i18n="johorSol1D">利用本地算力中心，部署高精度车牌识别巡逻车。针对马来西亚复杂车牌（及新加坡车牌）优化算法，实现 >98% 识别率，自动生成电子罚单。</p>
-                                </div>
-                                <div>
-                                    <h4 class="font-bold text-teal-700 text-sm uppercase tracking-wide mb-2" data-i18n="johorSol2T">数字化支付生态</h4>
-                                    <p class="text-sm text-slate-600" data-i18n="johorSol2D">整合 Touch 'n Go, GrabPay 及信用卡。推动“无感支付”停车，减少人工收费漏洞。</p>
-                                </div>
-                                <div>
-                                    <h4 class="font-bold text-teal-700 text-sm uppercase tracking-wide mb-2" data-i18n="johorSol3T">资本+运营 (BOO模式)</h4>
-                                    <p class="text-sm text-slate-600" data-i18n="johorSol3D">我们提供前期设备资本（CAPEX），政府零投入，仅通过收入分成（Revenue Share）偿还。降低政府财政压力。</p>
-                                </div>
-                            </div>
-                        </div>
+                    <!-- Solution Architecture -->
+                    <div class="academic-card p-8 border-t-4 border-teal-500">
+                        <h3 class="text-lg font-bold text-slate-800 mb-6 flex items-center">
+                            <span class="w-2 h-2 bg-teal-500 rounded-full mr-3"></span>
+                            <span data-i18n="solTitle">Technological Intervention Architecture</span>
+                        </h3>
 
-                        <!-- SWOT Grid (Compact) -->
-                        <div class="bg-white p-6 rounded-xl shadow-sm">
-                            <h3 class="text-lg font-bold text-slate-800 mb-4">SWOT 概览</h3>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div class="p-3 bg-green-50 rounded border border-green-100">
-                                    <div class="font-bold text-green-700 text-xs mb-1">Strengths</div>
-                                    <div class="text-xs text-slate-600" data-i18n="swotS">本地AI算力, 资本储备</div>
-                                </div>
-                                <div class="p-3 bg-red-50 rounded border border-red-100">
-                                    <div class="font-bold text-red-700 text-xs mb-1">Weaknesses</div>
-                                    <div class="text-xs text-slate-600" data-i18n="swotW">缺大规模运营历史</div>
-                                </div>
-                                <div class="p-3 bg-blue-50 rounded border border-blue-100">
-                                    <div class="font-bold text-blue-700 text-xs mb-1">Opportunities</div>
-                                    <div class="text-xs text-slate-600" data-i18n="swotO">柔新特区(JS-SEZ)发展</div>
-                                </div>
-                                <div class="p-3 bg-amber-50 rounded border border-amber-100">
-                                    <div class="font-bold text-amber-700 text-xs mb-1">Threats</div>
-                                    <div class="text-xs text-slate-600" data-i18n="swotT">政策变动, 利益团体抵制</div>
-                                </div>
+                        <div class="space-y-6">
+                            <div>
+                                <h4 class="text-sm font-bold text-slate-900 uppercase tracking-wide mb-2" data-i18n="sol1Head">Sovereign Edge Computing</h4>
+                                <p class="text-xs text-slate-600 leading-relaxed text-justify" data-i18n="sol1Text">
+                                    Deploying localized LPR algorithm nodes for Inference at the Edge. This circumvents legal risks associated with cross-border data sovereignty and resolves latency issues in identifying foreign vehicles.
+                                </p>
+                            </div>
+                            <hr class="border-slate-100">
+                            <div>
+                                <h4 class="text-sm font-bold text-slate-900 uppercase tracking-wide mb-2" data-i18n="sol2Head">BOO Capital Structure</h4>
+                                <p class="text-xs text-slate-600 leading-relaxed text-justify" data-i18n="sol2Text">
+                                    Adopting the Build-Own-Operate model. We internalize CapEx (equipment depreciation) and convert the government's OpEx (labor costs) into variable costs based on revenue sharing. This significantly improves the municipal balance sheet.
+                                </p>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <!-- Radar Chart Context -->
+                <div class="academic-card p-8 animate-reveal delay-200">
+                    <h3 class="text-lg font-bold text-slate-800 mb-4 text-center" data-i18n="radarTitle">Multi-Dimensional Capability Assessment Model</h3>
+                    <div class="chart-wrapper h-[400px]">
+                        <canvas id="capabilityRadar"></canvas>
+                    </div>
+                </div>
             </div>
 
-            <!-- SECTION: FEASIBILITY SIMULATOR -->
-            <div id="feasibility-sim" class="content-section hidden space-y-6">
-                <header class="mb-6 animate-fade-in">
-                    <h2 class="text-2xl font-bold text-slate-800" data-i18n="simTitle">财务模拟器</h2>
-                    <p class="text-slate-600 mt-2" data-i18n="simSubtitle">调整参数，评估 AI 执法与技术介入对营收的潜在提升。</p>
+            <!-- SECTION 4: FINANCIAL MODEL -->
+            <div id="financial-model" class="content-section hidden max-w-6xl mx-auto space-y-8">
+                <header class="animate-reveal">
+                    <h2 class="text-3xl font-bold text-slate-900 mb-3" data-i18n="finTitle">Financial Sensitivity Model</h2>
+                    <p class="text-slate-600 text-sm" data-i18n="finSub">A revenue projection model based on multi-variable assumptions, assessing the marginal contribution of Technology Efficacy to fiscal yield.</p>
                 </header>
 
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-fade-in delay-100">
-                    <!-- Controls -->
-                    <div class="lg:col-span-1 bg-white p-6 rounded-xl shadow-sm space-y-8 border border-slate-100">
-                        <div class="flex items-center justify-between pb-2 border-b border-slate-100">
-                            <h3 class="font-bold text-slate-800" data-i18n="simParams">参数设置</h3>
-                            <span class="text-xs text-slate-400">INPUTS</span>
-                        </div>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-reveal delay-100">
+                    <!-- Parameters -->
+                    <div class="lg:col-span-1 academic-card p-6 bg-slate-50 border-slate-200">
+                        <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-6 border-b border-slate-200 pb-2">Model Assumptions</h3>
                         
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-2" data-i18n="labelSpots">停车位数量</label>
-                            <input type="range" id="sim-spots" min="1000" max="50000" step="1000" value="10000" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-teal-600">
-                            <div class="flex justify-between text-xs text-slate-500 mt-2 font-mono">
-                                <span>1K</span>
-                                <span id="val-spots" class="font-bold text-teal-700 bg-teal-50 px-2 py-0.5 rounded">10,000</span>
-                                <span>50K</span>
+                        <div class="space-y-6">
+                            <div class="group">
+                                <label class="block text-xs font-medium text-slate-700 mb-2 font-mono">Total Addressable Spots (TAS)</label>
+                                <input type="range" id="sim-spots" min="1000" max="50000" step="1000" value="15000" class="w-full h-1 bg-slate-300 rounded-lg appearance-none cursor-pointer accent-teal-600">
+                                <div class="flex justify-between mt-2 text-xs font-mono text-slate-500">
+                                    <span>1k</span>
+                                    <span id="val-spots" class="text-teal-700 font-bold">15,000</span>
+                                </div>
                             </div>
-                        </div>
 
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-2" data-i18n="labelRate">平均时薪 (MYR)</label>
-                            <input type="range" id="sim-rate" min="0.5" max="5.0" step="0.1" value="0.8" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-teal-600">
-                            <div class="flex justify-between text-xs text-slate-500 mt-2 font-mono">
-                                <span>0.5</span>
-                                <span id="val-rate" class="font-bold text-teal-700 bg-teal-50 px-2 py-0.5 rounded">0.8</span>
-                                <span>5.0</span>
+                            <div class="group">
+                                <label class="block text-xs font-medium text-slate-700 mb-2 font-mono">Rev Per Available Hour (RevPAH)</label>
+                                <input type="range" id="sim-rate" min="0.5" max="5.0" step="0.1" value="1.2" class="w-full h-1 bg-slate-300 rounded-lg appearance-none cursor-pointer accent-teal-600">
+                                <div class="flex justify-between mt-2 text-xs font-mono text-slate-500">
+                                    <span>MYR 0.5</span>
+                                    <span id="val-rate" class="text-teal-700 font-bold">1.2</span>
+                                </div>
                             </div>
-                        </div>
 
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-2" data-i18n="labelEfficiency">AI 执法效率提升 (%)</label>
-                            <input type="range" id="sim-ai" min="0" max="200" step="10" value="60" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-teal-600">
-                            <div class="flex justify-between text-xs text-slate-500 mt-2 font-mono">
-                                <span>0%</span>
-                                <span id="val-ai" class="font-bold text-teal-700 bg-teal-50 px-2 py-0.5 rounded">+60%</span>
-                                <span>+200%</span>
+                            <div class="group">
+                                <label class="block text-xs font-medium text-slate-700 mb-2 font-mono">Tech-Driven Efficiency Delta (ΔE)</label>
+                                <input type="range" id="sim-ai" min="0" max="150" step="10" value="40" class="w-full h-1 bg-slate-300 rounded-lg appearance-none cursor-pointer accent-teal-600">
+                                <div class="flex justify-between mt-2 text-xs font-mono text-slate-500">
+                                    <span>0%</span>
+                                    <span id="val-ai" class="text-teal-700 font-bold">+40%</span>
+                                </div>
                             </div>
-                        </div>
-
-                        <div class="p-4 bg-blue-50 rounded-lg border border-blue-100">
-                            <p class="text-xs text-blue-800 leading-relaxed">
-                                <strong>Note:</strong> <span data-i18n="simNote">模拟基于每日8小时收费时长，基础占用率60%的假设模型。仅供内部参考。</span>
-                            </p>
                         </div>
                     </div>
 
-                    <!-- Visualization -->
-                    <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-slate-100 flex flex-col justify-between">
+                    <!-- Output Visualization -->
+                    <div class="lg:col-span-2 academic-card p-6 flex flex-col">
                         <div class="flex justify-between items-end mb-6">
                             <div>
-                                <h3 class="font-bold text-slate-800" data-i18n="simResultTitle">年度营收预测 (Yearly Revenue)</h3>
-                                <p class="text-xs text-slate-500 mt-1">Comparision: Manual vs Tech-Enabled</p>
+                                <h3 class="text-sm font-bold text-slate-800" data-i18n="finOutTitle">Projected Fiscal Yield</h3>
+                                <p class="text-[10px] text-slate-400 mt-1 mono-text">BASIS: 300 DAYS/YR, 8H/DAY, 65% OCCUPANCY</p>
                             </div>
                             <div class="text-right">
-                                <div class="text-xs text-slate-500 uppercase tracking-wide" data-i18n="simUpliftLabel">预计提升</div>
-                                <div id="revenue-uplift" class="text-2xl font-extrabold text-green-600">+MYR 0</div>
+                                <div class="text-[10px] text-slate-400 uppercase tracking-widest">Incremental Value (Delta)</div>
+                                <div id="revenue-delta" class="text-2xl font-serif font-bold text-teal-600">+ MYR 0.0M</div>
                             </div>
                         </div>
-                        <div class="chart-container flex-1">
-                            <canvas id="simulationChart"></canvas>
+                        <div class="chart-wrapper flex-1">
+                            <canvas id="simChart"></canvas>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- SECTION: ROADMAP -->
-            <div id="roadmap" class="content-section hidden space-y-6">
-                <header class="mb-6 animate-fade-in">
-                    <h2 class="text-2xl font-bold text-slate-800" data-i18n="mapTitle">合作与实施路径</h2>
-                    <p class="text-slate-600 mt-2" data-i18n="mapSubtitle">从接触国际团队到柔佛项目落地的分阶段计划。</p>
+            <!-- SECTION 5: IMPLEMENTATION MATRIX -->
+            <div id="matrix" class="content-section hidden max-w-6xl mx-auto space-y-8">
+                <header class="animate-reveal">
+                    <h2 class="text-3xl font-bold text-slate-900 mb-3" data-i18n="mapTitle">Strategic Implementation Matrix</h2>
+                    <p class="text-slate-600 text-sm" data-i18n="mapSub">Phased deployment roadmap covering stakeholder alignment, technical validation, and scalable delivery.</p>
                 </header>
 
-                <div class="relative border-l-4 border-slate-200 ml-4 space-y-12 pb-10 animate-fade-in delay-100">
-                    <!-- Step 1 -->
-                    <div class="ml-8 relative group">
-                        <div class="absolute -left-[42px] top-0 w-6 h-6 bg-white border-4 border-slate-300 rounded-full group-hover:border-teal-500 transition-colors"></div>
-                        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
-                            <div class="flex justify-between items-start">
-                                <h3 class="font-bold text-lg text-slate-800">Q1-Q2: <span data-i18n="step1Title">国际伙伴筛选与洽谈</span></h3>
-                                <span class="bg-slate-100 text-slate-600 text-xs px-2 py-1 rounded font-mono">Phase 1</span>
-                            </div>
-                            <p class="text-slate-600 mt-2 text-sm" data-i18n="step1Desc">接触源报告中提到的关键企业 (Duncan Solutions, Saba Park Services)，重点考察其运营SOP与技术整合能力。</p>
-                            <div class="mt-4 flex gap-2">
-                                <span class="text-xs bg-amber-50 text-amber-700 px-2 py-1 rounded border border-amber-100">Action: MOU Signing</span>
-                            </div>
+                <div class="relative border-l border-slate-300 ml-6 space-y-12 animate-reveal delay-100 py-4">
+                    <!-- Phase 1 -->
+                    <div class="ml-10 relative">
+                        <div class="absolute -left-[49px] top-1 w-4 h-4 rounded-full bg-white border-4 border-slate-400"></div>
+                        <h3 class="text-lg font-bold text-slate-800" data-i18n="ph1Title">Phase 1: Strategic Alliance Formation (Q1-Q2)</h3>
+                        <div class="academic-card p-5 mt-3 bg-white">
+                            <p class="text-sm text-slate-600 mb-3" data-i18n="ph1Desc">
+                                Establish exclusive partnerships with Duncan Solutions & Saba Park Services. Focus on importing SOP IP and locking in local compute as the infrastructure layer via MOU.
+                            </p>
+                            <span class="inline-block px-2 py-1 bg-slate-100 text-[10px] font-mono text-slate-600 rounded">MILESTONE: JV FORMATION</span>
                         </div>
                     </div>
 
-                    <!-- Step 2 -->
-                    <div class="ml-8 relative group">
-                        <div class="absolute -left-[42px] top-0 w-6 h-6 bg-white border-4 border-teal-500 rounded-full"></div>
-                        <div class="bg-white p-6 rounded-xl shadow-sm border border-teal-100 ring-1 ring-teal-50">
-                            <div class="flex justify-between items-start">
-                                <h3 class="font-bold text-lg text-teal-800">Q3: <span data-i18n="step2Title">柔佛试点项目 (Pilot)</span></h3>
-                                <span class="bg-teal-100 text-teal-700 text-xs px-2 py-1 rounded font-mono">Phase 2</span>
-                            </div>
-                            <p class="text-slate-600 mt-2 text-sm" data-i18n="step2Desc">选定柔佛核心区进行技术验证。部署本地算力边缘节点，测试针对马来西亚车牌的AI识别率。</p>
+                    <!-- Phase 2 -->
+                    <div class="ml-10 relative">
+                        <div class="absolute -left-[49px] top-1 w-4 h-4 rounded-full bg-white border-4 border-teal-500"></div>
+                        <h3 class="text-lg font-bold text-teal-800" data-i18n="ph2Title">Phase 2: Proof of Concept & Calibration (Q3)</h3>
+                        <div class="academic-card p-5 mt-3 bg-teal-50/50 border-teal-200">
+                            <p class="text-sm text-slate-600 mb-3" data-i18n="ph2Desc">
+                                Launch Pilot Program in Johor CBD. Deploy 'Sovereign Edge Computing Units', fine-tuning algorithms for mixed SG/MY license plate flows to validate >98% accuracy.
+                            </p>
+                            <span class="inline-block px-2 py-1 bg-teal-100 text-[10px] font-mono text-teal-800 rounded">MILESTONE: TECH VALIDATION</span>
                         </div>
                     </div>
 
-                    <!-- Step 3 -->
-                    <div class="ml-8 relative group">
-                        <div class="absolute -left-[42px] top-0 w-6 h-6 bg-white border-4 border-slate-300 rounded-full group-hover:border-teal-500 transition-colors"></div>
-                        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
-                            <div class="flex justify-between items-start">
-                                <h3 class="font-bold text-lg text-slate-800">Next Year: <span data-i18n="step3Title">全面推广与交钥匙交付</span></h3>
-                                <span class="bg-slate-100 text-slate-600 text-xs px-2 py-1 rounded font-mono">Phase 3</span>
-                            </div>
-                            <p class="text-slate-600 mt-2 text-sm" data-i18n="step3Desc">基于试点数据，提交全面可行性报告，争取长期特许经营权。</p>
+                    <!-- Phase 3 -->
+                    <div class="ml-10 relative">
+                        <div class="absolute -left-[49px] top-1 w-4 h-4 rounded-full bg-white border-4 border-slate-400"></div>
+                        <h3 class="text-lg font-bold text-slate-800" data-i18n="ph3Title">Phase 3: Full Delivery & Asset Securitization (Year 2+)</h3>
+                        <div class="academic-card p-5 mt-3 bg-white">
+                            <p class="text-sm text-slate-600 mb-3" data-i18n="ph3Desc">
+                                Complete state-wide deployment. Based on stable Cash Flow, explore Asset-Backed Securitization (ABS) or further financing to achieve capital recycling.
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -448,540 +393,402 @@
         </main>
     </div>
 
-    <!-- JavaScript Logic -->
+    <!-- Logic Layer -->
     <script>
-        // --- TRANSLATIONS ---
+        // --- PHD LEVEL DICTIONARY ---
         const i18n = {
             zh: {
-                appTitle: "战略分析平台",
-                appSubtitle: "柔佛州停车项目可行性研究",
-                appTitleShort: "智能停车分析",
-                navDashboard: "仪表盘概览",
-                navGlobal: "全球市场对标",
-                navJohor: "柔佛项目分析",
-                navSim: "财务模拟器",
-                navRoadmap: "合作路径规划",
-                contactTitle: "项目联系人",
-                lastUpdated: "最后更新: 2026年1月",
-                dashTitle: "执行摘要",
-                dashSubtitle: "基于澳新及欧美市场成熟经验，结合本地算力与资本优势，探索柔佛州停车管理交钥匙工程可行性。",
-                card1Title: "全球对标案例",
-                card1Unit: "核心市场",
-                card1Desc: "涵盖澳大利亚(Monash), 英国(Sutton), 新西兰(Auckland), 美国(Orange)。",
-                card2Title: "本地核心优势",
-                card2Unit: "大支柱",
-                card2Desc: "本地算力 (AI/Compute) + 算法优化 + 资本储备。",
-                card3Title: "战略目标",
-                card3Unit: "交钥匙",
-                card3Desc: "引入国际运营经验，通过技术降本增效。",
-                chartTrendTitle: "市场趋势：外包与技术融合",
-                chartTrendSub: "分析显示，成熟市场（如澳洲Monash）长期采用外包模式，且合同周期趋长，稳定性高。",
-                benchTitle: "全球市场对标分析",
-                benchSubtitle: "深入剖析源报告中提到的澳大利亚、英国、新西兰及美国停车执法外包模式。",
-                selectRegion: "选择区域查看详情",
-                johorTitle: "柔佛州停车项目深度分析",
-                johorSubtitle: "针对柔佛新山(JB)及周边区域的痛点、机会与技术解决方案。",
-                johorPainTitle: "核心痛点",
-                johorPain1T: "非法看车人 (Jaga Kereta)",
-                johorPain1D: "虽然官方有停车券/APP，但“看车人”现象严重，导致公众付费意愿低，且政府无法收到这部分收入。",
-                johorPain2T: "执法效率低下",
-                johorPain2D: "传统人工巡逻（开罚单）效率低，且面临执法人员安全风险和腐败风险。",
-                johorPain3T: "新加坡车辆跨境执法难",
-                johorPain3D: "大量新加坡车辆（高频高消费）违停难追责，缺乏跨境数据打通或有效的锁车/拖车联动机制。",
-                johorRadarTitle: "竞争优势对比：传统 VS 技术型",
-                johorSolTitle: "技术解决方案",
-                johorSol1T: "本地化 AI 巡逻车",
-                johorSol1D: "部署高精度车牌识别巡逻车。针对马来西亚/新加坡车牌优化算法，实现 >98% 识别率。",
-                johorSol2T: "数字化支付生态",
-                johorSol2D: "整合 Touch 'n Go, GrabPay。推动“无感支付”停车，减少漏洞。",
-                johorSol3T: "资本+运营 (BOO模式)",
-                johorSol3D: "提供前期设备资本(CAPEX)，通过运营分润偿还，降低政府压力。",
-                swotS: "本地AI算力, 资本储备",
-                swotW: "缺大规模运营历史",
-                swotO: "柔新特区(JS-SEZ)发展",
-                swotT: "政策变动, 利益团体抵制",
-                simTitle: "财务模拟器",
-                simSubtitle: "调整参数，评估 AI 执法与技术介入对营收的潜在提升。",
-                simParams: "参数设置",
-                labelSpots: "停车位数量",
-                labelRate: "平均时薪 (MYR)",
-                labelEfficiency: "AI 执法效率提升 (%)",
-                simNote: "模拟基于每日8小时收费时长，基础占用率60%的假设模型。仅供内部参考。",
-                simResultTitle: "年度营收预测",
-                simUpliftLabel: "预计提升",
-                mapTitle: "合作与实施路径",
-                mapSubtitle: "从接触国际团队到柔佛项目落地的分阶段计划。",
-                step1Title: "国际伙伴筛选与洽谈",
-                step1Desc: "接触源报告中提到的关键企业 (Duncan Solutions, Saba)，考察运营SOP。",
-                step2Title: "柔佛试点项目 (Pilot)",
-                step2Desc: "选定核心区进行技术验证，测试车牌识别准确率。",
-                step3Title: "全面推广与交钥匙交付",
-                step3Desc: "提交全面可行性报告，争取长期特许经营权。",
-                chartLabelManual: "传统人工执法",
-                chartLabelAI: "AI 增强执法",
-                chartLabelRevenue: "年度预估营收 (MYR)",
-                radarLabelTrad: "传统国际运营商",
-                radarLabelUs: "我们 (Tech + Local)",
-                trendLabelContract: "外包合同覆盖率",
-                trendLabelTech: "技术介入深度"
+                appTitle: "城市交通基础设施\n技术经济分析",
+                appSubtitle: "柔佛州智能停车系统可行性与战略部署研究",
+                contactHeader: "首席分析师 (PRINCIPAL)",
+                navDash: "执行战略摘要",
+                navBench: "全球基准与对标",
+                navJohor: "柔佛技术经济研究",
+                navModel: "财务敏感性模型",
+                navMatrix: "实施矩阵",
+                execTitle: "执行战略摘要 (Executive Strategic Abstract)",
+                execSummary: "本报告旨在分析将“端到端交钥匙 (Turnkey)”停车管理模式引入柔佛州市场的可行性。通过对标澳新 (ANZ) 及英国市场的成熟外包模型，结合本地特有的“算力资本 (Compute Capital)”优势，我们提出一种基于 BOO (Build-Own-Operate) 的数字化转型路径，旨在解决财政流失并优化城市空间治理。",
+                kpi1Title: "全球基准 (BENCHMARKS)",
+                kpi1Desc: "基于 OECD 市场的长期特许经营案例 (30年+)，验证了市政服务外包的财政稳定性与抗风险能力。",
+                kpi2Title: "技术套利 (TECH ARBITRAGE)",
+                kpi2Desc: "利用本地算力中心的低延迟优势与资本支出的高杠杆，构建相对于传统人工执法的非对称竞争优势。",
+                kpi3Title: "财政影响 (FISCAL IMPACT)",
+                kpi3Desc: "通过消除非正规经济寻租（非法看车人）与跨境执法漏洞，预计实现 40-60% 的隐性财政收入回收。",
+                chartTrendTitle: "宏观趋势：外包渗透率与技术融合度",
+                chartNote: "图表显示，随着市政预算紧缩，G2B (Government to Business) 外包模式的相关性显著上升，且技术栈在合同价值中的权重逐年增加。",
+                benchTitle: "比较市场分析与基准",
+                benchSub: "通过解构澳大利亚、英国及新西兰的停车特许经营协议，提取适用于新兴市场的最佳实践范式。",
+                johorTitle: "柔佛项目技术经济可行性研究",
+                johorSub: "针对柔佛新山 (JB) 特有的地缘经济特征，分析结构性低效与数字化干预的边际效益。",
+                probTitle: "结构性市场失灵 (Structural Inefficiencies)",
+                prob1Head: "非正规经济寻租 (Rent-Seeking)",
+                prob1Text: "俗称 'Jaga Kereta' 的非法看车人现象，本质上是一种非正规经济对公共资源的侵占。这导致了市政收入的直接流失（Leakage），并破坏了“付费-服务”的社会契约，造成市场定价机制失效。",
+                prob2Head: "跨境执法套利 (Enforcement Arbitrage)",
+                prob2Text: "新加坡车辆虽然具有高消费能力，但由于缺乏跨境数据交换协议（Cross-border Data Protocol），实际上享有“违停豁免权”。这构成了一种监管套利，导致高价值区域的周转率下降。",
+                solTitle: "技术干预架构 (Technological Intervention)",
+                sol1Head: "主权边缘计算 (Sovereign Edge Computing)",
+                sol1Text: "部署本地化 LPR 算法节点，直接在巡逻车端完成推理（Inference at the Edge）。这不仅规避了跨境数据隐私的法律风险（Data Sovereignty），还解决了跨境车辆识别的延迟问题。",
+                sol2Head: "BOO 资本结构 (Capital Structure)",
+                sol2Text: "采用 Build-Own-Operate 模式。我们将 CapEx（设备折旧）内部化，将政府的 OpEx（人力成本）转化为基于收入分成的可变成本（Variable Cost）。这极大地改善了市政资产负债表。",
+                radarTitle: "能力多维评估模型",
+                finTitle: "财务敏感性模型",
+                finSub: "基于多变量假设的收入预测模型，评估技术效能（Technology Efficacy）对财政收益率的边际贡献。",
+                finOutTitle: "年度财政收益预测 (Projected Fiscal Yield)",
+                mapTitle: "战略实施矩阵",
+                mapSub: "阶段性部署路线图，涵盖利益相关者协调、技术验证与规模化交付。",
+                ph1Title: "Phase 1: 战略联盟构建 (Q1-Q2)",
+                ph1Desc: "与 Duncan Solutions 及 Saba Park Services 建立排他性合作伙伴关系。重点在于引入 SOP 知识产权，并通过 MOU 锁定本地算力作为基础设施底层。",
+                ph2Title: "Phase 2: 概念验证与技术校准 (Q3)",
+                ph2Desc: "在柔佛核心商业区 (CBD) 启动 Pilot Program。部署“主权边缘计算单元”，针对新加坡及马来西亚混合车牌流进行算法微调，验证 >98% 的识别精度。",
+                ph3Title: "Phase 3: 全面交付与资产证券化 (Year 2+)",
+                ph3Desc: "完成全州范围内部署。基于稳定的现金流（Cash Flow），探索资产证券化（ABS）或进一步融资，实现资本的循环利用。",
+                labels: {
+                    radar: ['运营成熟度', '资本深度', '政府协同', '算法主权', '数据合规', '响应延迟'],
+                    trendSeries1: '外包渗透率 (Outsourcing)',
+                    trendSeries2: '技术依赖度 (Tech Dependency)',
+                    simManual: '基准情景 (Baseline)',
+                    simAI: '技术增强情景 (Tech-Enabled)'
+                }
             },
             en: {
-                appTitle: "Strategic Analysis Platform",
-                appSubtitle: "Johor Parking Project Feasibility Study",
-                appTitleShort: "Parking Analysis",
-                navDashboard: "Dashboard",
-                navGlobal: "Global Benchmarks",
-                navJohor: "Johor Analysis",
-                navSim: "Simulator",
-                navRoadmap: "Roadmap",
-                contactTitle: "Contact Person",
-                lastUpdated: "Last Updated: Jan 2026",
-                dashTitle: "Executive Summary",
-                dashSubtitle: "Exploring turnkey feasibility for Johor parking management leveraging local compute/capital and global benchmarks.",
-                card1Title: "Global Benchmarks",
-                card1Unit: "Key Markets",
-                card1Desc: "Covers Australia (Monash), UK (Sutton), NZ (Auckland), USA (Orange).",
-                card2Title: "Local Advantages",
-                card2Unit: "Pillars",
-                card2Desc: "Local Compute (AI) + Algorithm Optimization + Capital Reserves.",
-                card3Title: "Strategic Goal",
-                card3Unit: "Turnkey",
-                card3Desc: "Importing global ops experience, reducing costs via technology.",
-                chartTrendTitle: "Market Trend: Outsourcing & Tech",
-                chartTrendSub: "Analysis shows mature markets (e.g., Monash) favor long-term outsourcing with increasing tech integration.",
-                benchTitle: "Global Benchmark Analysis",
-                benchSubtitle: "Deep dive into parking enforcement outsourcing models in Aus, UK, NZ, and USA.",
-                selectRegion: "Select Region",
-                johorTitle: "Johor Project Deep Analysis",
-                johorSubtitle: "Pain points, opportunities, and technical solutions for Johor Bahru (JB).",
-                johorPainTitle: "Core Pain Points",
-                johorPain1T: "Illegal Attendants (Jaga Kereta)",
-                johorPain1D: "High leakage due to illegal attendants collecting fees instead of the council.",
-                johorPain2T: "Low Enforcement Efficiency",
-                johorPain2D: "Manual patrols are slow, inefficient, and prone to corruption risks.",
-                johorPain3T: "Singapore Vehicle Enforcement",
-                johorPain3D: "Difficulty in fining foreign (SG) vehicles without cross-border data or clamping/towing SOPs.",
-                johorRadarTitle: "Competitive Edge: Traditional vs Tech",
-                johorSolTitle: "Tech Solutions",
-                johorSol1T: "Local AI Patrol Vehicles",
-                johorSol1D: "Deploying LPR patrols with algorithms optimized for MY/SG plates (>98% accuracy).",
-                johorSol2T: "Digital Payment Ecosystem",
-                johorSol2D: "Integration with Touch 'n Go & E-wallets. Frictionless payment.",
-                johorSol3T: "Capital + Ops (BOO Model)",
-                johorSol3D: "We provide CAPEX, reducing gov burden, in exchange for revenue share.",
-                swotS: "Local Compute, Capital",
-                swotW: "No Operational History",
-                swotO: "JS-SEZ Economic Zone",
-                swotT: "Policy Changes, Pushback",
-                simTitle: "Financial Simulator",
-                simSubtitle: "Adjust parameters to estimate revenue uplift from AI enforcement.",
-                simParams: "Parameters",
-                labelSpots: "Est. Spots",
-                labelRate: "Hourly Rate (MYR)",
-                labelEfficiency: "AI Efficiency Boost (%)",
-                simNote: "Simulation based on 8-hour charging day, 60% base occupancy. Internal reference only.",
-                simResultTitle: "Revenue Projection",
-                simUpliftLabel: "Est. Uplift",
-                mapTitle: "Cooperation Roadmap",
-                mapSubtitle: "Phased plan from initial contact to turnkey delivery.",
-                step1Title: "Partner Selection & Talks",
-                step1Desc: "Engage key players (Duncan, Saba) referenced in report for SOPs.",
-                step2Title: "Johor Pilot Project",
-                step2Desc: "Validate technology and LPR accuracy in core JB zone.",
-                step3Title: "Full Rollout & Turnkey",
-                step3Desc: "Submit full feasibility report for long-term concession.",
-                chartLabelManual: "Manual Enforcement",
-                chartLabelAI: "AI Enhanced",
-                chartLabelRevenue: "Est. Yearly Revenue (MYR)",
-                radarLabelTrad: "Traditional Ops",
-                radarLabelUs: "Us (Tech + Local)",
-                trendLabelContract: "Outsourcing Rate",
-                trendLabelTech: "Tech Integration"
+                appTitle: "Urban Infrastructure &\nTechno-Economic Analysis",
+                appSubtitle: "Feasibility Study & Strategic Deployment for Johor Smart Parking",
+                contactHeader: "PRINCIPAL ANALYST",
+                navDash: "Executive Strategic Abstract",
+                navBench: "Comparative Benchmarking",
+                navJohor: "Johor Techno-Economic Study",
+                navModel: "Financial Sensitivity Model",
+                navMatrix: "Implementation Matrix",
+                execTitle: "Executive Strategic Abstract",
+                execSummary: "This report analyzes the feasibility of introducing an 'End-to-End Turnkey' parking management model to the Johor market. Benchmarking against mature outsourcing models in ANZ and the UK, and leveraging local 'Compute Capital' advantages, we propose a digitization pathway based on the BOO (Build-Own-Operate) model to address fiscal leakage and optimize urban spatial governance.",
+                kpi1Title: "GLOBAL BENCHMARKS",
+                kpi1Desc: "Long-term concession cases (30+ years) in OECD markets validate the fiscal stability and risk resilience of municipal service outsourcing.",
+                kpi2Title: "TECH ARBITRAGE",
+                kpi2Desc: "Leveraging the low latency of local compute centers and high leverage of CapEx to build an asymmetric competitive advantage over traditional manual enforcement.",
+                kpi3Title: "FISCAL IMPACT",
+                kpi3Desc: "Projecting a 40-60% recovery of implicit fiscal revenue by eliminating informal economy rent-seeking ('Jaga Kereta') and cross-border enforcement loopholes.",
+                chartTrendTitle: "Macro Trend: Outsourcing Penetration vs. Tech Integration",
+                chartNote: "The chart indicates that as municipal budgets tighten, the relevance of G2B (Government to Business) outsourcing models rises significantly, with the tech stack's weight in contract value increasing annually.",
+                benchTitle: "Comparative Market Analysis & Benchmarking",
+                benchSub: "Deconstructing parking franchise agreements in Australia, UK, and NZ to extract best practice paradigms applicable to emerging markets.",
+                johorTitle: "Johor Techno-Economic Feasibility Study",
+                johorSub: "Analyzing structural inefficiencies and the marginal benefit of digital intervention given Johor Bahru's (JB) unique geo-economic characteristics.",
+                probTitle: "Structural Inefficiencies",
+                prob1Head: "Informal Economy Rent-Seeking",
+                prob1Text: "The 'Jaga Kereta' phenomenon is essentially the appropriation of public resources by the informal economy. This leads to direct municipal revenue leakage and disrupts the 'Pay-for-Service' social contract, causing market pricing mechanism failure.",
+                prob2Head: "Cross-Border Enforcement Arbitrage",
+                prob2Text: "While Singaporean vehicles possess high spending power, they effectively enjoy 'parking immunity' due to the lack of Cross-border Data Protocols. This constitutes regulatory arbitrage, reducing turnover in high-value zones.",
+                solTitle: "Technological Intervention Architecture",
+                sol1Head: "Sovereign Edge Computing",
+                sol1Text: "Deploying localized LPR algorithm nodes for Inference at the Edge. This circumvents legal risks associated with cross-border data sovereignty and resolves latency issues in identifying foreign vehicles.",
+                sol2Head: "BOO Capital Structure",
+                sol2Text: "Adopting the Build-Own-Operate model. We internalize CapEx (equipment depreciation) and convert the government's OpEx (labor costs) into variable costs based on revenue sharing. This significantly improves the municipal balance sheet.",
+                radarTitle: "Multi-Dimensional Capability Assessment Model",
+                finTitle: "Financial Sensitivity Model",
+                finSub: "A revenue projection model based on multi-variable assumptions, assessing the marginal contribution of Technology Efficacy to fiscal yield.",
+                finOutTitle: "Projected Fiscal Yield",
+                mapTitle: "Strategic Implementation Matrix",
+                mapSub: "Phased deployment roadmap covering stakeholder alignment, technical validation, and scalable delivery.",
+                ph1Title: "Phase 1: Strategic Alliance Formation (Q1-Q2)",
+                ph1Desc: "Establish exclusive partnerships with Duncan Solutions & Saba Park Services. Focus on importing SOP IP and locking in local compute as the infrastructure layer via MOU.",
+                ph2Title: "Phase 2: Proof of Concept & Calibration (Q3)",
+                ph2Desc: "Launch Pilot Program in Johor CBD. Deploy 'Sovereign Edge Computing Units', fine-tuning algorithms for mixed SG/MY license plate flows to validate >98% accuracy.",
+                ph3Title: "Phase 3: Full Delivery & Asset Securitization (Year 2+)",
+                ph3Desc: "Complete state-wide deployment. Based on stable Cash Flow, explore Asset-Backed Securitization (ABS) or further financing to achieve capital recycling.",
+                labels: {
+                    radar: ['Ops Maturity', 'Capital Depth', 'Gov Synergy', 'Algo Sovereignty', 'Data Compliance', 'Latency (Low)'],
+                    trendSeries1: 'Outsourcing Penetration',
+                    trendSeries2: 'Tech Integration Index',
+                    simManual: 'Baseline Scenario',
+                    simAI: 'Tech-Enabled Scenario'
+                }
             }
         };
 
-        // --- DATA STORE (PDF Derived) ---
+        // --- DATA STORE ---
         const benchmarkData = [
             {
-                id: 'australia',
-                country: '澳大利亚 (Australia)',
-                countryEn: 'Australia',
-                flag: '🇦🇺',
-                cases: [
-                    {
-                        city: 'City of Monash, Victoria',
-                        partner: 'Tenix Solutions (Duncan)',
-                        details: '自1995年起外包。2015年续签5年。外包内容含执法人员及罚单管理。',
-                        detailsEn: 'Outsourced since 1995. Renewed in 2015 for 5 years. Includes officers & ticket mgmt.',
-                        insight: '长期外包模式证明了稳定性。主要动力是避免内部招聘高昂成本。',
-                        insightEn: 'Long-term model proves stability. Avoids internal hiring costs.',
-                        source: 'monash.vic.gov.au'
-                    },
-                    {
-                        city: 'Melbourne Area Councils',
-                        partner: 'Tenix Solutions',
-                        details: 'Glen Eira, Port Phillip, Stonnington 均多次续签。',
-                        detailsEn: 'Glen Eira, Port Phillip, Stonnington repeatedly renewed contracts.',
-                        insight: '供应商形成了网络效应。',
-                        insightEn: 'Vendor network effect established.',
-                        source: 'ombudsman.vic.gov.au'
-                    }
-                ],
-                stats: { contractLength: 5, satisfaction: 85 }
+                id: 'aus',
+                name: { zh: 'Australia (Monash Model)', en: 'Australia (Monash Model)' },
+                details: {
+                    zh: 'Monash 市议会自 1995 年起采用外包模式。Tenix Solutions (现 Duncan) 提供的不仅仅是人力，而是基于 SLA (Service Level Agreement) 的合规管理。这种长期排他性合同确立了“基础设施即服务”的先例。',
+                    en: 'Monash Council has adopted outsourcing since 1995. Tenix Solutions (now Duncan) provides not just labor, but SLA-based compliance management. This long-term exclusive contract establishes a precedent for "Infrastructure as a Service".'
+                },
+                tags: ['Long-term Contract', 'SLA Driven', 'High Stability']
             },
             {
                 id: 'uk',
-                country: '英国 (UK)',
-                countryEn: 'United Kingdom',
-                flag: '🇬🇧',
-                cases: [
-                    {
-                        city: 'London Borough of Sutton',
-                        partner: 'Saba Park Services',
-                        details: '5年期合同，自2026年开始。Saba 在2025年中标。',
-                        detailsEn: '5-year contract starting 2026. Saba won tender in 2025.',
-                        insight: '竞争性招标激烈，合同具有前瞻性。',
-                        insightEn: 'Competitive tendering. Forward-looking contracts.',
-                        source: 'find-tender.service.gov.uk'
-                    }
-                ],
-                stats: { contractLength: 5, satisfaction: 80 }
-            },
-            {
-                id: 'nz',
-                country: '新西兰 (New Zealand)',
-                countryEn: 'New Zealand',
-                flag: '🇳🇿',
-                cases: [
-                    {
-                        city: 'Auckland',
-                        partner: 'Auckland Transport (AT)',
-                        details: 'AT 管理。未授权停车罚款约 $200。',
-                        detailsEn: 'AT managed. Unauthorized parking fines approx $200.',
-                        insight: '高额罚款保障收入，需强力取证支持。',
-                        insightEn: 'High fines secure revenue, require strong evidence.',
-                        source: 'at.govt.nz'
-                    }
-                ],
-                stats: { contractLength: 3, satisfaction: 75 }
+                name: { zh: 'UK (Sutton / Saba)', en: 'UK (Sutton / Saba)' },
+                details: {
+                    zh: 'Saba Park Services 赢得的 Sutton 合同（2026启动）展示了新一代招标特征：技术权重极高。中标关键在于数字化执法平台与市政已有 ERP 系统的无缝集成能力。',
+                    en: 'The Sutton contract won by Saba Park Services (starting 2026) demonstrates next-gen tender characteristics: high technology weighting. Key to winning was the seamless integration of digital enforcement platforms with municipal ERP systems.'
+                },
+                tags: ['Digital Integration', 'Future-Ready', 'Comp. Tender']
             }
         ];
 
-        // --- STATE ---
-        let currentLang = 'zh';
-        let currentSection = 'dashboard';
-        let charts = {}; // Store chart instances
+        // --- DEFAULT LANGUAGE SET TO ENGLISH ---
+        let currentLang = 'en';
+        let charts = {};
 
-        // --- INIT ---
         document.addEventListener('DOMContentLoaded', () => {
-            initNavigation();
-            initCharts();
-            renderBenchmarkList();
-            selectBenchmark('australia');
-            initSimulator();
-            setupLanguageToggle();
-            
-            // Initial Translation Apply
-            updateLanguage(currentLang);
+            initApp();
         });
 
-        // --- LANGUAGE LOGIC ---
-        function setupLanguageToggle() {
-            const btn = document.getElementById('lang-toggle');
-            const label = document.getElementById('lang-label');
-            
-            btn.addEventListener('click', () => {
-                currentLang = currentLang === 'zh' ? 'en' : 'zh';
-                label.innerText = currentLang === 'zh' ? 'English' : '中文';
-                
-                // Add spin animation
-                btn.classList.add('scale-95');
-                setTimeout(() => btn.classList.remove('scale-95'), 150);
-
-                updateLanguage(currentLang);
-            });
-        }
-
-        function updateLanguage(lang) {
-            // Update Text Elements
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.getAttribute('data-i18n');
-                if (i18n[lang][key]) {
-                    // Fade out effect could be added here
-                    el.innerText = i18n[lang][key];
-                }
-            });
-
-            // Re-render components dependent on language
-            renderBenchmarkList();
-            // Select currently active benchmark to refresh details
-            const activeId = document.querySelector('#benchmark-list > div.bg-slate-50')?.getAttribute('data-id') || 'australia';
-            selectBenchmark(activeId);
-
-            // Update Charts
-            updateChartsLanguage(lang);
+        function initApp() {
+            setupNavigation();
+            setupLangToggle();
+            initCharts();
+            renderBenchmarks();
+            initSim();
+            updateLanguageUI();
         }
 
         // --- NAVIGATION ---
-        function initNavigation() {
-            const navItems = document.querySelectorAll('.nav-item');
+        function setupNavigation() {
+            const navs = document.querySelectorAll('.nav-item');
             const sections = document.querySelectorAll('.content-section');
+            const menuBtn = document.getElementById('mobile-menu-btn');
             const sidebar = document.getElementById('sidebar');
-            const mobileBtn = document.getElementById('mobile-menu-btn');
 
-            navItems.forEach(item => {
-                item.addEventListener('click', (e) => {
+            navs.forEach(nav => {
+                nav.addEventListener('click', (e) => {
                     e.preventDefault();
-                    navItems.forEach(nav => nav.classList.remove('active'));
-                    item.classList.add('active');
-
-                    const targetId = item.getAttribute('data-target');
-                    sections.forEach(sec => {
-                        sec.classList.add('hidden');
-                        sec.classList.remove('animate-fade-in'); // Reset animation
+                    navs.forEach(n => n.classList.remove('active'));
+                    nav.classList.add('active');
+                    
+                    const target = nav.dataset.target;
+                    sections.forEach(s => {
+                        s.classList.add('hidden');
+                        s.classList.remove('animate-reveal');
                     });
                     
-                    const targetSec = document.getElementById(targetId);
-                    targetSec.classList.remove('hidden');
-                    // Re-trigger animation
-                    void targetSec.offsetWidth; 
-                    targetSec.classList.add('animate-fade-in');
+                    const el = document.getElementById(target);
+                    el.classList.remove('hidden');
+                    void el.offsetWidth; // trigger reflow
+                    el.classList.add('animate-reveal');
 
-                    if (window.innerWidth < 768) {
-                        sidebar.classList.add('hidden');
-                    }
+                    if(window.innerWidth < 768) sidebar.classList.add('hidden');
                 });
             });
 
-            mobileBtn.addEventListener('click', () => {
+            menuBtn.addEventListener('click', () => {
                 sidebar.classList.toggle('hidden');
                 sidebar.classList.toggle('absolute');
                 sidebar.classList.toggle('h-full');
             });
         }
 
+        // --- LANGUAGE ---
+        function setupLangToggle() {
+            const btn = document.getElementById('lang-toggle');
+            btn.addEventListener('click', () => {
+                currentLang = currentLang === 'zh' ? 'en' : 'zh';
+                document.getElementById('lang-label').innerText = currentLang === 'zh' ? 'Switch to 中文' : 'Switch to English';
+                updateLanguageUI();
+            });
+        }
+
+        function updateLanguageUI() {
+            // Update Text
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.dataset.i18n;
+                if(i18n[currentLang][key]) el.innerText = i18n[currentLang][key];
+            });
+            
+            // Update button label dynamically based on current state
+             document.getElementById('lang-label').innerText = currentLang === 'zh' ? 'Switch to English' : 'Switch to 中文';
+
+
+            // Update Charts
+            updateCharts();
+            renderBenchmarks();
+            updateSim();
+        }
+
         // --- CHARTS ---
         function initCharts() {
-            // 1. Trend Chart
-            const ctxTrend = document.getElementById('marketTrendChart').getContext('2d');
-            charts.trend = new Chart(ctxTrend, {
+            // 1. Macro Trend
+            const ctx1 = document.getElementById('macroTrendChart').getContext('2d');
+            charts.trend = new Chart(ctx1, {
                 type: 'line',
                 data: {
-                    labels: ['1995', '2000', '2005', '2010', '2015', '2020', '2025', '2030'],
-                    datasets: [{
-                        label: 'Outsourcing Rate',
-                        data: [20, 35, 45, 60, 70, 75, 85, 90],
-                        borderColor: '#0f766e',
-                        backgroundColor: 'rgba(15, 118, 110, 0.1)',
-                        fill: true,
-                        tension: 0.4
-                    }, {
-                        label: 'Tech Integration',
-                        data: [5, 10, 20, 30, 45, 65, 80, 95],
-                        borderColor: '#f59e0b',
-                        borderDash: [5, 5],
-                        fill: false
-                    }]
+                    labels: ['1995', '2005', '2015', '2025', '2030 (Est)'],
+                    datasets: [
+                        {
+                            label: 'Outsourcing',
+                            data: [20, 45, 70, 85, 92],
+                            borderColor: '#0f172a',
+                            backgroundColor: 'rgba(15, 23, 42, 0.05)',
+                            fill: true,
+                            tension: 0.4
+                        },
+                        {
+                            label: 'Tech Integration',
+                            data: [5, 20, 45, 80, 95],
+                            borderColor: '#0d9488',
+                            borderDash: [5,5],
+                            tension: 0.4
+                        }
+                    ]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    interaction: { mode: 'index', intersect: false },
-                    plugins: { legend: { position: 'top' } }
+                    plugins: { legend: { position: 'top', align: 'end' } },
+                    scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' } }, x: { grid: { display: false } } }
                 }
             });
 
-            // 2. Radar Chart
-            const ctxRadar = document.getElementById('capabilityRadarChart').getContext('2d');
-            charts.radar = new Chart(ctxRadar, {
+            // 2. Radar
+            const ctx2 = document.getElementById('capabilityRadar').getContext('2d');
+            charts.radar = new Chart(ctx2, {
                 type: 'radar',
                 data: {
-                    labels: ['Ops Exp', 'Capital', 'Gov Rel', 'AI Tech', 'Security', 'Speed'],
+                    labels: [], // set in updateCharts
+                    datasets: [
+                        {
+                            label: 'Traditional Ops (Tenix/Saba)',
+                            data: [90, 60, 40, 50, 60, 40],
+                            borderColor: '#94a3b8',
+                            backgroundColor: 'rgba(148, 163, 184, 0.2)'
+                        },
+                        {
+                            label: 'Proposed JV (DeepTech)',
+                            data: [50, 90, 95, 95, 90, 90],
+                            borderColor: '#0d9488',
+                            backgroundColor: 'rgba(13, 148, 136, 0.2)',
+                            pointBackgroundColor: '#0d9488'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { r: { suggestedMin: 0, suggestedMax: 100, pointLabels: { font: { size: 11, family: 'Inter' } } } }
+                }
+            });
+
+            // 3. Sim Chart (Bar)
+            const ctx3 = document.getElementById('simChart').getContext('2d');
+            charts.sim = new Chart(ctx3, {
+                type: 'bar',
+                data: {
+                    labels: [],
                     datasets: [{
-                        label: 'Trad Ops',
-                        data: [95, 50, 40, 40, 60, 40],
-                        borderColor: '#64748b',
-                        backgroundColor: 'rgba(100, 116, 139, 0.2)',
-                    }, {
-                        label: 'Us',
-                        data: [40, 90, 95, 95, 90, 85],
-                        borderColor: '#0d9488',
-                        backgroundColor: 'rgba(13, 148, 136, 0.2)',
+                        label: 'Annual Revenue (MYR)',
+                        data: [0, 0],
+                        backgroundColor: ['#cbd5e1', '#0d9488'],
+                        barPercentage: 0.5
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    scales: { r: { suggestedMin: 0, suggestedMax: 100 } }
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' } } }
                 }
             });
-
-            // 3. Sim Chart (Initialized in updateSimulation)
         }
 
-        function updateChartsLanguage(lang) {
-            const t = i18n[lang];
-
-            // Update Trend Chart
-            charts.trend.data.datasets[0].label = t.trendLabelContract;
-            charts.trend.data.datasets[1].label = t.trendLabelTech;
+        function updateCharts() {
+            const labels = i18n[currentLang].labels;
+            
+            // Trend
+            charts.trend.data.datasets[0].label = labels.trendSeries1;
+            charts.trend.data.datasets[1].label = labels.trendSeries2;
             charts.trend.update();
 
-            // Update Radar Chart
-            charts.radar.data.labels = lang === 'zh' 
-                ? ['运营经验', '资本', '政府关系', 'AI技术', '安全', '速度']
-                : ['Ops Exp', 'Capital', 'Gov Rel', 'AI Tech', 'Security', 'Speed'];
-            charts.radar.data.datasets[0].label = t.radarLabelTrad;
-            charts.radar.data.datasets[1].label = t.radarLabelUs;
+            // Radar
+            charts.radar.data.labels = labels.radar;
             charts.radar.update();
 
-            // Sim chart updates in its own function
-            updateSimulation();
+            // Sim
+            charts.sim.data.labels = [labels.simManual, labels.simAI];
+            charts.sim.update();
         }
 
-        // --- BENCHMARK ---
-        function renderBenchmarkList() {
-            const listContainer = document.getElementById('benchmark-list');
-            listContainer.innerHTML = '';
-
-            benchmarkData.forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'p-4 hover:bg-slate-50 cursor-pointer flex items-center justify-between transition-colors duration-200';
-                div.setAttribute('data-id', item.id);
-                
-                const name = currentLang === 'zh' ? item.country : item.countryEn;
-                
-                div.innerHTML = `
-                    <div class="flex items-center">
-                        <span class="text-2xl mr-3">${item.flag}</span>
-                        <div>
-                            <div class="font-medium text-slate-700">${name}</div>
-                            <div class="text-xs text-slate-500">${item.cases.length} ${currentLang === 'zh' ? '案例' : 'Cases'}</div>
-                        </div>
-                    </div>
-                    <div class="text-slate-300">›</div>
-                `;
-                div.addEventListener('click', () => {
-                    document.querySelectorAll('#benchmark-list > div').forEach(d => d.classList.remove('bg-slate-50'));
-                    div.classList.add('bg-slate-50');
-                    selectBenchmark(item.id);
-                });
-                listContainer.appendChild(div);
-            });
-        }
-
-        function selectBenchmark(id) {
-            const data = benchmarkData.find(b => b.id === id);
-            if (!data) return;
-
-            const container = document.getElementById('benchmark-detail');
-            const name = currentLang === 'zh' ? data.country : data.countryEn;
+        // --- BENCHMARKS UI ---
+        function renderBenchmarks() {
+            const nav = document.getElementById('benchmark-nav');
+            const container = document.getElementById('benchmark-detail-container');
             
-            let html = `
-                <div class="mb-4 pb-4 border-b border-slate-100">
-                    <h3 class="text-xl font-bold text-slate-800 flex items-center">
-                        ${data.flag} <span class="ml-2">${name}</span>
-                    </h3>
-                </div>
-                <div class="flex-1 overflow-y-auto pr-2 space-y-4">
-            `;
-
-            data.cases.forEach(c => {
-                const details = currentLang === 'zh' ? c.details : c.detailsEn;
-                const insight = currentLang === 'zh' ? c.insight : c.insightEn;
-                const label = currentLang === 'zh' ? '洞察' : 'Insight';
-
-                html += `
-                    <div class="p-5 bg-slate-50 rounded-lg border border-slate-100 hover:shadow-sm transition-shadow">
-                        <div class="flex justify-between items-start mb-2">
-                            <h4 class="font-bold text-slate-700">${c.partner}</h4>
-                            <span class="text-xs font-mono text-teal-600 bg-teal-50 px-2 py-1 rounded">${c.city}</span>
-                        </div>
-                        <p class="text-sm text-slate-600 mb-3 leading-relaxed">${details}</p>
-                        <div class="bg-white p-3 rounded text-sm text-slate-500 italic border-l-2 border-amber-400">
-                            <strong>${label}:</strong> ${insight}
-                        </div>
-                    </div>
-                `;
+            nav.innerHTML = '';
+            
+            benchmarkData.forEach((item, index) => {
+                const btn = document.createElement('div');
+                btn.className = `p-4 mb-2 rounded cursor-pointer border transition-all ${index === 0 ? 'bg-slate-800 text-white border-slate-800 shadow-md' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'}`;
+                btn.innerHTML = `<div class="font-bold text-sm">${item.name[currentLang]}</div>`;
+                btn.onclick = () => {
+                    // Reset styles
+                    Array.from(nav.children).forEach(c => {
+                        c.className = 'p-4 mb-2 rounded cursor-pointer border transition-all bg-white text-slate-600 border-slate-200 hover:bg-slate-50';
+                    });
+                    // Active style
+                    btn.className = 'p-4 mb-2 rounded cursor-pointer border transition-all bg-slate-800 text-white border-slate-800 shadow-md';
+                    renderBenchmarkDetail(item);
+                };
+                nav.appendChild(btn);
             });
 
-            html += `</div>`;
-            container.innerHTML = html;
+            renderBenchmarkDetail(benchmarkData[0]);
+        }
+
+        function renderBenchmarkDetail(item) {
+            const container = document.getElementById('benchmark-detail-container');
+            const tags = item.tags.map(t => `<span class="px-2 py-1 bg-slate-100 text-slate-600 text-[10px] uppercase font-bold tracking-wider rounded">${t}</span>`).join('');
+            
+            container.innerHTML = `
+                <div>
+                    <div class="flex space-x-2 mb-4">${tags}</div>
+                    <h3 class="text-2xl font-bold text-slate-800 mb-6 font-serif">${item.name[currentLang]}</h3>
+                    <div class="prose prose-slate text-sm leading-7 text-justify">
+                        ${item.details[currentLang]}
+                    </div>
+                </div>
+                <div class="mt-8 pt-6 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400 font-mono">
+                    <span>ANALYSIS ID: ${item.id.toUpperCase()}-2026</span>
+                    <span>CONFIDENCE: HIGH</span>
+                </div>
+            `;
         }
 
         // --- SIMULATOR ---
-        function initSimulator() {
+        function initSim() {
             ['sim-spots', 'sim-rate', 'sim-ai'].forEach(id => {
-                document.getElementById(id).addEventListener('input', updateSimulation);
+                document.getElementById(id).addEventListener('input', updateSim);
             });
         }
 
-        function updateSimulation() {
+        function updateSim() {
             const spots = parseInt(document.getElementById('sim-spots').value);
             const rate = parseFloat(document.getElementById('sim-rate').value);
-            const aiBoost = parseInt(document.getElementById('sim-ai').value);
+            const efficiency = parseInt(document.getElementById('sim-ai').value);
 
-            // Display
-            document.getElementById('val-spots').innerText = spots.toLocaleString();
-            document.getElementById('val-rate').innerText = rate.toFixed(1);
-            document.getElementById('val-ai').innerText = "+" + aiBoost + "%";
-
-            // Calc
-            // Base: 365 days * 8 hours * 60% occupancy * rate * spots * 30% enforcement capture (manual)
-            const baseCaptureRate = 0.30;
-            const annualPotential = spots * 8 * 365 * 0.60 * rate;
-            const manualRevenue = annualPotential * baseCaptureRate;
+            // Logic: 300 days * 8 hours * 65% occupancy
+            const operationalHours = 300 * 8;
+            const occupancy = 0.65;
+            const baselineCapture = 0.35; // Manual efficiency
             
-            // AI Boost
-            const newCaptureRate = Math.min(0.95, baseCaptureRate * (1 + (aiBoost / 100)));
-            const aiRevenue = annualPotential * newCaptureRate;
-            const uplift = aiRevenue - manualRevenue;
+            const potentialRev = spots * operationalHours * occupancy * rate;
+            const manualRev = potentialRev * baselineCapture;
+            
+            const aiCapture = Math.min(0.98, baselineCapture * (1 + efficiency/100));
+            const aiRev = potentialRev * aiCapture;
 
-            const currency = "MYR ";
-            document.getElementById('revenue-uplift').innerText = "+" + currency + (uplift / 1000000).toFixed(2) + " M";
+            // Update UI
+            document.getElementById('val-spots').innerText = spots.toLocaleString();
+            document.getElementById('val-rate').innerText = rate.toFixed(2);
+            document.getElementById('val-ai').innerText = `+${efficiency}%`;
+            
+            const delta = aiRev - manualRev;
+            document.getElementById('revenue-delta').innerText = `+ MYR ${(delta/1000000).toFixed(2)}M`;
 
-            // Chart
-            const ctx = document.getElementById('simulationChart').getContext('2d');
-            const t = i18n[currentLang];
-
-            if (charts.sim) {
-                charts.sim.destroy();
-            }
-
-            charts.sim = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: [t.chartLabelManual, t.chartLabelAI],
-                    datasets: [{
-                        label: t.chartLabelRevenue,
-                        data: [manualRevenue, aiRevenue],
-                        backgroundColor: ['#94a3b8', '#0f766e'],
-                        borderRadius: 4,
-                        barThickness: 50
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            callbacks: {
-                                label: function(c) {
-                                    return currency + (c.raw / 1000000).toFixed(2) + ' M';
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: { callback: v => v / 1000000 + 'M' }
-                        }
-                    }
-                }
-            });
+            // Update Chart
+            charts.sim.data.datasets[0].data = [manualRev, aiRev];
+            charts.sim.update();
         }
+
     </script>
 </body>
 </html>
