@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>大华 F1 新加坡赛事安保解决方案研究报告 | Dahua F1 Singapore Security Research</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    body{font-family:Inter,system-ui,-apple-system,sans-serif;background:#f8fafc;color:#1e293b}
+    .chart-container{position:relative;width:100%;max-width:600px;margin:0 auto;height:300px;max-height:420px}
+    @media (min-width:768px){.chart-container{height:350px}}
+    .nav-active{border-bottom:2px solid #2563eb;color:#2563eb;font-weight:600}
+    .card-hover:hover{transform:translateY(-2px);box-shadow:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -2px rgba(0,0,0,.05)}
+    .spec-badge{background:#e0f2fe;color:#0369a1;padding:2px 8px;border-radius:4px;font-size:.75rem;font-weight:500}
+    .pill{border:1px solid #e2e8f0;background:#fff;border-radius:999px;padding:.35rem .7rem;font-size:.8rem}
+    .kbd{border:1px solid #cbd5e1;border-bottom-width:2px;background:#fff;border-radius:.35rem;padding:0 .35rem;font-size:.75rem}
+    .muted{color:#64748b}
+    .lang-hide{display:none}
+    .soft{background:linear-gradient(180deg, rgba(59,130,246,.10), rgba(14,165,233,.06));}
+  </style>
+</head>
+
+<body class="min-h-screen flex flex-col">
+
+  <!-- Top Bar -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 gap-3">
+        <div class="flex items-center gap-3 min-w-0">
+          <div class="flex-shrink-0">
+            <div class="text-xl sm:text-2xl font-bold text-blue-800 leading-none">
+              DAHUA
+              <span class="text-slate-500 text-sm sm:text-lg font-normal ml-2">| F1 Security Research</span>
+            </div>
+            <div class="text-xs text-slate-500 -mt-1">
+              <span class="lang-zh">新加坡滨海湾街道赛·安保选型研究</span>
+              <span class="lang-en lang-hide">Marina Bay Street Circuit · Security Selection Notes</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right controls -->
+        <div class="flex items-center gap-2">
+          <div class="hidden sm:flex items-center gap-2 text-xs text-slate-500">
+            <span class="pill">ONVIF / RTSP</span>
+            <span class="pill">IP67</span>
+            <span class="pill">H.265</span>
+          </div>
+          <button id="langBtn" class="px-3 py-2 rounded-md border border-slate-200 bg-white hover:bg-slate-50 text-sm font-medium">
+            <span class="lang-zh">EN</span><span class="lang-en lang-hide">中文</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Navigation (scrollable on mobile) -->
+      <div class="pb-2 -mt-1">
+        <div class="flex gap-6 overflow-x-auto" id="main-nav" style="-webkit-overflow-scrolling:touch;">
+          <button onclick="navigate('overview')" class="nav-btn nav-active whitespace-nowrap inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-900" data-target="overview">
+            <span class="lang-zh">项目概况</span><span class="lang-en lang-hide">Overview</span>
+          </button>
+          <button onclick="navigate('products')" class="nav-btn whitespace-nowrap inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 hover:text-gray-700" data-target="products">
+            <span class="lang-zh">产品选型</span><span class="lang-en lang-hide">Products</span>
+          </button>
+          <button onclick="navigate('analytics')" class="nav-btn whitespace-nowrap inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 hover:text-gray-700" data-target="analytics">
+            <span class="lang-zh">性能对比</span><span class="lang-en lang-hide">Analytics</span>
+          </button>
+          <button onclick="navigate('protocols')" class="nav-btn whitespace-nowrap inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 hover:text-gray-700" data-target="protocols">
+            <span class="lang-zh">系统集成</span><span class="lang-en lang-hide">Integration</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 w-full">
+
+    <!-- SECTION: OVERVIEW -->
+    <section id="overview" class="space-y-6">
+      <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6 md:p-8 soft">
+        <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 mb-3">
+          <span class="lang-zh">新加坡 F1 大奖赛安保需求分析</span>
+          <span class="lang-en lang-hide">Singapore F1 Security Requirements</span>
+        </h1>
+        <p class="text-base sm:text-lg text-slate-700 mb-6 leading-relaxed">
+          <span class="lang-zh">本页聚焦滨海湾街市赛道（Marina Bay Street Circuit）的特殊环境：夜赛、热带高湿、人流密集与多方系统共存。目标是把前端相机（枪机/球机）与后端存储（NVR）用 ONVIF/RTSP 标准协议接入第三方指挥平台，做到可快速部署、可运维、可扩展。</span>
+          <span class="lang-en lang-hide">This page summarizes key challenges at the Marina Bay Street Circuit: night race lighting, tropical humidity, extreme crowd density, and multi-vendor operations. The goal is to integrate front-end cameras (bullet/PTZ) and backend recording (NVR) into third-party command systems via ONVIF/RTSP for rapid deployment and scalable operations.</span>
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
+            <h3 class="font-bold text-blue-900 mb-2">🏎️ <span class="lang-zh">极速捕捉</span><span class="lang-en lang-hide">High-Speed Capture</span></h3>
+            <p class="text-sm text-blue-900/90 leading-relaxed">
+              <span class="lang-zh">赛车可达 300km/h+，建议赛道关键点使用 60fps+ 枪机，保证事故回放与赛道监控画面清晰。</span>
+              <span class="lang-en lang-hide">Cars exceed 300km/h. Use 60fps+ bullets at critical track points for clear incident review and track monitoring.</span>
+            </p>
+          </div>
+          <div class="bg-slate-100 p-4 rounded-lg border-l-4 border-slate-500">
+            <h3 class="font-bold text-slate-900 mb-2">🌙 <span class="lang-zh">夜间低照</span><span class="lang-en lang-hide">Low-Light Night Ops</span></h3>
+            <p class="text-sm text-slate-800 leading-relaxed">
+              <span class="lang-zh">赛道有强光，但看台/外围光照复杂，优先全彩/星光级传感器、强 WDR 与低噪编码策略。</span>
+              <span class="lang-en lang-hide">Track lighting is strong, but stands/perimeter are mixed. Prioritize full-color/starlight sensors, strong WDR, and low-noise encoding.</span>
+            </p>
+          </div>
+          <div class="bg-sky-50 p-4 rounded-lg border-l-4 border-sky-500">
+            <h3 class="font-bold text-sky-900 mb-2">🌐 <span class="lang-zh">开放兼容</span><span class="lang-en lang-hide">Interoperability</span></h3>
+            <p class="text-sm text-sky-900/90 leading-relaxed">
+              <span class="lang-zh">赛事往往是多供应商混合，要求 ONVIF Profile S/T 与 RTSP 拉流标准化，便于对接第三方 VMS。</span>
+              <span class="lang-en lang-hide">Events are typically multi-vendor. Standardize ONVIF Profile S/T and RTSP streaming for smooth VMS integration.</span>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+          <h3 class="text-lg font-semibold text-slate-800 mb-4">
+            <span class="lang-zh">关键环境指标</span><span class="lang-en lang-hide">Key Environmental Indicators</span>
+          </h3>
+          <div class="space-y-4">
+            <div class="flex justify-between items-center">
+              <span class="text-sm muted"><span class="lang-zh">环境湿度（热带）</span><span class="lang-en lang-hide">Humidity (Tropical)</span></span>
+              <span class="text-sm font-bold text-slate-900">RH 90%+ (IP67)</span>
+            </div>
+            <div class="w-full bg-slate-200 rounded-full h-2"><div class="bg-blue-600 h-2 rounded-full" style="width:95%"></div></div>
+
+            <div class="flex justify-between items-center">
+              <span class="text-sm muted"><span class="lang-zh">人群密度</span><span class="lang-en lang-hide">Crowd Density</span></span>
+              <span class="text-sm font-bold text-slate-900"><span class="lang-zh">极高（需 AI 人流分析）</span><span class="lang-en lang-hide">Very High (AI analytics)</span></span>
+            </div>
+            <div class="w-full bg-slate-200 rounded-full h-2"><div class="bg-red-500 h-2 rounded-full" style="width:90%"></div></div>
+
+            <div class="flex justify-between items-center">
+              <span class="text-sm muted"><span class="lang-zh">防护与抗破坏</span><span class="lang-en lang-hide">Ruggedization</span></span>
+              <span class="text-sm font-bold text-slate-900">IP67 / IK10 (Outdoor)</span>
+            </div>
+            <div class="w-full bg-slate-200 rounded-full h-2"><div class="bg-emerald-500 h-2 rounded-full" style="width:85%"></div></div>
+          </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200 flex flex-col">
+          <h3 class="text-lg font-semibold text-slate-800 mb-2">
+            <span class="lang-zh">设备类型部署比例建议</span><span class="lang-en lang-hide">Suggested Deployment Mix</span>
+          </h3>
+          <div class="flex-grow flex items-center justify-center">
+            <div class="chart-container"><canvas id="deploymentChart"></canvas></div>
+          </div>
+          <p class="text-xs text-center text-slate-400 mt-2">
+            <span class="lang-zh">基于赛道长度、看台与出入口分布的经验估算</span>
+            <span class="lang-en lang-hide">Rule-of-thumb estimate based on track/stands/gates distribution</span>
+          </p>
+        </div>
+      </div>
+
+      <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div>
+            <h3 class="text-lg font-semibold text-slate-800">
+              <span class="lang-zh">快速使用提示</span><span class="lang-en lang-hide">Quick Tips</span>
+            </h3>
+            <p class="text-sm text-slate-600">
+              <span class="lang-zh">移动端可左右滑动导航；产品页可切换标签；图表支持缩放查看。</span>
+              <span class="lang-en lang-hide">On mobile, swipe the top nav horizontally; switch product tabs; charts are responsive for quick inspection.</span>
+            </p>
+          </div>
+          <div class="text-sm text-slate-600 flex items-center gap-2">
+            <span class="kbd">Alt</span>+
+            <span class="kbd">L</span>
+            <span class="muted"><span class="lang-zh">切换语言</span><span class="lang-en lang-hide">toggle language</span></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION: PRODUCTS -->
+    <section id="products" class="hidden space-y-6">
+      <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+        <h2 class="text-2xl font-bold text-slate-900 mb-2">
+          <span class="lang-zh">核心产品选型研究</span><span class="lang-en lang-hide">Core Product Selection</span>
+        </h2>
+        <p class="text-slate-600 mb-6 leading-relaxed">
+          <span class="lang-zh">按区域把任务拆开：赛道侧更看重高帧率和稳定性；高点和广场更看重变倍与跟踪；指挥中心更看重带宽与冗余。点击标签切换类别查看推荐型号与用途。</span>
+          <span class="lang-en lang-hide">Break down by area: trackside needs high FPS and stability; vantage points need zoom and tracking; command centers need bandwidth and redundancy. Switch tabs to view representative models and use-cases.</span>
+        </p>
+
+        <div class="flex gap-2 border-b border-slate-200 mb-6 overflow-x-auto" style="-webkit-overflow-scrolling:touch;">
+          <button class="filter-btn px-4 py-2 text-sm font-medium text-blue-600 border-b-2 border-blue-600 whitespace-nowrap" onclick="filterProducts('bullet', this)">
+            <span class="lang-zh">户外枪机 (Bullet)</span><span class="lang-en lang-hide">Bullet Cameras</span>
+          </button>
+          <button class="filter-btn px-4 py-2 text-sm font-medium text-slate-500 border-b-2 border-transparent hover:text-slate-700 whitespace-nowrap" onclick="filterProducts('ptz', this)">
+            <span class="lang-zh">全景球机 (PTZ)</span><span class="lang-en lang-hide">PTZ Cameras</span>
+          </button>
+          <button class="filter-btn px-4 py-2 text-sm font-medium text-slate-500 border-b-2 border-transparent hover:text-slate-700 whitespace-nowrap" onclick="filterProducts('nvr', this)">
+            <span class="lang-zh">后端存储 (NVR)</span><span class="lang-en lang-hide">NVR / Recording</span>
+          </button>
+        </div>
+
+        <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+
+        <div class="mt-6 p-4 bg-slate-50 border border-slate-200 rounded-lg">
+          <div class="text-sm text-slate-700 leading-relaxed">
+            <span class="lang-zh"><b>备注：</b>此页面的型号/参数作为“选型研究模板示例”，你可以替换为大华新加坡可供货的真实 SKU（比如同系列的不同焦段/不同传感器版本）。</span>
+            <span class="lang-en lang-hide"><b>Note:</b> Model numbers/specs here serve as a selection template. Replace with real Singapore-available SKUs (e.g., different lens/sensor variants in the same series).</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION: ANALYTICS -->
+    <section id="analytics" class="hidden space-y-6">
+      <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+        <h2 class="text-2xl font-bold text-slate-900 mb-4">
+          <span class="lang-zh">技术性能深度对比</span><span class="lang-en lang-hide">Performance Analytics</span>
+        </h2>
+        <p class="text-slate-600 mb-8 leading-relaxed">
+          <span class="lang-zh">用图表把“为什么要这么配”讲清楚：枪机负责稳定、清晰、覆盖；球机负责灵活、跟踪、调度；后端负责吞吐、可靠、留存。</span>
+          <span class="lang-en lang-hide">Charts justify the recommended mix: bullets for stable coverage and clarity; PTZ for flexible tracking and dispatch; backend for throughput, reliability, and retention.</span>
+        </p>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div class="bg-slate-50 rounded-xl p-4 border border-slate-200">
+            <h3 class="text-lg font-semibold text-slate-800 mb-4 text-center">
+              <span class="lang-zh">枪机 vs. 球机：场景能力雷达图</span><span class="lang-en lang-hide">Bullet vs PTZ: Capability Radar</span>
+            </h3>
+            <div class="chart-container"><canvas id="radarChart"></canvas></div>
+            <div class="mt-4 text-sm text-slate-500 text-center">
+              <span class="inline-block w-3 h-3 bg-blue-500 rounded-full mr-1"></span> <span class="lang-zh">枪机</span><span class="lang-en lang-hide">Bullet</span>
+              <span class="inline-block w-3 h-3 bg-sky-400 rounded-full ml-4 mr-1"></span> <span class="lang-zh">球机</span><span class="lang-en lang-hide">PTZ</span>
+            </div>
+          </div>
+
+          <div class="bg-slate-50 rounded-xl p-4 border border-slate-200">
+            <h3 class="text-lg font-semibold text-slate-800 mb-4 text-center">
+              <span class="lang-zh">NVR 带宽压力测试预估 (Mbps)</span><span class="lang-en lang-hide">NVR Bandwidth Estimate (Mbps)</span>
+            </h3>
+            <div class="chart-container"><canvas id="barChart"></canvas></div>
+            <p class="mt-4 text-sm text-slate-600 px-4 leading-relaxed">
+              <span class="lang-zh">*基于 H.265/H.264 的经验码率估算。多路 4K@60fps 会迅速推高带宽和存储写入，建议选用高吞吐、支持 RAID 与冗余电源的 NVR。</span>
+              <span class="lang-en lang-hide">*Rule-of-thumb bitrate estimate for H.265/H.264. Multiple 4K@60fps streams quickly increase bandwidth and write load—use high-throughput NVRs with RAID and redundant PSU.</span>
+            </p>
+          </div>
+        </div>
+
+        <div class="mt-8 p-4 bg-white border border-slate-200 rounded-lg">
+          <h4 class="font-semibold text-slate-800 mb-2">
+            <span class="lang-zh">落地建议（运维视角）</span><span class="lang-en lang-hide">Ops Notes</span>
+          </h4>
+          <ul class="list-disc list-inside text-sm text-slate-700 space-y-1 leading-relaxed">
+            <li><span class="lang-zh">先定“录像留存天数/清晰度”再反推存储与带宽，避免采购阶段拍脑袋。</span><span class="lang-en lang-hide">Decide retention days & quality first, then back-calculate storage/bandwidth.</span></li>
+            <li><span class="lang-zh">关键点位建议双路：主相机 + 辅助相机（不同角度/不同焦段）提高取证可靠性。</span><span class="lang-en lang-hide">Critical points should use dual coverage (main + auxiliary camera) for evidence reliability.</span></li>
+            <li><span class="lang-zh">夜赛要重点关注 WDR、快门与补光策略，别只看分辨率。</span><span class="lang-en lang-hide">For night race, prioritize WDR, shutter, and illumination strategy—not just resolution.</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION: PROTOCOLS -->
+    <section id="protocols" class="hidden space-y-6">
+      <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+        <h2 class="text-2xl font-bold text-slate-900 mb-4">
+          <span class="lang-zh">协议集成架构 (ONVIF & RTSP)</span><span class="lang-en lang-hide">Integration Architecture (ONVIF & RTSP)</span>
+        </h2>
+        <p class="text-slate-600 mb-8 leading-relaxed">
+          <span class="lang-zh">大型赛事的现实是“多供应商 + 多系统”。你需要一套能稳定拉流、能下发 PTZ 控制、能传递 AI 告警元数据的标准接口体系。</span>
+          <span class="lang-en lang-hide">Large events are multi-vendor and multi-system. You need stable streaming, PTZ control, and metadata delivery via standardized interfaces.</span>
+        </p>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+          <div class="bg-slate-50 p-6 rounded-xl border border-slate-200">
+            <h3 class="font-bold text-slate-800 mb-6 text-center">
+              <span class="lang-zh">数据流向示意图</span><span class="lang-en lang-hide">Data Flow Diagram</span>
+            </h3>
+
+            <div class="flex flex-col items-center space-y-2">
+              <div class="w-full max-w-xs p-3 bg-white border-2 border-blue-500 rounded-lg shadow-sm text-center">
+                <div class="font-bold text-blue-900"><span class="lang-zh">前端采集（相机）</span><span class="lang-en lang-hide">Edge Capture (Camera)</span></div>
+                <div class="text-xs muted">RTP over UDP/TCP</div>
+              </div>
+
+              <div class="h-8 w-0.5 bg-slate-300"></div>
+
+              <div class="w-full max-w-xs p-3 bg-white border border-slate-300 rounded-lg shadow-sm text-center">
+                <div class="font-bold text-slate-700"><span class="lang-zh">核心交换网络</span><span class="lang-en lang-hide">Core Network</span></div>
+                <div class="text-xs muted">Multicast / Unicast</div>
+              </div>
+
+              <div class="flex w-full max-w-md justify-center gap-8">
+                <div class="flex flex-col items-center flex-1">
+                  <div class="h-8 w-0.5 bg-slate-300"></div>
+                  <div class="w-full p-3 bg-white border-2 border-emerald-500 rounded-lg shadow-sm text-center">
+                    <div class="font-bold text-emerald-900"><span class="lang-zh">存储（NVR）</span><span class="lang-en lang-hide">Recording (NVR)</span></div>
+                    <div class="text-xs text-emerald-700"><span class="lang-zh">私有协议/优化链路</span><span class="lang-en lang-hide">Private/Optimized</span></div>
+                  </div>
+                </div>
+
+                <div class="flex flex-col items-center flex-1">
+                  <div class="h-8 w-0.5 bg-slate-300"></div>
+                  <div class="w-full p-3 bg-white border-2 border-sky-500 rounded-lg shadow-sm text-center">
+                    <div class="font-bold text-sky-900"><span class="lang-zh">第三方 VMS</span><span class="lang-en lang-hide">3rd-Party VMS</span></div>
+                    <div class="text-xs text-sky-700">ONVIF / RTSP</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-4">
+            <details class="p-4 border border-slate-200 rounded-lg bg-white">
+              <summary class="cursor-pointer flex justify-between items-center">
+                <span class="font-bold text-blue-800">ONVIF Profile S / T</span>
+                <span class="text-sm muted"><span class="lang-zh">点我展开</span><span class="lang-en lang-hide">expand</span></span>
+              </summary>
+              <div class="mt-3 text-sm text-slate-700 leading-relaxed">
+                <p><b>Profile S:</b> <span class="lang-zh">基础视频流与 PTZ 控制，确保第三方平台能拉流并控制云台。</span><span class="lang-en lang-hide">Core streaming + PTZ control for third-party platforms.</span></p>
+                <p class="mt-2"><b>Profile T:</b> <span class="lang-zh">支持 H.265 与更丰富的元数据（如智能分析事件），更适合把 AI 告警带到指挥平台。</span><span class="lang-en lang-hide">Adds H.265 and richer metadata for analytics/event delivery.</span></p>
+              </div>
+            </details>
+
+            <details class="p-4 border border-slate-200 rounded-lg bg-white">
+              <summary class="cursor-pointer flex justify-between items-center">
+                <span class="font-bold text-blue-800">RTSP / RTP</span>
+                <span class="text-sm muted"><span class="lang-zh">点我展开</span><span class="lang-en lang-hide">expand</span></span>
+              </summary>
+              <div class="mt-3 text-sm text-slate-700 leading-relaxed">
+                <p><b>RTSP:</b> <span class="lang-zh">会话控制（建立、暂停、切换码流）。</span><span class="lang-en lang-hide">Session control (setup/pause/switch streams).</span></p>
+                <p class="mt-2"><b>RTP:</b> <span class="lang-zh">实际承载视频数据（UDP/TCP）。</span><span class="lang-en lang-hide">Actual media transport over UDP/TCP.</span></p>
+                <p class="mt-2"><span class="lang-zh">示例：</span><span class="lang-en lang-hide">Example:</span>
+                  <code class="bg-slate-100 px-1 rounded">rtsp://user:pwd@ip:554/cam/realmonitor?channel=1&subtype=0</code>
+                </p>
+              </div>
+            </details>
+
+            <div class="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <h3 class="font-bold text-yellow-900 mb-1">⚠️ <span class="lang-zh">实施注意事项</span><span class="lang-en lang-hide">Implementation Notes</span></h3>
+              <ul class="list-disc list-inside text-sm text-yellow-900 space-y-1 leading-relaxed">
+                <li><span class="lang-zh">现场无线干扰大，主链路优先光纤；关键点位建议双上联冗余。</span><span class="lang-en lang-hide">RF interference is common—use fiber for backbone; dual uplinks for critical points.</span></li>
+                <li><span class="lang-zh">ONVIF 账户与权限单独管理，强密码 + 定期轮换；关闭不必要服务。</span><span class="lang-en lang-hide">Separate ONVIF creds, strong passwords + rotation; disable unnecessary services.</span></li>
+                <li><span class="lang-zh">高并发拉流时可用 NVR/流媒体服务器转推，减轻前端压力。</span><span class="lang-en lang-hide">For many concurrent viewers, restream via NVR/media server to reduce camera load.</span></li>
+              </ul>
+            </div>
+
+            <div class="p-4 bg-slate-50 border border-slate-200 rounded-lg">
+              <h4 class="font-semibold text-slate-800 mb-2">
+                <span class="lang-zh">一条经验</span><span class="lang-en lang-hide">Rule of thumb</span>
+              </h4>
+              <p class="text-sm text-slate-700 leading-relaxed">
+                <span class="lang-zh">把系统当“网络项目”做：先画带宽拓扑、再定码率策略、最后才是相机/NVR SKU。这样不容易翻车。</span>
+                <span class="lang-en lang-hide">Treat it as a networking project: bandwidth topology → bitrate policy → then SKUs. This avoids surprises.</span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="bg-white border-t border-slate-200 mt-auto">
+    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+      <p class="text-center text-sm text-slate-500">
+        <span class="lang-zh">&copy; 2026 Security Solution Research. 该页面为选型研究模板，可替换为真实项目参数。</span>
+        <span class="lang-en lang-hide">&copy; 2026 Security Solution Research. Template for selection research—replace with real project parameters.</span>
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    // -------------------------
+    // State
+    // -------------------------
+    let currentLang = 'zh';
+
+    const products = {
+      bullet: [
+        {
+          model: "IPC-HFW7842H-Z",
+          series: "WizMind 7 Series",
+          res: "4K (8MP)",
+          fps: "60 fps",
+          lens: "Vari-focal Motorized",
+          featuresZH: ["AI 人脸识别", "超宽动态 WDR", "IP67/IK10 防护"],
+          featuresEN: ["AI face recognition", "Wide dynamic range (WDR)", "IP67/IK10 rugged"],
+          descZH: "适用于赛道直道与弯道关键点。60fps 高帧率确保高速赛车画面无拖影，AI 功能用于识别闯入赛道的人员。",
+          descEN: "Best for straights and critical corners. 60fps reduces motion blur for incident review; AI helps detect track intrusions.",
+          useZH: "赛道侧",
+          useEN: "Trackside"
+        },
+        {
+          model: "IPC-HFW5442E-ZE",
+          series: "WizMind 5 Series",
+          res: "4MP",
+          fps: "50/60 fps",
+          lens: "ePoE Support",
+          featuresZH: ["星光级低照度", "人群密度分析", "长距离供电"],
+          featuresEN: ["Starlight low-light", "Crowd density analytics", "Long-distance power (ePoE)"],
+          descZH: "适用于看台出入口与外围缓冲区。星光技术确保夜间低照度下依然呈色清晰。",
+          descEN: "Good for gates and perimeter buffer zones. Starlight tech keeps color clarity under low light.",
+          useZH: "外围",
+          useEN: "Perimeter"
+        }
+      ],
+      ptz: [
+        {
+          model: "SD10A248V-HNI",
+          series: "Ultra AI Series",
+          res: "2MP (1080P)",
+          fps: "50/60 fps",
+          zoom: "48x Optical",
+          featuresZH: ["450m 红外补光", "自动跟踪", "激光测距"],
+          featuresEN: ["450m IR", "Auto-tracking", "Laser ranging"],
+          descZH: "适用于高点全景监控。48倍光学变倍可清晰捕捉远距离细节，自动跟踪用于锁定可疑目标。",
+          descEN: "For high vantage overview. 48x optical zoom captures distant details; auto-tracking locks onto suspicious targets.",
+          useZH: "高点",
+          useEN: "Vantage"
+        },
+        {
+          model: "SD6AL445XA-HNR",
+          series: "WizSense PTZ",
+          res: "4MP",
+          zoom: "45x Optical",
+          featuresZH: ["激光补光", "周界防护", "快速对焦"],
+          featuresEN: ["Laser illumination", "Perimeter protection", "Fast focus"],
+          descZH: "适用于广场与人流密集区。配合后端可实现快速人员调度与事件定位。",
+          descEN: "For plazas and dense crowds. Works with backend analytics for fast dispatch and incident localization.",
+          useZH: "人群",
+          useEN: "Crowd"
+        }
+      ],
+      nvr: [
+        {
+          model: "NVR608-64-4KS2",
+          series: "Ultra Series",
+          channels: "64 Channel",
+          bandwidth: "384 Mbps",
+          raid: "RAID 0/1/5/10",
+          featuresZH: ["AI 搜索", "冗余电源", "N+M 热备"],
+          featuresEN: ["AI search", "Redundant PSU", "N+M hot standby"],
+          descZH: "核心存储节点。支持高带宽接入，确保多路 4K 视频流稳定录制，并提供 RAID 保护。",
+          descEN: "Core recording node. High ingress bandwidth for multi-4K recording with RAID protection.",
+          useZH: "指挥中心",
+          useEN: "Command"
+        }
+      ]
+    };
+
+    // -------------------------
+    // Navigation
+    // -------------------------
+    function navigate(targetId){
+      document.querySelectorAll('main > section').forEach(sec=>sec.classList.add('hidden'));
+      const t=document.getElementById(targetId);
+      if(t) t.classList.remove('hidden');
+
+      document.querySelectorAll('.nav-btn').forEach(btn=>{
+        if(btn.dataset.target===targetId){
+          btn.classList.add('nav-active','text-gray-900');
+          btn.classList.remove('text-gray-500');
+        }else{
+          btn.classList.remove('nav-active','text-gray-900');
+          btn.classList.add('text-gray-500');
+        }
+      });
+
+      // re-render products when entering products section (for correct language)
+      if(targetId==='products'){
+        const activeTab=document.querySelector('.filter-btn.text-blue-600');
+        if(activeTab){
+          const type=activeTab.getAttribute('onclick').match(/'(.*)'/)[1];
+          filterProducts(type, activeTab);
+        }
+      }
+
+      // charts are already created; responsive resize handled by Chart.js
+      window.scrollTo({top:0,behavior:'smooth'});
+    }
+
+    // -------------------------
+    // Product rendering
+    // -------------------------
+    function filterProducts(type, btnElement){
+      const grid=document.getElementById('product-grid');
+      if(!grid) return;
+      grid.innerHTML='';
+
+      document.querySelectorAll('.filter-btn').forEach(btn=>{
+        btn.classList.remove('text-blue-600','border-blue-600');
+        btn.classList.add('text-slate-500','border-transparent');
+      });
+      btnElement.classList.remove('text-slate-500','border-transparent');
+      btnElement.classList.add('text-blue-600','border-blue-600');
+
+      (products[type]||[]).forEach(item=>{
+        const card=document.createElement('div');
+        card.className="bg-white border border-slate-200 rounded-lg p-5 card-hover transition-all duration-300";
+
+        let specsHtml='';
+        if(type==='nvr'){
+          specsHtml=`
+            <div class="flex flex-wrap gap-2 mb-3">
+              <span class="spec-badge">${item.channels}</span>
+              <span class="spec-badge">${item.bandwidth}</span>
+              <span class="spec-badge">${item.raid}</span>
+            </div>
+          `;
+        }else{
+          specsHtml=`
+            <div class="flex flex-wrap gap-2 mb-3">
+              <span class="spec-badge">${item.res}</span>
+              <span class="spec-badge">${item.fps || item.zoom}</span>
+            </div>
+          `;
+        }
+
+        const useText = currentLang==='zh' ? item.useZH : item.useEN;
+        const descText = currentLang==='zh' ? item.descZH : item.descEN;
+        const feats = currentLang==='zh' ? item.featuresZH : item.featuresEN;
+
+        card.innerHTML=`
+          <div class="flex justify-between items-start mb-2 gap-3">
+            <h3 class="text-lg font-bold text-slate-800 break-words">${item.model}</h3>
+            <span class="text-xs font-semibold text-slate-500 border border-slate-200 px-2 py-1 rounded whitespace-nowrap">${useText}</span>
+          </div>
+          <p class="text-xs text-blue-600 font-medium mb-3 uppercase tracking-wide">${item.series}</p>
+          ${specsHtml}
+          <p class="text-sm text-slate-600 mb-4 leading-relaxed">${descText}</p>
+          <div class="border-t border-slate-100 pt-3">
+            <p class="text-xs text-slate-500 font-semibold mb-1">${currentLang==='zh'?'关键特性':'Key features'}:</p>
+            <ul class="text-xs text-slate-600 list-disc list-inside">
+              ${feats.map(f=>`<li>${f}</li>`).join('')}
+            </ul>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    // -------------------------
+    // Language toggle
+    // -------------------------
+    function setLang(lang){
+      currentLang=lang;
+      const zh = lang==='zh';
+      document.querySelectorAll('.lang-zh').forEach(el=>el.classList.toggle('lang-hide', !zh));
+      document.querySelectorAll('.lang-en').forEach(el=>el.classList.toggle('lang-hide', zh));
+
+      // refresh product grid in current language if visible
+      const productsSection=document.getElementById('products');
+      if(productsSection && !productsSection.classList.contains('hidden')){
+        const active=document.querySelector('.filter-btn.text-blue-600') || document.querySelector('.filter-btn');
+        if(active){
+          const type=active.getAttribute('onclick').match(/'(.*)'/)[1];
+          filterProducts(type, active);
+        }
+      }
+
+      // update html lang attribute
+      document.documentElement.lang = zh ? 'zh-CN' : 'en';
+    }
+
+    function toggleLang(){
+      setLang(currentLang==='zh' ? 'en' : 'zh');
+    }
+
+    // Keyboard shortcut Alt+L
+    window.addEventListener('keydown', (e)=>{
+      if(e.altKey && (e.key==='l' || e.key==='L')){ e.preventDefault(); toggleLang(); }
+    });
+
+    // -------------------------
+    // Charts
+    // -------------------------
+    let chartsInitialized=false;
+    function initCharts(){
+      if(chartsInitialized) return;
+      chartsInitialized=true;
+
+      const deployEl=document.getElementById('deploymentChart');
+      const radarEl=document.getElementById('radarChart');
+      const barEl=document.getElementById('barChart');
+      if(!deployEl||!radarEl||!barEl) return;
+
+      // Deployment Doughnut
+      new Chart(deployEl.getContext('2d'), {
+        type:'doughnut',
+        data:{
+          labels:[
+            'Bullet (Track)',
+            'PTZ (Crowd/Vantage)',
+            'Aux (Gates/Access)'
+          ],
+          datasets:[{ data:[65,20,15], backgroundColor:['#3b82f6','#0ea5e9','#94a3b8'], borderWidth:0 }]
+        },
+        options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'bottom' } } }
+      });
+
+      // Radar
+      new Chart(radarEl.getContext('2d'), {
+        type:'radar',
+        data:{
+          labels:['Zoom','IR','FOV','FPS','Flexibility'],
+          datasets:[
+            { label:'Bullet', data:[20,60,90,95,40], fill:true, backgroundColor:'rgba(59,130,246,.20)', borderColor:'#3b82f6', pointBackgroundColor:'#3b82f6' },
+            { label:'PTZ', data:[95,95,100,70,85], fill:true, backgroundColor:'rgba(14,165,233,.20)', borderColor:'#0ea5e9', pointBackgroundColor:'#0ea5e9' }
+          ]
+        },
+        options:{ responsive:true, maintainAspectRatio:false, scales:{ r:{ angleLines:{color:'#e2e8f0'}, grid:{color:'#e2e8f0'}, suggestedMin:0, suggestedMax:100 } } }
+      });
+
+      // Bar
+      new Chart(barEl.getContext('2d'), {
+        type:'bar',
+        data:{
+          labels:['10 cams','50 cams','100 cams','200 cams'],
+          datasets:[
+            { label:'H.265 (4K@60fps)', data:[80,400,800,1600], backgroundColor:'#3b82f6' },
+            { label:'H.264 (4K@60fps)', data:[120,600,1200,2400], backgroundColor:'#cbd5e1' }
+          ]
+        },
+        options:{ responsive:true, maintainAspectRatio:false, scales:{ y:{ beginAtZero:true, title:{ display:true, text:'Mbps' } } } }
+      });
+    }
+
+    // -------------------------
+    // Boot
+    // -------------------------
+    document.addEventListener('DOMContentLoaded', ()=>{
+      // charts
+      initCharts();
+
+      // initial product grid
+      const firstTab=document.querySelector('.filter-btn');
+      if(firstTab) filterProducts('bullet', firstTab);
+
+      // language button
+      document.getElementById('langBtn')?.addEventListener('click', toggleLang);
+
+      // default language: Chinese
+      setLang('zh');
+    });
+  </script>
+</body>
+</html>
