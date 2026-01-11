@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
-    <!-- SEO Title from page.html -->
+    <!-- SEO Title -->
     <title>DCDeepTech | AI Infrastructure & Applied Intelligence for Cities and Campuses</title>
     
-    <!-- Meta Description from page.html -->
+    <!-- Meta Description -->
     <meta name="description" content="Engineering AI infrastructure and outcome-driven AI applications, from liquid-cooled compute systems to intelligent transport, cleaning, and security solutions.">
     
     <!-- GEO / Schema.org Structure -->
@@ -37,7 +37,7 @@
     </script>
 
     <style>
-        /* --- CSS Reset & Variables (Unchanged) --- */
+        /* --- CSS Reset & Variables --- */
         :root {
             --color-bg-body: #ffffff;
             --color-bg-alt: #f8f9fa; /* OCP Light Gray */
@@ -229,11 +229,11 @@
             display: block;
         }
 
-        /* Removed .logo-text style as requested */
+        /* Removed .logo-text style */
 
         .nav-links {
             display: flex;
-            gap: 2rem; /* Adjusted gap to fit more items */
+            gap: 2rem;
             list-style: none;
         }
 
@@ -302,6 +302,7 @@
             list-style: none;
             position: relative;
             padding-left: 1.2rem;
+            outline: none;
         }
         details.team-details summary::before {
             content: '▶';
@@ -724,8 +725,9 @@
         <div class="container">
             <nav>
                 <a href="#" class="logo-container">
-                    <!-- Only Image, Text Removed -->
+                    <!-- Image path: using github raw for preview, reserve local path /image/logo.png -->
                     <img src="https://raw.githubusercontent.com/luoxisg/dcdeeptech/main/image/DCdeeptech_logo-removebg-preview.png" alt="DCDeepTech Logo" class="logo-img">
+                    <!-- Text Removed -->
                 </a>
                 
                 <button class="mobile-menu-btn" onclick="toggleMenu()" aria-label="Toggle Menu">☰</button>
@@ -903,7 +905,7 @@
                         </div>
                     </div>
 
-                    <!-- WP 5 - CHANGED TO ITS AI -->
+                    <!-- WP 5 - Transport ITS -->
                     <div class="card reveal-on-scroll delay-500" style="border-top: 4px solid var(--color-accent);">
                         <div class="card-header">
                             <h4 style="font-size: 1.1rem; color: var(--color-primary);">Transport</h4>
@@ -918,7 +920,7 @@
             </div>
         </section>
 
-        <!-- Infrastructure Products (bg-alt to alternate after Downloads) -->
+        <!-- Infrastructure Products (bg-alt) -->
         <section id="products" class="bg-alt">
             <div class="container">
                 <h2 class="reveal-on-scroll">Infrastructure Products</h2>
@@ -950,7 +952,7 @@
                         </div>
                     </div>
                     
-                    <!-- Image Column: [IMAGE PLACEHOLDER 2] 液冷工作站部署大模型 -->
+                    <!-- Image Column: [IMAGE PLACEHOLDER 2] -->
                     <div class="reveal-on-scroll delay-300">
                         <div style="background: white; padding: 10px; border: 1px solid var(--color-border); border-radius: 8px;">
                             <img src="/image/2-liquid-cooled-workstation.jpg" alt="Liquid Cooled AI Workstation Deployment" style="width: 100%; height: auto; border-radius: 4px; display: block;">
@@ -961,13 +963,12 @@
             </div>
         </section>
 
-        <!-- Use Scenarios Section (White to alternate after Products) -->
+        <!-- Use Scenarios Section (White) -->
         <section id="use-scenarios" class="">
             <div class="container">
                 <h2 class="reveal-on-scroll">Deployment Scenarios</h2>
                 <div class="scenario-grid">
                     <!-- Scenario 1: Transport (Smart Traffic) -->
-                    <!-- [IMAGE PLACEHOLDER 4] 智能交通 -->
                     <div class="scenario-card reveal-on-scroll delay-100">
                         <div class="scenario-img-wrap">
                             <img src="/image/4-smart-transport.jpg" alt="Smart Traffic & Urban Sensing" class="scenario-img">
@@ -979,7 +980,6 @@
                     </div>
 
                     <!-- Scenario 2: CaaS (Cleaning) -->
-                    <!-- [IMAGE PLACEHOLDER 5] 园区清洁即服务 -->
                     <div class="scenario-card reveal-on-scroll delay-200">
                         <div class="scenario-img-wrap">
                             <img src="/image/5-campus-cleaning.jpg" alt="Clean as a Service (CaaS)" class="scenario-img">
@@ -991,7 +991,6 @@
                     </div>
 
                     <!-- Scenario 3: Security (Events) -->
-                    <!-- [IMAGE PLACEHOLDER 3] 大型赛事安保 -->
                     <div class="scenario-card reveal-on-scroll delay-300">
                         <div class="scenario-img-wrap">
                             <img src="/image/3-event-security.jpg" alt="Cognitive Security & Events" class="scenario-img">
@@ -1003,7 +1002,7 @@
                     </div>
                 </div>
                 
-                <!-- Smart Campus Text Block (Kept for completeness but less emphasized visually) -->
+                <!-- Smart Campus Text Block -->
                 <div class="reveal-on-scroll delay-400" style="margin-top: 2rem; padding: 1.5rem; background: #f8f9fa; border-radius: 8px; border-left: 4px solid var(--color-accent);">
                     <h4 style="margin-bottom: 0.5rem;">Smart Campus Operations</h4>
                     <p style="margin-bottom: 0;">Integrated AI solutions for smart campuses spanning transport, cleaning, and security operations.</p>
@@ -1011,7 +1010,7 @@
             </div>
         </section>
 
-        <!-- Why Singapore Section (bg-alt to alternate after Scenarios) -->
+        <!-- Why Singapore Section (bg-alt) -->
         <section id="why-singapore" class="bg-alt">
             <div class="container">
                 <h2 class="reveal-on-scroll">Why Singapore</h2>
@@ -1030,14 +1029,14 @@
                     </div>
                     
                     <div class="singapore-image-wrapper reveal-on-scroll delay-300">
-                         <!-- [IMAGE PLACEHOLDER 6] 新加坡总部辐射欧洲美洲 -->
+                         <!-- [IMAGE PLACEHOLDER 6] -->
                         <img src="/image/6-singapore-global-hq.jpg" alt="Singapore Infrastructure Hub" class="singapore-image">
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Founder Section (White to alternate after Why Singapore) -->
+        <!-- Founder Section (White) -->
         <section id="founder" class="">
             <div class="container">
                 <h2 class="reveal-on-scroll">Founder & Team</h2> <!-- Updated Title -->
@@ -1088,7 +1087,7 @@
             </div>
         </section>
 
-        <!-- GEO Anchor Section (bg-alt to alternate after Founder) -->
+        <!-- GEO Anchor Section (bg-alt) -->
         <section id="about-geo" class="bg-alt">
             <div class="container">
                 <div class="geo-block reveal-on-scroll">
@@ -1101,7 +1100,7 @@
             </div>
         </section>
 
-        <!-- Contact Section (White to alternate after GEO) -->
+        <!-- Contact Section (White) -->
         <section id="contact" class="">
             <div class="container">
                 <h2 class="reveal-on-scroll">Contact DCDeepTech</h2>
