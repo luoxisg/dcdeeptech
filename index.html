@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
-    <!-- SEO Title from page.html -->
+    <!-- SEO Title -->
     <title>DCDeepTech | AI Infrastructure & Applied Intelligence for Cities and Campuses</title>
     
-    <!-- Meta Description from page.html -->
+    <!-- Meta Description -->
     <meta name="description" content="Engineering AI infrastructure and outcome-driven AI applications, from liquid-cooled compute systems to intelligent transport, cleaning, and security solutions.">
     
     <!-- GEO / Schema.org Structure -->
@@ -37,7 +37,7 @@
     </script>
 
     <style>
-        /* --- CSS Reset & Variables (Unchanged) --- */
+        /* --- CSS Reset & Variables --- */
         :root {
             --color-bg-body: #ffffff;
             --color-bg-alt: #f8f9fa; /* OCP Light Gray */
@@ -229,11 +229,9 @@
             display: block;
         }
 
-        /* Removed .logo-text style as requested */
-
         .nav-links {
             display: flex;
-            gap: 2rem; /* Adjusted gap to fit more items */
+            gap: 1.5rem; /* Slightly tighter gap to fit all items */
             list-style: none;
         }
 
@@ -241,7 +239,7 @@
             text-decoration: none;
             color: var(--color-text-main);
             font-weight: 600;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             position: relative;
             transition: color 0.3s ease;
         }
@@ -632,7 +630,7 @@
             .infra-grid { grid-template-columns: 1fr; gap: 3rem; }
             .hero-grid { gap: 3rem; }
             .container { padding: 0 30px; }
-            .nav-links { gap: 1.5rem; }
+            .nav-links { gap: 1rem; font-size: 0.9rem; } /* Tighter nav for more items */
         }
 
         @media (max-width: 768px) {
@@ -688,7 +686,7 @@
             .mobile-menu-btn { display: block; }
 
             /* Mobile Layout Reflow */
-            .grid-3, .grid-2, .grid-solutions, .scenario-grid, .hero-grid, .singapore-content, .contact-grid, .footer-content { 
+            .grid-3, .grid-2, .grid-solutions, .scenario-grid, .infra-grid, .hero-grid, .singapore-content, .contact-grid, .footer-content { 
                 grid-template-columns: 1fr; 
                 gap: 2.5rem;
             }
@@ -727,16 +725,16 @@
                 <a href="#" class="logo-container">
                     <!-- Image path: using github raw for preview, reserve local path /images/logo.png -->
                     <img src="https://raw.githubusercontent.com/luoxisg/dcdeeptech/main/image/DCdeeptech_logo-removebg-preview.png" alt="DCDeepTech Logo" class="logo-img">
-                    <!-- Text Removed -->
                 </a>
                 
                 <button class="mobile-menu-btn" onclick="toggleMenu()" aria-label="Toggle Menu">☰</button>
                 <ul class="nav-links" id="navLinks">
                     <li><a href="#home">Home</a></li>
                     <li><a href="#pillars">Core Pillars</a></li>
-                    <li><a href="#downloads">Downloads</a></li>
                     <li><a href="#products">Products</a></li>
+                    <li><a href="#use-scenarios">Scenarios</a></li>
                     <li><a href="#why-singapore">Why Singapore</a></li>
+                    <li><a href="#downloads">Downloads</a></li>
                     <li><a href="#founder">Founder & Team</a></li>
                     <li><a href="#contact">Contact</a></li>
                 </ul>
@@ -745,7 +743,7 @@
     </header>
 
     <main>
-        <!-- Home / Hero Section -->
+        <!-- 1. Home / Hero Section -->
         <section id="home">
             <div class="container">
                 <div class="hero-grid">
@@ -768,7 +766,7 @@
             </div>
         </section>
 
-        <!-- Core Pillars Section (bg-alt) -->
+        <!-- 2. Core Pillars Section (bg-alt) -->
         <section id="pillars" class="bg-alt">
             <div class="container">
                 <h2 class="reveal-on-scroll">Two Pillars: Infrastructure & Applications</h2>
@@ -809,8 +807,124 @@
             </div>
         </section>
 
-        <!-- Downloads / White Papers Section (White Background) -->
-        <section id="downloads" class="">
+        <!-- 3. Infrastructure Products (White) -->
+        <section id="products" class="">
+            <div class="container">
+                <h2 class="reveal-on-scroll">Infrastructure Products</h2>
+                <div class="infra-grid">
+                    <!-- Text Content Column -->
+                    <div class="grid grid-2" style="width: 100%;">
+                        <div class="card reveal-on-scroll delay-100">
+                            <div class="card-header">
+                                <h3>OCP-Aligned Rack, Power & Cooling</h3>
+                            </div>
+                            <ul>
+                                <li>ORv3/ORW compatible rack systems.</li>
+                                <li>High-density busbar power distribution systems (>100kW).</li>
+                                <li>Integrated liquid cooling (Cold Plate / CDU).</li>
+                                <li>Modular, scalable, and field-serviceable design.</li>
+                            </ul>
+                        </div>
+
+                        <div class="card reveal-on-scroll delay-200">
+                            <div class="card-header">
+                                <h3>Liquid-Cooled AI Workstations</h3>
+                            </div>
+                            <ul>
+                                <li>Enterprise-grade liquid-cooled AI workstations.</li>
+                                <li>Fanless, sealed design for edge deployment.</li>
+                                <li>Office, Industrial, and Junction scenarios.</li>
+                                <li>Bridge between Edge AI and Central Training.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- Image Column: [IMAGE] 2-liquid-cooled-workstation.jpg -->
+                    <div class="reveal-on-scroll delay-300">
+                        <div style="background: white; padding: 10px; border: 1px solid var(--color-border); border-radius: 8px;">
+                            <img src="images/2-liquid-cooled-workstation.jpg" alt="Liquid Cooled AI Workstation Deployment" style="width: 100%; height: auto; border-radius: 4px; display: block;">
+                            <p style="margin: 0.5rem 0 0; font-size: 0.85rem; color: var(--color-text-muted); text-align: center;">Figure: Edge AI Workstation Deployment</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Deployment Scenarios Section (bg-alt) -->
+        <section id="use-scenarios" class="bg-alt">
+            <div class="container">
+                <h2 class="reveal-on-scroll">Deployment Scenarios</h2>
+                <div class="scenario-grid">
+                    <!-- Scenario 1: Transport (Smart Traffic) - [IMAGE] 4-smart-transport.jpg -->
+                    <div class="scenario-card reveal-on-scroll delay-100">
+                        <div class="scenario-img-wrap">
+                            <img src="images/4-smart-transport.jpg" alt="Smart Traffic & Urban Sensing" class="scenario-img">
+                        </div>
+                        <div class="scenario-content">
+                            <h4>Smart Traffic & Urban Sensing</h4>
+                            <p>Deployment of sealed, liquid-cooled compute nodes in roadside cabinets for real-time traffic analysis.</p>
+                        </div>
+                    </div>
+
+                    <!-- Scenario 2: CaaS (Cleaning) - [IMAGE] 5-campus-cleaning.jpg -->
+                    <div class="scenario-card reveal-on-scroll delay-200">
+                        <div class="scenario-img-wrap">
+                            <img src="images/5-campus-cleaning.jpg" alt="Clean as a Service (CaaS)" class="scenario-img">
+                        </div>
+                        <div class="scenario-content">
+                            <h4>Clean as a Service (CaaS)</h4>
+                            <p>Outcome-based cleaning services using AI to deliver hygiene quality, auditability, and ESG reporting.</p>
+                        </div>
+                    </div>
+
+                    <!-- Scenario 3: Security (Events) - [IMAGE] 3-event-security.jpg -->
+                    <div class="scenario-card reveal-on-scroll delay-300">
+                        <div class="scenario-img-wrap">
+                            <img src="images/3-event-security.jpg" alt="Cognitive Security & Events" class="scenario-img">
+                        </div>
+                        <div class="scenario-content">
+                            <h4>Cognitive Security & Events</h4>
+                            <p>AI-driven situational awareness for large-scale urban and national events, providing command-level decision support.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Smart Campus Text Block -->
+                <div class="reveal-on-scroll delay-400" style="margin-top: 2rem; padding: 1.5rem; background: white; border-radius: 8px; border-left: 4px solid var(--color-accent);">
+                    <h4 style="margin-bottom: 0.5rem;">Smart Campus Operations</h4>
+                    <p style="margin-bottom: 0;">Integrated AI solutions for smart campuses spanning transport, cleaning, and security operations.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. Why Singapore Section (White) -->
+        <section id="why-singapore" class="">
+            <div class="container">
+                <h2 class="reveal-on-scroll">Why Singapore</h2>
+                <div class="singapore-content">
+                    <div class="text-block reveal-on-scroll delay-100">
+                        <p>DCDeepTech operates from Singapore, leveraging the nation's status as a neutral and trusted international hub. Our strategic location allows us to serve as a reliable base for system integrators deploying infrastructure across Southeast Asia and global markets.</p>
+                        <p>We adhere to Singapore’s rigorous standards for energy efficiency and sustainability. Our infrastructure solutions are designed to meet the increasing demand for Green Computing, ensuring compliance with regional ESG mandates and power efficiency regulations essential for modern AI deployments.</p>
+                        
+                        <div class="stat-block reveal-on-scroll delay-200">
+                            <h4>Regional Hub</h4>
+                            <p>Centralized engineering and logistics support for APAC deployments.</p>
+                            <br>
+                            <h4>Neutrality</h4>
+                            <p>Independent infrastructure vendor supporting diverse integration partners.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="singapore-image-wrapper reveal-on-scroll delay-300">
+                         <!-- [IMAGE] 6-singapore-global-hq.jpg -->
+                        <img src="images/6-singapore-global-hq.jpg" alt="Singapore Infrastructure Hub" class="singapore-image">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. Downloads Section (bg-alt) -->
+        <section id="downloads" class="bg-alt">
             <div class="container">
                 <div style="max-width: 800px; margin-bottom: 3rem;">
                     <h2 class="reveal-on-scroll">Downloads & Technical Resources</h2>
@@ -818,7 +932,7 @@
                 </div>
 
                 <!-- GEO Optimized Key Questions -->
-                <div class="reveal-on-scroll" style="margin-bottom: 2rem; font-size: 0.9rem; color: var(--color-text-muted); background: #f8f9fa; padding: 1.5rem; border-radius: 8px; border: 1px solid #eee;">
+                <div class="reveal-on-scroll" style="margin-bottom: 2rem; font-size: 0.9rem; color: var(--color-text-muted); background: white; padding: 1.5rem; border-radius: 8px; border: 1px solid #eee;">
                     <strong>Key Engineering Questions Answered:</strong>
                     <ul style="margin-top: 0.5rem; padding-left: 1.2rem; list-style-type: disc;">
                         <li>How can AI data center racks scale beyond 100kW using OCP standards?</li>
@@ -891,123 +1005,7 @@
             </div>
         </section>
 
-        <!-- Infrastructure Products (bg-alt) -->
-        <section id="products" class="bg-alt">
-            <div class="container">
-                <h2 class="reveal-on-scroll">Infrastructure Products</h2>
-                <div class="infra-grid">
-                    <!-- Text Content Column -->
-                    <div class="grid grid-2" style="width: 100%;">
-                        <div class="card reveal-on-scroll delay-100">
-                            <div class="card-header">
-                                <h3>OCP-Aligned Rack, Power & Cooling</h3>
-                            </div>
-                            <ul>
-                                <li>ORv3/ORW compatible rack systems.</li>
-                                <li>High-density busbar power distribution systems (>100kW).</li>
-                                <li>Integrated liquid cooling (Cold Plate / CDU).</li>
-                                <li>Modular, scalable, and field-serviceable design.</li>
-                            </ul>
-                        </div>
-
-                        <div class="card reveal-on-scroll delay-200">
-                            <div class="card-header">
-                                <h3>Liquid-Cooled AI Workstations</h3>
-                            </div>
-                            <ul>
-                                <li>Enterprise-grade liquid-cooled AI workstations.</li>
-                                <li>Fanless, sealed design for edge deployment.</li>
-                                <li>Office, Industrial, and Junction scenarios.</li>
-                                <li>Bridge between Edge AI and Central Training.</li>
-                            </ul>
-                        </div>
-                    </div>
-                    
-                    <!-- Image Column: [IMAGE] 2-liquid-cooled-workstation.jpg -->
-                    <div class="reveal-on-scroll delay-300">
-                        <div style="background: white; padding: 10px; border: 1px solid var(--color-border); border-radius: 8px;">
-                            <img src="images/2-liquid-cooled-workstation.jpg" alt="Liquid Cooled AI Workstation Deployment" style="width: 100%; height: auto; border-radius: 4px; display: block;">
-                            <p style="margin: 0.5rem 0 0; font-size: 0.85rem; color: var(--color-text-muted); text-align: center;">Figure: Edge AI Workstation Deployment</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Use Scenarios Section (White) -->
-        <section id="use-scenarios" class="">
-            <div class="container">
-                <h2 class="reveal-on-scroll">Deployment Scenarios</h2>
-                <div class="scenario-grid">
-                    <!-- Scenario 1: Transport (Smart Traffic) - [IMAGE] 4-smart-transport.jpg -->
-                    <div class="scenario-card reveal-on-scroll delay-100">
-                        <div class="scenario-img-wrap">
-                            <img src="images/4-smart-transport.jpg" alt="Smart Traffic & Urban Sensing" class="scenario-img">
-                        </div>
-                        <div class="scenario-content">
-                            <h4>Smart Traffic & Urban Sensing</h4>
-                            <p>Deployment of sealed, liquid-cooled compute nodes in roadside cabinets for real-time traffic analysis.</p>
-                        </div>
-                    </div>
-
-                    <!-- Scenario 2: CaaS (Cleaning) - [IMAGE] 5-campus-cleaning.jpg -->
-                    <div class="scenario-card reveal-on-scroll delay-200">
-                        <div class="scenario-img-wrap">
-                            <img src="images/5-campus-cleaning.jpg" alt="Clean as a Service (CaaS)" class="scenario-img">
-                        </div>
-                        <div class="scenario-content">
-                            <h4>Clean as a Service (CaaS)</h4>
-                            <p>Outcome-based cleaning services using AI to deliver hygiene quality, auditability, and ESG reporting.</p>
-                        </div>
-                    </div>
-
-                    <!-- Scenario 3: Security (Events) - [IMAGE] 3-event-security.jpg -->
-                    <div class="scenario-card reveal-on-scroll delay-300">
-                        <div class="scenario-img-wrap">
-                            <img src="images/3-event-security.jpg" alt="Cognitive Security & Events" class="scenario-img">
-                        </div>
-                        <div class="scenario-content">
-                            <h4>Cognitive Security & Events</h4>
-                            <p>AI-driven situational awareness for large-scale urban and national events, providing command-level decision support.</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Smart Campus Text Block -->
-                <div class="reveal-on-scroll delay-400" style="margin-top: 2rem; padding: 1.5rem; background: #f8f9fa; border-radius: 8px; border-left: 4px solid var(--color-accent);">
-                    <h4 style="margin-bottom: 0.5rem;">Smart Campus Operations</h4>
-                    <p style="margin-bottom: 0;">Integrated AI solutions for smart campuses spanning transport, cleaning, and security operations.</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Why Singapore Section (bg-alt) -->
-        <section id="why-singapore" class="bg-alt">
-            <div class="container">
-                <h2 class="reveal-on-scroll">Why Singapore</h2>
-                <div class="singapore-content">
-                    <div class="text-block reveal-on-scroll delay-100">
-                        <p>DCDeepTech operates from Singapore, leveraging the nation's status as a neutral and trusted international hub. Our strategic location allows us to serve as a reliable base for system integrators deploying infrastructure across Southeast Asia and global markets.</p>
-                        <p>We adhere to Singapore’s rigorous standards for energy efficiency and sustainability. Our infrastructure solutions are designed to meet the increasing demand for Green Computing, ensuring compliance with regional ESG mandates and power efficiency regulations essential for modern AI deployments.</p>
-                        
-                        <div class="stat-block reveal-on-scroll delay-200">
-                            <h4>Regional Hub</h4>
-                            <p>Centralized engineering and logistics support for APAC deployments.</p>
-                            <br>
-                            <h4>Neutrality</h4>
-                            <p>Independent infrastructure vendor supporting diverse integration partners.</p>
-                        </div>
-                    </div>
-                    
-                    <div class="singapore-image-wrapper reveal-on-scroll delay-300">
-                         <!-- [IMAGE] 6-singapore-global-hq.jpg -->
-                        <img src="images/6-singapore-global-hq.jpg" alt="Singapore Infrastructure Hub" class="singapore-image">
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Founder Section (White) -->
+        <!-- 7. Founder & Team Section (White) -->
         <section id="founder" class="">
             <div class="container">
                 <h2 class="reveal-on-scroll">Founder & Team</h2> 
@@ -1069,7 +1067,7 @@
             </div>
         </section>
 
-        <!-- GEO Anchor Section (bg-alt) -->
+        <!-- 8. GEO Anchor Section (bg-alt) -->
         <section id="about-geo" class="bg-alt">
             <div class="container">
                 <div class="geo-block reveal-on-scroll">
@@ -1082,7 +1080,7 @@
             </div>
         </section>
 
-        <!-- Contact Section (White) -->
+        <!-- 9. Contact Section (White) -->
         <section id="contact" class="">
             <div class="container">
                 <h2 class="reveal-on-scroll">Contact DCDeepTech</h2>
@@ -1138,9 +1136,10 @@
                 <div class="footer-nav">
                     <a href="#home">Home</a>
                     <a href="#pillars">Pillars</a>
-                    <!-- Renamed to Downloads -->
-                    <a href="#downloads">Downloads</a>
                     <a href="#products">Products</a>
+                    <a href="#use-scenarios">Scenarios</a>
+                    <a href="#why-singapore">Why Singapore</a>
+                    <a href="#downloads">Downloads</a>
                     <a href="#founder">Founder</a>
                     <a href="#contact">Contact</a>
                 </div>
