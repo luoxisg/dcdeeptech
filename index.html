@@ -231,7 +231,7 @@
 
         .nav-links {
             display: flex;
-            gap: 1.5rem; /* Slightly tighter gap to fit all items */
+            gap: 1.2rem;
             list-style: none;
         }
 
@@ -630,7 +630,7 @@
             .infra-grid { grid-template-columns: 1fr; gap: 3rem; }
             .hero-grid { gap: 3rem; }
             .container { padding: 0 30px; }
-            .nav-links { gap: 1rem; font-size: 0.9rem; } /* Tighter nav for more items */
+            .nav-links { gap: 1rem; font-size: 0.9rem; }
         }
 
         @media (max-width: 768px) {
@@ -674,6 +674,7 @@
             .nav-links li:nth-child(6) { animation-delay: 0.35s; }
             .nav-links li:nth-child(7) { animation-delay: 0.4s; }
             .nav-links li:nth-child(8) { animation-delay: 0.45s; }
+            .nav-links li:nth-child(9) { animation-delay: 0.5s; }
 
             .nav-links a { 
                 display: block;
@@ -723,7 +724,6 @@
         <div class="container">
             <nav>
                 <a href="#" class="logo-container">
-                    <!-- Image path: using github raw for preview, reserve local path /images/logo.png -->
                     <img src="https://raw.githubusercontent.com/luoxisg/dcdeeptech/main/image/DCdeeptech_logo-removebg-preview.png" alt="DCDeepTech Logo" class="logo-img">
                 </a>
                 
@@ -735,7 +735,8 @@
                     <li><a href="#use-scenarios">Scenarios</a></li>
                     <li><a href="#why-singapore">Why Singapore</a></li>
                     <li><a href="#downloads">Downloads</a></li>
-                    <li><a href="#founder">Founder & Team</a></li>
+                    <li><a href="#founder">Founder</a></li>
+                    <li><a href="#axiomdeta">Partner</a></li>
                     <li><a href="#contact">Contact</a></li>
                 </ul>
             </nav>
@@ -759,7 +760,7 @@
                         <a href="#contact" class="cta-button">Start a Technical Discussion</a>
                     </div>
                     <div class="hero-image-wrapper">
-                         <!-- [IMAGE] 1-ocp-dc-architecture.jpg (Hero) -->
+                        <!-- [IMAGE] 1 -->
                         <img src="images/1-ocp-dc-architecture.jpg" alt="OCP DC Architecture" class="hero-image">
                     </div>
                 </div>
@@ -771,8 +772,7 @@
             <div class="container">
                 <h2 class="reveal-on-scroll">Two Pillars: Infrastructure & Applications</h2>
                 <div class="grid grid-solutions">
-                    
-                    <!-- Pillar 1: Infrastructure -->
+                    <!-- Pillar 1 -->
                     <div class="card reveal-on-scroll delay-100">
                         <div class="card-header">
                             <h3>AI Infrastructure (Pillar I)</h3>
@@ -788,7 +788,7 @@
                         </div>
                     </div>
 
-                    <!-- Pillar 2: Applications -->
+                    <!-- Pillar 2 -->
                     <div class="card reveal-on-scroll delay-200">
                         <div class="card-header">
                             <h3>AI Applications (Pillar II)</h3>
@@ -812,7 +812,6 @@
             <div class="container">
                 <h2 class="reveal-on-scroll">Infrastructure Products</h2>
                 <div class="infra-grid">
-                    <!-- Text Content Column -->
                     <div class="grid grid-2" style="width: 100%;">
                         <div class="card reveal-on-scroll delay-100">
                             <div class="card-header">
@@ -839,7 +838,7 @@
                         </div>
                     </div>
                     
-                    <!-- Image Column: [IMAGE] 2-liquid-cooled-workstation.jpg -->
+                    <!-- [IMAGE] 2 -->
                     <div class="reveal-on-scroll delay-300">
                         <div style="background: white; padding: 10px; border: 1px solid var(--color-border); border-radius: 8px;">
                             <img src="images/2-liquid-cooled-workstation.jpg" alt="Liquid Cooled AI Workstation Deployment" style="width: 100%; height: auto; border-radius: 4px; display: block;">
@@ -850,12 +849,12 @@
             </div>
         </section>
 
-        <!-- 4. Deployment Scenarios Section (bg-alt) -->
+        <!-- 4. Deployment Scenarios (bg-alt) -->
         <section id="use-scenarios" class="bg-alt">
             <div class="container">
                 <h2 class="reveal-on-scroll">Deployment Scenarios</h2>
                 <div class="scenario-grid">
-                    <!-- Scenario 1: Transport (Smart Traffic) - [IMAGE] 4-smart-transport.jpg -->
+                    <!-- Scenario 1 [IMAGE] 4 -->
                     <div class="scenario-card reveal-on-scroll delay-100">
                         <div class="scenario-img-wrap">
                             <img src="images/4-smart-transport.jpg" alt="Smart Traffic & Urban Sensing" class="scenario-img">
@@ -866,7 +865,7 @@
                         </div>
                     </div>
 
-                    <!-- Scenario 2: CaaS (Cleaning) - [IMAGE] 5-campus-cleaning.jpg -->
+                    <!-- Scenario 2 [IMAGE] 5 -->
                     <div class="scenario-card reveal-on-scroll delay-200">
                         <div class="scenario-img-wrap">
                             <img src="images/5-campus-cleaning.jpg" alt="Clean as a Service (CaaS)" class="scenario-img">
@@ -877,7 +876,7 @@
                         </div>
                     </div>
 
-                    <!-- Scenario 3: Security (Events) - [IMAGE] 3-event-security.jpg -->
+                    <!-- Scenario 3 [IMAGE] 3 -->
                     <div class="scenario-card reveal-on-scroll delay-300">
                         <div class="scenario-img-wrap">
                             <img src="images/3-event-security.jpg" alt="Cognitive Security & Events" class="scenario-img">
@@ -888,16 +887,10 @@
                         </div>
                     </div>
                 </div>
-                
-                <!-- Smart Campus Text Block -->
-                <div class="reveal-on-scroll delay-400" style="margin-top: 2rem; padding: 1.5rem; background: white; border-radius: 8px; border-left: 4px solid var(--color-accent);">
-                    <h4 style="margin-bottom: 0.5rem;">Smart Campus Operations</h4>
-                    <p style="margin-bottom: 0;">Integrated AI solutions for smart campuses spanning transport, cleaning, and security operations.</p>
-                </div>
             </div>
         </section>
 
-        <!-- 5. Why Singapore Section (White) -->
+        <!-- 5. Why Singapore (White) -->
         <section id="why-singapore" class="">
             <div class="container">
                 <h2 class="reveal-on-scroll">Why Singapore</h2>
@@ -916,29 +909,19 @@
                     </div>
                     
                     <div class="singapore-image-wrapper reveal-on-scroll delay-300">
-                         <!-- [IMAGE] 6-singapore-global-hq.jpg -->
+                         <!-- [IMAGE] 6 -->
                         <img src="images/6-singapore-global-hq.jpg" alt="Singapore Infrastructure Hub" class="singapore-image">
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- 6. Downloads Section (bg-alt) -->
+        <!-- 6. Downloads (bg-alt) -->
         <section id="downloads" class="bg-alt">
             <div class="container">
                 <div style="max-width: 800px; margin-bottom: 3rem;">
                     <h2 class="reveal-on-scroll">Downloads & Technical Resources</h2>
                     <p class="reveal-on-scroll">Deep-dive engineering documents covering OCP rack design, liquid cooling strategies, and applied AI outcomes.</p>
-                </div>
-
-                <!-- GEO Optimized Key Questions -->
-                <div class="reveal-on-scroll" style="margin-bottom: 2rem; font-size: 0.9rem; color: var(--color-text-muted); background: white; padding: 1.5rem; border-radius: 8px; border: 1px solid #eee;">
-                    <strong>Key Engineering Questions Answered:</strong>
-                    <ul style="margin-top: 0.5rem; padding-left: 1.2rem; list-style-type: disc;">
-                        <li>How can AI data center racks scale beyond 100kW using OCP standards?</li>
-                        <li>What is the optimal strategy for delivering liquid-cooled AI workstations to the edge?</li>
-                        <li>How to implement outcome-based cleaning services (CaaS) using AI?</li>
-                    </ul>
                 </div>
 
                 <div class="grid grid-3">
@@ -950,7 +933,7 @@
                         </div>
                         <p style="font-size: 0.95rem;">Technical architecture for >100kW racks using ORv3 standards and blind-mate liquid cooling.</p>
                         <div class="card-footer">
-                            <a href="/docs/whitepaper-ocp-ai-rack.pdf" download class="text-link icon-download">Download PDF</a>
+                            <a href="/docs/whitepaper-ocp-ai-rack.pdf" target="_blank" class="text-link icon-download">Download PDF</a>
                         </div>
                     </div>
 
@@ -962,7 +945,7 @@
                         </div>
                         <p style="font-size: 0.95rem;">Integrated delivery strategy for deploying sealed, maintenance-free AI workstations at the edge.</p>
                         <div class="card-footer">
-                            <a href="/docs/whitepaper-edge-delivery.pdf" download class="text-link icon-download">Download PDF</a>
+                            <a href="/docs/whitepaper-edge-delivery.pdf" target="_blank" class="text-link icon-download">Download PDF</a>
                         </div>
                     </div>
 
@@ -974,7 +957,7 @@
                         </div>
                         <p style="font-size: 0.95rem;">Transitioning from labor-based cleaning to outcome-based, AI-audited service models.</p>
                         <div class="card-footer">
-                            <a href="/docs/whitepaper-caas-model.pdf" download class="text-link icon-download">Download PDF</a>
+                            <a href="/docs/whitepaper-caas-model.pdf" target="_blank" class="text-link icon-download">Download PDF</a>
                         </div>
                     </div>
 
@@ -986,11 +969,11 @@
                         </div>
                         <p style="font-size: 0.95rem;">AI-driven situational awareness framework for large-scale urban events and national security.</p>
                         <div class="card-footer">
-                            <a href="/docs/whitepaper-cognitive-security.pdf" download class="text-link icon-download">Download PDF</a>
+                            <a href="/docs/whitepaper-cognitive-security.pdf" target="_blank" class="text-link icon-download">Download PDF</a>
                         </div>
                     </div>
 
-                    <!-- WP 5 - Transport ITS (Updated File Name) -->
+                    <!-- WP 5 - ITS AI -->
                     <div class="card reveal-on-scroll delay-500" style="border-top: 4px solid var(--color-accent);">
                         <div class="card-header">
                             <h4 style="font-size: 1.1rem; color: var(--color-primary);">Transport</h4>
@@ -998,7 +981,7 @@
                         </div>
                         <p style="font-size: 0.95rem;">Edge-first intelligent transport systems powered by liquid-cooled AI workstations.</p>
                         <div class="card-footer">
-                            <a href="/docs/whitepaper-its-ai.pdf" download class="text-link icon-download">Download PDF</a>
+                            <a href="/docs/whitepaper-its-ai.pdf" target="_blank" class="text-link icon-download">Download PDF</a>
                         </div>
                     </div>
                 </div>
@@ -1014,7 +997,6 @@
                         <div style="display:flex; align-items:center; gap:1.5rem; margin-bottom:1.5rem;">
                              <div style="min-width:60px; height:60px; background:var(--color-primary); color:white; display:flex; align-items:center; justify-content:center; border-radius:12px; font-size:1.5rem; font-weight:bold;">F</div>
                              <div>
-                                 <!-- Updated Title -->
                                  <h3 style="margin:0; font-size:1.1rem; margin-bottom:0.2rem;">Founder & Engineering Team</h3>
                                  <div style="font-size:0.9rem; color:var(--color-text-muted);">DCDeepTech</div>
                              </div>
@@ -1035,12 +1017,10 @@
                     </div>
 
                     <div class="card reveal-on-scroll delay-200" style="display:flex; flex-direction:column; justify-content:center;">
-                        <!-- Visible Summary -->
                         <p style="font-size: 1.1rem; font-weight: 500; margin-bottom: 1.5rem;">
                             Former General Electric (GE) & Honeywell engineering leader specializing in critical infrastructure and large-scale system reliability.
                         </p>
 
-                        <!-- Collapsible Founder Details -->
                         <details class="team-details" style="margin-bottom: 1rem;">
                             <summary style="cursor: pointer; font-weight: 600; color: var(--color-accent); list-style: none;">
                                 ▶ View Founder's Full Experience
@@ -1053,7 +1033,6 @@
                             </div>
                         </details>
 
-                        <!-- Collapsible Team Details -->
                         <details class="team-details" style="border-top: 1px solid var(--color-border); padding-top: 1rem;">
                             <summary style="cursor: pointer; font-weight: 600; color: var(--color-accent); list-style: none;">
                                 ▶ View Team Background (Telecom Experience)
@@ -1067,20 +1046,33 @@
             </div>
         </section>
 
-        <!-- 8. GEO Anchor Section (bg-alt) -->
-        <section id="about-geo" class="bg-alt">
+        <!-- 8. Strategic JV (bg-alt) -->
+        <section id="axiomdeta" class="bg-alt">
             <div class="container">
-                <div class="geo-block reveal-on-scroll">
-                    <h2>What is DCDeepTech?</h2>
-                    <p>DCDeepTech is a Singapore-based engineering company specializing in AI infrastructure and applied intelligence systems. The company designs liquid-cooled AI compute platforms, OCP-based data center architectures, and edge-first AI applications for transport, cleaning, and security operations.</p>
-                    <p style="font-size: 0.9rem; color: var(--color-text-muted); margin-top: 1rem;">
-                        <strong>Key Domains:</strong> AI Infrastructure, Liquid Cooling, OCP Standards, Intelligent Transport Systems.
-                    </p>
+                <h2 class="reveal-on-scroll">Strategic Joint Venture</h2>
+                <div class="grid grid-2" style="align-items: center;">
+                    <div class="reveal-on-scroll delay-100">
+                        <h3 style="font-size: 1.8rem; margin-bottom: 1rem; color: var(--color-accent);">AxiomDeta</h3>
+                        <p style="font-size: 1.1rem; color: var(--color-text-main); font-weight: 500;">Product Realization & Engineering Execution Partner</p>
+                        <p>DCDeepTech maintains a strategic joint venture with AxiomDeta to deliver industrial-grade engineering realization and comprehensive product lifecycle management.</p>
+                        <p>This partnership bridges the gap between high-level architectural design and field-ready manufacturing execution.</p>
+                        <br>
+                        <a href="https://axiomdeta.com/" target="_blank" class="cta-button">Visit AxiomDeta.com</a>
+                    </div>
+                    <div class="card reveal-on-scroll delay-200" style="justify-content: center; border-left: 4px solid var(--color-accent);">
+                        <h4 style="margin-bottom: 1rem;">JV Key Capabilities</h4>
+                        <ul style="color: var(--color-text-muted);">
+                            <li style="margin-bottom: 0.5rem;">Rapid Prototyping & NPI</li>
+                            <li style="margin-bottom: 0.5rem;">Supply Chain Management</li>
+                            <li style="margin-bottom: 0.5rem;">Quality Assurance & Testing</li>
+                            <li>Global Logistics Support</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- 9. Contact Section (White) -->
+        <!-- 9. Contact (White) -->
         <section id="contact" class="">
             <div class="container">
                 <h2 class="reveal-on-scroll">Contact DCDeepTech</h2>
@@ -1102,7 +1094,6 @@
                     </div>
                     
                     <div class="contact-form-wrapper reveal-on-scroll delay-200">
-                        <!-- Mailto Action -->
                         <form action="mailto:info@dcdeeptech.com" method="post" enctype="text/plain">
                             <div class="form-group">
                                 <label for="name" class="contact-label">Name</label>
@@ -1137,8 +1128,6 @@
                     <a href="#home">Home</a>
                     <a href="#pillars">Pillars</a>
                     <a href="#products">Products</a>
-                    <a href="#use-scenarios">Scenarios</a>
-                    <a href="#why-singapore">Why Singapore</a>
                     <a href="#downloads">Downloads</a>
                     <a href="#founder">Founder</a>
                     <a href="#contact">Contact</a>
