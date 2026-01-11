@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
-    <!-- SEO Title -->
+    <!-- SEO Title from page.html -->
     <title>DCDeepTech | AI Infrastructure & Applied Intelligence for Cities and Campuses</title>
     
-    <!-- Meta Description -->
+    <!-- Meta Description from page.html -->
     <meta name="description" content="Engineering AI infrastructure and outcome-driven AI applications, from liquid-cooled compute systems to intelligent transport, cleaning, and security solutions.">
     
     <!-- GEO / Schema.org Structure -->
@@ -37,7 +37,7 @@
     </script>
 
     <style>
-        /* --- CSS Reset & Variables --- */
+        /* --- CSS Reset & Variables (Unchanged) --- */
         :root {
             --color-bg-body: #ffffff;
             --color-bg-alt: #f8f9fa; /* OCP Light Gray */
@@ -229,9 +229,11 @@
             display: block;
         }
 
+        /* Removed .logo-text style as requested */
+
         .nav-links {
             display: flex;
-            gap: 2rem;
+            gap: 2rem; /* Adjusted gap to fit more items */
             list-style: none;
         }
 
@@ -723,8 +725,9 @@
         <div class="container">
             <nav>
                 <a href="#" class="logo-container">
-                    <!-- GitHub Logo URL preserved per instructions -->
+                    <!-- Image path: using github raw for preview, reserve local path /images/logo.png -->
                     <img src="https://raw.githubusercontent.com/luoxisg/dcdeeptech/main/image/DCdeeptech_logo-removebg-preview.png" alt="DCDeepTech Logo" class="logo-img">
+                    <!-- Text Removed -->
                 </a>
                 
                 <button class="mobile-menu-btn" onclick="toggleMenu()" aria-label="Toggle Menu">☰</button>
@@ -800,35 +803,6 @@
                         </ul>
                         <div class="card-footer">
                             <a href="#use-scenarios" class="text-link">View Use Cases →</a>
-                        </div>
-                    </div>
-
-                    <!-- Architecture Block -->
-                    <div class="card reveal-on-scroll delay-300">
-                        <div class="card-header">
-                            <h3>Edge-to-DataCenter Architecture</h3>
-                        </div>
-                        <p>Unified compute continuum spanning edge inference to centralized training.</p>
-                        <ul>
-                            <li>Edge Inference at Junction/Device Level.</li>
-                            <li>Regional Aggregation & Control.</li>
-                            <li>Centralized Model Training & Governance.</li>
-                        </ul>
-                    </div>
-
-                    <!-- Engineering Approach (Intro to Downloads) -->
-                    <div class="card reveal-on-scroll delay-400">
-                        <div class="card-header">
-                            <h3>Engineering-First Approach</h3>
-                        </div>
-                        <p>Driven by technical white papers and open engineering standards.</p>
-                        <ul>
-                            <li><strong>Standards:</strong> OCP ORv3, OpenBMC.</li>
-                            <li><strong>Methodology:</strong> Outcome-Driven Delivery.</li>
-                            <li><strong>Focus:</strong> Reliability & TCO.</li>
-                        </ul>
-                        <div class="card-footer">
-                            <a href="#downloads" class="text-link">View Technical Docs →</a>
                         </div>
                     </div>
                 </div>
@@ -1042,6 +1016,7 @@
                         <div style="display:flex; align-items:center; gap:1.5rem; margin-bottom:1.5rem;">
                              <div style="min-width:60px; height:60px; background:var(--color-primary); color:white; display:flex; align-items:center; justify-content:center; border-radius:12px; font-size:1.5rem; font-weight:bold;">F</div>
                              <div>
+                                 <!-- Updated Title -->
                                  <h3 style="margin:0; font-size:1.1rem; margin-bottom:0.2rem;">Founder & Engineering Team</h3>
                                  <div style="font-size:0.9rem; color:var(--color-text-muted);">DCDeepTech</div>
                              </div>
@@ -1055,22 +1030,33 @@
                         <p>Infrastructure-first engineering with practical CV/LLM deployment experience.</p>
                         
                         <h4 style="margin-top:2rem; font-size:1.1rem; color:var(--color-accent);">Core Strengths</h4>
-                        <ul>
-                            <li>Large-scale systems integration & reliability.</li>
+                        <ul style="font-weight:700; color:var(--color-text-main);">
+                            <li style="margin-bottom: 0.5rem;">Large-scale systems integration & reliability.</li>
                             <li>Data-center infrastructure & edge compute engineering.</li>
-                            <li>CV/LLM deployment aligned with operations.</li>
                         </ul>
                     </div>
 
                     <div class="card reveal-on-scroll delay-200" style="display:flex; flex-direction:column; justify-content:center;">
-                        <p>Previously responsible for security technology planning and delivery for a national-level Olympic event under General Electric (GE), covering sensing devices, system integration, and operational reliability for large-scale events.</p>
-                        <!-- Preserved Honeywell experience -->
-                        <p>Gained foundational expertise in automatic control systems and industrial automation during tenure at <strong>Honeywell</strong>, applying control theory to critical infrastructure stability and feedback loops.</p>
-                        <p>Earlier experience includes technical research in 3M’s communications and data-center-related business units, building a strong foundation in infrastructure and systems engineering.</p>
-                        <p>In recent years, focused on practical, production-ready applications of computer vision and large language models (LLMs), with attention to the coordination between AI models, compute systems, and physical infrastructure.</p>
-                        
-                        <!-- Collapsible Team Section -->
-                        <details class="team-details" style="margin-top: 1.5rem; border-top: 1px solid var(--color-border); padding-top: 1rem;">
+                        <!-- Visible Summary -->
+                        <p style="font-size: 1.1rem; font-weight: 500; margin-bottom: 1.5rem;">
+                            Former General Electric (GE) & Honeywell engineering leader specializing in critical infrastructure and large-scale system reliability.
+                        </p>
+
+                        <!-- Collapsible Founder Details -->
+                        <details class="team-details" style="margin-bottom: 1rem;">
+                            <summary style="cursor: pointer; font-weight: 600; color: var(--color-accent); list-style: none;">
+                                ▶ View Founder's Full Experience
+                            </summary>
+                            <div style="margin-top: 1rem; color: var(--color-text-muted); font-size: 0.95rem;">
+                                <p><strong>General Electric (GE):</strong> Led security technology planning and delivery for national-level Olympic events, covering sensing devices and system integration.</p>
+                                <p><strong>Honeywell:</strong> Gained foundational expertise in automatic control systems and industrial automation, applying control theory to critical infrastructure stability.</p>
+                                <p><strong>3M:</strong> Conducted technical research in communications and data-center business units, building a strong foundation in physical infrastructure.</p>
+                                <p><strong>Recent Focus:</strong> Practical, production-ready applications of CV and LLMs, bridging the gap between AI models and compute infrastructure.</p>
+                            </div>
+                        </details>
+
+                        <!-- Collapsible Team Details -->
+                        <details class="team-details" style="border-top: 1px solid var(--color-border); padding-top: 1rem;">
                             <summary style="cursor: pointer; font-weight: 600; color: var(--color-accent); list-style: none;">
                                 ▶ View Team Background (Telecom Experience)
                             </summary>
@@ -1152,6 +1138,7 @@
                 <div class="footer-nav">
                     <a href="#home">Home</a>
                     <a href="#pillars">Pillars</a>
+                    <!-- Renamed to Downloads -->
                     <a href="#downloads">Downloads</a>
                     <a href="#products">Products</a>
                     <a href="#founder">Founder</a>
