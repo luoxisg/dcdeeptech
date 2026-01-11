@@ -1,14 +1,43 @@
- 
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DCDeepTech | Liquid-Cooled AI Compute & OCP Infrastructure</title>
-    <meta name="description" content="Provider of liquid-cooled AI compute infrastructure and OCP-aligned rack, power, and cooling systems. Engineered in Singapore.">
     
+    <!-- SEO Title from page.html -->
+    <title>DCDeepTech | AI Infrastructure & Applied Intelligence for Cities and Campuses</title>
+    
+    <!-- Meta Description from page.html -->
+    <meta name="description" content="Engineering AI infrastructure and outcome-driven AI applications, from liquid-cooled compute systems to intelligent transport, cleaning, and security solutions.">
+    
+    <!-- GEO / Schema.org Structure -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "DCDeepTech",
+      "url": "https://www.dcdeeptech.com",
+      "description": "Engineering AI infrastructure and applied intelligence systems, including liquid-cooled AI compute, OCP data center architecture, and edge-first AI applications.",
+      "foundingLocation": {
+        "@type": "Place",
+        "address": {
+          "@type": "PostalAddress",
+          "addressCountry": "SG"
+        }
+      },
+      "knowsAbout": [
+        "AI Infrastructure",
+        "Liquid Cooling",
+        "OCP Data Center",
+        "Edge AI",
+        "Intelligent Transport Systems",
+        "AI Operations"
+      ]
+    }
+    </script>
+
     <style>
-        /* --- CSS Reset & Variables --- */
+        /* --- CSS Reset & Variables (Unchanged) --- */
         :root {
             --color-bg-body: #ffffff;
             --color-bg-alt: #f8f9fa; /* OCP Light Gray */
@@ -60,11 +89,6 @@
             to { opacity: 1; }
         }
 
-        @keyframes shimmer {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
-
         /* Utility Class for JS Scroll Reveal */
         .reveal-on-scroll {
             opacity: 0;
@@ -82,6 +106,8 @@
         .delay-100 { transition-delay: 0.1s; }
         .delay-200 { transition-delay: 0.2s; }
         .delay-300 { transition-delay: 0.3s; }
+        .delay-400 { transition-delay: 0.4s; }
+        .delay-500 { transition-delay: 0.5s; }
 
         /* --- Typography --- */
         h1, h2, h3, h4 {
@@ -156,6 +182,7 @@
 
         .grid-3 { grid-template-columns: repeat(3, 1fr); }
         .grid-2 { grid-template-columns: repeat(2, 1fr); }
+        .grid-solutions { grid-template-columns: repeat(2, 1fr); }
 
         /* --- Navigation --- */
         header {
@@ -204,7 +231,7 @@
 
         .nav-links {
             display: flex;
-            gap: 2.5rem;
+            gap: 2rem; /* Adjusted gap to fit more items */
             list-style: none;
         }
 
@@ -249,27 +276,10 @@
             z-index: 1;
         }
 
-        /* Button Shine Effect */
-        .cta-button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(120deg, transparent, rgba(255,255,255,0.3), transparent);
-            transition: transform 0.6s;
-            z-index: -1;
-        }
-
         .cta-button:hover {
             background-color: #008f85;
             transform: translateY(-2px);
             box-shadow: 0 10px 20px rgba(0, 164, 153, 0.2);
-        }
-
-        .cta-button:hover::before {
-            transform: translateX(200%);
         }
 
         .mobile-menu-btn {
@@ -284,7 +294,7 @@
 
         /* --- Hero Section --- */
         #home {
-            min-height: 100vh; /* Full screen impact */
+            min-height: 100vh;
             display: flex;
             align-items: center;
             background: radial-gradient(circle at 80% 20%, rgba(0, 164, 153, 0.05) 0%, rgba(255,255,255,0) 50%);
@@ -298,7 +308,6 @@
             align-items: center;
         }
 
-        /* Initial Load Animations */
         .hero-content > * {
             opacity: 0;
             animation: slideUpFade 0.8s var(--transition-smooth) forwards;
@@ -318,7 +327,7 @@
             overflow: hidden;
             box-shadow: 0 20px 40px rgba(0,0,0,0.1);
             opacity: 0;
-            animation: fadeIn 1.2s ease forwards 0.6s; /* Delayed fade in */
+            animation: fadeIn 1.2s ease forwards 0.6s;
             border: 1px solid var(--color-border);
         }
 
@@ -333,7 +342,7 @@
         }
         
         .hero-image-wrapper:hover .hero-image {
-            transform: scale(1.05); /* Subtle zoom on hover */
+            transform: scale(1.05);
         }
 
         .hero-subhead {
@@ -354,6 +363,8 @@
             height: 100%;
             position: relative;
             top: 0;
+            display: flex;
+            flex-direction: column;
         }
 
         .card:hover {
@@ -366,6 +377,29 @@
             margin-bottom: 1.5rem;
             border-bottom: 1px solid var(--color-border);
             padding-bottom: 1rem;
+        }
+        
+        .card-footer {
+            margin-top: auto;
+            padding-top: 1.5rem;
+        }
+        
+        .text-link {
+            color: var(--color-accent);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+        }
+        
+        .text-link:hover {
+            text-decoration: underline;
+        }
+        
+        /* Small download icon helper */
+        .icon-download::before {
+            content: '↓ ';
+            font-weight: bold;
         }
 
         .card ul li {
@@ -439,7 +473,7 @@
             margin-bottom: 0.5rem;
         }
 
-        /* Scenario List Animations */
+        /* Scenario List */
         .scenario-list {
             display: grid;
             grid-template-columns: 1fr;
@@ -460,13 +494,24 @@
             border-left-color: var(--color-accent);
             background: #ffffff;
             box-shadow: 0 8px 25px rgba(0,0,0,0.06);
-            transform: translateX(10px); /* Slight slide right on hover */
+            transform: translateX(10px);
         }
 
         .scenario-content h4 {
             font-size: 1.2rem;
             color: var(--color-text-main);
             margin-bottom: 0.5rem;
+        }
+        
+        /* GEO Anchor Styles */
+        .geo-block {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: left;
+        }
+        .geo-block h2 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
         }
 
         /* --- Contact --- */
@@ -497,7 +542,7 @@
             border: 1px solid var(--color-border);
             border-radius: 4px;
             font-family: inherit;
-            font-size: 1rem; /* 16px to prevent iOS zoom */
+            font-size: 1rem;
             background: #fff;
             transition: border-color 0.3s, box-shadow 0.3s;
         }
@@ -547,13 +592,15 @@
         @media (max-width: 1024px) {
             h1 { font-size: 2.8rem; }
             .grid-3 { grid-template-columns: repeat(2, 1fr); }
+            .grid-solutions { grid-template-columns: repeat(2, 1fr); }
             .hero-grid { gap: 3rem; }
             .container { padding: 0 30px; }
+            .nav-links { gap: 1.5rem; }
         }
 
         @media (max-width: 768px) {
             :root {
-                --spacing-section: 60px; /* Tighter vertical spacing */
+                --spacing-section: 60px;
             }
 
             /* Mobile Nav */
@@ -584,13 +631,14 @@
                 animation: slideUpFade 0.4s ease forwards;
             }
 
-            /* Stagger mobile menu items */
             .nav-links li:nth-child(1) { animation-delay: 0.1s; }
             .nav-links li:nth-child(2) { animation-delay: 0.15s; }
             .nav-links li:nth-child(3) { animation-delay: 0.2s; }
             .nav-links li:nth-child(4) { animation-delay: 0.25s; }
             .nav-links li:nth-child(5) { animation-delay: 0.3s; }
             .nav-links li:nth-child(6) { animation-delay: 0.35s; }
+            .nav-links li:nth-child(7) { animation-delay: 0.4s; }
+            .nav-links li:nth-child(8) { animation-delay: 0.45s; }
 
             .nav-links a { 
                 display: block;
@@ -603,7 +651,7 @@
             .mobile-menu-btn { display: block; }
 
             /* Mobile Layout Reflow */
-            .grid-3, .grid-2, .hero-grid, .singapore-content, .contact-grid, .footer-content { 
+            .grid-3, .grid-2, .grid-solutions, .hero-grid, .singapore-content, .contact-grid, .footer-content { 
                 grid-template-columns: 1fr; 
                 gap: 2.5rem;
             }
@@ -619,11 +667,9 @@
             .footer-nav a { margin-left: 0; }
             .copyright { text-align: left; }
 
-            /* Typography Scaling for Mobile */
             h1 { font-size: 2.25rem; margin-bottom: 1rem; }
             h2 { font-size: 1.8rem; margin-bottom: 2rem; }
             
-            /* Order Swapping for Mobile: Image top if desired, or keep logic */
             .hero-grid { display: flex; flex-direction: column; }
             .hero-content { order: 2; text-align: left; }
             .hero-image-wrapper { order: 1; padding-bottom: 60%; margin-bottom: 1rem; }
@@ -631,7 +677,7 @@
             .singapore-content { display: flex; flex-direction: column; }
             .singapore-image-wrapper { height: 250px; }
 
-            .scenario-item:hover { transform: none; } /* Disable hover slide on touch */
+            .scenario-item:hover { transform: none; }
         }
     </style>
 </head>
@@ -642,6 +688,7 @@
         <div class="container">
             <nav>
                 <a href="#" class="logo-container">
+                    <!-- Image path: using github raw for preview, reserve local path /images/logo.png -->
                     <img src="https://raw.githubusercontent.com/luoxisg/dcdeeptech/main/image/DCdeeptech_logo-removebg-preview.png" alt="DCDeepTech Logo" class="logo-img">
                     <span class="logo-text">DCDeepTech</span>
                 </a>
@@ -649,10 +696,12 @@
                 <button class="mobile-menu-btn" onclick="toggleMenu()" aria-label="Toggle Menu">☰</button>
                 <ul class="nav-links" id="navLinks">
                     <li><a href="#home">Home</a></li>
-                    <li><a href="#solutions">Solutions</a></li>
+                    <li><a href="#pillars">Core Pillars</a></li>
+                    <!-- Changed White Papers to Downloads -->
+                    <li><a href="#downloads">Downloads</a></li>
                     <li><a href="#products">Products</a></li>
                     <li><a href="#why-singapore">Why Singapore</a></li>
-                    <li><a href="#use-scenarios">Use Scenarios</a></li>
+                    <li><a href="#founder">Founder</a></li>
                     <li><a href="#contact">Contact</a></li>
                 </ul>
             </nav>
@@ -665,102 +714,215 @@
             <div class="container">
                 <div class="hero-grid">
                     <div class="hero-content">
-                        <span class="tagline">Infrastructure Partner</span>
-                        <h1>Liquid-Cooled AI Compute & OCP Infrastructure</h1>
-                        <p class="hero-subhead">OCP-aligned racks, power and cooling systems, and liquid-cooled AI servers — engineered in Singapore for deployment across Southeast Asia and global markets.</p>
-                        <a href="#contact" class="cta-button">Request a Technical Discussion</a>
+                        <span class="tagline">Infrastructure & Applications</span>
+                        <h1>Engineering AI Infrastructure and Applied Intelligence</h1>
+                        <p class="hero-subhead">Engineering AI infrastructure and outcome-driven AI applications, from liquid-cooled compute systems to intelligent transport, cleaning, and security solutions.</p>
+                        
+                        <div style="margin-bottom: 1.5rem; display: inline-block; padding: 4px 12px; border: 1px solid var(--color-border); border-radius: 20px; font-size: 0.85rem; color: var(--color-text-muted);">
+                           <span style="color:var(--color-accent)">●</span> Liquid-Cooled Infrastructure · Outcome-Driven AI · Open Standards
+                        </div>
+                        <br>
+                        <a href="#contact" class="cta-button">Start a Technical Discussion</a>
                     </div>
                     <div class="hero-image-wrapper">
-                         <!-- Placeholder for 3D Rack Render or Server Image -->
+                         <!-- Image path: using github raw for preview, reserve local path /images/rackpowercooling.jpg -->
                         <img src="https://raw.githubusercontent.com/luoxisg/dcdeeptech/main/image/rackpowercooling.jpg" alt="Liquid Cooled OCP Rack" class="hero-image">
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Solutions Section -->
-        <section id="solutions" class="bg-alt">
+        <!-- Core Pillars Section (bg-alt) -->
+        <section id="pillars" class="bg-alt">
             <div class="container">
-                <h2 class="reveal-on-scroll">Solutions for System Integrators</h2>
-                <div class="grid grid-3">
-                    <!-- Solution 1 -->
+                <h2 class="reveal-on-scroll">Two Pillars: Infrastructure & Applications</h2>
+                <div class="grid grid-solutions">
+                    
+                    <!-- Pillar 1: Infrastructure -->
                     <div class="card reveal-on-scroll delay-100">
                         <div class="card-header">
-                            <h3>Edge & Industrial AI Compute</h3>
+                            <h3>AI Infrastructure (Pillar I)</h3>
                         </div>
-                        <p>High-reliability infrastructure designed for deployment in non-datacenter environments.</p>
+                        <p>Physical and system-level foundation for scalable AI workloads.</p>
                         <ul>
-                            <li>Designed for traffic systems, industrial parks, utilities, and ports.</li>
-                            <li>Engineered for high temperature, dust, and humidity tolerance.</li>
-                            <li>Liquid cooling architecture enabling sealed, low-maintenance systems.</li>
+                            <li>OCP-Based Data Center Rack Systems.</li>
+                            <li>High-Density Liquid Cooling Architectures.</li>
+                            <li>Rack-Level Power & Thermal Engineering.</li>
                         </ul>
+                        <div class="card-footer">
+                            <a href="#products" class="text-link">Explore Infrastructure →</a>
+                        </div>
                     </div>
 
-                    <!-- Solution 2 -->
+                    <!-- Pillar 2: Applications -->
                     <div class="card reveal-on-scroll delay-200">
                         <div class="card-header">
-                            <h3>Private AI & Video Compute Clusters</h3>
+                            <h3>AI Applications (Pillar II)</h3>
                         </div>
-                        <p>Density-optimized infrastructure for city-level or enterprise on-premise deployments.</p>
+                        <p>Outcome-driven intelligence for cities and campus operations.</p>
                         <ul>
-                            <li>Ideal for power and space constrained environments.</li>
-                            <li>OCP-aligned rack architecture with integrated manifold systems.</li>
-                            <li>Supports high-density video analytics workloads.</li>
+                            <li>Intelligent Transport AI (Edge-First).</li>
+                            <li>Clean as a Service (CaaS) & Hygiene Audit.</li>
+                            <li>Cognitive Security for Large-Scale Events.</li>
+                        </ul>
+                        <div class="card-footer">
+                            <a href="#use-scenarios" class="text-link">View Use Cases →</a>
+                        </div>
+                    </div>
+
+                    <!-- Architecture Block -->
+                    <div class="card reveal-on-scroll delay-300">
+                        <div class="card-header">
+                            <h3>Edge-to-DataCenter Architecture</h3>
+                        </div>
+                        <p>Unified compute continuum spanning edge inference to centralized training.</p>
+                        <ul>
+                            <li>Edge Inference at Junction/Device Level.</li>
+                            <li>Regional Aggregation & Control.</li>
+                            <li>Centralized Model Training & Governance.</li>
                         </ul>
                     </div>
 
-                    <!-- Solution 3 -->
-                    <div class="card reveal-on-scroll delay-300">
+                    <!-- Engineering Approach (Intro to Downloads) -->
+                    <div class="card reveal-on-scroll delay-400">
                         <div class="card-header">
-                            <h3>Overseas & Regulated Projects</h3>
+                            <h3>Engineering-First Approach</h3>
                         </div>
-                        <p>Vendor-neutral infrastructure support for complex jurisdictional requirements.</p>
+                        <p>Driven by technical white papers and open engineering standards.</p>
                         <ul>
-                            <li>Meeting strict energy efficiency and PUE mandates.</li>
-                            <li>Aligned with ESG and corporate sustainability frameworks.</li>
-                            <li>Neutral, Singapore-based infrastructure provision.</li>
+                            <li><strong>Standards:</strong> OCP ORv3, OpenBMC.</li>
+                            <li><strong>Methodology:</strong> Outcome-Driven Delivery.</li>
+                            <li><strong>Focus:</strong> Reliability & TCO.</li>
                         </ul>
+                        <div class="card-footer">
+                            <a href="#downloads" class="text-link">View Technical Docs →</a>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Products Section -->
-        <section id="products">
+        <!-- Downloads / White Papers Section (White Background) -->
+        <!-- Renamed ID to downloads -->
+        <section id="downloads" class="">
+            <div class="container">
+                <div style="max-width: 800px; margin-bottom: 3rem;">
+                    <!-- Renamed Title to Downloads & Technical Resources -->
+                    <h2 class="reveal-on-scroll">Downloads & Technical Resources</h2>
+                    <p class="reveal-on-scroll">Deep-dive engineering documents covering OCP rack design, liquid cooling strategies, and applied AI outcomes.</p>
+                </div>
+
+                <!-- GEO Optimized Key Questions -->
+                <div class="reveal-on-scroll" style="margin-bottom: 2rem; font-size: 0.9rem; color: var(--color-text-muted); background: #f8f9fa; padding: 1.5rem; border-radius: 8px; border: 1px solid #eee;">
+                    <strong>Key Engineering Questions Answered:</strong>
+                    <ul style="margin-top: 0.5rem; padding-left: 1.2rem; list-style-type: disc;">
+                        <li>How can AI data center racks scale beyond 100kW using OCP standards?</li>
+                        <li>What is the optimal strategy for delivering liquid-cooled AI workstations to the edge?</li>
+                        <li>How to implement outcome-based cleaning services (CaaS) using AI?</li>
+                    </ul>
+                </div>
+
+                <div class="grid grid-3">
+                    <!-- WP 1 -->
+                    <div class="card reveal-on-scroll delay-100" style="border-top: 4px solid var(--color-accent);">
+                        <div class="card-header">
+                            <h4 style="font-size: 1.1rem; color: var(--color-primary);">Infrastructure</h4>
+                            <h3 style="font-size: 1.3rem; margin-top: 0.5rem;">Next-Gen OCP AI Rack Design</h3>
+                        </div>
+                        <p style="font-size: 0.95rem;">Technical architecture for >100kW racks using ORv3 standards and blind-mate liquid cooling.</p>
+                        <div class="card-footer">
+                            <!-- Added download attribute -->
+                            <a href="/docs/whitepaper-ocp-ai-rack.pdf" download class="text-link icon-download">Download PDF</a>
+                        </div>
+                    </div>
+
+                    <!-- WP 2 -->
+                    <div class="card reveal-on-scroll delay-200" style="border-top: 4px solid var(--color-accent);">
+                        <div class="card-header">
+                            <h4 style="font-size: 1.1rem; color: var(--color-primary);">Edge AI</h4>
+                            <h3 style="font-size: 1.3rem; margin-top: 0.5rem;">Liquid-Cooled Edge Delivery</h3>
+                        </div>
+                        <p style="font-size: 0.95rem;">Integrated delivery strategy for deploying sealed, maintenance-free AI workstations at the edge.</p>
+                        <div class="card-footer">
+                            <!-- Added download attribute -->
+                            <a href="/docs/whitepaper-edge-delivery.pdf" download class="text-link icon-download">Download PDF</a>
+                        </div>
+                    </div>
+
+                    <!-- WP 3 -->
+                    <div class="card reveal-on-scroll delay-300" style="border-top: 4px solid var(--color-accent);">
+                        <div class="card-header">
+                            <h4 style="font-size: 1.1rem; color: var(--color-primary);">Applications</h4>
+                            <h3 style="font-size: 1.3rem; margin-top: 0.5rem;">Clean as a Service (CaaS)</h3>
+                        </div>
+                        <p style="font-size: 0.95rem;">Transitioning from labor-based cleaning to outcome-based, AI-audited service models.</p>
+                        <div class="card-footer">
+                            <!-- Added download attribute -->
+                            <a href="/docs/whitepaper-caas-model.pdf" download class="text-link icon-download">Download PDF</a>
+                        </div>
+                    </div>
+
+                     <!-- WP 4 -->
+                     <div class="card reveal-on-scroll delay-400" style="border-top: 4px solid var(--color-accent);">
+                        <div class="card-header">
+                            <h4 style="font-size: 1.1rem; color: var(--color-primary);">Security</h4>
+                            <h3 style="font-size: 1.3rem; margin-top: 0.5rem;">Cognitive Security Architecture</h3>
+                        </div>
+                        <p style="font-size: 0.95rem;">AI-driven situational awareness framework for large-scale urban events and national security.</p>
+                        <div class="card-footer">
+                            <a href="/docs/whitepaper-cognitive-security.pdf" download class="text-link icon-download">Download PDF</a>
+                        </div>
+                    </div>
+
+                    <!-- WP 5 -->
+                    <div class="card reveal-on-scroll delay-500" style="border-top: 4px solid var(--color-accent);">
+                        <div class="card-header">
+                            <h4 style="font-size: 1.1rem; color: var(--color-primary);">Infrastructure</h4>
+                            <h3 style="font-size: 1.3rem; margin-top: 0.5rem;">High-Density Power Engineering</h3>
+                        </div>
+                        <p style="font-size: 0.95rem;">Busbar and power shelf design strategies for >100kW AI racks in modern data centers.</p>
+                        <div class="card-footer">
+                            <a href="/docs/whitepaper-power-engineering.pdf" download class="text-link icon-download">Download PDF</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Infrastructure Products (bg-alt to alternate after Downloads) -->
+        <section id="products" class="bg-alt">
             <div class="container">
                 <h2 class="reveal-on-scroll">Infrastructure Products</h2>
                 <div class="grid grid-2">
-                    <!-- Product Group 1 -->
                     <div class="card reveal-on-scroll delay-100">
                         <div class="card-header">
                             <h3>OCP-Aligned Rack, Power & Cooling</h3>
                         </div>
                         <ul>
                             <li>ORv3/ORW compatible rack systems.</li>
-                            <li>High-density busbar power distribution systems.</li>
-                            <li>Integrated liquid cooling architecture (manifolds, CDUs).</li>
+                            <li>High-density busbar power distribution systems (>100kW).</li>
+                            <li>Integrated liquid cooling (Cold Plate / CDU).</li>
                             <li>Modular, scalable, and field-serviceable design.</li>
                         </ul>
                     </div>
 
-                    <!-- Product Group 2 -->
                     <div class="card reveal-on-scroll delay-200">
                         <div class="card-header">
-                            <h3>Liquid-Cooled AI Servers</h3>
+                            <h3>Liquid-Cooled AI Workstations</h3>
                         </div>
                         <ul>
-                            <li>Direct-to-Chip liquid cooling or hybrid air-liquid designs.</li>
-                            <li>Fanless or low-airflow configurations for acoustic dampening.</li>
-                            <li>Sealed chassis options for harsh edge environments.</li>
-                            <li>Compute-agnostic hardware design supporting various accelerators.</li>
+                            <li>Enterprise-grade liquid-cooled AI workstations.</li>
+                            <li>Fanless, sealed design for edge deployment.</li>
+                            <li>Office, Industrial, and Junction scenarios.</li>
+                            <li>Bridge between Edge AI and Central Training.</li>
                         </ul>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Why Singapore Section -->
-        <section id="why-singapore" class="bg-alt">
+        <!-- Why Singapore Section (White to alternate after Products) -->
+        <section id="why-singapore" class="">
             <div class="container">
                 <h2 class="reveal-on-scroll">Why Singapore</h2>
                 <div class="singapore-content">
@@ -778,50 +940,105 @@
                     </div>
                     
                     <div class="singapore-image-wrapper reveal-on-scroll delay-300">
+                         <!-- Image path: using github raw for preview, reserve local path /images/sg.jpg -->
                         <img src="https://raw.githubusercontent.com/luoxisg/dcdeeptech/main/image/sg.jpg" alt="Singapore Infrastructure Hub" class="singapore-image">
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Use Scenarios Section -->
-        <section id="use-scenarios">
+        <!-- Founder Section (bg-alt to alternate after Why Singapore) -->
+        <section id="founder" class="bg-alt">
+            <div class="container">
+                <h2 class="reveal-on-scroll">Founder Profile</h2>
+                <div class="grid grid-2">
+                    <div class="card reveal-on-scroll delay-100">
+                        <div style="display:flex; align-items:center; gap:1.5rem; margin-bottom:1.5rem;">
+                             <div style="min-width:60px; height:60px; background:var(--color-primary); color:white; display:flex; align-items:center; justify-content:center; border-radius:12px; font-size:1.5rem; font-weight:bold;">F</div>
+                             <div>
+                                 <h3 style="margin:0; font-size:1.1rem; margin-bottom:0.2rem;">Founder & Managing Director</h3>
+                                 <div style="font-size:0.9rem; color:var(--color-text-muted);">DCDeepTech</div>
+                             </div>
+                        </div>
+                        
+                        <div style="font-size:0.9rem; color:var(--color-primary); font-weight:600; margin-bottom:1rem; padding-bottom:1rem; border-bottom:1px solid var(--color-border);">
+                            Open Compute Project (OCP) Member
+                        </div>
+
+                        <p class="tagline" style="margin-top:0.5rem; font-size:0.75rem;">Quick Positioning</p>
+                        <p>Infrastructure-first engineering with practical CV/LLM deployment experience.</p>
+                        
+                        <h4 style="margin-top:2rem; font-size:1.1rem; color:var(--color-accent);">Core Strengths</h4>
+                        <ul>
+                            <li>Large-scale systems integration & reliability.</li>
+                            <li>Data-center infrastructure & edge compute engineering.</li>
+                            <li>CV/LLM deployment aligned with operations.</li>
+                        </ul>
+                    </div>
+
+                    <div class="card reveal-on-scroll delay-200" style="display:flex; flex-direction:column; justify-content:center;">
+                        <p>Previously responsible for security technology planning and delivery for a national-level Olympic event under General Electric (GE), covering sensing devices, system integration, and operational reliability for large-scale events.</p>
+                        <!-- Preserved Honeywell experience -->
+                        <p>Gained foundational expertise in automatic control systems and industrial automation during tenure at <strong>Honeywell</strong>, applying control theory to critical infrastructure stability and feedback loops.</p>
+                        <p>Earlier experience includes technical research in 3M’s communications and data-center-related business units, building a strong foundation in infrastructure and systems engineering.</p>
+                        <p>In recent years, focused on practical, production-ready applications of computer vision and large language models (LLMs), with attention to the coordination between AI models, compute systems, and physical infrastructure.</p>
+                        <p>As an Open Compute Project (OCP) member, continuously follows open data-center standards that improve efficiency, density, and sustainability.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Use Scenarios Section (White to alternate after Founder) -->
+        <section id="use-scenarios" class="">
             <div class="container">
                 <h2 class="reveal-on-scroll">Deployment Scenarios</h2>
                 <div class="scenario-list">
                     <div class="scenario-item reveal-on-scroll">
                         <div class="scenario-content">
                             <h4>Smart Traffic & Urban Sensing</h4>
-                            <p>Deployment of sealed, liquid-cooled compute nodes in roadside cabinets and uncontrolled environments for real-time traffic analysis.</p>
+                            <p>Deployment of sealed, liquid-cooled compute nodes in roadside cabinets for real-time traffic analysis (Intelligent Transport AI).</p>
                         </div>
                     </div>
                     <div class="scenario-item reveal-on-scroll">
                         <div class="scenario-content">
-                            <h4>Industrial Parks & Utilities</h4>
-                            <p>High-reliability infrastructure for predictive maintenance and monitoring in manufacturing zones and power generation sites.</p>
+                            <h4>Clean as a Service (CaaS)</h4>
+                            <p>Outcome-based cleaning services using AI to deliver hygiene quality, auditability, and ESG reporting for facilities.</p>
                         </div>
                     </div>
                     <div class="scenario-item reveal-on-scroll">
                         <div class="scenario-content">
-                            <h4>Ports & Energy Infrastructure</h4>
-                            <p>Ruggedized compute clusters managing logistics automation and energy grid balancing in maritime and critical infrastructure settings.</p>
+                            <h4>Cognitive Security & Events</h4>
+                            <p>AI-driven situational awareness for large-scale urban and national events, providing command-level decision support.</p>
                         </div>
                     </div>
                     <div class="scenario-item reveal-on-scroll">
                         <div class="scenario-content">
-                            <h4>Private AI & Video Analytics Clusters</h4>
-                            <p>Secure, on-premise compute racks for sensitive data processing within government or enterprise facilities.</p>
+                            <h4>Smart Campus Operations</h4>
+                            <p>Integrated AI solutions for smart campuses spanning transport, cleaning, and security operations.</p>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Contact Section -->
-        <section id="contact" class="bg-alt">
+        <!-- GEO Anchor Section (bg-alt to alternate after Scenarios) -->
+        <section id="about-geo" class="bg-alt">
+            <div class="container">
+                <div class="geo-block reveal-on-scroll">
+                    <h2>What is DCDeepTech?</h2>
+                    <p>DCDeepTech is a Singapore-based engineering company specializing in AI infrastructure and applied intelligence systems. The company designs liquid-cooled AI compute platforms, OCP-based data center architectures, and edge-first AI applications for transport, cleaning, and security operations.</p>
+                    <p style="font-size: 0.9rem; color: var(--color-text-muted); margin-top: 1rem;">
+                        <strong>Key Domains:</strong> AI Infrastructure, Liquid Cooling, OCP Standards, Intelligent Transport Systems.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section (White to alternate after GEO) -->
+        <section id="contact" class="">
             <div class="container">
                 <h2 class="reveal-on-scroll">Contact DCDeepTech</h2>
-                <p class="reveal-on-scroll" style="margin-bottom: 3rem; color: var(--color-text-muted);">Ready to discuss your liquid cooling or OCP rack project?</p>
+                <p class="reveal-on-scroll" style="margin-bottom: 3rem; color: var(--color-text-muted);">Ready to discuss your AI infrastructure or application project?</p>
                 <div class="contact-grid">
                     <div class="contact-details reveal-on-scroll delay-100">
                         <div class="contact-info-block">
@@ -835,10 +1052,6 @@
                         <div class="contact-info-block">
                             <div class="contact-label">WhatsApp</div>
                             <div class="contact-value">+65 8378 5068</div>
-                        </div>
-                        <div class="contact-info-block">
-                            <div class="contact-label">Region</div>
-                            <div class="contact-value">Singapore, Taiwan</div>
                         </div>
                     </div>
                     
@@ -857,6 +1070,7 @@
                                 <select id="subject">
                                     <option>Technical Partnership Inquiry</option>
                                     <option>Infrastructure Specification Request</option>
+                                    <option>AI Application Pilot</option>
                                     <option>Project Consultation</option>
                                 </select>
                             </div>
@@ -874,19 +1088,24 @@
                 <div class="logo-text" style="color: white;">DCDeepTech</div>
                 <div class="footer-nav">
                     <a href="#home">Home</a>
-                    <a href="#solutions">Solutions</a>
+                    <a href="#pillars">Pillars</a>
+                    <!-- Renamed to Downloads -->
+                    <a href="#downloads">Downloads</a>
                     <a href="#products">Products</a>
+                    <a href="#founder">Founder</a>
                     <a href="#contact">Contact</a>
                 </div>
             </div>
             <div class="copyright">
-                &copy; 2024 DCDeepTech Pte. Ltd. All rights reserved. <br>
-                Vendor-Neutral Infrastructure Provider.
+                &copy; <span id="year">2024</span> DCDeepTech Pte. Ltd. All rights reserved. <br>
+                Singapore-Based Engineering Company.
             </div>
         </div>
     </footer>
 
     <script>
+        document.getElementById("year").textContent = new Date().getFullYear();
+
         // Mobile Menu Toggle
         function toggleMenu() {
             const navLinks = document.getElementById('navLinks');
