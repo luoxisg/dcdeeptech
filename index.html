@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -231,7 +231,7 @@
 
         .nav-links {
             display: flex;
-            gap: 1.2rem;
+            gap: 1rem;
             list-style: none;
         }
 
@@ -280,6 +280,17 @@
             background-color: #008f85;
             transform: translateY(-2px);
             box-shadow: 0 10px 20px rgba(0, 164, 153, 0.2);
+        }
+        
+        .cta-button.secondary {
+            background-color: transparent;
+            border: 2px solid var(--color-accent);
+            color: var(--color-accent);
+        }
+        
+        .cta-button.secondary:hover {
+            background-color: var(--color-accent);
+            color: white;
         }
 
         .mobile-menu-btn {
@@ -724,6 +735,7 @@
         <div class="container">
             <nav>
                 <a href="#" class="logo-container">
+                    <!-- Image path: using github raw for preview, reserve local path /images/logo.png -->
                     <img src="https://raw.githubusercontent.com/luoxisg/dcdeeptech/main/image/DCdeeptech_logo-removebg-preview.png" alt="DCDeepTech Logo" class="logo-img">
                 </a>
                 
@@ -886,6 +898,12 @@
                             <p>AI-driven situational awareness for large-scale urban and national events, providing command-level decision support.</p>
                         </div>
                     </div>
+                </div>
+                
+                <!-- Smart Campus Text Block -->
+                <div class="reveal-on-scroll delay-400" style="margin-top: 2rem; padding: 1.5rem; background: white; border-radius: 8px; border-left: 4px solid var(--color-accent);">
+                    <h4 style="margin-bottom: 0.5rem;">Smart Campus Operations</h4>
+                    <p style="margin-bottom: 0;">Integrated AI solutions for smart campuses spanning transport, cleaning, and security operations.</p>
                 </div>
             </div>
         </section>
@@ -1053,20 +1071,22 @@
                 <div class="grid grid-2" style="align-items: center;">
                     <div class="reveal-on-scroll delay-100">
                         <h3 style="font-size: 1.8rem; margin-bottom: 1rem; color: var(--color-accent);">AxiomDeta</h3>
-                        <p style="font-size: 1.1rem; color: var(--color-text-main); font-weight: 500;">Product Realization & Engineering Execution Partner</p>
-                        <p>DCDeepTech maintains a strategic joint venture with AxiomDeta to deliver industrial-grade engineering realization and comprehensive product lifecycle management.</p>
-                        <p>This partnership bridges the gap between high-level architectural design and field-ready manufacturing execution.</p>
+                        <p style="font-size: 1.1rem; color: var(--color-text-main); font-weight: 500; margin-bottom: 1rem;">Product, Engineering & Manufacturing Entity</p>
+                        <p>AxiomDeta is the product, engineering, and manufacturing entity. Its official capabilities and offerings are defined in /docs, and visually presented via /images.</p>
                         <br>
-                        <a href="https://axiomdeta.com/" target="_blank" class="cta-button">Visit AxiomDeta.com</a>
+                        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                            <a href="/docs/axiomdeta-company.pdf" target="_blank" class="cta-button">Download Company Profile</a>
+                            <a href="/docs/axiomdeta-catalog.pdf" target="_blank" class="cta-button secondary">Download Product Catalog</a>
+                        </div>
                     </div>
-                    <div class="card reveal-on-scroll delay-200" style="justify-content: center; border-left: 4px solid var(--color-accent);">
-                        <h4 style="margin-bottom: 1rem;">JV Key Capabilities</h4>
-                        <ul style="color: var(--color-text-muted);">
-                            <li style="margin-bottom: 0.5rem;">Rapid Prototyping & NPI</li>
-                            <li style="margin-bottom: 0.5rem;">Supply Chain Management</li>
-                            <li style="margin-bottom: 0.5rem;">Quality Assurance & Testing</li>
-                            <li>Global Logistics Support</li>
-                        </ul>
+                    <div class="reveal-on-scroll delay-200">
+                        <div style="background: white; padding: 10px; border: 1px solid var(--color-border); border-radius: 8px;">
+                            <!-- [IMAGE] product.jpg wrapped in link -->
+                            <a href="https://axiomdeta.com/" target="_blank" style="text-decoration: none; cursor: pointer;">
+                                <img src="images/product.jpg" alt="AxiomDeta Product Engineering" style="width: 100%; height: auto; border-radius: 4px; display: block; transition: opacity 0.3s;">
+                            </a>
+                            <p style="margin: 0.5rem 0 0; font-size: 0.85rem; color: var(--color-text-muted); text-align: center;">Figure: Precision Engineering & Manufacturing (Click to Visit)</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1128,8 +1148,11 @@
                     <a href="#home">Home</a>
                     <a href="#pillars">Pillars</a>
                     <a href="#products">Products</a>
+                    <a href="#use-scenarios">Scenarios</a>
+                    <a href="#why-singapore">Why Singapore</a>
                     <a href="#downloads">Downloads</a>
                     <a href="#founder">Founder</a>
+                    <a href="#axiomdeta">Partner</a>
                     <a href="#contact">Contact</a>
                 </div>
             </div>
