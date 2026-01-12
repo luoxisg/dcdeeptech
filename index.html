@@ -89,6 +89,11 @@
             to { opacity: 1; }
         }
 
+        @keyframes zoom {
+            from {transform:scale(0)}
+            to {transform:scale(1)}
+        }
+
         /* Utility Class for JS Scroll Reveal */
         .reveal-on-scroll {
             opacity: 0;
@@ -508,7 +513,7 @@
         /* Scenario Section (Grid for Images) */
         .scenario-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr); /* Changed to 2 columns for 4 items */
+            grid-template-columns: repeat(2, 1fr); /* 2x2 Layout for 4 items */
             gap: 2rem;
         }
 
@@ -631,6 +636,57 @@
             text-align: right;
             font-size: 0.85rem;
         }
+        
+        /* --- Lightbox Styles --- */
+        .lightbox {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            padding-top: 50px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.9);
+        }
+
+        .lightbox-content {
+            margin: auto;
+            display: block;
+            width: 80%;
+            max-width: 1000px;
+            max-height: 90vh;
+            object-fit: contain;
+            animation-name: zoom;
+            animation-duration: 0.3s;
+        }
+
+        .close-lightbox {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            transition: 0.3s;
+            cursor: pointer;
+            z-index: 2001;
+        }
+
+        .close-lightbox:hover,
+        .close-lightbox:focus {
+            color: #bbb;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Add hover effect to zoomable images */
+        .zoomable {
+            cursor: zoom-in;
+            transition: transform 0.3s ease;
+        }
+        /* No hover opacity for zoomable to keep it clean, just cursor change */
 
         /* --- Mobile Optimization & Responsive --- */
         @media (max-width: 1024px) {
@@ -725,6 +781,8 @@
             .singapore-image-wrapper { height: 250px; }
 
             .scenario-item:hover { transform: none; }
+            
+            .lightbox-content { width: 95%; }
         }
     </style>
 </head>
@@ -772,8 +830,8 @@
                         <a href="#contact" class="cta-button">Start a Technical Discussion</a>
                     </div>
                     <div class="hero-image-wrapper">
-                        <!-- [IMAGE] 1 -->
-                        <img src="images/1-ocp-dc-architecture.jpg" alt="OCP DC Architecture" class="hero-image">
+                        <!-- [IMAGE] 1 - Added zoomable class -->
+                        <img src="images/1-ocp-dc-architecture.jpg" alt="OCP DC Architecture" class="hero-image zoomable">
                     </div>
                 </div>
             </div>
@@ -850,10 +908,10 @@
                         </div>
                     </div>
                     
-                    <!-- [IMAGE] 2 -->
+                    <!-- [IMAGE] 2 - Added zoomable class -->
                     <div class="reveal-on-scroll delay-300">
                         <div style="background: white; padding: 10px; border: 1px solid var(--color-border); border-radius: 8px;">
-                            <img src="images/2-liquid-cooled-workstation.jpg" alt="Liquid Cooled AI Workstation Deployment" style="width: 100%; height: auto; border-radius: 4px; display: block;">
+                            <img src="images/2-liquid-cooled-workstation.jpg" alt="Liquid Cooled AI Workstation Deployment" class="zoomable" style="width: 100%; height: auto; border-radius: 4px; display: block;">
                             <p style="margin: 0.5rem 0 0; font-size: 0.85rem; color: var(--color-text-muted); text-align: center;">Figure: Edge AI Workstation Deployment</p>
                         </div>
                     </div>
@@ -866,10 +924,10 @@
             <div class="container">
                 <h2 class="reveal-on-scroll">Deployment Scenarios</h2>
                 <div class="scenario-grid">
-                    <!-- Scenario 1 [IMAGE] 4 -->
+                    <!-- Scenario 1 [IMAGE] 4 - Added zoomable class -->
                     <div class="scenario-card reveal-on-scroll delay-100">
                         <div class="scenario-img-wrap">
-                            <img src="images/4-smart-transport.jpg" alt="Smart Traffic & Urban Sensing" class="scenario-img">
+                            <img src="images/4-smart-transport.jpg" alt="Smart Traffic & Urban Sensing" class="scenario-img zoomable">
                         </div>
                         <div class="scenario-content">
                             <h4>Smart Traffic & Urban Sensing</h4>
@@ -877,10 +935,10 @@
                         </div>
                     </div>
 
-                    <!-- Scenario 2 [IMAGE] 5 -->
+                    <!-- Scenario 2 [IMAGE] 5 - Added zoomable class -->
                     <div class="scenario-card reveal-on-scroll delay-200">
                         <div class="scenario-img-wrap">
-                            <img src="images/5-campus-cleaning.jpg" alt="Clean as a Service (CaaS)" class="scenario-img">
+                            <img src="images/5-campus-cleaning.jpg" alt="Clean as a Service (CaaS)" class="scenario-img zoomable">
                         </div>
                         <div class="scenario-content">
                             <h4>Clean as a Service (CaaS)</h4>
@@ -888,10 +946,10 @@
                         </div>
                     </div>
 
-                    <!-- Scenario 3 [IMAGE] 3 -->
+                    <!-- Scenario 3 [IMAGE] 3 - Added zoomable class -->
                     <div class="scenario-card reveal-on-scroll delay-300">
                         <div class="scenario-img-wrap">
-                            <img src="images/3-event-security.jpg" alt="Cognitive Security & Events" class="scenario-img">
+                            <img src="images/3-event-security.jpg" alt="Cognitive Security & Events" class="scenario-img zoomable">
                         </div>
                         <div class="scenario-content">
                             <h4>Cognitive Security & Events</h4>
@@ -899,10 +957,10 @@
                         </div>
                     </div>
 
-                    <!-- Scenario 4 [IMAGE] 7 -->
+                    <!-- Scenario 4 [IMAGE] 7 - Added zoomable class -->
                     <div class="scenario-card reveal-on-scroll delay-400">
                         <div class="scenario-img-wrap">
-                            <img src="images/7-compus-edge.jpg" alt="Smart Campus Operations" class="scenario-img">
+                            <img src="images/7-compus-edge.jpg" alt="Smart Campus Operations" class="scenario-img zoomable">
                         </div>
                         <div class="scenario-content">
                             <h4>Smart Campus Operations</h4>
@@ -932,8 +990,8 @@
                     </div>
                     
                     <div class="singapore-image-wrapper reveal-on-scroll delay-300">
-                         <!-- [IMAGE] 6 -->
-                        <img src="images/6-singapore-global-hq.jpg" alt="Singapore Infrastructure Hub" class="singapore-image">
+                         <!-- [IMAGE] 6 - Added zoomable class -->
+                        <img src="images/6-singapore-global-hq.jpg" alt="Singapore Infrastructure Hub" class="singapore-image zoomable">
                     </div>
                 </div>
             </div>
@@ -1075,7 +1133,7 @@
                     </div>
                     <div class="reveal-on-scroll delay-200">
                         <div style="background: white; padding: 10px; border: 1px solid var(--color-border); border-radius: 8px;">
-                            <!-- [IMAGE] product.jpg wrapped in link -->
+                            <!-- [IMAGE] product.jpg wrapped in link - NO zoomable class here -->
                             <a href="https://axiomdeta.com/" target="_blank" style="text-decoration: none; cursor: pointer;">
                                 <img src="images/product.jpg" alt="AxiomDeta Product Engineering" style="width: 100%; height: auto; border-radius: 4px; display: block; transition: opacity 0.3s;">
                             </a>
@@ -1157,6 +1215,12 @@
         </div>
     </footer>
 
+    <!-- Lightbox Container -->
+    <div id="imageLightbox" class="lightbox">
+        <span class="close-lightbox">&times;</span>
+        <img class="lightbox-content" id="img01">
+    </div>
+
     <script>
         document.getElementById("year").textContent = new Date().getFullYear();
 
@@ -1195,6 +1259,43 @@
 
             const revealElements = document.querySelectorAll('.reveal-on-scroll');
             revealElements.forEach(el => observer.observe(el));
+        });
+
+        // Lightbox Logic
+        const lightbox = document.getElementById('imageLightbox');
+        const lightboxImg = document.getElementById('img01');
+        const closeBtn = document.getElementsByClassName('close-lightbox')[0];
+
+        // Add click event to all images with class 'zoomable'
+        document.querySelectorAll('.zoomable').forEach(img => {
+            img.addEventListener('click', function(e) {
+                // Double check it's not part of a link
+                if (this.parentElement.tagName === 'A') return;
+
+                lightbox.style.display = "flex"; // Use flex for centering
+                lightbox.style.justifyContent = "center";
+                lightbox.style.alignItems = "center";
+                lightboxImg.src = this.src;
+            });
+        });
+
+        // Close when clicking the 'x'
+        closeBtn.onclick = function() {
+            lightbox.style.display = "none";
+        }
+
+        // Close when clicking outside the image
+        lightbox.onclick = function(e) {
+            if(e.target !== lightboxImg) {
+                lightbox.style.display = "none";
+            }
+        }
+        
+        // Close on Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === "Escape") {
+                lightbox.style.display = "none";
+            }
         });
     </script>
 </body>
