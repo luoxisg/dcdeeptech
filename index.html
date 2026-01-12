@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -508,7 +508,7 @@
         /* Scenario Section (Grid for Images) */
         .scenario-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(2, 1fr); /* Changed to 2 columns for 4 items */
             gap: 2rem;
         }
 
@@ -898,12 +898,17 @@
                             <p>AI-driven situational awareness for large-scale urban and national events, providing command-level decision support.</p>
                         </div>
                     </div>
-                </div>
-                
-                <!-- Smart Campus Text Block -->
-                <div class="reveal-on-scroll delay-400" style="margin-top: 2rem; padding: 1.5rem; background: white; border-radius: 8px; border-left: 4px solid var(--color-accent);">
-                    <h4 style="margin-bottom: 0.5rem;">Smart Campus Operations</h4>
-                    <p style="margin-bottom: 0;">Integrated AI solutions for smart campuses spanning transport, cleaning, and security operations.</p>
+
+                    <!-- Scenario 4 [IMAGE] 7 -->
+                    <div class="scenario-card reveal-on-scroll delay-400">
+                        <div class="scenario-img-wrap">
+                            <img src="images/7-compus-edge.jpg" alt="Smart Campus Operations" class="scenario-img">
+                        </div>
+                        <div class="scenario-content">
+                            <h4>Smart Campus Operations</h4>
+                            <p>Integrated AI solutions for smart campuses spanning transport, cleaning, and security operations.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -938,67 +943,56 @@
         <section id="downloads" class="bg-alt">
             <div class="container">
                 <div style="max-width: 800px; margin-bottom: 3rem;">
-                    <h2 class="reveal-on-scroll">Downloads & Technical Resources</h2>
-                    <p class="reveal-on-scroll">Deep-dive engineering documents covering OCP rack design, liquid cooling strategies, and applied AI outcomes.</p>
+                    <h2 class="reveal-on-scroll">Downloads</h2>
                 </div>
 
                 <div class="grid grid-3">
                     <!-- WP 1 -->
                     <div class="card reveal-on-scroll delay-100" style="border-top: 4px solid var(--color-accent);">
-                        <div class="card-header">
-                            <h4 style="font-size: 1.1rem; color: var(--color-primary);">Infrastructure</h4>
-                            <h3 style="font-size: 1.3rem; margin-top: 0.5rem;">Next-Gen OCP AI Rack Design</h3>
+                        <div style="margin-bottom: 1rem;">
+                            <h3 style="margin: 0; font-size: 1.2rem;">Next-Gen OCP AI Rack Design</h3>
                         </div>
-                        <p style="font-size: 0.95rem;">Technical architecture for >100kW racks using ORv3 standards and blind-mate liquid cooling.</p>
-                        <div class="card-footer">
+                        <div class="card-footer" style="margin-top: auto; padding-top: 0;">
                             <a href="/docs/whitepaper-ocp-ai-rack.pdf" target="_blank" class="text-link icon-download">Download PDF</a>
                         </div>
                     </div>
 
                     <!-- WP 2 -->
                     <div class="card reveal-on-scroll delay-200" style="border-top: 4px solid var(--color-accent);">
-                        <div class="card-header">
-                            <h4 style="font-size: 1.1rem; color: var(--color-primary);">Edge AI</h4>
-                            <h3 style="font-size: 1.3rem; margin-top: 0.5rem;">Liquid-Cooled Edge Delivery</h3>
+                        <div style="margin-bottom: 1rem;">
+                            <h3 style="margin: 0; font-size: 1.2rem;">Liquid-Cooled Edge Delivery</h3>
                         </div>
-                        <p style="font-size: 0.95rem;">Integrated delivery strategy for deploying sealed, maintenance-free AI workstations at the edge.</p>
-                        <div class="card-footer">
+                        <div class="card-footer" style="margin-top: auto; padding-top: 0;">
                             <a href="/docs/whitepaper-edge-delivery.pdf" target="_blank" class="text-link icon-download">Download PDF</a>
                         </div>
                     </div>
 
                     <!-- WP 3 -->
                     <div class="card reveal-on-scroll delay-300" style="border-top: 4px solid var(--color-accent);">
-                        <div class="card-header">
-                            <h4 style="font-size: 1.1rem; color: var(--color-primary);">Applications</h4>
-                            <h3 style="font-size: 1.3rem; margin-top: 0.5rem;">Clean as a Service (CaaS)</h3>
+                        <div style="margin-bottom: 1rem;">
+                            <h3 style="margin: 0; font-size: 1.2rem;">Clean as a Service (CaaS)</h3>
                         </div>
-                        <p style="font-size: 0.95rem;">Transitioning from labor-based cleaning to outcome-based, AI-audited service models.</p>
-                        <div class="card-footer">
+                        <div class="card-footer" style="margin-top: auto; padding-top: 0;">
                             <a href="/docs/whitepaper-caas-model.pdf" target="_blank" class="text-link icon-download">Download PDF</a>
                         </div>
                     </div>
 
                      <!-- WP 4 -->
                      <div class="card reveal-on-scroll delay-400" style="border-top: 4px solid var(--color-accent);">
-                        <div class="card-header">
-                            <h4 style="font-size: 1.1rem; color: var(--color-primary);">Security</h4>
-                            <h3 style="font-size: 1.3rem; margin-top: 0.5rem;">Cognitive Security Architecture</h3>
+                        <div style="margin-bottom: 1rem;">
+                            <h3 style="margin: 0; font-size: 1.2rem;">Cognitive Security Architecture</h3>
                         </div>
-                        <p style="font-size: 0.95rem;">AI-driven situational awareness framework for large-scale urban events and national security.</p>
-                        <div class="card-footer">
+                        <div class="card-footer" style="margin-top: auto; padding-top: 0;">
                             <a href="/docs/whitepaper-cognitive-security.pdf" target="_blank" class="text-link icon-download">Download PDF</a>
                         </div>
                     </div>
 
                     <!-- WP 5 - ITS AI -->
                     <div class="card reveal-on-scroll delay-500" style="border-top: 4px solid var(--color-accent);">
-                        <div class="card-header">
-                            <h4 style="font-size: 1.1rem; color: var(--color-primary);">Transport</h4>
-                            <h3 style="font-size: 1.3rem; margin-top: 0.5rem;">ITS AI</h3>
+                        <div style="margin-bottom: 1rem;">
+                            <h3 style="margin: 0; font-size: 1.2rem;">ITS AI</h3>
                         </div>
-                        <p style="font-size: 0.95rem;">Edge-first intelligent transport systems powered by liquid-cooled AI workstations.</p>
-                        <div class="card-footer">
+                        <div class="card-footer" style="margin-top: auto; padding-top: 0;">
                             <a href="/docs/whitepaper-its-ai.pdf" target="_blank" class="text-link icon-download">Download PDF</a>
                         </div>
                     </div>
@@ -1075,8 +1069,8 @@
                         <p>AxiomDeta is the product, engineering, and manufacturing entity. Its official capabilities and offerings are defined in /docs, and visually presented via /images.</p>
                         <br>
                         <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-                            <a href="/docs/axiomdeta -company.pdf" target="_blank" class="cta-button">Download Company Profile</a>
-                            <a href="/docs/axiomdeta -catalog.pdf" target="_blank" class="cta-button secondary">Download Product Catalog</a>
+                            <a href="/docs/axiomdeta-company.pdf" target="_blank" class="cta-button">Download Company Profile</a>
+                            <a href="/docs/axiomdeta-catalog.pdf" target="_blank" class="cta-button secondary">Download Product Catalog</a>
                         </div>
                     </div>
                     <div class="reveal-on-scroll delay-200">
