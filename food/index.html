@@ -1,9 +1,10 @@
  <!-- 
-    Title: COFCO Overseas DTC Supply Chain Guide (Pro Edition v5)
+    Title: COFCO Overseas DTC Supply Chain Guide (Pro Edition v6)
     Updates:
-    - ACTION CHANGE: Link now opens PDF in new tab (target="_blank") instead of downloading.
-    - Text Update: "View" instead of "Download".
-    - Logic: English defaults to 'food_report_en.pdf', Chinese to 'food_report.pdf'.
+    - PDF PATH FIX: All PDF links now point to '/docs/' directory.
+    - EN Link: docs/food_report_en.pdf
+    - ZH Link: docs/food_report.pdf
+    - Interaction: Opens in new tab (View mode)
 -->
 
 <!DOCTYPE html>
@@ -112,11 +113,11 @@
                 Based on the 'Local Partner + SG Hub' model. A deep dive into Luncheon Meat (Little Black Pig) fulfillment standards from GACC clearance to Last Mile delivery.
             </p>
 
-            <!-- 2. Smart Link: Opens in New Tab (target="_blank") -->
+            <!-- 2. Smart Link: Opens in New Tab (target="_blank") pointing to /docs/ -->
             <div class="flex justify-center">
-                <a id="download-link" href="food_report_en.pdf" target="_blank" class="group relative inline-flex items-center gap-3 bg-red-700 hover:bg-red-800 text-white px-8 py-4 rounded-full font-bold shadow-xl shadow-red-200 transition-all duration-300 transform hover:-translate-y-1 hover:scale-105">
+                <a id="download-link" href="docs/food_report_en.pdf" target="_blank" class="group relative inline-flex items-center gap-3 bg-red-700 hover:bg-red-800 text-white px-8 py-4 rounded-full font-bold shadow-xl shadow-red-200 transition-all duration-300 transform hover:-translate-y-1 hover:scale-105">
                     <span class="absolute inset-0 rounded-full border border-white/20"></span>
-                    <!-- Changed Icon to 'Eye' for View -->
+                    <!-- Icon -->
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                     <span data-key="download_btn">View Deep Dive Report (PDF)</span>
                     <div class="absolute inset-0 rounded-full ring-4 ring-red-500/30 animate-pulse-slow"></div>
@@ -229,7 +230,7 @@
                 hero_title: "中粮食品海外DTC供应链执行框架",
                 hero_desc: "基于“本地合作商+新加坡中枢”模式，深度解析午餐肉罐头(小黑猪系列)从GACC清关到最后一公里履约的全流程标准。",
                 download_btn: "在线查阅深度研究报告 (PDF)",
-                download_link: "food_report.pdf", // Link for Chinese
+                download_link: "docs/food_report.pdf", // Link for Chinese -> /docs/
                 checklist_title: "核心SOP清单",
                 chart_subtitle: "风险评估数据",
                 est_result: "系统预估",
@@ -241,7 +242,7 @@
                 hero_title: "COFCO Overseas DTC Supply Chain Framework",
                 hero_desc: "Based on 'Local Partner + SG Hub' model. Deep dive into Luncheon Meat (Little Black Pig) fulfillment from GACC clearance to Last Mile.",
                 download_btn: "View Deep Dive Report (PDF)",
-                download_link: "food_report_en.pdf", // Link for English
+                download_link: "docs/food_report_en.pdf", // Link for English -> /docs/
                 checklist_title: "Critical SOP Checklist",
                 chart_subtitle: "Risk Assessment",
                 est_result: "System Estimate",
