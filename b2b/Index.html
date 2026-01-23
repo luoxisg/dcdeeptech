@@ -1,0 +1,1900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>B2B Industrial Product Showcase</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- 1. React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18.2.0/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
+
+    <!-- 2. Global Variable Shim (CRITICAL FIX for UMD libraries) -->
+    <script>
+        // Fix for libraries that expect React on window but don't find it immediately
+        window.React = React;
+        window.ReactDOM = ReactDOM;
+    </script>
+
+    <!-- 3. Framer Motion -->
+    <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
+
+    <!-- 4. Lucide React Icons -->
+    <script src="https://unpkg.com/lucide-react@0.460.0/dist/umd/lucide-react.min.js"></script>
+
+    <!-- 5. Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- 6. Google Model Viewer -->
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.3.0/model-viewer.min.js"></script>
+
+    <style>
+        /* Custom scrollbar hiding utility */
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-white text-neutral-900 font-sans antialiased selection:bg-neutral-900 selection:text-white">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        // -----------------------------
+        // Imports & Global Setup
+        // -----------------------------
+        
+        // Ensure globals are available
+        const { useMemo, useState, useEffect, useRef } = React;
+        
+        // Safely access libraries
+        const MotionLib = window.Motion;
+        const LucideLib = window.lucideReact;
+
+        if (!MotionLib) {
+            console.error("Framer Motion library failed to load.");
+        }
+        if (!LucideLib) {
+            console.error("Lucide React library failed to load.");
+        }
+
+        const { motion, AnimatePresence } = MotionLib || { motion: { div: 'div' }, AnimatePresence: ({children}) => children };
+        
+        // Destructure Icons
+        const {
+            Search, ShoppingCart, FileText, Box, Download, Shield, Globe,
+            ChevronRight, ChevronDown, ExternalLink, Mail, Phone, MapPin,
+            X, CheckCircle, Loader2, AlertCircle, User, Briefcase,
+            Calendar, MessageSquare
+        } = LucideLib || {};
+
+        // Fallback Icon component if library fails
+        const IconFallback = () => <span className="w-4 h-4 bg-gray-200 inline-block rounded"></span>;
+        
+        // Helper to safely render icon
+        const SafeIcon = (IconComponent, props) => {
+            if (IconComponent) return <IconComponent {...props} />;
+            return <IconFallback />;
+        };
+
+        // -----------------------------
+        // Mock Data
+        // -----------------------------
+
+        const PRODUCTS = [
+            {
+                id: "p-robot-6axis-x1",
+                name: {
+                    en: "6-Axis Industrial Robot X1",
+                    de: "6-Achs-Industrieroboter X1",
+                    fr: "Robot industriel 6 axes X1",
+                },
+                sku: "X1-6AX-010",
+                bigClass: "Industrial Robots",
+                categoryPath: ["Robotics", "6-Axis Robots"],
+                badges: ["New", "CE"],
+                shortDesc: {
+                    en: "Compact 6-axis arm for flexible automation cells.",
+                    de: "Kompakter 6-Achs-Arm für flexible Automationszellen.",
+                    fr: "Bras 6 axes compact pour cellules d'automatisation flexibles.",
+                },
+                heroImage: "https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&w=1200&q=80",
+                gallery: [
+                    "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1200&q=80",
+                    "https://images.unsplash.com/photo-1581091870621-3c96fe2f8e2b?auto=format&fit=crop&w=1200&q=80",
+                    "https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?auto=format&fit=crop&w=1200&q=80",
+                ],
+                glbModelUrl: "https://modelviewer.dev/shared-assets/models/Astronaut.glb",
+                videoUrl: "https://www.youtube.com/watch?v=1w7OgIMMRc4",
+                keySpecs: [
+                    { label: "Payload", value: "10" },
+                    { label: "Reach", value: "1400" },
+                    { label: "Repeatability", value: "±0.03" },
+                ],
+                techData: [
+                    {
+                        group: "Kinematics",
+                        items: [
+                            { attr: "Payload", value: "10", unit: "kg" },
+                            { attr: "Reach", value: "1400", unit: "mm" },
+                            { attr: "Axes", value: "6" },
+                        ],
+                    },
+                    {
+                        group: "Accuracy",
+                        items: [
+                            { attr: "Repeatability", value: "±0.03", unit: "mm" },
+                            { attr: "Protection", value: "IP65" },
+                        ],
+                    },
+                    {
+                        group: "Power",
+                        items: [
+                            { attr: "Supply", value: "200–240", unit: "VAC" },
+                            { attr: "Nominal Power", value: "1.8", unit: "kW" },
+                        ],
+                    },
+                ],
+                docs: [
+                    {
+                        id: "d1",
+                        type: "datasheet",
+                        title: {
+                            en: "Datasheet — Robot X1",
+                            de: "Datenblatt — Robot X1",
+                            fr: "Fiche technique — Robot X1",
+                        },
+                        fileName: "Datasheet_RobotX1_EN.pdf",
+                        sizeMB: 2.4,
+                    },
+                    {
+                        id: "d2",
+                        type: "manual",
+                        title: {
+                            en: "User Manual — Installation",
+                            de: "Benutzerhandbuch — Installation",
+                            fr: "Manuel — Installation",
+                        },
+                        fileName: "Manual_RobotX1_Install.pdf",
+                        sizeMB: 6.8,
+                    },
+                    {
+                        id: "d3",
+                        type: "whitepaper",
+                        title: {
+                            en: "White Paper — Energy Efficiency in Robot Cells",
+                            de: "Whitepaper — Energieeffizienz in Roboterzellen",
+                            fr: "Livre blanc — Efficacité énergétique",
+                        },
+                        fileName: "WP_RobotCells_EnergyEfficiency.pdf",
+                        sizeMB: 3.1,
+                    },
+                ],
+                cad: [
+                    { format: "STEP", fileName: "RobotX1.step", sizeMB: 18.2 },
+                    { format: "IGES", fileName: "RobotX1.iges", sizeMB: 14.9 },
+                    { format: "DWG", fileName: "RobotX1.dwg", sizeMB: 7.3 },
+                ],
+            },
+            {
+                id: "p-drive-servo-s5",
+                name: {
+                    en: "Servo Drive S5",
+                    de: "Servoantrieb S5",
+                    fr: "Variateur servo S5",
+                },
+                sku: "S5-SD-480",
+                bigClass: "Electric Drives",
+                categoryPath: ["Automation", "Servo Systems"],
+                badges: ["Hot", "RoHS"],
+                shortDesc: {
+                    en: "High dynamic servo drive with compact footprint.",
+                    de: "Hochdynamischer Servoantrieb mit kompakter Bauform.",
+                    fr: "Variateur servo haute dynamique, format compact.",
+                },
+                heroImage: "https://images.unsplash.com/photo-1581091215367-59ab6b89b5e4?auto=format&fit=crop&w=1200&q=80",
+                gallery: [
+                    "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80",
+                    "https://images.unsplash.com/photo-1558346490-a72e53ae2d4f?auto=format&fit=crop&w=1200&q=80",
+                ],
+                glbModelUrl: "https://modelviewer.dev/shared-assets/models/RobotExpressive.glb",
+                keySpecs: [
+                    { label: "Rated Voltage", value: "400" },
+                    { label: "Rated Current", value: "12" },
+                    { label: "Control", value: "EtherCAT" },
+                ],
+                techData: [
+                    {
+                        group: "Electrical",
+                        items: [
+                            { attr: "Rated Voltage", value: "400", unit: "VAC" },
+                            { attr: "Rated Current", value: "12", unit: "A" },
+                            { attr: "Peak Current", value: "24", unit: "A" },
+                        ],
+                    },
+                    {
+                        group: "Interfaces",
+                        items: [
+                            { attr: "Fieldbus", value: "EtherCAT" },
+                            { attr: "Feedback", value: "EnDat / BiSS" },
+                        ],
+                    },
+                    {
+                        group: "Environment",
+                        items: [
+                            { attr: "Protection", value: "IP20" },
+                            { attr: "Operating Temp", value: "0–45", unit: "°C" },
+                        ],
+                    },
+                ],
+                docs: [
+                    {
+                        id: "d4",
+                        type: "datasheet",
+                        title: {
+                            en: "Datasheet — Servo Drive S5",
+                            de: "Datenblatt — Servoantrieb S5",
+                            fr: "Fiche technique — Variateur S5",
+                        },
+                        fileName: "Datasheet_ServoDriveS5.pdf",
+                        sizeMB: 1.9,
+                    },
+                    {
+                        id: "d5",
+                        type: "whitepaper",
+                        title: {
+                            en: "White Paper — Low-Temperature Efficiency",
+                            de: "Whitepaper — Effizienz bei niedrigen Temperaturen",
+                            fr: "Livre blanc — Efficacité à basse température",
+                        },
+                        fileName: "WP_LowTemp_Efficiency.pdf",
+                        sizeMB: 2.7,
+                    },
+                ],
+                cad: [
+                    { format: "STEP", fileName: "ServoDriveS5.step", sizeMB: 6.2 },
+                    { format: "DWG", fileName: "ServoDriveS5.dwg", sizeMB: 2.4 },
+                ],
+            },
+        ];
+
+        const BIG_CLASSES = [
+            {
+                title: "Industrial Robots",
+                groups: [
+                    { title: "6-Axis Robots", tag: "Robotics" },
+                    { title: "SCARA Robots", tag: "Robotics" },
+                    { title: "Collaborative Robots", tag: "Robotics" },
+                ],
+            },
+            {
+                title: "Electric Drives",
+                groups: [
+                    { title: "Servo Systems", tag: "Automation" },
+                    { title: "Motors", tag: "Automation" },
+                    { title: "Inverters", tag: "Automation" },
+                ],
+            },
+            {
+                title: "Sensors & Vision",
+                groups: [
+                    { title: "Machine Vision", tag: "Sensing" },
+                    { title: "Encoders", tag: "Sensing" },
+                    { title: "Safety Sensors", tag: "Sensing" },
+                ],
+            },
+        ];
+
+        // -----------------------------
+        // UI Helpers & Components
+        // -----------------------------
+
+        function cn(...classes) {
+            return classes.filter(Boolean).join(" ");
+        }
+
+        function pill(text) {
+            return (
+                <span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium text-neutral-700">
+                    {text}
+                </span>
+            );
+        }
+
+        function formatMB(n) {
+            return `${n.toFixed(1)} MB`;
+        }
+
+        function DocIcon({ type }) {
+            if (type === "datasheet") return SafeIcon(FileText, { className: "h-4 w-4" });
+            if (type === "manual") return SafeIcon(Shield, { className: "h-4 w-4" });
+            return SafeIcon(Globe, { className: "h-4 w-4" });
+        }
+
+        // --- 增强的通用输入组件 ---
+
+        function FormInput({ label, error, icon, className, ...props }) {
+            return (
+                <div className={cn("space-y-1.5", className)}>
+                    <label className="text-xs font-semibold text-neutral-700">{label}</label>
+                    <div className="relative">
+                        <input
+                            className={cn(
+                                "w-full rounded-2xl border bg-white py-2.5 text-sm outline-none transition-all placeholder:text-neutral-400",
+                                icon ? "pl-10 pr-3" : "px-3",
+                                error
+                                    ? "border-red-500 focus:ring-2 focus:ring-red-100"
+                                    : "border-neutral-200 focus:border-neutral-900 focus:ring-2 focus:ring-neutral-100"
+                            )}
+                            {...props}
+                        />
+                        {icon && (
+                            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400">
+                                {icon}
+                            </div>
+                        )}
+                    </div>
+                    {error && (
+                        <div className="flex items-center gap-1 text-xs text-red-500">
+                            {SafeIcon(AlertCircle, { className: "h-3 w-3" })}
+                            <span>{error}</span>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        function FormTextarea({ label, error, className, ...props }) {
+            return (
+                <div className={cn("space-y-1.5", className)}>
+                    <label className="text-xs font-semibold text-neutral-700">{label}</label>
+                    <textarea
+                        className={cn(
+                            "w-full min-h-[100px] rounded-2xl border bg-white px-3 py-2.5 text-sm outline-none transition-all placeholder:text-neutral-400",
+                            error
+                                ? "border-red-500 focus:ring-2 focus:ring-red-100"
+                                : "border-neutral-200 focus:border-neutral-900 focus:ring-2 focus:ring-neutral-100"
+                        )}
+                        {...props}
+                    />
+                    {error && (
+                        <div className="flex items-center gap-1 text-xs text-red-500">
+                            {SafeIcon(AlertCircle, { className: "h-3 w-3" })}
+                            <span>{error}</span>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        // -----------------------------
+        // Main App Component
+        // -----------------------------
+
+        function B2BIndustrialShowcase() {
+            const [lang, setLang] = useState("en");
+            const [route, setRoute] = useState({ name: "home" });
+            const [megaOpen, setMegaOpen] = useState(false);
+            const [searchOpen, setSearchOpen] = useState(false);
+            const [query, setQuery] = useState("");
+            const [selectedBigClass, setSelectedBigClass] = useState(undefined);
+
+            const [cartOpen, setCartOpen] = useState(false);
+            const [quoteCart, setQuoteCart] = useState([]);
+
+            const [cookieConsent, setCookieConsent] = useState("unset");
+
+            // Filtering Logic
+            const products = useMemo(() => {
+                let list = PRODUCTS;
+                if (selectedBigClass) list = list.filter((p) => p.bigClass === selectedBigClass);
+                const q = query.trim().toLowerCase();
+                if (q) {
+                    list = list.filter((p) => {
+                        const hay = `${p.name[lang]} ${p.sku} ${p.shortDesc[lang]} ${p.bigClass} ${p.categoryPath.join(" ")}`.toLowerCase();
+                        return hay.includes(q);
+                    });
+                }
+                return list;
+            }, [lang, query, selectedBigClass]);
+
+            const currentProduct = useMemo(() => {
+                if (route.name !== "product") return null;
+                return PRODUCTS.find((p) => p.id === route.id) ?? null;
+            }, [route]);
+
+            const cartCount = quoteCart.reduce((sum, i) => sum + i.qty, 0);
+
+            // Navigation Helpers
+            function navToCatalog(opts) {
+                setRoute({ name: "catalog", bigClass: opts?.bigClass, q: opts?.q });
+                setSelectedBigClass(opts?.bigClass);
+                setQuery(opts?.q ?? "");
+                setMegaOpen(false);
+                setSearchOpen(false);
+                window.scrollTo({ top: 0, behavior: "smooth" });
+            }
+
+            function navToProduct(id) {
+                setRoute({ name: "product", id });
+                setMegaOpen(false);
+                setSearchOpen(false);
+                window.scrollTo({ top: 0, behavior: "smooth" });
+            }
+
+            function addToQuoteCart(productId, qty = 1) {
+                setQuoteCart((prev) => {
+                    const idx = prev.findIndex((x) => x.productId === productId);
+                    if (idx >= 0) {
+                        const next = [...prev];
+                        next[idx] = { ...next[idx], qty: next[idx].qty + qty };
+                        return next;
+                    }
+                    return [...prev, { productId, qty }];
+                });
+                setCartOpen(true);
+            }
+
+            function setQty(productId, qty) {
+                setQuoteCart((prev) => {
+                    const next = prev
+                        .map((x) => (x.productId === productId ? { ...x, qty } : x))
+                        .filter((x) => x.qty > 0);
+                    return next;
+                });
+            }
+
+            function resetDownloadWall() {
+                setDownloadGate({ open: false, kind: "doc", payload: null });
+            }
+
+            const [downloadGate, setDownloadGate] = useState({ open: false, kind: "doc", payload: null });
+
+            return (
+                <div className="min-h-screen bg-white text-neutral-900 font-sans selection:bg-neutral-900 selection:text-white">
+                    <Header
+                        lang={lang}
+                        setLang={setLang}
+                        megaOpen={megaOpen}
+                        setMegaOpen={setMegaOpen}
+                        searchOpen={searchOpen}
+                        setSearchOpen={setSearchOpen}
+                        query={query}
+                        setQuery={setQuery}
+                        selectedBigClass={selectedBigClass}
+                        setSelectedBigClass={setSelectedBigClass}
+                        onGoHome={() => setRoute({ name: "home" })}
+                        onGoCatalog={() => navToCatalog({ bigClass: selectedBigClass, q: query })}
+                        onGoCatalogWith={(bigClass) => navToCatalog({ bigClass })}
+                        onGoContact={() => setRoute({ name: "contact" })}
+                        cartCount={cartCount}
+                        onOpenCart={() => setCartOpen(true)}
+                    />
+
+                    <main className="min-h-[calc(100vh-300px)]">
+                        <AnimatePresence mode="wait">
+                            {route.name === "home" && (
+                                <motion.div
+                                    key="home"
+                                    initial={{ opacity: 0, y: 8 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -8 }}
+                                    transition={{ duration: 0.25 }}
+                                >
+                                    <HomeHero
+                                        onBrowse={() => navToCatalog({})}
+                                        onPickBigClass={(c) => navToCatalog({ bigClass: c })}
+                                    />
+                                    <HomeHighlights
+                                        onPick={(id) => navToProduct(id)}
+                                        onBrowse={() => navToCatalog({})}
+                                    />
+                                    <TrustAndCompliance
+                                        onImpressum={() => setRoute({ name: "impressum" })}
+                                        onPrivacy={() => setRoute({ name: "privacy" })}
+                                    />
+                                </motion.div>
+                            )}
+
+                            {route.name === "catalog" && (
+                                <motion.div
+                                    key="catalog"
+                                    initial={{ opacity: 0, y: 8 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -8 }}
+                                    transition={{ duration: 0.25 }}
+                                >
+                                    <Catalog
+                                        lang={lang}
+                                        products={products}
+                                        selectedBigClass={selectedBigClass}
+                                        onSelectBigClass={(c) => setSelectedBigClass(c)}
+                                        onClearBigClass={() => setSelectedBigClass(undefined)}
+                                        query={query}
+                                        onOpenProduct={navToProduct}
+                                    />
+                                </motion.div>
+                            )}
+
+                            {route.name === "product" && currentProduct && (
+                                <motion.div
+                                    key={currentProduct.id}
+                                    initial={{ opacity: 0, y: 8 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -8 }}
+                                    transition={{ duration: 0.25 }}
+                                >
+                                    <ProductDetail
+                                        lang={lang}
+                                        product={currentProduct}
+                                        onBack={() => navToCatalog({ bigClass: currentProduct.bigClass })}
+                                        onOpenProduct={navToProduct}
+                                        onAddToQuote={() => addToQuoteCart(currentProduct.id, 1)}
+                                        onDownloadDoc={(doc) => setDownloadGate({ open: true, kind: "doc", payload: doc })}
+                                        onDownloadCAD={(format) =>
+                                            setDownloadGate({ open: true, kind: "cad", payload: { product: currentProduct, format } })
+                                        }
+                                    />
+                                </motion.div>
+                            )}
+
+                            {route.name === "contact" && (
+                                <motion.div
+                                    key="contact"
+                                    initial={{ opacity: 0, y: 8 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -8 }}
+                                    transition={{ duration: 0.25 }}
+                                >
+                                    <ContactPage onBack={() => setRoute({ name: "home" })} />
+                                </motion.div>
+                            )}
+
+                            {route.name === "impressum" && (
+                                <motion.div
+                                    key="impressum"
+                                    initial={{ opacity: 0, y: 8 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -8 }}
+                                    transition={{ duration: 0.25 }}
+                                >
+                                    <LegalPage
+                                        title="Impressum"
+                                        subtitle="Legal disclosure (DACH / EU best practice)"
+                                        onBack={() => setRoute({ name: "home" })}
+                                    >
+                                        <div className="space-y-3 text-sm leading-6 text-neutral-700">
+                                            <p><strong>Company:</strong> Example Industrial GmbH</p>
+                                            <p><strong>Address:</strong> Musterstraße 1, 60311 Frankfurt, Germany</p>
+                                            <p><strong>Register:</strong> HRB 123456</p>
+                                            <p className="text-neutral-500 italic">This is a static template.</p>
+                                        </div>
+                                    </LegalPage>
+                                </motion.div>
+                            )}
+
+                            {route.name === "privacy" && (
+                                <motion.div
+                                    key="privacy"
+                                    initial={{ opacity: 0, y: 8 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -8 }}
+                                    transition={{ duration: 0.25 }}
+                                >
+                                    <LegalPage
+                                        title="Privacy Policy"
+                                        subtitle="GDPR-oriented baseline"
+                                        onBack={() => setRoute({ name: "home" })}
+                                    >
+                                        <div className="space-y-3 text-sm leading-6 text-neutral-700">
+                                            <p>We value your privacy. Data is processed only for business purposes.</p>
+                                            <p className="text-neutral-500 italic">This is a static template.</p>
+                                        </div>
+                                    </LegalPage>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+                    </main>
+
+                    <Footer
+                        onImpressum={() => setRoute({ name: "impressum" })}
+                        onPrivacy={() => setRoute({ name: "privacy" })}
+                        onCatalog={() => navToCatalog({})}
+                        onContact={() => setRoute({ name: "contact" })}
+                    />
+
+                    <Drawer open={cartOpen} onClose={() => setCartOpen(false)}>
+                        <QuoteCart
+                            items={quoteCart}
+                            onSetQty={setQty}
+                            onClose={() => setCartOpen(false)}
+                        />
+                    </Drawer>
+
+                    <Modal open={downloadGate.open} onClose={resetDownloadWall} title="Download Request">
+                        <DownloadWall
+                            kind={downloadGate.open ? downloadGate.kind : "doc"}
+                            payload={downloadGate.open ? downloadGate.payload : null}
+                            onClose={resetDownloadWall}
+                        />
+                    </Modal>
+
+                    <CookieBanner
+                        state={cookieConsent}
+                        onAccept={() => setCookieConsent("accepted")}
+                        onReject={() => setCookieConsent("rejected")}
+                        onPrivacy={() => setRoute({ name: "privacy" })}
+                    />
+                </div>
+            );
+        }
+
+        // -----------------------------
+        // Header
+        // -----------------------------
+
+        function Header(props) {
+            const {
+                lang,
+                setLang,
+                megaOpen,
+                setMegaOpen,
+                searchOpen,
+                setSearchOpen,
+                query,
+                setQuery,
+                selectedBigClass,
+                setSelectedBigClass,
+                onGoHome,
+                onGoCatalog,
+                onGoCatalogWith,
+                onGoContact,
+                cartCount,
+                onOpenCart,
+            } = props;
+
+            return (
+                <div className="sticky top-0 z-40 border-b bg-white/85 backdrop-blur-md">
+                    <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3">
+                        <button
+                            className="flex items-center gap-2 group"
+                            onClick={onGoHome}
+                            aria-label="Home"
+                        >
+                            <div className="grid h-9 w-9 place-items-center rounded-2xl bg-neutral-900 text-white transition-transform group-hover:scale-105">
+                                {SafeIcon(Box, { className: "h-5 w-5" })}
+                            </div>
+                            <div className="text-left hidden sm:block">
+                                <div className="text-sm font-semibold leading-4">Industrial Catalog</div>
+                                <div className="text-xs text-neutral-500">Showcase / SSOT-ready</div>
+                            </div>
+                        </button>
+
+                        <div className="hidden items-center gap-2 md:flex">
+                            <div className="relative">
+                                <button
+                                    className={cn(
+                                        "inline-flex items-center gap-2 rounded-2xl border px-3 py-2 text-sm transition-colors",
+                                        megaOpen ? "bg-neutral-100 border-neutral-300" : "hover:bg-neutral-50"
+                                    )}
+                                    onClick={() => setMegaOpen(!megaOpen)}
+                                >
+                                    Products
+                                    {SafeIcon(ChevronDown, { className: "h-4 w-4" })}
+                                </button>
+
+                                <AnimatePresence>
+                                    {megaOpen && (
+                                        <motion.div
+                                            initial={{ opacity: 0, y: 8 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            exit={{ opacity: 0, y: 8 }}
+                                            transition={{ duration: 0.2 }}
+                                            className="absolute left-0 mt-2 w-[680px] rounded-3xl border bg-white p-4 shadow-xl z-50"
+                                        >
+                                            <div className="grid grid-cols-3 gap-4">
+                                                {BIG_CLASSES.map((bc) => (
+                                                    <div key={bc.title} className="space-y-2">
+                                                        <button
+                                                            className={cn(
+                                                                "w-full rounded-2xl px-3 py-2 text-left text-sm font-semibold transition-colors",
+                                                                selectedBigClass === bc.title ? "bg-neutral-900 text-white" : "hover:bg-neutral-50"
+                                                            )}
+                                                            onClick={() => {
+                                                                setSelectedBigClass(bc.title);
+                                                                onGoCatalogWith(bc.title);
+                                                            }}
+                                                        >
+                                                            {bc.title}
+                                                        </button>
+                                                        <div className="space-y-1 rounded-2xl bg-neutral-50 p-2">
+                                                            {bc.groups.map((g) => (
+                                                                <div key={g.title} className="flex items-center justify-between rounded-xl px-2 py-1.5 text-xs text-neutral-700">
+                                                                    <span>{g.title}</span>
+                                                                    <span className="text-neutral-400">{g.tag}</span>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </div>
+
+                            <button
+                                className="inline-flex items-center gap-2 rounded-2xl border px-3 py-2 text-sm hover:bg-neutral-50 transition-colors"
+                                onClick={onGoCatalog}
+                            >
+                                Catalog
+                            </button>
+
+                            <button
+                                className="inline-flex items-center gap-2 rounded-2xl border px-3 py-2 text-sm hover:bg-neutral-50 transition-colors"
+                                onClick={onGoContact}
+                            >
+                                Contact
+                            </button>
+
+                            <div className="relative group">
+                                <div className={cn(
+                                    "flex items-center gap-2 rounded-2xl border px-3 py-2 text-sm transition-all bg-white",
+                                    "focus-within:ring-2 focus-within:ring-neutral-200 focus-within:border-neutral-400 w-64"
+                                )}>
+                                    {SafeIcon(Search, { className: "h-4 w-4 text-neutral-400" })}
+                                    <input
+                                        value={query}
+                                        onChange={(e) => setQuery(e.target.value)}
+                                        onFocus={() => {
+                                            setSearchOpen(true);
+                                            if (!route.name.includes("catalog")) navToCatalog({ q: query });
+                                        }}
+                                        placeholder="Search SKU / specs..."
+                                        className="w-full outline-none bg-transparent"
+                                    />
+                                    {query && (
+                                        <button onClick={() => setQuery("")} className="text-neutral-400 hover:text-neutral-900">
+                                            {SafeIcon(X, { className: "h-3 w-3" })}
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                            <LangSwitch lang={lang} setLang={setLang} />
+
+                            <button
+                                className="relative inline-flex items-center gap-2 rounded-2xl border px-3 py-2 text-sm hover:bg-neutral-50 transition-colors"
+                                onClick={onOpenCart}
+                            >
+                                {SafeIcon(ShoppingCart, { className: "h-4 w-4" })}
+                                <span className="hidden sm:inline">Quote</span>
+                                {cartCount > 0 && (
+                                    <span className="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-neutral-900 px-1 text-xs text-white border-2 border-white">
+                                        {cartCount}
+                                    </span>
+                                )}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        function LangSwitch({ lang, setLang }) {
+            const items = [
+                { id: "en", label: "EN" },
+                { id: "de", label: "DE" },
+                { id: "fr", label: "FR" },
+            ];
+            return (
+                <div className="hidden items-center rounded-2xl border bg-white p-1 sm:flex">
+                    {items.map((it) => (
+                        <button
+                            key={it.id}
+                            className={cn(
+                                "rounded-xl px-2.5 py-1 text-xs font-medium transition-all",
+                                lang === it.id ? "bg-neutral-900 text-white shadow-sm" : "text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900"
+                            )}
+                            onClick={() => setLang(it.id)}
+                        >
+                            {it.label}
+                        </button>
+                    ))}
+                </div>
+            );
+        }
+
+        // -----------------------------
+        // Components: Home & Catalog
+        // -----------------------------
+
+        function HomeHero({ onBrowse, onPickBigClass }) {
+            return (
+                <section className="mx-auto max-w-6xl px-4 py-12">
+                    <div className="grid gap-12 md:grid-cols-2 items-center">
+                        <div className="space-y-6">
+                            <div className="inline-flex items-center gap-2 rounded-full border bg-neutral-50 px-3 py-1 text-xs font-medium text-neutral-600">
+                                <span className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse" />
+                                Live Demo: React Single File Prototype
+                            </div>
+                            <h1 className="text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl text-neutral-900">
+                                Smart catalog for complex engineering.
+                            </h1>
+                            <p className="text-lg text-neutral-600 max-w-md">
+                                Streamline your B2B sales with structured technical data, integrated CAD downloads, and a seamless RFQ workflow.
+                            </p>
+                            <div className="flex flex-wrap gap-3 pt-2">
+                                <button
+                                    className="rounded-full bg-neutral-900 px-6 py-3 text-sm font-medium text-white shadow-lg shadow-neutral-200 transition-transform hover:scale-105 active:scale-95"
+                                    onClick={onBrowse}
+                                >
+                                    Browse Catalog
+                                </button>
+                                <button
+                                    className="rounded-full border px-6 py-3 text-sm font-medium hover:bg-neutral-50 transition-colors"
+                                    onClick={() => onPickBigClass("Industrial Robots")}
+                                >
+                                    Explore Robots
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="relative">
+                            <div className="absolute -inset-4 rounded-full bg-neutral-100 blur-3xl opacity-50 z-0" />
+                            <div className="relative z-10 rounded-3xl border bg-white p-4 shadow-xl">
+                                <img
+                                    src={PRODUCTS[0].heroImage}
+                                    alt="Hero"
+                                    className="aspect-[4/3] w-full rounded-2xl object-cover"
+                                />
+                                <div className="mt-4 flex items-center justify-between">
+                                    <div>
+                                        <div className="font-bold text-neutral-900">Robot X1 Series</div>
+                                        <div className="text-xs text-neutral-500">Flagship Automation</div>
+                                    </div>
+                                    <div className="flex -space-x-2">
+                                        {[1, 2, 3].map(i => <div key={i} className="h-8 w-8 rounded-full border-2 border-white bg-neutral-200" />)}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            );
+        }
+
+        function HomeHighlights({ onPick, onBrowse }) {
+            return (
+                <section className="mx-auto max-w-6xl px-4 py-10">
+                    <div className="flex items-end justify-between mb-6">
+                        <div>
+                            <h2 className="text-xl font-bold">Featured Products</h2>
+                            <p className="text-sm text-neutral-500">High demand items available for immediate quote.</p>
+                        </div>
+                        <button className="text-sm font-medium underline hover:text-neutral-600" onClick={onBrowse}>
+                            View all
+                        </button>
+                    </div>
+
+                    <div className="grid gap-6 md:grid-cols-2">
+                        {PRODUCTS.map((p) => (
+                            <div
+                                key={p.id}
+                                className="group relative cursor-pointer overflow-hidden rounded-3xl border bg-white shadow-sm transition-all hover:shadow-md hover:border-neutral-300"
+                                onClick={() => onPick(p.id)}
+                            >
+                                <div className="absolute inset-0 bg-neutral-900/0 transition-colors group-hover:bg-neutral-900/[0.02]" />
+                                <div className="flex h-full flex-col md:flex-row">
+                                    <div className="relative h-48 md:h-auto md:w-2/5 shrink-0 overflow-hidden bg-neutral-100">
+                                        <img src={p.heroImage} alt={p.name.en} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                                        <div className="absolute left-3 top-3 flex gap-1">
+                                            {p.badges.map((b) => (
+                                                <span key={b} className="rounded-full bg-white/90 backdrop-blur px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide shadow-sm">
+                                                    {b}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                    <div className="flex-1 p-5 flex flex-col justify-between">
+                                        <div>
+                                            <div className="flex justify-between items-start">
+                                                <h3 className="font-bold text-neutral-900">{p.name.en}</h3>
+                                                {SafeIcon(ChevronRight, { className: "h-5 w-5 text-neutral-300 group-hover:text-neutral-900 transition-colors" })}
+                                            </div>
+                                            <div className="mt-1 text-xs text-neutral-500 font-mono">{p.sku}</div>
+                                            <p className="mt-3 text-sm text-neutral-600 line-clamp-2">{p.shortDesc.en}</p>
+                                        </div>
+                                        <div className="mt-4 pt-4 border-t flex flex-wrap gap-2">
+                                            {p.keySpecs.slice(0, 2).map(s => (
+                                                <div key={s.label} className="text-xs bg-neutral-50 px-2 py-1 rounded-lg border">
+                                                    <span className="text-neutral-400">{s.label}: </span>
+                                                    <span className="font-medium">{s.value}</span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </section>
+            );
+        }
+
+        function TrustAndCompliance({ onImpressum, onPrivacy }) {
+            return (
+                <section className="border-t bg-neutral-50/50">
+                    <div className="mx-auto grid max-w-6xl gap-6 px-4 py-12 md:grid-cols-3">
+                        <div className="flex gap-4">
+                            <div className="h-10 w-10 shrink-0 rounded-full bg-neutral-900 flex items-center justify-center text-white">
+                                {SafeIcon(Shield, { className: "h-5 w-5" })}
+                            </div>
+                            <div>
+                                <h3 className="font-bold text-sm">Industrial Grade Trust</h3>
+                                <p className="mt-1 text-xs leading-5 text-neutral-600">
+                                    Verified specs, ISO certifications available upon request.
+                                </p>
+                            </div>
+                        </div>
+                        <div className="flex gap-4">
+                            <div className="h-10 w-10 shrink-0 rounded-full bg-white border flex items-center justify-center text-neutral-900">
+                                {SafeIcon(FileText, { className: "h-5 w-5" })}
+                            </div>
+                            <div>
+                                <h3 className="font-bold text-sm">Full Documentation</h3>
+                                <div className="mt-1 text-xs leading-5 text-neutral-600">
+                                    <button onClick={onImpressum} className="underline hover:text-black">Impressum</button> available.
+                                </div>
+                            </div>
+                        </div>
+                        <div className="flex gap-4">
+                            <div className="h-10 w-10 shrink-0 rounded-full bg-white border flex items-center justify-center text-neutral-900">
+                                {SafeIcon(Globe, { className: "h-5 w-5" })}
+                            </div>
+                            <div>
+                                <h3 className="font-bold text-sm">Global Compliance</h3>
+                                <div className="mt-1 text-xs leading-5 text-neutral-600">
+                                    <button onClick={onPrivacy} className="underline hover:text-black">GDPR Ready</button>.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            );
+        }
+
+        function Catalog(props) {
+            const { lang, products, selectedBigClass, onSelectBigClass, onClearBigClass, query, onOpenProduct } = props;
+
+            return (
+                <div className="mx-auto max-w-6xl px-4 py-8">
+                    <div className="sticky top-[64px] z-30 bg-white/95 backdrop-blur py-4 mb-6 border-b">
+                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                            <div>
+                                <h2 className="text-2xl font-bold">Catalog</h2>
+                                <div className="text-sm text-neutral-500 mt-1">
+                                    {products.length} result{products.length !== 1 && "s"} found
+                                    {selectedBigClass && <span> in <span className="font-semibold text-neutral-900">{selectedBigClass}</span></span>}
+                                </div>
+                            </div>
+                            <div className="flex flex-wrap gap-2">
+                                {selectedBigClass && (
+                                    <button onClick={onClearBigClass} className="px-3 py-1.5 text-xs font-medium bg-neutral-100 hover:bg-neutral-200 rounded-full flex items-center gap-1">
+                                        Clear Filter {SafeIcon(X, { className: "h-3 w-3" })}
+                                    </button>
+                                )}
+                                {BIG_CLASSES.map(bc => (
+                                    <button
+                                        key={bc.title}
+                                        onClick={() => onSelectBigClass(bc.title)}
+                                        className={cn(
+                                            "px-3 py-1.5 text-xs font-medium rounded-full border transition-colors",
+                                            selectedBigClass === bc.title ? "bg-neutral-900 text-white border-neutral-900" : "bg-white text-neutral-600 hover:bg-neutral-50"
+                                        )}
+                                    >
+                                        {bc.title}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                        {products.map((p) => (
+                            <div key={p.id} className="group flex flex-col rounded-3xl border bg-white p-4 transition-all hover:shadow-lg hover:-translate-y-1">
+                                <div className="relative aspect-square mb-4 overflow-hidden rounded-2xl bg-neutral-100">
+                                    <img src={p.heroImage} alt={p.name[lang]} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                                </div>
+                                <div className="flex-1">
+                                    <div className="text-xs font-mono text-neutral-400 mb-1">{p.sku}</div>
+                                    <button onClick={() => onOpenProduct(p.id)} className="text-lg font-bold text-neutral-900 hover:underline text-left">
+                                        {p.name[lang]}
+                                    </button>
+                                    <p className="mt-2 text-sm text-neutral-600 line-clamp-2">{p.shortDesc[lang]}</p>
+                                </div>
+                                <div className="mt-4 pt-4 border-t flex items-center justify-between">
+                                    <div className="flex gap-1">
+                                        {p.badges.map(b => <span key={b} className="text-[10px] font-bold bg-neutral-100 px-2 py-1 rounded">{b}</span>)}
+                                    </div>
+                                    <button onClick={() => onOpenProduct(p.id)} className="h-8 w-8 rounded-full border flex items-center justify-center hover:bg-neutral-900 hover:text-white transition-colors">
+                                        {SafeIcon(ChevronRight, { className: "h-4 w-4" })}
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {products.length === 0 && (
+                        <div className="py-20 text-center">
+                            <div className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-neutral-50 mb-4">
+                                {SafeIcon(Search, { className: "h-6 w-6 text-neutral-300" })}
+                            </div>
+                            <h3 className="text-lg font-medium text-neutral-900">No products found</h3>
+                            <p className="text-neutral-500">Try adjusting your search or filters.</p>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        // -----------------------------
+        // Product Detail
+        // -----------------------------
+
+        function ProductDetail(props) {
+            const { lang, product, onBack, onOpenProduct, onAddToQuote, onDownloadDoc, onDownloadCAD } = props;
+            const [tab, setTab] = useState("overview");
+            const [activeImage, setActiveImage] = useState(product.heroImage);
+
+            return (
+                <div className="mx-auto max-w-6xl px-4 py-8">
+                    <nav className="flex items-center gap-2 text-xs text-neutral-500 mb-6">
+                        <button className="hover:text-neutral-900" onClick={onBack}>Catalog</button>
+                        {SafeIcon(ChevronRight, { className: "h-3 w-3" })}
+                        <span>{product.bigClass}</span>
+                        {SafeIcon(ChevronRight, { className: "h-3 w-3" })}
+                        <span className="text-neutral-900 font-medium truncate">{product.name[lang]}</span>
+                    </nav>
+
+                    <div className="grid gap-8 lg:grid-cols-2">
+                        {/* Left: Gallery */}
+                        <div className="space-y-4">
+                            <div className="aspect-[4/3] w-full overflow-hidden rounded-3xl border bg-white shadow-sm">
+                                <img src={activeImage} alt={product.name[lang]} className="h-full w-full object-contain" />
+                            </div>
+                            <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+                                {[product.heroImage, ...product.gallery].map((img, i) => (
+                                    <button
+                                        key={i}
+                                        onClick={() => setActiveImage(img)}
+                                        className={cn(
+                                            "h-20 w-24 shrink-0 overflow-hidden rounded-xl border bg-white transition-all",
+                                            activeImage === img ? "ring-2 ring-neutral-900 ring-offset-2" : "opacity-70 hover:opacity-100"
+                                        )}
+                                    >
+                                        <img src={img} className="h-full w-full object-cover" />
+                                    </button>
+                                ))}
+                            </div>
+                            {product.glbModelUrl && (
+                                <div className="rounded-3xl border bg-neutral-50 p-4">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <h4 className="font-semibold text-sm">Interactive 3D Preview</h4>
+                                        <span className="text-xs bg-white px-2 py-1 rounded border">WebGL</span>
+                                    </div>
+                                    <model-viewer
+                                        src={product.glbModelUrl}
+                                        ar
+                                        camera-controls
+                                        shadow-intensity="1"
+                                        style={{ width: "100%", height: 300, backgroundColor: "#f5f5f5", borderRadius: "1rem" }}
+                                    ></model-viewer>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Right: Details */}
+                        <div>
+                            <div className="mb-6">
+                                <h1 className="text-3xl font-bold text-neutral-900">{product.name[lang]}</h1>
+                                <div className="mt-2 flex items-center gap-4">
+                                    <span className="font-mono text-sm text-neutral-500">SKU: {product.sku}</span>
+                                    <div className="h-4 w-px bg-neutral-200" />
+                                    <div className="flex gap-2">
+                                        {product.badges.map(b => <span key={b} className="bg-neutral-100 text-neutral-700 px-2 py-0.5 rounded text-xs font-medium">{b}</span>)}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="prose prose-sm text-neutral-600 mb-6">
+                                <p>{product.shortDesc[lang]}</p>
+                            </div>
+
+                            {/* Key Specs Grid */}
+                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-8">
+                                {product.keySpecs.map(s => (
+                                    <div key={s.label} className="rounded-2xl border bg-white p-3 shadow-sm">
+                                        <div className="text-xs text-neutral-500 mb-1">{s.label}</div>
+                                        <div className="font-semibold text-neutral-900">{s.value}</div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* Actions */}
+                            <div className="flex flex-wrap gap-3 mb-8 p-4 bg-neutral-50 rounded-3xl border">
+                                <button
+                                    onClick={onAddToQuote}
+                                    className="flex-1 min-w-[140px] bg-neutral-900 text-white rounded-xl px-6 py-3 font-semibold shadow-lg shadow-neutral-200 hover:bg-neutral-800 active:scale-95 transition-all flex items-center justify-center gap-2"
+                                >
+                                    {SafeIcon(ShoppingCart, { className: "h-4 w-4" })}
+                                    Add to Quote
+                                </button>
+                                <button
+                                    onClick={() => setTab("cad")}
+                                    className="flex-1 min-w-[140px] bg-white border text-neutral-900 rounded-xl px-6 py-3 font-semibold hover:bg-neutral-50 active:scale-95 transition-all flex items-center justify-center gap-2"
+                                >
+                                    {SafeIcon(Box, { className: "h-4 w-4" })}
+                                    Get CAD
+                                </button>
+                            </div>
+
+                            {/* Tabs */}
+                            <div className="space-y-6">
+                                <div className="flex border-b">
+                                    {["overview", "tech", "docs", "cad"].map((t) => (
+                                        <button
+                                            key={t}
+                                            onClick={() => setTab(t)}
+                                            className={cn(
+                                                "px-4 py-2 text-sm font-medium border-b-2 transition-colors capitalize",
+                                                tab === t ? "border-neutral-900 text-neutral-900" : "border-transparent text-neutral-500 hover:text-neutral-700"
+                                            )}
+                                        >
+                                            {t === "docs" ? "Downloads" : t}
+                                        </button>
+                                    ))}
+                                </div>
+
+                                <div className="min-h-[200px]">
+                                    {tab === "overview" && (
+                                        <div className="space-y-4 text-sm text-neutral-700 leading-relaxed animate-in fade-in slide-in-from-bottom-2">
+                                            <p>Designed for high-performance industrial environments, this unit integrates seamlessly with standard automation protocols. It features a robust housing, optimized thermal management, and long maintenance intervals.</p>
+                                            <ul className="list-disc pl-5 space-y-1">
+                                                <li>ISO 9001 Certified manufacturing</li>
+                                                <li>24/7 Duty cycle rated</li>
+                                                <li>Global support network available</li>
+                                            </ul>
+                                        </div>
+                                    )}
+                                    {tab === "tech" && (
+                                        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2">
+                                            {product.techData.map(group => (
+                                                <div key={group.group}>
+                                                    <h4 className="font-semibold text-sm mb-2">{group.group}</h4>
+                                                    <div className="rounded-xl border divide-y overflow-hidden">
+                                                        {group.items.map(item => (
+                                                            <div key={item.attr} className="flex justify-between p-3 bg-white text-sm">
+                                                                <span className="text-neutral-500">{item.attr}</span>
+                                                                <span className="font-medium">{item.value} {item.unit}</span>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                    {tab === "docs" && (
+                                        <div className="grid gap-3 animate-in fade-in slide-in-from-bottom-2">
+                                            {product.docs.map(d => (
+                                                <div key={d.id} className="flex items-center justify-between p-3 rounded-2xl border bg-white hover:border-neutral-300 transition-colors">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="h-10 w-10 rounded-xl bg-neutral-50 flex items-center justify-center text-neutral-500">
+                                                            <DocIcon type={d.type} />
+                                                        </div>
+                                                        <div>
+                                                            <div className="font-medium text-sm">{d.title[lang]}</div>
+                                                            <div className="text-xs text-neutral-400">{d.fileName} • {d.sizeMB} MB</div>
+                                                        </div>
+                                                    </div>
+                                                    <button onClick={() => onDownloadDoc(d)} className="p-2 text-neutral-400 hover:text-neutral-900 hover:bg-neutral-50 rounded-lg">
+                                                        {SafeIcon(Download, { className: "h-5 w-5" })}
+                                                    </button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                    {tab === "cad" && (
+                                        <div className="grid grid-cols-2 gap-3 animate-in fade-in slide-in-from-bottom-2">
+                                            {product.cad.map(c => (
+                                                <button key={c.format} onClick={() => onDownloadCAD(c.format)} className="flex flex-col items-center justify-center p-6 rounded-2xl border bg-white hover:border-neutral-900 hover:bg-neutral-50 transition-all group">
+                                                    {SafeIcon(Box, { className: "h-8 w-8 text-neutral-300 group-hover:text-neutral-900 mb-2" })}
+                                                    <div className="font-bold">{c.format}</div>
+                                                    <div className="text-xs text-neutral-400">{c.sizeMB} MB</div>
+                                                </button>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // -----------------------------
+        // Contact Page
+        // -----------------------------
+
+        function ContactPage({ onBack }) {
+            const [loading, setLoading] = useState(false);
+            const [success, setSuccess] = useState(false);
+            const [formData, setFormData] = useState({
+                name: "",
+                email: "",
+                subject: "",
+                message: "",
+            });
+            const [errors, setErrors] = useState({});
+
+            const validate = () => {
+                const newErrors = {};
+                if (!formData.name) newErrors.name = "Name is required";
+                if (!formData.email || !/^\S+@\S+\.\S+$/.test(formData.email)) newErrors.email = "Valid email is required";
+                if (!formData.message) newErrors.message = "Message is required";
+                setErrors(newErrors);
+                return Object.keys(newErrors).length === 0;
+            };
+
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                if (!validate()) return;
+
+                setLoading(true);
+                // Simulate API call
+                setTimeout(() => {
+                    setLoading(false);
+                    setSuccess(true);
+                }, 1500);
+            };
+
+            if (success) {
+                return (
+                    <div className="mx-auto max-w-2xl px-4 py-20 text-center animate-in zoom-in-95 duration-300">
+                        <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-green-100 text-green-600 mb-6">
+                            {SafeIcon(CheckCircle, { className: "h-10 w-10" })}
+                        </div>
+                        <h2 className="text-2xl font-bold">Message Sent!</h2>
+                        <p className="mt-2 text-neutral-600">Thank you for contacting us. We will respond to {formData.email} shortly.</p>
+                        <button
+                            onClick={onBack}
+                            className="mt-8 rounded-full border px-6 py-2.5 text-sm font-medium hover:bg-neutral-50"
+                        >
+                            Return Home
+                        </button>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="mx-auto max-w-2xl px-4 py-12">
+                    <button onClick={onBack} className="mb-8 flex items-center gap-1 text-sm text-neutral-500 hover:text-neutral-900">
+                        {SafeIcon(ChevronRight, { className: "h-4 w-4 rotate-180" })} Back
+                    </button>
+
+                    <div className="text-center mb-10">
+                        <h1 className="text-3xl font-bold">Contact Us</h1>
+                        <p className="mt-2 text-neutral-600">Sales inquiries, technical support, or partnership opportunities.</p>
+                    </div>
+
+                    <form onSubmit={handleSubmit} className="space-y-6 rounded-3xl border bg-white p-8 shadow-sm">
+                        <div className="grid gap-6 md:grid-cols-2">
+                            <FormInput
+                                label="Full Name"
+                                placeholder="John Doe"
+                                value={formData.name}
+                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                error={errors.name}
+                                icon={SafeIcon(User, { className: "h-4 w-4" })}
+                            />
+                            <FormInput
+                                label="Work Email"
+                                placeholder="john@company.com"
+                                value={formData.email}
+                                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                error={errors.email}
+                                icon={SafeIcon(Mail, { className: "h-4 w-4" })}
+                            />
+                        </div>
+
+                        <FormInput
+                            label="Subject"
+                            placeholder="e.g. Requesting bulk pricing for Robot X1"
+                            value={formData.subject}
+                            onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                            icon={SafeIcon(MessageSquare, { className: "h-4 w-4" })}
+                        />
+
+                        <FormTextarea
+                            label="Message"
+                            placeholder="How can we help you?"
+                            value={formData.message}
+                            onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                            error={errors.message}
+                        />
+
+                        <div className="pt-2">
+                            <button
+                                type="submit"
+                                disabled={loading}
+                                className="w-full flex items-center justify-center gap-2 rounded-2xl bg-neutral-900 py-3 text-sm font-bold text-white transition-all hover:bg-neutral-800 disabled:opacity-70"
+                            >
+                                {loading ? SafeIcon(Loader2, { className: "h-4 w-4 animate-spin" }) : "Send Message"}
+                            </button>
+                        </div>
+                    </form>
+
+                    <div className="mt-12 grid grid-cols-3 gap-4 text-center text-xs text-neutral-500">
+                        <div className="flex flex-col items-center gap-2">
+                            <div className="h-10 w-10 rounded-full bg-neutral-50 flex items-center justify-center">
+                                {SafeIcon(Phone, { className: "h-4 w-4" })}
+                            </div>
+                            <span>+49 (0) 123 456 78</span>
+                        </div>
+                        <div className="flex flex-col items-center gap-2">
+                            <div className="h-10 w-10 rounded-full bg-neutral-50 flex items-center justify-center">
+                                {SafeIcon(Mail, { className: "h-4 w-4" })}
+                            </div>
+                            <span>sales@example.com</span>
+                        </div>
+                        <div className="flex flex-col items-center gap-2">
+                            <div className="h-10 w-10 rounded-full bg-neutral-50 flex items-center justify-center">
+                                {SafeIcon(MapPin, { className: "h-4 w-4" })}
+                            </div>
+                            <span>Frankfurt, DE</span>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // -----------------------------
+        // Quote Cart
+        // -----------------------------
+
+        function QuoteCart({ items, onSetQty, onClose }) {
+            const [step, setStep] = useState("cart");
+            const [loading, setLoading] = useState(false);
+            const [rfqDetails, setRfqDetails] = useState({
+                projectName: "",
+                deliveryDate: "",
+                notes: "",
+                contactName: "",
+                contactEmail: "",
+            });
+            const [rfqErrors, setRfqErrors] = useState({});
+
+            const rows = items
+                .map((it) => ({
+                    it,
+                    product: PRODUCTS.find((p) => p.id === it.productId) ?? null,
+                }))
+                .filter((r) => r.product);
+
+            const validateRfq = () => {
+                const errs = {};
+                if (!rfqDetails.projectName) errs.projectName = "Project Name is required";
+                if (!rfqDetails.contactName) errs.contactName = "Contact Name is required";
+                if (!rfqDetails.contactEmail || !rfqDetails.contactEmail.includes("@")) errs.contactEmail = "Valid email required";
+                setRfqErrors(errs);
+                return Object.keys(errs).length === 0;
+            };
+
+            const handleSubmit = () => {
+                if (!validateRfq()) return;
+                setLoading(true);
+                // Simulate API submission
+                setTimeout(() => {
+                    setLoading(false);
+                    setStep("success");
+                }, 2000);
+            };
+
+            return (
+                <div className="flex h-full flex-col bg-neutral-50/50">
+                    <div className="flex items-center justify-between border-b bg-white px-5 py-4">
+                        <div>
+                            <h2 className="font-bold text-lg">Quote Request</h2>
+                            <div className="text-xs text-neutral-500">
+                                {step === "cart" && "Review your items"}
+                                {step === "details" && "Project details"}
+                                {step === "success" && "Submission complete"}
+                            </div>
+                        </div>
+                        <button className="rounded-full p-2 hover:bg-neutral-100" onClick={onClose}>
+                            {SafeIcon(X, { className: "h-5 w-5" })}
+                        </button>
+                    </div>
+
+                    <div className="flex-1 overflow-y-auto p-5">
+                        {step === "cart" && (
+                            <>
+                                {rows.length === 0 ? (
+                                    <div className="flex flex-col items-center justify-center h-64 text-center">
+                                        <div className="h-16 w-16 bg-neutral-200 rounded-full flex items-center justify-center mb-4 text-neutral-400">
+                                            {SafeIcon(ShoppingCart, { className: "h-8 w-8" })}
+                                        </div>
+                                        <h3 className="font-medium text-neutral-900">Cart is empty</h3>
+                                        <p className="text-sm text-neutral-500 mt-1">Browse our catalog to add products.</p>
+                                        <button onClick={onClose} className="mt-4 text-sm font-semibold underline">Keep browsing</button>
+                                    </div>
+                                ) : (
+                                    <div className="space-y-4">
+                                        {rows.map(({ it, product }) => (
+                                            <div key={it.productId} className="relative flex gap-4 rounded-3xl border bg-white p-3 shadow-sm">
+                                                <div className="h-20 w-20 shrink-0 overflow-hidden rounded-2xl bg-neutral-100">
+                                                    <img src={product.heroImage} alt="thumb" className="h-full w-full object-cover" />
+                                                </div>
+                                                <div className="flex flex-col justify-between flex-1 py-1">
+                                                    <div>
+                                                        <div className="font-semibold text-sm line-clamp-1">{product.name.en}</div>
+                                                        <div className="text-xs text-neutral-500 font-mono">{product.sku}</div>
+                                                    </div>
+                                                    <div className="flex items-center justify-between">
+                                                        <div className="flex items-center gap-2 rounded-xl border px-1 bg-neutral-50">
+                                                            <button className="p-1 hover:text-neutral-900 text-neutral-400" onClick={() => onSetQty(it.productId, Math.max(0, it.qty - 1))}>−</button>
+                                                            <span className="text-sm font-medium min-w-[20px] text-center">{it.qty}</span>
+                                                            <button className="p-1 hover:text-neutral-900 text-neutral-400" onClick={() => onSetQty(it.productId, it.qty + 1)}>+</button>
+                                                        </div>
+                                                        <div className="text-xs text-neutral-500">
+                                                            {it.qty} Unit{it.qty > 1 ? "s" : ""}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </>
+                        )}
+
+                        {step === "details" && (
+                            <div className="space-y-5 animate-in slide-in-from-right-4 duration-300">
+                                <div className="bg-blue-50 text-blue-800 p-4 rounded-2xl text-xs flex gap-2">
+                                    {SafeIcon(AlertCircle, { className: "h-4 w-4 shrink-0" })}
+                                    Please provide project details to help us prepare an accurate quote.
+                                </div>
+
+                                <div className="space-y-4">
+                                    <h3 className="font-semibold text-sm border-b pb-2">Project Info</h3>
+                                    <FormInput
+                                        label="Project Name / Reference *"
+                                        placeholder="e.g. Assembly Line Upgrade 2024"
+                                        value={rfqDetails.projectName}
+                                        onChange={e => setRfqDetails({ ...rfqDetails, projectName: e.target.value })}
+                                        error={rfqErrors.projectName}
+                                        icon={SafeIcon(Briefcase, { className: "h-4 w-4" })}
+                                    />
+                                    <FormInput
+                                        type="date"
+                                        label="Target Delivery Date"
+                                        value={rfqDetails.deliveryDate}
+                                        onChange={e => setRfqDetails({ ...rfqDetails, deliveryDate: e.target.value })}
+                                        icon={SafeIcon(Calendar, { className: "h-4 w-4" })}
+                                    />
+                                </div>
+
+                                <div className="space-y-4">
+                                    <h3 className="font-semibold text-sm border-b pb-2">Contact Person</h3>
+                                    <FormInput
+                                        label="Full Name *"
+                                        placeholder="John Doe"
+                                        value={rfqDetails.contactName}
+                                        onChange={e => setRfqDetails({ ...rfqDetails, contactName: e.target.value })}
+                                        error={rfqErrors.contactName}
+                                        icon={SafeIcon(User, { className: "h-4 w-4" })}
+                                    />
+                                    <FormInput
+                                        label="Email Address *"
+                                        placeholder="john@company.com"
+                                        value={rfqDetails.contactEmail}
+                                        onChange={e => setRfqDetails({ ...rfqDetails, contactEmail: e.target.value })}
+                                        error={rfqErrors.contactEmail}
+                                        icon={SafeIcon(Mail, { className: "h-4 w-4" })}
+                                    />
+                                </div>
+
+                                <FormTextarea
+                                    label="Additional Notes"
+                                    placeholder="Special requirements, shipping instructions, etc."
+                                    value={rfqDetails.notes}
+                                    onChange={e => setRfqDetails({ ...rfqDetails, notes: e.target.value })}
+                                />
+                            </div>
+                        )}
+
+                        {step === "success" && (
+                            <div className="h-full flex flex-col items-center justify-center text-center animate-in zoom-in-95">
+                                <div className="h-20 w-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-6">
+                                    {SafeIcon(CheckCircle, { className: "h-10 w-10" })}
+                                </div>
+                                <h3 className="text-xl font-bold mb-2">Quote Requested!</h3>
+                                <p className="text-neutral-500 text-sm max-w-xs mb-8">
+                                    Your RFQ #{Math.floor(Math.random() * 10000)} has been generated. Check your email ({rfqDetails.contactEmail}) for confirmation.
+                                </p>
+                                <button onClick={onClose} className="w-full bg-neutral-900 text-white rounded-2xl py-3 font-semibold">
+                                    Return to Catalog
+                                </button>
+                            </div>
+                        )}
+                    </div>
+
+                    {step !== "success" && rows.length > 0 && (
+                        <div className="border-t bg-white p-5">
+                            {step === "cart" ? (
+                                <button
+                                    className="w-full rounded-2xl bg-neutral-900 py-3 text-sm font-bold text-white shadow-lg transition-transform active:scale-95 hover:bg-neutral-800"
+                                    onClick={() => setStep("details")}
+                                >
+                                    Continue to Request
+                                </button>
+                            ) : (
+                                <div className="flex gap-3">
+                                    <button
+                                        className="flex-1 rounded-2xl border bg-white py-3 text-sm font-bold text-neutral-900 hover:bg-neutral-50"
+                                        onClick={() => setStep("cart")}
+                                    >
+                                        Back
+                                    </button>
+                                    <button
+                                        className="flex-[2] rounded-2xl bg-neutral-900 py-3 text-sm font-bold text-white shadow-lg flex items-center justify-center gap-2 hover:bg-neutral-800 disabled:opacity-70"
+                                        onClick={handleSubmit}
+                                        disabled={loading}
+                                    >
+                                        {loading ? SafeIcon(Loader2, { className: "h-4 w-4 animate-spin" }) : "Submit Request"}
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        function DownloadWall({ kind, payload, onClose }) {
+            const [loading, setLoading] = useState(false);
+            const [downloadReady, setDownloadReady] = useState(false);
+            
+            const [form, setForm] = useState({
+                firstName: "",
+                lastName: "",
+                email: "",
+                phone: "",
+                company: "",
+                optIn: false
+            });
+            const [errors, setErrors] = useState({});
+
+            const title = kind === "doc"
+                ? `Document: ${payload?.fileName ?? ""}`
+                : `CAD: ${payload?.format ?? ""}`;
+
+            const validate = () => {
+                const e = {};
+                if (!form.firstName) e.firstName = "Required";
+                if (!form.lastName) e.lastName = "Required";
+                if (!form.email || !form.email.includes("@")) e.email = "Valid email required";
+                if (!form.company) e.company = "Required";
+                setErrors(e);
+                return Object.keys(e).length === 0;
+            };
+
+            const handleSubmit = () => {
+                if (!validate()) return;
+                setLoading(true);
+                // Simulate API lead capture
+                setTimeout(() => {
+                    setLoading(false);
+                    setDownloadReady(true);
+                }, 1500);
+            };
+
+            if (downloadReady) {
+                return (
+                    <div className="text-center py-8 animate-in zoom-in-95">
+                        <div className="h-16 w-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            {SafeIcon(Download, { className: "h-8 w-8" })}
+                        </div>
+                        <h3 className="text-lg font-bold mb-2">Ready to Download</h3>
+                        <p className="text-sm text-neutral-500 mb-6">Your file is ready. If the download doesn't start automatically, click below.</p>
+                        <button
+                            onClick={onClose}
+                            className="bg-neutral-900 text-white px-6 py-2.5 rounded-full font-medium hover:bg-neutral-800 transition-colors"
+                        >
+                            Download File
+                        </button>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="space-y-6">
+                    <div className="rounded-2xl border border-blue-100 bg-blue-50/50 p-4">
+                        <div className="flex gap-3">
+                            <div className="h-10 w-10 rounded-lg bg-white border flex items-center justify-center shrink-0">
+                                {kind === 'doc' ? SafeIcon(FileText, { className: "h-5 w-5 text-blue-600" }) : SafeIcon(Box, { className: "h-5 w-5 text-blue-600" })}
+                            </div>
+                            <div>
+                                <div className="text-sm font-bold text-blue-900">{title}</div>
+                                <div className="text-xs text-blue-700 mt-0.5">
+                                    Complete the form below to access this engineering asset.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="grid gap-4">
+                        <div className="grid grid-cols-2 gap-4">
+                            <FormInput
+                                label="First Name *"
+                                placeholder="Jane"
+                                value={form.firstName}
+                                onChange={e => setForm({ ...form, firstName: e.target.value })}
+                                error={errors.firstName}
+                            />
+                            <FormInput
+                                label="Last Name *"
+                                placeholder="Doe"
+                                value={form.lastName}
+                                onChange={e => setForm({ ...form, lastName: e.target.value })}
+                                error={errors.lastName}
+                            />
+                        </div>
+
+                        <FormInput
+                            label="Work Email *"
+                            placeholder="jane.doe@company.com"
+                            value={form.email}
+                            onChange={e => setForm({ ...form, email: e.target.value })}
+                            error={errors.email}
+                            icon={SafeIcon(Mail, { className: "h-4 w-4" })}
+                        />
+
+                        <div className="grid grid-cols-2 gap-4">
+                            <FormInput
+                                label="Company *"
+                                placeholder="Acme Corp"
+                                value={form.company}
+                                onChange={e => setForm({ ...form, company: e.target.value })}
+                                error={errors.company}
+                                icon={SafeIcon(Briefcase, { className: "h-4 w-4" })}
+                            />
+                            <FormInput
+                                label="Phone (Optional)"
+                                placeholder="+1 234..."
+                                value={form.phone}
+                                onChange={e => setForm({ ...form, phone: e.target.value })}
+                                icon={SafeIcon(Phone, { className: "h-4 w-4" })}
+                            />
+                        </div>
+
+                        <label className="flex items-start gap-3 rounded-xl border p-3 cursor-pointer hover:bg-neutral-50 transition-colors">
+                            <input
+                                type="checkbox"
+                                className="mt-1 h-4 w-4 rounded border-neutral-300 text-neutral-900 focus:ring-neutral-900"
+                                checked={form.optIn}
+                                onChange={(e) => setForm({ ...form, optIn: e.target.checked })}
+                            />
+                            <span className="text-xs text-neutral-600">
+                                I agree to receive technical updates, white papers, and product news. I can unsubscribe at any time.
+                            </span>
+                        </label>
+                    </div>
+
+                    <div className="flex gap-3 pt-2">
+                        <button className="flex-1 rounded-2xl border px-4 py-2.5 text-sm font-bold hover:bg-neutral-50 transition-colors" onClick={onClose}>
+                            Cancel
+                        </button>
+                        <button
+                            className="flex-[2] flex items-center justify-center gap-2 rounded-2xl bg-neutral-900 px-4 py-2.5 text-sm font-bold text-white hover:bg-neutral-800 disabled:opacity-70 transition-all"
+                            disabled={loading}
+                            onClick={handleSubmit}
+                        >
+                            {loading ? SafeIcon(Loader2, { className: "h-4 w-4 animate-spin" }) : "Access Download"}
+                        </button>
+                    </div>
+                </div>
+            );
+        }
+
+        // -----------------------------
+        // Footer & Modals
+        // -----------------------------
+
+        function Footer({ onImpressum, onPrivacy, onCatalog, onContact }) {
+            return (
+                <footer className="border-t bg-white pt-16 pb-8">
+                    <div className="mx-auto grid max-w-6xl gap-10 px-4 md:grid-cols-4 mb-12">
+                        <div className="space-y-4">
+                            <div className="flex items-center gap-2 font-bold text-lg">
+                                {SafeIcon(Box, { className: "h-6 w-6" })}
+                                <span>Industrial Catalog</span>
+                            </div>
+                            <div className="text-sm text-neutral-500 leading-relaxed">
+                                Premium engineering components for next-gen automation. Trusted by 500+ integrators worldwide.
+                            </div>
+                        </div>
+
+                        <div>
+                            <h4 className="font-bold text-sm mb-4">Products</h4>
+                            <ul className="space-y-2 text-sm text-neutral-600">
+                                <li><button onClick={onCatalog} className="hover:text-neutral-900 hover:underline">All Products</button></li>
+                                <li><button className="hover:text-neutral-900 hover:underline">Robotics</button></li>
+                                <li><button className="hover:text-neutral-900 hover:underline">Drives</button></li>
+                                <li><button className="hover:text-neutral-900 hover:underline">Sensors</button></li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h4 className="font-bold text-sm mb-4">Support</h4>
+                            <ul className="space-y-2 text-sm text-neutral-600">
+                                <li><button className="hover:text-neutral-900 hover:underline">Documentation</button></li>
+                                <li><button className="hover:text-neutral-900 hover:underline">CAD Library</button></li>
+                                <li><button onClick={onContact} className="hover:text-neutral-900 hover:underline">Contact Sales</button></li>
+                            </ul>
+                        </div>
+
+                        <div className="space-y-4">
+                            <h4 className="font-bold text-sm">Get in Touch</h4>
+                            <div className="flex items-center gap-2 text-sm text-neutral-600">
+                                {SafeIcon(Mail, { className: "h-4 w-4 text-neutral-400" })}
+                                <span>sales@example.com</span>
+                            </div>
+                            <div className="flex items-center gap-2 text-sm text-neutral-600">
+                                {SafeIcon(Phone, { className: "h-4 w-4 text-neutral-400" })}
+                                <span>+49 (0) 123 456 78</span>
+                            </div>
+                            <div className="flex items-center gap-2 text-sm text-neutral-600">
+                                {SafeIcon(MapPin, { className: "h-4 w-4 text-neutral-400" })}
+                                <span>Frankfurt, Germany</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="mx-auto max-w-6xl px-4 border-t pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-neutral-500">
+                        <div>© {new Date().getFullYear()} Example Industrial GmbH. All rights reserved.</div>
+                        <div className="flex gap-6">
+                            <button onClick={onImpressum} className="hover:text-neutral-900">Impressum</button>
+                            <button onClick={onPrivacy} className="hover:text-neutral-900">Privacy Policy</button>
+                            <button className="hover:text-neutral-900">Terms of Use</button>
+                        </div>
+                    </div>
+                </footer>
+            );
+        }
+
+        function Drawer({ open, onClose, children }) {
+            return (
+                <AnimatePresence>
+                    {open && (
+                        <>
+                            <motion.div
+                                className="fixed inset-0 z-50 bg-neutral-900/40 backdrop-blur-sm"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                onClick={onClose}
+                            />
+                            <motion.div
+                                className="fixed right-0 top-0 z-50 h-full w-full max-w-md border-l bg-white shadow-2xl flex flex-col"
+                                initial={{ x: "100%" }}
+                                animate={{ x: 0 }}
+                                exit={{ x: "100%" }}
+                                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                            >
+                                {children}
+                            </motion.div>
+                        </>
+                    )}
+                </AnimatePresence>
+            );
+        }
+
+        function Modal({ open, onClose, title, children }) {
+            return (
+                <AnimatePresence>
+                    {open && (
+                        <>
+                            <motion.div
+                                className="fixed inset-0 z-50 bg-neutral-900/40 backdrop-blur-sm"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                onClick={onClose}
+                            />
+                            <motion.div
+                                className="fixed left-1/2 top-1/2 z-50 w-[94vw] max-w-lg -translate-x-1/2 -translate-y-1/2 rounded-3xl border bg-white shadow-2xl max-h-[90vh] overflow-y-auto"
+                                initial={{ opacity: 0, scale: 0.95, y: "-40%" }}
+                                animate={{ opacity: 1, scale: 1, y: "-50%" }}
+                                exit={{ opacity: 0, scale: 0.95, y: "-40%" }}
+                                transition={{ duration: 0.2 }}
+                            >
+                                <div className="flex items-center justify-between border-b px-6 py-4 sticky top-0 bg-white z-10">
+                                    <div className="text-base font-bold">{title}</div>
+                                    <button className="rounded-full p-2 hover:bg-neutral-100 transition-colors" onClick={onClose}>
+                                        {SafeIcon(X, { className: "h-4 w-4" })}
+                                    </button>
+                                </div>
+                                <div className="p-6">{children}</div>
+                            </motion.div>
+                        </>
+                    )}
+                </AnimatePresence>
+            );
+        }
+
+        function CookieBanner({ state, onAccept, onReject, onPrivacy }) {
+            if (state !== "unset") return null;
+            return (
+                <motion.div
+                    initial={{ y: 100, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    className="fixed bottom-6 left-6 right-6 z-50 mx-auto max-w-4xl rounded-3xl border bg-white p-5 shadow-2xl ring-1 ring-black/5"
+                >
+                    <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                        <div className="flex gap-4">
+                            <div className="h-10 w-10 shrink-0 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
+                                {SafeIcon(Shield, { className: "h-5 w-5" })}
+                            </div>
+                            <div>
+                                <div className="text-sm font-bold text-neutral-900">Privacy Settings</div>
+                                <div className="text-sm text-neutral-600 max-w-lg mt-1">
+                                    We use cookies to enhance your experience and analyze catalog usage.
+                                    <button className="ml-1 font-medium text-neutral-900 underline" onClick={onPrivacy}>
+                                        Read Policy
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="flex gap-2 pl-14 md:pl-0">
+                            <button className="rounded-xl border border-neutral-200 px-5 py-2.5 text-sm font-bold text-neutral-700 hover:bg-neutral-50" onClick={onReject}>
+                                Necessary Only
+                            </button>
+                            <button className="rounded-xl bg-neutral-900 px-5 py-2.5 text-sm font-bold text-white shadow-lg hover:bg-neutral-800" onClick={onAccept}>
+                                Accept All
+                            </button>
+                        </div>
+                    </div>
+                </motion.div>
+            );
+        }
+
+        function LegalPage({ title, subtitle, onBack, children }) {
+            return (
+                <div className="mx-auto max-w-3xl px-4 py-12">
+                    <button className="group mb-8 flex items-center gap-1 rounded-full border px-4 py-1.5 text-sm font-medium text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900" onClick={onBack}>
+                        {SafeIcon(ChevronRight, { className: "h-4 w-4 rotate-180 transition-transform group-hover:-translate-x-1" })}
+                        Back to Home
+                    </button>
+                    <h1 className="text-4xl font-bold tracking-tight text-neutral-900">{title}</h1>
+                    <div className="mt-2 text-lg text-neutral-500">{subtitle}</div>
+                    <div className="mt-8 rounded-3xl border bg-white p-8 shadow-sm">{children}</div>
+                </div>
+            );
+        }
+
+        // Render the App
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<B2BIndustrialShowcase />);
+    </script>
+</body>
+</html>
