@@ -470,6 +470,18 @@
             padding: 6px 12px;
             border-radius: 4px;
         }
+        
+        /* Status Tag for Partners */
+        .status-tag {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: white;
+            background-color: var(--color-primary);
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+        }
 
         /* --- Specific Section Styles --- */
         .singapore-content {
@@ -742,6 +754,7 @@
             .nav-links li:nth-child(7) { animation-delay: 0.4s; }
             .nav-links li:nth-child(8) { animation-delay: 0.45s; }
             .nav-links li:nth-child(9) { animation-delay: 0.5s; }
+            .nav-links li:nth-child(10) { animation-delay: 0.55s; }
 
             .nav-links a { 
                 display: block;
@@ -1144,8 +1157,68 @@
             </div>
         </section>
 
-        <!-- 9. Contact (White) -->
-        <section id="contact" class="">
+        <!-- 9. Strategic Partnerships (MOU) [NEW SECTION] -->
+        <section id="partnerships" class="">
+            <div class="container">
+                <h2 class="reveal-on-scroll">Strategic Partnerships (MOU)</h2>
+                <p class="reveal-on-scroll" style="margin-bottom: 3rem; color: var(--color-text-muted); max-width: 800px;">
+                    Accelerating infrastructure through alliances with industry leaders. We are building a comprehensive ecosystem by partnering with domain experts in power, transportation, and public services.
+                </p>
+                
+                <div class="grid grid-3">
+                    <!-- Partner 1 -->
+                    <div class="card reveal-on-scroll delay-100">
+                        <div style="margin-bottom:1rem;">
+                            <span class="status-tag">Pre-IPO</span>
+                            <h3 style="margin-top:0.5rem; margin-bottom: 0.25rem;">Beijing HHE</h3>
+                            <div style="font-size:0.9rem; font-weight:600; color: var(--color-text-muted);">(Honghui Energy)</div>
+                        </div>
+                        
+                        <h4 style="font-size:1rem; margin-bottom:0.5rem; color:var(--color-accent);">Critical Power Infrastructure</h4>
+                        <p style="font-size:0.95rem;">Strategic partnership for critical power infrastructure including Flywheel UPS (kinetic storage) and Solid State Transformers (SST).</p>
+                        
+                        <div style="margin-top:auto; padding-top:1rem; border-top:1px solid var(--color-border); font-size:0.9rem; color:var(--color-text-muted);">
+                            <strong>Scope:</strong> Joint Venture structure for ASEAN market expansion.
+                        </div>
+                    </div>
+
+                    <!-- Partner 2 -->
+                    <div class="card reveal-on-scroll delay-200">
+                        <div style="margin-bottom:1rem;">
+                            <span class="status-tag" style="background-color: var(--color-accent);">Listed (301091)</span>
+                            <h3 style="margin-top:0.5rem; margin-bottom: 0.25rem;">SUTPC</h3>
+                            <div style="font-size:0.9rem; font-weight:600; color: var(--color-text-muted);">Shenzhen Urban Transport Planning Center</div>
+                        </div>
+
+                        <h4 style="font-size:1rem; margin-bottom:0.5rem; color:var(--color-accent);">Smart Transportation AI</h4>
+                        <p style="font-size:0.95rem;">Collaboration with Singapore Branch for Smart Transportation AI infrastructure and city-scale Digital Twins.</p>
+                        
+                        <div style="margin-top:auto; padding-top:1rem; border-top:1px solid var(--color-border); font-size:0.9rem; color:var(--color-text-muted);">
+                            <strong>Scope:</strong> Cross-border data compliance and modeling.
+                        </div>
+                    </div>
+
+                    <!-- Partner 3 -->
+                    <div class="card reveal-on-scroll delay-300">
+                        <div style="margin-bottom:1rem;">
+                            <span class="status-tag" style="background-color: var(--color-accent);">Listed (301197)</span>
+                            <h3 style="margin-top:0.5rem; margin-bottom: 0.25rem;">Junyi Digital City</h3>
+                            <div style="font-size:0.9rem; font-weight:600; color: var(--color-text-muted);">Sichuan Junyi Digital City</div>
+                        </div>
+
+                        <h4 style="font-size:1rem; margin-bottom:0.5rem; color:var(--color-accent);">Public Service AI</h4>
+                        <p style="font-size:0.95rem;">Joint exploration of LLM (Large Language Models) and VLM (Vision Language Models) for public services.</p>
+                        
+                        <div style="margin-top:auto; padding-top:1rem; border-top:1px solid var(--color-border); font-size:0.9rem; color:var(--color-text-muted);">
+                            <strong>Scope:</strong> Edge AI inference node deployment.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 10. Contact (White) -->
+        <section id="contact" class="bg-alt">
             <div class="container">
                 <h2 class="reveal-on-scroll">Contact DCDeepTech</h2>
                 <p class="reveal-on-scroll" style="margin-bottom: 3rem; color: var(--color-text-muted);">Ready to discuss your AI infrastructure or application project?</p>
