@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GAIF - Strategic Proposal for Chongqing Green Intelligent Computing Fund</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body {
+            font-family: 'Inter', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            scroll-behavior: smooth;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #064e3b 0%, #022c22 100%);
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            transition: all 0.3s ease;
+        }
+        .table-gradient th {
+            background: linear-gradient(90deg, #059669 0%, #10b981 100%);
+        }
+        /* Language Transition */
+        [data-lang] {
+            transition: opacity 0.2s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 bg-white/80 backdrop-blur-md border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-emerald-600 rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-xl">G</span>
+                    </div>
+                    <span class="text-xl font-bold tracking-tight text-slate-800">GAIF <span class="text-emerald-600">Fund</span></span>
+                </div>
+                <div class="hidden md:flex space-x-8 text-sm font-medium text-slate-600">
+                    <a href="#summary" class="hover:text-emerald-600 transition" data-en="Summary" data-zh="执行摘要">Summary</a>
+                    <a href="#strategy" class="hover:text-emerald-600 transition" data-en="Strategy" data-zh="宏观战略">Strategy</a>
+                    <a href="#tech" class="hover:text-emerald-600 transition" data-en="Technology" data-zh="核心技术">Technology</a>
+                    <a href="#finance" class="hover:text-emerald-600 transition" data-en="Finance" data-zh="财务策略">Finance</a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <!-- Language Switcher -->
+                    <button onclick="toggleLanguage()" id="langBtn" class="flex items-center space-x-1 border border-slate-300 px-3 py-1 rounded-md text-sm font-medium hover:bg-slate-100 transition">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 11.37 9.198 15.299 6 18.232"></path></svg>
+                        <span id="langLabel">中文</span>
+                    </button>
+                    <button class="bg-emerald-600 text-white px-5 py-2 rounded-full text-sm font-semibold hover:bg-emerald-700 transition" data-en="Contact" data-zh="联系我们">
+                        Contact
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="pt-32 pb-20 gradient-bg text-white overflow-hidden relative">
+        <div class="absolute inset-0 opacity-10">
+            <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                        <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" stroke-width="1"/>
+                    </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#grid)" />
+            </svg>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="max-w-3xl">
+                <div class="inline-flex items-center space-x-2 bg-emerald-500/20 px-3 py-1 rounded-full text-emerald-300 text-xs font-bold mb-6 border border-emerald-500/30">
+                    <span data-en="Strategic Feasibility & Implementation White Paper" data-zh="战略可行性与实施白皮书">Strategic Feasibility & Implementation White Paper</span>
+                </div>
+                <h1 class="text-4xl md:text-6xl font-bold leading-tight mb-6">
+                    <span data-en="Chongqing Green AI Computing Fund" data-zh="重庆绿色智算基础设施基金">Chongqing Green AI Computing Fund</span> <br>
+                    <span class="text-emerald-400" data-en="Cross-border Capital & New Productive Forces" data-zh="跨境资本与新质生产力">Cross-border Capital & New Productive Forces</span>
+                </h1>
+                <p class="text-lg text-slate-300 mb-8 leading-relaxed" data-en="In the opening year of the '15th Five-Year Plan', GAIF Fund utilizes the 'Singapore VCC + Chongqing QFLP' architecture, integrating liquid cooling deep tech with green finance to resolve the conflict between AI computing explosion and energy constraints, securing the 'Green Premium'." data-zh="在“十五五”规划开局之年，GAIF 基金通过“新加坡VCC + 重庆QFLP”架构，融合液冷深科技与绿色金融，旨在解决 AI 算力爆发与能耗限制的矛盾，锁定“绿色溢价”。">
+                    In the opening year of the '15th Five-Year Plan', GAIF Fund utilizes the 'Singapore VCC + Chongqing QFLP' architecture, integrating liquid cooling deep tech with green finance to resolve the conflict between AI computing explosion and energy constraints, securing the 'Green Premium'.
+                </p>
+                <div class="flex flex-wrap gap-4">
+                    <a href="#tech" class="bg-white text-emerald-900 px-8 py-3 rounded-lg font-bold hover:bg-emerald-50 transition shadow-lg" data-en="Tech Solution" data-zh="查看技术方案">Tech Solution</a>
+                    <a href="#finance" class="border border-white/30 bg-white/10 backdrop-blur text-white px-8 py-3 rounded-lg font-bold hover:bg-white/20 transition" data-en="ROI Analysis" data-zh="财务回报分析">ROI Analysis</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Executive Summary -->
+    <section id="summary" class="py-20 -mt-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white p-8 rounded-2xl shadow-xl border border-slate-100 card-hover">
+                    <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4" data-en="Dual-GP Model" data-zh="“双GP”模式">Dual-GP Model</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed" data-en="Dcdeeptech serves as the Technical GP, collaborating with financial institutions as the Capital GP. Solving the contradiction between high-density AI demands and strict energy limits." data-zh="由 Dcdeeptech 担任技术 GP，联合金融机构担任资本 GP。解决 AI 高密度需求与严苛能耗限制之间的矛盾。">
+                        Dcdeeptech serves as the Technical GP, collaborating with financial institutions as the Capital GP. Solving the contradiction between high-density AI demands and strict energy limits.
+                    </p>
+                </div>
+                <div class="bg-white p-8 rounded-2xl shadow-xl border border-slate-100 card-hover">
+                    <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4" data-en="Cross-border Green Channel" data-zh="跨境绿色通道">Cross-border Green Channel</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed" data-en="Leveraging Singapore VCC's tax benefits and Chongqing QFLP's convenience to open an efficient path for international capital into China's computing hubs." data-zh="利用新加坡 VCC 的税务优惠与重庆 QFLP 的便捷性，打通国际资本进入中国算力枢纽的高效路径。">
+                        Leveraging Singapore VCC's tax benefits and Chongqing QFLP's convenience to open an efficient path for international capital into China's computing hubs.
+                    </p>
+                </div>
+                <div class="bg-white p-8 rounded-2xl shadow-xl border border-slate-100 card-hover">
+                    <div class="w-12 h-12 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4" data-en="Asset Rejuvenation" data-zh="存量资产盘活">Asset Rejuvenation</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed" data-en="Focusing on 'Brownfield Transformation', reducing PUE of legacy data centers to below 1.2 via OCP-standard liquid cooling to unlock asset value." data-zh="专注“棕地改造”，通过 OCP 标准液冷技术将老旧数据中心 PUE 降至 1.2 以下，解锁资产价值。">
+                        Focusing on 'Brownfield Transformation', reducing PUE of legacy data centers to below 1.2 via OCP-standard liquid cooling to unlock asset value.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Macro Strategy -->
+    <section id="strategy" class="py-20 bg-slate-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold mb-4" data-en="Macro Strategic Context" data-zh="宏观战略语境">Macro Strategic Context</h2>
+                <div class="w-20 h-1 bg-emerald-600 mx-auto"></div>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h3 class="text-2xl font-bold mb-6 text-slate-800" data-en="Chongqing's Mission under the 15th Five-Year Plan" data-zh="“十五五”规划下的重庆使命">Chongqing's Mission under the 15th Five-Year Plan</h3>
+                    <div class="space-y-6">
+                        <div class="flex items-start space-x-4">
+                            <div class="mt-1 flex-shrink-0 w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs font-bold">1</div>
+                            <p class="text-slate-600"><strong data-en="New Productive Forces:" data-zh="新质生产力：">New Productive Forces:</strong> <span data-en="Chongqing is positioned as an 'Inland Open Comprehensive Hub'. GAIF is a deep practice of digital economy transformation and asset rejuvenation." data-zh="重庆定位为“内陆开放综合枢纽”，GAIF 正是对数字经济转型、存量资产盘活的深度实践。">Chongqing is positioned as an 'Inland Open Comprehensive Hub'. GAIF is a deep practice of digital economy transformation and asset rejuvenation.</span></p>
+                        </div>
+                        <div class="flex items-start space-x-4">
+                            <div class="mt-1 flex-shrink-0 w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs font-bold">2</div>
+                            <p class="text-slate-600"><strong data-en="PUE 1.2 Redline:" data-zh="PUE 1.2 红线：">PUE 1.2 Redline:</strong> <span data-en="National policy requires large data centers to have PUE < 1.2. Legacy assets face strong regulatory pressure for transformation or shutdown." data-zh="国家政策要求新建大型数据中心 PUE 必须低于 1.2，老旧资产面临改造与关停的强力合规压力。">National policy requires large data centers to have PUE < 1.2. Legacy assets face strong regulatory pressure for transformation or shutdown.</span></p>
+                        </div>
+                        <div class="flex items-start space-x-4">
+                            <div class="mt-1 flex-shrink-0 w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs font-bold">3</div>
+                            <p class="text-slate-600"><strong data-en="China-Singapore CCI Upgrade:" data-zh="中新 CCI 升级：">China-Singapore CCI Upgrade:</strong> <span data-en="By 2026, cooperation enters a new phase. GAIF serves as a tangible outcome, benefiting from mutual recognition of green standards and cross-border financing ease." data-zh="2026 年中新合作迈入新阶段，GAIF 作为实体化产物，享受绿色分类标准互认及跨境融资便利。">By 2026, cooperation enters a new phase. GAIF serves as a tangible outcome, benefiting from mutual recognition of green standards and cross-border financing ease.</span></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-8 rounded-3xl shadow-inner border border-slate-200">
+                    <div class="aspect-video bg-slate-900 rounded-2xl flex flex-col items-center justify-center text-white p-8 relative overflow-hidden">
+                        <div class="absolute inset-0 opacity-20">
+                            <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                                <path fill="#10B981" d="M44.7,-76.4C58.2,-69.2,69.7,-57.4,77.3,-43.8C84.8,-30.2,88.4,-15.1,88.1,-0.2C87.7,14.7,83.5,29.3,75.3,41.9C67.1,54.5,55,65,41.2,72.4C27.4,79.8,11.9,84.1,-3.5,89.5C-18.9,94.9,-37.8,101.5,-51.2,94.5C-64.6,87.5,-72.5,66.9,-78.3,49.2C-84.1,31.6,-87.8,16.8,-88.7,-0.5C-89.6,-17.8,-87.7,-35.6,-78.7,-48.9C-69.8,-62.1,-53.8,-70.9,-38.7,-77.3C-23.6,-83.8,-9.4,-87.8,2.7,-92.5C14.8,-97.2,29.7,-102.6,44.7,-76.4Z" transform="translate(100 100)" />
+                            </svg>
+                        </div>
+                        <div class="text-center z-10">
+                            <div class="text-4xl font-bold mb-2">PUE &lt; 1.15</div>
+                            <div class="text-emerald-400 font-semibold mb-4 text-lg" data-en="GAIF Core Technical Goal" data-zh="GAIF 核心技术目标">GAIF Core Technical Goal</div>
+                            <p class="text-slate-400 text-sm" data-en="Compared to traditional air-cooling (PUE 1.5 - 1.8), energy efficiency improves by over 40%." data-zh="对比传统风冷机房（PUE 1.5 - 1.8），节能率提升达 40% 以上">Compared to traditional air-cooling (PUE 1.5 - 1.8), energy efficiency improves by over 40%.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Core Technology Table -->
+    <section id="tech" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold mb-4" data-en="Tech Investment Thesis: Dcdeeptech 'Technical Alpha'" data-zh="技术投资核心论点：Dcdeeptech “技术 Alpha”">Tech Investment Thesis: Dcdeeptech 'Technical Alpha'</h2>
+                <p class="text-slate-600" data-en="Reshaping asset value through liquid cooling economics, eliminating vendor lock-in, and achieving brownfield arbitrage." data-zh="通过液冷经济学重塑资产价值，消除厂商锁定，实现棕地改造套利">Reshaping asset value through liquid cooling economics, eliminating vendor lock-in, and achieving brownfield arbitrage.</p>
+            </div>
+
+            <div class="overflow-hidden rounded-3xl shadow-2xl border border-slate-200 overflow-x-auto">
+                <table class="w-full text-left border-collapse min-w-[800px]">
+                    <thead>
+                        <tr class="table-gradient text-white">
+                            <th class="p-6 text-sm font-bold uppercase tracking-wider" data-en="Core Metrics" data-zh="核心指标">Core Metrics</th>
+                            <th class="p-6 text-sm font-bold uppercase tracking-wider" data-en="Traditional Air-cooled IDC" data-zh="传统风冷 IDC">Traditional Air-cooled IDC</th>
+                            <th class="p-6 text-sm font-bold uppercase tracking-wider text-emerald-100 italic" data-en="Dcdeeptech Liquid-cooled AIDC" data-zh="Dcdeeptech 液冷 AIDC">Dcdeeptech Liquid-cooled AIDC</th>
+                            <th class="p-6 text-sm font-bold uppercase tracking-wider" data-en="Valuation Mechanism" data-zh="估值影响机制">Valuation Mechanism</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 bg-white">
+                        <tr class="hover:bg-slate-50 transition">
+                            <td class="p-6 font-semibold" data-en="Power Density (per rack)" data-zh="单机柜功率密度">Power Density (per rack)</td>
+                            <td class="p-6 text-slate-500">4 – 8 kW</td>
+                            <td class="p-6 text-emerald-600 font-bold">40 – 100 kW</td>
+                            <td class="p-6 text-xs text-slate-600" data-en="High: Supports high-value AI tenants (LLM training), strong rental premium capability." data-zh="高：支持高净值 AI 租户（如大模型训练），租金溢价能力强">High: Supports high-value AI tenants (LLM training), strong rental premium capability.</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50 transition">
+                            <td class="p-6 font-semibold" data-en="PUE (Energy Efficiency)" data-zh="PUE (能源效率)">PUE (Energy Efficiency)</td>
+                            <td class="p-6 text-slate-500">1.5 – 1.8</td>
+                            <td class="p-6 text-emerald-600 font-bold">&lt; 1.15</td>
+                            <td class="p-6 text-xs text-slate-600" data-en="Critical: Determines eligibility for Green Credits and REITs listing." data-zh="关键：决定是否符合绿色信贷及 REITs 发行标准">Critical: Determines eligibility for Green Credits and REITs listing.</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50 transition">
+                            <td class="p-6 font-semibold" data-en="WUE (Water Efficiency)" data-zh="WUE (水资源效率)">WUE (Water Efficiency)</td>
+                            <td class="p-6 text-slate-500" data-en="High (Dependency on Evaporation)" data-zh="高 (依赖冷却塔蒸发)">High (Dependency on Evaporation)</td>
+                            <td class="p-6 text-emerald-600 font-bold" data-en="Ultra-low / Zero (Closed loop)" data-zh="极低 / 零 (闭式循环)">Ultra-low / Zero (Closed loop)</td>
+                            <td class="p-6 text-xs text-slate-600" data-en="Medium: Meets ESG rating requirements, attracts international institutional investors." data-zh="中：符合 ESG 评级要求，吸引国际基金接盘">Medium: Meets ESG rating requirements, attracts international institutional investors.</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50 transition">
+                            <td class="p-6 font-semibold" data-en="Cooling OPEX %" data-zh="制冷 OPEX 占比">Cooling OPEX %</td>
+                            <td class="p-6 text-slate-500" data-en="40%+ of IT Power" data-zh="占 IT 能耗的 40%+">40%+ of IT Power</td>
+                            <td class="p-6 text-emerald-600 font-bold" data-en="~10% of IT Power" data-zh="占 IT 能耗的 10% 左右">~10% of IT Power</td>
+                            <td class="p-6 text-xs text-slate-600" data-en="High: Directly boosts Net Operating Income (NOI) significantly." data-zh="高：直接大幅提升净营运收入 (NOI)">High: Directly boosts Net Operating Income (NOI) significantly.</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50 transition">
+                            <td class="p-6 font-semibold" data-en="Hardware Lifespan" data-zh="硬件寿命">Hardware Lifespan</td>
+                            <td class="p-6 text-slate-500" data-en="Vibration & heat spot wear" data-zh="风扇震动及热点导致损耗">Vibration & heat spot wear</td>
+                            <td class="p-6 text-emerald-600 font-bold" data-en="Stable temp extends life" data-zh="恒温环境延长芯片寿命">Stable temp extends life</td>
+                            <td class="p-6 text-xs text-slate-600" data-en="Medium: Reduces depreciation anxiety, increases client stickiness." data-zh="中：降低硬件折旧焦虑，增加客户粘性">Medium: Reduces depreciation anxiety, increases client stickiness.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Fund Architecture -->
+    <section class="py-20 bg-slate-900 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                <div>
+                    <h2 class="text-3xl font-bold mb-6" data-en="'VCC + QFLP' Dual-Layer Structure" data-zh="“VCC + QFLP” 双层架构">'VCC + QFLP' Dual-Layer Structure</h2>
+                    <p class="text-slate-400 mb-8" data-en="Through this architecture, GAIF achieves seamless integration of global capital and Chinese asset investment, enabling efficient cross-border flow and legal risk isolation." data-zh="通过这一架构，GAIF 实现了全球资本汇聚与中国资产投资的无缝对接，不仅打通了跨境流动，更实现了法律风险的有效隔离。">
+                        Through this architecture, GAIF achieves seamless integration of global capital and Chinese asset investment, enabling efficient cross-border flow and legal risk isolation.
+                    </p>
+                    <div class="space-y-6">
+                        <div class="p-6 bg-white/5 rounded-2xl border border-white/10">
+                            <h4 class="text-emerald-400 font-bold mb-2" data-en="Singapore VCC (Variable Capital Company)" data-zh="新加坡 VCC（可变动资本公司）">Singapore VCC (Variable Capital Company)</h4>
+                            <p class="text-sm text-slate-400" data-en="Umbrella structure for legal isolation; applies for Singapore 13U tax exemption on dividends and interest." data-zh="设立伞形结构，旗下子基金法律隔离；申请新加坡 13U 税务豁免，实现股息、利息全额免税。">Umbrella structure for legal isolation; applies for Singapore 13U tax exemption on dividends and interest.</p>
+                        </div>
+                        <div class="p-6 bg-white/5 rounded-2xl border border-white/10">
+                            <h4 class="text-blue-400 font-bold mb-2" data-en="Chongqing QFLP (Qualified Foreign Limited Partner)" data-zh="重庆 QFLP（合格境外有限合伙人）">Chongqing QFLP (Qualified Foreign Limited Partner)</h4>
+                            <p class="text-sm text-slate-400" data-en="Utilizes the CCI green channel, supports equity-debt hybrids, simplifies profit repatriation, and enjoys policy dividends." data-zh="利用中新互联互通绿色通道，支持“股债结合”投资，简化利润汇出流程，享受政策红利。">Utilizes the CCI green channel, supports equity-debt hybrids, simplifies profit repatriation, and enjoys policy dividends.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="relative">
+                    <div class="bg-gradient-to-br from-emerald-900 to-slate-800 p-8 rounded-3xl border border-emerald-500/30 shadow-2xl">
+                        <div class="flex flex-col space-y-4">
+                            <div class="p-4 bg-emerald-600 rounded-lg text-center font-bold" data-en="Global LP (SWF / Family Office)" data-zh="全球 LP (主权基金/家办)">Global LP (SWF / Family Office)</div>
+                            <div class="flex justify-center"><svg class="w-6 h-6 text-emerald-500 rotate-180 md:rotate-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 10.293a1 1 0 010 1.414l-6 6a1 1 0 01-1.414 0l-6-6a1 1 0 111.414-1.414L9 14.586V3a1 1 0 012 0v11.586l4.293-4.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg></div>
+                            <div class="p-4 bg-slate-700 rounded-lg text-center font-bold border border-emerald-500/50" data-en="Singapore VCC Fund" data-zh="新加坡 VCC 母基金">Singapore VCC Fund</div>
+                            <div class="flex justify-center"><svg class="w-6 h-6 text-emerald-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 10.293a1 1 0 010 1.414l-6 6a1 1 0 01-1.414 0l-6-6a1 1 0 111.414-1.414L9 14.586V3a1 1 0 012 0v11.586l4.293-4.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg></div>
+                            <div class="p-4 bg-slate-700 rounded-lg text-center font-bold border border-blue-500/50" data-en="Chongqing QFLP Onshore Fund" data-zh="重庆 QFLP 境内基金">Chongqing QFLP Onshore Fund</div>
+                            <div class="flex justify-center"><svg class="w-6 h-6 text-emerald-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 10.293a1 1 0 010 1.414l-6 6a1 1 0 01-1.414 0l-6-6a1 1 0 111.414-1.414L9 14.586V3a1 1 0 012 0v11.586l4.293-4.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg></div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="p-3 bg-emerald-500/20 rounded border border-emerald-500/30 text-xs text-center" data-en="SPV 1: AIDC Center" data-zh="SPV 1: 智算中心">SPV 1: AIDC Center</div>
+                                <div class="p-3 bg-emerald-500/20 rounded border border-emerald-500/30 text-xs text-center" data-en="SPV 2: Brownfield" data-zh="SPV 2: 棕地项目">SPV 2: Brownfield</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Financial Targets -->
+    <section id="finance" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold mb-4" data-en="Financial Feasibility & Return Targets" data-zh="财务可行性与回报目标">Financial Feasibility & Return Targets</h2>
+                <p class="text-slate-600 text-lg" data-en="Driven by 'Multiple Expansion' and 'NOI Uplift'" data-zh="通过“估值倍数扩张”与“NOI 提升”双轮驱动">Driven by 'Multiple Expansion' and 'NOI Uplift'</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="text-center p-8 bg-slate-50 rounded-2xl">
+                    <div class="text-4xl font-bold text-emerald-600 mb-2">14-18%</div>
+                    <div class="text-slate-600 font-medium" data-en="Target Net IRR" data-zh="目标净内部收益率 (Net IRR)">Target Net IRR</div>
+                </div>
+                <div class="text-center p-8 bg-slate-50 rounded-2xl">
+                    <div class="text-4xl font-bold text-emerald-600 mb-2">2.0-2.5x</div>
+                    <div class="text-slate-600 font-medium" data-en="Target MOIC" data-zh="目标投资倍数 (MOIC)">Target MOIC</div>
+                </div>
+                <div class="text-center p-8 bg-slate-50 rounded-2xl">
+                    <div class="text-4xl font-bold text-blue-600 mb-2">8x - 22x</div>
+                    <div class="text-slate-600 font-medium" data-en="Multiple Expansion (Exit vs Entry)" data-zh="倍数扩张 (收购 vs 退出)">Multiple Expansion (Exit vs Entry)</div>
+                </div>
+                <div class="text-center p-8 bg-slate-50 rounded-2xl">
+                    <div class="text-4xl font-bold text-blue-600 mb-2">40%+</div>
+                    <div class="text-slate-600 font-medium" data-en="Energy Cost Savings" data-zh="电力成本节省率">Energy Cost Savings</div>
+                </div>
+            </div>
+
+            <div class="mt-20 grid grid-cols-1 md:grid-cols-2 gap-12">
+                <div class="bg-emerald-50 p-10 rounded-3xl">
+                    <h3 class="text-2xl font-bold mb-6 flex items-center">
+                        <svg class="w-6 h-6 mr-3 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <span data-en="Exit Paths: Diversified Liquidity" data-zh="退出路径：多元化流动性方案">Exit Paths: Diversified Liquidity</span>
+                    </h3>
+                    <ul class="space-y-4 text-slate-700">
+                        <li class="flex items-start">
+                            <span class="mr-2">•</span>
+                            <span data-en="<strong>C-REITs:</strong> High-quality AIDC assets meet Chinese Public REITs listing standards." data-zh="<strong>C-REITs 通道：</strong> 优质 AIDC 资产完全符合中国公募 REITs 底层资产上市标准。"><strong>C-REITs:</strong> High-quality AIDC assets meet Chinese Public REITs listing standards.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="mr-2">•</span>
+                            <span data-en="<strong>S-REITs 'Asset Recycling':</strong> Exit via VCC by selling equity to international capital seeking ESG-compliant assets." data-zh="<strong>S-REITs “资产循环”：</strong> 通过新加坡 VCC 架构将股权出售给急需 ESG 资产的国际资本。"><strong>S-REITs 'Asset Recycling':</strong> Exit via VCC by selling equity to international capital seeking ESG-compliant assets.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="mr-2">•</span>
+                            <span data-en="<strong>M&A:</strong> Strong demand from domestic/int'l insurers and SWFs for stable-yield green infrastructure." data-zh="<strong>并购退出：</strong> 国内外险资及主权基金对稳定收益的绿色基础设施有长期配置需求。"><strong>M&A:</strong> Strong demand from domestic/int'l insurers and SWFs for stable-yield green infrastructure.</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="bg-slate-900 text-white p-10 rounded-3xl">
+                    <h3 class="text-2xl font-bold mb-6 flex items-center">
+                        <svg class="w-6 h-6 mr-3 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                        <span data-en="Risk Management" data-zh="风险管控">Risk Management</span>
+                    </h3>
+                    <div class="space-y-4 text-slate-300 text-sm">
+                        <p><strong data-en="Regulatory:" data-zh="监管风险：">Regulatory:</strong> <span data-en="Physical isolation; fund holds infrastructure only, no access to tenant data." data-zh="严格物理隔离，基金仅持有基础设施，不触碰租户数据。">Physical isolation; fund holds infrastructure only, no access to tenant data.</span></p>
+                        <p><strong data-en="Taxation:" data-zh="税务风险：">Taxation:</strong> <span data-en="Ensure QFLP substance to secure 10% withholding tax treatment." data-zh="确保 QFLP 实质性运营，争取 10% 预提税待遇。">Ensure QFLP substance to secure 10% withholding tax treatment.</span></p>
+                        <p><strong data-en="Technical:" data-zh="技术风险：">Technical:</strong> <span data-en="Strict adherence to OCP standards and leak detection; comprehensive insurance." data-zh="严格执行 OCP 标准及“漏液检测”体系，购买足额商业保险。">Strict adherence to OCP standards and leak detection; comprehensive insurance.</span></p>
+                        <p><strong data-en="Market:" data-zh="市场风险：">Market:</strong> <span data-en="Focus solely on 50kW+ high-density AIDC; avoid low-density generic computing." data-zh="坚决避开低密度通用算力，深耕 50kW+ 高密度 AIDC 蓝海。">Focus solely on 50kW+ high-density AIDC; avoid low-density generic computing.</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-50 py-12 border-t border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div class="text-xl font-bold mb-4">GAIF Fund</div>
+            <p class="text-slate-500 text-sm max-w-lg mx-auto mb-8" data-en="Dcdeeptech-Chongqing Green AI Computing Fund: Defining the leader in green AI infrastructure for Western China and SE Asia." data-zh="Dcdeeptech-重庆绿色智算基础设施基金：定义西部地区乃至东南亚地区绿色 AI 基础设施的领跑者。">
+                Dcdeeptech-Chongqing Green AI Computing Fund: Defining the leader in green AI infrastructure for Western China and SE Asia.
+            </p>
+            <div class="text-slate-400 text-xs" data-en="© 2026 Dcdeeptech. All rights reserved. Based on the China-Singapore (Chongqing) Connectivity Initiative framework." data-zh="© 2026 Dcdeeptech. All rights reserved. 战略方案基于中新（重庆）战略性互联互通示范项目框架。">
+                © 2026 Dcdeeptech. All rights reserved. Based on the China-Singapore (Chongqing) Connectivity Initiative framework.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        let currentLang = 'en';
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'zh' : 'en';
+            
+            // Update all elements with data-en and data-zh
+            document.querySelectorAll('[data-en]').forEach(el => {
+                el.innerHTML = el.getAttribute(`data-${currentLang}`);
+            });
+
+            // Update button label
+            document.getElementById('langLabel').innerText = currentLang === 'en' ? '中文' : 'English';
+            
+            // Update document lang attribute
+            document.documentElement.setAttribute('lang', currentLang === 'en' ? 'en' : 'zh-CN');
+            
+            // Re-animate or smooth transition if needed
+            document.body.style.opacity = '0.8';
+            setTimeout(() => { document.body.style.opacity = '1'; }, 50);
+        }
+    </script>
+</body>
+</html>
