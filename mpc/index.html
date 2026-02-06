@@ -81,8 +81,23 @@
             position: relative;
             background: #1e293b;
             border-bottom: 1px solid #0f172a;
+            transition: background-color 0.5s ease;
         }
         .server-led { box-shadow: 0 0 5px currentColor; }
+
+        /* 气流粒子动画 */
+        @keyframes flow-x {
+            0% { transform: translateX(-10px); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateX(20px); opacity: 0; }
+        }
+        .airflow-particle {
+            position: absolute;
+            width: 2px;
+            height: 1px;
+            background: rgba(255,255,255,0.3);
+            animation: flow-x 1s linear infinite;
+        }
 
         /* 全屏闪烁 */
         @keyframes mode-flash {
@@ -158,17 +173,61 @@
             );
         };
 
-        // --- OCP 机柜组件 ---
-        const OCPRack = ({ load, temp, pue, cue, wug, mode, theme }) => {
-            const units = 12; 
-            const activeUnits = Math.ceil((load / 100) * units);
+        // --- OCP 机柜组件 (Enhanced Physics) ---
+        const OCPRack = ({ load, temp, pue, cue, wug, mode, theme, t }) => {
+            const units = 14; 
             
-            const getLedColor = (isActive) => {
-                if (!isActive) return '#334155';
-                if (mode === 'PID' && temp > 65) return '#ef4444';
-                if (mode === 'Rule' && temp > 60) return '#f59e0b';
-                return '#10b981';
-            };
+            // 模拟单个服务器单元的物理状态
+            const serverData = useMemo(() => {
+                return Array.from({ length: units }).map((_, i) => {
+                    const unitId = units - i; // 从上到下编号 14 -> 1
+                    
+                    // 基础负载分配
+                    const isIdle = (i / units) * 100 > load;
+                    
+                    // 物理模拟：热分层效应 (Thermal Stratification)
+                    // PID 模式下，顶部机柜(unitId较大)温度显著升高
+                    let unitTemp = parseFloat(temp);
+                    let variance = 0;
+
+                    if (!isIdle) {
+                        if (mode === 'PID') {
+                            // PID: 严重的热分层 + 随机热点
+                            const heightPenalty = (unitId / units) * 8; // 顶部热 8度
+                            const hotspot = Math.random() > 0.8 ? 10 : 0; // 随机热点
+                            variance = heightPenalty + hotspot + (Math.random() * 2);
+                        } else if (mode === 'Rule') {
+                            // Rule: 中等分层
+                            const heightPenalty = (unitId / units) * 4;
+                            variance = heightPenalty + (Math.random() * 3);
+                        } else {
+                            // MPC: 智能导风，温度极其均匀
+                            variance = Math.random() * 1.5; 
+                        }
+                    } else {
+                        unitTemp = 24; // 待机温度
+                    }
+
+                    const finalTemp = (unitTemp + variance).toFixed(1);
+                    
+                    // 颜色映射：根据单体温度决定颜色
+                    let color = '#1e293b'; // 默认冷
+                    if (!isIdle) {
+                        if (finalTemp < 50) color = '#064e3b'; // 极佳 (深绿)
+                        else if (finalTemp < 60) color = '#1e293b'; // 正常 (蓝灰)
+                        else if (finalTemp < 70) color = '#713f12'; // 偏热 (暗橙)
+                        else color = '#7f1d1d'; // 过热 (暗红)
+                    }
+
+                    return {
+                        id: unitId,
+                        temp: finalTemp,
+                        isIdle,
+                        color,
+                        isHot: finalTemp > 65
+                    };
+                });
+            }, [load, temp, mode]);
 
             return (
                 <div className="glass-panel p-4 rounded-xl h-full flex flex-col items-center relative overflow-hidden">
@@ -188,27 +247,55 @@
                         </div>
                     </div>
 
-                    <div className="ocp-rack-frame w-full flex-1 flex flex-col p-[2px] relative rounded-sm">
-                        <div className="h-6 bg-slate-800 border-b border-black mb-[1px] flex items-center justify-between px-2">
+                    <div className="ocp-rack-frame w-full flex-1 flex flex-col p-[2px] relative rounded-sm bg-black/80">
+                        {/* Rack Top Switch */}
+                        <div className="h-6 bg-slate-900 border-b border-slate-700 mb-[1px] flex items-center justify-between px-2">
                              <div className="flex gap-1">{[1,2].map(i => <div key={i} className="w-1 h-1 rounded-full bg-green-500 animate-pulse"></div>)}</div>
-                             <span className="text-[8px] text-slate-500">ToR</span>
+                             <span className="text-[8px] text-slate-500 font-mono">ToR-SW-01</span>
                         </div>
                         
                         {/* Servers */}
-                        <div className="flex-1 flex flex-col gap-[1px] relative z-10">
-                            {Array.from({ length: units }).map((_, i) => {
-                                const index = units - 1 - i; 
-                                const isActive = index < activeUnits;
-                                return (
-                                    <div key={i} className="server-sled h-full flex items-center justify-between px-2">
-                                        <div className="w-1 h-1 rounded-full transition-colors duration-300 server-led" style={{ backgroundColor: getLedColor(isActive), color: getLedColor(isActive) }} />
+                        <div className="flex-1 flex flex-col gap-[1px] relative z-10 p-1">
+                            {serverData.map((unit) => (
+                                <div 
+                                    key={unit.id} 
+                                    className="server-sled flex-1 flex items-center justify-between px-2 transition-colors duration-500"
+                                    style={{ backgroundColor: unit.color }}
+                                >
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-[8px] font-mono text-slate-500 w-4">{unit.id}U</span>
+                                        {!unit.isIdle && (
+                                            <div className={`w-1 h-1 rounded-full animate-pulse ${unit.isHot ? 'bg-red-500' : 'bg-blue-400'}`}></div>
+                                        )}
                                     </div>
-                                );
-                            })}
+                                    
+                                    {/* 气流动画 (仅工作状态显示) */}
+                                    {!unit.isIdle && (
+                                        <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-30">
+                                            <div className="airflow-particle" style={{ top: '50%', left: '20%', animationDelay: `${Math.random()}s` }}></div>
+                                            <div className="airflow-particle" style={{ top: '30%', left: '50%', animationDelay: `${Math.random()}s` }}></div>
+                                        </div>
+                                    )}
+
+                                    <span className={`text-[9px] font-mono ${unit.isHot ? 'text-red-400 font-bold' : 'text-slate-400'}`}>
+                                        {unit.temp}°C
+                                    </span>
+                                </div>
+                            ))}
                         </div>
                         
-                        {mode === 'MPC' && <div className="scanner-bar" style={{ background: theme.primary, boxShadow: `0 0 10px ${theme.primary}` }}></div>}
-                        <div className="absolute inset-0 pointer-events-none transition-opacity duration-1000 z-0 mix-blend-overlay" style={{ background: `linear-gradient(to top, ${temp > 60 ? '#ef4444' : '#10b981'}, transparent)`, opacity: load / 200 }} />
+                        {/* 底部热成像图例 */}
+                        <div className="h-2 w-full mt-1 rounded-sm flex text-[8px] text-slate-500 font-mono justify-between px-1 bg-gradient-to-r from-blue-900 via-yellow-900 to-red-900 opacity-50">
+                            <span>20°C</span>
+                            <span>80°C</span>
+                        </div>
+
+                        {mode === 'MPC' && <div className="scanner-bar" style={{ background: theme.primary, boxShadow: `0 0 10px ${theme.primary}`, opacity: 0.5 }}></div>}
+                    </div>
+                    
+                    <div className="mt-2 w-full flex justify-between text-[9px] text-slate-500 font-mono">
+                        <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-blue-900"></div> {t.rack.intake}</div>
+                        <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-red-900"></div> {t.rack.exhaust}</div>
                     </div>
                 </div>
             );
@@ -221,12 +308,117 @@
         };
 
         const Dashboard = () => {
+            const [lang, setLang] = useState('zh');
             const [mode, setMode] = useState('MPC');
             const [load, setLoad] = useState(45);
             const [time, setTime] = useState(0);
             const [history, setHistory] = useState([]);
             const [flash, setFlash] = useState(false); 
             const theme = THEME[mode];
+
+            // 翻译字典 - 覆盖所有 UI 文本
+            const translations = {
+                zh: {
+                    title: "AIDC 智算控制台",
+                    subtitle: "MPC 策略神经中枢",
+                    header: {
+                        online: "在线",
+                        region: "新加坡-西部-1"
+                    },
+                    controller: "控制器",
+                    inputLoad: "负载输入",
+                    kpi: {
+                        chipTemp: "芯片温度",
+                        headroom: "热冗余",
+                        itPower: "IT功耗",
+                        cooling: "制冷功耗"
+                    },
+                    charts: {
+                        realtime: "实时动态",
+                        log: "系统日志",
+                        listening: "系统初始化完成。正在监听端口 8080...",
+                        logPrefix: {
+                            mpc: ">> 优化器：",
+                            pid: ">> 警告：",
+                            rule: ">> 规则："
+                        }
+                    },
+                    rack: {
+                        intake: "冷通道",
+                        exhaust: "热通道"
+                    },
+                    labels: {
+                        compute: "算力",
+                        pump: "泵速"
+                    },
+                    logs: {
+                        mpc: "检测到未来180s负载尖峰。预冷程序已启动...",
+                        pid: "温度偏差 > 2.5。被动响应滞后，尝试积分补偿。",
+                        rule: "触发阈值 55°C。执行强制切换逻辑。"
+                    },
+                    modeStatus: {
+                        MPC: ">> AI 预测模型已激活",
+                        PID: ">> 被动反馈回路已激活",
+                        Rule: ">> 静态逻辑已激活"
+                    },
+                    modes: {
+                        MPC: "模型预测",
+                        PID: "PID控制",
+                        Rule: "规则逻辑"
+                    }
+                },
+                en: {
+                    title: "AIDC OPERATIONS",
+                    subtitle: "Neural Strategy Hub",
+                    header: {
+                        online: "ONLINE",
+                        region: "SG-WEST-1"
+                    },
+                    controller: "Controller",
+                    inputLoad: "Input Load",
+                    kpi: {
+                        chipTemp: "CHIP TEMP",
+                        headroom: "HEADROOM",
+                        itPower: "IT POWER",
+                        cooling: "COOLING"
+                    },
+                    charts: {
+                        realtime: "Realtime Dynamics",
+                        log: "System Log",
+                        listening: "Systemd initialized. Listening on port 8080...",
+                        logPrefix: {
+                            mpc: ">> OPTIMIZER: ",
+                            pid: ">> WARNING: ",
+                            rule: ">> RULE: "
+                        }
+                    },
+                    rack: {
+                        intake: "COLD AISLE",
+                        exhaust: "HOT AISLE"
+                    },
+                    labels: {
+                        compute: "COMPUTE",
+                        pump: "PUMP"
+                    },
+                    logs: {
+                        mpc: "Look-ahead window 180s. Pre-cooling...",
+                        pid: "Error deviation > 2.5. Integral windup.",
+                        rule: "Threshold 55C triggered. Hard switch."
+                    },
+                    modeStatus: {
+                        MPC: ">> AI Predictive Model Active",
+                        PID: ">> Reactive Loop Active",
+                        Rule: ">> Static Logic Active"
+                    },
+                    modes: {
+                        MPC: "MPC Model",
+                        PID: "PID Loop",
+                        Rule: "Rule Logic"
+                    }
+                }
+            };
+
+            const t = translations[lang];
 
             // Simulation Logic
             const currentTemp = useMemo(() => {
@@ -273,17 +465,23 @@
                         <div className="flex items-center gap-3">
                             <Icon name="Server" size={20} className="text-white" />
                             <div>
-                                <h1 className="text-base font-bold tracking-tight text-white leading-tight">AIDC OPERATIONS</h1>
-                                <p className="text-[10px] text-slate-400 font-mono uppercase tracking-wider">Neural Strategy Hub</p>
+                                <h1 className="text-base font-bold tracking-tight text-white leading-tight">{t.title}</h1>
+                                <p className="text-[10px] text-slate-400 font-mono uppercase tracking-wider">{t.subtitle}</p>
                             </div>
                         </div>
                         <div className="flex items-center gap-4 text-[10px] font-mono">
                             <div className="flex items-center gap-2">
                                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                                <span className="text-emerald-400">ONLINE</span>
+                                <span className="text-emerald-400">{t.header.online}</span>
                             </div>
                             <span className="text-slate-600">|</span>
-                            <span>SG-WEST-1</span>
+                            <span>{t.header.region}</span>
+                            <button 
+                                onClick={() => setLang(lang === 'zh' ? 'en' : 'zh')}
+                                className="ml-4 px-2 py-1 border border-slate-700 rounded hover:bg-white/10 transition-colors"
+                            >
+                                {lang === 'zh' ? 'EN' : '中文'}
+                            </button>
                         </div>
                     </header>
 
@@ -295,7 +493,7 @@
                             
                             {/* 1. Compact Mode Selector (Corner) */}
                             <section className="glass-panel p-3 rounded-xl flex flex-col gap-2">
-                                <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Controller</h3>
+                                <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">{t.controller}</h3>
                                 <div className="grid grid-cols-3 gap-1">
                                     {['PID', 'Rule', 'MPC'].map(m => (
                                         <button
@@ -305,12 +503,12 @@
                                             style={mode === m ? { color: THEME[m].primary } : { color: '#64748b' }}
                                         >
                                             <Icon name={THEME[m].icon} size={16} />
-                                            <span className="text-[9px] font-bold mt-1">{m}</span>
+                                            <span className="text-[9px] font-bold mt-1">{t.modes[m]}</span>
                                         </button>
                                     ))}
                                 </div>
                                 <div className="text-[10px] mt-1 h-8 leading-tight opacity-70 px-1" style={{ color: theme.primary }}>
-                                    {mode === 'MPC' ? ">> AI Predictive Model Active" : (mode === 'PID' ? ">> Reactive Loop Active" : ">> Static Logic Active")}
+                                    {t.modeStatus[mode]}
                                 </div>
                             </section>
 
@@ -318,7 +516,7 @@
                             <section className="glass-panel p-4 rounded-xl flex-1 flex flex-col items-center justify-center gap-6">
                                 <div className="w-full">
                                     <div className="flex justify-between items-end mb-2">
-                                        <label className="text-[10px] font-bold text-slate-500 uppercase">Input Load</label>
+                                        <label className="text-[10px] font-bold text-slate-500 uppercase">{t.inputLoad}</label>
                                         <span className="text-2xl font-mono font-bold" style={{ color: theme.primary }}>{load}%</span>
                                     </div>
                                     <input 
@@ -329,8 +527,8 @@
                                     />
                                 </div>
                                 <div className="flex gap-4 justify-center w-full">
-                                    <MiniGauge value={load} label="COMPUTE" color={theme.primary} />
-                                    <MiniGauge value={mode==='MPC'?Math.min(100, load+10):Math.min(100, load*1.5)} label="PUMP" color={mode==='PID'?'#ef4444':'#10b981'} />
+                                    <MiniGauge value={load} label={t.labels.compute} color={theme.primary} />
+                                    <MiniGauge value={mode==='MPC'?Math.min(100, load+10):Math.min(100, load*1.5)} label={t.labels.pump} color={mode==='PID'?'#ef4444':'#10b981'} />
                                 </div>
                             </section>
                         </div>
@@ -341,10 +539,10 @@
                             {/* KPI Strip */}
                             <div className="grid grid-cols-4 gap-3 h-20 shrink-0">
                                 {[
-                                    { l: "CHIP TEMP", v: currentTemp, u: "°C", c: parseFloat(currentTemp)>60 ? (mode==='PID'?'text-red-400':'text-yellow-400') : 'text-slate-200' },
-                                    { l: "HEADROOM", v: (85-parseFloat(currentTemp)).toFixed(1), u: "°C", c: "text-blue-300" },
-                                    { l: "IT POWER", v: itPower, u: "kW", c: "text-slate-200" },
-                                    { l: "COOLING", v: (parseFloat(itPower)*(pue-1)).toFixed(1), u: "kW", c: "text-slate-400" },
+                                    { l: t.kpi.chipTemp, v: currentTemp, u: "°C", c: parseFloat(currentTemp)>60 ? (mode==='PID'?'text-red-400':'text-yellow-400') : 'text-slate-200' },
+                                    { l: t.kpi.headroom, v: (85-parseFloat(currentTemp)).toFixed(1), u: "°C", c: "text-blue-300" },
+                                    { l: t.kpi.itPower, v: itPower, u: "kW", c: "text-slate-200" },
+                                    { l: t.kpi.cooling, v: (parseFloat(itPower)*(pue-1)).toFixed(1), u: "kW", c: "text-slate-400" },
                                 ].map((k,i) => (
                                     <div key={i} className="glass-panel rounded-xl flex flex-col justify-center items-center relative overflow-hidden">
                                         <div className="text-[9px] text-slate-500 font-bold uppercase">{k.l}</div>
@@ -358,7 +556,7 @@
                                 {/* Top Chart: Realtime */}
                                 <section className="glass-panel p-3 rounded-xl flex-1 min-h-0 flex flex-col relative overflow-hidden" style={{ borderColor: `${theme.primary}30` }}>
                                     <h3 className="text-[10px] font-bold text-slate-500 uppercase mb-2 flex items-center gap-2 shrink-0">
-                                        <Icon name="Activity" size={12} className={theme.primary} /> Realtime Dynamics
+                                        <Icon name="Activity" size={12} className={theme.primary} /> {t.charts.realtime}
                                     </h3>
                                     <div className="flex-1 min-h-0">
                                         <ResponsiveContainer width="100%" height="100%">
@@ -378,22 +576,19 @@
                                 <section className="glass-panel p-3 rounded-xl h-1/3 shrink-0 flex flex-col relative overflow-hidden">
                                     <div className="absolute top-0 left-0 w-1 h-full" style={{ backgroundColor: theme.primary, opacity: 0.5 }}></div>
                                     <h3 className="text-[10px] font-bold text-slate-500 uppercase mb-2 flex items-center gap-2 shrink-0">
-                                        <Icon name="Terminal" size={12} /> System Log
+                                        <Icon name="Terminal" size={12} /> {t.charts.log}
                                     </h3>
                                     <div className="font-mono text-[10px] leading-relaxed opacity-80 overflow-hidden">
-                                        <div className="text-slate-500">Listening on port 8080... [OK]</div>
+                                        <div className="text-slate-500">{t.charts.listening} [OK]</div>
                                         <AnimatePresence mode="wait">
                                             <motion.div 
-                                                key={mode} 
+                                                key={mode + lang} 
                                                 initial={{ opacity: 0, x: -5 }} 
                                                 animate={{ opacity: 1, x: 0 }} 
                                                 className="mt-1"
                                                 style={{ color: theme.primary }}
                                             >
-                                                {mode === 'MPC' 
-                                                    ? `>> OPTIMIZER: Look-ahead window 180s. Pre-cooling...`
-                                                    : (mode === 'PID' ? `>> WARNING: Error deviation > 2.5. Integral windup.` : `>> RULE: Threshold 55C triggered. Hard switch.`)
-                                                }
+                                                {t.charts.logPrefix[mode.toLowerCase()] + t.logs[mode.toLowerCase()]}
                                             </motion.div>
                                         </AnimatePresence>
                                     </div>
@@ -403,7 +598,7 @@
 
                         {/* RIGHT: Digital Twin (Rack) */}
                         <div className="col-span-3 h-full">
-                            <OCPRack load={load} temp={currentTemp} pue={pue} cue={cue} wug={wug} mode={mode} theme={theme} />
+                            <OCPRack load={load} temp={currentTemp} pue={pue} cue={cue} wug={wug} mode={mode} theme={theme} t={t} />
                         </div>
 
                     </div>
