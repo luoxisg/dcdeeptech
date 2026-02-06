@@ -1,525 +1,418 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { 
-  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  AreaChart, Area, ReferenceLine, ComposedChart
-} from 'recharts';
-import { 
-  Settings, Activity, ShieldCheck, Zap, 
-  Languages, PlayCircle, Download, ChevronDown, 
-  ChevronUp, AlertTriangle, Cpu, Leaf, BarChart3, Radio
-} from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+ <!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIDC MPC Operations Dashboard</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- React & ReactDOM -->
+    <script src="https://unpkg.com/react@18.2.0/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
+    <!-- PropTypes -->
+    <script src="https://unpkg.com/prop-types@15.8.1/prop-types.min.js"></script>
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Recharts -->
+    <script src="https://unpkg.com/recharts@2.12.7/umd/Recharts.js"></script>
+    <!-- Framer Motion -->
+    <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@0.344.0/dist/umd/lucide.min.js"></script>
 
-// --- I18n Dictionary ---
-const translations = {
-  zh: {
-    title: "AIDC MPC 智慧能效神经中枢",
-    subtitle: "IMDA 政策可解释性演示版",
-    controlMode: "内核控制算法",
-    pid: "传统 PID",
-    rule: "启发式规则",
-    mpc: "模型预测控制 (MPC)",
-    inputs: "感知控制区",
-    computeLoad: "AI 计算算力负载",
-    loadPresets: { idle: "低功耗", inference: "推理负载", training: "全速训练" },
-    coolingConstraints: "工程物理约束",
-    pumpLimit: "泵组容量限制",
-    flowRate: "冷却液流量",
-    supplyTemp: "供水温度",
-    humidity: "环境湿度",
-    objective: "策略权重 (Weights)",
-    slaFirst: "SLA 优先 (零热损)",
-    energyFirst: "碳中和优先 (低碳)",
-    carbonAware: "碳强度感知",
-    kpis: {
-      chipTemp: "芯片平均温度",
-      thermalHeadroom: "热安全边际",
-      itPower: "IT 总功率",
-      coolingPower: "制冷能耗",
-      pue: "实时 PUE"
-    },
-    charts: {
-      realtime: "实时运行态势 (Live Stream)",
-      prediction: "MPC 神经预测视图 (Prediction)",
-      explanation: "MPC 决策推理链路"
-    },
-    compliance: "合规与准入标准",
-    ashrae: "ASHRAE 运行包络线",
-    director: "导演脚本控制",
-    scenarios: {
-      spikePid: "负载激增 (PID模式)",
-      spikeMpc: "负载激增 (MPC预处理)",
-      failure: "制冷机组离线模拟"
-    },
-    mpcExplain: "AI 识别到未来 180s 内将出现计算波峰，已提前 45s 调低供水温度 1.8℃。当前能耗效率提升 12.4%。",
-    predictLabel: "MPC 预测预测",
-    limitLabel: "物理临界线"
-  },
-  en: {
-    title: "AIDC MPC Neural Hub",
-    subtitle: "IMDA Policy Explainability Demo",
-    controlMode: "Kernel Control",
-    pid: "Legacy PID",
-    rule: "Rule-based",
-    mpc: "MPC Core",
-    inputs: "Perception & Control",
-    computeLoad: "AI Compute Workload",
-    loadPresets: { idle: "Idle", inference: "Inference", training: "Heavy Training" },
-    coolingConstraints: "Physical Constraints",
-    pumpLimit: "Pump Capacity",
-    flowRate: "Flow Rate",
-    supplyTemp: "Supply Water",
-    humidity: "Humidity",
-    objective: "Strategic Weighting",
-    slaFirst: "SLA (Zero Overheat)",
-    energyFirst: "Net Zero (Eco)",
-    carbonAware: "Carbon-aware",
-    kpis: {
-      chipTemp: "Avg Chip Temp",
-      thermalHeadroom: "Thermal Margin",
-      itPower: "IT Power",
-      coolingPower: "Cooling Power",
-      pue: "Live PUE"
-    },
-    charts: {
-      realtime: "Real-time Dynamics",
-      prediction: "MPC Neural Prediction",
-      explanation: "Decision Reasoning"
-    },
-    compliance: "Compliance & Safety",
-    ashrae: "ASHRAE Envelope",
-    director: "Director Console",
-    scenarios: {
-      spikePid: "Load Spike + PID",
-      spikeMpc: "Load Spike + MPC (Proactive)",
-      failure: "Cooling Offline Sim"
-    },
-    mpcExplain: "AI detected compute surge in 180s. Supply water temp lowered by 1.8°C (45s ahead). Energy efficiency +12.4%.",
-    predictLabel: "MPC Path",
-    limitLabel: "Limit"
-  }
-};
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&display=swap');
 
-// --- Sub-Component: Animated KPI ---
-const KpiCard = ({ label, value, unit, type, colorClass = "text-blue-400" }) => (
-  <motion.div 
-    whileHover={{ y: -5, scale: 1.02 }}
-    className="bg-slate-900/50 backdrop-blur-xl border border-slate-700/50 p-4 rounded-2xl relative overflow-hidden group"
-  >
-    <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-blue-500/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">{label}</p>
-    <div className="flex items-baseline gap-1">
-      <motion.span 
-        key={value}
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className={`text-2xl font-black ${colorClass}`}
-      >
-        {value}
-      </motion.span>
-      <span className="text-xs text-slate-500">{unit}</span>
-    </div>
-    <div className="mt-2 h-1 w-full bg-slate-800 rounded-full overflow-hidden">
-      <motion.div 
-        initial={{ width: 0 }}
-        animate={{ width: `${Math.min(100, (value / (type === 'temp' ? 100 : 200)) * 100)}%` }}
-        className={`h-full ${colorClass.replace('text', 'bg')}`}
-      />
-    </div>
-  </motion.div>
-);
+        body {
+            background-color: #020617;
+            color: #f8fafc;
+            margin: 0;
+            font-family: 'JetBrains Mono', monospace;
+            overflow: hidden; /* 强制无滚动 */
+            height: 100vh;
+        }
 
-const App = () => {
-  const [lang, setLang] = useState('zh');
-  const t = translations[lang];
-  const [mode, setMode] = useState('MPC');
-  const [load, setLoad] = useState(45);
-  const [objective, setObjective] = useState('sla');
-  const [isDirectorMode, setIsDirectorMode] = useState(false);
-  const [history, setHistory] = useState([]);
-  const [prediction, setPrediction] = useState([]);
-  const [time, setTime] = useState(0);
+        /* 动态背景网格 */
+        .bg-grid {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background-image: 
+                linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            mask-image: radial-gradient(circle at 50% 50%, black, transparent 90%);
+        }
 
-  // Simulation Logic
-  const currentTemp = useMemo(() => {
-    const base = 48 + (load * 0.28);
-    const noise = (Math.random() - 0.5) * 1.2;
-    let controlOffset = mode === 'PID' ? 4 + Math.sin(time / 4) * 3 : 0;
-    if (load > 85 && mode === 'PID') controlOffset += 8; // Spike penalty for PID
-    return (base + controlOffset + noise).toFixed(1);
-  }, [load, mode, time]);
+        /* 玻璃态面板 - 更通透 */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
 
-  const itPower = (load * 2.8).toFixed(1);
-  const coolingPower = (mode === 'MPC' ? load * 0.35 : load * 0.65).toFixed(1);
-  const pue = (1 + (coolingPower / itPower)).toFixed(2);
-  const headroom = (85 - currentTemp).toFixed(1);
+        /* 扫描线动画 */
+        @keyframes scan {
+            0% { top: 0%; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { top: 100%; opacity: 0; }
+        }
+        .scanner-bar {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: #3b82f6;
+            box-shadow: 0 0 15px #3b82f6;
+            animation: scan 3s linear infinite;
+            z-index: 10;
+            pointer-events: none;
+        }
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setTime(prev => prev + 1);
-      setHistory(prev => {
-        const newData = [...prev.slice(-40), { 
-          time: new Date().toLocaleTimeString().split(' ')[0], 
-          temp: parseFloat(currentTemp),
-          pidBase: parseFloat(currentTemp) + (mode === 'MPC' ? 10 : 0)
-        }];
-        return newData;
-      });
+        /* OCP Rack */
+        .ocp-rack-frame {
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+            border: 2px solid #334155;
+            background: #0f172a;
+        }
+        .server-sled {
+            position: relative;
+            background: #1e293b;
+            border-bottom: 1px solid #0f172a;
+        }
+        .server-led { box-shadow: 0 0 5px currentColor; }
 
-      // Prediction Horizon logic
-      const pred = [];
-      for (let i = 0; i <= 10; i++) {
-        const futureLoad = isDirectorMode ? load + Math.sin((time + i) / 3) * 15 : load;
-        pred.push({
-          minute: i,
-          temp: 52 + (futureLoad * 0.2) - (mode === 'MPC' ? Math.sqrt(i) * 2 : 0),
-          limit: 82
-        });
-      }
-      setPrediction(pred);
-    }, 1500);
-    return () => clearInterval(interval);
-  }, [load, mode, time, currentTemp, isDirectorMode]);
+        /* 全屏闪烁 */
+        @keyframes mode-flash {
+            0% { opacity: 0; }
+            10% { opacity: 0.2; background: white; }
+            100% { opacity: 0; }
+        }
+        .mode-flash-overlay {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 100;
+            animation: mode-flash 0.3s ease-out forwards;
+        }
 
-  return (
-    <div className="min-h-screen bg-black text-slate-100 font-sans p-6 overflow-hidden selection:bg-blue-500/30">
-      {/* Background Matrix/Grid Effect */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(17,24,39,1),rgba(0,0,0,1))]" />
-        <div className="absolute inset-0 opacity-[0.03] bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px]" />
-      </div>
+        .recharts-responsive-container { min-height: 0; } /* 允许图表压缩 */
+    </style>
+</head>
+<body>
+    <div id="root"></div>
 
-      <div className="relative z-10 max-w-[1600px] mx-auto">
-        {/* Header */}
-        <header className="flex justify-between items-center mb-8 border-b border-slate-800 pb-6">
-          <motion.div 
-            initial={{ x: -20, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            className="flex items-center gap-4"
-          >
-            <div className="relative">
-              <div className="absolute inset-0 bg-blue-500 blur-xl opacity-20 animate-pulse" />
-              <div className="bg-gradient-to-br from-blue-600 to-indigo-700 p-3 rounded-xl shadow-lg relative border border-blue-400/30">
-                <Radio className="text-white animate-pulse" size={28} />
-              </div>
-            </div>
-            <div>
-              <h1 className="text-2xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-white to-slate-500 uppercase">
-                {t.title}
-              </h1>
-              <p className="text-xs text-blue-400/80 font-bold flex items-center gap-2">
-                <span className="w-2 h-2 bg-blue-500 rounded-full inline-block animate-ping" />
-                {t.subtitle}
-              </p>
-            </div>
-          </motion.div>
+    <script type="text/babel">
+        const { useState, useEffect, useMemo, useRef } = React;
+        const { motion, AnimatePresence } = window.Motion;
+        const { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area, ReferenceLine, ComposedChart } = window.Recharts;
 
-          <div className="flex items-center gap-4">
-            <div className="bg-slate-900/80 p-1 rounded-xl border border-slate-700 flex backdrop-blur-md">
-              {['PID', 'Rule', 'MPC'].map(m => (
-                <button
-                  key={m}
-                  onClick={() => setMode(m)}
-                  className={`px-5 py-2 rounded-lg text-xs font-black transition-all duration-500 ${
-                    mode === m 
-                      ? 'bg-blue-600 text-white shadow-[0_0_15px_rgba(37,99,235,0.4)]' 
-                      : 'text-slate-500 hover:text-slate-300'
-                  }`}
-                >
-                  {t[m.toLowerCase()]}
-                </button>
-              ))}
-            </div>
-            <button 
-              onClick={() => setLang(lang === 'zh' ? 'en' : 'zh')}
-              className="px-4 py-2 bg-slate-800/50 border border-slate-700 rounded-xl hover:bg-slate-700 transition-colors flex items-center gap-2 text-xs font-bold"
-            >
-              <Languages size={16} /> {lang === 'zh' ? 'ENGLISH' : '中文'}
-            </button>
-          </div>
-        </header>
+        // --- 图标组件 ---
+        const Icon = ({ name, size = 16, className = "" }) => {
+            const iconRef = useRef(null);
+            useEffect(() => {
+                if (window.lucide && iconRef.current) {
+                    iconRef.current.innerHTML = '';
+                    const i = document.createElement('i');
+                    i.setAttribute('data-lucide', name.toLowerCase());
+                    iconRef.current.appendChild(i);
+                    window.lucide.createIcons({
+                        attrs: { width: size, height: size, class: className },
+                        nameAttr: 'data-lucide'
+                    });
+                }
+            }, [name, size, className]);
+            return <span ref={iconRef} className="flex items-center justify-center"></span>;
+        };
 
-        <div className="grid grid-cols-12 gap-8">
-          
-          {/* Sidebar */}
-          <motion.aside 
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="col-span-3 space-y-6"
-          >
-            <section className="bg-slate-900/40 backdrop-blur-md border border-slate-800 p-6 rounded-3xl">
-              <h3 className="text-xs font-black text-slate-500 mb-6 uppercase tracking-[0.2em] flex items-center gap-2">
-                <Settings size={14} /> {t.inputs}
-              </h3>
-              
-              <div className="space-y-8 mb-8">
-                <div className="space-y-4">
-                  <div className="flex justify-between items-end">
-                    <label className="text-sm font-bold text-slate-300">{t.computeLoad}</label>
-                    <span className="text-xl font-black text-blue-500 font-mono">{load}%</span>
-                  </div>
-                  <div className="relative group">
-                    <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg blur opacity-10 group-hover:opacity-20 transition duration-1000" />
-                    <input 
-                      type="range" min="0" max="100" value={load} 
-                      onChange={(e) => setLoad(parseInt(e.target.value))}
-                      className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-blue-500"
-                    />
-                  </div>
-                  <div className="grid grid-cols-3 gap-2">
-                    {['idle', 'inference', 'training'].map((k) => (
-                      <button 
-                        key={k}
-                        onClick={() => setLoad(k === 'idle' ? 15 : k === 'inference' ? 65 : 95)}
-                        className="text-[10px] py-2 bg-slate-800 hover:bg-slate-700 rounded-lg font-bold border border-slate-700 transition-all"
-                      >
-                        {t.loadPresets[k]}
-                      </button>
-                    ))}
-                  </div>
-                </div>
+        // --- 小尺寸仪表 ---
+        const MiniGauge = ({ value, label, color }) => {
+            const radius = 28;
+            const circumference = 2 * Math.PI * radius;
+            const strokeDashoffset = circumference - (value / 100) * circumference;
 
-                <div className="grid grid-cols-2 gap-4">
-                  {[
-                    { label: t.pumpLimit, val: '85%' },
-                    { label: t.flowRate, val: '450 L/min' },
-                    { label: t.supplyTemp, val: '18.5°C' },
-                    { label: t.humidity, val: '52%' }
-                  ].map((item, idx) => (
-                    <div key={idx} className="bg-slate-800/30 p-3 rounded-xl border border-slate-800/50">
-                      <p className="text-[10px] text-slate-500 mb-1">{item.label}</p>
-                      <p className="text-sm font-bold text-slate-200">{item.val}</p>
+            return (
+                <div className="flex flex-col items-center justify-center relative">
+                    <div className="relative w-16 h-16">
+                        <svg className="w-full h-full transform -rotate-90">
+                            <circle cx="32" cy="32" r={radius} stroke="#1e293b" strokeWidth="6" fill="transparent" />
+                            <circle 
+                                cx="32" cy="32" r={radius} 
+                                stroke={color} 
+                                strokeWidth="6" 
+                                fill="transparent" 
+                                strokeDasharray={circumference} 
+                                strokeDashoffset={strokeDashoffset} 
+                                strokeLinecap="round"
+                                className="transition-all duration-700 ease-out"
+                            />
+                        </svg>
+                        <div className="absolute inset-0 flex flex-col items-center justify-center">
+                            <span className="text-xs font-bold font-mono" style={{ color }}>{value}</span>
+                        </div>
                     </div>
-                  ))}
+                    <span className="text-[9px] text-slate-500 font-bold uppercase mt-1 tracking-wider">{label}</span>
                 </div>
-              </div>
+            );
+        };
 
-              <div className="space-y-3">
-                <p className="text-[10px] font-black text-slate-500 uppercase">{t.objective}</p>
-                {['sla', 'energy', 'carbon'].map(obj => (
-                  <button
-                    key={obj}
-                    onClick={() => setObjective(obj)}
-                    className={`w-full flex items-center justify-between p-3 rounded-xl border transition-all ${
-                      objective === obj 
-                        ? 'bg-blue-600/10 border-blue-500/50 text-blue-400' 
-                        : 'bg-slate-800/20 border-slate-800 text-slate-500 hover:border-slate-700'
-                    }`}
-                  >
-                    <span className="text-xs font-bold">{t[obj + 'First']}</span>
-                    {objective === obj && <div className="w-2 h-2 bg-blue-500 rounded-full shadow-[0_0_8px_#3b82f6]" />}
-                  </button>
-                ))}
-              </div>
-            </section>
+        // --- OCP 机柜组件 ---
+        const OCPRack = ({ load, temp, pue, cue, wug, mode, theme }) => {
+            const units = 12; 
+            const activeUnits = Math.ceil((load / 100) * units);
+            
+            const getLedColor = (isActive) => {
+                if (!isActive) return '#334155';
+                if (mode === 'PID' && temp > 65) return '#ef4444';
+                if (mode === 'Rule' && temp > 60) return '#f59e0b';
+                return '#10b981';
+            };
 
-            <section className="bg-slate-900 border border-slate-800 p-6 rounded-3xl">
-              <div className="flex items-center gap-2 mb-4 text-xs font-black text-slate-500 uppercase tracking-widest">
-                <PlayCircle size={16} className="text-blue-500" />
-                {t.director}
-              </div>
-              <div className="space-y-3">
-                <button 
-                  onClick={() => { setMode('PID'); setLoad(95); setIsDirectorMode(true); }}
-                  className="w-full text-left p-4 rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-bold transition-all group"
-                >
-                  <span className="text-red-500 mr-2 group-hover:animate-ping opacity-50">●</span> {t.scenarios.spikePid}
-                </button>
-                <button 
-                  onClick={() => { setMode('MPC'); setLoad(95); setIsDirectorMode(true); }}
-                  className="w-full text-left p-4 rounded-2xl bg-blue-900/20 hover:bg-blue-900/40 border border-blue-500/30 text-xs font-bold transition-all"
-                >
-                  <span className="text-blue-500 mr-2">●</span> {t.scenarios.spikeMpc}
-                </button>
-              </div>
-            </section>
-          </motion.aside>
-
-          {/* Main Dashboard */}
-          <main className="col-span-9 space-y-8">
-            {/* KPI HUD */}
-            <motion.div 
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="grid grid-cols-5 gap-4"
-            >
-              <KpiCard label={t.kpis.chipTemp} value={currentTemp} unit="°C" type="temp" colorClass={currentTemp > 80 ? "text-red-500" : "text-emerald-400"} />
-              <KpiCard label={t.kpis.thermalHeadroom} value={headroom} unit="°C" type="temp" colorClass="text-blue-400" />
-              <KpiCard label={t.kpis.itPower} value={itPower} unit="kW" />
-              <KpiCard label={t.kpis.coolingPower} value={coolingPower} unit="kW" colorClass="text-indigo-400" />
-              <KpiCard label={t.kpis.pue} value={pue} unit="" colorClass="text-orange-400" />
-            </motion.div>
-
-            {/* Charts Section */}
-            <div className="grid grid-cols-2 gap-8">
-              {/* Real-time Status */}
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="bg-slate-900/40 backdrop-blur-md border border-slate-800 p-6 rounded-3xl"
-              >
-                <div className="flex justify-between items-center mb-6">
-                  <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                    <Activity size={16} className="text-emerald-500" />
-                    {t.charts.realtime}
-                  </h3>
-                  <div className="flex gap-4 text-[9px] font-bold">
-                    <span className="text-emerald-500">LIVE FEED</span>
-                    {mode === 'MPC' && <span className="text-slate-500">GHOST PID LINE</span>}
-                  </div>
-                </div>
-                <div className="h-72">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={history}>
-                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#1e293b" />
-                      <XAxis dataKey="time" hide />
-                      <YAxis domain={[40, 95]} hide />
-                      <Tooltip 
-                        contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #334155', borderRadius: '12px', fontSize: '10px' }}
-                        itemStyle={{ color: '#60a5fa' }}
-                      />
-                      <Line type="monotone" dataKey="pidBase" stroke="#334155" strokeDasharray="5 5" strokeWidth={1} dot={false} isAnimationActive={false} />
-                      <Line type="step" dataKey="temp" stroke="#10b981" strokeWidth={3} dot={false} animationDuration={300} />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </div>
-              </motion.div>
-
-              {/* MPC Prediction Horizon */}
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="bg-slate-900/40 backdrop-blur-md border border-blue-500/20 p-6 rounded-3xl relative overflow-hidden group"
-              >
-                {/* Scanner Line Effect */}
-                <motion.div 
-                  animate={{ left: ['0%', '100%'] }} 
-                  transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
-                  className="absolute top-0 bottom-0 w-[1px] bg-gradient-to-b from-transparent via-blue-500/50 to-transparent z-20"
-                />
-
-                <div className="flex justify-between items-center mb-6 relative z-10">
-                  <h3 className="text-xs font-black text-blue-400 uppercase tracking-widest flex items-center gap-2">
-                    <Cpu size={16} />
-                    {t.charts.prediction}
-                  </h3>
-                  <div className="bg-blue-500/10 px-2 py-1 rounded text-[10px] text-blue-500 font-black border border-blue-500/20">
-                    DEEP PREDICTION v2.0
-                  </div>
-                </div>
-                <div className="h-72 relative z-10">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <ComposedChart data={prediction}>
-                      <defs>
-                        <linearGradient id="colorPred" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.4}/>
-                          <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
-                        </linearGradient>
-                      </defs>
-                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#1e293b" />
-                      <XAxis dataKey="minute" label={{ value: 'min (future)', position: 'insideBottomRight', offset: -5, fill: '#64748b', fontSize: 10 }} stroke="#334155" />
-                      <YAxis domain={[40, 95]} stroke="#334155" />
-                      <Tooltip 
-                        contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #3b82f6', borderRadius: '12px', fontSize: '10px' }}
-                      />
-                      <ReferenceLine y={82} stroke="#ef4444" strokeDasharray="10 10" label={{ value: t.limitLabel, fill: '#ef4444', fontSize: 10, position: 'top' }} />
-                      <Area type="monotone" dataKey="temp" stroke="#3b82f6" fillOpacity={1} fill="url(#colorPred)" strokeWidth={3} name={t.predictLabel} />
-                    </ComposedChart>
-                  </ResponsiveContainer>
-                </div>
-              </motion.div>
-            </div>
-
-            {/* AI Decision Stream / XAI */}
-            <motion.div 
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              className="bg-gradient-to-r from-blue-900/40 to-indigo-900/40 backdrop-blur-2xl border border-blue-500/30 p-8 rounded-[2rem] relative overflow-hidden"
-            >
-              <div className="absolute top-0 right-0 p-8 opacity-10">
-                <ShieldCheck size={120} />
-              </div>
-
-              <div className="relative z-10">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="bg-blue-500 p-2 rounded-lg shadow-[0_0_20px_rgba(59,130,246,0.5)]">
-                    <BarChart3 size={20} className="text-white" />
-                  </div>
-                  <h4 className="font-black text-lg tracking-tight uppercase">{t.charts.explanation}</h4>
-                </div>
-                
-                <div className="flex gap-8 items-start">
-                  <div className="flex-1">
-                    <AnimatePresence mode="wait">
-                      <motion.div 
-                        key={mode}
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: 10 }}
-                        className="bg-black/40 border border-white/5 p-6 rounded-2xl min-h-[100px] flex items-center"
-                      >
-                        <p className="text-blue-100/90 text-sm leading-relaxed font-medium">
-                          <span className="text-blue-500 font-mono mr-2">&gt;</span>
-                          {mode === 'MPC' ? t.mpcExplain : (lang === 'zh' ? '当前处于基础控制模式。AI 预测已挂起，系统仅根据当前误差进行滞后响应。' : 'Legacy mode active. AI forecasting suspended; system responding to current error only.')}
-                        </p>
-                      </motion.div>
-                    </AnimatePresence>
-                  </div>
-
-                  <div className="w-64 space-y-4">
-                    <div className="flex items-center justify-between text-[10px] font-black uppercase text-slate-500">
-                      <span>Neural Reliability</span>
-                      <span className="text-blue-400">98.2%</span>
+            return (
+                <div className="glass-panel p-4 rounded-xl h-full flex flex-col items-center relative overflow-hidden">
+                    {/* Metrics Overlay */}
+                    <div className="w-full flex justify-between gap-2 mb-2 pb-2 border-b border-slate-700/50 text-[10px]">
+                        <div className="flex flex-col items-center">
+                            <span className="text-slate-500 font-bold">PUE</span>
+                            <span className={`${pue < 1.2 ? 'text-emerald-400' : 'text-slate-200'} font-bold font-mono`}>{pue}</span>
+                        </div>
+                        <div className="flex flex-col items-center">
+                            <span className="text-slate-500 font-bold">CUE</span>
+                            <span className="text-blue-400 font-bold font-mono">{cue}</span>
+                        </div>
+                        <div className="flex flex-col items-center">
+                            <span className="text-slate-500 font-bold">WUG</span>
+                            <span className="text-cyan-400 font-bold font-mono">{wug}</span>
+                        </div>
                     </div>
-                    <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
-                      <motion.div 
-                        initial={{ width: 0 }} 
-                        animate={{ width: '98.2%' }} 
-                        className="h-full bg-blue-500 shadow-[0_0_10px_#3b82f6]"
-                      />
+
+                    <div className="ocp-rack-frame w-full flex-1 flex flex-col p-[2px] relative rounded-sm">
+                        <div className="h-6 bg-slate-800 border-b border-black mb-[1px] flex items-center justify-between px-2">
+                             <div className="flex gap-1">{[1,2].map(i => <div key={i} className="w-1 h-1 rounded-full bg-green-500 animate-pulse"></div>)}</div>
+                             <span className="text-[8px] text-slate-500">ToR</span>
+                        </div>
+                        
+                        {/* Servers */}
+                        <div className="flex-1 flex flex-col gap-[1px] relative z-10">
+                            {Array.from({ length: units }).map((_, i) => {
+                                const index = units - 1 - i; 
+                                const isActive = index < activeUnits;
+                                return (
+                                    <div key={i} className="server-sled h-full flex items-center justify-between px-2">
+                                        <div className="w-1 h-1 rounded-full transition-colors duration-300 server-led" style={{ backgroundColor: getLedColor(isActive), color: getLedColor(isActive) }} />
+                                    </div>
+                                );
+                            })}
+                        </div>
+                        
+                        {mode === 'MPC' && <div className="scanner-bar" style={{ background: theme.primary, boxShadow: `0 0 10px ${theme.primary}` }}></div>}
+                        <div className="absolute inset-0 pointer-events-none transition-opacity duration-1000 z-0 mix-blend-overlay" style={{ background: `linear-gradient(to top, ${temp > 60 ? '#ef4444' : '#10b981'}, transparent)`, opacity: load / 200 }} />
                     </div>
-                    <div className="flex items-center gap-2 text-[10px] text-blue-300 font-bold">
-                      <div className="w-2 h-2 bg-blue-500 rounded-full animate-ping" />
-                      TRUSTED BY IMDA COMPLIANCE FRAMEWORK
-                    </div>
-                  </div>
                 </div>
-              </div>
-            </motion.div>
+            );
+        };
 
-          </main>
-        </div>
-      </div>
+        const THEME = {
+            MPC: { primary: '#3b82f6', bg: 'rgba(59, 130, 246, 0.05)', grid: 'rgba(59, 130, 246, 0.1)', icon: 'Cpu' },
+            PID: { primary: '#f59e0b', bg: 'rgba(245, 158, 11, 0.05)', grid: 'rgba(245, 158, 11, 0.1)', icon: 'Activity' },
+            Rule: { primary: '#10b981', bg: 'rgba(16, 185, 129, 0.05)', grid: 'rgba(16, 185, 129, 0.1)', icon: 'Scale' }
+        };
 
-      {/* Extreme Violation Alert */}
-      {(mode !== 'MPC' && currentTemp > 80) && (
-        <motion.div 
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          className="fixed bottom-12 right-12 bg-red-600 text-white p-6 rounded-3xl shadow-[0_0_50px_rgba(220,38,38,0.5)] border border-red-400 z-50 flex items-center gap-6 ring-8 ring-red-600/20"
-        >
-          <div className="p-3 bg-white/20 rounded-2xl">
-            <AlertTriangle size={32} className="animate-bounce" />
-          </div>
-          <div>
-            <h5 className="font-black text-xl uppercase leading-none mb-1">Critical Overheat!</h5>
-            <p className="text-sm font-bold opacity-80 uppercase tracking-widest">{mode} MODE FAILURE TO PREEMPT</p>
-          </div>
-        </motion.div>
-      )}
+        const Dashboard = () => {
+            const [mode, setMode] = useState('MPC');
+            const [load, setLoad] = useState(45);
+            const [time, setTime] = useState(0);
+            const [history, setHistory] = useState([]);
+            const [flash, setFlash] = useState(false); 
+            const theme = THEME[mode];
 
-      {/* Full Screen Glitch Effect on Spike */}
-      {isDirectorMode && (
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: [0, 0.2, 0] }}
-          transition={{ duration: 0.5 }}
-          className="fixed inset-0 bg-red-500 pointer-events-none z-40"
-        />
-      )}
-    </div>
-  );
-};
+            // Simulation Logic
+            const currentTemp = useMemo(() => {
+                const base = 48 + (load * 0.28);
+                const noise = (Math.random() - 0.5) * 1.5;
+                let offset = 0;
+                if (mode === 'PID') { offset = 8 * Math.sin(time / 2.5) + noise * 2; if (load > 70) offset += 5; }
+                else if (mode === 'Rule') { const step = Math.floor(time / 5); offset = (step % 2 === 0 ? 4 : -4) + noise * 0.5; }
+                else { offset = Math.sin(time / 10) * 1.2; }
+                return (base + offset).toFixed(1);
+            }, [load, mode, time]);
 
-export default App;
+            const itPower = (load * 2.5).toFixed(1);
+            const pue = (1 + (mode === 'MPC' ? 0.15 : 0.35)).toFixed(2);
+            const cue = (parseFloat(pue) * 0.42).toFixed(2);
+            const wug = (mode === 'MPC' ? 0.35 + (load/200) : 0.65 + (load/150)).toFixed(2);
+
+            useEffect(() => {
+                const timer = setInterval(() => {
+                    setTime(prev => prev + 1);
+                    setHistory(prev => {
+                        const next = [...prev, { time, temp: parseFloat(currentTemp), target: 50 }];
+                        if (next.length > 60) next.shift();
+                        return next;
+                    });
+                }, 800);
+                return () => clearInterval(timer);
+            }, [currentTemp, time]);
+
+            const handleModeChange = (newMode) => {
+                if (newMode === mode) return;
+                setFlash(true);
+                setMode(newMode);
+                setTimeout(() => setFlash(false), 300);
+            };
+
+            return (
+                <div className="h-screen w-screen p-3 text-slate-200 relative overflow-hidden flex flex-col gap-3">
+                    <div className="bg-grid" style={{ backgroundImage: `linear-gradient(to right, ${theme.grid} 1px, transparent 1px), linear-gradient(to bottom, ${theme.grid} 1px, transparent 1px)` }}></div>
+                    {flash && <div className="mode-flash-overlay"></div>}
+
+                    {/* --- COMPACT HEADER --- */}
+                    <header className="glass-panel rounded-xl px-4 py-2 flex justify-between items-center shrink-0 z-20 h-14">
+                        <div className="flex items-center gap-3">
+                            <Icon name="Server" size={20} className="text-white" />
+                            <div>
+                                <h1 className="text-base font-bold tracking-tight text-white leading-tight">AIDC OPERATIONS</h1>
+                                <p className="text-[10px] text-slate-400 font-mono uppercase tracking-wider">Neural Strategy Hub</p>
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-4 text-[10px] font-mono">
+                            <div className="flex items-center gap-2">
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                                <span className="text-emerald-400">ONLINE</span>
+                            </div>
+                            <span className="text-slate-600">|</span>
+                            <span>SG-WEST-1</span>
+                        </div>
+                    </header>
+
+                    {/* --- MAIN CONTENT (GRID) --- */}
+                    <div className="flex-1 grid grid-cols-12 gap-3 min-h-0">
+                        
+                        {/* LEFT: Controls & Gauges (Compact) */}
+                        <div className="col-span-3 flex flex-col gap-3 h-full">
+                            
+                            {/* 1. Compact Mode Selector (Corner) */}
+                            <section className="glass-panel p-3 rounded-xl flex flex-col gap-2">
+                                <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Controller</h3>
+                                <div className="grid grid-cols-3 gap-1">
+                                    {['PID', 'Rule', 'MPC'].map(m => (
+                                        <button
+                                            key={m}
+                                            onClick={() => handleModeChange(m)}
+                                            className={`flex flex-col items-center justify-center py-2 rounded-lg border transition-all duration-200 ${mode === m ? 'bg-white/10 border-transparent shadow-inner' : 'border-slate-800 hover:bg-white/5'}`}
+                                            style={mode === m ? { color: THEME[m].primary } : { color: '#64748b' }}
+                                        >
+                                            <Icon name={THEME[m].icon} size={16} />
+                                            <span className="text-[9px] font-bold mt-1">{m}</span>
+                                        </button>
+                                    ))}
+                                </div>
+                                <div className="text-[10px] mt-1 h-8 leading-tight opacity-70 px-1" style={{ color: theme.primary }}>
+                                    {mode === 'MPC' ? ">> AI Predictive Model Active" : (mode === 'PID' ? ">> Reactive Loop Active" : ">> Static Logic Active")}
+                                </div>
+                            </section>
+
+                            {/* 2. Load Input & Gauges */}
+                            <section className="glass-panel p-4 rounded-xl flex-1 flex flex-col items-center justify-center gap-6">
+                                <div className="w-full">
+                                    <div className="flex justify-between items-end mb-2">
+                                        <label className="text-[10px] font-bold text-slate-500 uppercase">Input Load</label>
+                                        <span className="text-2xl font-mono font-bold" style={{ color: theme.primary }}>{load}%</span>
+                                    </div>
+                                    <input 
+                                        type="range" min="0" max="100" value={load} 
+                                        onChange={(e) => setLoad(parseInt(e.target.value))}
+                                        className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer"
+                                        style={{ accentColor: theme.primary }}
+                                    />
+                                </div>
+                                <div className="flex gap-4 justify-center w-full">
+                                    <MiniGauge value={load} label="COMPUTE" color={theme.primary} />
+                                    <MiniGauge value={mode==='MPC'?Math.min(100, load+10):Math.min(100, load*1.5)} label="PUMP" color={mode==='PID'?'#ef4444':'#10b981'} />
+                                </div>
+                            </section>
+                        </div>
+
+                        {/* CENTER: Charts (KPIs + Split View) */}
+                        <div className="col-span-6 flex flex-col gap-3 h-full">
+                            
+                            {/* KPI Strip */}
+                            <div className="grid grid-cols-4 gap-3 h-20 shrink-0">
+                                {[
+                                    { l: "CHIP TEMP", v: currentTemp, u: "°C", c: parseFloat(currentTemp)>60 ? (mode==='PID'?'text-red-400':'text-yellow-400') : 'text-slate-200' },
+                                    { l: "HEADROOM", v: (85-parseFloat(currentTemp)).toFixed(1), u: "°C", c: "text-blue-300" },
+                                    { l: "IT POWER", v: itPower, u: "kW", c: "text-slate-200" },
+                                    { l: "COOLING", v: (parseFloat(itPower)*(pue-1)).toFixed(1), u: "kW", c: "text-slate-400" },
+                                ].map((k,i) => (
+                                    <div key={i} className="glass-panel rounded-xl flex flex-col justify-center items-center relative overflow-hidden">
+                                        <div className="text-[9px] text-slate-500 font-bold uppercase">{k.l}</div>
+                                        <div className={`text-lg font-mono font-bold ${k.c}`}>{k.v}<span className="text-[10px] ml-1 text-slate-600">{k.u}</span></div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* Charts Container */}
+                            <div className="flex-1 flex flex-col gap-3 min-h-0">
+                                {/* Top Chart: Realtime */}
+                                <section className="glass-panel p-3 rounded-xl flex-1 min-h-0 flex flex-col relative overflow-hidden" style={{ borderColor: `${theme.primary}30` }}>
+                                    <h3 className="text-[10px] font-bold text-slate-500 uppercase mb-2 flex items-center gap-2 shrink-0">
+                                        <Icon name="Activity" size={12} className={theme.primary} /> Realtime Dynamics
+                                    </h3>
+                                    <div className="flex-1 min-h-0">
+                                        <ResponsiveContainer width="100%" height="100%">
+                                            <LineChart data={history}>
+                                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#334155" opacity={0.3} />
+                                                <XAxis dataKey="time" hide />
+                                                <YAxis domain={[40, 70]} hide />
+                                                <Tooltip contentStyle={{ backgroundColor: '#020617', borderColor: theme.primary, borderRadius: '4px', fontSize: '10px' }} />
+                                                <Line type={mode === 'Rule' ? "stepAfter" : "monotone"} dataKey="temp" stroke={theme.primary} strokeWidth={2} dot={false} isAnimationActive={false} />
+                                                <ReferenceLine y={50} stroke="#475569" strokeDasharray="5 5" />
+                                            </LineChart>
+                                        </ResponsiveContainer>
+                                    </div>
+                                </section>
+
+                                {/* Bottom Chart: Prediction / Log */}
+                                <section className="glass-panel p-3 rounded-xl h-1/3 shrink-0 flex flex-col relative overflow-hidden">
+                                    <div className="absolute top-0 left-0 w-1 h-full" style={{ backgroundColor: theme.primary, opacity: 0.5 }}></div>
+                                    <h3 className="text-[10px] font-bold text-slate-500 uppercase mb-2 flex items-center gap-2 shrink-0">
+                                        <Icon name="Terminal" size={12} /> System Log
+                                    </h3>
+                                    <div className="font-mono text-[10px] leading-relaxed opacity-80 overflow-hidden">
+                                        <div className="text-slate-500">Listening on port 8080... [OK]</div>
+                                        <AnimatePresence mode="wait">
+                                            <motion.div 
+                                                key={mode} 
+                                                initial={{ opacity: 0, x: -5 }} 
+                                                animate={{ opacity: 1, x: 0 }} 
+                                                className="mt-1"
+                                                style={{ color: theme.primary }}
+                                            >
+                                                {mode === 'MPC' 
+                                                    ? `>> OPTIMIZER: Look-ahead window 180s. Pre-cooling...`
+                                                    : (mode === 'PID' ? `>> WARNING: Error deviation > 2.5. Integral windup.` : `>> RULE: Threshold 55C triggered. Hard switch.`)
+                                                }
+                                            </motion.div>
+                                        </AnimatePresence>
+                                    </div>
+                                </section>
+                            </div>
+                        </div>
+
+                        {/* RIGHT: Digital Twin (Rack) */}
+                        <div className="col-span-3 h-full">
+                            <OCPRack load={load} temp={currentTemp} pue={pue} cue={cue} wug={wug} mode={mode} theme={theme} />
+                        </div>
+
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<Dashboard />);
+    </script>
+</body>
+</html>
