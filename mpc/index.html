@@ -1,604 +1,853 @@
  <!DOCTYPE html>
-<html lang="zh">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AIDC MPC Operations Dashboard</title>
+    <title>AIDC Thermal Control Paradigm: Constrained Optimization</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
     <!-- React & ReactDOM -->
-    <script src="https://unpkg.com/react@18.2.0/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
-    <!-- PropTypes -->
+    <script crossorigin src="https://unpkg.com/react@18.2.0/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
+    
+    <!-- Prop-Types -->
     <script src="https://unpkg.com/prop-types@15.8.1/prop-types.min.js"></script>
-    <!-- Babel for JSX -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
     <!-- Recharts -->
     <script src="https://unpkg.com/recharts@2.12.7/umd/Recharts.js"></script>
-    <!-- Framer Motion -->
-    <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
+    
+    <!-- Babel -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@0.344.0/dist/umd/lucide.min.js"></script>
 
+    <!-- KaTeX: Scientific Rendering Engine (Used ONLY for Report Generation) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js"></script>
+
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600&family=Noto+Serif+SC:wght@500;700&display=swap');
+
+        :root {
+            --bg-dark: #0f172a;
+            --panel-bg: rgba(30, 41, 59, 0.7);
+            --border: rgba(255, 255, 255, 0.1);
+            --primary-mpc: #3b82f6; 
+            --primary-pid: #f59e0b; 
+        }
 
         body {
             background-color: #020617;
-            color: #f8fafc;
-            margin: 0;
-            font-family: 'JetBrains Mono', monospace;
-            overflow: hidden; /* 强制无滚动 */
+            color: #e2e8f0;
+            font-family: 'Inter', system-ui, sans-serif;
+            overflow: hidden;
             height: 100vh;
         }
 
-        /* 动态背景网格 */
-        .bg-grid {
-            position: fixed;
-            inset: 0;
-            z-index: -1;
-            background-image: 
-                linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-            background-size: 40px 40px;
-            mask-image: radial-gradient(circle at 50% 50%, black, transparent 90%);
-        }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        .font-serif { font-family: 'Noto Serif SC', serif; }
 
-        /* 玻璃态面板 - 更通透 */
         .glass-panel {
-            background: rgba(15, 23, 42, 0.4);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            background: var(--panel-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: border-color 0.5s ease;
         }
 
-        /* 扫描线动画 */
-        @keyframes scan {
-            0% { top: 0%; opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { top: 100%; opacity: 0; }
-        }
-        .scanner-bar {
-            position: absolute;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: #3b82f6;
-            box-shadow: 0 0 15px #3b82f6;
-            animation: scan 3s linear infinite;
-            z-index: 10;
-            pointer-events: none;
+        /* Engineering Grid Background */
+        .bg-grid {
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
         }
 
-        /* OCP Rack */
-        .ocp-rack-frame {
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
-            border: 2px solid #334155;
-            background: #0f172a;
-        }
-        .server-sled {
-            position: relative;
-            background: #1e293b;
-            border-bottom: 1px solid #0f172a;
-            transition: background-color 0.5s ease;
-        }
-        .server-led { box-shadow: 0 0 5px currentColor; }
-
-        /* 气流粒子动画 */
-        @keyframes flow-x {
-            0% { transform: translateX(-10px); opacity: 0; }
-            50% { opacity: 1; }
-            100% { transform: translateX(20px); opacity: 0; }
-        }
-        .airflow-particle {
-            position: absolute;
-            width: 2px;
-            height: 1px;
-            background: rgba(255,255,255,0.3);
-            animation: flow-x 1s linear infinite;
+        /* Scrollbar */
+        .log-scroll::-webkit-scrollbar { width: 4px; }
+        .log-scroll::-webkit-scrollbar-thumb { background: #475569; border-radius: 2px; }
+        
+        /* Causal Chain Arrow */
+        .arrow-right {
+            display: inline-block;
+            width: 0; 
+            height: 0; 
+            border-top: 5px solid transparent;
+            border-bottom: 5px solid transparent;
+            border-left: 8px solid #64748b;
+            margin: 0 8px;
         }
 
-        /* 全屏闪烁 */
-        @keyframes mode-flash {
-            0% { opacity: 0; }
-            10% { opacity: 0.2; background: white; }
-            100% { opacity: 0; }
-        }
-        .mode-flash-overlay {
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            z-index: 100;
-            animation: mode-flash 0.3s ease-out forwards;
+        /* Visual Linkage Animations */
+        .kpi-glow-mpc {
+            animation: kpi-pulse-blue 1.5s ease-out forwards;
+            border-color: rgba(59, 130, 246, 0.6) !important;
+            background-color: rgba(59, 130, 246, 0.1) !important;
         }
 
-        .recharts-responsive-container { min-height: 0; } /* 允许图表压缩 */
+        @keyframes kpi-pulse-blue {
+            0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+        }
     </style>
 </head>
 <body>
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState, useEffect, useMemo, useRef } = React;
-        const { motion, AnimatePresence } = window.Motion;
-        const { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area, ReferenceLine, ComposedChart } = window.Recharts;
+        const { useState, useEffect, useRef, useMemo } = React;
+        const { ComposedChart, Line, Area, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine, ResponsiveContainer, Legend } = window.Recharts;
 
-        // --- 图标组件 ---
-        const Icon = ({ name, size = 16, className = "" }) => {
-            const iconRef = useRef(null);
-            useEffect(() => {
-                if (window.lucide && iconRef.current) {
-                    iconRef.current.innerHTML = '';
-                    const i = document.createElement('i');
-                    i.setAttribute('data-lucide', name.toLowerCase());
-                    iconRef.current.appendChild(i);
-                    window.lucide.createIcons({
-                        attrs: { width: size, height: size, class: className },
-                        nameAttr: 'data-lucide'
-                    });
-                }
-            }, [name, size, className]);
-            return <span ref={iconRef} className="flex items-center justify-center"></span>;
+        // --- ENGINEERING CONSTANTS ---
+        const PHYSICS_MODEL = {
+            PSU_EFFICIENCY: 0.95,
+            NON_IT_LOAD_KW: 6.0,
+            THERMAL_RESISTANCE: 0.22,
+            CARBON_INTENSITY: 0.45,
+            WATER_USAGE_INTENSITY: 1.8, // L/kWh (Scenario assumption)
+            MIN_SUPPLY_TEMP: 16.0,
+            MAX_SUPPLY_TEMP: 30.0,
+            BASELINE_TEMP: 18.0,
+            GLOBAL_LIMIT_TEMP: 65.0 // Single Source of Truth for Limit
         };
 
-        // --- 小尺寸仪表 ---
-        const MiniGauge = ({ value, label, color }) => {
-            const radius = 28;
-            const circumference = 2 * Math.PI * radius;
-            const strokeDashoffset = circumference - (value / 100) * circumference;
-
-            return (
-                <div className="flex flex-col items-center justify-center relative">
-                    <div className="relative w-16 h-16">
-                        <svg className="w-full h-full transform -rotate-90">
-                            <circle cx="32" cy="32" r={radius} stroke="#1e293b" strokeWidth="6" fill="transparent" />
-                            <circle 
-                                cx="32" cy="32" r={radius} 
-                                stroke={color} 
-                                strokeWidth="6" 
-                                fill="transparent" 
-                                strokeDasharray={circumference} 
-                                strokeDashoffset={strokeDashoffset} 
-                                strokeLinecap="round"
-                                className="transition-all duration-700 ease-out"
-                            />
-                        </svg>
-                        <div className="absolute inset-0 flex flex-col items-center justify-center">
-                            <span className="text-xs font-bold font-mono" style={{ color }}>{value}</span>
-                        </div>
-                    </div>
-                    <span className="text-[9px] text-slate-500 font-bold uppercase mt-1 tracking-wider">{label}</span>
-                </div>
-            );
-        };
-
-        // --- OCP 机柜组件 (Enhanced Physics) ---
-        const OCPRack = ({ load, temp, pue, cue, wug, mode, theme, t }) => {
-            const units = 14; 
-            
-            // 模拟单个服务器单元的物理状态
-            const serverData = useMemo(() => {
-                return Array.from({ length: units }).map((_, i) => {
-                    const unitId = units - i; // 从上到下编号 14 -> 1
-                    
-                    // 基础负载分配
-                    const isIdle = (i / units) * 100 > load;
-                    
-                    // 物理模拟：热分层效应 (Thermal Stratification)
-                    // PID 模式下，顶部机柜(unitId较大)温度显著升高
-                    let unitTemp = parseFloat(temp);
-                    let variance = 0;
-
-                    if (!isIdle) {
-                        if (mode === 'PID') {
-                            // PID: 严重的热分层 + 随机热点
-                            const heightPenalty = (unitId / units) * 8; // 顶部热 8度
-                            const hotspot = Math.random() > 0.8 ? 10 : 0; // 随机热点
-                            variance = heightPenalty + hotspot + (Math.random() * 2);
-                        } else if (mode === 'Rule') {
-                            // Rule: 中等分层
-                            const heightPenalty = (unitId / units) * 4;
-                            variance = heightPenalty + (Math.random() * 3);
-                        } else {
-                            // MPC: 智能导风，温度极其均匀
-                            variance = Math.random() * 1.5; 
-                        }
-                    } else {
-                        unitTemp = 24; // 待机温度
-                    }
-
-                    const finalTemp = (unitTemp + variance).toFixed(1);
-                    
-                    // 颜色映射：根据单体温度决定颜色
-                    let color = '#1e293b'; // 默认冷
-                    if (!isIdle) {
-                        if (finalTemp < 50) color = '#064e3b'; // 极佳 (深绿)
-                        else if (finalTemp < 60) color = '#1e293b'; // 正常 (蓝灰)
-                        else if (finalTemp < 70) color = '#713f12'; // 偏热 (暗橙)
-                        else color = '#7f1d1d'; // 过热 (暗红)
-                    }
-
-                    return {
-                        id: unitId,
-                        temp: finalTemp,
-                        isIdle,
-                        color,
-                        isHot: finalTemp > 65
-                    };
-                });
-            }, [load, temp, mode]);
-
-            return (
-                <div className="glass-panel p-4 rounded-xl h-full flex flex-col items-center relative overflow-hidden">
-                    {/* Metrics Overlay */}
-                    <div className="w-full flex justify-between gap-2 mb-2 pb-2 border-b border-slate-700/50 text-[10px]">
-                        <div className="flex flex-col items-center">
-                            <span className="text-slate-500 font-bold">PUE</span>
-                            <span className={`${pue < 1.2 ? 'text-emerald-400' : 'text-slate-200'} font-bold font-mono`}>{pue}</span>
-                        </div>
-                        <div className="flex flex-col items-center">
-                            <span className="text-slate-500 font-bold">CUE</span>
-                            <span className="text-blue-400 font-bold font-mono">{cue}</span>
-                        </div>
-                        <div className="flex flex-col items-center">
-                            <span className="text-slate-500 font-bold">WUG</span>
-                            <span className="text-cyan-400 font-bold font-mono">{wug}</span>
-                        </div>
-                    </div>
-
-                    <div className="ocp-rack-frame w-full flex-1 flex flex-col p-[2px] relative rounded-sm bg-black/80">
-                        {/* Rack Top Switch */}
-                        <div className="h-6 bg-slate-900 border-b border-slate-700 mb-[1px] flex items-center justify-between px-2">
-                             <div className="flex gap-1">{[1,2].map(i => <div key={i} className="w-1 h-1 rounded-full bg-green-500 animate-pulse"></div>)}</div>
-                             <span className="text-[8px] text-slate-500 font-mono">ToR-SW-01</span>
-                        </div>
-                        
-                        {/* Servers */}
-                        <div className="flex-1 flex flex-col gap-[1px] relative z-10 p-1">
-                            {serverData.map((unit) => (
-                                <div 
-                                    key={unit.id} 
-                                    className="server-sled flex-1 flex items-center justify-between px-2 transition-colors duration-500"
-                                    style={{ backgroundColor: unit.color }}
-                                >
-                                    <div className="flex items-center gap-2">
-                                        <span className="text-[8px] font-mono text-slate-500 w-4">{unit.id}U</span>
-                                        {!unit.isIdle && (
-                                            <div className={`w-1 h-1 rounded-full animate-pulse ${unit.isHot ? 'bg-red-500' : 'bg-blue-400'}`}></div>
-                                        )}
-                                    </div>
-                                    
-                                    {/* 气流动画 (仅工作状态显示) */}
-                                    {!unit.isIdle && (
-                                        <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-30">
-                                            <div className="airflow-particle" style={{ top: '50%', left: '20%', animationDelay: `${Math.random()}s` }}></div>
-                                            <div className="airflow-particle" style={{ top: '30%', left: '50%', animationDelay: `${Math.random()}s` }}></div>
-                                        </div>
-                                    )}
-
-                                    <span className={`text-[9px] font-mono ${unit.isHot ? 'text-red-400 font-bold' : 'text-slate-400'}`}>
-                                        {unit.temp}°C
-                                    </span>
-                                </div>
-                            ))}
-                        </div>
-                        
-                        {/* 底部热成像图例 */}
-                        <div className="h-2 w-full mt-1 rounded-sm flex text-[8px] text-slate-500 font-mono justify-between px-1 bg-gradient-to-r from-blue-900 via-yellow-900 to-red-900 opacity-50">
-                            <span>20°C</span>
-                            <span>80°C</span>
-                        </div>
-
-                        {mode === 'MPC' && <div className="scanner-bar" style={{ background: theme.primary, boxShadow: `0 0 10px ${theme.primary}`, opacity: 0.5 }}></div>}
-                    </div>
-                    
-                    <div className="mt-2 w-full flex justify-between text-[9px] text-slate-500 font-mono">
-                        <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-blue-900"></div> {t.rack.intake}</div>
-                        <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-red-900"></div> {t.rack.exhaust}</div>
-                    </div>
-                </div>
-            );
-        };
-
-        const THEME = {
-            MPC: { primary: '#3b82f6', bg: 'rgba(59, 130, 246, 0.05)', grid: 'rgba(59, 130, 246, 0.1)', icon: 'Cpu' },
-            PID: { primary: '#f59e0b', bg: 'rgba(245, 158, 11, 0.05)', grid: 'rgba(245, 158, 11, 0.1)', icon: 'Activity' },
-            Rule: { primary: '#10b981', bg: 'rgba(16, 185, 129, 0.05)', grid: 'rgba(16, 185, 129, 0.1)', icon: 'Scale' }
-        };
-
-        const Dashboard = () => {
-            const [lang, setLang] = useState('zh');
-            const [mode, setMode] = useState('MPC');
-            const [load, setLoad] = useState(45);
-            const [time, setTime] = useState(0);
-            const [history, setHistory] = useState([]);
-            const [flash, setFlash] = useState(false); 
-            const theme = THEME[mode];
-
-            // 翻译字典 - 覆盖所有 UI 文本
-            const translations = {
-                zh: {
-                    title: "AIDC 智算控制台",
-                    subtitle: "MPC 策略神经中枢",
-                    header: {
-                        online: "在线",
-                        region: "新加坡-西部-1"
-                    },
-                    controller: "控制器",
-                    inputLoad: "负载输入",
-                    kpi: {
-                        chipTemp: "芯片温度",
-                        headroom: "热冗余",
-                        itPower: "IT功耗",
-                        cooling: "制冷功耗"
-                    },
-                    charts: {
-                        realtime: "实时动态",
-                        log: "系统日志",
-                        listening: "系统初始化完成。正在监听端口 8080...",
-                        logPrefix: {
-                            mpc: ">> 优化器：",
-                            pid: ">> 警告：",
-                            rule: ">> 规则："
-                        }
-                    },
-                    rack: {
-                        intake: "冷通道",
-                        exhaust: "热通道"
-                    },
-                    labels: {
-                        compute: "算力",
-                        pump: "泵速"
-                    },
-                    logs: {
-                        mpc: "检测到未来180s负载尖峰。预冷程序已启动...",
-                        pid: "温度偏差 > 2.5。被动响应滞后，尝试积分补偿。",
-                        rule: "触发阈值 55°C。执行强制切换逻辑。"
-                    },
-                    modeStatus: {
-                        MPC: ">> AI 预测模型已激活",
-                        PID: ">> 被动反馈回路已激活",
-                        Rule: ">> 静态逻辑已激活"
-                    },
-                    modes: {
-                        MPC: "模型预测",
-                        PID: "PID控制",
-                        Rule: "规则逻辑"
+        // --- I18N STRINGS ---
+        const I18N = {
+            en: {
+                title: "AIDC Thermal Control Paradigm",
+                subtitle: "Constraint-Aware Setpoint Optimization (MPC) vs Fixed Baseline (PID)",
+                instance: "Representative Instance: GB200 NVL72 Class High-Density Rack",
+                // L1 Labels
+                l1: {
+                    control: "Control Variable (T_supply)",
+                    constraint: "Constraint (T_chip)",
+                    objective: "Objective (PUE)"
+                },
+                // L2 Labels
+                l2: {
+                    cue: "CUE (Derived)",
+                    margin: "Margin Utilized"
+                },
+                // L3 Labels
+                l3: {
+                    variance: "Setpoint Variance (σ)",
+                    effort: "Control Effort"
+                },
+                // L4 Labels
+                l4: {
+                    wue: "WUE (Scenario)",
+                    carbon: "Grid Emission Factor"
+                },
+                profReqTitle: "Control Strategy Validation",
+                // Animated Steps
+                validationSteps: [
+                    { icon: "ShieldCheck", text: "Fixed IT load and thermal safety constraints enforced." },
+                    { icon: "Sliders", text: "MPC performs dynamic setpoint optimization on supply water temperature (T_supply)." },
+                    { icon: "TrendingDown", text: (delta) => `Energy-optimal operation achieved with measurable PUE reduction (ΔPUE ≈ -${delta}%).` }
+                ],
+                sections: {
+                    input: "System Inputs (Disturbance)",
+                    boundary: "Boundary Conditions",
+                    advanced: "Advanced Telemetry & Assumptions",
+                    charts: "System Trajectory"
+                },
+                labels: {
+                    itPower: "IT Workload Power",
+                    chipLimit: "Constraint: T_max",
+                    baseTemp: "Baseline: T_supply",
+                    trace: {
+                        opt: "Derived from T_supply optimization",
+                        load: "Computed under identical IT load"
                     }
                 },
-                en: {
-                    title: "AIDC OPERATIONS",
-                    subtitle: "Neural Strategy Hub",
-                    header: {
-                        online: "ONLINE",
-                        region: "SG-WEST-1"
+                chartAxis: {
+                    chip: "Chip Temp (°C)",
+                    supply: "Supply Temp (°C)",
+                    limit: "MAX LIMIT"
+                },
+                twin: {
+                    title: "DIGITAL TWIN",
+                    state: "STATE",
+                    active: "ACTIVE"
+                },
+                report: {
+                    btn: "Generate Review Memo",
+                    title: "Technical Review Memorandum",
+                    // STRICT ACADEMIC TITLES - NO UNDEFINED
+                    titles: {
+                        prob: "1. Problem Formulation: Setpoint Optimization under Thermal Safety Constraints",
+                        baseline: "2. Counterfactual Baseline Analysis (PID vs. MPC)",
+                        trace: "3. Traceability, Assumptions, and System Constants"
                     },
-                    controller: "Controller",
-                    inputLoad: "Input Load",
-                    kpi: {
-                        chipTemp: "CHIP TEMP",
-                        headroom: "HEADROOM",
-                        itPower: "IT POWER",
-                        cooling: "COOLING"
-                    },
-                    charts: {
-                        realtime: "Realtime Dynamics",
-                        log: "System Log",
-                        listening: "Systemd initialized. Listening on port 8080...",
-                        logPrefix: {
-                            mpc: ">> OPTIMIZER: ",
-                            pid: ">> WARNING: ",
-                            rule: ">> RULE: "
-                        }
-                    },
-                    rack: {
-                        intake: "COLD AISLE",
-                        exhaust: "HOT AISLE"
-                    },
-                    labels: {
-                        compute: "COMPUTE",
-                        pump: "PUMP"
-                    },
-                    logs: {
-                        mpc: "Look-ahead window 180s. Pre-cooling...",
-                        pid: "Error deviation > 2.5. Integral windup.",
-                        rule: "Threshold 55C triggered. Hard switch."
-                    },
-                    modeStatus: {
-                        MPC: ">> AI Predictive Model Active",
-                        PID: ">> Reactive Loop Active",
-                        Rule: ">> Static Logic Active"
-                    },
-                    modes: {
-                        MPC: "MPC Model",
-                        PID: "PID Loop",
-                        Rule: "Rule Logic"
+                    content: {
+                        prob_vars: {
+                            u: "Control Variable: Supply Water Temperature ($T_{supply}$)",
+                            y: "Constraint Variable: Chip Junction Temperature ($T_{chip} \\le 65^\\circ\\mathrm{C}$)",
+                            j: "Objective Function: Minimize Cooling Energy ($PUE$) s.t. $T_{chip}(k) \\le T_{limit}$"
+                        },
+                        prob_summary: "Under fixed operating demand (IT load treated as an exogenous input) and strict thermal safety constraints ($T_{chip} \\le T_{limit}$), the MPC controller performs dynamic setpoint optimization on the supply water temperature ($T_{supply}$). By converting conservative thermal safety margins into controllable degrees of freedom, the system transitions from fixed, conservative operation (PID baseline at $18^\\circ\\mathrm{C}$) to energy-optimal operation, resulting in a measurable reduction in system PUE under identical load conditions.",
+                        comp_intro: "To isolate the efficacy of the control algorithm from environmental variances, we perform a counterfactual baseline evaluation. The PID baseline represents standard industry practice (fixed supply temperature at 18°C) applied to the exact same IT load profile and physical model as the MPC experiment."
                     }
-                }
-            };
+                },
+                langSwitch: "中文" 
+            },
+            zh: {
+                title: "AIDC 热控制范式研究",
+                subtitle: "基于约束的设定点优化 (MPC) vs 固定基线 (PID)",
+                instance: "代表性实例：GB200 NVL72 级高密度机柜",
+                // L1 Labels
+                l1: {
+                    control: "控制变量 (供水温度)",
+                    constraint: "约束变量 (芯片结温)",
+                    objective: "优化目标 (PUE)"
+                },
+                // L2 Labels
+                l2: {
+                    cue: "CUE (衍生指标)",
+                    margin: "裕量利用率"
+                },
+                // L3 Labels
+                l3: {
+                    variance: "设定点方差 (σ)",
+                    effort: "控制动作量"
+                },
+                // L4 Labels
+                l4: {
+                    wue: "WUE (情景假设)",
+                    carbon: "电网碳因子"
+                },
+                profReqTitle: "控制策略有效性验证",
+                // Animated Steps
+                validationSteps: [
+                    { icon: "ShieldCheck", text: "已强制执行固定 IT 负载与热安全约束。" },
+                    { icon: "Sliders", text: "MPC 对供水温度 (T_supply) 执行动态设定点优化。" },
+                    { icon: "TrendingDown", text: (delta) => `实现能效最优运行，PUE 显著降低 (ΔPUE ≈ -${delta}%)。` }
+                ],
+                sections: {
+                    input: "系统输入 (扰动变量)",
+                    boundary: "边界条件 (敏感性分析)",
+                    advanced: "高级遥测与假设验证",
+                    charts: "系统轨迹与约束边界"
+                },
+                labels: {
+                    itPower: "IT 算力负载 (输入)",
+                    chipLimit: "约束条件: T_max",
+                    baseTemp: "基线设定: T_supply",
+                    trace: {
+                        opt: "源于供水温度动态优化",
+                        load: "基于完全相同的IT负载计算"
+                    }
+                },
+                chartAxis: {
+                    chip: "芯片结温 (°C)",
+                    supply: "供水温度 (°C)",
+                    limit: "安全红线"
+                },
+                twin: {
+                    title: "数字孪生体",
+                    state: "运行状态",
+                    active: "在线"
+                },
+                report: {
+                    btn: "生成评审备忘录",
+                    title: "技术评审备忘录",
+                    // STRICT ACADEMIC TITLES
+                    titles: {
+                        prob: "1. 问题阐述：热安全约束下的设定点优化",
+                        baseline: "2. 反事实基线分析 (PID vs. MPC)",
+                        trace: "3. 可追溯性、假设与系统常数"
+                    },
+                    content: {
+                        prob_vars: {
+                            u: "控制变量：供水温度 ($T_{supply}$)",
+                            y: "约束变量：芯片结温 ($T_{chip} \\le 65^\\circ\\mathrm{C}$)",
+                            j: "目标函数：最小化能耗 ($PUE$) s.t. $T_{chip}(k) \\le T_{limit}$"
+                        },
+                        prob_summary: "在满足芯片热安全约束（$T_{chip} \\le T_{limit}$）与运行需求（IT负载给定）的前提下，MPC 对供水温度 $T_{supply}$ 进行动态优化。通过将保守的热安全冗余转化为可控的自由度，系统从固定的保守运行模式（PID 基线 $18^\\circ\\mathrm{C}$）转变为能效最优运行模式，从而在相同负载条件下实现可量化的 PUE 降低。",
+                        comp_intro: "为了将控制算法的效能与环境变化隔离，我们执行了反事实基线评估。PID 基线代表了应用于与 MPC 实验完全相同的 IT 负载曲线和物理模型的标准工业实践（固定供水温度 18°C）。"
+                    }
+                },
+                langSwitch: "EN" 
+            }
+        };
 
-            const t = translations[lang];
-
-            // Simulation Logic
-            const currentTemp = useMemo(() => {
-                const base = 48 + (load * 0.28);
-                const noise = (Math.random() - 0.5) * 1.5;
-                let offset = 0;
-                if (mode === 'PID') { offset = 8 * Math.sin(time / 2.5) + noise * 2; if (load > 70) offset += 5; }
-                else if (mode === 'Rule') { const step = Math.floor(time / 5); offset = (step % 2 === 0 ? 4 : -4) + noise * 0.5; }
-                else { offset = Math.sin(time / 10) * 1.2; }
-                return (base + offset).toFixed(1);
-            }, [load, mode, time]);
-
-            const itPower = (load * 2.5).toFixed(1);
-            const pue = (1 + (mode === 'MPC' ? 0.15 : 0.35)).toFixed(2);
-            const cue = (parseFloat(pue) * 0.42).toFixed(2);
-            const wug = (mode === 'MPC' ? 0.35 + (load/200) : 0.65 + (load/150)).toFixed(2);
-
+        // --- ICON COMPONENT ---
+        const Icon = ({ name, size = 16, className = "" }) => {
+            const ref = useRef(null);
             useEffect(() => {
-                const timer = setInterval(() => {
-                    setTime(prev => prev + 1);
-                    setHistory(prev => {
-                        const next = [...prev, { time, temp: parseFloat(currentTemp), target: 50 }];
-                        if (next.length > 60) next.shift();
-                        return next;
+                if (window.lucide) {
+                    ref.current.innerHTML = '';
+                    const i = document.createElement('i');
+                    i.setAttribute('data-lucide', name.toLowerCase());
+                    ref.current.appendChild(i);
+                    window.lucide.createIcons({ nameAttr: 'data-lucide', attrs: {width: size, height: size, class: className} });
+                }
+            }, [name, size, className]);
+            return <span ref={ref} className="flex items-center justify-center"></span>;
+        };
+
+        // --- PHYSICS ENGINE ---
+        const calcPUE = (itKW, rackKW, supplyC) => {
+            const baseCOP = 4.0; 
+            const cop = baseCOP * (1 + (supplyC - 18) * 0.035);
+            const coolingKW = (rackKW * 0.98) / cop; 
+            return (rackKW + coolingKW) / itKW;
+        };
+
+        const calcChipTemp = (supplyC, rackKW) => {
+            const heatLoadKW = rackKW * 0.98;
+            return supplyC + (heatLoadKW * PHYSICS_MODEL.THERMAL_RESISTANCE) + 2.0;
+        };
+
+        // --- COMPONENT: L1 METRIC CARD ---
+        const L1Metric = ({ label, value, unit, color, isMpcActive, traceLabel }) => (
+            <div className={`relative flex flex-col items-center justify-center p-3 rounded-lg border transition-all duration-700 ${isMpcActive && color !== 'text-slate-200' ? 'kpi-glow-mpc border-blue-500/50' : 'border-white/10 bg-slate-800/30'}`}>
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">{label}</span>
+                <div className={`text-2xl font-mono font-bold ${color || 'text-white'}`}>
+                    {value} <span className="text-xs text-slate-500 font-normal">{unit}</span>
+                </div>
+                {/* Traceability Tag */}
+                {traceLabel && (
+                    <div className="absolute -bottom-6 w-full text-center opacity-0 transition-opacity duration-300 group-hover:opacity-100 text-[9px] text-slate-500 italic">
+                        {traceLabel}
+                    </div>
+                )}
+            </div>
+        );
+
+        // --- COMPONENT: L2 METRIC ROW ---
+        const L2Metric = ({ label, value, unit, isMpcActive }) => (
+            <div className={`flex justify-between items-center text-xs border-b border-white/5 py-1 last:border-0 transition-colors duration-500 ${isMpcActive ? 'text-blue-200' : 'text-slate-500'}`}>
+                <span>{label}</span>
+                <span className="font-mono">{value} {unit}</span>
+            </div>
+        );
+
+        // --- COMPONENT: ANIMATED VALIDATION STEP ---
+        const ValidationStep = ({ icon, text, delay, visible }) => {
+            const [show, setShow] = useState(false);
+            
+            useEffect(() => {
+                let timer;
+                if (visible) {
+                    timer = setTimeout(() => setShow(true), delay);
+                } else {
+                    setShow(false);
+                }
+                return () => clearTimeout(timer);
+            }, [visible, delay]);
+
+            return (
+                <div className={`flex items-start gap-3 transition-all duration-500 ease-out transform ${show ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
+                    <div className="mt-0.5 text-emerald-400 shrink-0">
+                        <Icon name={icon} size={14} />
+                    </div>
+                    <p className="text-xs text-slate-300 leading-relaxed">
+                        {text}
+                    </p>
+                </div>
+            );
+        };
+
+        const App = () => {
+            const [lang, setLang] = useState('zh');
+            const [mode, setMode] = useState('MPC');
+            const [showAdvanced, setShowAdvanced] = useState(false);
+            const [showSummary, setShowSummary] = useState(true);
+            
+            // --- STATE VECTORS ---
+            const [inputs, setInputs] = useState({
+                itPowerKW: 85.0,
+                safetyLimitC: PHYSICS_MODEL.GLOBAL_LIMIT_TEMP,
+                baselineTempC: PHYSICS_MODEL.BASELINE_TEMP
+            });
+
+            const [state, setState] = useState({
+                supplyTempC: 18.0,
+                chipTempC: 45.0,
+                rackPowerKW: 95.0,
+                pue: 1.45,
+                cue: 0.6,
+                wue: 1.8,
+                margin: 20.0,
+                deltaPue: 0.0,
+                variance: 0.0,
+                effort: 0.0,
+                history: []
+            });
+
+            const t = I18N[lang];
+
+            // Effect: Sequence the Text Appearance
+            useEffect(() => {
+                if (mode === 'MPC') {
+                    setShowSummary(true);
+                } else {
+                    setShowSummary(false);
+                }
+            }, [mode]);
+
+            // --- MAIN SIMULATION LOOP (1Hz) ---
+            useEffect(() => {
+                const tick = setInterval(() => {
+                    setState(prev => {
+                        const rackKW = (inputs.itPowerKW / PHYSICS_MODEL.PSU_EFFICIENCY) + PHYSICS_MODEL.NON_IT_LOAD_KW;
+                        const heatLoadKW = rackKW * 0.98;
+
+                        // Baseline Calculation (Counterfactual)
+                        const baselineSupply = PHYSICS_MODEL.BASELINE_TEMP;
+                        const baselinePUE = calcPUE(inputs.itPowerKW, rackKW, baselineSupply);
+
+                        let nextSupply = prev.supplyTempC;
+
+                        if (mode === 'PID') {
+                            const err = inputs.baselineTempC - prev.supplyTempC;
+                            nextSupply = prev.supplyTempC + (err * 0.2); 
+                        } else {
+                            const SAFE_MARGIN = 2.5; 
+                            const maxFeasibleChip = inputs.safetyLimitC - SAFE_MARGIN;
+                            const deltaT = (heatLoadKW * PHYSICS_MODEL.THERMAL_RESISTANCE) + 2.0;
+                            let optimalSupply = maxFeasibleChip - deltaT;
+
+                            // Clamp
+                            optimalSupply = Math.max(PHYSICS_MODEL.MIN_SUPPLY_TEMP, Math.min(PHYSICS_MODEL.MAX_SUPPLY_TEMP, optimalSupply));
+
+                            // Actuator Dynamics
+                            nextSupply = prev.supplyTempC * 0.6 + optimalSupply * 0.4;
+                        }
+
+                        const nextChip = calcChipTemp(nextSupply, rackKW);
+                        const nextPUE = calcPUE(inputs.itPowerKW, rackKW, nextSupply);
+                        
+                        // L2 Metrics
+                        const nextCUE = nextPUE * PHYSICS_MODEL.CARBON_INTENSITY;
+                        const nextMargin = inputs.safetyLimitC - nextChip;
+                        const deltaPuePct = ((baselinePUE - nextPUE) / baselinePUE * 100).toFixed(1);
+
+                        // L3 Metrics
+                        const diff = nextSupply - prev.supplyTempC;
+                        const nextEffort = Math.abs(diff); 
+                        const nextVar = prev.variance * 0.9 + (diff * diff) * 0.1;
+
+                        const now = new Date().toLocaleTimeString('en-GB', { hour12: false });
+                        const newHistory = [...prev.history, {
+                            time: now,
+                            chip: nextChip,
+                            supply: nextSupply,
+                            limit: inputs.safetyLimitC,
+                            baseline: inputs.baselineTempC
+                        }].slice(-60);
+
+                        return {
+                            supplyTempC: nextSupply,
+                            chipTempC: nextChip,
+                            rackPowerKW: rackKW,
+                            pue: nextPUE,
+                            cue: nextCUE,
+                            wue: nextPUE * PHYSICS_MODEL.WATER_USAGE_INTENSITY, 
+                            margin: nextMargin,
+                            deltaPue: deltaPuePct,
+                            variance: Math.sqrt(nextVar),
+                            effort: nextEffort,
+                            history: newHistory
+                        };
                     });
                 }, 800);
-                return () => clearInterval(timer);
-            }, [currentTemp, time]);
+                return () => clearInterval(tick);
+            }, [inputs, mode, lang]);
 
-            const handleModeChange = (newMode) => {
-                if (newMode === mode) return;
-                setFlash(true);
-                setMode(newMode);
-                setTimeout(() => setFlash(false), 300);
+            // --- REPORT GENERATOR ---
+            const generateMemo = () => {
+                const w = window.open('', '_blank');
+                
+                const rackKW = (inputs.itPowerKW / PHYSICS_MODEL.PSU_EFFICIENCY) + PHYSICS_MODEL.NON_IT_LOAD_KW;
+                
+                // Explicit Counterfactual Calculation
+                const baselineSupply = PHYSICS_MODEL.BASELINE_TEMP; // 18C fixed
+                const baselinePUE = calcPUE(inputs.itPowerKW, rackKW, baselineSupply);
+                const baselineChip = calcChipTemp(baselineSupply, rackKW);
+                
+                const actualSupply = state.supplyTempC;
+                const actualPUE = state.pue;
+                const actualChip = state.chipTempC;
+
+                const pueSaving = ((baselinePUE - actualPUE) / baselinePUE * 100).toFixed(2);
+                
+                // KaTeX scripts - Only loaded in Report Window
+                const katexHead = `
+                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css">
+                    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"><\/script>
+                    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js"><\/script>
+                `;
+
+                // Self-Checking Export Script
+                const exportScript = `
+                    <script>
+                        function renderMath() {
+                            if(window.renderMathInElement) {
+                                renderMathInElement(document.body, {
+                                    delimiters: [
+                                        { left: "$$", right: "$$", display: true },
+                                        { left: "\\\\(", right: "\\\\)", display: false },
+                                        { left: "$", right: "$", display: false }
+                                    ],
+                                    throwOnError: false
+                                });
+                            }
+                        }
+
+                        async function prepareForExport() {
+                            let attempts = 0;
+                            while(!window.renderMathInElement && attempts < 50) {
+                                await new Promise(r => setTimeout(r, 100));
+                                attempts++;
+                            }
+                            renderMath();
+                            if (document.fonts && document.fonts.ready) await document.fonts.ready;
+                            await new Promise(r => setTimeout(r, 800));
+
+                            const content = document.body.innerText;
+                            if (content.match(/\\\\(circ|mathrm|eta|le|Delta|approx)/)) {
+                                const msg = "${lang}" === 'zh' 
+                                    ? "导出中断：检测到未渲染的数学公式代码。\\n请检查网络连接是否允许加载 KaTeX 库。" 
+                                    : "Export Halted: Unrendered LaTeX code detected.\\nPlease check if network allows loading KaTeX.";
+                                alert(msg);
+                                throw new Error("Self-check failed: Unrendered LaTeX");
+                            }
+                        }
+
+                        window.onload = () => {
+                            prepareForExport().then(() => {
+                                window.print();
+                            }).catch(e => {
+                                console.error("Export failed:", e);
+                            });
+                        };
+                    <\/script>
+                `;
+
+                const html = `
+                    <!DOCTYPE html>
+                    <html lang="${lang}">
+                    <head>
+                        <title>${t.report.title}</title>
+                        ${katexHead}
+                        <style>
+                            body { font-family: 'Noto Serif SC', serif; padding: 40px; color: #1e293b; max-width: 800px; margin: 0 auto; line-height: 1.5; }
+                            h1 { border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 5px; font-size: 24px; }
+                            .meta { color: #64748b; font-family: monospace; font-size: 0.9em; margin-bottom: 30px; }
+                            h2 { margin-top: 30px; font-size: 18px; border-left: 4px solid #3b82f6; padding-left: 10px; background: #f8fafc; }
+                            table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 0.9em; }
+                            th, td { border: 1px solid #cbd5e1; padding: 8px 12px; text-align: left; }
+                            th { background: #f1f5f9; }
+                            .highlight { font-weight: bold; color: #1e40af; }
+                            .mono { font-family: monospace; }
+                            .summary-box { background: #eff6ff; border: 1px solid #bfdbfe; padding: 15px; border-radius: 4px; margin-bottom: 20px; color: #1e3a8a; font-size: 0.95em; }
+                            ul { padding-left: 20px; }
+                            li { margin-bottom: 5px; }
+                        </style>
+                    </head>
+                    <body>
+                        <h1>${t.report.title}</h1>
+                        <div class="meta">
+                            DATE: ${new Date().toISOString().split('T')[0]}<br/>
+                            SUBJECT: ${t.instance}<br/>
+                            ID: ${Math.random().toString(36).substr(2, 9).toUpperCase()}
+                        </div>
+
+                        <h2>${t.report.titles.prob}</h2>
+                        <ul>
+                            <li><strong>${t.report.content.prob_vars.u}</strong></li>
+                            <li><strong>${t.report.content.prob_vars.y}</strong></li>
+                            <li><strong>${t.report.content.prob_vars.j}</strong></li>
+                        </ul>
+                        <div class="summary-box">
+                            ${t.report.content.prob_summary}
+                        </div>
+
+                        <h2>${t.report.titles.baseline}</h2>
+                        <p>${t.report.content.comp_intro}</p>
+                        <p>($P_{IT} = ${inputs.itPowerKW.toFixed(1)}$ kW, $T_{baseline} = ${baselineSupply.toFixed(1)}^\\circ\\mathrm{C}$)</p>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Parameter</th>
+                                    <th>PID Baseline (Counterfactual)</th>
+                                    <th>MPC (Actual)</th>
+                                    <th>Delta</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Setpoint ($T_{supply}$)</td>
+                                    <td>$${baselineSupply.toFixed(1)}^\\circ\\mathrm{C}$</td>
+                                    <td class="highlight">$${actualSupply.toFixed(1)}^\\circ\\mathrm{C}$</td>
+                                    <td>$${(actualSupply - baselineSupply).toFixed(1)}^\\circ\\mathrm{C}$</td>
+                                </tr>
+                                <tr>
+                                    <td>Chip Temp ($T_{chip}$)</td>
+                                    <td>$${baselineChip.toFixed(1)}^\\circ\\mathrm{C}$</td>
+                                    <td>$${actualChip.toFixed(1)}^\\circ\\mathrm{C}$</td>
+                                    <td>Margin Utilized</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>System PUE</strong></td>
+                                    <td>${baselinePUE.toFixed(3)}</td>
+                                    <td class="highlight">${actualPUE.toFixed(3)}</td>
+                                    <td><strong>-${pueSaving}%</strong></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h2>${t.report.titles.trace}</h2>
+                        <div class="mono" style="background:#f8fafc; padding:10px; border:1px solid #e2e8f0; font-size:0.8em;">
+                            # SYSTEM CONSTANTS<br/>
+                            $\\eta_{PSU} = ${PHYSICS_MODEL.PSU_EFFICIENCY}$<br/>
+                            $R_{th} = ${PHYSICS_MODEL.THERMAL_RESISTANCE} \\; \\mathrm{K/kW}$<br/>
+                            $P_{facility} = ${PHYSICS_MODEL.NON_IT_LOAD_KW} \\; \\mathrm{kW}$<br/>
+                            <br/>
+                            # BOUNDARY CONDITIONS<br/>
+                            $T_{limit} = ${inputs.safetyLimitC}^\\circ\\mathrm{C}$<br/>
+                            $T_{baseline} = ${baselineSupply.toFixed(1)}^\\circ\\mathrm{C}$<br/>
+                            $P_{IT} = ${inputs.itPowerKW} \\; \\mathrm{kW}$
+                        </div>
+
+                        ${exportScript}
+                    </body>
+                    </html>
+                `;
+                w.document.write(html);
+                w.document.close();
             };
 
             return (
-                <div className="h-screen w-screen p-3 text-slate-200 relative overflow-hidden flex flex-col gap-3">
-                    <div className="bg-grid" style={{ backgroundImage: `linear-gradient(to right, ${theme.grid} 1px, transparent 1px), linear-gradient(to bottom, ${theme.grid} 1px, transparent 1px)` }}></div>
-                    {flash && <div className="mode-flash-overlay"></div>}
-
-                    {/* --- COMPACT HEADER --- */}
-                    <header className="glass-panel rounded-xl px-4 py-2 flex justify-between items-center shrink-0 z-20 h-14">
-                        <div className="flex items-center gap-3">
-                            <Icon name="Server" size={20} className="text-white" />
+                <div className="flex flex-col h-screen p-4 gap-4">
+                    {/* HEADER */}
+                    <header className="glass-panel p-4 rounded-xl flex justify-between items-center shrink-0">
+                        <div className="flex items-center gap-4">
+                            <div className="p-2 bg-blue-900/30 rounded-lg text-blue-400">
+                                <Icon name="Activity" size={24} />
+                            </div>
                             <div>
-                                <h1 className="text-base font-bold tracking-tight text-white leading-tight">{t.title}</h1>
-                                <p className="text-[10px] text-slate-400 font-mono uppercase tracking-wider">{t.subtitle}</p>
+                                <h1 className="text-lg font-bold tracking-tight text-white">{t.title}</h1>
+                                <div className="flex items-center gap-2 text-xs text-slate-400 font-mono">
+                                    <span className="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700">VER 5.5 (Staged)</span>
+                                    <span>{t.instance}</span>
+                                </div>
                             </div>
                         </div>
-                        <div className="flex items-center gap-4 text-[10px] font-mono">
-                            <div className="flex items-center gap-2">
-                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                                <span className="text-emerald-400">{t.header.online}</span>
+                        <div className="flex gap-3">
+                            <div className="flex bg-slate-800 rounded-lg p-1 border border-slate-700">
+                                <button onClick={() => setMode('PID')} className={`px-4 py-1.5 rounded text-xs font-bold ${mode==='PID' ? 'bg-amber-600 text-white' : 'text-slate-400'}`}>PID</button>
+                                <button onClick={() => setMode('MPC')} className={`px-4 py-1.5 rounded text-xs font-bold ${mode==='MPC' ? 'bg-blue-600 text-white' : 'text-slate-400'}`}>MPC</button>
                             </div>
-                            <span className="text-slate-600">|</span>
-                            <span>{t.header.region}</span>
-                            <button 
-                                onClick={() => setLang(lang === 'zh' ? 'en' : 'zh')}
-                                className="ml-4 px-2 py-1 border border-slate-700 rounded hover:bg-white/10 transition-colors"
-                            >
-                                {lang === 'zh' ? 'EN' : '中文'}
+                            <button onClick={() => setLang(l => l==='en'?'zh':'en')} className="px-3 py-1.5 border border-slate-700 rounded text-xs text-slate-400 font-mono hover:text-white">
+                                {t.langSwitch}
                             </button>
                         </div>
                     </header>
 
-                    {/* --- MAIN CONTENT (GRID) --- */}
-                    <div className="flex-1 grid grid-cols-12 gap-3 min-h-0">
+                    {/* ANIMATED PROFESSOR REQUIREMENT BLOCK */}
+                    <div className={`glass-panel p-3 rounded-xl border-l-4 border-blue-500 bg-blue-900/10 shrink-0 transition-all duration-500 ${showSummary ? 'opacity-100 max-h-40' : 'opacity-0 max-h-0 overflow-hidden py-0'}`}>
+                        <h4 className="text-xs font-bold text-blue-400 mb-2">{t.profReqTitle}</h4>
+                        <div className="space-y-1.5">
+                            {t.validationSteps.map((step, idx) => (
+                                <ValidationStep 
+                                    key={idx} 
+                                    icon={step.icon} 
+                                    text={typeof step.text === 'function' ? step.text(state.deltaPue) : step.text}
+                                    delay={idx * 600}
+                                    visible={showSummary}
+                                />
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* MAIN CONTENT */}
+                    <div className="flex-1 grid grid-cols-12 gap-4 min-h-0">
                         
-                        {/* LEFT: Controls & Gauges (Compact) */}
-                        <div className="col-span-3 flex flex-col gap-3 h-full">
+                        {/* LEFT: CONTROLS & HIERARCHICAL METRICS */}
+                        <div className="col-span-3 flex flex-col gap-4 overflow-y-auto">
                             
-                            {/* 1. Compact Mode Selector (Corner) */}
-                            <section className="glass-panel p-3 rounded-xl flex flex-col gap-2">
-                                <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">{t.controller}</h3>
-                                <div className="grid grid-cols-3 gap-1">
-                                    {['PID', 'Rule', 'MPC'].map(m => (
-                                        <button
-                                            key={m}
-                                            onClick={() => handleModeChange(m)}
-                                            className={`flex flex-col items-center justify-center py-2 rounded-lg border transition-all duration-200 ${mode === m ? 'bg-white/10 border-transparent shadow-inner' : 'border-slate-800 hover:bg-white/5'}`}
-                                            style={mode === m ? { color: THEME[m].primary } : { color: '#64748b' }}
-                                        >
-                                            <Icon name={THEME[m].icon} size={16} />
-                                            <span className="text-[9px] font-bold mt-1">{t.modes[m]}</span>
-                                        </button>
-                                    ))}
-                                </div>
-                                <div className="text-[10px] mt-1 h-8 leading-tight opacity-70 px-1" style={{ color: theme.primary }}>
-                                    {t.modeStatus[mode]}
+                            {/* Inputs (Disturbance) */}
+                            <section className="glass-panel p-4 rounded-xl">
+                                <h3 className="text-xs font-bold text-slate-500 uppercase mb-4 border-b border-white/10 pb-2">{t.sections.input}</h3>
+                                <div className="space-y-4">
+                                    <div>
+                                        <div className="flex justify-between text-xs mb-1 text-slate-300">
+                                            <span>{t.labels.itPower}</span>
+                                            <span className="font-mono">{inputs.itPowerKW.toFixed(0)} kW</span>
+                                        </div>
+                                        <input 
+                                            type="range" min="50" max="130" step="1" 
+                                            value={inputs.itPowerKW}
+                                            onChange={(e) => setInputs(s => ({...s, itPowerKW: Number(e.target.value)}))}
+                                            className="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                                        />
+                                    </div>
                                 </div>
                             </section>
 
-                            {/* 2. Load Input & Gauges */}
-                            <section className="glass-panel p-4 rounded-xl flex-1 flex flex-col items-center justify-center gap-6">
-                                <div className="w-full">
-                                    <div className="flex justify-between items-end mb-2">
-                                        <label className="text-[10px] font-bold text-slate-500 uppercase">{t.inputLoad}</label>
-                                        <span className="text-2xl font-mono font-bold" style={{ color: theme.primary }}>{load}%</span>
+                            {/* Boundary Conditions */}
+                            <section className="glass-panel p-4 rounded-xl">
+                                <h3 className="text-xs font-bold text-slate-500 uppercase mb-4 border-b border-white/10 pb-2">{t.sections.boundary}</h3>
+                                <div className="space-y-4">
+                                    <div>
+                                        <div className="flex justify-between text-xs mb-1 text-red-300">
+                                            <span>{t.labels.chipLimit}</span>
+                                            <span className="font-mono">{inputs.safetyLimitC.toFixed(0)}°C</span>
+                                        </div>
+                                        <input type="range" min="60" max="75" step="1" value={inputs.safetyLimitC} onChange={(e) => setInputs(s => ({...s, safetyLimitC: Number(e.target.value)}))} className="w-full h-1.5 bg-slate-700 rounded-lg accent-red-500" />
                                     </div>
-                                    <input 
-                                        type="range" min="0" max="100" value={load} 
-                                        onChange={(e) => setLoad(parseInt(e.target.value))}
-                                        className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer"
-                                        style={{ accentColor: theme.primary }}
+                                </div>
+                            </section>
+
+                            {/* L3 & L4: Advanced Telemetry (Collapsible) */}
+                            <section className="glass-panel rounded-xl overflow-hidden group">
+                                <button onClick={() => setShowAdvanced(!showAdvanced)} className="w-full p-3 flex justify-between items-center text-xs font-bold text-slate-400 hover:bg-white/5 transition-colors">
+                                    <span>{t.sections.advanced}</span>
+                                    <Icon name={showAdvanced ? "ChevronUp" : "ChevronDown"} size={14} />
+                                </button>
+                                {showAdvanced && (
+                                    <div className="p-4 pt-0 space-y-2 bg-black/20">
+                                        {/* L3 Metrics */}
+                                        <L2Metric label={t.l3.variance} value={state.variance.toFixed(3)} unit="" isMpcActive={mode==='MPC'} />
+                                        <L2Metric label={t.l3.effort} value={state.effort.toFixed(2)} unit="°C/s" isMpcActive={mode==='MPC'} />
+                                        <div className="h-px bg-white/10 my-2"></div>
+                                        {/* L4 Metrics */}
+                                        <L2Metric label={t.l4.wue} value={state.wue.toFixed(2)} unit="L/kWh" isMpcActive={mode==='MPC'} />
+                                        <div className="text-[9px] text-slate-500 mt-2 italic">
+                                            * WUE is scenario-based (Assumption: {PHYSICS_MODEL.WATER_USAGE_INTENSITY} L/kWh)
+                                        </div>
+                                    </div>
+                                )}
+                            </section>
+
+                            <button onClick={generateMemo} className="mt-auto glass-panel p-3 rounded-xl flex items-center justify-center gap-2 hover:bg-white/5 transition-colors text-xs font-bold text-slate-300 uppercase tracking-wider">
+                                <Icon name="FileText" size={14} /> {t.report.btn}
+                            </button>
+                        </div>
+
+                        {/* CENTER: L1 VISUALIZATION & CAUSAL CHAIN */}
+                        <div className="col-span-6 flex flex-col gap-4">
+                            
+                            {/* L1 & L2: Causal Loop Visualizer */}
+                            <div className="glass-panel p-4 rounded-xl flex flex-col gap-4">
+                                {/* Causal Chain Header */}
+                                <div className="flex justify-between items-center text-[10px] text-slate-500 font-mono uppercase tracking-widest border-b border-white/5 pb-2">
+                                    <span>Control Input</span>
+                                    <span>System Response</span>
+                                    <span>Objective</span>
+                                </div>
+                                
+                                {/* L1 Primary Metrics */}
+                                <div className="grid grid-cols-3 gap-2 items-center">
+                                    {/* Control Variable */}
+                                    <L1Metric 
+                                        label={t.l1.control} 
+                                        value={state.supplyTempC.toFixed(1)} 
+                                        unit="°C" 
+                                        color={mode === 'MPC' ? "text-blue-400" : "text-amber-400"}
+                                        isMpcActive={mode === 'MPC'}
+                                        traceLabel={showAdvanced ? t.labels.trace.opt : null}
+                                    />
+                                    
+                                    <div className="flex flex-col items-center">
+                                        <div className="h-0.5 w-full bg-slate-700 relative top-1/2"></div>
+                                        {/* Constraint Variable */}
+                                        <L1Metric 
+                                            label={t.l1.constraint} 
+                                            value={state.chipTempC.toFixed(1)} 
+                                            unit="°C" 
+                                            color={state.margin < 3 ? "text-red-400 animate-pulse" : "text-slate-200"}
+                                            isMpcActive={false} // Constraint is passive response
+                                            traceLabel={showAdvanced ? t.labels.trace.load : null}
+                                        />
+                                    </div>
+
+                                    {/* Objective Variable */}
+                                    <L1Metric 
+                                        label={t.l1.objective} 
+                                        value={state.pue.toFixed(3)} 
+                                        unit="" 
+                                        color={mode === 'MPC' ? "text-emerald-400" : "text-slate-200"}
+                                        isMpcActive={mode === 'MPC'}
+                                        traceLabel={showAdvanced ? `Δ = ${state.deltaPue}%` : null}
                                     />
                                 </div>
-                                <div className="flex gap-4 justify-center w-full">
-                                    <MiniGauge value={load} label={t.labels.compute} color={theme.primary} />
-                                    <MiniGauge value={mode==='MPC'?Math.min(100, load+10):Math.min(100, load*1.5)} label={t.labels.pump} color={mode==='PID'?'#ef4444':'#10b981'} />
+
+                                {/* L2 Derived Metrics (Subordinate) */}
+                                <div className="grid grid-cols-2 gap-4 pt-2 bg-white/5 rounded-lg p-2">
+                                    <L2Metric label={t.l2.margin} value={state.margin.toFixed(1)} unit="°C" isMpcActive={false} />
+                                    <L2Metric label={t.l2.cue} value={state.cue.toFixed(2)} unit="kg/kWh" isMpcActive={mode === 'MPC'} />
                                 </div>
-                            </section>
-                        </div>
-
-                        {/* CENTER: Charts (KPIs + Split View) */}
-                        <div className="col-span-6 flex flex-col gap-3 h-full">
-                            
-                            {/* KPI Strip */}
-                            <div className="grid grid-cols-4 gap-3 h-20 shrink-0">
-                                {[
-                                    { l: t.kpi.chipTemp, v: currentTemp, u: "°C", c: parseFloat(currentTemp)>60 ? (mode==='PID'?'text-red-400':'text-yellow-400') : 'text-slate-200' },
-                                    { l: t.kpi.headroom, v: (85-parseFloat(currentTemp)).toFixed(1), u: "°C", c: "text-blue-300" },
-                                    { l: t.kpi.itPower, v: itPower, u: "kW", c: "text-slate-200" },
-                                    { l: t.kpi.cooling, v: (parseFloat(itPower)*(pue-1)).toFixed(1), u: "kW", c: "text-slate-400" },
-                                ].map((k,i) => (
-                                    <div key={i} className="glass-panel rounded-xl flex flex-col justify-center items-center relative overflow-hidden">
-                                        <div className="text-[9px] text-slate-500 font-bold uppercase">{k.l}</div>
-                                        <div className={`text-lg font-mono font-bold ${k.c}`}>{k.v}<span className="text-[10px] ml-1 text-slate-600">{k.u}</span></div>
-                                    </div>
-                                ))}
                             </div>
 
-                            {/* Charts Container */}
-                            <div className="flex-1 flex flex-col gap-3 min-h-0">
-                                {/* Top Chart: Realtime */}
-                                <section className="glass-panel p-3 rounded-xl flex-1 min-h-0 flex flex-col relative overflow-hidden" style={{ borderColor: `${theme.primary}30` }}>
-                                    <h3 className="text-[10px] font-bold text-slate-500 uppercase mb-2 flex items-center gap-2 shrink-0">
-                                        <Icon name="Activity" size={12} className={theme.primary} /> {t.charts.realtime}
-                                    </h3>
-                                    <div className="flex-1 min-h-0">
-                                        <ResponsiveContainer width="100%" height="100%">
-                                            <LineChart data={history}>
-                                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#334155" opacity={0.3} />
-                                                <XAxis dataKey="time" hide />
-                                                <YAxis domain={[40, 70]} hide />
-                                                <Tooltip contentStyle={{ backgroundColor: '#020617', borderColor: theme.primary, borderRadius: '4px', fontSize: '10px' }} />
-                                                <Line type={mode === 'Rule' ? "stepAfter" : "monotone"} dataKey="temp" stroke={theme.primary} strokeWidth={2} dot={false} isAnimationActive={false} />
-                                                <ReferenceLine y={50} stroke="#475569" strokeDasharray="5 5" />
-                                            </LineChart>
-                                        </ResponsiveContainer>
-                                    </div>
-                                </section>
+                            {/* Main Chart */}
+                            <div className="glass-panel p-4 rounded-xl flex-1 relative flex flex-col min-h-0">
+                                <h3 className="text-xs font-bold text-slate-500 uppercase mb-2 flex items-center gap-2">
+                                    <Icon name="LineChart" size={14} /> {t.sections.charts}
+                                </h3>
+                                <div className="flex-1 w-full min-h-0">
+                                    <ResponsiveContainer>
+                                        <ComposedChart data={state.history}>
+                                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#334155" opacity={0.3} />
+                                            <XAxis dataKey="time" hide />
+                                            {/* LEFT AXIS: Constraint (Chip) */}
+                                            <YAxis yAxisId="left" domain={[30, 80]} tick={{fontSize: 10, fill: '#94a3b8'}} label={{value: t.chartAxis.chip, angle:-90, position:'insideLeft', fill:'#94a3b8', fontSize:10}} />
+                                            {/* RIGHT AXIS: Control (Supply) */}
+                                            <YAxis yAxisId="right" orientation="right" domain={[10, 35]} tick={{fontSize: 10, fill: '#3b82f6'}} label={{value: t.chartAxis.supply, angle:90, position:'insideRight', fill:'#3b82f6', fontSize:10}} />
+                                            
+                                            <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', fontSize: '12px' }} itemStyle={{padding: 0}} />
+                                            <Legend verticalAlign="top" height={36} iconType="plain" wrapperStyle={{fontSize: '10px'}} />
 
-                                {/* Bottom Chart: Prediction / Log */}
-                                <section className="glass-panel p-3 rounded-xl h-1/3 shrink-0 flex flex-col relative overflow-hidden">
-                                    <div className="absolute top-0 left-0 w-1 h-full" style={{ backgroundColor: theme.primary, opacity: 0.5 }}></div>
-                                    <h3 className="text-[10px] font-bold text-slate-500 uppercase mb-2 flex items-center gap-2 shrink-0">
-                                        <Icon name="Terminal" size={12} /> {t.charts.log}
-                                    </h3>
-                                    <div className="font-mono text-[10px] leading-relaxed opacity-80 overflow-hidden">
-                                        <div className="text-slate-500">{t.charts.listening} [OK]</div>
-                                        <AnimatePresence mode="wait">
-                                            <motion.div 
-                                                key={mode + lang} 
-                                                initial={{ opacity: 0, x: -5 }} 
-                                                animate={{ opacity: 1, x: 0 }} 
-                                                className="mt-1"
-                                                style={{ color: theme.primary }}
-                                            >
-                                                {t.charts.logPrefix[mode.toLowerCase()] + t.logs[mode.toLowerCase()]}
-                                            </motion.div>
-                                        </AnimatePresence>
-                                    </div>
-                                </section>
+                                            <ReferenceLine yAxisId="left" y={inputs.safetyLimitC} stroke="#ef4444" strokeDasharray="3 3" label={{ value: t.chartAxis.limit, fill: 'red', fontSize: 10 }} />
+                                            
+                                            <Area yAxisId="left" type="monotone" dataKey="chip" stroke="#94a3b8" fill="url(#colorChip)" strokeWidth={2} name="Chip Temp (Response)" />
+                                            <Line yAxisId="right" type="step" dataKey="supply" stroke="#3b82f6" strokeWidth={2} dot={false} name="Supply Temp (Control)" animationDuration={300} />
+                                            
+                                            <defs>
+                                                <linearGradient id="colorChip" x1="0" y1="0" x2="0" y2="1">
+                                                    <stop offset="5%" stopColor="#94a3b8" stopOpacity={0.1}/>
+                                                    <stop offset="95%" stopColor="#94a3b8" stopOpacity={0}/>
+                                                </linearGradient>
+                                            </defs>
+                                        </ComposedChart>
+                                    </ResponsiveContainer>
+                                </div>
                             </div>
                         </div>
 
-                        {/* RIGHT: Digital Twin (Rack) */}
-                        <div className="col-span-3 h-full">
-                            <OCPRack load={load} temp={currentTemp} pue={pue} cue={cue} wug={wug} mode={mode} theme={theme} t={t} />
+                        {/* RIGHT: DIGITAL TWIN (VISUAL CONFIRMATION) */}
+                        <div className="col-span-3 glass-panel p-1 rounded-xl relative overflow-hidden flex flex-col">
+                             <div className={`scanline ${mode === 'MPC' ? 'opacity-100' : 'opacity-0'}`}></div>
+                             <div className="p-3 border-b border-white/5 bg-slate-900/50">
+                                <h3 className="text-xs font-bold text-center text-slate-300">{t.twin.title}</h3>
+                                <div className="flex justify-between text-[9px] text-slate-500 mt-1 font-mono uppercase">
+                                    <span>Model: GB200</span>
+                                    <span>{t.twin.active}</span>
+                                </div>
+                             </div>
+                             <div className="flex-1 p-2 flex flex-col gap-px bg-black/40">
+                                {Array.from({length: 18}).map((_, i) => {
+                                    const zoneHeightFactor = (18 - i) / 18; 
+                                    const heatLoad = state.rackPowerKW * 0.98;
+                                    const localTemp = state.supplyTempC + (heatLoad * PHYSICS_MODEL.THERMAL_RESISTANCE * 0.8) + (zoneHeightFactor * 5);
+                                    const isHot = localTemp > inputs.safetyLimitC - 2;
+                                    const color = isHot ? '#7f1d1d' : (localTemp > inputs.safetyLimitC - 10 ? '#713f12' : '#064e3b');
+                                    
+                                    return (
+                                        <div key={i} className="flex-1 flex items-center justify-between px-2 rounded-sm transition-colors duration-500" style={{ backgroundColor: color }}>
+                                            <span className="text-[9px] font-mono text-slate-500">U{36 - i*2}</span>
+                                            {/* UI uses simple unicode degree */}
+                                            <span className={`text-[9px] font-mono ${isHot ? 'text-red-300 font-bold' : 'text-slate-300'}`}>{localTemp.toFixed(1)}°C</span>
+                                        </div>
+                                    )
+                                })}
+                             </div>
                         </div>
 
                     </div>
@@ -607,7 +856,7 @@
         };
 
         const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<Dashboard />);
+        root.render(<App />);
     </script>
 </body>
 </html>
