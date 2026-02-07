@@ -104,15 +104,11 @@
         const { ComposedChart, Line, Area, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine, ResponsiveContainer, Legend } = window.Recharts;
 
         // --- ENGINEERING CONSTANTS ---
-        // Renamed from PHYSICS_MODEL to GLOBAL_CONSTANTS to match App usage
         const GLOBAL_CONSTANTS = {
-            PSU_EFFICIENCY: 0.95,
-            NON_IT_LOAD_KW: 6.0,
             THERMAL_RESISTANCE: 0.22,
             CARBON_INTENSITY: 0.45,
             WATER_USAGE_INTENSITY: 1.8,
             MIN_SUPPLY_TEMP: 16.0,
-            MAX_SUPPLY_TEMP: 30.0,
             BASELINE_TEMP: 18.0,
             GLOBAL_LIMIT_TEMP: 65.0
         };
@@ -165,7 +161,7 @@
                 labels: { itPower: "IT Load", chipLimit: "Limit: T_max", baseTemp: "Base: T_supply", trace: { opt: "Optimized", load: "Identical Load", limit: "Phys. Limited", adv: "Adv. Arch" }, slew: "Slew Rate", variance: "Variance", utilization: "Utilization", wue: "WUE", feasibility: "PUE constrained by physics.", physLimit: "Phys. Limit" },
                 chartAxis: { chip: "Chip (°C)", supply: "Supply (°C)", limit: "LIMIT" },
                 twin: { title: "DIGITAL TWIN", state: "STATE", active: "ACTIVE" },
-                report: { btn: "Review Memo", title: "Technical Review Memo", titles: { prob: "1. Problem Formulation", baseline: "2. Counterfactual Baseline", trace: "3. Traceability & Constants" }, content: { prob_vars: { u: "Control: T_supply", y: "Constraint: T_chip <= 65°C", j: "Obj: Min Energy" }, prob_summary: "MPC optimizes setpoint under constraints.", comp_intro: "Comparison under identical load." } },
+                report: { btn: "Review Memo", title: "Technical Review Memorandum", titles: { prob: "1. Problem Formulation", baseline: "2. Counterfactual Baseline", trace: "3. Traceability & Constants" }, content: { prob_vars: { u: "Control: T_supply", y: "Constraint: T_chip <= 65°C", j: "Obj: Min Energy" }, prob_summary: "MPC optimizes setpoint under constraints.", comp_intro: "Comparison under identical load." } },
                 langSwitch: "中文" 
             },
             zh: {
@@ -285,7 +281,7 @@
             const [mode, setMode] = useState('MPC');
             const [showScenario, setShowScenario] = useState(false);
             const [showSummary, setShowSummary] = useState(true);
-            const [isQualityExpanded, setIsQualityExpanded] = useState(true); // Expanded by default for visibility
+            const [isQualityExpanded, setIsQualityExpanded] = useState(true); 
             const [activeProfileId, setActiveProfileId] = useState('MODERN');
             
             const [inputs, setInputs] = useState({ itPowerKW: 85.0, safetyLimitC: GLOBAL_CONSTANTS.GLOBAL_LIMIT_TEMP, baselineTempC: GLOBAL_CONSTANTS.BASELINE_TEMP });
@@ -345,11 +341,178 @@
                 return () => clearInterval(tick);
             }, [inputs, mode, lang, activeProfile]);
 
+            // --- REPORT GENERATOR ---
             const generateMemo = () => {
                 const w = window.open('', '_blank');
-                // (Report generation logic condensed but functional)
-                 w.document.write(`<html><body><h1>${t.report.title}</h1><p>See console for full logic.</p><script>setTimeout(()=>window.print(),500)<\/script></body></html>`);
-                 w.document.close();
+                const { PSU_EFFICIENCY, NON_IT_LOAD_KW } = activeProfile.params;
+                const rackKW = (inputs.itPowerKW / PSU_EFFICIENCY) + NON_IT_LOAD_KW;
+                
+                // Explicit Counterfactual
+                const baselineSupply = GLOBAL_CONSTANTS.BASELINE_TEMP; 
+                const baselinePUE = calcPUE(inputs.itPowerKW, rackKW, baselineSupply, activeProfile.params);
+                const baselineChip = calcChipTemp(baselineSupply, rackKW);
+                
+                const actualSupply = state.supplyTempC;
+                const actualPUE = state.pue;
+                const actualChip = state.chipTempC;
+                const pueSaving = ((baselinePUE - actualPUE) / baselinePUE * 100).toFixed(2);
+                
+                const profReqText = lang === 'en' 
+                    ? `Under fixed operating demand (IT load treated as an exogenous input) and strict thermal safety constraints ($T_{chip} \\le ${inputs.safetyLimitC}^\\circ\\mathrm{C}$), the MPC controller performs dynamic setpoint optimization on the supply water temperature ($T_{supply}$). By converting conservative thermal safety margins into controllable degrees of freedom, the system transitions from fixed, conservative operation (PID baseline at $18^\\circ\\mathrm{C}$) to energy-optimal operation, resulting in a measurable reduction in system PUE under identical load conditions ($\\Delta PUE \\approx -${pueSaving}\\%$).`
+                    : `在满足芯片热安全约束（$T_{chip} \\le ${inputs.safetyLimitC}^\\circ\\mathrm{C}$）与运行需求（IT负载给定）的前提下，MPC 对供水温度 $T_{supply}$ 进行动态优化，将保守冗余转化为能效收益，并在同一负载条件下相较 PID ($18^\\circ\\mathrm{C}$ 定温) 实现可量化的 PUE 降低（$\\Delta PUE \\approx -${pueSaving}\\%$）。`;
+
+                // KaTeX scripts
+                const katexHead = `
+                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css">
+                    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"><\/script>
+                    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js"><\/script>
+                `;
+
+                // Export Script with Self-Check
+                const exportScript = `
+                    <script>
+                        function renderMath() {
+                            if(window.renderMathInElement) {
+                                renderMathInElement(document.body, {
+                                    delimiters: [
+                                        { left: "$$", right: "$$", display: true },
+                                        { left: "\\\\(", right: "\\\\)", display: false },
+                                        { left: "$", right: "$", display: false }
+                                    ],
+                                    throwOnError: false
+                                });
+                            }
+                        }
+
+                        async function prepareForExport() {
+                            let attempts = 0;
+                            while(!window.renderMathInElement && attempts < 50) {
+                                await new Promise(r => setTimeout(r, 100));
+                                attempts++;
+                            }
+                            renderMath();
+                            if (document.fonts && document.fonts.ready) await document.fonts.ready;
+                            await new Promise(r => setTimeout(r, 800));
+
+                            const content = document.body.innerText;
+                            if (content.match(/\\\\(circ|mathrm|eta|le|Delta|approx)/)) {
+                                const msg = "${lang}" === 'zh' 
+                                    ? "导出中断：检测到未渲染的数学公式代码。\\n请检查网络连接是否允许加载 KaTeX 库。" 
+                                    : "Export Halted: Unrendered LaTeX code detected.\\nPlease check if network allows loading KaTeX.";
+                                alert(msg);
+                                throw new Error("Self-check failed: Unrendered LaTeX");
+                            }
+                        }
+
+                        window.onload = () => {
+                            prepareForExport().then(() => {
+                                window.print();
+                            }).catch(e => {
+                                console.error("Export failed:", e);
+                            });
+                        };
+                    <\/script>
+                `;
+
+                const html = `
+                    <!DOCTYPE html>
+                    <html lang="${lang}">
+                    <head>
+                        <title>${t.report.title}</title>
+                        ${katexHead}
+                        <style>
+                            body { font-family: 'Noto Serif SC', serif; padding: 40px; color: #1e293b; max-width: 800px; margin: 0 auto; line-height: 1.5; }
+                            h1 { border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 5px; font-size: 24px; }
+                            .meta { color: #64748b; font-family: monospace; font-size: 0.9em; margin-bottom: 30px; }
+                            h2 { margin-top: 30px; font-size: 18px; border-left: 4px solid #3b82f6; padding-left: 10px; background: #f8fafc; }
+                            table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 0.9em; }
+                            th, td { border: 1px solid #cbd5e1; padding: 8px 12px; text-align: left; }
+                            th { background: #f1f5f9; }
+                            .highlight { font-weight: bold; color: #1e40af; }
+                            .mono { font-family: monospace; }
+                            .summary-box { background: #eff6ff; border: 1px solid #bfdbfe; padding: 15px; border-radius: 4px; margin-bottom: 20px; color: #1e3a8a; font-size: 0.95em; }
+                            ul { padding-left: 20px; }
+                            li { margin-bottom: 5px; }
+                        </style>
+                    </head>
+                    <body>
+                        <h1>${t.report.title}</h1>
+                        <div class="meta">
+                            DATE: ${new Date().toISOString().split('T')[0]}<br/>
+                            SUBJECT: ${t.instance}<br/>
+                            ARCH_PROFILE: ${activeProfile.label} (${activeProfile.desc})<br/>
+                            ID: ${Math.random().toString(36).substr(2, 9).toUpperCase()}
+                        </div>
+
+                        <div class="summary-box">
+                            <strong>${t.profReqTitle}:</strong><br/>
+                            ${profReqText}
+                        </div>
+
+                        <h2>${t.report.titles.prob}</h2>
+                        <ul>
+                            <li><strong>${t.report.content.prob_vars.u}</strong></li>
+                            <li><strong>${t.report.content.prob_vars.y}</strong></li>
+                            <li><strong>${t.report.content.prob_vars.j}</strong></li>
+                        </ul>
+                        <div class="summary-box">
+                            ${t.report.content.prob_summary}
+                        </div>
+
+                        <h2>${t.report.titles.baseline}</h2>
+                        <p>${t.report.content.comp_intro}</p>
+                        <p>($P_{IT} = ${inputs.itPowerKW.toFixed(1)}$ kW, $T_{baseline} = ${baselineSupply.toFixed(1)}^\\circ\\mathrm{C}$)</p>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Parameter</th>
+                                    <th>PID Baseline (Counterfactual)</th>
+                                    <th>MPC (Actual)</th>
+                                    <th>Delta</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Setpoint ($T_{supply}$)</td>
+                                    <td>$${baselineSupply.toFixed(1)}^\\circ\\mathrm{C}$</td>
+                                    <td class="highlight">$${actualSupply.toFixed(1)}^\\circ\\mathrm{C}$</td>
+                                    <td>$${(actualSupply - baselineSupply).toFixed(1)}^\\circ\\mathrm{C}$</td>
+                                </tr>
+                                <tr>
+                                    <td>Chip Temp ($T_{chip}$)</td>
+                                    <td>$${baselineChip.toFixed(1)}^\\circ\\mathrm{C}$</td>
+                                    <td>$${actualChip.toFixed(1)}^\\circ\\mathrm{C}$</td>
+                                    <td>Margin Utilized</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>System PUE</strong></td>
+                                    <td>${baselinePUE.toFixed(3)}</td>
+                                    <td class="highlight">${actualPUE.toFixed(3)}</td>
+                                    <td><strong>-${pueSaving}%</strong></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h2>${t.report.titles.trace}</h2>
+                        <div class="mono" style="background:#f8fafc; padding:10px; border:1px solid #e2e8f0; font-size:0.8em;">
+                            # SYSTEM CONSTANTS (PROFILE: ${activeProfile.id})<br/>
+                            $\\eta_{PSU} = ${activeProfile.params.PSU_EFFICIENCY}$<br/>
+                            $R_{th} = ${GLOBAL_CONSTANTS.THERMAL_RESISTANCE} \\; \\mathrm{K/kW}$<br/>
+                            $P_{facility} = ${activeProfile.params.NON_IT_LOAD_KW} \\; \\mathrm{kW}$<br/>
+                            $PUE_{floor} = ${activeProfile.pueFloor.toFixed(3)}$<br/>
+                            <br/>
+                            # BOUNDARY CONDITIONS<br/>
+                            $T_{limit} = ${inputs.safetyLimitC}^\\circ\\mathrm{C}$<br/>
+                            $T_{baseline} = ${baselineSupply.toFixed(1)}^\\circ\\mathrm{C}$<br/>
+                            $P_{IT} = ${inputs.itPowerKW} \\; \\mathrm{kW}$
+                        </div>
+
+                        ${exportScript}
+                    </body>
+                    </html>
+                `;
+                w.document.write(html);
+                w.document.close();
             };
 
             return (
@@ -361,7 +524,7 @@
                             <div>
                                 <h1 className="text-2xl font-bold tracking-tight text-white">{t.title}</h1>
                                 <div className="flex items-center gap-2 text-xs text-slate-400 font-mono mt-1">
-                                    <span className="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700">VER 7.1</span>
+                                    <span className="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700">VER 7.2 (Report Fix)</span>
                                     <span>{t.instance}</span>
                                 </div>
                             </div>
