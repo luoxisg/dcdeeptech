@@ -45,6 +45,7 @@
             font-family: 'Inter', system-ui, sans-serif;
             overflow: hidden;
             height: 100vh;
+            font-size: 12px; /* Base font size reduction for density */
         }
 
         .font-mono { font-family: 'JetBrains Mono', monospace; }
@@ -65,8 +66,9 @@
                               linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
         }
 
-        /* Scrollbar */
+        /* Scrollbar - Thin and dark */
         .log-scroll::-webkit-scrollbar { width: 4px; }
+        .log-scroll::-webkit-scrollbar-track { background: transparent; }
         .log-scroll::-webkit-scrollbar-thumb { background: #475569; border-radius: 2px; }
         
         /* Causal Chain Arrow */
@@ -74,10 +76,10 @@
             display: inline-block;
             width: 0; 
             height: 0; 
-            border-top: 5px solid transparent;
-            border-bottom: 5px solid transparent;
-            border-left: 8px solid #64748b;
-            margin: 0 8px;
+            border-top: 4px solid transparent;
+            border-bottom: 4px solid transparent;
+            border-left: 6px solid #64748b;
+            margin: 0 6px;
         }
 
         /* Visual Linkage Animations */
@@ -101,273 +103,93 @@
         const { useState, useEffect, useRef, useMemo } = React;
         const { ComposedChart, Line, Area, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine, ResponsiveContainer, Legend } = window.Recharts;
 
-        // --- ARCHITECTURE PROFILES (FEASIBILITY LAYER) ---
-        const ARCH_PROFILES = {
-            LEGACY: {
-                id: 'LEGACY',
-                label: 'Baseline (Legacy)',
-                desc: 'Air-cooled/Basic Liquid Assist',
-                pueFloor: 1.35,
-                params: {
-                    PSU_EFFICIENCY: 0.90,
-                    NON_IT_LOAD_KW: 12.0,
-                    BASE_COP: 3.2,
-                    COP_COEFF: 0.025,
-                    MAX_SUPPLY_TEMP: 26.0
-                }
-            },
-            MODERN: {
-                id: 'MODERN',
-                label: 'Best Practice',
-                desc: 'Direct-to-Chip Liquid Cooling',
-                pueFloor: 1.22,
-                params: {
-                    PSU_EFFICIENCY: 0.95,
-                    NON_IT_LOAD_KW: 6.0,
-                    BASE_COP: 4.0,
-                    COP_COEFF: 0.035,
-                    MAX_SUPPLY_TEMP: 32.0
-                }
-            },
-            ADVANCED: {
-                id: 'ADVANCED',
-                label: 'Advanced (Research)',
-                desc: 'Warm-Water / Free Cooling',
-                pueFloor: 1.14,
-                params: {
-                    PSU_EFFICIENCY: 0.97,
-                    NON_IT_LOAD_KW: 3.5,
-                    BASE_COP: 5.5,
-                    COP_COEFF: 0.045,
-                    MAX_SUPPLY_TEMP: 40.0
-                }
-            }
-        };
-
-        // --- ENGINEERING CONSTANTS (SHARED) ---
+        // --- ENGINEERING CONSTANTS ---
+        // Renamed from PHYSICS_MODEL to GLOBAL_CONSTANTS to match App usage
         const GLOBAL_CONSTANTS = {
+            PSU_EFFICIENCY: 0.95,
+            NON_IT_LOAD_KW: 6.0,
             THERMAL_RESISTANCE: 0.22,
             CARBON_INTENSITY: 0.45,
             WATER_USAGE_INTENSITY: 1.8,
             MIN_SUPPLY_TEMP: 16.0,
+            MAX_SUPPLY_TEMP: 30.0,
             BASELINE_TEMP: 18.0,
             GLOBAL_LIMIT_TEMP: 65.0
+        };
+
+        // --- ARCHITECTURE PROFILES ---
+        const ARCH_PROFILES = {
+            LEGACY: {
+                id: 'LEGACY',
+                label: 'Baseline (Legacy)',
+                desc: 'Air-cooled/Basic',
+                pueFloor: 1.35,
+                params: { PSU_EFFICIENCY: 0.90, NON_IT_LOAD_KW: 12.0, BASE_COP: 3.2, COP_COEFF: 0.025, MAX_SUPPLY_TEMP: 26.0 }
+            },
+            MODERN: {
+                id: 'MODERN',
+                label: 'Best Practice',
+                desc: 'Direct-to-Chip',
+                pueFloor: 1.22,
+                params: { PSU_EFFICIENCY: 0.95, NON_IT_LOAD_KW: 6.0, BASE_COP: 4.0, COP_COEFF: 0.035, MAX_SUPPLY_TEMP: 32.0 }
+            },
+            ADVANCED: {
+                id: 'ADVANCED',
+                label: 'Advanced',
+                desc: 'Warm-Water/Free',
+                pueFloor: 1.14,
+                params: { PSU_EFFICIENCY: 0.97, NON_IT_LOAD_KW: 3.5, BASE_COP: 5.5, COP_COEFF: 0.045, MAX_SUPPLY_TEMP: 40.0 }
+            }
         };
 
         // --- I18N STRINGS ---
         const I18N = {
             en: {
-                title: "AIDC Thermal Control Paradigm",
-                subtitle: "Constraint-Aware Setpoint Optimization (MPC) vs Fixed Baseline (PID)",
-                instance: "Representative Instance: GB200 NVL72 Class High-Density Rack",
-                // L1 Labels
-                l1: {
-                    control: "Control Variable (T_supply)",
-                    constraint: "Constraint (T_chip)",
-                    objective: "Objective (PUE)"
-                },
-                // L2 Labels
-                l2: {
-                    cue: "CUE (Derived)",
-                    margin: "Margin Utilized"
-                },
-                // L3 Labels
-                l3: {
-                    variance: "Setpoint Variance (σ)",
-                    effort: "Control Effort"
-                },
-                // L4 Labels
-                l4: {
-                    wue: "WUE (Scenario)",
-                    carbon: "Grid Emission Factor"
-                },
+                title: "AIDC Thermal Control",
+                subtitle: "Constraint-Aware Optimization (MPC) vs Fixed Baseline (PID)",
+                instance: "GB200 NVL72 Rack",
+                l1: { control: "Control (T_supply)", constraint: "Constraint (T_chip)", objective: "Objective (PUE)" },
+                l2: { cue: "CUE (Derived)", margin: "Margin Utilized" },
+                l3: { variance: "Setpoint Var (σ)", effort: "Control Effort" },
+                l4: { wue: "WUE (Scenario)", carbon: "Grid Emission" },
                 profReqTitle: "Control Strategy Validation",
-                // Animated Steps
                 validationSteps: [
-                    { icon: "ShieldCheck", text: "Fixed IT load and thermal safety constraints enforced." },
-                    { icon: "Sliders", text: "MPC performs dynamic setpoint optimization on supply water temperature (T_supply)." },
-                    { icon: "TrendingDown", text: (delta) => `Energy-optimal operation achieved with measurable PUE reduction (ΔPUE ≈ -${delta}%).` }
+                    { icon: "ShieldCheck", text: "Constraints enforced." },
+                    { icon: "Sliders", text: "MPC optimizing T_supply." },
+                    { icon: "TrendingDown", text: (delta) => `Optimal operation (ΔPUE ≈ -${delta}%).` }
                 ],
-                sections: {
-                    input: "System Inputs (Disturbance)",
-                    boundary: "Boundary Conditions",
-                    advanced: "Control Quality Dashboard", 
-                    pid_dash: "PID Operational Dashboard",
-                    charts: "System Trajectory",
-                    arch: "Architecture Profile"
-                },
-                arch: {
-                    legacy: "Legacy (Air)",
-                    modern: "Modern (DLC)",
-                    advanced: "Advanced (Warm)"
-                },
-                quality: {
-                    stability: "Control Stability & Smoothness",
-                    constraint: "Constraint Utilization",
-                    scenario: "Scenario-Based Indicators",
-                    disclaimer: "Scenario-based estimate under fixed cooling architecture assumption. Not a direct control objective.",
-                    tooltips: {
-                        margin: "Indicates how much thermal safety margin is actively utilized by MPC for efficiency optimization."
-                    }
-                },
-                pid_dash: {
-                    setpoint: "Fixed Setpoint (PID)",
-                    margin: "Safety Margin (Unused)",
-                    baseline: "Baseline PUE"
-                },
-                labels: {
-                    itPower: "IT Workload Power",
-                    chipLimit: "Constraint: T_max",
-                    baseTemp: "Baseline: T_supply",
-                    trace: {
-                        opt: "Derived from T_supply optimization",
-                        load: "Computed under identical IT load",
-                        limit: "Approaching physical limit",
-                        adv: "Advanced architecture assumption"
-                    },
-                    slew: "Control Slew Rate",
-                    variance: "Setpoint Variance (σ)",
-                    utilization: "Margin Utilization",
-                    wue: "WUE (Water Usage)",
-                    feasibility: "PUE values are constrained by the selected cooling architecture. MPC optimizes within this feasible domain.",
-                    physLimit: "Phys. Limit (PUE)"
-                },
-                chartAxis: {
-                    chip: "Chip Temp (°C)",
-                    supply: "Supply Temp (°C)",
-                    limit: "MAX LIMIT"
-                },
-                twin: {
-                    title: "DIGITAL TWIN",
-                    state: "STATE",
-                    active: "ACTIVE"
-                },
-                report: {
-                    btn: "Generate Review Memo",
-                    title: "Technical Review Memorandum",
-                    // STRICT ACADEMIC TITLES - NO UNDEFINED
-                    titles: {
-                        prob: "1. Problem Formulation: Setpoint Optimization under Thermal Safety Constraints",
-                        baseline: "2. Counterfactual Baseline Analysis (PID vs. MPC)",
-                        trace: "3. Traceability, Assumptions, and System Constants"
-                    },
-                    content: {
-                        prob_vars: {
-                            u: "Control Variable: Supply Water Temperature ($T_{supply}$)",
-                            y: "Constraint Variable: Chip Junction Temperature ($T_{chip} \\le 65^\\circ\\mathrm{C}$)",
-                            j: "Objective Function: Minimize Cooling Energy ($PUE$) s.t. $T_{chip}(k) \\le T_{limit}$"
-                        },
-                        prob_summary: "Under fixed operating demand (IT load treated as an exogenous input) and strict thermal safety constraints ($T_{chip} \\le T_{limit}$), the MPC controller performs dynamic setpoint optimization on the supply water temperature ($T_{supply}$). By converting conservative thermal safety margins into controllable degrees of freedom, the system transitions from fixed, conservative operation (PID baseline at $18^\\circ\\mathrm{C}$) to energy-optimal operation, resulting in a measurable reduction in system PUE under identical load conditions.",
-                        comp_intro: "To isolate the efficacy of the control algorithm from environmental variances, we perform a counterfactual baseline evaluation. The PID baseline represents standard industry practice (fixed supply temperature at 18°C) applied to the exact same IT load profile and physical model as the MPC experiment."
-                    }
-                },
+                sections: { input: "Inputs", boundary: "Boundaries", advanced: "Control Quality", pid_dash: "PID Operations", charts: "Trajectory", arch: "Architecture" },
+                arch: { legacy: "Legacy", modern: "Modern", advanced: "Advanced" },
+                quality: { stability: "Stability", constraint: "Constraint", scenario: "Scenario", disclaimer: "Scenario-based estimate. Not control objective.", tooltips: { margin: "Active margin utilization." } },
+                pid_dash: { setpoint: "Fixed Setpoint", margin: "Unused Margin", baseline: "Baseline PUE" },
+                labels: { itPower: "IT Load", chipLimit: "Limit: T_max", baseTemp: "Base: T_supply", trace: { opt: "Optimized", load: "Identical Load", limit: "Phys. Limited", adv: "Adv. Arch" }, slew: "Slew Rate", variance: "Variance", utilization: "Utilization", wue: "WUE", feasibility: "PUE constrained by physics.", physLimit: "Phys. Limit" },
+                chartAxis: { chip: "Chip (°C)", supply: "Supply (°C)", limit: "LIMIT" },
+                twin: { title: "DIGITAL TWIN", state: "STATE", active: "ACTIVE" },
+                report: { btn: "Review Memo", title: "Technical Review Memo", titles: { prob: "1. Problem Formulation", baseline: "2. Counterfactual Baseline", trace: "3. Traceability & Constants" }, content: { prob_vars: { u: "Control: T_supply", y: "Constraint: T_chip <= 65°C", j: "Obj: Min Energy" }, prob_summary: "MPC optimizes setpoint under constraints.", comp_intro: "Comparison under identical load." } },
                 langSwitch: "中文" 
             },
             zh: {
-                title: "AIDC 热控制范式研究",
+                title: "AIDC 热控制范式",
                 subtitle: "基于约束的设定点优化 (MPC) vs 固定基线 (PID)",
-                instance: "代表性实例：GB200 NVL72 级高密度机柜",
-                // L1 Labels
-                l1: {
-                    control: "控制变量 (供水温度)",
-                    constraint: "约束变量 (芯片结温)",
-                    objective: "优化目标 (PUE)"
-                },
-                // L2 Labels
-                l2: {
-                    cue: "CUE (衍生指标)",
-                    margin: "裕量利用率"
-                },
-                // L3 Labels
-                l3: {
-                    variance: "设定点方差 (σ)",
-                    effort: "控制动作量"
-                },
-                // L4 Labels
-                l4: {
-                    wue: "WUE (情景假设)",
-                    carbon: "电网碳因子"
-                },
-                profReqTitle: "控制策略有效性验证",
-                // Animated Steps
+                instance: "GB200 NVL72 高密机柜",
+                l1: { control: "控制变量 (供水)", constraint: "约束变量 (结温)", objective: "优化目标 (PUE)" },
+                l2: { cue: "CUE (衍生)", margin: "裕量利用率" },
+                l3: { variance: "设定点方差", effort: "动作量" },
+                l4: { wue: "WUE (情景)", carbon: "碳因子" },
+                profReqTitle: "策略验证",
                 validationSteps: [
-                    { icon: "ShieldCheck", text: "已强制执行固定 IT 负载与热安全约束。" },
-                    { icon: "Sliders", text: "MPC 对供水温度 (T_supply) 执行动态设定点优化。" },
-                    { icon: "TrendingDown", text: (delta) => `实现能效最优运行，PUE 显著降低 (ΔPUE ≈ -${delta}%)。` }
+                    { icon: "ShieldCheck", text: "热安全约束已强制执行。" },
+                    { icon: "Sliders", text: "MPC 正动态优化供水温度。" },
+                    { icon: "TrendingDown", text: (delta) => `能效最优运行 (ΔPUE ≈ -${delta}%)。` }
                 ],
-                sections: {
-                    input: "系统输入 (扰动变量)",
-                    boundary: "边界条件 (敏感性分析)",
-                    advanced: "控制质量仪表盘",
-                    pid_dash: "PID 运行仪表盘",
-                    charts: "系统轨迹与约束边界",
-                    arch: "冷却架构配置"
-                },
-                arch: {
-                    legacy: "传统 (风冷/混动)",
-                    modern: "现代 (冷板液冷)",
-                    advanced: "前沿 (温水/自然冷)"
-                },
-                quality: {
-                    stability: "控制稳定性与平滑度",
-                    constraint: "约束利用率",
-                    scenario: "情景基准指标",
-                    disclaimer: "基于固定冷却架构假设的估算值。非直接控制目标。",
-                    tooltips: {
-                        margin: "指示 MPC 为优化能效而主动利用了多少热安全裕量。"
-                    }
-                },
-                pid_dash: {
-                    setpoint: "固定设定点 (PID)",
-                    margin: "未利用的安全裕量",
-                    baseline: "基线 PUE"
-                },
-                labels: {
-                    itPower: "IT 算力负载 (输入)",
-                    chipLimit: "约束条件: T_max",
-                    baseTemp: "基线设定: T_supply",
-                    trace: {
-                        opt: "源于供水温度动态优化",
-                        load: "基于完全相同的IT负载计算",
-                        limit: "PUE 受限于物理约束",
-                        adv: "前沿架构假设"
-                    },
-                    slew: "控制摆率 (Slew Rate)",
-                    variance: "设定点方差 (σ)",
-                    utilization: "裕量利用率",
-                    wue: "WUE (水耗)",
-                    feasibility: "PUE 值受限于所选冷却架构的物理极限。MPC 仅在可行域内优化。",
-                    physLimit: "物理极限 (PUE)"
-                },
-                chartAxis: {
-                    chip: "芯片结温 (°C)",
-                    supply: "供水温度 (°C)",
-                    limit: "安全红线"
-                },
-                twin: {
-                    title: "数字孪生体",
-                    state: "运行状态",
-                    active: "在线"
-                },
-                report: {
-                    btn: "生成评审备忘录",
-                    title: "技术评审备忘录",
-                    // STRICT ACADEMIC TITLES
-                    titles: {
-                        prob: "1. 问题阐述：热安全约束下的设定点优化",
-                        baseline: "2. 反事实基线分析 (PID vs. MPC)",
-                        trace: "3. 可追溯性、假设与系统常数"
-                    },
-                    content: {
-                        prob_vars: {
-                            u: "控制变量：供水温度 ($T_{supply}$)",
-                            y: "约束变量：芯片结温 ($T_{chip} \\le 65^\\circ\\mathrm{C}$)",
-                            j: "目标函数：最小化能耗 ($PUE$) s.t. $T_{chip}(k) \\le T_{limit}$"
-                        },
-                        prob_summary: "在满足芯片热安全约束（$T_{chip} \\le T_{limit}$）与运行需求（IT负载给定）的前提下，MPC 对供水温度 $T_{supply}$ 进行动态优化。通过将保守的热安全冗余转化为可控的自由度，系统从固定的保守运行模式（PID 基线 $18^\\circ\\mathrm{C}$）转变为能效最优运行模式，从而在相同负载条件下实现可量化的 PUE 降低。",
-                        comp_intro: "为了将控制算法的效能与环境变化隔离，我们执行了反事实基线评估。PID 基线代表了应用于与 MPC 实验完全相同的 IT 负载曲线和物理模型的标准工业实践（固定供水温度 18°C）。"
-                    }
-                },
+                sections: { input: "系统输入", boundary: "边界条件", advanced: "控制质量", pid_dash: "PID 运行", charts: "系统轨迹", arch: "架构配置" },
+                arch: { legacy: "传统", modern: "现代", advanced: "前沿" },
+                quality: { stability: "控制稳定性", constraint: "约束利用", scenario: "情景指标", disclaimer: "基于固定假设。非控制目标。", tooltips: { margin: "MPC 主动利用的安全裕量。" } },
+                pid_dash: { setpoint: "固定设定点", margin: "未用裕量", baseline: "基线 PUE" },
+                labels: { itPower: "IT 负载", chipLimit: "约束: T_max", baseTemp: "基线: T_supply", trace: { opt: "动态优化", load: "同负载计算", limit: "物理受限", adv: "前沿架构" }, slew: "摆率", variance: "方差", utilization: "利用率", wue: "WUE", feasibility: "PUE 受物理极限约束。", physLimit: "物理极限" },
+                chartAxis: { chip: "结温 (°C)", supply: "供水 (°C)", limit: "红线" },
+                twin: { title: "数字孪生", state: "状态", active: "在线" },
+                report: { btn: "生成报告", title: "技术评审备忘录", titles: { prob: "1. 问题阐述", baseline: "2. 反事实基线分析", trace: "3. 可追溯性" }, content: { prob_vars: { u: "控制: 供水温度", y: "约束: 结温 <= 65°C", j: "目标: 最小化能耗" }, prob_summary: "MPC 在约束下优化设定点。", comp_intro: "相同负载下的基线对比。" } },
                 langSwitch: "EN" 
             }
         };
@@ -387,22 +209,13 @@
             return <span ref={ref} className="flex items-center justify-center"></span>;
         };
 
-        // --- PHYSICS ENGINE & FEASIBILITY LAYER ---
-        // 1. Compute Min Feasible PUE for a given profile
+        // --- PHYSICS & LOGIC ---
         const computeMinFeasiblePUE = (itKW, profile) => {
             const { PSU_EFFICIENCY, NON_IT_LOAD_KW, BASE_COP, COP_COEFF, MAX_SUPPLY_TEMP } = profile.params;
-            
-            // Rack power is IT + Conversion Loss + Fans
             const rackKW = (itKW / PSU_EFFICIENCY) + NON_IT_LOAD_KW;
-            const heatLoadKW = rackKW * 0.98; // Assumed heat load
-
-            // Max possible COP at physical limit
+            const heatLoadKW = rackKW * 0.98; 
             const maxCOP = BASE_COP * (1 + (MAX_SUPPLY_TEMP - 18) * COP_COEFF);
-            
-            // Minimum cooling power
             const minCoolingKW = heatLoadKW / maxCOP;
-
-            // PUE = Total / IT
             return (rackKW + minCoolingKW) / itKW;
         };
 
@@ -422,76 +235,47 @@
             return supplyC + (heatLoadKW * GLOBAL_CONSTANTS.THERMAL_RESISTANCE) + 2.0;
         };
 
-        // --- COMPONENT: L1 METRIC CARD ---
+        // --- COMPONENTS ---
         const L1Metric = ({ label, value, unit, color, isMpcActive, traceLabel, warning }) => (
-            <div className={`relative flex flex-col items-center justify-center p-3 rounded-lg border transition-all duration-700 ${isMpcActive && color !== 'text-slate-200' ? 'kpi-glow-mpc border-blue-500/50' : 'border-white/10 bg-slate-800/30'}`}>
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">{label}</span>
-                <div className={`text-2xl font-mono font-bold ${color || 'text-white'}`}>
-                    {value} <span className="text-xs text-slate-500 font-normal">{unit}</span>
+            <div className={`relative flex flex-col items-center justify-center p-2 rounded-lg border transition-all duration-700 ${isMpcActive && color !== 'text-slate-200' ? 'kpi-glow-mpc border-blue-500/50' : 'border-white/10 bg-slate-800/30'}`}>
+                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">{label}</span>
+                <div className={`text-xl font-mono font-bold ${color || 'text-white'} leading-none`}>
+                    {value} <span className="text-[10px] text-slate-500 font-normal">{unit}</span>
                 </div>
-                {/* Warning / Feasibility Indicator */}
-                {warning && (
-                    <div className="absolute -top-2 right-2 text-amber-400 animate-pulse" title={warning}>
-                        <Icon name="AlertTriangle" size={12} />
-                    </div>
-                )}
-                {/* Traceability Tag */}
-                {traceLabel && (
-                    <div className={`absolute -bottom-6 w-full text-center opacity-0 transition-opacity duration-300 group-hover:opacity-100 text-[9px] italic whitespace-nowrap ${warning ? 'text-amber-400' : 'text-slate-500'}`}>
-                        {traceLabel}
-                    </div>
-                )}
+                {warning && <div className="absolute -top-1 right-1 text-amber-400 animate-pulse" title={warning}><Icon name="AlertTriangle" size={10} /></div>}
+                {traceLabel && <div className={`absolute -bottom-4 w-full text-center opacity-0 transition-opacity duration-300 group-hover:opacity-100 text-[8px] italic whitespace-nowrap ${warning ? 'text-amber-400' : 'text-slate-500'}`}>{traceLabel}</div>}
             </div>
         );
 
-        // --- COMPONENT: L2 METRIC ROW ---
         const L2Metric = ({ label, value, unit, isMpcActive }) => (
-            <div className={`flex justify-between items-center text-xs border-b border-white/5 py-1 last:border-0 transition-colors duration-500 ${isMpcActive ? 'text-blue-200' : 'text-slate-500'}`}>
+            <div className={`flex justify-between items-center text-[10px] border-b border-white/5 py-1 last:border-0 transition-colors duration-500 ${isMpcActive ? 'text-blue-200' : 'text-slate-500'}`}>
                 <span>{label}</span>
                 <span className="font-mono">{value} {unit}</span>
             </div>
         );
 
-        // --- COMPONENT: QUALITY DASHBOARD METRIC ---
         const QualityMetric = ({ label, value, unit, tooltip }) => (
-            <div className="flex justify-between items-center text-xs py-1 group relative">
+            <div className="flex justify-between items-center text-[10px] py-0.5 group relative">
                 <div className="flex items-center gap-1 text-slate-400">
                     <span>{label}</span>
-                    {tooltip && (
-                        <div className="group relative">
-                            <Icon name="Info" size={10} className="text-slate-600 cursor-help" />
-                            <div className="absolute bottom-full left-0 mb-1 w-48 p-2 bg-slate-900 border border-slate-700 rounded shadow-lg text-[10px] text-slate-300 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50">
-                                {tooltip}
-                            </div>
-                        </div>
-                    )}
+                    {tooltip && <Icon name="Info" size={10} className="text-slate-600 cursor-help" />}
                 </div>
-                <span className="font-mono text-slate-200">{value} <span className="text-slate-500 text-[10px]">{unit}</span></span>
+                <span className="font-mono text-slate-200">{value} <span className="text-slate-500 text-[9px]">{unit}</span></span>
             </div>
         );
 
-        // --- COMPONENT: ANIMATED VALIDATION STEP ---
         const ValidationStep = ({ icon, text, delay, visible }) => {
             const [show, setShow] = useState(false);
-            
             useEffect(() => {
                 let timer;
-                if (visible) {
-                    timer = setTimeout(() => setShow(true), delay);
-                } else {
-                    setShow(false);
-                }
+                if (visible) timer = setTimeout(() => setShow(true), delay);
+                else setShow(false);
                 return () => clearTimeout(timer);
             }, [visible, delay]);
-
             return (
-                <div className={`flex items-start gap-3 transition-all duration-500 ease-out transform ${show ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
-                    <div className="mt-0.5 text-emerald-400 shrink-0">
-                        <Icon name={icon} size={14} />
-                    </div>
-                    <p className="text-xs text-slate-300 leading-relaxed">
-                        {text}
-                    </p>
+                <div className={`flex items-start gap-2 transition-all duration-500 ease-out transform ${show ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
+                    <div className="mt-0.5 text-emerald-400 shrink-0"><Icon name={icon} size={12} /></div>
+                    <p className="text-[10px] text-slate-300 leading-tight">{text}</p>
                 </div>
             );
         };
@@ -501,138 +285,66 @@
             const [mode, setMode] = useState('MPC');
             const [showScenario, setShowScenario] = useState(false);
             const [showSummary, setShowSummary] = useState(true);
-            const [isQualityExpanded, setIsQualityExpanded] = useState(false); 
+            const [isQualityExpanded, setIsQualityExpanded] = useState(true); // Expanded by default for visibility
             const [activeProfileId, setActiveProfileId] = useState('MODERN');
             
-            // --- STATE VECTORS ---
-            const [inputs, setInputs] = useState({
-                itPowerKW: 85.0,
-                safetyLimitC: GLOBAL_CONSTANTS.GLOBAL_LIMIT_TEMP,
-                baselineTempC: GLOBAL_CONSTANTS.BASELINE_TEMP
-            });
-
-            const [state, setState] = useState({
-                supplyTempC: 18.0,
-                chipTempC: 45.0,
-                rackPowerKW: 95.0,
-                pue: 1.45,
-                pueMin: 1.22,
-                cue: 0.6,
-                wue: 1.8,
-                margin: 20.0,
-                deltaPue: 0.0,
-                variance: 0.0,
-                slew: 0.0,
-                marginUtil: 0.0,
-                history: [],
-                isFeasibilityLimit: false
-            });
+            const [inputs, setInputs] = useState({ itPowerKW: 85.0, safetyLimitC: GLOBAL_CONSTANTS.GLOBAL_LIMIT_TEMP, baselineTempC: GLOBAL_CONSTANTS.BASELINE_TEMP });
+            const [state, setState] = useState({ supplyTempC: 18.0, chipTempC: 45.0, rackPowerKW: 95.0, pue: 1.45, pueMin: 1.22, cue: 0.6, wue: 1.8, margin: 20.0, deltaPue: 0.0, variance: 0.0, slew: 0.0, marginUtil: 0.0, history: [], isFeasibilityLimit: false });
 
             const t = I18N[lang];
             const activeProfile = ARCH_PROFILES[activeProfileId];
 
-            useEffect(() => {
-                if (mode === 'MPC') {
-                    setShowSummary(true);
-                } else {
-                    setShowSummary(false);
-                }
-            }, [mode]);
+            useEffect(() => { setShowSummary(mode === 'MPC'); }, [mode]);
 
-            // --- MAIN SIMULATION LOOP (1Hz) ---
             useEffect(() => {
                 const tick = setInterval(() => {
                     setState(prev => {
-                        // FIX: Correctly extract variables from activeProfile.params and GLOBAL_CONSTANTS
                         const { PSU_EFFICIENCY, NON_IT_LOAD_KW, MAX_SUPPLY_TEMP } = activeProfile.params;
                         const { MIN_SUPPLY_TEMP } = GLOBAL_CONSTANTS;
                         
-                        // Physics Derivations
                         const rackKW = (inputs.itPowerKW / PSU_EFFICIENCY) + NON_IT_LOAD_KW;
                         const heatLoadKW = rackKW * 0.98;
-
-                        // Calculate Feasibility Floor (Hard Bound)
                         const minFeasiblePUE = computeMinFeasiblePUE(inputs.itPowerKW, activeProfile);
-
-                        // Baseline Calculation (Counterfactual using active profile params)
                         const baselineSupply = GLOBAL_CONSTANTS.BASELINE_TEMP;
                         const baselinePUE = calcPUE(inputs.itPowerKW, rackKW, baselineSupply, activeProfile.params);
 
                         let nextSupply = prev.supplyTempC;
-
                         if (mode === 'PID') {
-                            // Fixed PID behavior
                             const err = inputs.baselineTempC - prev.supplyTempC;
                             nextSupply = prev.supplyTempC + (err * 0.2); 
                         } else {
-                            // MPC Optimization
                             const SAFE_MARGIN = 2.5; 
                             const maxFeasibleChip = inputs.safetyLimitC - SAFE_MARGIN;
                             const deltaT = (heatLoadKW * GLOBAL_CONSTANTS.THERMAL_RESISTANCE) + 2.0;
                             let optimalSupply = maxFeasibleChip - deltaT;
-
-                            // Clamp Optimization to Profile Constraints
-                            // Ensure MAX_SUPPLY_TEMP is used from profile
                             optimalSupply = Math.max(MIN_SUPPLY_TEMP, Math.min(MAX_SUPPLY_TEMP, optimalSupply));
-
-                            // Actuator Dynamics
                             nextSupply = prev.supplyTempC * 0.6 + optimalSupply * 0.4;
                         }
 
                         const nextChip = calcChipTemp(nextSupply, rackKW);
                         let nextPUE = calcPUE(inputs.itPowerKW, rackKW, nextSupply, activeProfile.params);
-                        
-                        // Enforce PUE Feasibility Floor in UI
                         let isLimit = false;
-                        if (nextPUE < minFeasiblePUE) {
-                            nextPUE = minFeasiblePUE;
-                            isLimit = true;
-                        }
+                        if (nextPUE < minFeasiblePUE) { nextPUE = minFeasiblePUE; isLimit = true; }
                         const isNearLimit = (nextPUE - minFeasiblePUE) < 0.015;
 
-                        // L2 Metrics
                         const nextCUE = nextPUE * GLOBAL_CONSTANTS.CARBON_INTENSITY;
                         const nextMargin = inputs.safetyLimitC - nextChip;
                         const deltaPuePct = ((baselinePUE - nextPUE) / baselinePUE * 100).toFixed(1);
-
-                        // L3 Metrics
                         const diff = nextSupply - prev.supplyTempC;
                         const nextSlew = Math.abs(diff); 
                         const nextVar = prev.variance * 0.9 + (diff * diff) * 0.1;
-                        
                         const marginUtil = (nextChip / inputs.safetyLimitC) * 100;
-
                         const now = new Date().toLocaleTimeString('en-GB', { hour12: false });
-                        const newHistory = [...prev.history, {
-                            time: now,
-                            chip: nextChip,
-                            supply: nextSupply,
-                            limit: inputs.safetyLimitC,
-                            baseline: inputs.baselineTempC
-                        }].slice(-60);
+                        const newHistory = [...prev.history, { time: now, chip: nextChip, supply: nextSupply, limit: inputs.safetyLimitC, baseline: inputs.baselineTempC }].slice(-60);
 
                         return {
-                            supplyTempC: nextSupply,
-                            chipTempC: nextChip,
-                            rackPowerKW: rackKW,
-                            pue: nextPUE,
-                            pueMin: minFeasiblePUE,
-                            cue: nextCUE,
-                            wue: nextPUE * GLOBAL_CONSTANTS.WATER_USAGE_INTENSITY, 
-                            margin: nextMargin,
-                            deltaPue: deltaPuePct,
-                            variance: Math.sqrt(nextVar),
-                            slew: nextSlew,
-                            marginUtil: marginUtil,
-                            history: newHistory,
-                            isFeasibilityLimit: isNearLimit || isLimit
+                            supplyTempC: nextSupply, chipTempC: nextChip, rackPowerKW: rackKW, pue: nextPUE, pueMin: minFeasiblePUE, cue: nextCUE, wue: nextPUE * GLOBAL_CONSTANTS.WATER_USAGE_INTENSITY, margin: nextMargin, deltaPue: deltaPuePct, variance: Math.sqrt(nextVar), slew: nextSlew, marginUtil: marginUtil, history: newHistory, isFeasibilityLimit: isNearLimit || isLimit
                         };
                     });
                 }, 800);
                 return () => clearInterval(tick);
             }, [inputs, mode, lang, activeProfile]);
 
-            // --- REPORT GENERATOR ---
             const generateMemo = () => {
                 const w = window.open('', '_blank');
                 const { PSU_EFFICIENCY, NON_IT_LOAD_KW } = activeProfile.params;
@@ -787,183 +499,109 @@
             };
 
             return (
-                <div className="flex flex-col h-screen p-4 gap-4">
+                <div className="flex flex-col h-screen p-2 gap-2 bg-[#020617] text-slate-200 overflow-hidden font-sans text-xs">
                     {/* HEADER */}
-                    <header className="glass-panel p-4 rounded-xl flex justify-between items-center shrink-0">
-                        <div className="flex items-center gap-4">
-                            <div className="p-2 bg-blue-900/30 rounded-lg text-blue-400">
-                                <Icon name="Activity" size={24} />
-                            </div>
+                    <header className="glass-panel p-2 rounded-lg flex justify-between items-center shrink-0 h-10">
+                        <div className="flex items-center gap-3">
+                            <div className="p-1.5 bg-blue-900/30 rounded text-blue-400"><Icon name="Activity" size={16} /></div>
                             <div>
-                                <h1 className="text-lg font-bold tracking-tight text-white">{t.title}</h1>
-                                <div className="flex items-center gap-2 text-xs text-slate-400 font-mono">
-                                    <span className="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700">VER 6.3 (Stable)</span>
+                                <h1 className="text-sm font-bold tracking-tight text-white">{t.title}</h1>
+                                <div className="flex items-center gap-2 text-[9px] text-slate-400 font-mono">
+                                    <span className="px-1 py-0.5 rounded bg-slate-800 border border-slate-700">VER 7.0</span>
                                     <span>{t.instance}</span>
                                 </div>
                             </div>
                         </div>
-                        <div className="flex gap-3">
-                            <div className="flex bg-slate-800 rounded-lg p-1 border border-slate-700">
-                                <button onClick={() => setMode('PID')} className={`px-4 py-1.5 rounded text-xs font-bold ${mode==='PID' ? 'bg-amber-600 text-white' : 'text-slate-400'}`}>PID</button>
-                                <button onClick={() => setMode('MPC')} className={`px-4 py-1.5 rounded text-xs font-bold ${mode==='MPC' ? 'bg-blue-600 text-white' : 'text-slate-400'}`}>MPC</button>
+                        <div className="flex gap-2">
+                            <div className="flex bg-slate-800 rounded p-0.5 border border-slate-700">
+                                <button onClick={() => setMode('PID')} className={`px-3 py-1 rounded text-[10px] font-bold ${mode==='PID' ? 'bg-amber-600 text-white' : 'text-slate-400'}`}>PID</button>
+                                <button onClick={() => setMode('MPC')} className={`px-3 py-1 rounded text-[10px] font-bold ${mode==='MPC' ? 'bg-blue-600 text-white' : 'text-slate-400'}`}>MPC</button>
                             </div>
-                            <button onClick={generateMemo} className="px-3 py-1.5 border border-blue-500/30 bg-blue-500/10 rounded text-xs text-blue-300 font-bold hover:bg-blue-500/20 flex items-center gap-2">
-                                <Icon name="FileText" size={14} /> {t.report.btn}
+                            <button onClick={generateMemo} className="px-2 py-1 border border-blue-500/30 bg-blue-500/10 rounded text-[10px] text-blue-300 font-bold hover:bg-blue-500/20 flex items-center gap-1">
+                                <Icon name="FileText" size={12} /> {t.report.btn}
                             </button>
-                            <button onClick={() => setLang(l => l==='en'?'zh':'en')} className="px-3 py-1.5 border border-slate-700 rounded text-xs text-slate-400 font-mono hover:text-white">
+                            <button onClick={() => setLang(l => l==='en'?'zh':'en')} className="px-2 py-1 border border-slate-700 rounded text-[10px] text-slate-400 font-mono hover:text-white">
                                 {t.langSwitch}
                             </button>
                         </div>
                     </header>
 
                     {/* ANIMATED PROFESSOR REQUIREMENT BLOCK */}
-                    <div className={`glass-panel p-3 rounded-xl border-l-4 border-blue-500 bg-blue-900/10 shrink-0 transition-all duration-500 ${showSummary ? 'opacity-100 max-h-40' : 'opacity-0 max-h-0 overflow-hidden py-0'}`}>
-                        <h4 className="text-xs font-bold text-blue-400 mb-2">{t.profReqTitle}</h4>
-                        <div className="space-y-1.5">
+                    <div className={`glass-panel px-3 py-2 rounded-lg border-l-2 border-blue-500 bg-blue-900/10 shrink-0 transition-all duration-500 ${showSummary ? 'opacity-100 max-h-24' : 'opacity-0 max-h-0 overflow-hidden py-0 border-0'}`}>
+                        <div className="space-y-1">
                             {t.validationSteps.map((step, idx) => (
-                                <ValidationStep 
-                                    key={idx} 
-                                    icon={step.icon} 
-                                    text={typeof step.text === 'function' ? step.text(state.deltaPue) : step.text}
-                                    delay={idx * 600}
-                                    visible={showSummary}
-                                />
+                                <ValidationStep key={idx} icon={step.icon} text={typeof step.text === 'function' ? step.text(state.deltaPue) : step.text} delay={idx * 600} visible={showSummary} />
                             ))}
                         </div>
                     </div>
 
                     {/* MAIN CONTENT */}
-                    <div className="flex-1 grid grid-cols-12 gap-4 min-h-0">
+                    <div className="flex-1 grid grid-cols-12 gap-2 min-h-0">
                         
-                        {/* LEFT: CONTROLS & ARCHITECTURE */}
-                        <div className="col-span-3 flex flex-col gap-4 overflow-y-auto">
-                            
-                            {/* Inputs (Disturbance) */}
-                            <section className="glass-panel p-4 rounded-xl">
-                                <h3 className="text-xs font-bold text-slate-500 uppercase mb-4 border-b border-white/10 pb-2">{t.sections.input}</h3>
-                                <div className="space-y-4">
-                                    <div>
-                                        <div className="flex justify-between text-xs mb-1 text-slate-300">
-                                            <span>{t.labels.itPower}</span>
-                                            <span className="font-mono">{inputs.itPowerKW.toFixed(0)} kW</span>
-                                        </div>
-                                        <input 
-                                            type="range" min="50" max="130" step="1" 
-                                            value={inputs.itPowerKW}
-                                            onChange={(e) => setInputs(s => ({...s, itPowerKW: Number(e.target.value)}))}
-                                            className="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
-                                        />
-                                    </div>
+                        {/* LEFT: CONTROLS & HIERARCHICAL METRICS */}
+                        <div className="col-span-3 flex flex-col gap-2 overflow-y-auto pr-1">
+                            {/* Inputs */}
+                            <section className="glass-panel p-3 rounded-lg shrink-0">
+                                <h3 className="text-[10px] font-bold text-slate-500 uppercase mb-2 border-b border-white/10 pb-1">{t.sections.input}</h3>
+                                <div>
+                                    <div className="flex justify-between text-[10px] mb-1 text-slate-300"><span>{t.labels.itPower}</span><span className="font-mono">{inputs.itPowerKW.toFixed(0)} kW</span></div>
+                                    <input type="range" min="50" max="130" step="1" value={inputs.itPowerKW} onChange={(e) => setInputs(s => ({...s, itPowerKW: Number(e.target.value)}))} className="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-500" />
                                 </div>
                             </section>
 
-                            {/* Boundary Conditions & Architecture */}
-                            <section className="glass-panel p-4 rounded-xl">
-                                <h3 className="text-xs font-bold text-slate-500 uppercase mb-4 border-b border-white/10 pb-2">{t.sections.boundary}</h3>
-                                <div className="space-y-4">
-                                    {/* Architecture Selector */}
-                                    <div>
-                                        <div className="text-xs text-slate-400 mb-2">{t.sections.arch}</div>
-                                        <div className="flex flex-col gap-2">
-                                            {Object.values(ARCH_PROFILES).map((prof) => (
-                                                <button 
-                                                    key={prof.id}
-                                                    onClick={() => setActiveProfileId(prof.id)}
-                                                    className={`text-[10px] text-left px-3 py-2 rounded border transition-all flex justify-between items-center ${
-                                                        activeProfileId === prof.id 
-                                                        ? 'bg-blue-500/20 border-blue-500/50 text-white' 
-                                                        : 'bg-slate-800/50 border-slate-700/50 text-slate-400 hover:border-slate-500'
-                                                    }`}
-                                                >
-                                                    <div>
-                                                        <div className="font-bold">{prof.label}</div>
-                                                        <div className="opacity-70">{prof.desc}</div>
-                                                    </div>
-                                                    <div className="text-[9px] font-mono opacity-80 bg-black/30 px-1.5 py-0.5 rounded border border-white/5">
-                                                        &gt;{prof.pueFloor}
-                                                    </div>
-                                                </button>
-                                            ))}
-                                        </div>
-                                        <div className="mt-2 text-[10px] flex justify-between items-center text-slate-400 bg-black/20 p-2 rounded border border-white/5">
-                                            <span>{t.labels.physLimit}:</span>
-                                            <span className="font-mono text-white font-bold">{state.pueMin.toFixed(3)}</span>
-                                        </div>
-                                        <div className="text-[9px] text-slate-500 mt-2 italic px-1">
-                                            {t.labels.feasibility}
-                                        </div>
+                            {/* Boundary */}
+                            <section className="glass-panel p-3 rounded-lg shrink-0">
+                                <h3 className="text-[10px] font-bold text-slate-500 uppercase mb-2 border-b border-white/10 pb-1">{t.sections.boundary}</h3>
+                                {/* Architecture Selector */}
+                                <div className="mb-3">
+                                    <div className="text-[10px] text-slate-400 mb-1">{t.sections.arch}</div>
+                                    <div className="flex flex-col gap-1.5">
+                                        {Object.values(ARCH_PROFILES).map((prof) => (
+                                            <button key={prof.id} onClick={() => setActiveProfileId(prof.id)} className={`text-[9px] text-left px-2 py-1.5 rounded border transition-all flex justify-between items-center ${activeProfileId === prof.id ? 'bg-blue-500/20 border-blue-500/50 text-white' : 'bg-slate-800/50 border-slate-700/50 text-slate-400 hover:border-slate-500'}`}>
+                                                <div><div className="font-bold">{prof.label}</div></div>
+                                                <div className="text-[9px] font-mono opacity-80 bg-black/30 px-1 rounded">&gt;{prof.pueFloor}</div>
+                                            </button>
+                                        ))}
                                     </div>
-
-                                    <div className="border-t border-white/5 pt-4">
-                                        <div className="flex justify-between text-xs mb-1 text-red-300">
-                                            <span>{t.labels.chipLimit}</span>
-                                            <span className="font-mono">{inputs.safetyLimitC.toFixed(0)}°C</span>
-                                        </div>
-                                        <input type="range" min="60" max="75" step="1" value={inputs.safetyLimitC} onChange={(e) => setInputs(s => ({...s, safetyLimitC: Number(e.target.value)}))} className="w-full h-1.5 bg-slate-700 rounded-lg accent-red-500" />
+                                    <div className="mt-1.5 text-[9px] flex justify-between items-center text-slate-400 bg-black/20 px-2 py-1 rounded border border-white/5">
+                                        <span>{t.labels.physLimit}:</span><span className="font-mono text-white font-bold">{state.pueMin.toFixed(3)}</span>
                                     </div>
+                                </div>
+                                <div className="border-t border-white/5 pt-2">
+                                    <div className="flex justify-between text-[10px] mb-1 text-red-300"><span>{t.labels.chipLimit}</span><span className="font-mono">{inputs.safetyLimitC.toFixed(0)}°C</span></div>
+                                    <input type="range" min="60" max="75" step="1" value={inputs.safetyLimitC} onChange={(e) => setInputs(s => ({...s, safetyLimitC: Number(e.target.value)}))} className="w-full h-1.5 bg-slate-700 rounded-lg accent-red-500" />
                                 </div>
                             </section>
 
-                            {/* PID OPERATIONAL DASHBOARD (PID Mode) */}
+                            {/* PID Dashboard */}
                             {mode === 'PID' && (
-                                <section className="glass-panel rounded-xl p-4 bg-slate-900/30 border border-amber-900/20">
-                                    <h3 className="text-xs font-bold text-amber-500/70 uppercase mb-3 border-b border-amber-900/20 pb-2">
-                                        {t.sections.pid_dash}
-                                    </h3>
-                                    <div className="space-y-3">
-                                        <div className="flex justify-between items-center text-xs">
-                                            <span className="text-slate-500">{t.pid_dash.setpoint}</span>
-                                            <span className="font-mono text-amber-100">{GLOBAL_CONSTANTS.BASELINE_TEMP.toFixed(1)} °C</span>
-                                        </div>
-                                        <div className="flex justify-between items-center text-xs">
-                                            <span className="text-slate-500">{t.pid_dash.margin}</span>
-                                            <span className="font-mono text-slate-300">{state.margin.toFixed(1)} °C</span>
-                                        </div>
-                                        <div className="flex justify-between items-center text-xs border-t border-white/5 pt-2">
-                                            <span className="text-slate-500">{t.pid_dash.baseline}</span>
-                                            <span className="font-mono text-slate-300">{calcPUE(inputs.itPowerKW, state.rackPowerKW, GLOBAL_CONSTANTS.BASELINE_TEMP, activeProfile.params).toFixed(3)}</span>
-                                        </div>
+                                <section className="glass-panel rounded-lg p-3 bg-slate-900/30 border border-amber-900/20 shrink-0">
+                                    <h3 className="text-[10px] font-bold text-amber-500/70 uppercase mb-2 border-b border-amber-900/20 pb-1">{t.sections.pid_dash}</h3>
+                                    <div className="space-y-1.5">
+                                        <div className="flex justify-between text-[10px]"><span className="text-slate-500">{t.pid_dash.setpoint}</span><span className="font-mono text-amber-100">{GLOBAL_CONSTANTS.BASELINE_TEMP.toFixed(1)} °C</span></div>
+                                        <div className="flex justify-between text-[10px]"><span className="text-slate-500">{t.pid_dash.margin}</span><span className="font-mono text-slate-300">{state.margin.toFixed(1)} °C</span></div>
                                     </div>
                                 </section>
                             )}
 
-                            {/* MPC CONTROL QUALITY DASHBOARD (MPC Mode) */}
+                            {/* MPC Dashboard */}
                             {mode === 'MPC' && (
-                                <section className="glass-panel rounded-xl overflow-hidden bg-slate-900/30 border border-blue-900/20">
-                                    <button 
-                                        onClick={() => setIsQualityExpanded(!isQualityExpanded)} 
-                                        className="w-full p-3 flex justify-between items-center text-xs font-bold text-slate-400 hover:text-blue-300 hover:bg-white/5 transition-colors"
-                                    >
-                                        <span>{t.sections.advanced}</span>
-                                        <Icon name={isQualityExpanded ? "ChevronUp" : "ChevronDown"} size={14} />
+                                <section className="glass-panel rounded-lg overflow-hidden bg-slate-900/30 border border-blue-900/20 shrink-0">
+                                    <button onClick={() => setIsQualityExpanded(!isQualityExpanded)} className="w-full p-2 flex justify-between items-center text-[10px] font-bold text-slate-400 hover:text-blue-300 hover:bg-white/5 transition-colors">
+                                        <span>{t.sections.advanced}</span><Icon name={isQualityExpanded ? "ChevronUp" : "ChevronDown"} size={12} />
                                     </button>
-                                    
                                     {isQualityExpanded && (
-                                        <div className="p-4 pt-0 space-y-2 bg-black/20">
-                                            <div className="h-px bg-white/5 my-2"></div>
-                                            <div className="mb-3">
-                                                <div className="text-[10px] text-slate-500 font-bold uppercase mb-1">{t.quality.stability}</div>
+                                        <div className="p-2 pt-0 space-y-2 bg-black/20">
+                                            <div className="h-px bg-white/5 my-1"></div>
+                                            <div className="space-y-1">
+                                                <div className="text-[9px] text-slate-500 font-bold uppercase">{t.quality.stability}</div>
                                                 <QualityMetric label={t.labels.variance} value={state.variance.toFixed(3)} unit="" />
                                                 <QualityMetric label={t.labels.slew} value={state.slew.toFixed(2)} unit="°C/s" />
                                             </div>
-                                            <div className="mb-3">
-                                                <div className="text-[10px] text-slate-500 font-bold uppercase mb-1">{t.quality.constraint}</div>
-                                                <QualityMetric label={t.labels.utilization} value={state.marginUtil.toFixed(1)} unit="%" tooltip={t.quality.tooltips.margin} />
-                                                <div className="w-full h-1 bg-slate-700 rounded-full mt-1 overflow-hidden">
-                                                    <div className="h-full bg-blue-500/60 transition-all duration-700" style={{width: `${Math.min(100, Math.max(0, state.marginUtil))}%`}} />
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <button onClick={() => setShowScenario(!showScenario)} className="flex items-center gap-1 text-[10px] text-slate-500 font-bold uppercase hover:text-slate-300 transition-colors">
-                                                    <Icon name={showScenario ? "ChevronDown" : "ChevronRight"} size={10} />
-                                                    {t.quality.scenario}
-                                                </button>
-                                                {showScenario && (
-                                                    <div className="mt-2 pl-2 border-l border-slate-700/50">
-                                                        <QualityMetric label={t.labels.wue} value={state.wue.toFixed(2)} unit="L/kWh" />
-                                                        <div className="text-[9px] text-slate-600 mt-1 italic leading-tight">{t.quality.disclaimer}</div>
-                                                    </div>
-                                                )}
+                                            <div className="space-y-1">
+                                                <div className="text-[9px] text-slate-500 font-bold uppercase">{t.quality.constraint}</div>
+                                                <QualityMetric label={t.labels.utilization} value={state.marginUtil.toFixed(1)} unit="%" />
+                                                <div className="w-full h-1 bg-slate-700 rounded-full overflow-hidden"><div className="h-full bg-blue-500/60 transition-all duration-700" style={{width: `${Math.min(100, Math.max(0, state.marginUtil))}%`}} /></div>
                                             </div>
                                         </div>
                                     )}
@@ -972,105 +610,63 @@
                         </div>
 
                         {/* CENTER: L1 VISUALIZATION & CAUSAL CHAIN */}
-                        <div className="col-span-6 flex flex-col gap-4">
-                            
-                            {/* L1 & L2: Causal Loop Visualizer */}
-                            <div className="glass-panel p-4 rounded-xl flex flex-col gap-4">
-                                <div className="flex justify-between items-center text-[10px] text-slate-500 font-mono uppercase tracking-widest border-b border-white/5 pb-2">
-                                    <span>Control Input</span>
-                                    <span>System Response</span>
-                                    <span>Objective</span>
+                        <div className="col-span-6 flex flex-col gap-2 h-full">
+                            <div className="glass-panel p-3 rounded-lg flex flex-col gap-3 shrink-0">
+                                <div className="flex justify-between items-center text-[9px] text-slate-500 font-mono uppercase tracking-widest border-b border-white/5 pb-1">
+                                    <span>Control Input</span><span>System Response</span><span>Objective</span>
                                 </div>
-                                
                                 <div className="grid grid-cols-3 gap-2 items-center">
-                                    <L1Metric 
-                                        label={t.l1.control} 
-                                        value={state.supplyTempC.toFixed(1)} 
-                                        unit="°C" 
-                                        color={mode === 'MPC' ? "text-blue-400" : "text-amber-400"}
-                                        isMpcActive={mode === 'MPC'}
-                                        traceLabel={mode === 'MPC' ? t.labels.trace.opt : t.pid_dash.setpoint}
-                                    />
-                                    
+                                    <L1Metric label={t.l1.control} value={state.supplyTempC.toFixed(1)} unit="°C" color={mode === 'MPC' ? "text-blue-400" : "text-amber-400"} isMpcActive={mode === 'MPC'} traceLabel={mode === 'MPC' ? t.labels.trace.opt : t.pid_dash.setpoint} />
                                     <div className="flex flex-col items-center">
                                         <div className="h-0.5 w-full bg-slate-700 relative top-1/2"></div>
-                                        <L1Metric 
-                                            label={t.l1.constraint} 
-                                            value={state.chipTempC.toFixed(1)} 
-                                            unit="°C" 
-                                            color={state.margin < 3 ? "text-red-400 animate-pulse" : "text-slate-200"}
-                                            isMpcActive={false} 
-                                            traceLabel={t.labels.trace.load}
-                                        />
+                                        <L1Metric label={t.l1.constraint} value={state.chipTempC.toFixed(1)} unit="°C" color={state.margin < 3 ? "text-red-400 animate-pulse" : "text-slate-200"} isMpcActive={false} traceLabel={t.labels.trace.load} />
                                     </div>
-
-                                    <L1Metric 
-                                        label={t.l1.objective} 
-                                        value={state.pue.toFixed(3)} 
-                                        unit="" 
-                                        color={mode === 'MPC' ? "text-emerald-400" : "text-slate-200"}
-                                        isMpcActive={mode === 'MPC'}
-                                        traceLabel={state.isFeasibilityLimit ? t.labels.trace.limit : (activeProfileId === 'ADVANCED' && mode === 'MPC' ? t.labels.trace.adv : `Δ = ${state.deltaPue}%`)}
-                                        warning={state.isFeasibilityLimit ? t.labels.trace.limit : null}
-                                    />
+                                    <L1Metric label={t.l1.objective} value={state.pue.toFixed(3)} unit="" color={mode === 'MPC' ? "text-emerald-400" : "text-slate-200"} isMpcActive={mode === 'MPC'} traceLabel={state.isFeasibilityLimit ? t.labels.trace.limit : (activeProfileId === 'ADVANCED' && mode === 'MPC' ? t.labels.trace.adv : `Δ = ${state.deltaPue}%`)} warning={state.isFeasibilityLimit ? t.labels.trace.limit : null} />
                                 </div>
-
-                                <div className="grid grid-cols-2 gap-4 pt-2 bg-white/5 rounded-lg p-2">
+                                <div className="grid grid-cols-2 gap-4 pt-1 bg-white/5 rounded p-1.5">
                                     <L2Metric label={t.l2.margin} value={state.margin.toFixed(1)} unit="°C" isMpcActive={false} />
                                     <L2Metric label={t.l2.cue} value={state.cue.toFixed(2)} unit="kg/kWh" isMpcActive={mode === 'MPC'} />
                                 </div>
                             </div>
 
-                            {/* Main Chart */}
-                            <div className="glass-panel p-4 rounded-xl flex-1 relative flex flex-col min-h-0">
-                                <h3 className="text-xs font-bold text-slate-500 uppercase mb-2 flex items-center gap-2">
-                                    <Icon name="LineChart" size={14} /> {t.sections.charts}
-                                </h3>
+                            <div className="glass-panel p-3 rounded-lg flex-1 min-h-0 flex flex-col relative">
+                                <h3 className="text-[10px] font-bold text-slate-500 uppercase mb-1 flex items-center gap-2"><Icon name="LineChart" size={12} /> {t.sections.charts}</h3>
                                 <div className="flex-1 w-full min-h-0">
                                     <ResponsiveContainer>
                                         <ComposedChart data={state.history}>
                                             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#334155" opacity={0.3} />
                                             <XAxis dataKey="time" hide />
-                                            <YAxis yAxisId="left" domain={[30, 80]} tick={{fontSize: 10, fill: '#94a3b8'}} label={{value: t.chartAxis.chip, angle:-90, position:'insideLeft', fill:'#94a3b8', fontSize:10}} />
-                                            <YAxis yAxisId="right" orientation="right" domain={[10, 45]} tick={{fontSize: 10, fill: '#3b82f6'}} label={{value: t.chartAxis.supply, angle:90, position:'insideRight', fill:'#3b82f6', fontSize:10}} />
-                                            <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', fontSize: '12px' }} itemStyle={{padding: 0}} />
+                                            <YAxis yAxisId="left" domain={[30, 80]} tick={{fontSize: 9, fill: '#94a3b8'}} label={{value: t.chartAxis.chip, angle:-90, position:'insideLeft', fill:'#94a3b8', fontSize:9}} />
+                                            <YAxis yAxisId="right" orientation="right" domain={[10, 45]} tick={{fontSize: 9, fill: '#3b82f6'}} label={{value: t.chartAxis.supply, angle:90, position:'insideRight', fill:'#3b82f6', fontSize:9}} />
+                                            <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', fontSize: '10px' }} itemStyle={{padding: 0}} />
                                             <Legend verticalAlign="top" height={36} iconType="plain" wrapperStyle={{fontSize: '10px'}} />
-                                            <ReferenceLine yAxisId="left" y={inputs.safetyLimitC} stroke="#ef4444" strokeDasharray="3 3" label={{ value: t.chartAxis.limit, fill: 'red', fontSize: 10 }} />
-                                            <Area yAxisId="left" type="monotone" dataKey="chip" stroke="#94a3b8" fill="url(#colorChip)" strokeWidth={2} name="Chip Temp (Response)" />
-                                            <Line yAxisId="right" type="step" dataKey="supply" stroke="#3b82f6" strokeWidth={2} dot={false} name="Supply Temp (Control)" animationDuration={300} />
-                                            <defs>
-                                                <linearGradient id="colorChip" x1="0" y1="0" x2="0" y2="1">
-                                                    <stop offset="5%" stopColor="#94a3b8" stopOpacity={0.1}/>
-                                                    <stop offset="95%" stopColor="#94a3b8" stopOpacity={0}/>
-                                                </linearGradient>
-                                            </defs>
+                                            <ReferenceLine yAxisId="left" y={inputs.safetyLimitC} stroke="#ef4444" strokeDasharray="3 3" label={{ value: t.chartAxis.limit, fill: 'red', fontSize: 9 }} />
+                                            <Area yAxisId="left" type="monotone" dataKey="chip" stroke="#94a3b8" fill="url(#colorChip)" strokeWidth={2} name="Chip Temp" />
+                                            <Line yAxisId="right" type="step" dataKey="supply" stroke="#3b82f6" strokeWidth={2} dot={false} name="Supply Temp" animationDuration={300} />
+                                            <defs><linearGradient id="colorChip" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#94a3b8" stopOpacity={0.1}/><stop offset="95%" stopColor="#94a3b8" stopOpacity={0}/></linearGradient></defs>
                                         </ComposedChart>
                                     </ResponsiveContainer>
                                 </div>
                             </div>
                         </div>
 
-                        {/* RIGHT: DIGITAL TWIN (VISUAL CONFIRMATION) */}
-                        <div className="col-span-3 glass-panel p-1 rounded-xl relative overflow-hidden flex flex-col">
+                        {/* RIGHT: DIGITAL TWIN */}
+                        <div className="col-span-3 glass-panel p-1 rounded-lg relative overflow-hidden flex flex-col h-full">
                              <div className={`scanline ${mode === 'MPC' ? 'opacity-100' : 'opacity-0'}`}></div>
-                             <div className="p-3 border-b border-white/5 bg-slate-900/50">
-                                <h3 className="text-xs font-bold text-center text-slate-300">{t.twin.title}</h3>
-                                <div className="flex justify-between text-[9px] text-slate-500 mt-1 font-mono uppercase">
-                                    <span>Model: GB200</span>
-                                    <span>{t.twin.active}</span>
-                                </div>
+                             <div className="p-2 border-b border-white/5 bg-slate-900/50">
+                                <h3 className="text-[10px] font-bold text-center text-slate-300">{t.twin.title}</h3>
+                                <div className="flex justify-between text-[8px] text-slate-500 mt-0.5 font-mono uppercase"><span>GB200-NVL72</span><span>{t.twin.active}</span></div>
                              </div>
-                             <div className="flex-1 p-2 flex flex-col gap-px bg-black/40">
+                             <div className="flex-1 p-1 flex flex-col gap-px bg-black/40 min-h-0 overflow-y-auto">
                                 {Array.from({length: 18}).map((_, i) => {
-                                    const zoneHeightFactor = (18 - i) / 18; 
                                     const heatLoad = state.rackPowerKW * 0.98;
-                                    const localTemp = state.supplyTempC + (heatLoad * GLOBAL_CONSTANTS.THERMAL_RESISTANCE * 0.8) + (zoneHeightFactor * 5);
+                                    const localTemp = state.supplyTempC + (heatLoad * GLOBAL_CONSTANTS.THERMAL_RESISTANCE * 0.8) + ((18 - i) / 18 * 5);
                                     const isHot = localTemp > inputs.safetyLimitC - 2;
                                     const color = isHot ? '#7f1d1d' : (localTemp > inputs.safetyLimitC - 10 ? '#713f12' : '#064e3b');
                                     return (
-                                        <div key={i} className="flex-1 flex items-center justify-between px-2 rounded-sm transition-colors duration-500" style={{ backgroundColor: color }}>
-                                            <span className="text-[9px] font-mono text-slate-500">U{36 - i*2}</span>
-                                            <span className={`text-[9px] font-mono ${isHot ? 'text-red-300 font-bold' : 'text-slate-300'}`}>{localTemp.toFixed(1)}°C</span>
+                                        <div key={i} className="flex-1 flex items-center justify-between px-2 rounded-sm transition-colors duration-500 min-h-[16px]" style={{ backgroundColor: color }}>
+                                            <span className="text-[8px] font-mono text-slate-500">U{36 - i*2}</span>
+                                            <span className={`text-[8px] font-mono ${isHot ? 'text-red-300 font-bold' : 'text-slate-300'}`}>{localTemp.toFixed(1)}°C</span>
                                         </div>
                                     )
                                 })}
@@ -1081,7 +677,6 @@
                 </div>
             );
         };
-
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<App />);
     </script>
