@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PSA Innovation: Green Intelligent Edge</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        /* 基础与滚动条设定 */
+        body { margin: 0; overflow-x: hidden; background-color: #f8fafc; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* 炫技：纯CSS背景流光特效 (Glow Orbs) */
+        .bg-orbs {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            overflow: hidden; z-index: -1; pointer-events: none;
+            background: linear-gradient(to bottom right, #f8fafc, #e2e8f0);
+        }
+        .orb {
+            position: absolute; border-radius: 50%; filter: blur(80px);
+            animation: float 20s infinite ease-in-out alternate;
+        }
+        .orb-1 { width: 40vw; height: 40vw; background: rgba(14, 165, 233, 0.15); top: -10%; left: -10%; }
+        .orb-2 { width: 50vw; height: 50vw; background: rgba(16, 185, 129, 0.1); bottom: -20%; right: -10%; animation-delay: -5s; }
+        
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(10%, 15%) scale(1.1); }
+        }
+
+        /* 炫技：级联入场动画 (Staggered Fade-in) */
+        .animate-fade-up { opacity: 0; animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .delay-100 { animation-delay: 100ms; }
+        .delay-200 { animation-delay: 200ms; }
+        .delay-300 { animation-delay: 300ms; }
+
+        /* 卡片悬浮发光特效 */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -10px rgba(14, 165, 233, 0.15);
+            border-color: rgba(14, 165, 233, 0.3);
+        }
+
+        /* 炫技：数据流光传输动画 (Data Flow) */
+        .data-line { position: relative; width: 2px; background: #334155; overflow: hidden; }
+        .data-packet {
+            position: absolute; top: -10px; left: 0; width: 100%; height: 10px;
+            background: #38bdf8;
+            box-shadow: 0 0 10px 2px #38bdf8;
+            animation: flowDown 1.5s infinite linear;
+        }
+        @keyframes flowDown {
+            0% { top: -10px; opacity: 1; }
+            80% { opacity: 1; }
+            100% { top: 100%; opacity: 0; }
+        }
+        .cooling-pulse { animation: pulseGreen 2s infinite; }
+        @keyframes pulseGreen {
+            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+            70% { box-shadow: 0 0 0 15px rgba(16, 185, 129, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        /* 移动端横向滚动隐藏原生滚动条 */
+        .hide-scroll::-webkit-scrollbar { display: none; }
+        .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* 图表容器严格约束 */
+        .chart-container {
+            position: relative; width: 100%; margin: 0 auto;
+            height: 300px; /* 移动端默认高度 */
+        }
+        @media (min-width: 768px) { .chart-container { height: 380px; } }
+    </style>
+</head>
+<body class="text-slate-800 font-sans antialiased selection:bg-sky-200 selection:text-sky-900">
+
+    <!-- 动态流光背景 -->
+    <div class="bg-orbs">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+    </div>
+
+    <!-- Application Structure Plan:
+         采用了"单页应用路由(SPA Router)"范式。
+         顶栏包含多语言切换器。
+         导航栏在移动端支持横向滑动 (hide-scroll)。
+         核心内容分为四个逻辑相连的模块，采用状态机(State Machine)管理渲染。
+    -->
+
+    <div id="app" class="min-h-screen flex flex-col max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-10 relative z-10">
+        
+        <!-- Header & Lang Toggle -->
+        <header class="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 animate-fade-up">
+            <div>
+                <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight" id="header-title">
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-sky-600 to-emerald-500" id="title-hl">Smart Port</span> Synergy
+                </h1>
+                <p class="mt-2 text-sm md:text-base text-slate-500 font-medium" id="header-subtitle">
+                    Joint Value Proposition: Dahua & dcdeeptech for PSA Singapore.
+                </p>
+            </div>
+            
+            <!-- Lang Toggle (炫酷胶囊切换) -->
+            <div class="flex items-center bg-white rounded-full p-1 shadow-sm border border-slate-200">
+                <button onclick="toggleLang('en')" id="btn-lang-en" class="px-4 py-1.5 rounded-full text-sm font-bold transition-all duration-300 bg-slate-800 text-white shadow-md">EN</button>
+                <button onclick="toggleLang('zh')" id="btn-lang-zh" class="px-4 py-1.5 rounded-full text-sm font-bold transition-all duration-300 text-slate-500 hover:text-slate-800">中文</button>
+            </div>
+        </header>
+
+        <!-- Navigation (移动端可滑动) -->
+        <nav class="flex overflow-x-auto hide-scroll gap-2 mb-8 pb-2 animate-fade-up delay-100" id="nav-container">
+            <!-- Buttons dynamically injected -->
+        </nav>
+
+        <!-- Main Content Area -->
+        <main id="main-content" class="flex-grow w-full">
+            <!-- Content dynamically injected -->
+        </main>
+
+        <!-- Footer -->
+        <footer class="mt-16 border-t border-slate-200/50 pt-6 pb-8 text-center text-slate-400 text-xs md:text-sm animate-fade-up delay-300" id="footer-text">
+            System generated visualization based on public research (PSA, Dahua, dcdeeptech).
+        </footer>
+    </div>
+
+    <script>
+        // === State Management ===
+        const state = {
+            lang: 'en', // 'en' or 'zh'
+            currentTab: 'context',
+            sim: { ai: true, cooling: false }
+        };
+
+        // === Bilingual Dictionary ===
+        const i18n = {
+            header: {
+                hl: { en: "Smart Port", zh: "智慧港口" },
+                title: { en: " Synergy", zh: "协同创新计划" },
+                sub: { en: "Joint Value Proposition: Dahua & dcdeeptech for PSA Singapore.", zh: "联合价值主张：大华股份与 dcdeeptech 赋能新加坡大士港 (Tuas Port)。" },
+                footer: { en: "System generated visualization based on public research.", zh: "基于公开调研数据生成的系统可视化方案 (PSA, 大华, dcdeeptech)。" }
+            },
+            tabs: [
+                { id: 'context', en: '1. PSA Context', zh: '1. PSA 现状痛点' },
+                { id: 'capabilities', en: '2. Capabilities', zh: '2. 核心技术底座' },
+                { id: 'solution', en: '3. Joint Solution', zh: '3. 联合解决方案' },
+                { id: 'roadmap', en: '4. Strategy', zh: '4. 资金与落地' }
+            ],
+            context: {
+                title: { en: "The Automation Frontier: Tuas Port", zh: "自动化前沿：新加坡大士港的边缘挑战" },
+                intro: { en: "Singapore aims for a fully automated Tuas Port by 2040. However, the intersection of massive AI workloads and a tropical climate creates severe 'Edge friction'.", zh: "新加坡计划2040年建成全球最大自动化港口。然而，海量AI计算负荷与热带气候的叠加，在“边缘端”产生了巨大的摩擦力。" },
+                radarTitle: { en: "Current IT vs. Tuas Demands", zh: "传统IT能力 vs 大士港需求" },
+                radarLabels: { en: ['Low Latency', 'Thermal Mgmt', 'Energy Efficiency', 'AI Scale', 'Durability'], zh: ['超低延迟', '热管理能力', '能源效率', 'AI算力扩展', '环境耐久度'] },
+                pains: [
+                    { icon: "🌡️", t: {en: "Thermal Throttling", zh: "高温降频"}, d: {en: "32°C+ ambient & humidity causes edge GPUs to throttle.", zh: "常年32°C以上高温高湿导致边缘AI服务器降频死机。"} },
+                    { icon: "⚡", t: {en: "Power Density", zh: "高功率密度"}, d: {en: "Processing 4K OCR locally spikes grid power limits.", zh: "成百上千台AGV的高清视频本地解析，对电网造成冲击。"} },
+                    { icon: "⏱️", t: {en: "Latency Critical", zh: "毫秒级延迟要求"}, d: {en: "AGVs require <10ms response. Cloud offloading is impossible.", zh: "无人集卡和岸桥需要毫秒级决策，无法将数据传回云端。"} },
+                    { icon: "🌊", t: {en: "Harsh Environment", zh: "严苛海事环境"}, d: {en: "Salt spray and vibrations reduce hardware lifespan.", zh: "高盐雾、高震动环境大幅缩短标准商用服务器寿命。"} }
+                ]
+            },
+            capabilities: {
+                title: { en: "Partner Ecosystem Integration", zh: "生态伙伴能力融合" },
+                intro: { en: "Solving the 'Tropical Edge' paradox requires combining best-in-class Vision AI with Deep Tech climate infrastructure.", zh: "破解“热带边缘计算”悖论，需要将顶级的视觉AI算法与专注于极端气候的深科技基础设施相融合。" },
+                dahua: {
+                    name: "Dahua Technology (大华股份)",
+                    role: { en: "The Brain: Industrial Vision AI", zh: "工业视觉AI大脑" },
+                    features: { en: ["Pro AI Camera Sensors", "Port-specific OCR/Analytics", "Low-bandwidth Codecs"], zh: ["专业级边缘AI传感器", "港口专属OCR与行为分析", "超低带宽视频编码技术"] },
+                    quote: { en: "Detecting safety & assets with industry-leading precision.", zh: "以业界领先的精度实现港口资产追踪与安全隐患预警。" }
+                },
+                dcdeeptech: {
+                    name: "dcdeeptech",
+                    role: { en: "The Habitat: Tropical Infrastructure", zh: "热带算力栖息地" },
+                    features: { en: ["Tropical-Native Liquid Cooling", "OCP Rack Optimization", "Dynamic Thermal Algorithms"], zh: ["原生热带液冷/风冷架构", "OCP开放计算标准优化", "动态热能管理专有算法"] },
+                    quote: { en: "Creating a stable micro-climate for high-density compute.", zh: "为高密度GPU算力打造不受外部环境影响的微气候。" }
+                }
+            },
+            solution: {
+                title: { en: "The 'Green Intelligent Edge' Node", zh: "“绿色智能边缘”节点模型" },
+                intro: { en: "An interactive simulation of integrating Dahua AI within a dcdeeptech OCP enclosure. Toggle features to see real-time impact.", zh: "交互式沙盘：将大华AI算法集成至dcdeeptech环境舱。请切换下方按钮查看对核心指标的影响。" },
+                cfgTitle: { en: "Architecture Configuration", zh: "架构配置模拟器" },
+                toggles: {
+                    ai: { en: "Dahua Edge AI", zh: "开启 大华边缘AI计算" },
+                    aiDesc: { en: "Enables heavy video analytics", zh: "启用高精度视频实时流分析" },
+                    cool: { en: "dcdeeptech Cooling", zh: "开启 dcdeeptech 专有温控" },
+                    coolDesc: { en: "Enables tropical OCP optimization", zh: "启用热带环境OCP机架级温控" }
+                },
+                chartTitle: { en: "Projected Metrics Index", zh: "核心指标预测指数" },
+                chartLabels: { en: ['Energy Cost', 'Carbon Emissions', 'AI Utility'], zh: ['能耗成本', '碳排放量', 'AI可用算力'] },
+                diag: {
+                    cam: { en: "Dahua Sensor", zh: "大华感知端" },
+                    edge: { en: "Edge Compute", zh: "边缘计算集群" },
+                    os: { en: "TOS / AGV System", zh: "港口/AGV系统" },
+                    tempHigh: { en: "Status: Thermal Warning", zh: "状态：高温警告" },
+                    tempStable: { en: "Status: Thermally Stable", zh: "状态：温控稳定" }
+                }
+            },
+            roadmap: {
+                title: { en: "Execution & Singapore Grants", zh: "落地规划与新加坡政府资助" },
+                intro: { en: "A phased validation approach mapped to local innovation ecosystems (MPA, ESG, PSA).", zh: "分阶段的概念验证(PoC)路径，完美契合新加坡海事局及企业发展局的创新资助框架。" },
+                steps: [
+                    { t: {en: "Phase 1: Lab Integration", zh: "阶段 1：实验室集成"}, d: {en: "Combine hardware. Thermal stress tests.", zh: "完成硬件融合与基础通讯，在模拟热带高湿环境下进行压力测试。"}, f: "PSA unboXed" },
+                    { t: {en: "Phase 2: Tuas Live PoC", zh: "阶段 2：大士港实地测试"}, d: {en: "Deploy 5 nodes on AGVs. Measure real PUE.", zh: "部署5个测试节点于AGV或充电桩，实测算法精度与真实PUE值。"}, f: "MPA MINT Fund" },
+                    { t: {en: "Phase 3: Fleet Scaling", zh: "阶段 3：全栈扩展部署"}, d: {en: "Standardize as a procurement SKU for PSA.", zh: "形成标准化产品SKU，纳入PSA下一代自动化设备采购目录。"}, f: "ESG EDG Grant" }
+                ],
+                grants: {
+                    title: { en: "Targeted Grant Ecosystem", zh: "目标资助生态地图" },
+                    mpa: { en: "Maritime Innovation & Tech. Focus on decarbonization.", zh: "海事创新与技术基金。高度契合其'绿色脱碳'主题。" },
+                    esg: { en: "Enterprise Dev Grant. Focus on capability upgrading.", zh: "企业发展计划。支持dcdeeptech等本土深科技企业能力升级。" },
+                    psa: { en: "Direct testbed access at Pasir Panjang/Tuas.", zh: "PSA旗下孵化器，提供极其稀缺的真实港口测试床资源。" }
+                }
+            }
+        };
+
+        const t = (keyStr) => {
+            const keys = keyStr.split('.');
+            let obj = i18n;
+            for (let k of keys) { if(obj[k]) obj = obj[k]; else return ''; }
+            return obj[state.lang] || obj; // Return string if exists, else might be object
+        };
+
+        // === Language Controller ===
+        function toggleLang(lang) {
+            state.lang = lang;
+            
+            // UI Button Updates
+            const btnEn = document.getElementById('btn-lang-en');
+            const btnZh = document.getElementById('btn-lang-zh');
+            if(lang === 'en') {
+                btnEn.className = "px-4 py-1.5 rounded-full text-sm font-bold transition-all duration-300 bg-slate-800 text-white shadow-md";
+                btnZh.className = "px-4 py-1.5 rounded-full text-sm font-bold transition-all duration-300 text-slate-500 hover:text-slate-800 bg-transparent shadow-none";
+            } else {
+                btnZh.className = "px-4 py-1.5 rounded-full text-sm font-bold transition-all duration-300 bg-slate-800 text-white shadow-md";
+                btnEn.className = "px-4 py-1.5 rounded-full text-sm font-bold transition-all duration-300 text-slate-500 hover:text-slate-800 bg-transparent shadow-none";
+            }
+
+            // Update Static Shell
+            document.getElementById('title-hl').innerText = i18n.header.hl[lang];
+            document.getElementById('header-title').lastChild.textContent = i18n.header.title[lang];
+            document.getElementById('header-subtitle').innerText = i18n.header.sub[lang];
+            document.getElementById('footer-text').innerText = i18n.header.footer[lang];
+
+            // Re-render
+            renderNav();
+            switchTab(state.currentTab, false); // false = don't animate everything again unnecessarliy, though in this simple setup we will replace innerHTML.
+        }
+
+        // === View Renderers ===
+
+        function renderNav() {
+            const nav = document.getElementById('nav-container');
+            nav.innerHTML = i18n.tabs.map(tab => `
+                <button 
+                    onclick="switchTab('${tab.id}', true)"
+                    class="whitespace-nowrap px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-300 ${
+                        state.currentTab === tab.id 
+                        ? 'bg-gradient-to-r from-sky-500 to-sky-600 text-white shadow-lg shadow-sky-500/30' 
+                        : 'bg-white text-slate-500 hover:bg-slate-100 border border-slate-200 shadow-sm'
+                    }"
+                >
+                    ${tab[state.lang]}
+                </button>
+            `).join('');
+        }
+
+        function switchTab(tabId, animate = true) {
+            state.currentTab = tabId;
+            renderNav();
+            
+            const main = document.getElementById('main-content');
+            let html = '';
+            
+            // Base animation class wrapper
+            const animClass = animate ? 'animate-fade-up' : '';
+
+            if (tabId === 'context') {
+                html = `
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 ${animClass}">
+                        <div class="lg:col-span-3">
+                            <h2 class="text-2xl md:text-3xl font-bold text-slate-800 mb-3">${t('context.title')}</h2>
+                            <p class="text-slate-600 md:text-lg leading-relaxed max-w-4xl">${t('context.intro')}</p>
+                        </div>
+                        <div class="glass-card p-4 md:p-6 rounded-3xl lg:col-span-1 flex flex-col delay-100 ${animClass}">
+                            <h3 class="text-lg font-bold text-slate-800 mb-4 text-center">${t('context.radarTitle')}</h3>
+                            <div class="chart-container flex-grow"><canvas id="radarChart"></canvas></div>
+                        </div>
+                        <div class="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 delay-200 ${animClass}">
+                            ${i18n.context.pains.map((p, i) => `
+                                <div class="glass-card p-6 rounded-2xl">
+                                    <div class="text-4xl mb-4 drop-shadow-md">${p.icon}</div>
+                                    <h4 class="font-bold text-slate-800 text-lg mb-2">${p.t[state.lang]}</h4>
+                                    <p class="text-sm text-slate-600 leading-relaxed">${p.d[state.lang]}</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>`;
+            } 
+            else if (tabId === 'capabilities') {
+                html = `
+                    <div class="flex flex-col space-y-8 ${animClass}">
+                        <div>
+                            <h2 class="text-2xl md:text-3xl font-bold text-slate-800 mb-3">${t('capabilities.title')}</h2>
+                            <p class="text-slate-600 md:text-lg leading-relaxed max-w-4xl">${t('capabilities.intro')}</p>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 relative delay-100 ${animClass}">
+                            <!-- Link Icon -->
+                            <div class="hidden md:flex absolute inset-0 items-center justify-center z-10 pointer-events-none">
+                                <div class="bg-white rounded-full p-3 shadow-xl border border-sky-100 text-sky-500 animate-pulse">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                                </div>
+                            </div>
+                            
+                            <!-- Dahua -->
+                            <div class="glass-card rounded-3xl overflow-hidden border-t-4 border-t-sky-500 transform transition hover:-translate-y-2">
+                                <div class="p-6 md:p-8">
+                                    <div class="flex items-center space-x-3 mb-6">
+                                        <div class="w-12 h-12 rounded-full bg-sky-100 flex items-center justify-center text-sky-600 text-2xl">👁️</div>
+                                        <div>
+                                            <h3 class="text-xl font-bold text-slate-900">${i18n.capabilities.dahua.name}</h3>
+                                            <p class="text-sky-600 font-semibold text-sm">${t('capabilities.dahua.role')}</p>
+                                        </div>
+                                    </div>
+                                    <ul class="space-y-4 mb-8">
+                                        ${i18n.capabilities.dahua.features[state.lang].map(f => `<li class="flex items-center text-slate-700 font-medium"><span class="w-2 h-2 rounded-full bg-sky-500 mr-3"></span>${f}</li>`).join('')}
+                                    </ul>
+                                    <div class="bg-sky-50/50 p-4 rounded-xl border border-sky-100 text-sm text-sky-900 italic font-medium">"${t('capabilities.dahua.quote')}"</div>
+                                </div>
+                            </div>
+
+                            <!-- dcdeeptech -->
+                            <div class="glass-card rounded-3xl overflow-hidden border-t-4 border-t-emerald-500 transform transition hover:-translate-y-2">
+                                <div class="p-6 md:p-8">
+                                    <div class="flex items-center space-x-3 mb-6">
+                                        <div class="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 text-2xl">❄️</div>
+                                        <div>
+                                            <h3 class="text-xl font-bold text-slate-900">${i18n.capabilities.dcdeeptech.name}</h3>
+                                            <p class="text-emerald-600 font-semibold text-sm">${t('capabilities.dcdeeptech.role')}</p>
+                                        </div>
+                                    </div>
+                                    <ul class="space-y-4 mb-8">
+                                        ${i18n.capabilities.dcdeeptech.features[state.lang].map(f => `<li class="flex items-center text-slate-700 font-medium"><span class="w-2 h-2 rounded-full bg-emerald-500 mr-3"></span>${f}</li>`).join('')}
+                                    </ul>
+                                    <div class="bg-emerald-50/50 p-4 rounded-xl border border-emerald-100 text-sm text-emerald-900 italic font-medium">"${t('capabilities.dcdeeptech.quote')}"</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`;
+            }
+            else if (tabId === 'solution') {
+                const s = state.sim;
+                const edgeStatusColor = s.cooling ? 'border-emerald-500 bg-emerald-900/40 text-emerald-300 shadow-[0_0_20px_rgba(16,185,129,0.3)]' : 'border-red-500 bg-red-900/40 text-red-300 shadow-[0_0_20px_rgba(239,68,68,0.3)]';
+                
+                html = `
+                    <div class="flex flex-col space-y-6 ${animClass}">
+                        <div>
+                            <h2 class="text-2xl md:text-3xl font-bold text-slate-800 mb-3">${t('solution.title')}</h2>
+                            <p class="text-slate-600 md:text-lg leading-relaxed max-w-4xl">${t('solution.intro')}</p>
+                        </div>
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 delay-100 ${animClass}">
+                            
+                            <!-- Left: Interactive Simulator -->
+                            <div class="lg:col-span-5 space-y-6">
+                                <div class="glass-card p-6 rounded-3xl">
+                                    <h3 class="font-bold text-slate-800 text-lg mb-6">${t('solution.cfgTitle')}</h3>
+                                    
+                                    <!-- Toggle AI -->
+                                    <div class="flex items-center justify-between p-4 mb-4 bg-white/50 rounded-2xl border border-slate-200 hover:border-sky-300 transition-colors cursor-pointer" onclick="toggleSim('ai')">
+                                        <div>
+                                            <p class="font-bold text-slate-800">${t('solution.toggles.ai')}</p>
+                                            <p class="text-xs text-slate-500 mt-1">${t('solution.toggles.aiDesc')}</p>
+                                        </div>
+                                        <div class="w-14 h-7 rounded-full transition-colors duration-300 relative ${s.ai ? 'bg-sky-500 shadow-lg shadow-sky-500/50' : 'bg-slate-300'}">
+                                            <div class="absolute top-1 left-1 w-5 h-5 bg-white rounded-full transition-transform duration-300 shadow-sm ${s.ai ? 'translate-x-7' : ''}"></div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Toggle Cooling -->
+                                    <div class="flex items-center justify-between p-4 bg-white/50 rounded-2xl border border-slate-200 hover:border-emerald-300 transition-colors cursor-pointer" onclick="toggleSim('cooling')">
+                                        <div>
+                                            <p class="font-bold text-slate-800">${t('solution.toggles.cool')}</p>
+                                            <p class="text-xs text-slate-500 mt-1">${t('solution.toggles.coolDesc')}</p>
+                                        </div>
+                                        <div class="w-14 h-7 rounded-full transition-colors duration-300 relative ${s.cooling ? 'bg-emerald-500 shadow-lg shadow-emerald-500/50' : 'bg-slate-300'}">
+                                            <div class="absolute top-1 left-1 w-5 h-5 bg-white rounded-full transition-transform duration-300 shadow-sm ${s.cooling ? 'translate-x-7' : ''}"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 炫技: Animated Tech Stack Diagram -->
+                                <div class="bg-slate-900 rounded-3xl p-6 relative overflow-hidden border border-slate-700 shadow-2xl">
+                                    <div class="absolute inset-0 opacity-20 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-sky-500 via-slate-900 to-slate-900"></div>
+                                    <div class="relative z-10 flex flex-col items-center">
+                                        <!-- Node: Camera -->
+                                        <div class="w-32 py-2 border border-sky-500/50 bg-sky-900/30 rounded-lg text-center backdrop-blur-sm z-10">
+                                            <span class="text-sky-300 text-xs font-bold tracking-wider uppercase">${t('solution.diag.cam')}</span>
+                                        </div>
+                                        
+                                        <!-- Data Flow Line -->
+                                        <div class="data-line h-8">
+                                            ${s.ai ? '<div class="data-packet"></div>' : ''}
+                                        </div>
+
+                                        <!-- Node: Edge Server -->
+                                        <div class="w-48 py-5 border-2 rounded-xl text-center backdrop-blur-sm transition-all duration-500 z-10 flex flex-col items-center justify-center ${edgeStatusColor} ${s.cooling ? 'cooling-pulse' : ''}">
+                                            <span class="text-white font-bold tracking-wider uppercase">${t('solution.diag.edge')}</span>
+                                            <span class="text-[10px] mt-2 px-2 py-0.5 rounded-full bg-black/30 backdrop-blur-md">
+                                                ${s.cooling ? t('solution.diag.tempStable') : t('solution.diag.tempHigh')}
+                                            </span>
+                                        </div>
+
+                                        <!-- Data Flow Line -->
+                                        <div class="data-line h-8">
+                                             ${s.ai && s.cooling ? '<div class="data-packet" style="background:#10b981; box-shadow:0 0 10px 2px #10b981"></div>' : '<div class="data-packet"></div>'}
+                                        </div>
+
+                                        <!-- Node: Port OS -->
+                                        <div class="w-32 py-2 border border-slate-600 bg-slate-800/80 rounded-lg text-center backdrop-blur-sm z-10">
+                                            <span class="text-slate-300 text-xs font-bold tracking-wider uppercase">${t('solution.diag.os')}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right: Dynamic Chart -->
+                            <div class="lg:col-span-7 glass-card p-6 rounded-3xl flex flex-col min-h-[400px]">
+                                <h3 class="font-bold text-slate-800 text-lg mb-4">${t('solution.chartTitle')}</h3>
+                                <div class="chart-container flex-grow w-full">
+                                    <canvas id="impactChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`;
+            }
+            else if (tabId === 'roadmap') {
+                html = `
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 ${animClass}">
+                        <div class="lg:col-span-3">
+                            <h2 class="text-2xl md:text-3xl font-bold text-slate-800 mb-3">${t('roadmap.title')}</h2>
+                            <p class="text-slate-600 md:text-lg leading-relaxed max-w-4xl">${t('roadmap.intro')}</p>
+                        </div>
+                        
+                        <!-- Timeline -->
+                        <div class="lg:col-span-2 space-y-6 delay-100 ${animClass}">
+                            ${i18n.roadmap.steps.map((s, i) => `
+                                <div class="flex group">
+                                    <div class="mr-6 flex flex-col items-center">
+                                        <div class="w-10 h-10 rounded-full bg-sky-100 text-sky-600 flex items-center justify-center font-bold border-2 border-sky-200 transition-all duration-300 group-hover:bg-sky-500 group-hover:text-white group-hover:scale-110 group-hover:shadow-lg shadow-sky-500/40">
+                                            ${i + 1}
+                                        </div>
+                                        ${i < i18n.roadmap.steps.length - 1 ? '<div class="w-0.5 flex-grow bg-slate-200 my-2 group-hover:bg-sky-200 transition-colors"></div>' : ''}
+                                    </div>
+                                    <div class="glass-card p-6 rounded-2xl flex-grow mb-4">
+                                        <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-3 gap-2">
+                                            <h3 class="font-bold text-slate-800 text-lg">${s.t[state.lang]}</h3>
+                                            <span class="inline-block text-xs font-bold text-emerald-700 bg-emerald-100 px-3 py-1 rounded-full whitespace-nowrap border border-emerald-200 shadow-sm">
+                                                💰 target: ${s.f}
+                                            </span>
+                                        </div>
+                                        <p class="text-slate-600 text-sm md:text-base">${s.d[state.lang]}</p>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <!-- Grants Sidecar -->
+                        <div class="lg:col-span-1 delay-200 ${animClass}">
+                            <div class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-3xl p-6 md:p-8 text-white shadow-2xl relative overflow-hidden h-full">
+                                <div class="absolute -top-10 -right-10 w-32 h-32 bg-sky-500/20 rounded-full blur-2xl"></div>
+                                <h3 class="font-bold text-xl border-b border-slate-700 pb-4 mb-6 relative z-10">${t('roadmap.grants.title')}</h3>
+                                
+                                <div class="space-y-6 relative z-10">
+                                    <div class="group cursor-pointer">
+                                        <h4 class="font-bold text-sky-400 group-hover:text-sky-300 transition-colors">MPA MINT Fund</h4>
+                                        <p class="text-sm text-slate-400 mt-2 leading-relaxed">${t('roadmap.grants.mpa')}</p>
+                                    </div>
+                                    <div class="group cursor-pointer">
+                                        <h4 class="font-bold text-emerald-400 group-hover:text-emerald-300 transition-colors">Enterprise SG (EDG)</h4>
+                                        <p class="text-sm text-slate-400 mt-2 leading-relaxed">${t('roadmap.grants.esg')}</p>
+                                    </div>
+                                    <div class="group cursor-pointer">
+                                        <h4 class="font-bold text-orange-400 group-hover:text-orange-300 transition-colors">PSA unboXed</h4>
+                                        <p class="text-sm text-slate-400 mt-2 leading-relaxed">${t('roadmap.grants.psa')}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`;
+            }
+
+            main.innerHTML = html;
+
+            // Initialize/Update Charts
+            setTimeout(() => {
+                if (tabId === 'context') initRadarChart();
+                if (tabId === 'solution') initImpactChart();
+            }, 50); // slight delay to ensure DOM is painted
+        }
+
+        // === Interactions & Chart Logic ===
+
+        function toggleSim(type) {
+            state.sim[type] = !state.sim[type];
+            switchTab('solution', false); // re-render without main tab animation
+        }
+
+        let rChart = null, iChart = null;
+
+        function initRadarChart() {
+            const ctx = document.getElementById('radarChart');
+            if(!ctx) return;
+            if (rChart) rChart.destroy();
+
+            rChart = new Chart(ctx.getContext('2d'), {
+                type: 'radar',
+                data: {
+                    labels: i18n.context.radarLabels[state.lang],
+                    datasets: [
+                        {
+                            label: state.lang === 'en' ? 'Standard IT' : '传统标准IT',
+                            data: [60, 40, 30, 50, 40],
+                            backgroundColor: 'rgba(148, 163, 184, 0.2)',
+                            borderColor: '#94a3b8',
+                            pointBackgroundColor: '#94a3b8'
+                        },
+                        {
+                            label: state.lang === 'en' ? 'Tuas Target' : '大士港目标要求',
+                            data: [95, 90, 95, 90, 90],
+                            backgroundColor: 'rgba(14, 165, 233, 0.2)',
+                            borderColor: '#0ea5e9',
+                            pointBackgroundColor: '#0ea5e9'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    scales: { r: { angleLines: { color: 'rgba(0,0,0,0.05)' }, grid: { color: 'rgba(0,0,0,0.05)' }, pointLabels: { font: { size: window.innerWidth < 640 ? 10 : 12, family: "'Inter', sans-serif", weight: 'bold' }, color: '#475569' }, suggestedMin: 0, suggestedMax: 100 } },
+                    plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20, font: {family: "'Inter', sans-serif", weight: 'bold'} } } }
+                }
+            });
+        }
+
+        function initImpactChart() {
+            const ctx = document.getElementById('impactChart');
+            if(!ctx) return;
+            
+            // Simulation Logic
+            const s = state.sim;
+            const baseline = [100, 100, 30]; 
+            let energy = 100, carbon = 100, utility = 30;
+
+            if (s.ai && !s.cooling) { energy = 140; carbon = 140; utility = 60; } // High heat, throttle
+            if (!s.ai && s.cooling) { energy = 60; carbon = 60; utility = 30; }   // Low load, extreme cool
+            if (s.ai && s.cooling) { energy = 70; carbon = 70; utility = 100; }  // Synergy! High utility, optimized power
+
+            if (iChart) iChart.destroy();
+
+            iChart = new Chart(ctx.getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: i18n.solution.chartLabels[state.lang],
+                    datasets: [
+                        {
+                            label: state.lang === 'en' ? 'Traditional Baseline' : '传统边缘基线',
+                            data: baseline,
+                            backgroundColor: '#cbd5e1',
+                            borderRadius: 6,
+                            barPercentage: 0.6
+                        },
+                        {
+                            label: state.lang === 'en' ? 'Synergy Node' : '联合创新节点',
+                            data: [energy, carbon, utility],
+                            backgroundColor: [
+                                (energy > 100) ? '#f43f5e' : '#10b981', // Red if bad, Green if good
+                                (carbon > 100) ? '#f43f5e' : '#10b981',
+                                '#0ea5e9' // Always blue for utility
+                            ],
+                            borderRadius: 6,
+                            barPercentage: 0.6
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    animation: { duration: 800, easing: 'easeOutQuart' },
+                    scales: {
+                        y: { 
+                            beginAtZero: true, 
+                            grid: { borderDash: [4, 4], color: 'rgba(0,0,0,0.05)' },
+                            title: { display: true, text: state.lang === 'en' ? 'Index (Lower is better for Energy)' : '指数 (能耗越低越好)', color: '#94a3b8', font:{size: 11} }
+                        },
+                        x: { grid: { display: false }, ticks: { font: { weight: 'bold' } } }
+                    },
+                    plugins: {
+                        legend: { position: 'top', labels: { usePointStyle: true, boxWidth: 8 } },
+                        tooltip: { backgroundColor: 'rgba(15, 23, 42, 0.9)', titleFont: { size: 13 }, bodyFont: { size: 14, weight: 'bold' }, padding: 12, cornerRadius: 8 }
+                    }
+                }
+            });
+        }
+
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set default language UI state
+            toggleLang(state.lang);
+        });
+
+        // Handle Resize to redraw charts perfectly
+        window.addEventListener('resize', () => {
+            if(state.currentTab === 'context' && rChart) rChart.resize();
+            if(state.currentTab === 'solution' && iChart) iChart.resize();
+        });
+    </script>
+</body>
+</html>
