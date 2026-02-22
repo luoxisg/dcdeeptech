@@ -1,876 +1,958 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Zap, Cpu, Droplets, ShieldAlert, Activity, Server, ChevronRight, Menu, X, ArrowUpRight, GitMerge, Globe } from 'lucide-react';
+ <!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OCP Power Architecture</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
 
-// ==========================================
-// 全局多语言数据词典 (i18n)
-// ==========================================
-const translations = {
-  zh: {
-    nav: {
-      brand: 'OCP',
-      subBrand: 'POWER ARCHITECTURE',
-      menu: ['核心演进', '解耦拓扑', '热力协同', '高级遥测'],
-      download: '下载完整报告'
-    },
-    hero: {
-      badge: '开放计算项目 (OCP) 深度研究',
-      title1: '兆瓦级 AI 数据中心',
-      title2: '电源与液冷协同创新',
-      desc: '从传统的 12V 向 48V (ORV3) 跨越，再向未来的高压直流 (HVDC 800V) 强制性过渡。探索支撑下一代吉瓦 (GW) 级 AI 算力的基础设施范式转变。',
-      btnPrimary: '阅读深度报告',
-      btnSecondary: '探索核心技术'
-    },
-    marquee: ['兆瓦级 AI', '800V 高压直流', '极致液冷', 'REDFISH API'],
-    features: {
-      title1: '支撑 AI 算力爆发的',
-      title2: '四大基础设施支柱',
-      desc: '单机柜功率密度正从 10kW 激增至 1MW 以上，传统的电力与散热法则正在失效，OCP 正引领一场物理层面的革命。',
-      cards: [
-        { title: '48V 到 HVDC 跃迁', desc: '彻底突破 12V/48V 母线的物理极限。面向 1MW 机柜，引入 800V (±400VDC) 解耦侧车架构，铜排用量锐减 45% 以上。' },
-        { title: '极致流体液冷协同', desc: '空气冷却走向死胡同。基于 Project Deschutes，引入高达 2MW 管理能力、盲插设计的冷却分配单元 (CDU)，全面标配芯片直触液冷。' },
-        { title: '架构级芯片直供电', desc: '为解决现代 AI 芯片 Sub-1V 和超千安培电流需求，采用分解式电源架构 (FPAM) 与垂直供电 (VPD)，彻底消除 PDN 阻抗损耗。' },
-        { title: 'BBU 电化学转型', desc: '机柜级电池备用单元全面放弃高危的 NMC 体系，转向极其稳定的 LFP (磷酸铁锂) 架构，轻松跨越 UL 9540A 热失控防火严苛标准。' }
-      ]
-    },
-    section1: {
-      badge: '解耦式侧车电源机柜',
-      title1: 'Project Mt. Diablo:',
-      title2: '打破物理空间的桎梏',
-      p1: '在传统的部署中，兆瓦级负载将需要庞大的电源插架，占用高达 64U 的机柜空间，导致宝贵的 AI 计算节点无处安放。',
-      p2: 'Google、Meta 和 Microsoft 联合主导的 Mt. Diablo 规范 提出了一种革命性的物理形态：将 AC/DC 转换组件、BBU 全部剥离至相邻的 24英寸专用“侧车 (Sidecar)” 机柜。',
-      list: [
-        { title: '极致计算密度', desc: '100% 的服务器机柜空间专用于 xPU 和网络交换机。' },
-        { title: '热力隔离', desc: '电源组件与计算芯片分置，采用独立冷却回路，防止热量互相烘烤。' },
-        { title: 'EV 供应链融合', desc: '采用电动汽车 (EV) 验证的接触器与连接器，实现基础设施快速商品化。' }
-      ],
-      fig: '图 1. 解耦式侧车架构'
-    },
-    table: {
-      title: '从 54V 向 HVDC 的范式转移',
-      desc: '面向兆瓦级 AI 集群的电源架构核心指标对比',
-      col1: '架构参数', col2: '传统遗留 54V 架构', col3: '下一代 HVDC (800V) 架构',
-      rows: [
-        { label: '单机柜最大可行功率', old: '~100 kW', new: '> 1 兆瓦 (MW)' },
-        { label: '兆瓦级负载下主电流', old: '~18,500 A', new: '~1,250 A' },
-        { label: '兆瓦级铜排需求量', old: '~200kg / 机柜', new: '用铜量锐减 45% 以上' },
-        { label: '物理形态演进', old: '架内集中式电源插架', new: '解耦式侧车电源机柜 (Sidecar)' },
-        { label: '主要供应链依托', old: '传统 IT 与电信级标准部件', new: '电动汽车 (EV) 及工业级功率半导体' },
-      ]
-    },
-    section2: {
-      badge: '现代 DCIM 遥测',
-      title1: '毫秒级的数字神经元：',
-      title2: '突破 Modbus 的局限',
-      p1: '兆瓦级机柜内部署了极其昂贵的算力资本，微小的硬件衰减或泄漏都会造成巨额损失。传统的 Modbus 轮询架构已无法应对复杂的云原生微服务生态。',
-      p2: '硬件生态系统正全面向 DMTF Redfish API 过渡。作为基于 HTTPS 的 RESTful 标准，Redfish 构建了高保真的数字孪生模型。',
-      card1Title: '电气母线架构 (Electrical Bus)',
-      card1Desc: '精确映射“多对多”母线拓扑，实现微秒级 PSU 负载隔离预测。',
-      card2Title: '储能监控架构 (Energy Storage)',
-      card2Desc: '细化至电芯级别 (Cell-level) 的 SoH 监控，将热失控扼杀于摇篮。'
-    },
-    cta: {
-      title1: '先进电源架构：',
-      title2: '决定生死存亡的终极竞争壁垒',
-      desc: '在这场向兆瓦级跃迁的军备竞赛中，未能迅速采纳深度融合的电源与热管理战略的企业，将在物理层面上失去部署下一代顶级 AI 算力的资格。',
-      btn: '获取完整版 PDF 报告'
-    },
-    footer: {
-      desc: '本报告解析基于开放计算项目 (OCP) 最新规范编制。技术驱动未来。'
+  <style>
+    /* 全局自定义 CSS 动画与样式 */
+    @keyframes blob {
+      0% { transform: translate(0px, 0px) scale(1); }
+      33% { transform: translate(30px, -50px) scale(1.1); }
+      66% { transform: translate(-20px, 20px) scale(0.9); }
+      100% { transform: translate(0px, 0px) scale(1); }
     }
-  },
-  en: {
-    nav: {
-      brand: 'OCP',
-      subBrand: 'POWER ARCHITECTURE',
-      menu: ['Core Evolution', 'Decoupled Topology', 'Thermal Synergy', 'Advanced Telemetry'],
-      download: 'Download Full Report'
-    },
-    hero: {
-      badge: 'Open Compute Project (OCP) In-Depth Research',
-      title1: 'Megawatt AI Data Centers',
-      title2: 'Power & Liquid Cooling Innovations',
-      desc: 'From the traditional 12V leap to 48V (ORV3), and the mandatory transition to High-Voltage Direct Current (HVDC 800V). Exploring the infrastructure paradigm shift supporting next-gen GW-scale AI computing.',
-      btnPrimary: 'Read In-Depth Report',
-      btnSecondary: 'Explore Core Tech'
-    },
-    marquee: ['MEGAWATT AI', '800V HVDC', 'LIQUID COOLING', 'REDFISH API'],
-    features: {
-      title1: 'The Four Infrastructure Pillars',
-      title2: 'Supporting the AI Explosion',
-      desc: 'With single-rack power density surging from 10kW to over 1MW, traditional power and thermal laws are failing. OCP is leading a physical revolution.',
-      cards: [
-        { title: 'Leap to HVDC', desc: 'Breaking the physical limits of 12V/48V busbars. Introducing 800V (±400VDC) decoupled sidecar architectures for 1MW racks, reducing copper usage by over 45%.' },
-        { title: 'Extreme Liquid Cooling', desc: 'Air cooling is a dead end. Based on Project Deschutes, introducing blind-mate CDUs with up to 2MW capacity, making direct-to-chip liquid cooling standard.' },
-        { title: 'Direct-to-Chip Power Delivery', desc: 'Addressing sub-1V and kA current needs of modern AI chips through Factorized Power Architecture (FPAM) and Vertical Power Delivery (VPD), eliminating PDN losses.' },
-        { title: 'BBU Electrochemical Shift', desc: 'Rack-level BBU abandoning high-risk NMC for hyper-stable LFP (Lithium Iron Phosphate) architectures, easily passing stringent UL 9540A thermal runaway tests.' }
-      ]
-    },
-    section1: {
-      badge: 'Decoupled Sidecar Power Cabinet',
-      title1: 'Project Mt. Diablo:',
-      title2: 'Shattering Physical Constraints',
-      p1: 'In traditional deployments, MW-scale loads would require massive power shelves occupying up to 64U of rack space, leaving no room for precious AI compute nodes.',
-      p2: 'The Mt. Diablo specification, led by Google, Meta, and Microsoft, proposes a revolutionary physical form factor: stripping all AC/DC conversion and BBUs into an adjacent 24-inch dedicated "Sidecar" cabinet.',
-      list: [
-        { title: 'Extreme Compute Density', desc: '100% of the server rack space is dedicated to xPUs and network switches.' },
-        { title: 'Thermal Isolation', desc: 'Power components and compute chips are separated with independent cooling loops, preventing mutual thermal baking.' },
-        { title: 'EV Supply Chain Integration', desc: 'Utilizing EV-validated contactors and connectors for rapid infrastructure commoditization.' }
-      ],
-      fig: 'FIG 1. DECOUPLED SIDECAR ARCHITECTURE'
-    },
-    table: {
-      title: 'Paradigm Shift from 54V to HVDC',
-      desc: 'Core metrics comparison for MW-scale AI clusters',
-      col1: 'Architecture Parameters', col2: 'Legacy 54V Architecture', col3: 'Next-Gen HVDC (800V)',
-      rows: [
-        { label: 'Max Feasible Power per Rack', old: '~100 kW', new: '> 1 Megawatt (MW)' },
-        { label: 'Main Current at MW Load', old: '~18,500 A', new: '~1,250 A' },
-        { label: 'Copper Requirement (MW-scale)', old: '~200kg / Rack', new: 'Copper usage reduced > 45%' },
-        { label: 'Physical Form Factor', old: 'In-rack centralized shelves', new: 'Decoupled Sidecar Cabinet' },
-        { label: 'Primary Supply Chain', old: 'Traditional IT & Telecom parts', new: 'EV & Industrial power semis' },
-      ]
-    },
-    section2: {
-      badge: 'Modern DCIM Telemetry',
-      title1: 'Millisecond Digital Neurons:',
-      title2: 'Breaking Modbus Limitations',
-      p1: 'MW-scale racks house astronomically expensive compute capital. Minor hardware degradation or leaks cause massive losses. Legacy Modbus polling cannot handle complex cloud-native microservices.',
-      p2: 'The hardware ecosystem is transitioning entirely to the DMTF Redfish API. As an HTTPS-based RESTful standard, Redfish builds high-fidelity digital twins.',
-      card1Title: 'Electrical Bus Schema',
-      card1Desc: 'Accurately maps "many-to-many" bus topologies for microsecond-level PSU load isolation prediction.',
-      card2Title: 'Energy Storage Schema',
-      card2Desc: 'Granular Cell-level SoH monitoring to eliminate thermal runaway in its infancy.'
-    },
-    cta: {
-      title1: 'Advanced Power Architecture:',
-      title2: 'The Ultimate Moat for Survival',
-      desc: 'In this arms race to MW-scale, enterprises failing to rapidly adopt deeply integrated power and thermal strategies will be physically disqualified from deploying next-gen top-tier AI compute.',
-      btn: 'Get the Full PDF Report'
-    },
-    footer: {
-      desc: 'This report analysis is based on the latest Open Compute Project (OCP) specifications. Technology drives the future.'
-    }
-  }
-};
-
-// ==========================================
-// 全局自定义 CSS 动画与样式
-// ==========================================
-const globalStyles = `
-  @keyframes blob {
-    0% { transform: translate(0px, 0px) scale(1); }
-    33% { transform: translate(30px, -50px) scale(1.1); }
-    66% { transform: translate(-20px, 20px) scale(0.9); }
-    100% { transform: translate(0px, 0px) scale(1); }
-  }
-  .animate-blob { animation: blob 7s infinite; }
-  .animation-delay-2000 { animation-delay: 2s; }
-  .animation-delay-4000 { animation-delay: 4s; }
-  
-  @keyframes marquee {
-    0% { transform: translateX(0%); }
-    100% { transform: translateX(-50%); }
-  }
-  .animate-marquee {
-    display: inline-flex;
-    white-space: nowrap;
-    animation: marquee 20s linear infinite;
-  }
-  
-  .glass-panel {
-    background: rgba(15, 23, 42, 0.6);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(6, 182, 212, 0.15);
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-  }
-  
-  .text-gradient {
-    background: linear-gradient(135deg, #00f2fe 0%, #4facfe 50%, #00f2fe 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    background-size: 200% auto;
-    animation: shine 3s linear infinite;
-  }
-  
-  @keyframes shine {
-    to { background-position: 200% center; }
-  }
+    .animate-blob { animation: blob 7s infinite; }
+    .animation-delay-2000 { animation-delay: 2s; }
+    .animation-delay-4000 { animation-delay: 4s; }
     
-  body {
-    background-color: #020617;
-    color: #f1f5f9;
-    overflow-x: hidden;
-  }
-
-  /* 语言切换开关样式 */
-  .lang-toggle {
-    position: relative;
-    width: 64px;
-    height: 32px;
-    background: rgba(15, 23, 42, 0.8);
-    border: 1px solid rgba(6, 182, 212, 0.4);
-    border-radius: 99px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    padding: 0 4px;
-    transition: all 0.3s ease;
-    box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
-  }
-  .lang-toggle:hover {
-    border-color: rgba(6, 182, 212, 0.8);
-    box-shadow: 0 0 10px rgba(6, 182, 212, 0.3), inset 0 2px 5px rgba(0,0,0,0.5);
-  }
-  .lang-knob {
-    position: absolute;
-    width: 24px;
-    height: 24px;
-    background: linear-gradient(135deg, #00f2fe, #4facfe);
-    border-radius: 50%;
-    transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 10px;
-    font-weight: bold;
-    color: #020617;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2), 0 0 10px rgba(0,242,254,0.5);
-  }
-  .lang-text {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    font-size: 11px;
-    font-weight: 700;
-    color: #64748b;
-    pointer-events: none;
-    padding: 0 6px;
-  }
-`;
-
-// ==========================================
-// 组件: 自定义跟随光标
-// ==========================================
-const CustomCursor = () => {
-  const [position, setPosition] = useState({ x: -100, y: -100 });
-  const [isPointer, setIsPointer] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    if (window.matchMedia('(pointer: coarse)').matches) return;
-    setIsVisible(true);
-    const moveCursor = (e) => setPosition({ x: e.clientX, y: e.clientY });
-    const handleMouseOver = (e) => {
-      const isClickable = window.getComputedStyle(e.target).cursor === 'pointer' || 
-                          ['BUTTON', 'A', 'INPUT', 'DIV'].includes(e.target.tagName);
-      setIsPointer(isClickable);
-    };
-
-    window.addEventListener('mousemove', moveCursor);
-    window.addEventListener('mouseover', handleMouseOver);
-    return () => {
-      window.removeEventListener('mousemove', moveCursor);
-      window.removeEventListener('mouseover', handleMouseOver);
-    };
-  }, []);
-
-  if (!isVisible) return null;
-
-  return (
-    <>
-      <div
-        className="fixed top-0 left-0 w-10 h-10 rounded-full border border-cyan-400 pointer-events-none z-[9999] transition-transform duration-200 ease-out flex items-center justify-center mix-blend-screen shadow-[0_0_10px_rgba(6,182,212,0.5)]"
-        style={{ transform: `translate(${position.x - 20}px, ${position.y - 20}px) scale(${isPointer ? 1.5 : 1})` }}
-      />
-      <div
-        className="fixed top-0 left-0 w-2 h-2 rounded-full bg-cyan-300 pointer-events-none z-[9999] transition-transform duration-75 ease-out shadow-[0_0_8px_#67e8f9]"
-        style={{ transform: `translate(${position.x - 4}px, ${position.y - 4}px)` }}
-      />
-    </>
-  );
-};
-
-// ==========================================
-// 组件: Canvas 粒子背景
-// ==========================================
-const ParticleCanvas = () => {
-  const canvasRef = useRef(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    let animationFrameId;
-    let particles = [];
-
-    const resize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    };
-    window.addEventListener('resize', resize);
-    resize();
-
-    class Particle {
-      constructor() {
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
-        this.vx = (Math.random() - 0.5) * 1.5;
-        this.vy = (Math.random() - 0.5) * 1.5;
-        this.radius = Math.random() * 1.5 + 0.5;
-      }
-      update() {
-        this.x += this.vx;
-        this.y += this.vy;
-        if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
-        if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
-      }
-      draw() {
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(6, 182, 212, 0.8)';
-        ctx.fill();
-      }
+    @keyframes marquee {
+      0% { transform: translateX(0%); }
+      100% { transform: translateX(-50%); }
     }
-
-    const particleCount = window.innerWidth < 768 ? 40 : 120;
-    for (let i = 0; i < particleCount; i++) particles.push(new Particle());
-
-    const animate = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    .animate-marquee {
+      display: inline-flex;
+      white-space: nowrap;
+      animation: marquee 20s linear infinite;
+    }
+    
+    .glass-panel {
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(6, 182, 212, 0.15);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    }
+    
+    .text-gradient {
+      background: linear-gradient(135deg, #00f2fe 0%, #4facfe 50%, #00f2fe 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      background-size: 200% auto;
+      animation: shine 3s linear infinite;
+    }
+    
+    @keyframes shine {
+      to { background-position: 200% center; }
+    }
       
-      particles.forEach(p => {
-        p.update();
-        p.draw();
-      });
-
-      for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-          const dx = particles[i].x - particles[j].x;
-          const dy = particles[i].y - particles[j].y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 120) {
-            ctx.beginPath();
-            ctx.moveTo(particles[i].x, particles[i].y);
-            ctx.lineTo(particles[j].x, particles[j].y);
-            ctx.strokeStyle = `rgba(14, 165, 233, ${1 - dist / 120})`; 
-            ctx.lineWidth = 0.8;
-            ctx.stroke();
-          }
-        }
-      }
-      animationFrameId = requestAnimationFrame(animate);
-    };
-    animate();
-
-    return () => {
-      window.removeEventListener('resize', resize);
-      cancelAnimationFrame(animationFrameId);
-    };
-  }, []);
-
-  return <canvas ref={canvasRef} className="absolute inset-0 pointer-events-none z-0 opacity-40 mix-blend-screen" />;
-};
-
-// ==========================================
-// 组件: 滚动视差显现
-// ==========================================
-const Reveal = ({ children, className = '', delay = 0, direction = 'up' }) => {
-  const ref = useRef(null);
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.unobserve(entry.target);
-        }
-      },
-      { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
-    );
-    if (ref.current) observer.observe(ref.current);
-    return () => ref.current && observer.disconnect();
-  }, []);
-
-  const getDirectionClass = () => {
-    switch(direction) {
-      case 'up': return 'translate-y-16';
-      case 'down': return '-translate-y-16';
-      case 'left': return 'translate-x-16';
-      case 'right': return '-translate-x-16';
-      default: return 'translate-y-16';
+    body {
+      background-color: #020617;
+      color: #f1f5f9;
+      overflow-x: hidden;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     }
-  };
 
-  return (
-    <div
-      ref={ref}
-      className={`transition-all duration-1000 cubic-bezier(0.16, 1, 0.3, 1) ${className} ${
-        isVisible ? 'opacity-100 translate-y-0 translate-x-0' : `opacity-0 ${getDirectionClass()}`
-      }`}
-      style={{ transitionDelay: `${delay}ms` }}
-    >
-      {children}
-    </div>
-  );
-};
+    /* 语言切换开关样式 */
+    .lang-toggle {
+      position: relative;
+      width: 64px;
+      height: 32px;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(6, 182, 212, 0.4);
+      border-radius: 99px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      padding: 0 4px;
+      transition: all 0.3s ease;
+      box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
+    }
+    .lang-toggle:hover {
+      border-color: rgba(6, 182, 212, 0.8);
+      box-shadow: 0 0 10px rgba(6, 182, 212, 0.3), inset 0 2px 5px rgba(0,0,0,0.5);
+    }
+    .lang-knob {
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      background: linear-gradient(135deg, #00f2fe, #4facfe);
+      border-radius: 50%;
+      transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 10px;
+      font-weight: bold;
+      color: #020617;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2), 0 0 10px rgba(0,242,254,0.5);
+    }
+    .lang-text {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      font-weight: 700;
+      color: #64748b;
+      pointer-events: none;
+      padding: 0 6px;
+    }
 
-// ==========================================
-// 组件: 3D 悬浮卡片
-// ==========================================
-const TiltCard = ({ children, className }) => {
-  const cardRef = useRef(null);
-  const [rotate, setRotate] = useState({ x: 0, y: 0 });
+    /* 光标样式 */
+    #cursor-outer, #cursor-inner {
+      display: none;
+    }
+  </style>
+</head>
+<body class="relative min-h-screen bg-slate-950 text-slate-100 font-sans selection:bg-cyan-500 selection:text-white transition-all duration-500">
+  
+  <!-- 自定义跟随光标 -->
+  <div id="cursor-outer" class="fixed top-0 left-0 w-10 h-10 rounded-full border border-cyan-400 pointer-events-none z-[9999] transition-transform duration-200 ease-out items-center justify-center mix-blend-screen shadow-[0_0_10px_rgba(6,182,212,0.5)]"></div>
+  <div id="cursor-inner" class="fixed top-0 left-0 w-2 h-2 rounded-full bg-cyan-300 pointer-events-none z-[9999] transition-transform duration-75 ease-out shadow-[0_0_8px_#67e8f9]"></div>
 
-  const handleMouseMove = (e) => {
-    if (window.matchMedia('(pointer: coarse)').matches) return;
-    const card = cardRef.current;
-    const { left, top, width, height } = card.getBoundingClientRect();
-    const x = e.clientX - left;
-    const y = e.clientY - top;
-    const rotateX = ((y - height / 2) / (height / 2)) * -10; 
-    const rotateY = ((x - width / 2) / (width / 2)) * 10;
-    setRotate({ x: rotateX, y: rotateY });
-  };
+  <!-- 导航栏 -->
+  <nav class="fixed top-0 left-0 right-0 z-50 glass-panel border-b border-cyan-900/30 px-4 md:px-6 py-4 rounded-none">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-3 group cursor-pointer">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center group-hover:rotate-12 transition-transform shadow-[0_0_15px_rgba(6,182,212,0.5)]">
+          <i data-lucide="zap" class="w-6 h-6 text-white"></i>
+        </div>
+        <div class="flex flex-col">
+          <span class="text-xl font-bold tracking-wider leading-none"><span data-i18n="nav.brand">OCP</span><span class="text-cyan-400">.</span></span>
+          <span class="text-[10px] text-cyan-500 font-mono tracking-widest mt-1 whitespace-nowrap" data-i18n="nav.subBrand">POWER ARCHITECTURE</span>
+        </div>
+      </div>
 
-  const handleMouseLeave = () => setRotate({ x: 0, y: 0 });
+      <div class="hidden lg:flex items-center gap-8">
+        <a href="#section-0" class="text-sm font-medium text-slate-300 hover:text-cyan-400 transition-colors relative group whitespace-nowrap">
+          <span data-i18n="nav.menu.0">核心演进</span>
+          <span class="absolute -bottom-2 left-0 w-0 h-0.5 bg-cyan-400 transition-all group-hover:w-full"></span>
+        </a>
+        <a href="#section-1" class="text-sm font-medium text-slate-300 hover:text-cyan-400 transition-colors relative group whitespace-nowrap">
+          <span data-i18n="nav.menu.1">解耦拓扑</span>
+          <span class="absolute -bottom-2 left-0 w-0 h-0.5 bg-cyan-400 transition-all group-hover:w-full"></span>
+        </a>
+        <a href="#section-2" class="text-sm font-medium text-slate-300 hover:text-cyan-400 transition-colors relative group whitespace-nowrap">
+          <span data-i18n="nav.menu.2">热力协同</span>
+          <span class="absolute -bottom-2 left-0 w-0 h-0.5 bg-cyan-400 transition-all group-hover:w-full"></span>
+        </a>
+        <a href="#section-3" class="text-sm font-medium text-slate-300 hover:text-cyan-400 transition-colors relative group whitespace-nowrap">
+          <span data-i18n="nav.menu.3">高级遥测</span>
+          <span class="absolute -bottom-2 left-0 w-0 h-0.5 bg-cyan-400 transition-all group-hover:w-full"></span>
+        </a>
+        
+        <!-- 中英文切换开关 (桌面端) -->
+        <div class="lang-toggle" title="Switch Language">
+          <div class="lang-text">
+            <span class="text-white">中</span>
+            <span>EN</span>
+          </div>
+          <div class="lang-knob" style="transform: translateX(0)">中</div>
+        </div>
 
-  return (
-    <div
-      ref={cardRef}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      className={`transition-all duration-300 ease-out perspective-1000 ${className} h-full`}
-      style={{ transform: `rotateX(${rotate.x}deg) rotateY(${rotate.y}deg)` }}
-    >
-      <div className="w-full h-full glass-panel rounded-2xl p-8 hover:shadow-[0_0_40px_rgba(6,182,212,0.2)] hover:border-cyan-400/30 transition-all duration-500 relative overflow-hidden group">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/10 rounded-full blur-3xl group-hover:bg-cyan-400/20 transition-all"></div>
-        {children}
+        <button class="px-6 py-2.5 rounded-full bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-400/30 text-cyan-300 text-sm font-bold transition-all shadow-[0_0_15px_rgba(6,182,212,0.2)] hover:shadow-[0_0_25px_rgba(6,182,212,0.4)] whitespace-nowrap" data-i18n="nav.download">
+          下载完整报告
+        </button>
+      </div>
+
+      <!-- 移动端右侧控件 -->
+      <div class="flex lg:hidden items-center gap-4">
+        <!-- 中英文切换开关 (移动端) -->
+        <div class="lang-toggle scale-90">
+          <div class="lang-text">
+            <span class="text-white">中</span>
+            <span>EN</span>
+          </div>
+          <div class="lang-knob" style="transform: translateX(0)">中</div>
+        </div>
+
+        <button id="mobile-menu-btn" class="p-2 text-slate-300 hover:text-cyan-400">
+          <i data-lucide="menu"></i>
+        </button>
       </div>
     </div>
-  );
-};
 
-// ==========================================
-// 页面主应用
-// ==========================================
-export default function App() {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [lang, setLang] = useState('zh');
-  const t = translations[lang];
-
-  const toggleLanguage = () => {
-    setLang(prev => prev === 'zh' ? 'en' : 'zh');
-  };
-
-  return (
-    <div className="relative min-h-screen bg-slate-950 text-slate-100 font-sans selection:bg-cyan-500 selection:text-white transition-all duration-500">
-      <style dangerouslySetInnerHTML={{ __html: globalStyles }} />
-      <CustomCursor />
-
-      {/* 导航栏 */}
-      <nav className="fixed top-0 left-0 right-0 z-50 glass-panel border-b border-cyan-900/30 px-4 md:px-6 py-4 rounded-none">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3 group cursor-pointer">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center group-hover:rotate-12 transition-transform shadow-[0_0_15px_rgba(6,182,212,0.5)]">
-              <Zap className="w-6 h-6 text-white" />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-xl font-bold tracking-wider leading-none">{t.nav.brand}<span className="text-cyan-400">.</span></span>
-              <span className="text-[10px] text-cyan-500 font-mono tracking-widest mt-1 whitespace-nowrap">{t.nav.subBrand}</span>
-            </div>
-          </div>
-
-          <div className="hidden lg:flex items-center gap-8">
-            {t.nav.menu.map((item, idx) => (
-              <a key={idx} href={`#section-${idx}`} className="text-sm font-medium text-slate-300 hover:text-cyan-400 transition-colors relative group whitespace-nowrap">
-                {item}
-                <span className="absolute -bottom-2 left-0 w-0 h-0.5 bg-cyan-400 transition-all group-hover:w-full"></span>
-              </a>
-            ))}
-            
-            {/* 中英文切换开关 (桌面端) */}
-            <div className="lang-toggle" onClick={toggleLanguage} title="Switch Language">
-              <div className="lang-text">
-                <span className={lang === 'zh' ? 'text-white' : ''}>中</span>
-                <span className={lang === 'en' ? 'text-white' : ''}>EN</span>
-              </div>
-              <div 
-                className="lang-knob" 
-                style={{ transform: lang === 'zh' ? 'translateX(0)' : 'translateX(30px)' }}
-              >
-                {lang === 'zh' ? '中' : 'E'}
-              </div>
-            </div>
-
-            <button className="px-6 py-2.5 rounded-full bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-400/30 text-cyan-300 text-sm font-bold transition-all shadow-[0_0_15px_rgba(6,182,212,0.2)] hover:shadow-[0_0_25px_rgba(6,182,212,0.4)] whitespace-nowrap">
-              {t.nav.download}
-            </button>
-          </div>
-
-          {/* 移动端右侧控件 */}
-          <div className="flex lg:hidden items-center gap-4">
-            {/* 中英文切换开关 (移动端) */}
-            <div className="lang-toggle scale-90" onClick={toggleLanguage}>
-              <div className="lang-text">
-                <span className={lang === 'zh' ? 'text-white' : ''}>中</span>
-                <span className={lang === 'en' ? 'text-white' : ''}>EN</span>
-              </div>
-              <div 
-                className="lang-knob" 
-                style={{ transform: lang === 'zh' ? 'translateX(0)' : 'translateX(30px)' }}
-              >
-                {lang === 'zh' ? '中' : 'E'}
-              </div>
-            </div>
-
-            <button 
-              className="p-2 text-slate-300 hover:text-cyan-400"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            >
-              {isMobileMenuOpen ? <X /> : <Menu />}
-            </button>
-          </div>
-        </div>
-
-        {/* 移动端菜单下拉 */}
-        <div className={`lg:hidden absolute top-full left-0 w-full glass-panel transition-all duration-300 origin-top overflow-hidden ${isMobileMenuOpen ? 'max-h-96 border-b border-cyan-900/30' : 'max-h-0'}`}>
-          <div className="flex flex-col p-4 gap-2">
-            {t.nav.menu.map((item, idx) => (
-              <a key={idx} href={`#section-${idx}`} className="text-lg font-medium text-slate-300 hover:text-cyan-400 py-3 px-4 rounded-lg hover:bg-cyan-900/20" onClick={() => setIsMobileMenuOpen(false)}>
-                {item}
-              </a>
-            ))}
-            <button className="w-full mt-4 py-3 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-bold shadow-lg">
-              {t.nav.download}
-            </button>
-          </div>
-        </div>
-      </nav>
-
-      {/* Hero 首屏 */}
-      <section className="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
-        <ParticleCanvas />
-        
-        {/* 能量背景球 */}
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-600/20 rounded-full mix-blend-screen filter blur-[100px] animate-blob"></div>
-        <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-cyan-500/20 rounded-full mix-blend-screen filter blur-[100px] animate-blob animation-delay-2000"></div>
-        <div className="absolute -bottom-10 left-1/3 w-96 h-96 bg-indigo-500/20 rounded-full mix-blend-screen filter blur-[100px] animate-blob animation-delay-4000"></div>
-
-        <div className="relative z-10 max-w-6xl mx-auto px-4 text-center mt-10">
-          <Reveal delay={100}>
-            <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full glass-panel border border-cyan-500/40 text-cyan-300 text-sm md:text-base font-medium mb-8 uppercase tracking-widest shadow-[0_0_20px_rgba(6,182,212,0.2)]">
-              <Activity className="w-4 h-4 animate-pulse" />
-              {t.hero.badge}
-            </div>
-          </Reveal>
-          
-          <Reveal delay={300}>
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tight mb-6 leading-tight">
-              {t.hero.title1} <br className="hidden md:block" />
-              <span className="text-gradient">{t.hero.title2}</span>
-            </h1>
-          </Reveal>
-          
-          <Reveal delay={500}>
-            <p className="text-lg md:text-2xl text-slate-400 max-w-3xl mx-auto mb-10 leading-relaxed font-light">
-              {t.hero.desc}
-            </p>
-          </Reveal>
-          
-          <Reveal delay={700}>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mt-8">
-              <button className="w-full sm:w-auto px-10 py-4 rounded-full bg-cyan-500 text-slate-950 font-black text-lg hover:bg-cyan-400 transition-all flex items-center justify-center gap-2 shadow-[0_0_30px_rgba(6,182,212,0.5)] hover:scale-105 active:scale-95">
-                {t.hero.btnPrimary} <ArrowUpRight className="w-6 h-6" />
-              </button>
-              <button className="w-full sm:w-auto px-10 py-4 rounded-full glass-panel font-bold text-lg hover:bg-white/5 transition-all flex items-center justify-center gap-2 border border-slate-700 hover:border-cyan-500/50">
-                {t.hero.btnSecondary} <ChevronRight className="w-6 h-6" />
-              </button>
-            </div>
-          </Reveal>
-        </div>
-
-        {/* 底部数据流装饰 */}
-        <div className="absolute bottom-0 w-full h-32 bg-gradient-to-t from-slate-950 to-transparent pointer-events-none z-10"></div>
-      </section>
-
-      {/* 科技感跑马灯 */}
-      <section className="py-6 border-y border-cyan-900/30 bg-cyan-950/10 overflow-hidden flex whitespace-nowrap relative z-20 shadow-[0_0_30px_rgba(0,0,0,0.5)_inset]">
-        <div className="animate-marquee flex items-center gap-12 text-2xl md:text-3xl font-black text-transparent [-webkit-text-stroke:1px_rgba(6,182,212,0.4)] opacity-80 font-mono tracking-widest">
-          {Array(6).fill(<>
-            <span>{t.marquee[0]}</span> <span className="text-cyan-500 [-webkit-text-stroke:0px]">⚡</span>
-            <span>{t.marquee[1]}</span> <span className="text-cyan-500 [-webkit-text-stroke:0px]">⚡</span>
-            <span>{t.marquee[2]}</span> <span className="text-cyan-500 [-webkit-text-stroke:0px]">⚡</span>
-            <span>{t.marquee[3]}</span> <span className="text-cyan-500 [-webkit-text-stroke:0px]">⚡</span>
-          </>)}
-        </div>
-      </section>
-
-      {/* 技术支柱卡片 (Features) */}
-      <section className="py-24 md:py-32 px-4 md:px-8 max-w-7xl mx-auto relative z-10" id="section-0">
-        <Reveal>
-          <div className="text-center mb-16 md:mb-24">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">{t.features.title1}<br/><span className="text-cyan-400">{t.features.title2}</span></h2>
-            <p className="text-slate-400 max-w-2xl mx-auto text-lg">
-              {t.features.desc}
-            </p>
-          </div>
-        </Reveal>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <Reveal delay={100} direction="up">
-            <TiltCard>
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20 flex items-center justify-center mb-6 border border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.2)]">
-                <Zap className="w-8 h-8 text-cyan-400" />
-              </div>
-              <h3 className="text-xl font-bold mb-3 text-white">{t.features.cards[0].title}</h3>
-              <p className="text-slate-400 text-sm leading-relaxed">{t.features.cards[0].desc}</p>
-            </TiltCard>
-          </Reveal>
-
-          <Reveal delay={200} direction="up">
-            <TiltCard>
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-teal-500/20 to-emerald-500/20 flex items-center justify-center mb-6 border border-teal-500/30 shadow-[0_0_15px_rgba(20,184,166,0.2)]">
-                <Droplets className="w-8 h-8 text-teal-400" />
-              </div>
-              <h3 className="text-xl font-bold mb-3 text-white">{t.features.cards[1].title}</h3>
-              <p className="text-slate-400 text-sm leading-relaxed">{t.features.cards[1].desc}</p>
-            </TiltCard>
-          </Reveal>
-
-          <Reveal delay={300} direction="up">
-            <TiltCard>
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center mb-6 border border-purple-500/30 shadow-[0_0_15px_rgba(168,85,247,0.2)]">
-                <Cpu className="w-8 h-8 text-purple-400" />
-              </div>
-              <h3 className="text-xl font-bold mb-3 text-white">{t.features.cards[2].title}</h3>
-              <p className="text-slate-400 text-sm leading-relaxed">{t.features.cards[2].desc}</p>
-            </TiltCard>
-          </Reveal>
-
-          <Reveal delay={400} direction="up">
-            <TiltCard>
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500/20 to-red-500/20 flex items-center justify-center mb-6 border border-orange-500/30 shadow-[0_0_15px_rgba(249,115,22,0.2)]">
-                <ShieldAlert className="w-8 h-8 text-orange-400" />
-              </div>
-              <h3 className="text-xl font-bold mb-3 text-white">{t.features.cards[3].title}</h3>
-              <p className="text-slate-400 text-sm leading-relaxed">{t.features.cards[3].desc}</p>
-            </TiltCard>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* 核心深度内容区 1 */}
-      <section className="py-24 max-w-7xl mx-auto px-4 md:px-8 relative" id="section-1">
-        <div className="absolute top-1/2 left-0 w-[500px] h-[500px] bg-cyan-600/10 rounded-full blur-[120px] pointer-events-none"></div>
-
-        <div className="flex flex-col lg:flex-row items-center gap-16 lg:gap-24 mb-32">
-          <Reveal className="flex-1 space-y-8" direction="right">
-            <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-400 font-mono text-sm uppercase">
-              <GitMerge className="w-4 h-4" /> {t.section1.badge}
-            </div>
-            <h2 className="text-4xl md:text-5xl font-bold leading-tight tracking-tight">
-              {t.section1.title1} <br/>
-              <span className="text-slate-400">{t.section1.title2}</span>
-            </h2>
-            <div className="space-y-6 text-lg text-slate-400 leading-relaxed font-light">
-              <p>{t.section1.p1}</p>
-              <p>{t.section1.p2}</p>
-            </div>
-            
-            <ul className="space-y-5 pt-4">
-              {t.section1.list.map((item, i) => (
-                <li key={i} className="flex items-start gap-4 glass-panel p-4 rounded-xl border-l-4 border-l-cyan-500">
-                  <div className="w-8 h-8 rounded-full bg-cyan-500/20 flex-shrink-0 flex items-center justify-center mt-1">
-                    <ChevronRight className="w-5 h-5 text-cyan-400" />
-                  </div>
-                  <div>
-                    <h4 className="text-white font-bold mb-1">{item.title}</h4>
-                    <p className="text-sm text-slate-400">{item.desc}</p>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </Reveal>
-
-          <Reveal className="flex-1 w-full" direction="left">
-             <div className="relative rounded-3xl overflow-hidden aspect-[4/5] lg:aspect-square bg-gradient-to-br from-slate-900 via-slate-800 to-cyan-950 border border-cyan-500/20 flex flex-col items-center justify-center shadow-[0_0_50px_rgba(6,182,212,0.15)] group">
-               <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0i四十IiBoZWlnaHQ9IjQwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0wIDBoNDB2NDBIMHoiIGZpbGw9Im5vbmUiLz48cGF0aCBkPSJNMCAwLjVoNDBNMCAzOS41aDQwTTAuNSAwdjQwTTM5LjUgMHY0MCIgc3Ryb2tlPSJyZ2JhKDYsMTgyLDIxMiwwLjEpIiBzdHJva2Utd2lkdGg9IjEiLz48L3N2Zz4=')] opacity-60"></div>
-               
-               <div className="relative z-10 w-3/4 h-3/4 flex gap-4">
-                 <div className="w-1/3 h-full glass-panel border-cyan-500/50 rounded-lg flex flex-col justify-between p-2 pb-6 group-hover:-translate-y-4 transition-transform duration-500">
-                   <div className="text-center text-xs font-mono text-cyan-400 mb-2">SIDECAR (800V)</div>
-                   {[...Array(6)].map((_, i) => (
-                     <div key={i} className="w-full h-8 bg-cyan-500/20 border border-cyan-500/40 rounded flex items-center justify-center relative overflow-hidden">
-                       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-400/20 to-transparent -translate-x-full group-hover:animate-[marquee_2s_infinite]"></div>
-                     </div>
-                   ))}
-                 </div>
-                 <div className="w-2/3 h-full glass-panel border-purple-500/30 rounded-lg flex flex-col p-2 gap-2 group-hover:translate-y-2 transition-transform duration-500">
-                   <div className="text-center text-xs font-mono text-purple-400 mb-1">MW AI CLUSTER</div>
-                   {[...Array(10)].map((_, i) => (
-                     <div key={i} className="flex-1 w-full bg-slate-800/80 border border-slate-600 rounded flex items-center justify-between px-2">
-                       <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
-                       <div className="w-12 h-1 bg-slate-600 rounded"></div>
-                     </div>
-                   ))}
-                 </div>
-                 
-                 <div className="absolute top-1/2 left-[30%] w-[10%] h-[2px] bg-cyan-400 z-20 shadow-[0_0_10px_#22d3ee]">
-                   <div className="w-full h-full bg-white animate-pulse"></div>
-                 </div>
-               </div>
-               
-               <div className="absolute bottom-6 text-center w-full">
-                 <span className="text-xs font-mono tracking-widest text-slate-500">{t.section1.fig}</span>
-               </div>
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* 数据对标表格区域 */}
-      <section className="py-20 bg-slate-900/50 border-y border-white/5 relative z-10" id="section-2">
-        <div className="max-w-6xl mx-auto px-4 md:px-8">
-          <Reveal>
-            <div className="text-center mb-12">
-              <h3 className="text-3xl font-bold mb-4">{t.table.title}</h3>
-              <p className="text-slate-400 font-light">{t.table.desc}</p>
-            </div>
-            
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse min-w-[600px]">
-                <thead>
-                  <tr>
-                    <th className="p-6 bg-slate-800/80 border-b border-cyan-900/50 text-slate-300 font-bold w-1/4 rounded-tl-xl">{t.table.col1}</th>
-                    <th className="p-6 bg-slate-800/50 border-b border-cyan-900/50 text-slate-400 font-bold w-1/3">{t.table.col2}</th>
-                    <th className="p-6 bg-cyan-900/30 border-b border-cyan-500/50 text-cyan-300 font-bold text-lg rounded-tr-xl border-l border-cyan-500/30">{t.table.col3}</th>
-                  </tr>
-                </thead>
-                <tbody className="glass-panel">
-                  {t.table.rows.map((row, idx) => {
-                    const highlight = idx === 0 || idx === 1; // 前两行高亮
-                    return (
-                      <tr key={idx} className="border-b border-slate-800/50 hover:bg-white/[0.02] transition-colors">
-                        <td className="p-6 text-slate-300 font-medium">{row.label}</td>
-                        <td className="p-6 text-slate-500 font-mono">{row.old}</td>
-                        <td className={`p-6 font-mono font-bold border-l border-cyan-500/20 bg-cyan-900/10 ${highlight ? 'text-cyan-400' : 'text-slate-300'}`}>
-                          {row.new}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* 核心深度内容区 2 */}
-      <section className="py-24 max-w-7xl mx-auto px-4 md:px-8" id="section-3">
-        <div className="flex flex-col-reverse lg:flex-row items-center gap-16 lg:gap-24">
-          <Reveal className="flex-1 w-full" direction="right">
-             <div className="relative rounded-3xl overflow-hidden aspect-video lg:aspect-square bg-slate-900 border border-slate-700 flex flex-col justify-center p-8 group">
-               {/* 模拟代码/控制台界面 */}
-               <div className="absolute top-0 left-0 w-full h-10 bg-slate-800 border-b border-slate-700 flex items-center px-4 gap-2">
-                 <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                 <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                 <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                 <div className="ml-4 text-xs font-mono text-slate-500">GET /redfish/v1/Chassis/Sidecar1/Power</div>
-               </div>
-               
-               <div className="mt-8 font-mono text-sm sm:text-base leading-relaxed overflow-x-auto">
-                 <div className="text-cyan-400">{"{"}</div>
-                 <div className="pl-4 text-pink-400">"@odata.type": <span className="text-green-400">"#Power.v1_5_0.Power"</span>,</div>
-                 <div className="pl-4 text-pink-400">"Id": <span className="text-green-400">"Power"</span>,</div>
-                 <div className="pl-4 text-pink-400">"PowerControl": <span className="text-cyan-400">[{"{"}</span></div>
-                 <div className="pl-8 text-pink-400">"PowerConsumedWatts": <span className="text-orange-400">854000</span>,</div>
-                 <div className="pl-8 text-pink-400">"PowerCapacityWatts": <span className="text-orange-400">1000000</span></div>
-                 <div className="pl-4 text-cyan-400">{"}"}],</div>
-                 <div className="pl-4 text-pink-400">"Voltages": <span className="text-cyan-400">[{"{"}</span></div>
-                 <div className="pl-8 text-pink-400">"ReadingVolts": <span className="text-orange-400">398.5</span>,</div>
-                 <div className="pl-8 text-pink-400">"State": <span className="text-green-400">"Enabled"</span></div>
-                 <div className="pl-4 text-cyan-400">{"}"}]</div>
-                 <div className="text-cyan-400">{"}"}</div>
-               </div>
-               
-               <div className="absolute bottom-0 right-0 w-48 h-48 bg-purple-500/20 rounded-full blur-[80px]"></div>
-            </div>
-          </Reveal>
-          
-          <Reveal className="flex-1 space-y-8" direction="left">
-            <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full border border-purple-500/30 bg-purple-500/10 text-purple-400 font-mono text-sm uppercase">
-              <Server className="w-4 h-4" /> {t.section2.badge}
-            </div>
-            <h2 className="text-4xl md:text-5xl font-bold leading-tight tracking-tight">
-              {t.section2.title1}<br/>
-              <span className="text-slate-400">{t.section2.title2}</span>
-            </h2>
-            <div className="space-y-6 text-lg text-slate-400 leading-relaxed font-light">
-              <p>{t.section2.p1}</p>
-              <p>{t.section2.p2}</p>
-            </div>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
-              <div className="p-6 rounded-2xl bg-slate-800/50 border border-slate-700/50 hover:border-purple-500/50 transition-colors">
-                <h4 className="text-lg font-bold text-white mb-2">{t.section2.card1Title}</h4>
-                <p className="text-sm text-slate-400">{t.section2.card1Desc}</p>
-              </div>
-              <div className="p-6 rounded-2xl bg-slate-800/50 border border-slate-700/50 hover:border-purple-500/50 transition-colors">
-                <h4 className="text-lg font-bold text-white mb-2">{t.section2.card2Title}</h4>
-                <p className="text-sm text-slate-400">{t.section2.card2Desc}</p>
-              </div>
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* 底部行动呼吁 (CTA) */}
-      <section className="relative py-32 overflow-hidden mt-10">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-cyan-950/40"></div>
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[1000px] h-[400px] bg-cyan-600/20 blur-[150px] rounded-full pointer-events-none"></div>
-        
-        <div className="relative z-10 max-w-4xl mx-auto px-4 text-center">
-          <Reveal>
-            <h2 className="text-4xl md:text-6xl font-black mb-8 leading-tight">
-              {t.cta.title1}<br/>
-              <span className="text-gradient">{t.cta.title2}</span>
-            </h2>
-            <p className="text-xl text-slate-400 mb-12 font-light leading-relaxed">
-              {t.cta.desc}
-            </p>
-            <button className="px-12 py-5 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-black text-xl shadow-[0_0_40px_rgba(6,182,212,0.4)] hover:shadow-[0_0_60px_rgba(6,182,212,0.6)] hover:scale-105 transition-all active:scale-95 flex items-center gap-3 mx-auto">
-              {t.cta.btn} <ArrowUpRight className="w-6 h-6" />
-            </button>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* 页脚 */}
-      <footer className="border-t border-cyan-900/30 glass-panel relative z-10 bg-slate-950/80">
-        <div className="max-w-7xl mx-auto px-6 py-12 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-3">
-            <Zap className="w-5 h-5 text-cyan-400" />
-            <div className="flex flex-col">
-              <span className="text-lg font-bold">{t.nav.brand}.</span>
-              <span className="text-[10px] text-slate-500 font-mono tracking-widest mt-0.5">RESEARCH REPORT 2026</span>
-            </div>
-          </div>
-          <p className="text-slate-500 text-sm font-light text-center md:text-left max-w-md">
-            {t.footer.desc}
-          </p>
-          <div className="flex gap-4">
-            <a href="#" className="w-10 h-10 rounded-full border border-slate-700 flex items-center justify-center text-slate-400 hover:text-cyan-400 hover:border-cyan-400 transition-colors">
-              <Activity className="w-4 h-4" />
-            </a>
-            <a href="#" className="w-10 h-10 rounded-full border border-slate-700 flex items-center justify-center text-slate-400 hover:text-cyan-400 hover:border-cyan-400 transition-colors">
-              <Server className="w-4 h-4" />
-            </a>
-          </div>
-        </div>
-      </footer>
+    <!-- 移动端菜单下拉 -->
+    <div id="mobile-menu" class="lg:hidden absolute top-full left-0 w-full glass-panel transition-all duration-300 origin-top overflow-hidden max-h-0">
+      <div class="flex flex-col p-4 gap-2">
+        <a href="#section-0" class="mobile-nav-link text-lg font-medium text-slate-300 hover:text-cyan-400 py-3 px-4 rounded-lg hover:bg-cyan-900/20" data-i18n="nav.menu.0">核心演进</a>
+        <a href="#section-1" class="mobile-nav-link text-lg font-medium text-slate-300 hover:text-cyan-400 py-3 px-4 rounded-lg hover:bg-cyan-900/20" data-i18n="nav.menu.1">解耦拓扑</a>
+        <a href="#section-2" class="mobile-nav-link text-lg font-medium text-slate-300 hover:text-cyan-400 py-3 px-4 rounded-lg hover:bg-cyan-900/20" data-i18n="nav.menu.2">热力协同</a>
+        <a href="#section-3" class="mobile-nav-link text-lg font-medium text-slate-300 hover:text-cyan-400 py-3 px-4 rounded-lg hover:bg-cyan-900/20" data-i18n="nav.menu.3">高级遥测</a>
+        <button class="w-full mt-4 py-3 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-bold shadow-lg" data-i18n="nav.download">
+          下载完整报告
+        </button>
+      </div>
     </div>
-  );
-}
+  </nav>
+
+  <!-- Hero 首屏 -->
+  <section class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
+    <canvas id="particle-canvas" class="absolute inset-0 pointer-events-none z-0 opacity-40 mix-blend-screen"></canvas>
+    
+    <!-- 能量背景球 -->
+    <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-600/20 rounded-full mix-blend-screen filter blur-[100px] animate-blob"></div>
+    <div class="absolute top-1/3 right-1/4 w-96 h-96 bg-cyan-500/20 rounded-full mix-blend-screen filter blur-[100px] animate-blob animation-delay-2000"></div>
+    <div class="absolute -bottom-10 left-1/3 w-96 h-96 bg-indigo-500/20 rounded-full mix-blend-screen filter blur-[100px] animate-blob animation-delay-4000"></div>
+
+    <div class="relative z-10 max-w-6xl mx-auto px-4 text-center mt-10">
+      <div class="reveal opacity-0 translate-y-16 transition-all duration-1000 cubic-bezier(0.16, 1, 0.3, 1)" style="transition-delay: 100ms">
+        <div class="inline-flex items-center gap-2 px-5 py-2 rounded-full glass-panel border border-cyan-500/40 text-cyan-300 text-sm md:text-base font-medium mb-8 uppercase tracking-widest shadow-[0_0_20px_rgba(6,182,212,0.2)]">
+          <i data-lucide="activity" class="w-4 h-4 animate-pulse"></i>
+          <span data-i18n="hero.badge">开放计算项目 (OCP) 深度研究</span>
+        </div>
+      </div>
+      
+      <div class="reveal opacity-0 translate-y-16 transition-all duration-1000 cubic-bezier(0.16, 1, 0.3, 1)" style="transition-delay: 300ms">
+        <h1 class="text-5xl md:text-7xl lg:text-8xl font-black tracking-tight mb-6 leading-tight">
+          <span data-i18n="hero.title1">兆瓦级 AI 数据中心</span> <br class="hidden md:block" />
+          <span class="text-gradient" data-i18n="hero.title2">电源与液冷协同创新</span>
+        </h1>
+      </div>
+      
+      <div class="reveal opacity-0 translate-y-16 transition-all duration-1000 cubic-bezier(0.16, 1, 0.3, 1)" style="transition-delay: 500ms">
+        <p class="text-lg md:text-2xl text-slate-400 max-w-3xl mx-auto mb-10 leading-relaxed font-light" data-i18n="hero.desc">
+          从传统的 12V 向 48V (ORV3) 跨越，再向未来的高压直流 (HVDC 800V) 强制性过渡。探索支撑下一代吉瓦 (GW) 级 AI 算力的基础设施范式转变。
+        </p>
+      </div>
+      
+      <div class="reveal opacity-0 translate-y-16 transition-all duration-1000 cubic-bezier(0.16, 1, 0.3, 1)" style="transition-delay: 700ms">
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-6 mt-8">
+          <button class="w-full sm:w-auto px-10 py-4 rounded-full bg-cyan-500 text-slate-950 font-black text-lg hover:bg-cyan-400 transition-all flex items-center justify-center gap-2 shadow-[0_0_30px_rgba(6,182,212,0.5)] hover:scale-105 active:scale-95">
+            <span data-i18n="hero.btnPrimary">阅读深度报告</span> <i data-lucide="arrow-up-right" class="w-6 h-6"></i>
+          </button>
+          <button class="w-full sm:w-auto px-10 py-4 rounded-full glass-panel font-bold text-lg hover:bg-white/5 transition-all flex items-center justify-center gap-2 border border-slate-700 hover:border-cyan-500/50">
+            <span data-i18n="hero.btnSecondary">探索核心技术</span> <i data-lucide="chevron-right" class="w-6 h-6"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 底部数据流装饰 -->
+    <div class="absolute bottom-0 w-full h-32 bg-gradient-to-t from-slate-950 to-transparent pointer-events-none z-10"></div>
+  </section>
+
+  <!-- 科技感跑马灯 -->
+  <section class="py-6 border-y border-cyan-900/30 bg-cyan-950/10 overflow-hidden flex whitespace-nowrap relative z-20 shadow-[0_0_30px_rgba(0,0,0,0.5)_inset]">
+    <div id="marquee-container" class="animate-marquee flex items-center gap-12 text-2xl md:text-3xl font-black text-transparent [-webkit-text-stroke:1px_rgba(6,182,212,0.4)] opacity-80 font-mono tracking-widest">
+      <!-- JS 会在这里动态生成内容 -->
+    </div>
+  </section>
+
+  <!-- 技术支柱卡片 (Features) -->
+  <section class="py-24 md:py-32 px-4 md:px-8 max-w-7xl mx-auto relative z-10" id="section-0">
+    <div class="reveal opacity-0 translate-y-16 transition-all duration-1000 cubic-bezier(0.16, 1, 0.3, 1)">
+      <div class="text-center mb-16 md:mb-24">
+        <h2 class="text-4xl md:text-5xl font-bold mb-6">
+          <span data-i18n="features.title1">支撑 AI 算力爆发的</span><br/>
+          <span class="text-cyan-400" data-i18n="features.title2">四大基础设施支柱</span>
+        </h2>
+        <p class="text-slate-400 max-w-2xl mx-auto text-lg" data-i18n="features.desc">
+          单机柜功率密度正从 10kW 激增至 1MW 以上，传统的电力与散热法则正在失效，OCP 正引领一场物理层面的革命。
+        </p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div class="reveal opacity-0 translate-y-16 transition-all duration-1000 cubic-bezier(0.16, 1, 0.3, 1)" style="transition-delay: 100ms">
+        <div class="tilt-card transition-all duration-300 ease-out perspective-1000 h-full">
+          <div class="w-full h-full glass-panel rounded-2xl p-8 hover:shadow-[0_0_40px_rgba(6,182,212,0.2)] hover:border-cyan-400/30 transition-all duration-500 relative overflow-hidden group">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-cyan-500/10 rounded-full blur-3xl group-hover:bg-cyan-400/20 transition-all"></div>
+            <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20 flex items-center justify-center mb-6 border border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.2)] relative z-10">
+              <i data-lucide="zap" class="w-8 h-8 text-cyan-400"></i>
+            </div>
+            <h3 class="text-xl font-bold mb-3 text-white relative z-10" data-i18n="features.cards.0.title">48V 到 HVDC 跃迁</h3>
+            <p class="text-slate-400 text-sm leading-relaxed relative z-10" data-i18n="features.cards.0.desc">彻底突破 12V/48V 母线的物理极限。面向 1MW 机柜，引入 800V (±400VDC) 解耦侧车架构，铜排用量锐减 45% 以上。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="reveal opacity-0 translate-y-16 transition-all duration-1000 cubic-bezier(0.16, 1, 0.3, 1)" style="transition-delay: 200ms">
+        <div class="tilt-card transition-all duration-300 ease-out perspective-1000 h-full">
+          <div class="w-full h-full glass-panel rounded-2xl p-8 hover:shadow-[0_0_40px_rgba(6,182,212,0.2)] hover:border-cyan-400/30 transition-all duration-500 relative overflow-hidden group">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-cyan-500/10 rounded-full blur-3xl group-hover:bg-cyan-400/20 transition-all"></div>
+            <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-teal-500/20 to-emerald-500/20 flex items-center justify-center mb-6 border border-teal-500/30 shadow-[0_0_15px_rgba(20,184,166,0.2)] relative z-10">
+              <i data-lucide="droplets" class="w-8 h-8 text-teal-400"></i>
+            </div>
+            <h3 class="text-xl font-bold mb-3 text-white relative z-10" data-i18n="features.cards.1.title">极致流体液冷协同</h3>
+            <p class="text-slate-400 text-sm leading-relaxed relative z-10" data-i18n="features.cards.1.desc">空气冷却走向死胡同。基于 Project Deschutes，引入高达 2MW 管理能力、盲插设计的冷却分配单元 (CDU)，全面标配芯片直触液冷。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="reveal opacity-0 translate-y-16 transition-all duration-1000 cubic-bezier(0.16, 1, 0.3, 1)" style="transition-delay: 300ms">
+        <div class="tilt-card transition-all duration-300 ease-out perspective-1000 h-full">
+          <div class="w-full h-full glass-panel rounded-2xl p-8 hover:shadow-[0_0_40px_rgba(6,182,212,0.2)] hover:border-cyan-400/30 transition-all duration-500 relative overflow-hidden group">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-cyan-500/10 rounded-full blur-3xl group-hover:bg-cyan-400/20 transition-all"></div>
+            <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center mb-6 border border-purple-500/30 shadow-[0_0_15px_rgba(168,85,247,0.2)] relative z-10">
+              <i data-lucide="cpu" class="w-8 h-8 text-purple-400"></i>
+            </div>
+            <h3 class="text-xl font-bold mb-3 text-white relative z-10" data-i18n="features.cards.2.title">架构级芯片直供电</h3>
+            <p class="text-slate-400 text-sm leading-relaxed relative z-10" data-i18n="features.cards.2.desc">为解决现代 AI 芯片 Sub-1V 和超千安培电流需求，采用分解式电源架构 (FPAM) 与垂直供电 (VPD)，彻底消除 PDN 阻抗损耗。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="reveal opacity-0 translate-y-16 transition-all duration-1000 cubic-bezier(0.16, 1, 0.3, 1)" style="transition-delay: 400ms">
+        <div class="tilt-card transition-all duration-300 ease-out perspective-1000 h-full">
+          <div class="w-full h-full glass-panel rounded-2xl p-8 hover:shadow-[0_0_40px_rgba(6,182,212,0.2)] hover:border-cyan-400/30 transition-all duration-500 relative overflow-hidden group">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-cyan-500/10 rounded-full blur-3xl group-hover:bg-cyan-400/20 transition-all"></div>
+            <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500/20 to-red-500/20 flex items-center justify-center mb-6 border border-orange-500/30 shadow-[0_0_15px_rgba(249,115,22,0.2)] relative z-10">
+              <i data-lucide="shield-alert" class="w-8 h-8 text-orange-400"></i>
+            </div>
+            <h3 class="text-xl font-bold mb-3 text-white relative z-10" data-i18n="features.cards.3.title">BBU 电化学转型</h3>
+            <p class="text-slate-400 text-sm leading-relaxed relative z-10" data-i18n="features.cards.3.desc">机柜级电池备用单元全面放弃高危的 NMC 体系，转向极其稳定的 LFP (磷酸铁锂) 架构，轻松跨越 UL 9540A 热失控防火严苛标准。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 核心深度内容区 1 -->
+  <section class="py-24 max-w-7xl mx-auto px-4 md:px-8 relative" id="section-1">
+    <div class="absolute top-1/2 left-0 w-[500px] h-[500px] bg-cyan-600/10 rounded-full blur-[120px] pointer-events-none"></div>
+
+    <div class="flex flex-col lg:flex-row items-center gap-16 lg:gap-24 mb-32">
+      <div class="reveal opacity-0 translate-x-16 transition-all duration-1000 cubic-bezier(0.16, 1, 0.3, 1) flex-1 space-y-8">
+        <div class="inline-flex items-center gap-3 px-4 py-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-400 font-mono text-sm uppercase">
+          <i data-lucide="git-merge" class="w-4 h-4"></i> <span data-i18n="section1.badge">解耦式侧车电源机柜</span>
+        </div>
+        <h2 class="text-4xl md:text-5xl font-bold leading-tight tracking-tight">
+          <span data-i18n="section1.title1">Project Mt. Diablo:</span> <br/>
+          <span class="text-slate-400" data-i18n="section1.title2">打破物理空间的桎梏</span>
+        </h2>
+        <div class="space-y-6 text-lg text-slate-400 leading-relaxed font-light">
+          <p data-i18n="section1.p1">在传统的部署中，兆瓦级负载将需要庞大的电源插架，占用高达 64U 的机柜空间，导致宝贵的 AI 计算节点无处安放。</p>
+          <p data-i18n="section1.p2">Google、Meta 和 Microsoft 联合主导的 Mt. Diablo 规范 提出了一种革命性的物理形态：将 AC/DC 转换组件、BBU 全部剥离至相邻的 24英寸专用“侧车 (Sidecar)” 机柜。</p>
+        </div>
+        
+        <ul class="space-y-5 pt-4">
+          <li class="flex items-start gap-4 glass-panel p-4 rounded-xl border-l-4 border-l-cyan-500">
+            <div class="w-8 h-8 rounded-full bg-cyan-500/20 flex-shrink-0 flex items-center justify-center mt-1">
+              <i data-lucide="chevron-right" class="w-5 h-5 text-cyan-400"></i>
+            </div>
+            <div>
+              <h4 class="text-white font-bold mb-1" data-i18n="section1.list.0.title">极致计算密度</h4>
+              <p class="text-sm text-slate-400" data-i18n="section1.list.0.desc">100% 的服务器机柜空间专用于 xPU 和网络交换机。</p>
+            </div>
+          </li>
+          <li class="flex items-start gap-4 glass-panel p-4 rounded-xl border-l-4 border-l-cyan-500">
+            <div class="w-8 h-8 rounded-full bg-cyan-500/20 flex-shrink-0 flex items-center justify-center mt-1">
+              <i data-lucide="chevron-right" class="w-5 h-5 text-cyan-400"></i>
+            </div>
+            <div>
+              <h4 class="text-white font-bold mb-1" data-i18n="section1.list.1.title">热力隔离</h4>
+              <p class="text-sm text-slate-400" data-i18n="section1.list.1.desc">电源组件与计算芯片分置，采用独立冷却回路，防止热量互相烘烤。</p>
+            </div>
+          </li>
+          <li class="flex items-start gap-4 glass-panel p-4 rounded-xl border-l-4 border-l-cyan-500">
+            <div class="w-8 h-8 rounded-full bg-cyan-500/20 flex-shrink-0 flex items-center justify-center mt-1">
+              <i data-lucide="chevron-right" class="w-5 h-5 text-cyan-400"></i>
+            </div>
+            <div>
+              <h4 class="text-white font-bold mb-1" data-i18n="section1.list.2.title">EV 供应链融合</h4>
+              <p class="text-sm text-slate-400" data-i18n="section1.list.2.desc">采用电动汽车 (EV) 验证的接触器与连接器，实现基础设施快速商品化。</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="reveal opacity-0 -translate-x-16 transition-all duration-1000 cubic-bezier(0.16, 1, 0.3, 1) flex-1 w-full">
+         <div class="relative rounded-3xl overflow-hidden aspect-[4/5] lg:aspect-square bg-gradient-to-br from-slate-900 via-slate-800 to-cyan-950 border border-cyan-500/20 flex flex-col items-center justify-center shadow-[0_0_50px_rgba(6,182,212,0.15)] group">
+           <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTAgMGg0MHY0MEgweiIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Ik0wIDAuNWg0ME0wIDM5LjVoNDBNMC41IDB2NDBNMzkuNSAwdjQwIiBzdHJva2U9InJnYmEoNiwxODIsMjEyLDAuMSkiIHN0cm9rZS13aWR0aD0iMSIvPjwvc3ZnPg==')] opacity-60"></div>
+           
+           <div class="relative z-10 w-3/4 h-3/4 flex gap-4">
+             <div class="w-1/3 h-full glass-panel border-cyan-500/50 rounded-lg flex flex-col justify-between p-2 pb-6 group-hover:-translate-y-4 transition-transform duration-500">
+               <div class="text-center text-xs font-mono text-cyan-400 mb-2">SIDECAR (800V)</div>
+               <!-- Decorative elements -->
+               <div class="w-full h-8 bg-cyan-500/20 border border-cyan-500/40 rounded flex items-center justify-center relative overflow-hidden"><div class="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-400/20 to-transparent -translate-x-full group-hover:animate-[marquee_2s_infinite]"></div></div>
+               <div class="w-full h-8 bg-cyan-500/20 border border-cyan-500/40 rounded flex items-center justify-center relative overflow-hidden"><div class="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-400/20 to-transparent -translate-x-full group-hover:animate-[marquee_2s_infinite]"></div></div>
+               <div class="w-full h-8 bg-cyan-500/20 border border-cyan-500/40 rounded flex items-center justify-center relative overflow-hidden"><div class="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-400/20 to-transparent -translate-x-full group-hover:animate-[marquee_2s_infinite]"></div></div>
+               <div class="w-full h-8 bg-cyan-500/20 border border-cyan-500/40 rounded flex items-center justify-center relative overflow-hidden"><div class="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-400/20 to-transparent -translate-x-full group-hover:animate-[marquee_2s_infinite]"></div></div>
+               <div class="w-full h-8 bg-cyan-500/20 border border-cyan-500/40 rounded flex items-center justify-center relative overflow-hidden"><div class="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-400/20 to-transparent -translate-x-full group-hover:animate-[marquee_2s_infinite]"></div></div>
+               <div class="w-full h-8 bg-cyan-500/20 border border-cyan-500/40 rounded flex items-center justify-center relative overflow-hidden"><div class="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-400/20 to-transparent -translate-x-full group-hover:animate-[marquee_2s_infinite]"></div></div>
+             </div>
+             <div class="w-2/3 h-full glass-panel border-purple-500/30 rounded-lg flex flex-col p-2 gap-2 group-hover:translate-y-2 transition-transform duration-500">
+               <div class="text-center text-xs font-mono text-purple-400 mb-1">MW AI CLUSTER</div>
+               <!-- Decorative elements -->
+               <div class="flex-1 w-full bg-slate-800/80 border border-slate-600 rounded flex items-center justify-between px-2"><div class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div><div class="w-12 h-1 bg-slate-600 rounded"></div></div>
+               <div class="flex-1 w-full bg-slate-800/80 border border-slate-600 rounded flex items-center justify-between px-2"><div class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div><div class="w-12 h-1 bg-slate-600 rounded"></div></div>
+               <div class="flex-1 w-full bg-slate-800/80 border border-slate-600 rounded flex items-center justify-between px-2"><div class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div><div class="w-12 h-1 bg-slate-600 rounded"></div></div>
+               <div class="flex-1 w-full bg-slate-800/80 border border-slate-600 rounded flex items-center justify-between px-2"><div class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div><div class="w-12 h-1 bg-slate-600 rounded"></div></div>
+               <div class="flex-1 w-full bg-slate-800/80 border border-slate-600 rounded flex items-center justify-between px-2"><div class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div><div class="w-12 h-1 bg-slate-600 rounded"></div></div>
+               <div class="flex-1 w-full bg-slate-800/80 border border-slate-600 rounded flex items-center justify-between px-2"><div class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div><div class="w-12 h-1 bg-slate-600 rounded"></div></div>
+               <div class="flex-1 w-full bg-slate-800/80 border border-slate-600 rounded flex items-center justify-between px-2"><div class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div><div class="w-12 h-1 bg-slate-600 rounded"></div></div>
+               <div class="flex-1 w-full bg-slate-800/80 border border-slate-600 rounded flex items-center justify-between px-2"><div class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div><div class="w-12 h-1 bg-slate-600 rounded"></div></div>
+               <div class="flex-1 w-full bg-slate-800/80 border border-slate-600 rounded flex items-center justify-between px-2"><div class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div><div class="w-12 h-1 bg-slate-600 rounded"></div></div>
+               <div class="flex-1 w-full bg-slate-800/80 border border-slate-600 rounded flex items-center justify-between px-2"><div class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div><div class="w-12 h-1 bg-slate-600 rounded"></div></div>
+             </div>
+             
+             <div class="absolute top-1/2 left-[30%] w-[10%] h-[2px] bg-cyan-400 z-20 shadow-[0_0_10px_#22d3ee]">
+               <div class="w-full h-full bg-white animate-pulse"></div>
+             </div>
+           </div>
+           
+           <div class="absolute bottom-6 text-center w-full">
+             <span class="text-xs font-mono tracking-widest text-slate-500" data-i18n="section1.fig">图 1. 解耦式侧车架构</span>
+           </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 数据对标表格区域 -->
+  <section class="py-20 bg-slate-900/50 border-y border-white/5 relative z-10" id="section-2">
+    <div class="max-w-6xl mx-auto px-4 md:px-8">
+      <div class="reveal opacity-0 translate-y-16 transition-all duration-1000 cubic-bezier(0.16, 1, 0.3, 1)">
+        <div class="text-center mb-12">
+          <h3 class="text-3xl font-bold mb-4" data-i18n="table.title">从 54V 向 HVDC 的范式转移</h3>
+          <p class="text-slate-400 font-light" data-i18n="table.desc">面向兆瓦级 AI 集群的电源架构核心指标对比</p>
+        </div>
+        
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse min-w-[600px]">
+            <thead>
+              <tr>
+                <th class="p-6 bg-slate-800/80 border-b border-cyan-900/50 text-slate-300 font-bold w-1/4 rounded-tl-xl" data-i18n="table.col1">架构参数</th>
+                <th class="p-6 bg-slate-800/50 border-b border-cyan-900/50 text-slate-400 font-bold w-1/3" data-i18n="table.col2">传统遗留 54V 架构</th>
+                <th class="p-6 bg-cyan-900/30 border-b border-cyan-500/50 text-cyan-300 font-bold text-lg rounded-tr-xl border-l border-cyan-500/30" data-i18n="table.col3">下一代 HVDC (800V) 架构</th>
+              </tr>
+            </thead>
+            <tbody class="glass-panel">
+              <tr class="border-b border-slate-800/50 hover:bg-white/[0.02] transition-colors">
+                <td class="p-6 text-slate-300 font-medium" data-i18n="table.rows.0.label">单机柜最大可行功率</td>
+                <td class="p-6 text-slate-500 font-mono" data-i18n="table.rows.0.old">~100 kW</td>
+                <td class="p-6 font-mono font-bold border-l border-cyan-500/20 bg-cyan-900/10 text-cyan-400" data-i18n="table.rows.0.new">> 1 兆瓦 (MW)</td>
+              </tr>
+              <tr class="border-b border-slate-800/50 hover:bg-white/[0.02] transition-colors">
+                <td class="p-6 text-slate-300 font-medium" data-i18n="table.rows.1.label">兆瓦级负载下主电流</td>
+                <td class="p-6 text-slate-500 font-mono" data-i18n="table.rows.1.old">~18,500 A</td>
+                <td class="p-6 font-mono font-bold border-l border-cyan-500/20 bg-cyan-900/10 text-cyan-400" data-i18n="table.rows.1.new">~1,250 A</td>
+              </tr>
+              <tr class="border-b border-slate-800/50 hover:bg-white/[0.02] transition-colors">
+                <td class="p-6 text-slate-300 font-medium" data-i18n="table.rows.2.label">兆瓦级铜排需求量</td>
+                <td class="p-6 text-slate-500 font-mono" data-i18n="table.rows.2.old">~200kg / 机柜</td>
+                <td class="p-6 font-mono font-bold border-l border-cyan-500/20 bg-cyan-900/10 text-slate-300" data-i18n="table.rows.2.new">用铜量锐减 45% 以上</td>
+              </tr>
+              <tr class="border-b border-slate-800/50 hover:bg-white/[0.02] transition-colors">
+                <td class="p-6 text-slate-300 font-medium" data-i18n="table.rows.3.label">物理形态演进</td>
+                <td class="p-6 text-slate-500 font-mono" data-i18n="table.rows.3.old">架内集中式电源插架</td>
+                <td class="p-6 font-mono font-bold border-l border-cyan-500/20 bg-cyan-900/10 text-slate-300" data-i18n="table.rows.3.new">解耦式侧车电源机柜 (Sidecar)</td>
+              </tr>
+              <tr class="border-b border-slate-800/50 hover:bg-white/[0.02] transition-colors">
+                <td class="p-6 text-slate-300 font-medium" data-i18n="table.rows.4.label">主要供应链依托</td>
+                <td class="p-6 text-slate-500 font-mono" data-i18n="table.rows.4.old">传统 IT 与电信级标准部件</td>
+                <td class="p-6 font-mono font-bold border-l border-cyan-500/20 bg-cyan-900/10 text-slate-300" data-i18n="table.rows.4.new">电动汽车 (EV) 及工业级功率半导体</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 核心深度内容区 2 -->
+  <section class="py-24 max-w-7xl mx-auto px-4 md:px-8" id="section-3">
+    <div class="flex flex-col-reverse lg:flex-row items-center gap-16 lg:gap-24">
+      <div class="reveal opacity-0 translate-x-16 transition-all duration-1000 cubic-bezier(0.16, 1, 0.3, 1) flex-1 w-full">
+         <div class="relative rounded-3xl overflow-hidden aspect-video lg:aspect-square bg-slate-900 border border-slate-700 flex flex-col justify-center p-8 group">
+           <!-- 模拟代码/控制台界面 -->
+           <div class="absolute top-0 left-0 w-full h-10 bg-slate-800 border-b border-slate-700 flex items-center px-4 gap-2">
+             <div class="w-3 h-3 rounded-full bg-red-500"></div>
+             <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+             <div class="w-3 h-3 rounded-full bg-green-500"></div>
+             <div class="ml-4 text-xs font-mono text-slate-500">GET /redfish/v1/Chassis/Sidecar1/Power</div>
+           </div>
+           
+           <div class="mt-8 font-mono text-sm sm:text-base leading-relaxed overflow-x-auto">
+             <div class="text-cyan-400">{</div>
+             <div class="pl-4 text-pink-400">"@odata.type": <span class="text-green-400">"#Power.v1_5_0.Power"</span>,</div>
+             <div class="pl-4 text-pink-400">"Id": <span class="text-green-400">"Power"</span>,</div>
+             <div class="pl-4 text-pink-400">"PowerControl": <span class="text-cyan-400">[{</span></div>
+             <div class="pl-8 text-pink-400">"PowerConsumedWatts": <span class="text-orange-400">854000</span>,</div>
+             <div class="pl-8 text-pink-400">"PowerCapacityWatts": <span class="text-orange-400">1000000</span></div>
+             <div class="pl-4 text-cyan-400">}],</div>
+             <div class="pl-4 text-pink-400">"Voltages": <span class="text-cyan-400">[{</span></div>
+             <div class="pl-8 text-pink-400">"ReadingVolts": <span class="text-orange-400">398.5</span>,</div>
+             <div class="pl-8 text-pink-400">"State": <span class="text-green-400">"Enabled"</span></div>
+             <div class="pl-4 text-cyan-400">}]</div>
+             <div class="text-cyan-400">}</div>
+           </div>
+           
+           <div class="absolute bottom-0 right-0 w-48 h-48 bg-purple-500/20 rounded-full blur-[80px]"></div>
+        </div>
+      </div>
+      
+      <div class="reveal opacity-0 -translate-x-16 transition-all duration-1000 cubic-bezier(0.16, 1, 0.3, 1) flex-1 space-y-8">
+        <div class="inline-flex items-center gap-3 px-4 py-1.5 rounded-full border border-purple-500/30 bg-purple-500/10 text-purple-400 font-mono text-sm uppercase">
+          <i data-lucide="server" class="w-4 h-4"></i> <span data-i18n="section2.badge">现代 DCIM 遥测</span>
+        </div>
+        <h2 class="text-4xl md:text-5xl font-bold leading-tight tracking-tight">
+          <span data-i18n="section2.title1">毫秒级的数字神经元：</span><br/>
+          <span class="text-slate-400" data-i18n="section2.title2">突破 Modbus 的局限</span>
+        </h2>
+        <div class="space-y-6 text-lg text-slate-400 leading-relaxed font-light">
+          <p data-i18n="section2.p1">兆瓦级机柜内部署了极其昂贵的算力资本，微小的硬件衰减或泄漏都会造成巨额损失。传统的 Modbus 轮询架构已无法应对复杂的云原生微服务生态。</p>
+          <p data-i18n="section2.p2">硬件生态系统正全面向 DMTF Redfish API 过渡。作为基于 HTTPS 的 RESTful 标准，Redfish 构建了高保真的数字孪生模型。</p>
+        </div>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
+          <div class="p-6 rounded-2xl bg-slate-800/50 border border-slate-700/50 hover:border-purple-500/50 transition-colors">
+            <h4 class="text-lg font-bold text-white mb-2" data-i18n="section2.card1Title">电气母线架构 (Electrical Bus)</h4>
+            <p class="text-sm text-slate-400" data-i18n="section2.card1Desc">精确映射“多对多”母线拓扑，实现微秒级 PSU 负载隔离预测。</p>
+          </div>
+          <div class="p-6 rounded-2xl bg-slate-800/50 border border-slate-700/50 hover:border-purple-500/50 transition-colors">
+            <h4 class="text-lg font-bold text-white mb-2" data-i18n="section2.card2Title">储能监控架构 (Energy Storage)</h4>
+            <p class="text-sm text-slate-400" data-i18n="section2.card2Desc">细化至电芯级别 (Cell-level) 的 SoH 监控，将热失控扼杀于摇篮。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 底部行动呼吁 (CTA) -->
+  <section class="relative py-32 overflow-hidden mt-10">
+    <div class="absolute inset-0 bg-gradient-to-b from-transparent to-cyan-950/40"></div>
+    <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[1000px] h-[400px] bg-cyan-600/20 blur-[150px] rounded-full pointer-events-none"></div>
+    
+    <div class="relative z-10 max-w-4xl mx-auto px-4 text-center">
+      <div class="reveal opacity-0 translate-y-16 transition-all duration-1000 cubic-bezier(0.16, 1, 0.3, 1)">
+        <h2 class="text-4xl md:text-6xl font-black mb-8 leading-tight">
+          <span data-i18n="cta.title1">先进电源架构：</span><br/>
+          <span class="text-gradient" data-i18n="cta.title2">决定生死存亡的终极竞争壁垒</span>
+        </h2>
+        <p class="text-xl text-slate-400 mb-12 font-light leading-relaxed" data-i18n="cta.desc">
+          在这场向兆瓦级跃迁的军备竞赛中，未能迅速采纳深度融合的电源与热管理战略的企业，将在物理层面上失去部署下一代顶级 AI 算力的资格。
+        </p>
+        <button class="px-12 py-5 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-black text-xl shadow-[0_0_40px_rgba(6,182,212,0.4)] hover:shadow-[0_0_60px_rgba(6,182,212,0.6)] hover:scale-105 transition-all active:scale-95 flex items-center gap-3 mx-auto">
+          <span data-i18n="cta.btn">获取完整版 PDF 报告</span> <i data-lucide="arrow-up-right" class="w-6 h-6"></i>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 页脚 -->
+  <footer class="border-t border-cyan-900/30 glass-panel relative z-10 bg-slate-950/80">
+    <div class="max-w-7xl mx-auto px-6 py-12 flex flex-col md:flex-row items-center justify-between gap-6">
+      <div class="flex items-center gap-3">
+        <i data-lucide="zap" class="w-5 h-5 text-cyan-400"></i>
+        <div class="flex flex-col">
+          <span class="text-lg font-bold"><span data-i18n="nav.brand">OCP</span>.</span>
+          <span class="text-[10px] text-slate-500 font-mono tracking-widest mt-0.5">RESEARCH REPORT 2026</span>
+        </div>
+      </div>
+      <p class="text-slate-500 text-sm font-light text-center md:text-left max-w-md" data-i18n="footer.desc">
+        本报告解析基于开放计算项目 (OCP) 最新规范编制。技术驱动未来。
+      </p>
+      <div class="flex gap-4">
+        <a href="#" class="w-10 h-10 rounded-full border border-slate-700 flex items-center justify-center text-slate-400 hover:text-cyan-400 hover:border-cyan-400 transition-colors">
+          <i data-lucide="activity" class="w-4 h-4"></i>
+        </a>
+        <a href="#" class="w-10 h-10 rounded-full border border-slate-700 flex items-center justify-center text-slate-400 hover:text-cyan-400 hover:border-cyan-400 transition-colors">
+          <i data-lucide="server" class="w-4 h-4"></i>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 原生 JS 逻辑 -->
+  <script>
+    // ==========================================
+    // 全局多语言数据词典 (i18n)
+    // ==========================================
+    const translations = {
+      zh: {
+        nav: {
+          brand: 'OCP',
+          subBrand: 'POWER ARCHITECTURE',
+          menu: ['核心演进', '解耦拓扑', '热力协同', '高级遥测'],
+          download: '下载完整报告'
+        },
+        hero: {
+          badge: '开放计算项目 (OCP) 深度研究',
+          title1: '兆瓦级 AI 数据中心',
+          title2: '电源与液冷协同创新',
+          desc: '从传统的 12V 向 48V (ORV3) 跨越，再向未来的高压直流 (HVDC 800V) 强制性过渡。探索支撑下一代吉瓦 (GW) 级 AI 算力的基础设施范式转变。',
+          btnPrimary: '阅读深度报告',
+          btnSecondary: '探索核心技术'
+        },
+        marquee: ['兆瓦级 AI', '800V 高压直流', '极致液冷', 'REDFISH API'],
+        features: {
+          title1: '支撑 AI 算力爆发的',
+          title2: '四大基础设施支柱',
+          desc: '单机柜功率密度正从 10kW 激增至 1MW 以上，传统的电力与散热法则正在失效，OCP 正引领一场物理层面的革命。',
+          cards: [
+            { title: '48V 到 HVDC 跃迁', desc: '彻底突破 12V/48V 母线的物理极限。面向 1MW 机柜，引入 800V (±400VDC) 解耦侧车架构，铜排用量锐减 45% 以上。' },
+            { title: '极致流体液冷协同', desc: '空气冷却走向死胡同。基于 Project Deschutes，引入高达 2MW 管理能力、盲插设计的冷却分配单元 (CDU)，全面标配芯片直触液冷。' },
+            { title: '架构级芯片直供电', desc: '为解决现代 AI 芯片 Sub-1V 和超千安培电流需求，采用分解式电源架构 (FPAM) 与垂直供电 (VPD)，彻底消除 PDN 阻抗损耗。' },
+            { title: 'BBU 电化学转型', desc: '机柜级电池备用单元全面放弃高危的 NMC 体系，转向极其稳定的 LFP (磷酸铁锂) 架构，轻松跨越 UL 9540A 热失控防火严苛标准。' }
+          ]
+        },
+        section1: {
+          badge: '解耦式侧车电源机柜',
+          title1: 'Project Mt. Diablo:',
+          title2: '打破物理空间的桎梏',
+          p1: '在传统的部署中，兆瓦级负载将需要庞大的电源插架，占用高达 64U 的机柜空间，导致宝贵的 AI 计算节点无处安放。',
+          p2: 'Google、Meta 和 Microsoft 联合主导的 Mt. Diablo 规范 提出了一种革命性的物理形态：将 AC/DC 转换组件、BBU 全部剥离至相邻的 24英寸专用“侧车 (Sidecar)” 机柜。',
+          list: [
+            { title: '极致计算密度', desc: '100% 的服务器机柜空间专用于 xPU 和网络交换机。' },
+            { title: '热力隔离', desc: '电源组件与计算芯片分置，采用独立冷却回路，防止热量互相烘烤。' },
+            { title: 'EV 供应链融合', desc: '采用电动汽车 (EV) 验证的接触器与连接器，实现基础设施快速商品化。' }
+          ],
+          fig: '图 1. 解耦式侧车架构'
+        },
+        table: {
+          title: '从 54V 向 HVDC 的范式转移',
+          desc: '面向兆瓦级 AI 集群的电源架构核心指标对比',
+          col1: '架构参数', col2: '传统遗留 54V 架构', col3: '下一代 HVDC (800V) 架构',
+          rows: [
+            { label: '单机柜最大可行功率', old: '~100 kW', new: '> 1 兆瓦 (MW)' },
+            { label: '兆瓦级负载下主电流', old: '~18,500 A', new: '~1,250 A' },
+            { label: '兆瓦级铜排需求量', old: '~200kg / 机柜', new: '用铜量锐减 45% 以上' },
+            { label: '物理形态演进', old: '架内集中式电源插架', new: '解耦式侧车电源机柜 (Sidecar)' },
+            { label: '主要供应链依托', old: '传统 IT 与电信级标准部件', new: '电动汽车 (EV) 及工业级功率半导体' },
+          ]
+        },
+        section2: {
+          badge: '现代 DCIM 遥测',
+          title1: '毫秒级的数字神经元：',
+          title2: '突破 Modbus 的局限',
+          p1: '兆瓦级机柜内部署了极其昂贵的算力资本，微小的硬件衰减或泄漏都会造成巨额损失。传统的 Modbus 轮询架构已无法应对复杂的云原生微服务生态。',
+          p2: '硬件生态系统正全面向 DMTF Redfish API 过渡。作为基于 HTTPS 的 RESTful 标准，Redfish 构建了高保真的数字孪生模型。',
+          card1Title: '电气母线架构 (Electrical Bus)',
+          card1Desc: '精确映射“多对多”母线拓扑，实现微秒级 PSU 负载隔离预测。',
+          card2Title: '储能监控架构 (Energy Storage)',
+          card2Desc: '细化至电芯级别 (Cell-level) 的 SoH 监控，将热失控扼杀于摇篮。'
+        },
+        cta: {
+          title1: '先进电源架构：',
+          title2: '决定生死存亡的终极竞争壁垒',
+          desc: '在这场向兆瓦级跃迁的军备竞赛中，未能迅速采纳深度融合的电源与热管理战略的企业，将在物理层面上失去部署下一代顶级 AI 算力的资格。',
+          btn: '获取完整版 PDF 报告'
+        },
+        footer: {
+          desc: '本报告解析基于开放计算项目 (OCP) 最新规范编制。技术驱动未来。'
+        }
+      },
+      en: {
+        nav: {
+          brand: 'OCP',
+          subBrand: 'POWER ARCHITECTURE',
+          menu: ['Core Evolution', 'Decoupled Topology', 'Thermal Synergy', 'Advanced Telemetry'],
+          download: 'Download Full Report'
+        },
+        hero: {
+          badge: 'Open Compute Project (OCP) In-Depth Research',
+          title1: 'Megawatt AI Data Centers',
+          title2: 'Power & Liquid Cooling Innovations',
+          desc: 'From the traditional 12V leap to 48V (ORV3), and the mandatory transition to High-Voltage Direct Current (HVDC 800V). Exploring the infrastructure paradigm shift supporting next-gen GW-scale AI computing.',
+          btnPrimary: 'Read In-Depth Report',
+          btnSecondary: 'Explore Core Tech'
+        },
+        marquee: ['MEGAWATT AI', '800V HVDC', 'LIQUID COOLING', 'REDFISH API'],
+        features: {
+          title1: 'The Four Infrastructure Pillars',
+          title2: 'Supporting the AI Explosion',
+          desc: 'With single-rack power density surging from 10kW to over 1MW, traditional power and thermal laws are failing. OCP is leading a physical revolution.',
+          cards: [
+            { title: 'Leap to HVDC', desc: 'Breaking the physical limits of 12V/48V busbars. Introducing 800V (±400VDC) decoupled sidecar architectures for 1MW racks, reducing copper usage by over 45%.' },
+            { title: 'Extreme Liquid Cooling', desc: 'Air cooling is a dead end. Based on Project Deschutes, introducing blind-mate CDUs with up to 2MW capacity, making direct-to-chip liquid cooling standard.' },
+            { title: 'Direct-to-Chip Power Delivery', desc: 'Addressing sub-1V and kA current needs of modern AI chips through Factorized Power Architecture (FPAM) and Vertical Power Delivery (VPD), eliminating PDN losses.' },
+            { title: 'BBU Electrochemical Shift', desc: 'Rack-level BBU abandoning high-risk NMC for hyper-stable LFP (Lithium Iron Phosphate) architectures, easily passing stringent UL 9540A thermal runaway tests.' }
+          ]
+        },
+        section1: {
+          badge: 'Decoupled Sidecar Power Cabinet',
+          title1: 'Project Mt. Diablo:',
+          title2: 'Shattering Physical Constraints',
+          p1: 'In traditional deployments, MW-scale loads would require massive power shelves occupying up to 64U of rack space, leaving no room for precious AI compute nodes.',
+          p2: 'The Mt. Diablo specification, led by Google, Meta, and Microsoft, proposes a revolutionary physical form factor: stripping all AC/DC conversion and BBUs into an adjacent 24-inch dedicated "Sidecar" cabinet.',
+          list: [
+            { title: 'Extreme Compute Density', desc: '100% of the server rack space is dedicated to xPUs and network switches.' },
+            { title: 'Thermal Isolation', desc: 'Power components and compute chips are separated with independent cooling loops, preventing mutual thermal baking.' },
+            { title: 'EV Supply Chain Integration', desc: 'Utilizing EV-validated contactors and connectors for rapid infrastructure commoditization.' }
+          ],
+          fig: 'FIG 1. DECOUPLED SIDECAR ARCHITECTURE'
+        },
+        table: {
+          title: 'Paradigm Shift from 54V to HVDC',
+          desc: 'Core metrics comparison for MW-scale AI clusters',
+          col1: 'Architecture Parameters', col2: 'Legacy 54V Architecture', col3: 'Next-Gen HVDC (800V)',
+          rows: [
+            { label: 'Max Feasible Power per Rack', old: '~100 kW', new: '> 1 Megawatt (MW)' },
+            { label: 'Main Current at MW Load', old: '~18,500 A', new: '~1,250 A' },
+            { label: 'Copper Requirement (MW-scale)', old: '~200kg / Rack', new: 'Copper usage reduced > 45%' },
+            { label: 'Physical Form Factor', old: 'In-rack centralized shelves', new: 'Decoupled Sidecar Cabinet' },
+            { label: 'Primary Supply Chain', old: 'Traditional IT & Telecom parts', new: 'EV & Industrial power semis' },
+          ]
+        },
+        section2: {
+          badge: 'Modern DCIM Telemetry',
+          title1: 'Millisecond Digital Neurons:',
+          title2: 'Breaking Modbus Limitations',
+          p1: 'MW-scale racks house astronomically expensive compute capital. Minor hardware degradation or leaks cause massive losses. Legacy Modbus polling cannot handle complex cloud-native microservices.',
+          p2: 'The hardware ecosystem is transitioning entirely to the DMTF Redfish API. As an HTTPS-based RESTful standard, Redfish builds high-fidelity digital twins.',
+          card1Title: 'Electrical Bus Schema',
+          card1Desc: 'Accurately maps "many-to-many" bus topologies for microsecond-level PSU load isolation prediction.',
+          card2Title: 'Energy Storage Schema',
+          card2Desc: 'Granular Cell-level SoH monitoring to eliminate thermal runaway in its infancy.'
+        },
+        cta: {
+          title1: 'Advanced Power Architecture:',
+          title2: 'The Ultimate Moat for Survival',
+          desc: 'In this arms race to MW-scale, enterprises failing to rapidly adopt deeply integrated power and thermal strategies will be physically disqualified from deploying next-gen top-tier AI compute.',
+          btn: 'Get the Full PDF Report'
+        },
+        footer: {
+          desc: 'This report analysis is based on the latest Open Compute Project (OCP) specifications. Technology drives the future.'
+        }
+      }
+    };
+
+    let currentLang = 'zh';
+
+    // 初始化 Lucide 图标
+    lucide.createIcons();
+
+    // ==========================================
+    // 语言切换控制
+    // ==========================================
+    function updateContent() {
+      // 1. 更新带有 data-i18n 属性的普通元素
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const path = el.getAttribute('data-i18n').split('.');
+        let val = translations[currentLang];
+        for (const key of path) {
+          if (val === undefined) break;
+          val = val[key];
+        }
+        if (val !== undefined) {
+          el.innerHTML = val;
+        }
+      });
+
+      // 2. 更新跑马灯 (Marquee)
+      const marqueeContainer = document.getElementById('marquee-container');
+      const items = translations[currentLang].marquee;
+      let marqueeHtml = '';
+      for (let i = 0; i < 6; i++) {
+        marqueeHtml += `
+          <span>${items[0]}</span> <span class="text-cyan-500 [-webkit-text-stroke:0px]">⚡</span>
+          <span>${items[1]}</span> <span class="text-cyan-500 [-webkit-text-stroke:0px]">⚡</span>
+          <span>${items[2]}</span> <span class="text-cyan-500 [-webkit-text-stroke:0px]">⚡</span>
+          <span>${items[3]}</span> <span class="text-cyan-500 [-webkit-text-stroke:0px]">⚡</span>
+        `;
+      }
+      marqueeContainer.innerHTML = marqueeHtml;
+
+      // 3. 更新切换开关的 UI 表现
+      document.querySelectorAll('.lang-toggle').forEach(btn => {
+        const knob = btn.querySelector('.lang-knob');
+        const textZh = btn.querySelector('.lang-text span:first-child');
+        const textEn = btn.querySelector('.lang-text span:last-child');
+        
+        if (currentLang === 'zh') {
+          knob.style.transform = 'translateX(0)';
+          knob.textContent = '中';
+          textZh.classList.add('text-white');
+          textEn.classList.remove('text-white');
+          document.documentElement.lang = 'zh';
+        } else {
+          knob.style.transform = 'translateX(30px)';
+          knob.textContent = 'E';
+          textZh.classList.remove('text-white');
+          textEn.classList.add('text-white');
+          document.documentElement.lang = 'en';
+        }
+      });
+    }
+
+    document.querySelectorAll('.lang-toggle').forEach(btn => {
+      btn.addEventListener('click', () => {
+        currentLang = currentLang === 'zh' ? 'en' : 'zh';
+        updateContent();
+      });
+    });
+
+    // 初次渲染动态部分
+    updateContent();
+
+    // ==========================================
+    // 移动端菜单控制
+    // ==========================================
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    let isMenuOpen = false;
+
+    mobileMenuBtn.addEventListener('click', () => {
+      isMenuOpen = !isMenuOpen;
+      if (isMenuOpen) {
+        mobileMenu.classList.remove('max-h-0');
+        mobileMenu.classList.add('max-h-96', 'border-b', 'border-cyan-900/30');
+        mobileMenuBtn.innerHTML = '<i data-lucide="x"></i>';
+      } else {
+        mobileMenu.classList.add('max-h-0');
+        mobileMenu.classList.remove('max-h-96', 'border-b', 'border-cyan-900/30');
+        mobileMenuBtn.innerHTML = '<i data-lucide="menu"></i>';
+      }
+      lucide.createIcons();
+    });
+
+    // 点击链接后自动关闭移动端菜单
+    document.querySelectorAll('.mobile-nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        if(isMenuOpen) mobileMenuBtn.click();
+      });
+    });
+
+    // ==========================================
+    // 自定义光标控制
+    // ==========================================
+    const cursorOuter = document.getElementById('cursor-outer');
+    const cursorInner = document.getElementById('cursor-inner');
+    let mouseX = -100, mouseY = -100;
+    let isPointer = false;
+
+    if (!window.matchMedia('(pointer: coarse)').matches) {
+      cursorOuter.style.display = 'flex';
+      cursorInner.style.display = 'block';
+
+      window.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        updateCursorTransform();
+      });
+
+      window.addEventListener('mouseover', (e) => {
+        const isClickable = window.getComputedStyle(e.target).cursor === 'pointer' || 
+                            ['BUTTON', 'A', 'INPUT'].includes(e.target.tagName) ||
+                            e.target.closest('button, a, .lang-toggle');
+        isPointer = !!isClickable;
+        updateCursorTransform();
+      });
+
+      function updateCursorTransform() {
+        cursorOuter.style.transform = `translate(${mouseX - 20}px, ${mouseY - 20}px) scale(${isPointer ? 1.5 : 1})`;
+        cursorInner.style.transform = `translate(${mouseX - 4}px, ${mouseY - 4}px)`;
+      }
+    }
+
+    // ==========================================
+    // 滚动视差显现 (Scroll Reveal)
+    // ==========================================
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.remove('opacity-0', 'translate-y-16', '-translate-y-16', 'translate-x-16', '-translate-x-16');
+          entry.target.classList.add('opacity-100', 'translate-y-0', 'translate-x-0');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+    // ==========================================
+    // 3D 悬浮卡片 (Tilt Card)
+    // ==========================================
+    document.querySelectorAll('.tilt-card').forEach(card => {
+      card.addEventListener('mousemove', (e) => {
+        if (window.matchMedia('(pointer: coarse)').matches) return;
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const rotateX = ((y - rect.height / 2) / (rect.height / 2)) * -10; 
+        const rotateY = ((x - rect.width / 2) / (rect.width / 2)) * 10;
+        card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+      });
+
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = `rotateX(0deg) rotateY(0deg)`;
+      });
+    });
+
+    // ==========================================
+    // Canvas 粒子连线背景
+    // ==========================================
+    const canvas = document.getElementById('particle-canvas');
+    if (canvas) {
+      const ctx = canvas.getContext('2d');
+      let particles = [];
+      let animationFrameId;
+
+      const resizeCanvas = () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      };
+      window.addEventListener('resize', resizeCanvas);
+      resizeCanvas();
+
+      class Particle {
+        constructor() {
+          this.x = Math.random() * canvas.width;
+          this.y = Math.random() * canvas.height;
+          this.vx = (Math.random() - 0.5) * 1.5;
+          this.vy = (Math.random() - 0.5) * 1.5;
+          this.radius = Math.random() * 1.5 + 0.5;
+        }
+        update() {
+          this.x += this.vx;
+          this.y += this.vy;
+          if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+          if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+        }
+        draw() {
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(6, 182, 212, 0.8)';
+          ctx.fill();
+        }
+      }
+
+      const initParticles = () => {
+        particles = [];
+        const particleCount = window.innerWidth < 768 ? 40 : 120;
+        for (let i = 0; i < particleCount; i++) {
+          particles.push(new Particle());
+        }
+      };
+      initParticles();
+
+      const animateParticles = () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        particles.forEach(p => {
+          p.update();
+          p.draw();
+        });
+
+        for (let i = 0; i < particles.length; i++) {
+          for (let j = i + 1; j < particles.length; j++) {
+            const dx = particles[i].x - particles[j].x;
+            const dy = particles[i].y - particles[j].y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 120) {
+              ctx.beginPath();
+              ctx.moveTo(particles[i].x, particles[i].y);
+              ctx.lineTo(particles[j].x, particles[j].y);
+              ctx.strokeStyle = `rgba(14, 165, 233, ${1 - dist / 120})`; 
+              ctx.lineWidth = 0.8;
+              ctx.stroke();
+            }
+          }
+        }
+        animationFrameId = requestAnimationFrame(animateParticles);
+      };
+      animateParticles();
+    }
+  </script>
+</body>
+</html>
