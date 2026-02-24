@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>高性能微通道液冷冷板 · 全生命周期工艺知识库</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700;900&family=JetBrains+Mono:wght@300;400;500;600&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ── WHITE THEME TOKENS ── */
+:root {
+  --bg:     #ffffff;
+  --s1:     #f7f8fa;
+  --s2:     #eef0f5;
+  --s3:     #e4e8f0;
+  --border: #dde1ea;
+  --border2:#c8cedd;
+  --c1:     #0077cc;   /* blue  */
+  --c2:     #e03800;   /* red-orange */
+  --c3:     #00875a;   /* green */
+  --c4:     #b05c00;   /* amber */
+  --c5:     #6633cc;   /* violet */
+  --text:   #141820;
+  --muted:  #52596e;
+  --dim:    #8a93a8;
+}
+
+/* ── RESET ── */
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans SC',sans-serif;font-weight:300;line-height:1.9;overflow-x:hidden;}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:#f0f2f7;}
+::-webkit-scrollbar-thumb{background:var(--c1);border-radius:2px;}
+
+/* ══════════════════ NAV ══════════════════ */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  height:56px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 48px;
+  background:rgba(255,255,255,0.92);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+}
+.nav-brand{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;letter-spacing:.16em;color:var(--c1);
+  white-space:nowrap;
+}
+.nav-links{display:flex;gap:20px;list-style:none;}
+.nav-links a{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;letter-spacing:.1em;
+  color:var(--muted);text-decoration:none;transition:color .2s;
+}
+.nav-links a:hover,.nav-links a.active{color:var(--c1);}
+
+/* hamburger */
+.nav-menu-btn{
+  display:none;flex-direction:column;gap:5px;cursor:pointer;
+  background:none;border:none;padding:4px;
+}
+.nav-menu-btn span{
+  display:block;width:22px;height:2px;
+  background:var(--muted);border-radius:1px;transition:all .3s;
+}
+.nav-drawer{
+  display:none;position:fixed;top:56px;left:0;right:0;
+  background:rgba(255,255,255,0.97);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  z-index:199;padding:16px 0;
+  transform:translateY(-8px);opacity:0;
+  transition:all .25s ease;
+  pointer-events:none;
+}
+.nav-drawer.open{transform:none;opacity:1;pointer-events:all;}
+.nav-drawer a{
+  display:block;padding:12px 24px;
+  font-family:'JetBrains Mono',monospace;font-size:12px;
+  letter-spacing:.1em;color:var(--muted);text-decoration:none;
+  border-bottom:1px solid var(--border);transition:color .2s,background .2s;
+}
+.nav-drawer a:last-child{border-bottom:none;}
+.nav-drawer a:hover{color:var(--c1);background:var(--s1);}
+
+/* ══════════════════ HERO ══════════════════ */
+#hero{
+  min-height:100vh;
+  display:flex;align-items:center;
+  padding:100px 80px 80px;
+  position:relative;overflow:hidden;
+  background:linear-gradient(135deg,#f0f6ff 0%,#ffffff 50%,#f5f0ff 100%);
+}
+.hero-bg-grid{
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(0,119,204,.06) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,119,204,.06) 1px,transparent 1px);
+  background-size:48px 48px;
+}
+.hero-orbs{position:absolute;inset:0;pointer-events:none;}
+.orb{position:absolute;border-radius:50%;filter:blur(100px);opacity:.2;}
+.orb1{width:400px;height:400px;background:#b3d9ff;top:-80px;right:-60px;}
+.orb2{width:350px;height:350px;background:#d9c8ff;bottom:-60px;left:100px;}
+.orb3{width:250px;height:250px;background:#ffe0cc;top:40%;right:15%;}
+
+.hero-inner{position:relative;max-width:1000px;width:100%;}
+.hero-tag{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;letter-spacing:.2em;
+  color:var(--c1);
+  border:1px solid rgba(0,119,204,.3);
+  background:rgba(0,119,204,.06);
+  padding:5px 16px;margin-bottom:32px;
+  animation:fu .7s ease both;
+}
+.hero-tag::before{content:'▶';font-size:8px;}
+.hero h1{
+  font-family:'Noto Serif SC',serif;
+  font-size:clamp(28px,5vw,64px);
+  font-weight:700;line-height:1.12;
+  color:var(--text);
+  margin-bottom:24px;
+  animation:fu .7s .1s ease both;
+}
+.hero h1 .hl{
+  background:linear-gradient(135deg,var(--c1),var(--c5));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.hero-desc{
+  max-width:600px;font-size:15px;color:var(--muted);
+  margin-bottom:48px;line-height:1.9;
+  animation:fu .7s .2s ease both;
+}
+.hero-kpis{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:1px;background:var(--border);
+  border:1px solid var(--border);
+  animation:fu .7s .3s ease both;
+}
+.kpi{background:#fff;padding:22px 18px;transition:background .3s;}
+.kpi:hover{background:var(--s1);}
+.kpi-val{
+  font-family:'JetBrains Mono',monospace;
+  font-size:26px;font-weight:600;
+  color:var(--c1);display:block;line-height:1;margin-bottom:8px;
+}
+.kpi-label{font-size:11px;color:var(--dim);letter-spacing:.04em;line-height:1.5;}
+
+@keyframes fu{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+
+/* ══════════════════ SECTIONS ══════════════════ */
+.sec{padding:80px 80px;max-width:1440px;margin:0 auto;}
+.sec-alt{background:var(--s1);}
+
+.sec-header{display:flex;align-items:center;gap:14px;margin-bottom:48px;flex-wrap:wrap;}
+.sec-idx{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;letter-spacing:.18em;color:var(--c1);
+  white-space:nowrap;
+}
+.sec-title{font-family:'Noto Serif SC',serif;font-size:24px;font-weight:600;color:var(--text);}
+.sec-rule{flex:1;height:1px;background:linear-gradient(90deg,var(--border2),transparent);min-width:20px;}
+
+/* ══════════════════ PHYSICS CARDS ══════════════════ */
+.physics-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+.phys-card{
+  background:#fff;border:1px solid var(--border2);
+  padding:28px;position:relative;overflow:hidden;
+  box-shadow:0 2px 12px rgba(0,0,0,.04);
+}
+.phys-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.phys-card.c1::before{background:var(--c1);}
+.phys-card.c2::before{background:var(--c2);}
+.phys-card.c3::before{background:var(--c3);}
+.phys-card.c4::before{background:var(--c4);}
+.phys-card.c5::before{background:var(--c5);}
+.phys-num{
+  font-family:'JetBrains Mono',monospace;
+  font-size:9.5px;letter-spacing:.14em;color:var(--dim);
+  margin-bottom:10px;display:block;
+}
+.phys-title{font-family:'Noto Serif SC',serif;font-size:15px;font-weight:600;margin-bottom:12px;color:var(--text);}
+.phys-body{font-size:13px;color:var(--muted);line-height:1.9;}
+.phys-body strong{color:var(--text);font-weight:500;}
+
+.formula-box{
+  background:var(--s2);
+  border:1px solid var(--border2);
+  border-left:3px solid var(--c1);
+  padding:12px 18px;margin:14px 0;
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;color:var(--c1);letter-spacing:.04em;
+}
+.formula-sub{font-size:10.5px;color:var(--muted);margin-top:5px;}
+.highlight-box{
+  background:rgba(0,119,204,.05);
+  border:1px solid rgba(0,119,204,.2);
+  padding:14px 18px;margin-top:12px;
+  font-size:13px;color:#1a5a8a;line-height:1.8;
+}
+
+/* ══════════════════ TIMELINE ══════════════════ */
+.timeline{position:relative;padding-left:48px;}
+.timeline::before{
+  content:'';position:absolute;left:14px;top:0;bottom:0;width:2px;
+  background:linear-gradient(180deg,var(--c1) 0%,var(--c5) 35%,var(--c2) 70%,var(--c3) 100%);
+}
+.t-step{position:relative;margin-bottom:44px;opacity:0;transform:translateX(-14px);transition:all .55s ease;}
+.t-step.on{opacity:1;transform:none;}
+.t-dot{
+  position:absolute;left:-37px;top:6px;
+  width:17px;height:17px;
+  background:#fff;
+  border:2px solid var(--c1);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+}
+.t-dot::after{content:'';width:6px;height:6px;background:var(--c1);border-radius:50%;}
+.t-head{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap;}
+.t-badge{
+  font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.14em;
+  border:1px solid rgba(0,119,204,.3);background:rgba(0,119,204,.07);
+  color:var(--c1);padding:3px 10px;
+}
+.t-name{font-family:'Noto Serif SC',serif;font-size:17px;font-weight:600;color:var(--text);}
+.t-body{
+  background:#fff;
+  border:1px solid var(--border);
+  border-left:3px solid var(--c1);
+  padding:22px 24px;
+  box-shadow:0 2px 8px rgba(0,0,0,.04);
+}
+.t-body p{font-size:13px;color:var(--muted);margin-bottom:10px;line-height:1.9;}
+.t-body p:last-child{margin-bottom:0;}
+.t-body strong{color:var(--text);font-weight:500;}
+.param-row{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px;padding-top:14px;border-top:1px solid var(--border);}
+.param{
+  font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.08em;
+  background:rgba(224,56,0,.06);border:1px solid rgba(224,56,0,.18);
+  color:var(--c2);padding:4px 10px;
+}
+.warn-box{
+  background:rgba(224,56,0,.05);
+  border:1px solid rgba(224,56,0,.2);
+  border-left:4px solid var(--c2);
+  padding:14px 18px;margin:14px 0 0;
+  font-size:12px;color:#8b2500;line-height:1.8;
+}
+.warn-box strong{color:var(--c2);display:block;margin-bottom:4px;}
+
+/* ══════════════════ TOPO CARDS ══════════════════ */
+.topo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+.topo-card{
+  background:#fff;border:1px solid var(--border2);
+  padding:24px 22px;
+  transition:border-color .3s,transform .3s,box-shadow .3s;
+  box-shadow:0 2px 8px rgba(0,0,0,.04);
+}
+.topo-card:hover{border-color:var(--c5);transform:translateY(-3px);box-shadow:0 6px 20px rgba(102,51,204,.1);}
+.topo-icon{font-size:24px;margin-bottom:12px;display:block;}
+.topo-title{font-size:14px;font-weight:500;margin-bottom:8px;color:var(--text);}
+.topo-text{font-size:12.5px;color:var(--muted);line-height:1.85;}
+.topo-text strong{color:var(--text);}
+
+/* ══════════════════ FSW TABLE ══════════════════ */
+.fsw-table{width:100%;border-collapse:collapse;font-size:12.5px;}
+.fsw-table th{
+  font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;
+  padding:12px 16px;text-align:left;
+  background:var(--s2);border-bottom:2px solid var(--border2);
+}
+.fsw-table th:first-child{color:var(--text);}
+.fsw-table th:nth-child(2){color:var(--c4);}
+.fsw-table th:nth-child(3){color:var(--c3);}
+.fsw-table td{padding:12px 16px;border-bottom:1px solid var(--border);color:var(--muted);vertical-align:top;line-height:1.8;}
+.fsw-table td:first-child{color:var(--text);font-size:11px;font-family:'JetBrains Mono',monospace;letter-spacing:.04em;}
+.fsw-table tr:hover td{background:var(--s1);}
+
+.badge-b{font-size:10px;font-family:'JetBrains Mono',monospace;padding:2px 7px;border-radius:2px;display:inline-block;margin:1px;}
+.b-good{background:rgba(0,135,90,.1);border:1px solid rgba(0,135,90,.3);color:var(--c3);}
+.b-warn{background:rgba(176,92,0,.1);border:1px solid rgba(176,92,0,.3);color:var(--c4);}
+.b-bad{background:rgba(224,56,0,.1);border:1px solid rgba(224,56,0,.3);color:var(--c2);}
+
+/* ══════════════════ QC ══════════════════ */
+.qc-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;}
+.qc-card{background:#fff;border:1px solid var(--border);padding:24px;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.qc-card-title{font-family:'Noto Serif SC',serif;font-size:14px;font-weight:600;margin-bottom:16px;color:var(--text);display:flex;align-items:center;gap:8px;}
+.qc-list{list-style:none;}
+.qc-list li{font-size:12px;color:var(--muted);padding:7px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:10px;}
+.qc-list li:last-child{border-bottom:none;}
+.qc-val{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--c3);white-space:nowrap;}
+
+/* ══════════════════ SUPPLY CHAIN ══════════════════ */
+.sc-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;}
+.sc-card{
+  background:#fff;border:1px solid var(--border2);
+  padding:24px;position:relative;overflow:hidden;
+  box-shadow:0 2px 8px rgba(0,0,0,.04);
+}
+.sc-card::after{
+  content:attr(data-cat);position:absolute;top:14px;right:14px;
+  font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.14em;color:var(--dim);
+}
+.sc-logo{font-family:'Noto Serif SC',serif;font-size:15px;font-weight:700;color:var(--c1);margin-bottom:4px;}
+.sc-sub{font-size:10.5px;color:var(--dim);margin-bottom:12px;font-family:'JetBrains Mono',monospace;}
+.sc-body{font-size:12.5px;color:var(--muted);line-height:1.85;}
+.sc-body strong{color:var(--text);}
+.sc-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;}
+.sc-tag{
+  font-family:'JetBrains Mono',monospace;font-size:9px;
+  background:rgba(0,119,204,.07);border:1px solid rgba(0,119,204,.2);
+  color:var(--c1);padding:3px 9px;
+}
+.sc-tag.o{background:rgba(224,56,0,.07);border-color:rgba(224,56,0,.2);color:var(--c2);}
+.sc-tag.g{background:rgba(0,135,90,.07);border-color:rgba(0,135,90,.2);color:var(--c3);}
+.sc-tag.v{background:rgba(102,51,204,.07);border-color:rgba(102,51,204,.2);color:var(--c5);}
+
+/* ══════════════════ REGION ══════════════════ */
+.region-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--border);}
+.region-card{background:var(--s1);padding:28px 24px;transition:background .3s;}
+.region-card:hover{background:var(--s2);}
+.region-city{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.18em;color:var(--c1);margin-bottom:10px;display:block;}
+.region-role{font-family:'Noto Serif SC',serif;font-size:14px;font-weight:600;margin-bottom:10px;color:var(--text);}
+.region-body{font-size:12.5px;color:var(--muted);line-height:1.85;}
+
+/* ══════════════════ COST ══════════════════ */
+.cost-layout{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start;}
+.cost-item{margin-bottom:16px;}
+.cost-label{display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted);margin-bottom:7px;}
+.cost-pct{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--c1);}
+.cost-track{height:5px;background:var(--s3);border-radius:3px;overflow:hidden;}
+.cost-fill{height:100%;background:linear-gradient(90deg,var(--c1),var(--c5));border-radius:3px;transition:width 1.5s cubic-bezier(.16,1,.3,1);}
+
+/* ══════════════════ DIVIDER / FOOTER ══════════════════ */
+.div-line{height:1px;background:linear-gradient(90deg,transparent,var(--border2),transparent);max-width:1440px;margin:0 auto;}
+
+footer{background:var(--s1);border-top:1px solid var(--border);padding:48px 80px;text-align:center;}
+.footer-logo{font-family:'Noto Serif SC',serif;font-size:19px;font-weight:700;color:var(--text);margin-bottom:12px;}
+.footer-sub{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.11em;color:var(--dim);}
+.footer-sub span{color:var(--c1);}
+
+/* ══════════════════ TABLES ══════════════════ */
+.table-wrap{overflow-x:auto;border:1px solid var(--border);}
+.data-table{width:100%;border-collapse:collapse;font-size:12.5px;}
+.data-table th{
+  font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;
+  padding:11px 14px;text-align:left;
+  background:var(--s2);color:var(--c1);
+  border-bottom:2px solid var(--border2);
+}
+.data-table td{padding:12px 14px;border-bottom:1px solid var(--border);color:var(--muted);vertical-align:top;line-height:1.8;}
+.data-table tr:hover td{background:var(--s1);}
+
+/* ══════════════════ TYPOGRAPHY GLOBALS ══════════════════ */
+h3{font-family:'Noto Serif SC',serif;font-size:16px;font-weight:600;color:var(--c4);margin:28px 0 14px;}
+p{font-size:14px;color:var(--muted);margin-bottom:12px;line-height:1.9;}
+p strong{color:var(--text);font-weight:500;}
+
+/* ══════════════════ RESPONSIVE ══════════════════ */
+
+/* Tablet */
+@media(max-width:1024px){
+  nav{padding:0 28px;}
+  .sec{padding:72px 40px;}
+  #hero{padding:90px 40px 64px;}
+  .hero-kpis{grid-template-columns:1fr 1fr;}
+  .physics-grid{grid-template-columns:1fr;}
+  .topo-grid{grid-template-columns:1fr 1fr;}
+  .cost-layout{grid-template-columns:1fr;}
+}
+
+/* Mobile */
+@media(max-width:768px){
+  nav{padding:0 16px;height:52px;}
+  .nav-links{display:none;}
+  .nav-menu-btn{display:flex;}
+
+  #hero{
+    min-height:auto;
+    padding:80px 20px 52px;
+    align-items:flex-start;
+  }
+  .hero-tag{font-size:9px;letter-spacing:.14em;padding:4px 12px;}
+  .hero h1{font-size:clamp(26px,7vw,40px);}
+  .hero-desc{font-size:14px;margin-bottom:36px;}
+  .hero-kpis{grid-template-columns:1fr 1fr;gap:1px;}
+  .kpi{padding:16px 14px;}
+  .kpi-val{font-size:22px;}
+  .kpi-label{font-size:10px;}
+
+  .sec{padding:52px 20px;}
+  .sec-header{margin-bottom:32px;gap:10px;}
+  .sec-title{font-size:20px;}
+  .sec-idx{font-size:9px;}
+
+  .physics-grid{grid-template-columns:1fr;gap:16px;}
+  .phys-card{padding:22px 18px;}
+
+  .topo-grid{grid-template-columns:1fr;gap:14px;}
+  .topo-card{padding:20px 18px;}
+
+  .timeline{padding-left:36px;}
+  .timeline::before{left:10px;}
+  .t-dot{left:-28px;width:14px;height:14px;}
+  .t-dot::after{width:5px;height:5px;}
+  .t-body{padding:18px 16px;}
+  .t-name{font-size:15px;}
+
+  .fsw-table td:first-child{white-space:normal;}
+  .fsw-table{font-size:12px;}
+  .fsw-table th,.fsw-table td{padding:10px 12px;}
+
+  .qc-grid{grid-template-columns:1fr;gap:14px;}
+  .qc-card{padding:20px 18px;}
+
+  .sc-grid{grid-template-columns:1fr;gap:14px;}
+  .sc-card{padding:20px 18px;}
+  .sc-card::after{display:none;}
+
+  .region-grid{grid-template-columns:1fr;}
+  .region-card{padding:22px 18px;}
+
+  .cost-layout{grid-template-columns:1fr;gap:32px;}
+
+  .physics-grid.two-col{grid-template-columns:1fr;}
+
+  footer{padding:40px 20px;}
+  .footer-logo{font-size:16px;}
+  .footer-sub{font-size:9px;letter-spacing:.06em;}
+
+  .data-table th,.data-table td{padding:10px 12px;font-size:11.5px;}
+
+  h3{font-size:15px;}
+  p{font-size:13.5px;}
+}
+
+/* Small mobile */
+@media(max-width:400px){
+  .hero-kpis{grid-template-columns:1fr;}
+  .kpi-val{font-size:20px;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">COLDPLATE · KNOWLEDGE BASE</div>
+  <ul class="nav-links">
+    <li><a href="#physics">物理原理</a></li>
+    <li><a href="#topo">拓扑优化</a></li>
+    <li><a href="#process">制造工艺</a></li>
+    <li><a href="#welding">焊接冶金</a></li>
+    <li><a href="#qc">质量体系</a></li>
+    <li><a href="#ecosystem">华南生态</a></li>
+    <li><a href="#supply">供应链</a></li>
+    <li><a href="#cost">成本</a></li>
+  </ul>
+  <button class="nav-menu-btn" id="menuBtn" aria-label="菜单">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="nav-drawer" id="navDrawer">
+  <a href="#physics" class="drawer-link">01 · 物理原理</a>
+  <a href="#topo" class="drawer-link">02 · 拓扑优化</a>
+  <a href="#process" class="drawer-link">03 · 制造工艺</a>
+  <a href="#welding" class="drawer-link">04 · 焊接冶金</a>
+  <a href="#qc" class="drawer-link">05 · 质量体系</a>
+  <a href="#ecosystem" class="drawer-link">06 · 华南生态</a>
+  <a href="#supply" class="drawer-link">07 · 供应链</a>
+  <a href="#cost" class="drawer-link">08 · 成本结构</a>
+</div>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg-grid"></div>
+  <div class="hero-orbs">
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+    <div class="orb orb3"></div>
+  </div>
+  <div class="hero-inner">
+    <div class="hero-tag">高性能微通道液冷冷板 · 全生命周期工艺理论解析</div>
+    <h1>突破高热流密度<br>热管理的<span class="hl">物理极限</span></h1>
+    <p class="hero-desc">
+      从纳维-斯托克斯方程到拓扑优化算法，从真空钎焊冶金学到FSW固相塑性变形，
+      再到华南珠三角完整产业生态网络——为GPU液冷冷板企业主构建的最完整知识体系。
+    </p>
+    <div class="hero-kpis">
+      <div class="kpi">
+        <span class="kpi-val" id="k1">790</span>
+        <span class="kpi-label">W/cm² · Tuckerman &amp; Pease实验散热极值</span>
+      </div>
+      <div class="kpi">
+        <span class="kpi-val">50μm</span>
+        <span class="kpi-label">硅基微通道最小通道宽度（1981年验证）</span>
+      </div>
+      <div class="kpi">
+        <span class="kpi-val">€98K</span>
+        <span class="kpi-label">FSW设备投资 vs 百万欧元级真空钎焊炉</span>
+      </div>
+      <div class="kpi">
+        <span class="kpi-val" id="k4">1000</span>
+        <span class="kpi-label">英维克液冷核心专利数量（截至2025年）</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 01 物理原理 ═══ -->
+<div class="div-line"></div>
+<div class="sec-alt">
+<div class="sec" id="physics">
+  <div class="sec-header">
+    <span class="sec-idx">01 // FLUID PHYSICS &amp; HEAT TRANSFER</span>
+    <h2 class="sec-title">微通道流体力学与对流传热数学机理</h2>
+    <div class="sec-rule"></div>
+  </div>
+
+  <div class="physics-grid">
+    <div class="phys-card c1">
+      <span class="phys-num">// 无量纲参数核心三角</span>
+      <div class="phys-title">Re · Pr · Nu 框架</div>
+      <div class="phys-body">
+        液冷冷板热力学性能从最底层物理法则上取决于三个无量纲参数协同作用。
+        <br><br>
+        <strong>雷诺数 Re</strong>（惯性力/粘性力比）：微通道内极低质量流量与极小尺度，导致 Re 极低，流态呈现高度稳定的<strong>层流状态</strong>。
+        <br><br>
+        <strong>普朗特数 Pr</strong>（动量扩散率/热扩散率比）：表征热边界层与速度边界层的相对厚度。
+        <br><br>
+        <strong>努塞尔数 Nu</strong>（对流换热强度/流体导热强度比）：评价对流换热能力的终极核心指标。
+      </div>
+      <div class="formula-box">
+        h = Nu · λ_f / D_h
+        <div class="formula-sub">h：对流传热系数 | λ_f：流体导热系数 | D_h：水力直径</div>
+      </div>
+      <div class="highlight-box">
+        ⚡ <strong>核心结论</strong>：充分发展层流中，Nu趋于几何常数，因此 h ∝ 1/D_h。通道越窄，传热系数越高——这是微通道设计的物理基础。
+      </div>
+    </div>
+
+    <div class="phys-card c5">
+      <span class="phys-num">// Tuckerman &amp; Pease 1981 · 奠基实验</span>
+      <div class="phys-title">790 W/cm² — 确立微通道历史地位</div>
+      <div class="phys-body">
+        1981年，Tuckerman与Pease在硅基底材料上以各向异性化学刻蚀技术制造出高深宽比微通道：
+        <br><br>
+        通道宽度：<strong>50 μm</strong> | 通道深度：<strong>300 μm</strong>（深宽比 6:1）<br>
+        冷却工质：<strong>纯去离子水</strong>
+        <br><br>
+        成功实现 <strong>790 W/cm² 极高热流密度耗散</strong>，系统温升仅71°C，正式确立微通道作为突破散热瓶颈终极手段的历史地位。
+        <br><br>
+        <strong>代价</strong>：Wu &amp; Little（1983）在130-300μm微通道中发现，摩擦因子上升幅度远超经典Moody图表预测——微观相对粗糙度对粘性底层的影响被极度放大。
+      </div>
+      <div class="formula-box">
+        Q_max = 790 W/cm²  |  ΔT = 71°C
+        <div class="formula-sub">Si基底 | 纯水工质 | 50μm通道 | 1981年实验</div>
+      </div>
+    </div>
+
+    <div class="phys-card c2">
+      <span class="phys-num">// 矩形截面优化</span>
+      <div class="phys-title">长宽比扰动与多维参数寻优</div>
+      <div class="phys-body">
+        在<strong>固定等效直径</strong>前提下，矩形截面的 f（摩擦系数）和 Nu 均随<strong>长宽比（深度/宽度）增加而单调递增</strong>（逆流矩形微通道研究证实）。
+        <br><br>
+        必须通过<strong>正交试验</strong>等科学方法，对以下参数进行高维寻优：
+        <br>
+        ① 冷却工质流量 &nbsp;② 流道长宽比 &nbsp;③ 通道分布阵列密度
+        <br><br>
+        经深度结构优化的微通道冷板，能够成功满足 <strong>350W+ 高功耗CPU</strong> 在极低压降下的散热需求，实现热平衡。
+      </div>
+      <div class="formula-box">
+        f · Re = const（充分发展层流修正模型）
+        <div class="formula-sub">适用于微观多孔介质渗透率与热传导耦合边界推导</div>
+      </div>
+    </div>
+
+    <div class="phys-card c3">
+      <span class="phys-num">// 机器学习驱动设计</span>
+      <div class="phys-title">ANN重构传热关联式</div>
+      <div class="phys-body">
+        传统离散几何依赖关联式在三维复杂流道全局寻优中无法直接应用。
+        <br><br>
+        前沿研究引入 <strong>人工神经网络（ANN）</strong> 与 <strong>机器学习（ML）</strong>，对海量流场数据集（含H1恒热流、H2恒壁温边界条件）进行高维非线性映射，构建<strong>泛化通用预测模型</strong>，适用于任意常规几何通道特征。
+        <br><br>
+        <strong>传统范式</strong>：物理试错 → 实验拟合 → 局部关联式（耗时低效）
+        <br>
+        <strong>新范式</strong>：算力+数据驱动 → 智能全局寻优 → 任意几何泛化预测
+      </div>
+      <div class="highlight-box">
+        🚀 冷板结构设计正式从耗时低效的物理试错阶段，迈向以算力与数据驱动的智能化演进新纪元。
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══ 02 拓扑优化 ═══ -->
+<div class="div-line"></div>
+<div class="sec" id="topo">
+  <div class="sec-header">
+    <span class="sec-idx">02 // TOPOLOGY OPTIMIZATION</span>
+    <h2 class="sec-title">流体通道拓扑优化理论与非常规形态前沿</h2>
+    <div class="sec-rule"></div>
+  </div>
+
+  <p style="max-width:820px;font-size:14px;margin-bottom:44px;">
+    拓扑优化彻底突破传统直线型、蛇形或规则针鳍阵列等参数化经验设计的局限性，是在给定物理边界与流体动力学约束下，寻找固体传热材料与冷却流体孔隙在三维空间中<strong>绝对最佳分布配置</strong>的从零重构方法。
+  </p>
+
+  <div class="topo-grid">
+    <div class="topo-card">
+      <span class="topo-icon">🧮</span>
+      <div class="topo-title">变密度法数学建模（Density Method）</div>
+      <p class="topo-text">赋予每个有限元网格0到1之间连续变化的相对密度变量（0=流体孔隙，1=固体材料）。通过求解基于<strong>布林克曼惩罚模型（Brinkman Penalization）</strong>的纳维-斯托克斯方程与能量守恒对流扩散方程，寻找使整体热顺应性最小化的密度分布。</p>
+    </div>
+    <div class="topo-card">
+      <span class="topo-icon">♟️</span>
+      <div class="topo-title">棋盘格现象消除（Checkerboard Pattern）</div>
+      <p class="topo-text">纯数学迭代易陷入固体与流体单元无序跳跃的数值振荡——物理上不可制造。解决方案：引入<strong>霍尔姆兹PDE密度过滤机制</strong>平滑密度梯度，再采用<strong>双曲正切投影（Hyperbolic Tangent Projection）</strong>锐化边界，获得适合CNC加工的清晰拓扑形态。</p>
+    </div>
+    <div class="topo-card">
+      <span class="topo-icon">🌿</span>
+      <div class="topo-title">仿生多孔网络分支型拓扑</div>
+      <p class="topo-text">有限元仿真对比表明，多轮迭代生成的仿生多孔网络或分支型拓扑优化通道，峰值温度显著低于传统直通道，底面温度均匀性大幅提升。基于<strong>移动渐近线方法（MMA）</strong>求解的不规则流道形态正在为AI训练芯片提供逼近理论传热极限的均温支撑。</p>
+    </div>
+    <div class="topo-card">
+      <span class="topo-icon">↘️</span>
+      <div class="topo-title">垂直对角出入口最优布局</div>
+      <p class="topo-text">仿真结果明确表明：<strong>垂直对角出入口布置（Orthogonal Diagonal Inlet-Outlet）</strong>能够诱导最均衡的流体分配网络，整体散热性能达到全局最优解，彻底消除因流体分布不均和流速死区导致的局部热点（Hotspots）积聚现象——传统平行直通道的系统性缺陷。</p>
+    </div>
+    <div class="topo-card">
+      <span class="topo-icon">🎯</span>
+      <div class="topo-title">多目标优化核心命题</div>
+      <p class="topo-text">
+        ① <strong>最大化</strong>流体与固体壁面对流换热系数<br>
+        ② <strong>最小化</strong>芯片表面三维温度梯度分布<br>
+        ③ <strong>约束满足</strong>系统许用压降（泵功限制）
+        <br><br>
+        三者平衡无法通过人工经验直接解决，必须依赖计算数学工具链（Fluent/STAR-CCM+ → MMA求解器）。
+      </p>
+    </div>
+    <div class="topo-card">
+      <span class="topo-icon">✅</span>
+      <div class="topo-title">物理验证闭环</div>
+      <p class="topo-text">物理实体冷板试制及严格的热工流体循环试验，已完美验证拓扑优化设计方法的工程有效性与数值仿真准确性。这一闭环验证确认了从纳维-斯托克斯方程推演的理论解，在真实制造环境中的可落地性。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 03 制造工艺 ═══ -->
+<div class="div-line"></div>
+<div class="sec-alt">
+<div class="sec" id="process">
+  <div class="sec-header">
+    <span class="sec-idx">03 // MANUFACTURING ROUTES</span>
+    <h2 class="sec-title">冷板基体成型工艺路径系统博弈</h2>
+    <div class="sec-rule"></div>
+  </div>
+
+  <div class="timeline" id="timeline">
+
+    <div class="t-step">
+      <div class="t-dot"></div>
+      <div class="t-head"><span class="t-badge">ROUTE A</span><span class="t-name">型材挤压成型（Extrusion）</span></div>
+      <div class="t-body">
+        <p>将加热至塑性状态的铝合金锭坯在极高压力下推过特定形状模具，直接成型出内部带有平行贯穿孔洞的型材。</p>
+        <p><strong>优势：</strong>无与伦比的大规模量产灵活性与极佳成本效益。广泛适用于发热分布均匀、成本敏感的储能电池包底盘散热或常规工业电子散热应用。</p>
+        <p><strong>固有局限：</strong>只能生产沿挤压方向截面一致的直流道，无法在内部形成复杂扰流柱或拓扑优化三维布局。热性能天花板明确。</p>
+        <div class="param-row">
+          <span class="param">成本最低</span><span class="param">量产最大</span><span class="param">仅平行直流道</span><span class="param">适合均匀热源</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="t-step">
+      <div class="t-dot"></div>
+      <div class="t-head"><span class="t-badge">ROUTE B</span><span class="t-name">深孔钻削（Gun Drilling）</span></div>
+      <div class="t-body">
+        <p>通过专用枪钻设备在铝/铜制高纯度实心厚板内部横向加工深长直孔，形成内部贯穿流道网络。</p>
+        <p><strong>核心优势：</strong>在一整块均质材料内部完成流道切割，<strong>完全无需二维焊接</strong>，机械强度极高，绝无泄漏风险。适用于要求承载极高流体静压或要求绝对无泄漏风险的特种应用。</p>
+        <p><strong>局限：</strong>仅能进行直线加工，流道无法折返或形成微观翅片，热传导性能相对受限。需在两端通过丝攻安装螺纹堵头实现闭环，或进行二次加工。</p>
+        <div class="param-row">
+          <span class="param">无焊接风险</span><span class="param">极高耐压</span><span class="param">仅直孔流道</span><span class="param">特种高压应用</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="t-step">
+      <div class="t-dot"></div>
+      <div class="t-head"><span class="t-badge">ROUTE C</span><span class="t-name">埋管复合工艺（Tube &amp; Plate）</span></div>
+      <div class="t-body">
+        <p>在铜/铝制基体载板上CNC铣削出预定轨迹沟槽，随后将无缝紫铜管或不锈钢管通过模具强行压入沟槽内。</p>
+        <p><strong>三种结合级别（决定界面热阻）：</strong></p>
+        <p>① <strong>机械干压接</strong>：成本最低，管壁与槽底存在空气微隙，热阻较高</p>
+        <p>② <strong>高导热环氧树脂填充（Thermal Epoxy Boundary）</strong>：消除微观气隙，热阻显著降低</p>
+        <p>③ <strong>低熔点合金锡焊（Soldered in Place）</strong>：冶金级紧密热传导耦合，极限传热性能，适合高效紧凑模块</p>
+        <div class="param-row">
+          <span class="param">结构最简捷</span><span class="param">三种热阻级别</span><span class="param">紫铜管无缝</span><span class="param">空间受限模块</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="t-step">
+      <div class="t-dot"></div>
+      <div class="t-head"><span class="t-badge">ROUTE D</span><span class="t-name">CNC精密铣削微通道</span></div>
+      <div class="t-body">
+        <p>采用高速精密加工中心（主轴转速10,000~40,000 rpm）雕刻出拓扑优化形态的异形流道。微通道宽度可达0.3~1mm，需使用超硬涂层刀具（TiAlN涂层）。</p>
+        <p><strong>铜材加工难点：</strong>铜软且粘，极易粘屑，刀具寿命管理是核心成本控制点。切削参数需严格控制防止铜材变形。</p>
+        <p><strong>针翅Pin-Fin加工：</strong>针翅直径0.4~1.5mm，间距0.3~1mm，高度1~5mm，需专用小直径铣刀，刀具寿命管理SOP是关键。</p>
+        <div class="param-row">
+          <span class="param">精度 IT7级</span><span class="param">Ra ≤ 0.8μm</span><span class="param">平面度 ≤ 0.02mm</span><span class="param">转速 10K~40K rpm</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="t-step">
+      <div class="t-dot"></div>
+      <div class="t-head"><span class="t-badge">ROUTE E</span><span class="t-name">铲齿成型（Skiving）</span></div>
+      <div class="t-body">
+        <p>通过专用铲齿机床，以极小切削厚度和精确切削角度，在平整基板上"铲"出极高密度、超薄且<strong>与基体完全一体的微观散热翅片阵列</strong>。</p>
+        <p><strong>核心优势：</strong>翅片与基体完全一体，无界面热阻；翅片密度极高（翅间距0.1~0.5mm）；翅片超薄（0.1~0.3mm），换热面积最大化。</p>
+        <p>适用于针对高功率IGBT/GPU等局部热点极度密集场景，是高密度翅片阵列成型的最佳工艺路线。随后必须引入高可靠性焊接工艺将上盖板进行永久性界面封闭结合。</p>
+        <div class="param-row">
+          <span class="param">翅片间距 0.1~0.5mm</span><span class="param">翅厚 0.1~0.3mm</span><span class="param">一体成型无热阻</span><span class="param">换热面积最大</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="t-step">
+      <div class="t-dot"></div>
+      <div class="t-head"><span class="t-badge">ROUTE F</span><span class="t-name">表面处理与内腔清洗</span></div>
+      <div class="t-body">
+        <p><strong>铜板表面：</strong>化学镀镍磷（Electroless Ni-P）5~10μm，提升耐腐蚀性，防铜离子溶出污染冷却液。接触底面研磨抛光至 Ra≤0.4μm，平面度≤0.01mm/10mm。</p>
+        <p><strong>铝板表面：</strong>硬质阳极氧化20~30μm，提供绝缘与耐腐蚀层；或化学镀镍后处理，防止电偶腐蚀。</p>
+        <p><strong>内腔清洗：</strong>超声波清洗（弱碱性清洗剂）→ 去离子水三遍漂洗 → 热风吹干 → 洁净室暂存。内部流道循环去离子水至出水电导率≤5μS/cm，颗粒物≥25μm零检出。</p>
+        <div class="param-row">
+          <span class="param">出水电导率 ≤5μS/cm</span><span class="param">底面平面度 ≤0.01mm</span><span class="param">大颗粒零检出</span>
+        </div>
+        <div class="warn-box">
+          <strong>⚠️ 电偶腐蚀预防</strong>铜和铝在同一液路中会产生电偶腐蚀，铝作为阳极被腐蚀。必须：全系统材料统一（全铜或全铝），或铝件全部镀镍隔离，或控制冷却液pH值7~8.5并添加缓蚀剂。
+        </div>
+      </div>
+    </div>
+
+    <div class="t-step">
+      <div class="t-dot"></div>
+      <div class="t-head"><span class="t-badge">ROUTE G</span><span class="t-name">气密检测与热性能验证</span></div>
+      <div class="t-body">
+        <p><strong>气密检测（100%全检）：</strong>充入压缩空气至1.5~2倍工作压力，浸水观察气泡或压降法。高端产品使用氦质谱检漏，灵敏度高达10⁻⁸~10⁻⁹ mbar·L/s。</p>
+        <p><strong>压降测试：</strong>在规定流量下测量进出口压差，实测偏差≤±10%设计值，验证内部流道无堵塞。</p>
+        <p><strong>热阻测试（抽检/首件全检）：</strong>使用标准热阻测试台，在定义功率、定义流量、定义进水温度条件下，测量温差计算Rth，是热性能合格验证的最终判据。</p>
+        <div class="param-row">
+          <span class="param">气压测试 200kPa / 60s</span><span class="param">液压耐压 300kPa × 30s</span><span class="param">Rth ≤ 设计值×1.1</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<!-- ═══ 04 焊接冶金 ═══ -->
+<div class="div-line"></div>
+<div class="sec" id="welding">
+  <div class="sec-header">
+    <span class="sec-idx">04 // WELDING METALLURGY</span>
+    <h2 class="sec-title">异质界面冶金连接：FSW vs 真空钎焊的终极博弈</h2>
+    <div class="sec-rule"></div>
+  </div>
+
+  <p style="max-width:820px;font-size:14px;margin-bottom:48px;">
+    "一个发生泄漏的冷板就是一个彻底宣告失败的冷板，不论其前期热力学性能设计得多么登峰造极。" 将基体与盖板实现毫无瑕疵的冶金结合，是决定热管理系统成败的终极环节，直接确立了冷板的界面热阻、承压能力与漏液风险。
+  </p>
+
+  <div class="table-wrap" style="margin-bottom:48px;">
+    <table class="fsw-table">
+      <thead>
+        <tr>
+          <th>评估维度</th>
+          <th>真空钎焊 (Vacuum Brazing)</th>
+          <th>搅拌摩擦焊 (FSW)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>基础物理机制</td><td>依赖低于母材熔点的液相金属毛细填充，有相变</td><td>固态下剧烈塑性变形与锻造冶金结合，<span class="badge-b b-good">无相变</span></td></tr>
+        <tr><td>外部材料引入</td><td>必须引入低熔点合金钎料（通常热导率远低于母材）</td><td><span class="badge-b b-good">无任何外部填充物</span>，纯母材固态结合</td></tr>
+        <tr><td>界面热阻特征</td><td><span class="badge-b b-warn">低导热介质层引入</span>，系统界面热阻明显增加</td><td><span class="badge-b b-good">晶格路径连续无缝</span>，热阻降至最低理论极限</td></tr>
+        <tr><td>微观冶金组织</td><td><span class="badge-b b-bad">液-固相变</span>易伴生微气孔、夹杂与缩松，晶粒相对粗大</td><td><span class="badge-b b-good">动态再结晶</span>形成极致密无气孔的细晶微观组织</td></tr>
+        <tr><td>长效热机械可靠性</td><td>高频热冲击及流体压力脉动下<span class="badge-b b-bad">易萌生微裂纹</span>导致泄漏</td><td><span class="badge-b b-good">类似锻件</span>的极高抗拉强度与延展性，绝缘疲劳断裂</td></tr>
+        <tr><td>核心固定资产投资</td><td><span class="badge-b b-bad">极高</span>：百万欧元级大型真空/气氛炉体系</td><td><span class="badge-b b-good">相对低廉</span>：约€98,000数控刚性加工平台</td></tr>
+        <tr><td>生产节拍与能耗</td><td><span class="badge-b b-bad">批处理工艺</span>，升温降温周期极长，电能消耗巨大，维保繁琐</td><td>类CNC连续加工工艺，循环极快，日常免维护率高</td></tr>
+        <tr><td>质量控制策略</td><td><span class="badge-b b-bad">高度依赖</span>昂贵X射线全量无损透视以检出隐性空洞</td><td>过程参数自动受控，本征低缺陷率大幅削减后期探伤成本</td></tr>
+        <tr><td>结构几何设计适应性</td><td><span class="badge-b b-good">极佳</span>：能实现大面积复杂高密度内部翅片全面同步粘接</td><td><span class="badge-b b-warn">局限于边缘密封</span>，刀具轨迹干涉，对盖板尺寸精度要求苛刻</td></tr>
+        <tr><td>最佳应用场景</td><td>超高热通量极致冷却、稳定工况、密集翅片大面积粘接</td><td>户外储能、高铁牵引、国防装备、高压振动极端工况</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="physics-grid">
+    <div class="phys-card c3">
+      <span class="phys-num">// FSW物理机制深度解析</span>
+      <div class="phys-title">固相塑性变形 · 轴向锻造 · 动态再结晶</div>
+      <div class="phys-body">
+        FSW利用带特殊几何形貌轴肩和搅拌针的<strong>非消耗性高硬度旋转工具</strong>，高速旋转强制压入盖板与基体结合线处。
+        <br><br>
+        <strong>热源机制：</strong>刀具与材料剧烈机械摩擦 + 材料内部强烈塑性剪切变形，将结合区金属迅速加热至熔点以下亚固相热塑性状态。
+        <br><br>
+        <strong>结合机制：</strong>强大轴向锻造力（Forging Force）+ 旋转搅拌流场，热塑性金属发生剧烈宏观转移与微观混合，形成致密冶金连接。
+        <br><br>
+        <strong>晶粒细化机制：</strong>FSW剧烈热塑性加工伴随动态再结晶，焊缝区呈现极均匀的细晶显微组织，致密度类似经过重力锻打，抗疲劳性能数量级提升。
+      </div>
+      <div class="formula-box">
+        转速：1000~3000 RPM | 焊速：200~800 mm/min
+        <div class="formula-sub">轴向锻造力精确控制 | 泄漏率 ≤ 1×10⁻⁸ mbar·L/s</div>
+      </div>
+    </div>
+
+    <div class="phys-card c2">
+      <span class="phys-num">// 真空钎焊风险图谱</span>
+      <div class="phys-title">液相毛细动力学缺陷演变与热阻瓶颈</div>
+      <div class="phys-body">
+        <strong>热阻瓶颈本质：</strong>钎料合金（含大量硅等降熔元素）本征热导率远低于铝/铜母材，在热传导路径上引入额外接触热阻网络，直接削弱极限换热效率。
+        <br><br>
+        <strong>冶金缺陷演变链路：</strong>
+        <br>
+        液-固相变 → 杂质气体析出 + 微量氧化物干扰 → 焊缝内随机生成气孔/缩孔/非金属夹渣 → 长期热机械交变应力撕扯 → 疲劳裂纹萌生 → 不可逆微泄漏
+        <br><br>
+        <strong>质控成本高昂：</strong>为控制此风险，必须对每件产品进行X射线无损探伤全量透视，极大提升运营成本与交货周期。
+      </div>
+      <div class="warn-box">
+        <strong>⚠️ 企业主战略决策</strong>
+        若终端场景（户外储能、轨交、国防）对抗漏液绝对安全、极高结构耐压及恶劣环境适应力有一票否决权，FSW已毫无争议地成为战略首选。若需极大面积、极高密度的错综内部盲孔翅片同步粘接，真空钎焊的液态毛细特性依然具备几何优势。
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 05 质量体系 ═══ -->
+<div class="div-line"></div>
+<div class="sec-alt">
+<div class="sec" id="qc">
+  <div class="sec-header">
+    <span class="sec-idx">05 // QUALITY SYSTEM</span>
+    <h2 class="sec-title">全生命周期质量控制体系</h2>
+    <div class="sec-rule"></div>
+  </div>
+
+  <div class="qc-grid">
+    <div class="qc-card">
+      <div class="qc-card-title"><span>📏</span> 尺寸精度（CMM三坐标全检）</div>
+      <ul class="qc-list">
+        <li>接触底面平面度 <span class="qc-val">≤ 0.01mm / 10mm</span></li>
+        <li>流道深度公差 <span class="qc-val">±0.02mm</span></li>
+        <li>接口位置度 <span class="qc-val">±0.05mm</span></li>
+        <li>表面粗糙度（接触面） <span class="qc-val">Ra ≤ 0.4μm</span></li>
+        <li>整体外形尺寸 <span class="qc-val">±0.1mm</span></li>
+        <li>安装孔位置度 <span class="qc-val">±0.05mm</span></li>
+      </ul>
+    </div>
+    <div class="qc-card">
+      <div class="qc-card-title"><span>🔬</span> 焊接质量检测</div>
+      <ul class="qc-list">
+        <li>X射线探伤（钎焊空洞率） <span class="qc-val">≤ 5%</span></li>
+        <li>超声波C扫（FSW隧道缺陷） <span class="qc-val">零检出</span></li>
+        <li>金相切片（抽检） <span class="qc-val">按频次执行</span></li>
+        <li>焊缝外观 <span class="qc-val">100%目检</span></li>
+        <li>接头剪切强度 <span class="qc-val">≥ 母材80%</span></li>
+      </ul>
+    </div>
+    <div class="qc-card">
+      <div class="qc-card-title"><span>💧</span> 气密与液压测试（100%全检）</div>
+      <ul class="qc-list">
+        <li>气压浸水测试 <span class="qc-val">200kPa / 60s 无泡</span></li>
+        <li>液压耐压测试 <span class="qc-val">300kPa × 30s</span></li>
+        <li>氦质谱检漏（高端） <span class="qc-val">≤ 10⁻⁸ mbar·L/s</span></li>
+        <li>压降测试偏差 <span class="qc-val">≤ ±10%设计值</span></li>
+        <li>出水电导率 <span class="qc-val">≤ 5 μS/cm</span></li>
+      </ul>
+    </div>
+    <div class="qc-card">
+      <div class="qc-card-title"><span>🌡️</span> 热性能与可靠性验证</div>
+      <ul class="qc-list">
+        <li>热阻测试 Rth（抽检/首件全检） <span class="qc-val">≤ 设计值×1.1</span></li>
+        <li>冷热冲击（-40~125°C） <span class="qc-val">100次无泄漏</span></li>
+        <li>振动测试 <span class="qc-val">ISTA 2A标准</span></li>
+        <li>盐雾测试（铝件） <span class="qc-val">96h 无腐蚀</span></li>
+        <li>冷却液浸泡兼容性 <span class="qc-val">1000h 无异常</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="warn-box" style="margin-top:40px;padding:24px 28px;border-left-width:5px;font-size:13px;">
+    <strong>🔴 企业主必知：三大质量成本陷阱</strong>
+    ① <strong>钎焊空洞（Void）</strong>是热阻超标的第一杀手，钎焊炉建议配套X射线在线检测，前期百万级投入可避免批次返工巨额损失。<br>
+    ② <strong>接触面平面度超差1μm</strong>可使热阻增加约0.01 K/W，最终导致客户GPU超温报警，归因费时，高赔偿风险。<br>
+    ③ <strong>清洗不彻底</strong>导致颗粒物堵塞微流道，压降超标30%+，整批返工成本极高——颗粒度≥25μm必须零检出。
+  </div>
+</div>
+</div>
+
+<!-- ═══ 06 华南生态 ═══ -->
+<div class="div-line"></div>
+<div class="sec" id="ecosystem">
+  <div class="sec-header">
+    <span class="sec-idx">06 // SOUTH CHINA ECOSYSTEM</span>
+    <h2 class="sec-title">华南珠三角液冷热管理产业生态矩阵</h2>
+    <div class="sec-rule"></div>
+  </div>
+
+  <p style="max-width:820px;font-size:14px;margin-bottom:48px;">
+    华南地区已自发演化形成一套涵盖底层基础材料、高精度机械加工、热力学系统级仿真集成以及智能制造装备的<strong>高度垂直融合液冷产业链集群</strong>。高度密集的地理集群效应，极大压缩了从拓扑优化到量产落地的迭代生命周期。
+  </p>
+
+  <div class="region-grid" style="margin-bottom:56px;">
+    <div class="region-card">
+      <span class="region-city">// 深圳 SHENZHEN</span>
+      <div class="region-role">技术研发与系统集成双极核</div>
+      <p class="region-body">顶级上市科技企业聚集，以庞大科研经费、底层专利护城河，主导液冷控制技术标准制定与全球终端系统交付方案。代表：广东英维克技术（两相流相变冷却技术领导者，超1000项核心专利）。</p>
+    </div>
+    <div class="region-card">
+      <span class="region-city">// 广州 GUANGZHOU</span>
+      <div class="region-role">特种工程交付与国家级项目枢纽</div>
+      <p class="region-body">掌控宏观大尺度、特高压与极端工况下热管理系统工程化绝对话语权。代表：广州高澜节能技术（国家电网特高压液冷、超算中心、军工防务，2024年营收6.9亿元+20.58% YoY）。</p>
+    </div>
+    <div class="region-card">
+      <span class="region-city">// 东莞 DONGGUAN</span>
+      <div class="region-role">精密制造与自动化装备腹地</div>
+      <p class="region-body">滨海湾新区、茶山镇等区块集聚大量"专精特新"高新技术企业，构成液冷精密加工、材料科学与工业自动化的最强隐形躯干。形成五金机加工、界面材料、自动化设备三大细分生态圈。</p>
+    </div>
+  </div>
+
+  <h3 style="margin-top:0">双龙头企业深度技术解析</h3>
+  <div class="physics-grid" style="margin-bottom:48px;">
+    <div class="phys-card c5">
+      <span class="phys-num">// 广东英维克技术有限公司（Envicool） · 深圳</span>
+      <div class="phys-title">两相流与复合温控深水区的拓荒者</div>
+      <div class="phys-body">
+        <strong>核心实力：</strong>超80个CNAS认可测试实验室 | 全球400万套ICT制冷系统部署 | 累计减碳超2000万吨 | 1000+核心专利 | 深圳企业专利创新实力百强
+        <br><br>
+        <strong>革命性技术：复合型液冷板（专利CN120179040A）</strong>
+        <br><br>
+        <strong>第一级·蒸发腔（潜热剥离）：</strong>高导热底板+中层散热板封闭，内封低沸点相变冷却介质。超高热流导入时，液相介质汽化吸收巨大相变潜热，以极小温差实现热量闪速剥离。
+        <br><br>
+        <strong>第二级·散热腔（强制对流接力）：</strong>上盖板+中层散热板围合，内置高密度阵列化微流道，外部主循环强迫对流工质高速冲刷带走显热。
+        <br><br>
+        <strong>自适应内循环：</strong>中层散热件充当冷凝界面，气态介质接触冷面后迅速冷凝，在重力与毛细力作用下回流，形成无需外部泵功的内循环热管效应网络。
+      </div>
+      <div class="highlight-box">
+        📈 覆盖赛道：储能全链条直冷温控 · 泵驱两相冷板液冷 · 全域算力服务器液冷
+      </div>
+    </div>
+
+    <div class="phys-card c1">
+      <span class="phys-num">// 广州高澜节能技术股份有限公司（Gaolan） · 广州</span>
+      <div class="phys-title">特高压极端工况工程化交付钢铁先锋</div>
+      <div class="phys-body">
+        <strong>2024年核心数据：</strong>营收6.91亿元（+20.58% YoY）| 新增授权专利69项（发明21项）| 3项技术"国际领先"| 3项"国际先进"
+        <br><br>
+        <strong>战略落地版图：</strong>
+        <br>· 国家电网特高压直流柔性输电液冷系统
+        <br>· 国内首个国家级超算中心冷板式二次侧冷却工程（总包交付）
+        <br>· 马来西亚/中东/巴西数据中心液冷成套出海
+        <br>· <strong>舰载服务器阵列、高能激光防务武器系统</strong>液冷定型量产
+        <br><br>
+        <strong>供应链国产化突破：</strong>自研PLC控制系统替代进口；突破特种耐腐蚀国产PVDF管道材料量产，彻底消除"卡脖子"隐患。
+      </div>
+      <div class="highlight-box">
+        🛡️ 定位：特种重大工程防务、超大型算力集群总包、绝对自主安全供应链的战略级基石合作伙伴
+      </div>
+    </div>
+  </div>
+
+  <h3>东莞"专精特新"三大细分生态圈</h3>
+  <div class="topo-grid">
+    <div class="topo-card">
+      <span class="topo-icon">⚙️</span>
+      <div class="topo-title">精密机械切削与宏观金属成型群</div>
+      <p class="topo-text">服务超高密度翅片铲齿成型与复杂异形拓扑流道深孔钻削的极限加工需求。代表企业：东莞明丰五金制品、东莞市新朗五金塑胶制品、东莞市东尚五金制品、东莞三板斧机械工具、东莞鑫三益五金制品。<br><br>数十年模具与切削参数积淀，能将冷板微观加工交期从数周极限压缩至数天，构成第一/二级核心供应商阵列。</p>
+    </div>
+    <div class="topo-card">
+      <span class="topo-icon">🧪</span>
+      <div class="topo-title">界面传热新材料与密封技术阵列</div>
+      <p class="topo-text">服务于微观空气绝热沟壑消除与高压循环端口密封的材料科学需求。代表企业：东莞世皓新材料生物科技、广东星鲜保温材料科技（防凝露保温）；东莞井上橡塑加工、东莞市松宝塑胶制品（耐化学液腐蚀氟橡胶O型密封圈、高导热TIM/Thermal Pad）。<br><br>基础化工配方支撑起冷板严苛生命周期底座。</p>
+    </div>
+    <div class="topo-card">
+      <span class="topo-icon">🤖</span>
+      <div class="topo-title">固态焊接智造自动化与视觉品控</div>
+      <p class="topo-text">服务于FSW精密焊接与全自动品质检测的智能制造需求。代表企业：广东华恒智能科技、东莞市方圆鑫达智能装备、广东钲捷智能科技、东莞市新一代人工智能产业技术研究院。<br><br>提供定制化大型数控FSW工作站、机器视觉六轴机械臂矩阵、全自动氦气检漏设备，支撑算力中心爆发式订单吞吐，实现全数字化质量追溯。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 07 供应链 ═══ -->
+<div class="div-line"></div>
+<div class="sec-alt">
+<div class="sec" id="supply">
+  <div class="sec-header">
+    <span class="sec-idx">07 // SUPPLY CHAIN</span>
+    <h2 class="sec-title">华南液冷冷板量产代工与生产线装备</h2>
+    <div class="sec-rule"></div>
+  </div>
+
+  <h3 style="margin-top:0">核心代工制造企业（OEM/ODM）</h3>
+  <div class="sc-grid" style="margin-bottom:48px;">
+    <div class="sc-card" data-cat="MANUFACTURER">
+      <div class="sc-logo">ToneCooling（威铂驰热技术）</div>
+      <div class="sc-sub">深圳（销售中心）+ 东莞（制造基地）</div>
+      <p class="sc-body">占地<strong>12,000平方米</strong>现代化工厂，年产能超<strong>90万件</strong>。全线配备CNC精密加工、型材挤压、真空钎焊与搅拌摩擦焊（FSW）系统。提供从前期热仿真验证到大规模量产的端到端定制服务。</p>
+      <div class="sc-tags">
+        <span class="sc-tag">CNC精密加工</span>
+        <span class="sc-tag o">真空钎焊</span>
+        <span class="sc-tag g">FSW搅拌摩擦焊</span>
+        <span class="sc-tag v">热仿真验证</span>
+        <span class="sc-tag">90万件/年</span>
+      </div>
+    </div>
+    <div class="sc-card" data-cat="MANUFACTURER">
+      <div class="sc-logo">Kenfa Tech（肯发科技）</div>
+      <div class="sc-sub">东莞</div>
+      <p class="sc-body">专业液冷板制造工厂，工艺覆盖极广：<strong>铝基冷板FSW摩擦搅拌焊、高可靠性真空钎焊、复合埋铜管工艺、深孔钻削</strong>全套流水线。是工艺选型灵活性最高的代工选择，可根据性能需求推荐最优工艺路线。</p>
+      <div class="sc-tags">
+        <span class="sc-tag g">FSW铝基冷板</span>
+        <span class="sc-tag o">真空钎焊</span>
+        <span class="sc-tag">埋铜管复合</span>
+        <span class="sc-tag">深孔钻削</span>
+        <span class="sc-tag v">全工艺覆盖</span>
+      </div>
+    </div>
+    <div class="sc-card" data-cat="MANUFACTURER">
+      <div class="sc-logo">ALVC Industries Limited</div>
+      <div class="sc-sub">东莞（生产中心）+ 深圳（销售中心）</div>
+      <p class="sc-body">部署从产品设计、原型打样、热力学测试到批量化生产的<strong>一站式冷板制造产线</strong>。双城布局使其兼具广深技术资源整合与东莞制造成本优势，适合寻找一站式服务的国际采购商。</p>
+      <div class="sc-tags">
+        <span class="sc-tag">一站式服务</span>
+        <span class="sc-tag">原型快速打样</span>
+        <span class="sc-tag v">热力学测试</span>
+        <span class="sc-tag g">批量生产</span>
+      </div>
+    </div>
+    <div class="sc-card" data-cat="MANUFACTURER">
+      <div class="sc-logo">Pioneer / Awind / Kingka（金卡科技）</div>
+      <div class="sc-sub">东莞精密制造集群</div>
+      <p class="sc-body">均在东莞建设完善的液冷板代工生产线，具备<strong>热管组件、真空腔均温板（VC）及复杂水冷板</strong>的规模化制造与品控检测能力，各自在特定产品形态上形成差异化优势。</p>
+      <div class="sc-tags">
+        <span class="sc-tag">热管组件</span>
+        <span class="sc-tag v">均温板VC</span>
+        <span class="sc-tag o">复杂水冷板</span>
+        <span class="sc-tag g">规模化品控</span>
+      </div>
+    </div>
+  </div>
+
+  <h3>生产线装备供应商（FSW &amp; 自动化）</h3>
+  <div class="sc-grid" style="margin-bottom:48px;">
+    <div class="sc-card" data-cat="EQUIPMENT">
+      <div class="sc-logo">万宇科技</div>
+      <div class="sc-sub">东莞 · FSW生产线技术核心赋能者</div>
+      <p class="sc-body">冷板搅拌摩擦焊（FSW）生产线核心装备供应商。支持复杂流道（<strong>3D曲面、微通道</strong>）的高精度固态焊接，能够实现铝-铜等异种金属兼容焊接，为液冷散热系统制造商提供高强度、无气孔、无裂纹的量产产线支持。</p>
+      <div class="sc-tags">
+        <span class="sc-tag g">FSW整线方案</span>
+        <span class="sc-tag">3D曲面焊接</span>
+        <span class="sc-tag v">异种金属兼容</span>
+        <span class="sc-tag">交钥匙产线</span>
+      </div>
+    </div>
+    <div class="sc-card" data-cat="EQUIPMENT">
+      <div class="sc-logo">广东华恒智能科技 / 方圆鑫达 / 广东钲捷</div>
+      <div class="sc-sub">东莞 · 自动化装备"专精特新"矩阵</div>
+      <p class="sc-body">提供：<strong>定制化大型数控FSW工作站</strong>、搭载机器视觉测量的<strong>智能上下料六轴机械臂矩阵</strong>、<strong>全自动氦气试漏检测设备</strong>——极大降低对熟练工人的依赖，实现制造过程全数字化质量追溯，支撑海量算力中心爆发式订单吞吐。</p>
+      <div class="sc-tags">
+        <span class="sc-tag o">数控FSW工作站</span>
+        <span class="sc-tag">机器视觉六轴臂</span>
+        <span class="sc-tag g">全自动氦气检漏</span>
+        <span class="sc-tag v">数字化质量追溯</span>
+      </div>
+    </div>
+  </div>
+
+  <h3>原材料与关键配套供应链</h3>
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead>
+        <tr><th>类别</th><th>主要供应商/来源</th><th>选择关键参数</th><th>风险控制策略</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>铜原材料（Cu-ETP/TU2）</td><td>铜陵有色、江铜、金龙铜业</td><td>含铜量≥99.9%，电导率≥57 MS/m，材质证书</td><td>双供应商，备2~4周库存，来料IQC全检</td></tr>
+        <tr><td>铝原材料（6061-T6）</td><td>忠旺铝业、东轻铝业</td><td>合金牌号确认，热处理T6状态，厚度公差±0.05mm</td><td>认证供应商，来料IQC全检</td></tr>
+        <tr><td>CNC刀具（TiAlN涂层）</td><td>HITACHI日立、Walter、肯纳</td><td>涂层类型，刀径精度，寿命一致性</td><td>刀具寿命管理系统SOP，防意外断刀</td></tr>
+        <tr><td>钎焊材料（银铜/铜磷钎料）</td><td>贺利氏、Johnson Matthey、信越</td><td>银含量，熔点范围精确，毛细流动性</td><td>认证批次号管理，严防用错钎料</td></tr>
+        <tr><td>密封圈O-Ring（EPDM/Viton）</td><td>Parker、NOK，国内丁腈橡胶</td><td>冷却液兼容性，尺寸精度，Shore A硬度</td><td>冷却液浸泡测试验证，批次抽检</td></tr>
+        <tr><td>快插接头（OCP标准）</td><td>Stäubli、Colder、Walther Prüfsy</td><td>OCP规格兼容，泄漏率，插拔寿命</td><td>认证接头，严禁私自更换品牌</td></tr>
+        <tr><td>导热界面材料TIM</td><td>贺利氏、Laird、Henkel</td><td>导热率（W/m·K），工作温度，冷却液兼容性</td><td>热阻测试验证，批次一致性管控</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</div>
+
+<!-- ═══ 08 成本结构 ═══ -->
+<div class="div-line"></div>
+<div class="sec" id="cost">
+  <div class="sec-header">
+    <span class="sec-idx">08 // ECONOMICS</span>
+    <h2 class="sec-title">成本结构、降本路径与竞争力构建</h2>
+    <div class="sec-rule"></div>
+  </div>
+
+  <div class="cost-layout">
+    <div>
+      <h3 style="margin-top:0">典型铜冷板BOM成本构成参考</h3>
+      <div class="cost-item">
+        <div class="cost-label"><span>铜原材料（铜板+铜管）</span><span class="cost-pct">35~45%</span></div>
+        <div class="cost-track"><div class="cost-fill" style="width:0" data-w="40%"></div></div>
+      </div>
+      <div class="cost-item">
+        <div class="cost-label"><span>CNC加工人工+刀具耗材</span><span class="cost-pct">20~28%</span></div>
+        <div class="cost-track"><div class="cost-fill" style="width:0" data-w="24%"></div></div>
+      </div>
+      <div class="cost-item">
+        <div class="cost-label"><span>钎焊/FSW焊接工序</span><span class="cost-pct">10~15%</span></div>
+        <div class="cost-track"><div class="cost-fill" style="width:0" data-w="12%"></div></div>
+      </div>
+      <div class="cost-item">
+        <div class="cost-label"><span>表面处理（化学镀镍磷）</span><span class="cost-pct">5~10%</span></div>
+        <div class="cost-track"><div class="cost-fill" style="width:0" data-w="7%"></div></div>
+      </div>
+      <div class="cost-item">
+        <div class="cost-label"><span>接头+密封件配套</span><span class="cost-pct">5~8%</span></div>
+        <div class="cost-track"><div class="cost-fill" style="width:0" data-w="6%"></div></div>
+      </div>
+      <div class="cost-item">
+        <div class="cost-label"><span>检测质量成本（X射线/氦检/CMM）</span><span class="cost-pct">3~8%</span></div>
+        <div class="cost-track"><div class="cost-fill" style="width:0" data-w="5%"></div></div>
+      </div>
+      <div class="cost-item">
+        <div class="cost-label"><span>制造费用分摊（设备折旧+能耗）</span><span class="cost-pct">5~10%</span></div>
+        <div class="cost-track"><div class="cost-fill" style="width:0" data-w="7%"></div></div>
+      </div>
+    </div>
+
+    <div>
+      <h3 style="margin-top:0">降本路径与盈利模型</h3>
+      <div class="phys-card c3" style="margin-bottom:20px;padding:22px 26px;">
+        <span class="phys-num">// 规模化降本</span>
+        <div class="phys-body">铜材吨级采购比小量低10~15%；CNC刀具批量采购+磨刀再利用节省30%刀具成本；真空炉满载率50%→90%可使单件分摊降低40%；FSW设备固定资产投入仅为真空炉的1/10。</div>
+      </div>
+      <div class="phys-card c4" style="margin-bottom:20px;padding:22px 26px;">
+        <span class="phys-num">// 自动化投资回报</span>
+        <div class="phys-body">自动点涂TIM机（替代人工）、自动气密测试流水线、AI视觉缺陷识别系统，将人工成本降低30~50%，同时大幅提升一致性与可追溯性。良率每提升1%，在规模化后直接转化为可观利润。</div>
+      </div>
+      <div class="phys-card c1" style="padding:22px 26px;">
+        <span class="phys-num">// 毛利率与竞争格局</span>
+        <div class="phys-body">
+          <strong>量产成熟品：</strong>毛利率 20~35%<br>
+          <strong>首样/NPI阶段：</strong>极低甚至亏损（研发摊销）<br>
+          <strong>定制高端冷板：</strong>毛利率 40~50%<br>
+          <strong>进入头部客户：</strong>量大稳定，但议价能力随竞争压缩<br><br>
+          <strong>初步建厂设备投入：</strong> 2000~5000万元<br>
+          （含CNC×多台、真空炉或FSW、CMM、X射线、氦检台、热阻台）
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">高性能微通道液冷冷板 · 全生命周期工艺知识库</div>
+  <div class="footer-sub" style="margin-top:14px;line-height:2.2;">
+    基于：ResearchGate拓扑优化研究 · 英维克专利CN120179040A · 高澜2024年度报告 · 东莞专精特新产业名录
+    <br>
+    <span>物理原理</span> · <span>拓扑优化</span> · <span>制造工艺</span> · <span>FSW vs 钎焊</span> · <span>质量体系</span> · <span>华南生态</span> · <span>供应链</span> · <span>成本</span>
+    <br>
+    COLDPLATE · KNOWLEDGE BASE // ENTERPRISE EDITION 2025 // GREATER BAY AREA ECOSYSTEM
+  </div>
+</footer>
+
+<script>
+// ── Hamburger menu
+const menuBtn = document.getElementById('menuBtn');
+const navDrawer = document.getElementById('navDrawer');
+let drawerOpen = false;
+function closeDrawer(){
+  drawerOpen = false;
+  navDrawer.classList.remove('open');
+  menuBtn.setAttribute('aria-expanded','false');
+}
+menuBtn.addEventListener('click', () => {
+  drawerOpen = !drawerOpen;
+  navDrawer.classList.toggle('open', drawerOpen);
+  menuBtn.setAttribute('aria-expanded', drawerOpen);
+});
+document.querySelectorAll('.drawer-link').forEach(a => {
+  a.addEventListener('click', () => setTimeout(closeDrawer, 80));
+});
+document.addEventListener('click', e => {
+  if(drawerOpen && !navDrawer.contains(e.target) && !menuBtn.contains(e.target)) closeDrawer();
+});
+
+// ── Timeline scroll animation
+const steps = document.querySelectorAll('.t-step');
+const io = new IntersectionObserver(entries => {
+  entries.forEach((e,i) => {
+    if(e.isIntersecting){
+      setTimeout(() => e.target.classList.add('on'), i * 70);
+      io.unobserve(e.target);
+    }
+  });
+},{threshold:.1});
+steps.forEach(s => io.observe(s));
+
+// ── Cost bars
+const bars = document.querySelectorAll('.cost-fill');
+const bio = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(e.isIntersecting){
+      e.target.style.width = e.target.dataset.w;
+      bio.unobserve(e.target);
+    }
+  });
+},{threshold:.4});
+bars.forEach(b => bio.observe(b));
+
+// ── Nav active highlight
+const navAs = document.querySelectorAll('.nav-links a');
+window.addEventListener('scroll', () => {
+  let cur = '';
+  document.querySelectorAll('[id]').forEach(el => {
+    if(window.scrollY >= el.offsetTop - 80) cur = el.id;
+  });
+  navAs.forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#'+cur);
+  });
+},{passive:true});
+
+// ── KPI counter animation
+['k1','k4'].forEach(id => {
+  const el = document.getElementById(id);
+  if(!el) return;
+  const target = parseFloat(el.textContent);
+  const suffix = el.textContent.replace(String(Math.floor(target)),'');
+  el.textContent = '0';
+  const kio = new IntersectionObserver(([e]) => {
+    if(!e.isIntersecting) return;
+    let start;
+    const step = ts => {
+      if(!start) start = ts;
+      const p = Math.min((ts-start)/1400, 1);
+      const v = 1-Math.pow(1-p,3);
+      el.textContent = Math.floor(v * target) + suffix;
+      if(p < 1) requestAnimationFrame(step);
+      else el.textContent = target + suffix;
+    };
+    requestAnimationFrame(step);
+    kio.disconnect();
+  },{threshold:1});
+  kio.observe(el);
+});
+</script>
+</body>
+</html>
