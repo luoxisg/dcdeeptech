@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PSA Singapore — 智慧港口科技门户</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=Noto+Sans+SC:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #030a14;
+    --bg2: #060f1e;
+    --surface: rgba(6, 18, 38, 0.75);
+    --surface2: rgba(10, 24, 50, 0.9);
+    --border: rgba(0, 180, 255, 0.1);
+    --border-hi: rgba(0, 180, 255, 0.35);
+    --cyan: #00c8ff;
+    --cyan-glow: rgba(0,200,255,0.15);
+    --blue: #2b6cb0;
+    --blue-hi: #4facfe;
+    --purple: #6d28d9;
+    --green: #00e096;
+    --amber: #f59e0b;
+    --red: #ef4444;
+    --text: #dde8f5;
+    --muted: #6b8aaa;
+    --dim: #3a5570;
+    --psa-red: #e63946;
+    --psa-navy: #1d3461;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Sora','Noto Sans SC',sans-serif;
+    background:var(--bg);color:var(--text);overflow-x:hidden;
+  }
+
+  /* ── canvas ── */
+  #bg-canvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:.45;}
+
+  /* ── NAV ── */
+  nav{
+    position:fixed;top:0;width:100%;z-index:200;
+    display:flex;justify-content:space-between;align-items:center;
+    padding:14px 5vw;
+    background:rgba(3,10,20,.92);
+    backdrop-filter:blur(20px);
+    border-bottom:1px solid var(--border);
+  }
+  .nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none;}
+  .nav-logo .logo-box{
+    width:36px;height:36px;border-radius:10px;
+    background:linear-gradient(135deg,var(--psa-navy),var(--psa-red));
+    display:flex;align-items:center;justify-content:center;
+    font-weight:800;font-size:1rem;color:#fff;letter-spacing:-0.5px;
+  }
+  .nav-logo span{
+    font-size:.9rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+    background:linear-gradient(90deg,#fff,var(--cyan));
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  }
+  .nav-right{display:flex;align-items:center;gap:14px;}
+  .nav-ext{
+    font-size:.78rem;font-weight:600;color:var(--muted);text-decoration:none;
+    transition:color .2s;display:none;
+  }
+  .nav-ext:hover{color:var(--cyan);}
+  @media(min-width:768px){.nav-ext{display:inline;}}
+  .lang-btn{
+    background:transparent;border:1px solid var(--border-hi);
+    padding:7px 18px;color:var(--cyan);
+    font-family:inherit;font-size:.8rem;font-weight:700;letter-spacing:.5px;
+    border-radius:100px;cursor:pointer;transition:background .2s;
+  }
+  .lang-btn:hover{background:var(--cyan-glow);}
+
+  /* ── FADE ── */
+  .fu{opacity:0;transform:translateY(36px);transition:opacity .7s ease,transform .7s ease;}
+  .fu.v{opacity:1;transform:translateY(0);}
+  .fu:nth-child(2){transition-delay:.08s;}
+  .fu:nth-child(3){transition-delay:.16s;}
+  .fu:nth-child(4){transition-delay:.24s;}
+  .fu:nth-child(5){transition-delay:.32s;}
+  .fu:nth-child(6){transition-delay:.40s;}
+
+  /* ── HERO ── */
+  .hero{
+    min-height:100vh;display:flex;flex-direction:column;
+    justify-content:center;align-items:center;text-align:center;
+    padding:120px 5vw 80px;position:relative;z-index:1;
+  }
+  .hero-eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    background:rgba(230,57,70,.1);border:1px solid rgba(230,57,70,.3);
+    border-radius:100px;padding:6px 18px;
+    font-size:.72rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+    color:var(--psa-red);margin-bottom:24px;
+  }
+  .hero-eyebrow::before{
+    content:'';width:6px;height:6px;border-radius:50%;
+    background:var(--psa-red);animation:pulse 2s infinite;
+  }
+  @keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.3;transform:scale(.7);}}
+  .hero h1{
+    font-size:clamp(2.6rem,7vw,5.5rem);font-weight:800;line-height:1.1;
+    margin-bottom:22px;
+    background:linear-gradient(135deg,#fff 10%,var(--cyan) 55%,var(--blue-hi) 100%);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  }
+  .hero h1 em{font-style:normal;color:var(--psa-red);-webkit-text-fill-color:var(--psa-red);}
+  .hero-sub{font-size:clamp(.95rem,1.8vw,1.15rem);max-width:760px;line-height:1.9;color:var(--muted);margin-bottom:44px;}
+
+  /* stats strip */
+  .stats{display:flex;flex-wrap:wrap;justify-content:center;gap:20px;margin-bottom:52px;}
+  .stat{
+    background:var(--surface);border:1px solid var(--border);
+    border-radius:14px;padding:18px 28px;text-align:center;min-width:140px;
+  }
+  .stat-n{
+    font-size:1.9rem;font-weight:800;
+    background:linear-gradient(90deg,var(--cyan),var(--blue-hi));
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+    line-height:1;margin-bottom:6px;
+  }
+  .stat-l{font-size:.7rem;color:var(--muted);font-weight:600;letter-spacing:.5px;}
+
+  .hero-cta{display:flex;flex-wrap:wrap;justify-content:center;gap:14px;}
+  .btn-p{
+    display:inline-flex;align-items:center;gap:8px;
+    background:linear-gradient(135deg,var(--psa-navy),var(--blue));
+    padding:13px 30px;border-radius:100px;border:none;
+    color:#fff;font-family:inherit;font-size:.92rem;font-weight:700;
+    text-decoration:none;cursor:pointer;
+    transition:transform .2s,box-shadow .2s;
+  }
+  .btn-p:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(45,108,176,.45);}
+  .btn-o{
+    display:inline-flex;align-items:center;gap:8px;
+    background:transparent;border:1px solid var(--border-hi);
+    padding:13px 30px;border-radius:100px;
+    color:var(--text);font-family:inherit;font-size:.92rem;
+    text-decoration:none;cursor:pointer;transition:background .2s,color .2s;
+  }
+  .btn-o:hover{background:var(--cyan-glow);color:var(--cyan);}
+
+  /* ── SECTIONS ── */
+  section{padding:90px 5vw;position:relative;z-index:1;}
+  .inner{max-width:1280px;margin:0 auto;}
+  .eyebrow{font-size:.7rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--cyan);margin-bottom:12px;}
+  .sec-title{font-size:clamp(1.7rem,3.5vw,2.8rem);font-weight:800;color:#fff;margin-bottom:14px;line-height:1.2;}
+  .sec-desc{font-size:1rem;color:var(--muted);max-width:660px;line-height:1.8;margin-bottom:54px;}
+  .center{text-align:center;margin-left:auto;margin-right:auto;}
+  .divider{height:1px;max-width:1280px;margin:0 auto;background:linear-gradient(90deg,transparent,var(--border-hi),transparent);}
+
+  /* ── PSA PROFILE HERO CARD ── */
+  .psa-profile{
+    display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;
+    background:var(--surface2);border:1px solid var(--border-hi);
+    border-radius:24px;padding:48px;margin-bottom:60px;
+    position:relative;overflow:hidden;
+  }
+  .psa-profile::before{
+    content:'PSA';position:absolute;right:-20px;bottom:-40px;
+    font-size:18rem;font-weight:900;color:rgba(0,180,255,.025);
+    line-height:1;pointer-events:none;user-select:none;
+  }
+  @media(max-width:860px){.psa-profile{grid-template-columns:1fr;}}
+  .psa-profile-left h2{font-size:clamp(1.6rem,3vw,2.4rem);font-weight:800;color:#fff;margin-bottom:16px;line-height:1.25;}
+  .psa-profile-left h2 span{color:var(--cyan);}
+  .psa-profile-left p{font-size:.97rem;color:var(--muted);line-height:1.85;margin-bottom:20px;}
+  .psa-kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .psa-kpi{
+    background:rgba(0,180,255,.06);border:1px solid var(--border);
+    border-radius:12px;padding:16px;
+  }
+  .psa-kpi .kn{font-size:1.5rem;font-weight:800;color:var(--cyan);line-height:1;}
+  .psa-kpi .kl{font-size:.72rem;color:var(--muted);margin-top:4px;font-weight:600;}
+
+  /* logo row */
+  .partner-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px;}
+  .p-badge{
+    font-size:.72rem;font-weight:700;padding:5px 14px;border-radius:100px;
+    border:1px solid;letter-spacing:.5px;
+  }
+  .pb-red{color:var(--psa-red);border-color:rgba(230,57,70,.3);background:rgba(230,57,70,.07);}
+  .pb-cyan{color:var(--cyan);border-color:rgba(0,200,255,.3);background:rgba(0,200,255,.07);}
+  .pb-blue{color:var(--blue-hi);border-color:rgba(79,172,254,.3);background:rgba(79,172,254,.07);}
+  .pb-green{color:var(--green);border-color:rgba(0,224,150,.3);background:rgba(0,224,150,.07);}
+  .pb-amber{color:var(--amber);border-color:rgba(245,158,11,.3);background:rgba(245,158,11,.07);}
+
+  /* ── GRID CARDS ── */
+  .grid3{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:24px;}
+  .card{
+    background:var(--surface);border:1px solid var(--border);
+    border-radius:20px;padding:32px 26px;
+    transition:border-color .3s,transform .3s,box-shadow .3s;
+    position:relative;overflow:hidden;
+  }
+  .card::after{
+    content:'';position:absolute;inset:0;border-radius:20px;
+    background:linear-gradient(135deg,rgba(0,200,255,.05),transparent 60%);
+    opacity:0;transition:opacity .3s;pointer-events:none;
+  }
+  .card:hover{border-color:var(--border-hi);transform:translateY(-6px);box-shadow:0 20px 50px rgba(0,140,200,.14);}
+  .card:hover::after{opacity:1;}
+  .card-icon{font-size:1.6rem;margin-bottom:16px;}
+  .card-num{font-size:.65rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--dim);margin-bottom:8px;}
+  .card h3{font-size:1.1rem;font-weight:700;color:#fff;margin-bottom:12px;line-height:1.4;}
+  .card p{font-size:.9rem;line-height:1.8;color:var(--muted);margin-bottom:18px;}
+  .tag-row{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px;}
+  .tag{font-size:.67rem;font-weight:700;padding:3px 10px;border-radius:100px;border:1px solid;white-space:nowrap;}
+  .tc{color:var(--cyan);border-color:rgba(0,200,255,.3);background:rgba(0,200,255,.06);}
+  .tb{color:var(--blue-hi);border-color:rgba(79,172,254,.3);background:rgba(79,172,254,.06);}
+  .tg{color:var(--green);border-color:rgba(0,224,150,.3);background:rgba(0,224,150,.06);}
+  .ta{color:var(--amber);border-color:rgba(245,158,11,.3);background:rgba(245,158,11,.06);}
+  .tp{color:#b97fff;border-color:rgba(185,127,255,.3);background:rgba(185,127,255,.06);}
+  .tr{color:var(--psa-red);border-color:rgba(230,57,70,.3);background:rgba(230,57,70,.06);}
+  .link-row{display:flex;flex-wrap:wrap;gap:8px;}
+  .ext{
+    display:inline-flex;align-items:center;gap:5px;
+    font-size:.74rem;font-weight:700;color:var(--cyan);text-decoration:none;
+    padding:5px 12px;border:1px solid rgba(0,200,255,.2);
+    border-radius:100px;background:rgba(0,200,255,.04);
+    transition:background .2s,border-color .2s;
+  }
+  .ext:hover{background:rgba(0,200,255,.12);border-color:var(--cyan);}
+  .ext::after{content:'↗';font-size:.66rem;opacity:.6;}
+
+  /* ── INNOVATION CARDS (wider) ── */
+  .grid2{display:grid;grid-template-columns:repeat(auto-fill,minmax(440px,1fr));gap:24px;}
+
+  /* ── EXPERT CARDS ── */
+  .expert-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:24px;}
+  .ecard{
+    background:var(--surface2);border:1px solid rgba(109,40,217,.2);
+    border-radius:20px;padding:32px 28px;
+    transition:border-color .3s,box-shadow .3s,transform .3s;
+    position:relative;overflow:hidden;
+  }
+  .ecard::before{
+    content:'';position:absolute;top:0;left:0;right:0;height:2px;
+    background:linear-gradient(90deg,var(--purple),var(--cyan));
+    opacity:0;transition:opacity .3s;
+  }
+  .ecard:hover{border-color:rgba(109,40,217,.5);box-shadow:0 16px 46px rgba(109,40,217,.18);transform:translateY(-4px);}
+  .ecard:hover::before{opacity:1;}
+  .ecard-av{
+    width:52px;height:52px;border-radius:14px;
+    background:linear-gradient(135deg,var(--purple),var(--blue));
+    display:flex;align-items:center;justify-content:center;
+    font-size:1.3rem;margin-bottom:18px;
+  }
+  .award-pill{
+    display:inline-flex;align-items:center;gap:5px;
+    background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);
+    border-radius:100px;padding:4px 12px;
+    font-size:.7rem;font-weight:700;color:var(--amber);margin-bottom:14px;
+  }
+  .award-pill::before{content:'★';}
+  .ecard h3{font-size:1.15rem;font-weight:700;color:#fff;margin-bottom:4px;}
+  .ecard-role{font-size:.78rem;color:var(--cyan);font-weight:600;margin-bottom:3px;}
+  .ecard-org{font-size:.75rem;color:var(--dim);margin-bottom:14px;}
+  .ecard p{font-size:.88rem;line-height:1.8;color:var(--muted);margin-bottom:16px;}
+
+  /* ── TIMELINE ── */
+  .tl-wrap{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start;}
+  @media(max-width:800px){.tl-wrap{grid-template-columns:1fr;}}
+  .tl{position:relative;padding-left:26px;}
+  .tl::before{
+    content:'';position:absolute;left:0;top:0;bottom:0;width:2px;
+    background:linear-gradient(to bottom,var(--cyan),var(--purple),transparent);
+  }
+  .tl-item{position:relative;margin-bottom:36px;padding-left:22px;}
+  .tl-item::before{
+    content:'';position:absolute;left:-31px;top:6px;
+    width:9px;height:9px;border-radius:50%;
+    background:var(--cyan);border:2px solid var(--bg);
+    box-shadow:0 0 10px var(--cyan);
+  }
+  .tl-date{font-size:.72rem;color:var(--cyan);font-weight:700;margin-bottom:5px;letter-spacing:.5px;}
+  .tl-item h4{font-size:.95rem;font-weight:700;color:#fff;margin-bottom:5px;}
+  .tl-item p{font-size:.84rem;color:var(--muted);line-height:1.7;}
+
+  /* ── RESOURCE GRID ── */
+  .rgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px;}
+  .rcard{
+    background:var(--surface);border:1px solid var(--border);
+    border-radius:16px;padding:22px;text-decoration:none;color:inherit;
+    display:flex;flex-direction:column;gap:8px;
+    transition:border-color .3s,transform .2s,box-shadow .2s;
+  }
+  .rcard:hover{border-color:var(--border-hi);transform:translateY(-3px);box-shadow:0 10px 28px rgba(0,140,200,.1);}
+  .rcard-icon{font-size:1.4rem;}
+  .rcard-cat{font-size:.65rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);}
+  .rcard h4{font-size:.92rem;font-weight:700;color:#fff;line-height:1.4;}
+  .rcard span{font-size:.8rem;color:var(--muted);line-height:1.6;}
+  .rcard-link{margin-top:auto;font-size:.74rem;font-weight:700;color:var(--cyan);display:flex;align-items:center;gap:4px;}
+
+  /* ── FOOTER ── */
+  footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:44px 5vw;text-align:center;}
+  footer p{font-size:.8rem;color:var(--dim);line-height:1.9;}
+  footer a{color:var(--cyan);text-decoration:none;}
+  footer a:hover{text-decoration:underline;}
+
+  @media(max-width:600px){
+    .stats{flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start;padding-bottom:8px;}
+    .stat{flex-shrink:0;}
+  }
+</style>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+
+<nav>
+  <a class="nav-logo" href="https://www.globalpsa.com" target="_blank" rel="noopener">
+    <div class="logo-box">PSA</div>
+    <span data-k="nav_title">PSA Singapore Science</span>
+  </a>
+  <div class="nav-right">
+    <a class="nav-ext" href="https://www.globalpsa.com" target="_blank" rel="noopener">PSA Global</a>
+    <a class="nav-ext" href="https://www.singaporepsa.com" target="_blank" rel="noopener">PSA SG</a>
+    <a class="nav-ext" href="https://www.maritimeinstitute.sg" target="_blank" rel="noopener">SMI</a>
+    <a class="nav-ext" href="https://www.mpa.gov.sg" target="_blank" rel="noopener">MPA</a>
+    <button class="lang-btn" onclick="toggleLang()">中文 / EN</button>
+  </div>
+</nav>
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<header class="hero">
+  <div class="hero-eyebrow fu" data-k="hero_badge">PSA International · 大士港 · 科技创新</div>
+  <h1 class="fu" data-k="hero_h1_html">全球最大全自动化港口<br><em>PSA Singapore</em> 的科技革命</h1>
+  <p class="hero-sub fu" data-k="hero_sub">PSA Singapore 2024年创下全球最高单港吞吐量40.9百万TEU纪录，大士港正以200辆AGV、多云AI平台与全电化愿景，重塑全球供应链的未来。</p>
+
+  <div class="stats fu">
+    <div class="stat">
+      <div class="stat-n">40.9M</div>
+      <div class="stat-l" data-k="s1">2024年吞吐量（TEU）</div>
+    </div>
+    <div class="stat">
+      <div class="stat-n">100.2M</div>
+      <div class="stat-l" data-k="s2">PSA集团全球总吞吐量</div>
+    </div>
+    <div class="stat">
+      <div class="stat-n">65M</div>
+      <div class="stat-l" data-k="s3">大士港目标容量（TEU）</div>
+    </div>
+    <div class="stat">
+      <div class="stat-n">200+</div>
+      <div class="stat-l" data-k="s4">部署AGV数量</div>
+    </div>
+    <div class="stat">
+      <div class="stat-n">600+</div>
+      <div class="stat-l" data-k="s5">全球直连港口</div>
+    </div>
+  </div>
+
+  <div class="hero-cta fu">
+    <a class="btn-p" href="https://www.singaporepsa.com" target="_blank" rel="noopener" data-k="cta1">PSA Singapore 官网</a>
+    <a class="btn-o" href="https://www.globalpsa.com/innovation/" target="_blank" rel="noopener" data-k="cta2">PSA 创新中心</a>
+  </div>
+</header>
+
+<div class="divider"></div>
+
+<!-- ═══════════════ PSA PROFILE ═══════════════ -->
+<section>
+  <div class="inner">
+    <div class="eyebrow fu" data-k="profile_eyebrow">集团概况</div>
+
+    <div class="psa-profile fu">
+      <div class="psa-profile-left">
+        <h2 data-k="profile_h2_html">PSA International<br><span>全球供应链枢纽</span></h2>
+        <p data-k="profile_p">PSA International 是世界领先的港口集团与供应链解决方案提供商，旗下新加坡大士港（Tuas Port）是全球最大全自动化集装箱港口。PSA 的战略创新横跨智慧港口技术、可持续脱碳、供应链数字化与风险投资四大维度，通过旗下 CrimsonLogic、PSA Marine 与 PSA Ventures 形成完整生态。</p>
+        <div class="partner-row">
+          <span class="p-badge pb-red">Tuas Port</span>
+          <span class="p-badge pb-cyan">PSAT 4.0</span>
+          <span class="p-badge pb-blue">PSA Ventures</span>
+          <span class="p-badge pb-green">CrimsonLogic</span>
+          <span class="p-badge pb-amber">PSA Marine</span>
+          <span class="p-badge pb-cyan">OptETruck</span>
+        </div>
+      </div>
+      <div class="psa-kpi-grid">
+        <div class="psa-kpi">
+          <div class="kn">$20B</div>
+          <div class="kl" data-k="kpi1">大士港总投资额</div>
+        </div>
+        <div class="psa-kpi">
+          <div class="kn">1337 ha</div>
+          <div class="kl" data-k="kpi2">大士港总面积</div>
+        </div>
+        <div class="psa-kpi">
+          <div class="kn">66</div>
+          <div class="kl" data-k="kpi3">满建后泊位总数</div>
+        </div>
+        <div class="psa-kpi">
+          <div class="kn">50%</div>
+          <div class="kl" data-k="kpi4">AGV较柴油车减排</div>
+        </div>
+        <div class="psa-kpi">
+          <div class="kn">26 km</div>
+          <div class="kl" data-k="kpi5">码头岸线总长度</div>
+        </div>
+        <div class="psa-kpi">
+          <div class="kn">2040s</div>
+          <div class="kl" data-k="kpi6">大士港全面竣工目标</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════ PSA TECH PILLARS ═══════════════ -->
+<section>
+  <div class="inner">
+    <div class="eyebrow fu" data-k="tech_eyebrow">技术战略</div>
+    <h2 class="sec-title fu" data-k="tech_title">PSA Technology 4.0 — 四大核心技术支柱</h2>
+    <p class="sec-desc fu" data-k="tech_desc">PSAT 4.0 是 PSA 横跨港口、企业、商业智能、货物与海事科技的全维度技术蓝图，由技术行动小组（TAG）主导在新加坡与安特卫普旗舰港口同步推进。</p>
+
+    <div class="grid3">
+
+      <div class="card fu">
+        <div class="card-icon">🤖</div>
+        <div class="card-num">PILLAR 01</div>
+        <h3 data-k="p1_title">港口自动化与AI智能运营</h3>
+        <p data-k="p1_desc">大士港已部署全球最大规模逾200辆全电化AGV，24小时不间断运作，单次20分钟即可充满电续航6至8小时。AI驱动的全球码头操作系统（GTOS）整合预见性维护、实时可视化与供应链中断应对，自动化起重机系统则实现了真正的"无人码头"作业。</p>
+        <div class="tag-row">
+          <span class="tag tc">GTOS</span>
+          <span class="tag tb">200+ AGV</span>
+          <span class="tag tg">全电化</span>
+          <span class="tag tc">AI 预见维护</span>
+        </div>
+        <div class="link-row">
+          <a class="ext" href="https://www.globalpsa.com/innovation/" target="_blank" rel="noopener" data-k="p1_l1">PSA 创新页面</a>
+          <a class="ext" href="https://www.dell.com/en-us/blog/psa-multicloud-innovation/" target="_blank" rel="noopener">PSA 多云案例</a>
+        </div>
+      </div>
+
+      <div class="card fu">
+        <div class="card-icon">☁️</div>
+        <div class="card-num">PILLAR 02</div>
+        <h3 data-k="p2_title">多云架构与数字平台</h3>
+        <p data-k="p2_desc">PSA 与 Dell Technologies 合作构建多云环境，支撑大规模机器学习与大数据分析，将新IT方案开发周期从数月压缩至数周。旗下 CrimsonLogic 率先在全球推出新加坡单一窗口贸易便利化系统，已向40余国输出数字政府和港口技术。GLOBAL PORTNET（GPN）串联港口社区、船公司与政府机构，中国广西已实现文件处理节省60%。</p>
+        <div class="tag-row">
+          <span class="tag tb">Multi-Cloud</span>
+          <span class="tag tc">CrimsonLogic</span>
+          <span class="tag tg">GPN</span>
+          <span class="tag ta">TradeNet</span>
+        </div>
+        <div class="link-row">
+          <a class="ext" href="https://www.globalpsa.com/global-network/" target="_blank" rel="noopener" data-k="p2_l1">PSA 数字生态</a>
+          <a class="ext" href="https://www.crimsonlogic.com" target="_blank" rel="noopener">CrimsonLogic</a>
+        </div>
+      </div>
+
+      <div class="card fu">
+        <div class="card-icon">🚛</div>
+        <div class="card-num">PILLAR 03</div>
+        <h3 data-k="p3_title">OptETruck — 港口陆路智慧物流</h3>
+        <p data-k="p3_desc">PSA 自主研发的 OptETruck 是云原生运输管理系统，通过API开放接入实现自动排班与资产共享。系统基于实时数据优化路线分配，将空车行驶次数减少50%，每年减少约1000万千克CO2排放，相当于种下30万棵树。荣获 OpenGov Asia 2024卓越认可奖。</p>
+        <div class="tag-row">
+          <span class="tag tg">OptETruck</span>
+          <span class="tag tc">云原生</span>
+          <span class="tag tg">-50% 空车</span>
+          <span class="tag tb">API 开放</span>
+        </div>
+        <div class="link-row">
+          <a class="ext" href="https://archive.opengovasia.com/2024/09/06/exclusive-psa-singapores-digital-leap-in-the-maritime-and-logistics-ecosystem/" target="_blank" rel="noopener" data-k="p3_l1">OpenGov 深度报道</a>
+        </div>
+      </div>
+
+      <div class="card fu">
+        <div class="card-icon">🌱</div>
+        <div class="card-num">PILLAR 04</div>
+        <h3 data-k="p4_title">港口电气化与可持续脱碳</h3>
+        <p data-k="p4_desc">PSA 与 Amperesand 开展固态变压器技术合作试点（2025年中启动），验证高功率充电基础设施在电动车队中的性能与成本。PSA 同时探索氢燃料补给站等绿色技术，AGV相较传统柴油车已减碳约50%，配合新加坡2030气候目标推进净零港口路径。</p>
+        <div class="tag-row">
+          <span class="tag tg">固态变压器</span>
+          <span class="tag tg">氢能源</span>
+          <span class="tag tc">净零排放</span>
+          <span class="tag tb">Amperesand</span>
+        </div>
+        <div class="link-row">
+          <a class="ext" href="https://splash247.com/psa-international-to-test-sustainable-electrification-at-singapore-port/" target="_blank" rel="noopener" data-k="p4_l1">电气化试点报道</a>
+        </div>
+      </div>
+
+      <div class="card fu">
+        <div class="card-icon">💡</div>
+        <div class="card-num">PILLAR 05</div>
+        <h3 data-k="p5_title">PSA Ventures — 风险投资与创新孵化</h3>
+        <p data-k="p5_desc">2025年初，PSA 将创新加速平台 PSA unboXed 升级为 PSA Ventures，聚焦四大域：码头技术、绿色能源转型、供应链与物流、数据与数字。通过商业化知识产权与联合创投，加速推进智能更绿色供应链生态建设。</p>
+        <div class="tag-row">
+          <span class="tag tp">PSA Ventures</span>
+          <span class="tag tc">Green Energy</span>
+          <span class="tag tb">Terminal Tech</span>
+          <span class="tag tg">Cybersecurity</span>
+        </div>
+        <div class="link-row">
+          <a class="ext" href="https://www.globalpsa.com/psa-unboxed-evolves-into-psa-ventures-to-drive-sustainable-innovation-and-growth-in-global-supply-chains/" target="_blank" rel="noopener" data-k="p5_l1">PSA Ventures 公告</a>
+        </div>
+      </div>
+
+      <div class="card fu">
+        <div class="card-icon">🏗️</div>
+        <div class="card-num">PILLAR 06</div>
+        <h3 data-k="p6_title">PSA 供应链枢纽 @ 大士 (PSCH)</h3>
+        <p data-k="p6_desc">2024年10月，PSA 正式动土造价6.475亿新元的 PSCH 综合物流枢纽，占地超过18.5公顷，配备9300平方米高40米的自动仓储与取货系统（ASRS）以及智能仓库数据交换平台（iWX），预计2027年开放，将取代肯特岗货运站。</p>
+        <div class="tag-row">
+          <span class="tag tr">S$647.5M</span>
+          <span class="tag tb">ASRS 自动仓储</span>
+          <span class="tag tc">iWX 数据平台</span>
+          <span class="tag tg">2027开放</span>
+        </div>
+        <div class="link-row">
+          <a class="ext" href="https://www.automotivelogistics.media/digitalisation/psa-automating-container-handling-at-tuas-port/46848.article" target="_blank" rel="noopener" data-k="p6_l1">PSCH 详情报道</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════ MPA R&D THRUSTS ═══════════════ -->
+<section>
+  <div class="inner">
+    <div class="eyebrow fu" data-k="thrust_eyebrow">MPA 研发路线图 2030</div>
+    <h2 class="sec-title fu" data-k="thrust_title">五大国家级海事科研战略方向</h2>
+    <p class="sec-desc fu" data-k="thrust_desc">PSA 与 MPA 的创新战略高度协同。以下为新加坡国家海事研发路线图2030的五大战略重点，PSA 是多项领域的核心实施方。</p>
+
+    <div class="grid3">
+      <div class="card fu">
+        <div class="card-icon">📡</div>
+        <div class="card-num">THRUST 01</div>
+        <h3 data-k="t1_title">下一代船舶交通管理（NGVTMS）</h3>
+        <p data-k="t1_desc">AI驱动的新一代船舶交通管理系统，结合5G与卫星实时监控船舶动态，优化泊位分配、预防拥堵与碰撞。SGTraDex数据共享平台支撑端到端JIT到港调度，PSA digitalPORT@SG™实现港口社区全流程数字化通关。</p>
+        <div class="tag-row"><span class="tag tc">NGVTMS</span><span class="tag tb">SGTraDex</span><span class="tag tg">JIT到港</span></div>
+        <div class="link-row">
+          <a class="ext" href="https://sgtradex.com" target="_blank" rel="noopener">SGTraDex</a>
+          <a class="ext" href="https://www.mpa.gov.sg/maritime-singapore/port-of-the-future" target="_blank" rel="noopener" data-k="t1_l2">MPA 港口未来</a>
+        </div>
+      </div>
+
+      <div class="card fu">
+        <div class="card-icon">🚢</div>
+        <div class="card-num">THRUST 02</div>
+        <h3 data-k="t2_title">水面自主船舶（MASS）</h3>
+        <p data-k="t2_desc">推进水面自主船舶商业化，海事无人机庄园开展港区无人机物流试验。A*STAR IHPC高级仿真评估电动渡轮与拖船电气化对新加坡电网的影响，PSA Marine探索自主拖轮与港区安全巡逻应用。</p>
+        <div class="tag-row"><span class="tag tp">MASS</span><span class="tag tc">无人机物流</span><span class="tag tg">电动拖轮</span></div>
+        <div class="link-row">
+          <a class="ext" href="https://www.maritimeinstitute.sg" target="_blank" rel="noopener">SMI</a>
+          <a class="ext" href="https://www.a-star.edu.sg/ihpc" target="_blank" rel="noopener">A*STAR IHPC</a>
+        </div>
+      </div>
+
+      <div class="card fu">
+        <div class="card-icon">🔐</div>
+        <div class="card-num">THRUST 03</div>
+        <h3 data-k="t3_title">MariOT — 全球首个海事网络物理测试平台</h3>
+        <p data-k="t3_desc">MPA与SUTD于2025年3月联合启用全球首个工业级船载OT测试平台MariOT，模拟导航、推进与电力管理系统的真实网络攻击并开展红蓝对抗演练。CyberSafe记分卡帮助中小船东提升网络就绪度。</p>
+        <div class="tag-row"><span class="tag ta">MariOT</span><span class="tag ta">CyberSafe</span><span class="tag tb">SUTD iTrust</span></div>
+        <div class="link-row">
+          <a class="ext" href="https://www.sutd.edu.sg/media-releases-listing/mpa-commissions-mariot-training-facility/" target="_blank" rel="noopener">SUTD: MariOT</a>
+          <a class="ext" href="https://www.mpa.gov.sg/media-centre/details/collective-efforts-to-strengthen-maritime-cybersecurity" target="_blank" rel="noopener" data-k="t3_l2">MPA 网络安全</a>
+        </div>
+      </div>
+
+      <div class="card fu">
+        <div class="card-icon">🌿</div>
+        <div class="card-num">THRUST 04</div>
+        <h3 data-k="t4_title">替代燃料加注与GCMD绿色走廊</h3>
+        <p data-k="t4_desc">GCMD主导甲醇（TR 129标准）与氨燃料安全实地试验，400项风险均获评低或可控。MPA与鹿特丹港共建绿色数字航运走廊（GDSC），首次生物甲烷加注已于2024年10月完成，目标2027年首批可持续航线启航。</p>
+        <div class="tag-row"><span class="tag tg">GCMD</span><span class="tag tg">甲醇 TR129</span><span class="tag tg">氨燃料</span><span class="tag tc">GDSC</span></div>
+        <div class="link-row">
+          <a class="ext" href="https://www.gcformd.org" target="_blank" rel="noopener">GCMD 官网</a>
+          <a class="ext" href="https://www.maritimeinstitute.sg/singapore-maritime-institute-sparks-rd-stakeholders-to-accelerate-maritime-decarbonisation-towards-a-net-zero-future/" target="_blank" rel="noopener" data-k="t4_l2">SMI 脱碳路径</a>
+        </div>
+      </div>
+
+      <div class="card fu">
+        <div class="card-icon">📋</div>
+        <div class="card-num">THRUST 05</div>
+        <h3 data-k="t5_title">DocuMind — AI智能单证识别</h3>
+        <p data-k="t5_desc">PSA与合作方推进AI单证智能识别系统（DocuMind），结合光学字符识别与自然语言处理，大幅压缩提单、报关单、海关文件的人工处理周期，配合大士港多云平台实现"无纸化"端到端港口通关链路。</p>
+        <div class="tag-row"><span class="tag tc">DocuMind</span><span class="tag tb">NLP</span><span class="tag tg">无纸化</span><span class="tag tc">OCR</span></div>
+        <div class="link-row">
+          <a class="ext" href="https://www.mpa.gov.sg/maritime-singapore/port-of-the-future" target="_blank" rel="noopener" data-k="t5_l1">MPA 港口未来</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════ EXPERTS ═══════════════ -->
+<section>
+  <div class="inner">
+    <div class="eyebrow fu center" data-k="expert_eyebrow">顶尖科研人才</div>
+    <h2 class="sec-title fu center" data-k="expert_title">首届SMI院士奖获奖者（2023）</h2>
+    <p class="sec-desc fu center" data-k="expert_desc">2023年11月6日第13届SMI论坛颁出首届院士奖，四位资深研究员获200万新元三年资助，研究方向与PSA技术路线高度契合。</p>
+
+    <div class="expert-grid">
+      <div class="ecard fu">
+        <div class="ecard-av">👩‍🔬</div>
+        <div class="award-pill" data-k="a1_award">首届SMI院士奖 2023</div>
+        <h3 data-k="a1_name">吴思慧副教授</h3>
+        <div class="ecard-role" data-k="a1_role">ISEM系主任</div>
+        <div class="ecard-org">NUS CDE · 海事研究中心研究负责人</div>
+        <p data-k="a1_desc">领衔海运排放脱碳建模与自适应船队更新战略规划研究。担任IMO第四次温室气体研究报告专家评审员，与PSA港口电气化评估研究紧密协同。</p>
+        <div class="link-row">
+          <a class="ext" href="https://maritimestudies.nus.edu.sg/research/smi-fellows-award-associate-professor-ng-szu-hui-2/" target="_blank" rel="noopener">NUS CMS 主页</a>
+          <a class="ext" href="https://maritimestudies.nus.edu.sg/events/articles/navigating-uncertainty/" target="_blank" rel="noopener" data-k="a1_l2">SMRC 演讲</a>
+        </div>
+      </div>
+
+      <div class="ecard fu">
+        <div class="ecard-av">🤖</div>
+        <div class="award-pill" data-k="a2_award">首届SMI院士奖 2023</div>
+        <h3 data-k="a2_name">付秀菊博士</h3>
+        <div class="ecard-role" data-k="a2_role">海事AI研究计划主任</div>
+        <div class="ecard-org">A*STAR IHPC · 首席科学家</div>
+        <p data-k="a2_desc">专攻AI建模与大数据智能，开发动态上下文感知机器学习模型保障港口安全航行，并主导评估电动港口船舶电气化对新加坡电网负荷影响的仿真研究，与 PSA 电气化路径研究直接对接。</p>
+        <div class="link-row">
+          <a class="ext" href="https://www.a-star.edu.sg/ihpc" target="_blank" rel="noopener">A*STAR IHPC</a>
+          <a class="ext" href="https://www.maritimeinstitute.sg/singapore-maritime-institute-sparks-rd-stakeholders-to-accelerate-maritime-decarbonisation-towards-a-net-zero-future/" target="_blank" rel="noopener" data-k="a2_l2">SMI院士奖</a>
+        </div>
+      </div>
+
+      <div class="ecard fu">
+        <div class="ecard-av">🧪</div>
+        <div class="award-pill" data-k="a3_award">首届SMI院士奖 2023</div>
+        <h3 data-k="a3_name">刘明博士</h3>
+        <div class="ecard-role" data-k="a3_role">替代能源研究负责人</div>
+        <div class="ecard-org">NTU MESD CoE · 高级研究员</div>
+        <p data-k="a3_desc">在南洋理工大学海事能源与可持续发展卓越中心主导氨与生物燃料安全性研究，承担SMI资助的"氨加注释放缓减技术与环境影响"项目，为PSA绿色港口目标提供科学支撑。</p>
+        <div class="link-row">
+          <a class="ext" href="https://www.ntu.edu.sg/mae/research/research-facilities/maritime-energy-sustainable-development" target="_blank" rel="noopener">NTU MESD</a>
+          <a class="ext" href="https://www.maritimeinstitute.sg/singapore-maritime-institute-sparks-rd-stakeholders-to-accelerate-maritime-decarbonisation-towards-a-net-zero-future/" target="_blank" rel="noopener" data-k="a3_l2">SMI 论坛</a>
+        </div>
+      </div>
+
+      <div class="ecard fu">
+        <div class="ecard-av">🌊</div>
+        <div class="award-pill" data-k="a4_award">首届SMI院士奖 2023</div>
+        <h3 data-k="a4_name">Pavel Tkalich 博士</h3>
+        <div class="ecard-role" data-k="a4_role">首席研究员 / 高级科学家</div>
+        <div class="ecard-org">NUS TMSI · TCOMS 海洋离岸技术中心</div>
+        <p data-k="a4_desc">专注海洋环境数值建模与仿真，为港口水质、溢油应急响应与波浪场预报提供科学支撑，数字孪生技术积累深厚，直接服务PSA大士港口的海洋安全应急管理平台需求。</p>
+        <div class="link-row">
+          <a class="ext" href="https://www.tmsi.nus.edu.sg" target="_blank" rel="noopener">NUS TMSI</a>
+          <a class="ext" href="https://www.maritimeinstitute.sg/singapore-maritime-institute-sparks-rd-stakeholders-to-accelerate-maritime-decarbonisation-towards-a-net-zero-future/" target="_blank" rel="noopener" data-k="a4_l2">SMI 院士奖公告</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════ TIMELINE ═══════════════ -->
+<section>
+  <div class="inner">
+    <div class="tl-wrap">
+      <div>
+        <div class="eyebrow fu" data-k="tl_eyebrow">关键里程碑</div>
+        <h2 class="sec-title fu" data-k="tl_title">PSA 与海事科技大事记</h2>
+        <p class="sec-desc fu" data-k="tl_desc">近年 PSA Singapore 与新加坡海事生态的重大科技突破，印证其全球领先港口的创新地位。</p>
+      </div>
+      <div class="tl fu">
+        <div class="tl-item">
+          <div class="tl-date">2022年9月</div>
+          <h4 data-k="tl1_h">大士港一期正式开港</h4>
+          <p data-k="tl1_p">首批3个泊位投入运营，开始以AGV与自动化起重机开创全球最大全自动化集装箱港口时代。</p>
+        </div>
+        <div class="tl-item">
+          <div class="tl-date">2023年11月</div>
+          <h4 data-k="tl2_h">首届SMI院士奖颁发</h4>
+          <p data-k="tl2_p">第13届SMI论坛颁发首届院士奖，同期SMI向逾10个项目拨款2300万新元，海事AI与脱碳研究全面加速。</p>
+        </div>
+        <div class="tl-item">
+          <div class="tl-date">2024年10月</div>
+          <h4 data-k="tl3_h">PSCH 正式动土，大士港突破10M TEU</h4>
+          <p data-k="tl3_p">价值6.475亿新元的 PSA 供应链枢纽动土；大士港累计吞吐量突破1000万TEU；2024全年 PSA Singapore 完成创纪录40.9百万TEU。</p>
+        </div>
+        <div class="tl-item">
+          <div class="tl-date">2025年1月</div>
+          <h4 data-k="tl4_h">PSA Ventures 正式成立</h4>
+          <p data-k="tl4_p">PSA unboXed 升级为专业风险投资机构 PSA Ventures，聚焦码头技术、绿色能源、供应链与数据安全四大域。</p>
+        </div>
+        <div class="tl-item">
+          <div class="tl-date">2025年3月</div>
+          <h4 data-k="tl5_h">MariOT 全球首个海事网络物理测试平台启用</h4>
+          <p data-k="tl5_p">于新加坡海事周启用全球首个工业级船载OT测试平台，首届跨国网络对抗演练同步举行。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════ RESOURCES ═══════════════ -->
+<section>
+  <div class="inner">
+    <div class="eyebrow fu center" data-k="res_eyebrow">权威资源导航</div>
+    <h2 class="sec-title fu center" data-k="res_title">官方机构与研究平台</h2>
+    <p class="sec-desc fu center" data-k="res_desc">新加坡港口与海事科研生态系统的核心节点，所有链接直达原始官方来源。</p>
+
+    <div class="rgrid fu">
+      <a class="rcard" href="https://www.singaporepsa.com" target="_blank" rel="noopener">
+        <div class="rcard-icon">⚓</div>
+        <div class="rcard-cat" data-k="r1_cat">港口运营商</div>
+        <h4 data-k="r1_h">PSA Singapore</h4>
+        <span data-k="r1_d">全球最大集装箱转运枢纽运营方，2024年吞吐量40.9百万TEU。</span>
+        <span class="rcard-link" data-k="r1_l">访问官网</span>
+      </a>
+      <a class="rcard" href="https://www.globalpsa.com" target="_blank" rel="noopener">
+        <div class="rcard-icon">🌐</div>
+        <div class="rcard-cat" data-k="r2_cat">集团总部</div>
+        <h4 data-k="r2_h">PSA International</h4>
+        <span data-k="r2_d">覆盖26国60+港口的全球港口集团，2024年全球吞吐量100.2百万TEU。</span>
+        <span class="rcard-link" data-k="r2_l">访问官网</span>
+      </a>
+      <a class="rcard" href="https://www.mpa.gov.sg" target="_blank" rel="noopener">
+        <div class="rcard-icon">🏛️</div>
+        <div class="rcard-cat" data-k="r3_cat">监管机构</div>
+        <h4 data-k="r3_h">新加坡海事及港务管理局（MPA）</h4>
+        <span data-k="r3_d">新加坡海事政策与港口技术标准最高主管机构。</span>
+        <span class="rcard-link" data-k="r3_l">访问官网</span>
+      </a>
+      <a class="rcard" href="https://www.maritimeinstitute.sg" target="_blank" rel="noopener">
+        <div class="rcard-icon">🔬</div>
+        <div class="rcard-cat" data-k="r4_cat">研究资助</div>
+        <h4 data-k="r4_h">新加坡海事研究院（SMI）</h4>
+        <span data-k="r4_d">国家级R&D协调机构，管理科研拨款与SMI院士计划。</span>
+        <span class="rcard-link" data-k="r4_l">访问官网</span>
+      </a>
+      <a class="rcard" href="https://www.gcformd.org" target="_blank" rel="noopener">
+        <div class="rcard-icon">🌱</div>
+        <div class="rcard-cat" data-k="r5_cat">脱碳中心</div>
+        <h4 data-k="r5_h">全球海事脱碳中心（GCMD）</h4>
+        <span data-k="r5_d">主导氨/甲醇安全试验与绿色数字航运走廊建设的国际合作中心。</span>
+        <span class="rcard-link" data-k="r5_l">访问官网</span>
+      </a>
+      <a class="rcard" href="https://www.globalpsa.com/innovation/" target="_blank" rel="noopener">
+        <div class="rcard-icon">💡</div>
+        <div class="rcard-cat" data-k="r6_cat">创新文化</div>
+        <h4 data-k="r6_h">PSA 创新中心</h4>
+        <span data-k="r6_d">PSAT 4.0蓝图、Catfish工坊、iCAN协同平台与Innovision@PSA全景。</span>
+        <span class="rcard-link" data-k="r6_l">访问页面</span>
+      </a>
+      <a class="rcard" href="https://sgtradex.com" target="_blank" rel="noopener">
+        <div class="rcard-icon">🔗</div>
+        <div class="rcard-cat" data-k="r7_cat">数字基础设施</div>
+        <h4 data-k="r7_h">SGTraDex</h4>
+        <span data-k="r7_d">新加坡公私共建海事贸易数据交换平台，支撑JIT到港与物流互操作。</span>
+        <span class="rcard-link" data-k="r7_l">访问平台</span>
+      </a>
+      <a class="rcard" href="https://www.crimsonlogic.com" target="_blank" rel="noopener">
+        <div class="rcard-icon">💻</div>
+        <div class="rcard-cat" data-k="r8_cat">贸易数字化</div>
+        <h4 data-k="r8_h">CrimsonLogic（PSA全资子公司）</h4>
+        <span data-k="r8_d">全球首个单一窗口贸易便利化系统研发商，已向40余国输出数字港口技术。</span>
+        <span class="rcard-link" data-k="r8_l">访问官网</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p data-k="footer">本页内容基于公开权威资料整合，所有链接均指向原始来源。
+    数据参考自
+    <a href="https://www.globalpsa.com" target="_blank" rel="noopener">PSA International</a>、
+    <a href="https://www.singaporepsa.com" target="_blank" rel="noopener">PSA Singapore</a>、
+    <a href="https://www.mpa.gov.sg" target="_blank" rel="noopener">MPA</a>、
+    <a href="https://www.maritimeinstitute.sg" target="_blank" rel="noopener">SMI</a> 及相关学术机构。
+    本页为非官方研究资讯整合页面。
+  </p>
+</footer>
+
+<script>
+/* ── Starfield ── */
+(function(){
+  var c = document.getElementById('bg-canvas');
+  var ctx = c.getContext('2d');
+  var stars = [];
+  function resize(){ c.width = innerWidth; c.height = innerHeight; }
+  resize(); window.addEventListener('resize', resize);
+  for(var i=0;i<180;i++){
+    stars.push({x:Math.random()*innerWidth,y:Math.random()*innerHeight,r:Math.random()*1.1+0.2,v:Math.random()*.18+.04,o:Math.random()*.5+.15});
+  }
+  function draw(){
+    ctx.clearRect(0,0,c.width,c.height);
+    stars.forEach(function(s){
+      ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+      ctx.fillStyle='rgba(160,210,255,'+s.o+')'; ctx.fill();
+      s.y+=s.v; if(s.y>c.height){s.y=0;s.x=Math.random()*c.width;}
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ── Scroll reveal ── */
+var obs = new IntersectionObserver(function(entries){
+  entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('v');obs.unobserve(e.target);}});
+},{threshold:.1});
+document.querySelectorAll('.fu').forEach(function(el){obs.observe(el);});
+
+/* ── i18n ── */
+/* NOTE: All Chinese curly quotes removed from JS strings to prevent SyntaxError */
+var i18n = {
+zh:{
+  nav_title:"PSA Singapore 科技门户",
+  hero_badge:"PSA International · 大士港 · 科技创新",
+  hero_h1_html:"全球最大全自动化港口<br><em>PSA Singapore</em> 的科技革命",
+  hero_sub:"PSA Singapore 2024年创下全球最高单港吞吐量40.9百万TEU纪录，大士港正以200辆AGV、多云AI平台与全电化愿景，重塑全球供应链的未来。",
+  s1:"2024年吞吐量（TEU）", s2:"PSA集团全球总吞吐量", s3:"大士港目标容量（TEU）", s4:"部署AGV数量", s5:"全球直连港口",
+  cta1:"PSA Singapore 官网", cta2:"PSA 创新中心",
+  profile_eyebrow:"集团概况",
+  profile_h2_html:"PSA International<br><span>全球供应链枢纽</span>",
+  profile_p:"PSA International 是世界领先的港口集团与供应链解决方案提供商，旗下新加坡大士港（Tuas Port）是全球最大全自动化集装箱港口。PSA 的战略创新横跨智慧港口技术、可持续脱碳、供应链数字化与风险投资四大维度，通过旗下 CrimsonLogic、PSA Marine 与 PSA Ventures 形成完整生态。",
+  kpi1:"大士港总投资额", kpi2:"大士港总面积", kpi3:"满建后泊位总数", kpi4:"AGV较柴油车减排", kpi5:"码头岸线总长度", kpi6:"大士港全面竣工目标",
+  tech_eyebrow:"技术战略",
+  tech_title:"PSA Technology 4.0 — 四大核心技术支柱",
+  tech_desc:"PSAT 4.0 是 PSA 横跨港口、企业、商业智能、货物与海事科技的全维度技术蓝图，由技术行动小组（TAG）主导在新加坡与安特卫普旗舰港口同步推进。",
+  p1_title:"港口自动化与AI智能运营",
+  p1_desc:"大士港已部署全球最大规模逾200辆全电化AGV，24小时不间断运作，单次20分钟即可充满电续航6至8小时。AI驱动的全球码头操作系统（GTOS）整合预见性维护、实时可视化与供应链中断应对，自动化起重机系统则实现了真正的无人码头作业。",
+  p1_l1:"PSA 创新页面",
+  p2_title:"多云架构与数字平台",
+  p2_desc:"PSA 与 Dell Technologies 合作构建多云环境，支撑大规模机器学习与大数据分析，将新IT方案开发周期从数月压缩至数周。旗下 CrimsonLogic 率先在全球推出新加坡单一窗口贸易便利化系统，已向40余国输出数字政府和港口技术。GLOBAL PORTNET（GPN）串联港口社区、船公司与政府机构，中国广西已实现文件处理节省60%。",
+  p2_l1:"PSA 数字生态",
+  p3_title:"OptETruck — 港口陆路智慧物流",
+  p3_desc:"PSA 自主研发的 OptETruck 是云原生运输管理系统，通过API开放接入实现自动排班与资产共享。系统基于实时数据优化路线分配，将空车行驶次数减少50%，每年减少约1000万千克CO2排放，相当于种下30万棵树。荣获 OpenGov Asia 2024卓越认可奖。",
+  p3_l1:"OpenGov 深度报道",
+  p4_title:"港口电气化与可持续脱碳",
+  p4_desc:"PSA 与 Amperesand 开展固态变压器技术合作试点（2025年中启动），验证高功率充电基础设施在电动车队中的性能与成本。PSA 同时探索氢燃料补给站等绿色技术，AGV相较传统柴油车已减碳约50%，配合新加坡2030气候目标推进净零港口路径。",
+  p4_l1:"电气化试点报道",
+  p5_title:"PSA Ventures — 风险投资与创新孵化",
+  p5_desc:"2025年初，PSA 将创新加速平台 PSA unboXed 升级为 PSA Ventures，聚焦四大域：码头技术、绿色能源转型、供应链与物流、数据与数字。通过商业化知识产权与联合创投，加速推进更智能更绿色的供应链生态建设。",
+  p5_l1:"PSA Ventures 公告",
+  p6_title:"PSA 供应链枢纽 @ 大士 (PSCH)",
+  p6_desc:"2024年10月，PSA 正式动土造价6.475亿新元的 PSCH 综合物流枢纽，占地超过18.5公顷，配备9300平方米高40米的自动仓储与取货系统（ASRS）以及智能仓库数据交换平台（iWX），预计2027年开放，将取代肯特岗货运站。",
+  p6_l1:"PSCH 详情报道",
+  thrust_eyebrow:"MPA 研发路线图 2030",
+  thrust_title:"五大国家级海事科研战略方向",
+  thrust_desc:"PSA 与 MPA 的创新战略高度协同。以下为新加坡国家海事研发路线图2030的五大战略重点，PSA 是多项领域的核心实施方。",
+  t1_title:"下一代船舶交通管理（NGVTMS）",
+  t1_desc:"AI驱动的新一代船舶交通管理系统，结合5G与卫星实时监控船舶动态，优化泊位分配、预防拥堵与碰撞。SGTraDex数据共享平台支撑端到端JIT到港调度，PSA digitalPORT@SG实现港口社区全流程数字化通关。",
+  t1_l2:"MPA 港口未来",
+  t2_title:"水面自主船舶（MASS）",
+  t2_desc:"推进水面自主船舶商业化，海事无人机庄园开展港区无人机物流试验。A*STAR IHPC高级仿真评估电动渡轮与拖船电气化对新加坡电网的影响，PSA Marine探索自主拖轮与港区安全巡逻应用。",
+  t3_title:"MariOT — 全球首个海事网络物理测试平台",
+  t3_desc:"MPA与SUTD于2025年3月联合启用全球首个工业级船载OT测试平台MariOT，模拟导航、推进与电力管理系统的真实网络攻击并开展红蓝对抗演练。CyberSafe记分卡帮助中小船东提升网络就绪度。",
+  t3_l2:"MPA 网络安全",
+  t4_title:"替代燃料加注与GCMD绿色走廊",
+  t4_desc:"GCMD主导甲醇（TR 129标准）与氨燃料安全实地试验，400项风险均获评低或可控。MPA与鹿特丹港共建绿色数字航运走廊（GDSC），首次生物甲烷加注已于2024年10月完成，目标2027年首批可持续航线启航。",
+  t4_l2:"SMI 脱碳路径",
+  t5_title:"DocuMind — AI智能单证识别",
+  t5_desc:"PSA与合作方推进AI单证智能识别系统（DocuMind），结合光学字符识别与自然语言处理，大幅压缩提单、报关单、海关文件的人工处理周期，配合大士港多云平台实现无纸化端到端港口通关链路。",
+  t5_l1:"MPA 港口未来",
+  expert_eyebrow:"顶尖科研人才",
+  expert_title:"首届SMI院士奖获奖者（2023）",
+  expert_desc:"2023年11月6日第13届SMI论坛颁出首届院士奖，四位资深研究员获200万新元三年资助，研究方向与PSA技术路线高度契合。",
+  a1_award:"首届SMI院士奖 2023", a1_name:"吴思慧副教授", a1_role:"ISEM系主任",
+  a1_desc:"领衔海运排放脱碳建模与自适应船队更新战略规划研究。担任IMO第四次温室气体研究报告专家评审员，与PSA港口电气化评估研究紧密协同。",
+  a1_l2:"SMRC 演讲",
+  a2_award:"首届SMI院士奖 2023", a2_name:"付秀菊博士", a2_role:"海事AI研究计划主任",
+  a2_desc:"专攻AI建模与大数据智能，开发动态上下文感知机器学习模型保障港口安全航行，并主导评估电动港口船舶电气化对新加坡电网负荷影响的仿真研究，与 PSA 电气化路径研究直接对接。",
+  a2_l2:"SMI院士奖",
+  a3_award:"首届SMI院士奖 2023", a3_name:"刘明博士", a3_role:"替代能源研究负责人",
+  a3_desc:"在南洋理工大学海事能源与可持续发展卓越中心主导氨与生物燃料安全性研究，承担SMI资助的氨加注释放缓减技术与环境影响项目，为PSA绿色港口目标提供科学支撑。",
+  a3_l2:"SMI 论坛",
+  a4_award:"首届SMI院士奖 2023", a4_name:"Pavel Tkalich 博士", a4_role:"首席研究员 / 高级科学家",
+  a4_desc:"专注海洋环境数值建模与仿真，为港口水质、溢油应急响应与波浪场预报提供科学支撑，数字孪生技术积累深厚，直接服务PSA大士港口的海洋安全应急管理平台需求。",
+  a4_l2:"SMI 院士奖公告",
+  tl_eyebrow:"关键里程碑", tl_title:"PSA 与海事科技大事记",
+  tl_desc:"近年 PSA Singapore 与新加坡海事生态的重大科技突破，印证其全球领先港口的创新地位。",
+  tl1_h:"大士港一期正式开港", tl1_p:"首批3个泊位投入运营，开始以AGV与自动化起重机开创全球最大全自动化集装箱港口时代。",
+  tl2_h:"首届SMI院士奖颁发", tl2_p:"第13届SMI论坛颁发首届院士奖，同期SMI向逾10个项目拨款2300万新元，海事AI与脱碳研究全面加速。",
+  tl3_h:"PSCH 正式动土，大士港突破10M TEU", tl3_p:"价值6.475亿新元的 PSA 供应链枢纽动土；大士港累计吞吐量突破1000万TEU；2024全年 PSA Singapore 完成创纪录40.9百万TEU。",
+  tl4_h:"PSA Ventures 正式成立", tl4_p:"PSA unboXed 升级为专业风险投资机构 PSA Ventures，聚焦码头技术、绿色能源、供应链与数据安全四大域。",
+  tl5_h:"MariOT 全球首个海事网络物理测试平台启用", tl5_p:"于新加坡海事周启用全球首个工业级船载OT测试平台，首届跨国网络对抗演练同步举行。",
+  res_eyebrow:"权威资源导航", res_title:"官方机构与研究平台", res_desc:"新加坡港口与海事科研生态系统的核心节点，所有链接直达原始官方来源。",
+  r1_cat:"港口运营商", r1_h:"PSA Singapore", r1_d:"全球最大集装箱转运枢纽运营方，2024年吞吐量40.9百万TEU。", r1_l:"访问官网",
+  r2_cat:"集团总部", r2_h:"PSA International", r2_d:"覆盖26国60+港口的全球港口集团，2024年全球吞吐量100.2百万TEU。", r2_l:"访问官网",
+  r3_cat:"监管机构", r3_h:"新加坡海事及港务管理局（MPA）", r3_d:"新加坡海事政策与港口技术标准最高主管机构。", r3_l:"访问官网",
+  r4_cat:"研究资助", r4_h:"新加坡海事研究院（SMI）", r4_d:"国家级R&D协调机构，管理科研拨款与SMI院士计划。", r4_l:"访问官网",
+  r5_cat:"脱碳中心", r5_h:"全球海事脱碳中心（GCMD）", r5_d:"主导氨/甲醇安全试验与绿色数字航运走廊建设的国际合作中心。", r5_l:"访问官网",
+  r6_cat:"创新文化", r6_h:"PSA 创新中心", r6_d:"PSAT 4.0蓝图、Catfish工坊、iCAN协同平台与Innovision@PSA全景。", r6_l:"访问页面",
+  r7_cat:"数字基础设施", r7_h:"SGTraDex", r7_d:"新加坡公私共建海事贸易数据交换平台，支撑JIT到港与物流互操作。", r7_l:"访问平台",
+  r8_cat:"贸易数字化", r8_h:"CrimsonLogic（PSA全资子公司）", r8_d:"全球首个单一窗口贸易便利化系统研发商，已向40余国输出数字港口技术。", r8_l:"访问官网",
+  footer:"本页内容基于公开权威资料整合，所有链接均指向原始来源。数据参考自 <a href='https://www.globalpsa.com' target='_blank' rel='noopener'>PSA International</a>、<a href='https://www.singaporepsa.com' target='_blank' rel='noopener'>PSA Singapore</a>、<a href='https://www.mpa.gov.sg' target='_blank' rel='noopener'>MPA</a>、<a href='https://www.maritimeinstitute.sg' target='_blank' rel='noopener'>SMI</a> 及相关学术机构。本页为非官方研究资讯整合页面。"
+},
+en:{
+  nav_title:"PSA Singapore Science Portal",
+  hero_badge:"PSA International · Tuas Port · Innovation",
+  hero_h1_html:"World's Largest Automated Port<br><em>PSA Singapore</em>'s Tech Revolution",
+  hero_sub:"PSA Singapore set a record 40.9M TEU throughput in 2024. Tuas Port is redefining the future of global supply chains with 200+ AGVs, multi-cloud AI, and a full electrification vision.",
+  s1:"2024 Throughput (TEU)", s2:"PSA Group Global Total", s3:"Tuas Port Target (TEU)", s4:"AGVs Deployed", s5:"Connected Ports Worldwide",
+  cta1:"PSA Singapore Website", cta2:"PSA Innovation Hub",
+  profile_eyebrow:"Group Overview",
+  profile_h2_html:"PSA International<br><span>Global Supply Chain Hub</span>",
+  profile_p:"PSA International is a leading global port group and supply chain solutions provider. Its Singapore Tuas Port is the world's largest fully automated container terminal. PSA's strategic innovation spans smart port technology, sustainable decarbonisation, supply chain digitalisation and venture capital, forming a complete ecosystem through CrimsonLogic, PSA Marine and PSA Ventures.",
+  kpi1:"Total Tuas Port Investment", kpi2:"Total Tuas Port Area", kpi3:"Final Berth Count", kpi4:"AGV vs. Diesel Emissions", kpi5:"Total Quay Length", kpi6:"Full Completion Target",
+  tech_eyebrow:"Technology Strategy",
+  tech_title:"PSA Technology 4.0 — Four Core Tech Pillars",
+  tech_desc:"PSAT 4.0 is PSA's full-spectrum technology blueprint covering Port, Enterprise, Business Analytics, Cargo Solutions and Marine Technologies, driven by the Technology Action Group (TAG) across the Singapore and Antwerp flagships.",
+  p1_title:"Port Automation & AI Operations",
+  p1_desc:"Tuas Port operates the world's largest fleet of 200+ fully electric AGVs running 24/7, each recharging in 20 minutes for 6-8 hours of continuous operation. The AI-driven Global Terminal Operating System (GTOS) integrates predictive maintenance, real-time visibility and disruption response, while automated crane systems deliver truly unattended quayside operations.",
+  p1_l1:"PSA Innovation Page",
+  p2_title:"Multi-Cloud Architecture & Digital Platforms",
+  p2_desc:"PSA partnered with Dell Technologies to build a multi-cloud environment supporting large-scale ML and big data analytics, cutting new IT solution development from months to weeks. Subsidiary CrimsonLogic pioneered the world's first single-window trade facilitation system and has exported digital port technology to 40+ countries. GLOBAL PORTNET (GPN) connects the port community with shipping lines and government agencies, achieving 60% documentation savings in Guangxi, China.",
+  p2_l1:"PSA Digital Ecosystem",
+  p3_title:"OptETruck — Smart Port Landside Logistics",
+  p3_desc:"PSA's in-house cloud-native transport management system OptETruck offers API-enabled automated scheduling and asset pooling. By allocating jobs using real-time data, it reduces empty truck trips by 50%, cutting approximately 10 million kg of CO2 annually — equivalent to planting 300,000 trees. Awarded OpenGov Asia Recognition of Excellence 2024.",
+  p3_l1:"OpenGov Deep Dive",
+  p4_title:"Port Electrification & Sustainability",
+  p4_desc:"PSA is partnering with Amperesand on a solid-state transformer technology trial (starting mid-2025) to validate high-power charging for its electric fleet. PSA is also exploring hydrogen refuelling stations; its AGVs already reduce carbon emissions by ~50% vs. diesel alternatives, supporting Singapore's 2030 climate goals.",
+  p4_l1:"Electrification Pilot Report",
+  p5_title:"PSA Ventures — VC & Innovation Incubation",
+  p5_desc:"In early 2025, PSA transformed PSA unboXed into PSA Ventures, a dedicated VC arm focused on four domains: Terminal Technology, Green Energy Transition, Supply Chain & Logistics, and Data & Digital. Through IP commercialisation and co-ventures, it accelerates smarter, greener supply chains globally.",
+  p5_l1:"PSA Ventures Announcement",
+  p6_title:"PSA Supply Chain Hub @ Tuas (PSCH)",
+  p6_desc:"In October 2024, PSA broke ground on the S$647.5M PSCH logistics complex spanning 18.5+ ha, featuring a 9,300 sqm ASRS (40m high) for automated pallet storage and the Intelligent Warehouse eXchange (iWX) data platform. Opening in 2027, it will replace Keppel Distripark.",
+  p6_l1:"PSCH Details Report",
+  thrust_eyebrow:"MPA R&D Roadmap 2030",
+  thrust_title:"Five National Maritime R&D Strategic Thrusts",
+  thrust_desc:"PSA and MPA's innovation strategies are highly aligned. Below are the five strategic thrusts of Singapore's Maritime R&D Roadmap 2030, with PSA as a key implementation partner in multiple areas.",
+  t1_title:"Next-Gen Vessel Traffic Management (NGVTMS)",
+  t1_desc:"AI-driven NGVTMS combines 5G and satellite for real-time vessel monitoring, berth optimisation and collision prevention. SGTraDex enables end-to-end JIT port calls; PSA's digitalPORT@SG powers fully digital port clearance for the port community.",
+  t1_l2:"MPA Port of the Future",
+  t2_title:"Maritime Autonomous Surface Ships (MASS)",
+  t2_desc:"Advancing commercial MASS deployment and drone logistics in the Maritime Drone Estate. A*STAR IHPC uses advanced simulation to assess electric ferry and tugboat grid impacts; PSA Marine explores autonomous tugboat and security patrol applications.",
+  t3_title:"MariOT — World's First Maritime Cyber-Physical Testbed",
+  t3_desc:"MPA and SUTD launched MariOT in March 2025 — the world's first industrial-grade vessel OT cyber-physical testbed — conducting red-blue exercises simulating real cyberattacks on navigation, propulsion and power management systems. The CyberSafe Scorecard helps SME shipowners assess cyber readiness.",
+  t3_l2:"MPA Cybersecurity Cooperation",
+  t4_title:"Alternative Fuel Bunkering & GCMD Green Corridors",
+  t4_desc:"GCMD leads methanol (TR 129) and ammonia bunkering safety pilots — all 400 identified risks rated low or mitigable. MPA and Port of Rotterdam co-built the Green & Digital Shipping Corridor (GDSC); first bio-methane bunkering completed October 2024, targeting first sustainable sailings by 2027.",
+  t4_l2:"SMI Decarbonisation Pathways",
+  t5_title:"DocuMind — AI Document Intelligence",
+  t5_desc:"PSA and partners are advancing AI document recognition (DocuMind), combining OCR and NLP to dramatically shorten processing cycles for bills of lading, customs declarations and cargo documents, enabling paperless end-to-end port clearance on Tuas Port's multi-cloud platform.",
+  t5_l1:"MPA Port of the Future",
+  expert_eyebrow:"Top Research Talent",
+  expert_title:"Inaugural SMI Fellows Award Recipients (2023)",
+  expert_desc:"On 6 November 2023 at the 13th SMI Forum, four senior researchers received the inaugural SMI Fellows Award with S$2M in funding over three years. Their research directly supports PSA's innovation roadmap.",
+  a1_award:"Inaugural SMI Fellows 2023", a1_name:"Assoc Prof Ng Szu Hui", a1_role:"Head, ISEM, NUS CDE",
+  a1_desc:"Research Track Leader at NUS CMS for maritime emissions modelling, decarbonisation, and adaptive fleet renewal. IMO Fourth GHG Study expert reviewer, directly supporting PSA port electrification impact assessments.",
+  a1_l2:"SMRC Talk",
+  a2_award:"Inaugural SMI Fellows 2023", a2_name:"Dr Xiuju Fu", a2_role:"Director, Maritime AI Research Programme",
+  a2_desc:"A*STAR IHPC Senior Principal Scientist specialising in AI modelling and big-data intelligence. Leads dynamic context-aware ML models for port navigation safety and the harbour craft electrification simulation project directly aligned with PSA's sustainability roadmap.",
+  a2_l2:"SMI Fellows",
+  a3_award:"Inaugural SMI Fellows 2023", a3_name:"Dr Liu Ming", a3_role:"Research Lead, Alternative Energy",
+  a3_desc:"Leads alternative fuel (ammonia, biofuels) safety research at NTU MESD CoE. PI on the SMI-funded ammonia bunkering release mitigation and environmental impact project, providing scientific foundations for PSA green port targets.",
+  a3_l2:"SMI Forum",
+  a4_award:"Inaugural SMI Fellows 2023", a4_name:"Dr Pavel Tkalich", a4_role:"Principal Research Fellow",
+  a4_desc:"Ocean environment numerical modelling expert at NUS TMSI and TCOMS. Provides scientific decision support for port water quality, oil spill emergency response and wave forecasting; digital twin expertise directly serves PSA Tuas Port marine safety management needs.",
+  a4_l2:"SMI Fellows Announcement",
+  tl_eyebrow:"Key Milestones", tl_title:"PSA & Maritime Tech Timeline",
+  tl_desc:"Major technological breakthroughs by PSA Singapore and the maritime ecosystem, cementing Singapore's global innovation leadership.",
+  tl1_h:"Tuas Port Phase 1 Opens", tl1_p:"First 3 berths operational, pioneering the world's largest fully automated container terminal with AGVs and automated cranes.",
+  tl2_h:"Inaugural SMI Fellows Award Presented", tl2_p:"13th SMI Forum presents inaugural awards; SMI disburses S$23M to 10+ R&D projects accelerating maritime AI and decarbonisation.",
+  tl3_h:"PSCH Groundbreaking; Tuas Surpasses 10M TEU", tl3_p:"S$647.5M PSA Supply Chain Hub breaks ground; Tuas Port crosses 10M cumulative TEU milestone; PSA Singapore achieves record 40.9M TEU for full year 2024.",
+  tl4_h:"PSA Ventures Established", tl4_p:"PSA unboXed transforms into PSA Ventures, a dedicated VC arm focused on Terminal Technology, Green Energy, Supply Chain and Cybersecurity.",
+  tl5_h:"MariOT — World's First Maritime Cyber-Physical Testbed Launched", tl5_p:"Commissioned at Singapore Maritime Week 2025; inaugural multinational cyber exercise simulates attacks on vessel OT systems.",
+  res_eyebrow:"Official Resources", res_title:"Institutions & Research Platforms", res_desc:"Core nodes of Singapore's port and maritime R&D ecosystem. All links direct to original official sources.",
+  r1_cat:"Port Operator", r1_h:"PSA Singapore", r1_d:"World's largest container transhipment hub operator; 40.9M TEU throughput in 2024.", r1_l:"Visit Website",
+  r2_cat:"Group HQ", r2_h:"PSA International", r2_d:"Global port group across 26 countries with 60+ terminals; 100.2M TEU group throughput in 2024.", r2_l:"Visit Website",
+  r3_cat:"Regulator", r3_h:"Maritime & Port Authority (MPA)", r3_d:"Singapore's top authority for maritime policy, port management and technical standards.", r3_l:"Visit Website",
+  r4_cat:"R&D Funding", r4_h:"Singapore Maritime Institute (SMI)", r4_d:"National maritime R&D body managing grants, scholarships and the SMI Fellows scheme.", r4_l:"Visit Website",
+  r5_cat:"Decarbonisation", r5_h:"Global Centre for Maritime Decarbonisation (GCMD)", r5_d:"Leading ammonia/methanol safety pilots and the Singapore-Rotterdam GDSC.", r5_l:"Visit Website",
+  r6_cat:"Innovation Culture", r6_h:"PSA Innovation Hub", r6_d:"PSAT 4.0 blueprint, Catfish Workshop, iCAN collaboration platform and Innovision@PSA programme.", r6_l:"Visit Page",
+  r7_cat:"Digital Infrastructure", r7_h:"SGTraDex", r7_d:"Singapore's public-private maritime trade data exchange platform for JIT port calls and logistics interoperability.", r7_l:"Visit Platform",
+  r8_cat:"Trade Digitalisation", r8_h:"CrimsonLogic (PSA subsidiary)", r8_d:"Pioneer of the world's first single-window trade facilitation system; digital port tech deployed in 40+ countries.", r8_l:"Visit Website",
+  footer:"Content compiled from open authoritative sources; all links direct to original references. Data sourced from <a href='https://www.globalpsa.com' target='_blank' rel='noopener'>PSA International</a>, <a href='https://www.singaporepsa.com' target='_blank' rel='noopener'>PSA Singapore</a>, <a href='https://www.mpa.gov.sg' target='_blank' rel='noopener'>MPA</a>, <a href='https://www.maritimeinstitute.sg' target='_blank' rel='noopener'>SMI</a> and affiliated universities. This is an unofficial informational aggregation page."
+}
+};
+
+var lang = 'zh';
+function applyLang(){
+  document.querySelectorAll('[data-k]').forEach(function(el){
+    var k = el.getAttribute('data-k');
+    if(i18n[lang][k] !== undefined){ el.innerHTML = i18n[lang][k]; }
+  });
+  document.documentElement.lang = lang === 'zh' ? 'zh' : 'en';
+}
+function toggleLang(){ lang = lang === 'zh' ? 'en' : 'zh'; applyLang(); }
+applyLang();
+</script>
+</body>
+</html>
