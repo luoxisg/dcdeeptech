@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="zh-CN" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
@@ -52,6 +52,27 @@
         /* Language Toggle Styles */
         body.en-mode [data-lang="zh"] { display: none !important; }
         body:not(.en-mode) [data-lang="en"] { display: none !important; }
+
+        /* Custom Scrollbar for dashboard mock */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        /* Console Menu Active States (NEW) */
+        .console-menu-item.active { background-color: #eff6ff; color: #2563eb; font-weight: 500; }
+        .console-menu-item.active .active-bar { opacity: 1; }
+        .console-menu-item.active i { color: #2563eb; }
+        .console-menu-item:not(.active) { color: #475569; }
+        .console-menu-item:not(.active):hover { background-color: #f1f5f9; }
+        .console-menu-item:not(.active) .active-bar { opacity: 0; }
+        .console-menu-item:not(.active) i { color: #94a3b8; }
     </style>
 </head>
 <body class="bg-deep text-slate-300 font-sans antialiased selection:bg-accent selection:text-white">
@@ -70,7 +91,7 @@
     </div>
 
     <!-- Navigation -->
-    <nav class="fixed w-full z-50 transition-all duration-300 backdrop-blur-md bg-deep/80 border-b border-slate-800" id="navbar">
+    <nav class="absolute w-full z-50 transition-all duration-300 backdrop-blur-md bg-deep/80 border-b border-slate-800" id="navbar">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <div class="flex-shrink-0 flex items-center cursor-pointer" onclick="window.scrollTo(0,0)">
@@ -79,30 +100,56 @@
                 </div>
                 <div class="hidden md:flex space-x-8 items-center">
                     <a href="#services" class="text-slate-300 hover:text-accent transition"><span data-lang="zh">核心服务</span><span data-lang="en">Services</span></a>
+                    <a href="#console-preview" class="text-slate-300 hover:text-accent transition"><span data-lang="zh">控制台预览</span><span data-lang="en">Console</span></a>
                     <a href="#advantages" class="text-slate-300 hover:text-accent transition"><span data-lang="zh">平台优势</span><span data-lang="en">Advantages</span></a>
                     <a href="#pricing" class="text-slate-300 hover:text-accent transition"><span data-lang="zh">算力定价</span><span data-lang="en">Pricing</span></a>
-                    <a href="#global" class="text-slate-300 hover:text-accent transition"><span data-lang="zh">全球资源</span><span data-lang="en">Global</span></a>
                     
                     <!-- Language Switcher -->
                     <button onclick="toggleLanguage()" class="text-slate-300 hover:text-white flex items-center transition ml-4 border border-slate-700 px-3 py-1 rounded-full text-sm">
                         <i class="fa-solid fa-globe mr-2"></i>
-                        <span data-lang="zh">EN</span><span data-lang="en">中</span>
+                        <!-- 中文模式下：高亮 中，变暗 EN -->
+                        <span data-lang="zh" class="font-bold text-white">中</span>
+                        <span data-lang="zh" class="text-slate-500 mx-1">/</span>
+                        <span data-lang="zh" class="text-slate-500 text-xs">EN</span>
+                        
+                        <!-- 英文模式下：变暗 中，高亮 EN -->
+                        <span data-lang="en" class="text-slate-500 text-xs">中</span>
+                        <span data-lang="en" class="text-slate-500 mx-1">/</span>
+                        <span data-lang="en" class="font-bold text-white">EN</span>
                     </button>
 
                     <button onclick="openModal()" class="bg-primary hover:bg-blue-600 text-white px-5 py-2 rounded-md font-medium transition shadow-[0_0_15px_rgba(59,130,246,0.5)]">
-                        <span data-lang="zh">控制台登录</span><span data-lang="en">Console</span>
+                        <span data-lang="zh">登录 / 预约</span><span data-lang="en">Login / Book</span>
                     </button>
                 </div>
                 <!-- Mobile menu button -->
                 <div class="md:hidden flex items-center space-x-4">
-                    <button onclick="toggleLanguage()" class="text-slate-300 hover:text-white focus:outline-none">
-                        <i class="fa-solid fa-globe text-xl"></i>
+                    <button onclick="toggleLanguage()" class="text-slate-300 hover:text-white focus:outline-none flex items-center text-sm border border-slate-700 px-2 py-0.5 rounded-full">
+                        <i class="fa-solid fa-globe mr-1"></i>
+                        <span data-lang="zh" class="font-bold text-white">中</span>
+                        <span data-lang="zh" class="text-slate-500 mx-1">/</span>
+                        <span data-lang="zh" class="text-slate-500 text-[10px]">EN</span>
+                        
+                        <span data-lang="en" class="text-slate-500 text-[10px]">中</span>
+                        <span data-lang="en" class="text-slate-500 mx-1">/</span>
+                        <span data-lang="en" class="font-bold text-white">EN</span>
                     </button>
-                    <button class="text-slate-300 hover:text-white focus:outline-none">
+                    <button onclick="toggleMobileMenu()" class="text-slate-300 hover:text-white focus:outline-none ml-2">
                         <i class="fa-solid fa-bars text-xl"></i>
                     </button>
                 </div>
             </div>
+        </div>
+        
+        <!-- Mobile Dropdown Menu (NEW) -->
+        <div id="mobileMenu" class="hidden absolute top-16 left-0 w-full bg-slate-900/95 backdrop-blur-md border-b border-slate-800 shadow-xl flex flex-col px-6 py-6 space-y-4">
+            <a href="#services" onclick="toggleMobileMenu()" class="text-slate-300 hover:text-white text-lg"><span data-lang="zh">核心服务</span><span data-lang="en">Services</span></a>
+            <a href="#console-preview" onclick="toggleMobileMenu()" class="text-slate-300 hover:text-white text-lg"><span data-lang="zh">控制台预览</span><span data-lang="en">Console</span></a>
+            <a href="#advantages" onclick="toggleMobileMenu()" class="text-slate-300 hover:text-white text-lg"><span data-lang="zh">平台优势</span><span data-lang="en">Advantages</span></a>
+            <a href="#pricing" onclick="toggleMobileMenu()" class="text-slate-300 hover:text-white text-lg"><span data-lang="zh">算力定价</span><span data-lang="en">Pricing</span></a>
+            <button onclick="openModal(); toggleMobileMenu()" class="mt-4 bg-primary hover:bg-blue-600 text-white px-5 py-3 rounded-md font-medium transition text-center w-full">
+                <span data-lang="zh">登录 / 预约</span><span data-lang="en">Login / Book</span>
+            </button>
         </div>
     </nav>
 
@@ -127,8 +174,8 @@
                     <button onclick="openModal()" class="px-8 py-4 bg-gradient-to-r from-primary to-accent text-white rounded-lg font-bold text-lg hover:shadow-[0_0_25px_rgba(6,182,212,0.6)] transition-all transform hover:-translate-y-1">
                         <i class="fa-solid fa-rocket mr-2"></i> <span data-lang="zh">立即预约演示</span><span data-lang="en">Book a Demo</span>
                     </button>
-                    <a href="#services" class="px-8 py-4 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white rounded-lg font-bold text-lg transition-all">
-                        <span data-lang="zh">了解核心业务</span><span data-lang="en">Explore Services</span>
+                    <a href="#console-preview" class="px-8 py-4 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white rounded-lg font-bold text-lg transition-all">
+                        <span data-lang="zh">查看控制台功能</span><span data-lang="en">View Console Features</span>
                     </a>
                 </div>
                 <p class="mt-6 text-sm text-slate-500">
@@ -211,9 +258,9 @@
                         <li><i class="fa-solid fa-check text-accent mr-2"></i> <span data-lang="zh">实时 Agent 与智慧城市决策</span><span data-lang="en">Real-time Agents & Smart City Decisions</span></li>
                         <li><i class="fa-solid fa-check text-accent mr-2"></i> <span data-lang="zh">兼容 OpenAI 标准 API 接口</span><span data-lang="en">OpenAI Compatible API Standard</span></li>
                     </ul>
-                    <a href="#" class="text-accent font-medium hover:text-white transition group-hover:underline">
+                    <button onclick="openModal()" class="text-accent font-medium hover:text-white transition group-hover:underline">
                         <span data-lang="zh">一键部署模型 &rarr;</span><span data-lang="en">Deploy Model &rarr;</span>
-                    </a>
+                    </button>
                 </div>
 
                 <!-- Service 2 -->
@@ -270,8 +317,279 @@
         </div>
     </section>
 
+    <!-- Console Dashboard Preview Section (UPDATED) -->
+    <section id="console-preview" class="py-24 bg-slate-900 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
+                    <span data-lang="zh">全功能自研管理控制台</span>
+                    <span data-lang="en">Full-Featured Management Console</span>
+                </h2>
+                <div class="w-20 h-1 bg-accent mx-auto rounded"></div>
+                <p class="mt-6 text-slate-400 max-w-2xl mx-auto">
+                    <span data-lang="zh">高度完善的后台支撑能力，全面覆盖模型、算力、存储的管理与财务流转。即插即用，满足您一站式的 AI 资产调配需求。</span>
+                    <span data-lang="en">Highly refined backend support capabilities covering models, compute, storage, and financial flow. Plug and play to fulfill your all-in-one AI asset orchestration needs.</span>
+                </p>
+            </div>
+
+            <!-- Fake Browser Window UI -->
+            <div class="rounded-xl border border-slate-700 bg-slate-800 shadow-2xl overflow-hidden flex flex-col max-w-5xl mx-auto">
+                <!-- Mac-style Top Bar -->
+                <div class="h-10 bg-[#1e293b] border-b border-slate-700 flex items-center px-4 relative justify-between">
+                    <div class="flex space-x-2">
+                        <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                    </div>
+                    <div class="absolute left-1/2 transform -translate-x-1/2 bg-slate-900 rounded-md px-4 py-1 flex items-center text-xs text-slate-400 font-mono shadow-inner border border-slate-700">
+                        <i class="fa-solid fa-lock mr-2 text-[10px]"></i> console.dcdeeptech.ai
+                    </div>
+                    <!-- Mobile Sidebar Toggle -->
+                    <button onclick="toggleConsoleSidebar()" class="md:hidden text-slate-400 hover:text-white focus:outline-none">
+                        <i class="fa-solid fa-bars-staggered"></i>
+                    </button>
+                </div>
+                
+                <!-- App Interface -->
+                <div class="flex h-[600px] md:h-[550px] bg-slate-50 relative overflow-hidden">
+                    
+                    <!-- Mobile Sidebar Overlay Darken -->
+                    <div id="sidebarOverlay" onclick="toggleConsoleSidebar()" class="absolute inset-0 bg-slate-900/50 z-20 hidden md:hidden"></div>
+
+                    <!-- Dashboard Sidebar -->
+                    <div id="consoleSidebar" class="absolute md:relative z-30 w-64 h-full bg-white border-r border-slate-200 flex flex-col text-sm shrink-0 transform -translate-x-full md:translate-x-0 transition-transform duration-300">
+                        <div class="p-5 border-b border-slate-100 flex items-center justify-between text-slate-800">
+                            <div class="flex items-center">
+                                <i class="fa-solid fa-microchip text-primary text-xl mr-2"></i>
+                                <span class="font-bold text-lg">DCDeepTech</span>
+                            </div>
+                            <button onclick="toggleConsoleSidebar()" class="md:hidden text-slate-400 hover:text-slate-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
+                        </div>
+                        
+                        <!-- Sidebar Scroll Area -->
+                        <div class="flex-1 overflow-y-auto py-4 text-slate-600 custom-scrollbar select-none">
+                            
+                            <!-- Category 1: Models -->
+                            <div class="px-3 mb-1">
+                                <div onclick="switchConsoleTab('tab-models', this)" class="console-menu-item active rounded-lg px-3 py-2.5 flex items-center cursor-pointer relative overflow-hidden transition">
+                                    <div class="active-bar absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full transition-opacity"></div>
+                                    <i class="fa-solid fa-cube w-5 text-center mr-2 transition-colors"></i>
+                                    <span data-lang="zh">模型广场</span><span data-lang="en">Model Hub</span>
+                                </div>
+                            </div>
+                            <div class="px-3 mb-1">
+                                <div onclick="switchConsoleTab('tab-generic', this)" class="console-menu-item rounded-lg px-3 py-2.5 flex items-center cursor-pointer relative overflow-hidden transition">
+                                    <div class="active-bar absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full transition-opacity"></div>
+                                    <i class="fa-solid fa-chart-line w-5 text-center mr-2 transition-colors"></i>
+                                    <span data-lang="zh">模型用量统计</span><span data-lang="en">Usage Statistics</span>
+                                </div>
+                            </div>
+                            <div class="px-3 mb-1">
+                                <div onclick="switchConsoleTab('tab-generic', this)" class="console-menu-item rounded-lg px-3 py-2.5 flex items-center cursor-pointer relative overflow-hidden transition">
+                                    <div class="active-bar absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full transition-opacity"></div>
+                                    <i class="fa-solid fa-file-invoice-dollar w-5 text-center mr-2 transition-colors"></i>
+                                    <span data-lang="zh">模型费用</span><span data-lang="en">Model Billing</span>
+                                </div>
+                            </div>
+
+                            <!-- Category 2: Compute -->
+                            <div class="mt-4 mb-2 px-6 text-[11px] text-slate-400 font-bold flex justify-between items-center">
+                                <span><span data-lang="zh">算力市场</span><span data-lang="en">Compute Market</span></span>
+                                <i class="fa-solid fa-chevron-down text-slate-300"></i>
+                            </div>
+                            <div class="px-3 mb-1">
+                                <div onclick="switchConsoleTab('tab-compute', this)" class="console-menu-item rounded-lg px-3 py-2.5 flex items-center cursor-pointer relative overflow-hidden transition pl-9">
+                                    <div class="active-bar absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full transition-opacity"></div>
+                                    <i class="fa-solid fa-box w-5 text-center mr-2 transition-colors"></i>
+                                    <span data-lang="zh">容器实例管理</span><span data-lang="en">Container Instances</span>
+                                </div>
+                            </div>
+                            <div class="px-3 mb-1">
+                                <div onclick="switchConsoleTab('tab-generic', this)" class="console-menu-item rounded-lg px-3 py-2.5 flex items-center cursor-pointer relative overflow-hidden transition pl-9">
+                                    <div class="active-bar absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full transition-opacity"></div>
+                                    <i class="fa-solid fa-bolt w-5 text-center mr-2 transition-colors"></i>
+                                    <span data-lang="zh">弹性实例管理</span><span data-lang="en">Elastic Instances</span>
+                                </div>
+                            </div>
+
+                            <!-- Category 3: Storage & Env -->
+                            <div class="mt-4 mb-2 px-6 text-[11px] text-slate-400 font-bold flex justify-between items-center">
+                                <span><span data-lang="zh">云存储管理</span><span data-lang="en">Cloud Storage</span></span>
+                                <i class="fa-solid fa-chevron-down text-slate-300"></i>
+                            </div>
+                            <div class="px-3 mb-1">
+                                <div onclick="switchConsoleTab('tab-generic', this)" class="console-menu-item rounded-lg px-3 py-2.5 flex items-center cursor-pointer relative overflow-hidden transition">
+                                    <div class="active-bar absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full transition-opacity"></div>
+                                    <i class="fa-solid fa-wallet w-5 text-center mr-2 transition-colors"></i>
+                                    <span data-lang="zh">容器费用</span><span data-lang="en">Container Costs</span>
+                                </div>
+                            </div>
+                            <div class="px-3 mb-1">
+                                <div onclick="switchConsoleTab('tab-generic', this)" class="console-menu-item rounded-lg px-3 py-2.5 flex items-center cursor-pointer relative overflow-hidden transition">
+                                    <div class="active-bar absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full transition-opacity"></div>
+                                    <i class="fa-solid fa-clone w-5 text-center mr-2 transition-colors"></i>
+                                    <span data-lang="zh">镜像模板</span><span data-lang="en">Image Templates</span>
+                                </div>
+                            </div>
+
+                            <!-- Category 4: Personal -->
+                            <div class="mt-4 mb-2 px-6 text-[11px] text-slate-400 font-bold flex justify-between items-center">
+                                <span><span data-lang="zh">个人中心</span><span data-lang="en">Personal Center</span></span>
+                                <i class="fa-solid fa-chevron-right text-slate-300"></i>
+                            </div>
+                        </div>
+
+                        <!-- Promotional Banner -->
+                        <div class="p-4 border-t border-slate-100 bg-orange-50 cursor-pointer hover:bg-orange-100 transition mt-auto">
+                            <p class="text-[#e85d04] font-bold text-sm text-center leading-relaxed">
+                                <span data-lang="zh">平台最新优惠福利说明<br>点我查看!!!</span>
+                                <span data-lang="en">Latest platform offers & benefits<br>Click to view!!!</span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Main Content Area Preview -->
+                    <div class="flex-1 bg-slate-50 p-6 md:p-10 overflow-y-auto relative w-full custom-scrollbar">
+                        <!-- Soft decorative background -->
+                        <div class="absolute -top-40 -right-40 w-96 h-96 bg-primary opacity-5 rounded-full blur-3xl pointer-events-none"></div>
+                        
+                        <!-- TAB 1: Models (Default) -->
+                        <div id="tab-models" class="console-tab-content">
+                            <div class="flex justify-between items-center mb-8 relative z-10">
+                                <h3 class="text-2xl font-bold text-slate-800">
+                                    <span data-lang="zh">模型广场</span><span data-lang="en">Model Hub</span>
+                                </h3>
+                                <button class="bg-primary text-white px-4 py-2 rounded-lg text-sm shadow hover:bg-blue-600 transition">
+                                    <i class="fa-solid fa-plus mr-1"></i> 
+                                    <span data-lang="zh">新建 API Key</span><span data-lang="en">New API Key</span>
+                                </button>
+                            </div>
+
+                            <!-- Model Cards Grid -->
+                            <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 relative z-10">
+                                <!-- Card 1: DeepSeek -->
+                                <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm hover:shadow-md transition">
+                                    <div class="flex justify-between items-start mb-4">
+                                        <div class="flex items-center">
+                                            <div class="w-12 h-12 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xl mr-4 border border-blue-100">DS</div>
+                                            <div>
+                                                <h4 class="font-bold text-slate-800 text-lg">DeepSeek-V3</h4>
+                                                <p class="text-xs text-slate-500">671B Params · MoE Architecture</p>
+                                            </div>
+                                        </div>
+                                        <span class="px-2.5 py-1 bg-green-50 text-green-600 text-[10px] font-bold uppercase rounded border border-green-200">Active</span>
+                                    </div>
+                                    <div class="bg-slate-50 rounded-lg p-3 text-sm text-slate-600 mb-4 font-mono text-xs border border-slate-100 break-all">
+                                        Base URL: https://api.dcdeeptech.ai/v1<br>
+                                        Model ID: deepseek-chat
+                                    </div>
+                                    <div class="flex justify-between items-center border-t border-slate-100 pt-4">
+                                        <span class="text-xs font-medium text-slate-500">¥ 0.05 / 10K Tokens</span>
+                                        <button class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                            <span data-lang="zh">查看文档 &rarr;</span><span data-lang="en">View Docs &rarr;</span>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Card 2: Kimi -->
+                                <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm hover:shadow-md transition">
+                                    <div class="flex justify-between items-start mb-4">
+                                        <div class="flex items-center">
+                                            <div class="w-12 h-12 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-xl mr-4 border border-indigo-100">KM</div>
+                                            <div>
+                                                <h4 class="font-bold text-slate-800 text-lg">Kimi-Chat</h4>
+                                                <p class="text-xs text-slate-500">Moonshot · 200K Context</p>
+                                            </div>
+                                        </div>
+                                        <span class="px-2.5 py-1 bg-green-50 text-green-600 text-[10px] font-bold uppercase rounded border border-green-200">Active</span>
+                                    </div>
+                                    <div class="bg-slate-50 rounded-lg p-3 text-sm text-slate-600 mb-4 font-mono text-xs border border-slate-100 break-all">
+                                        Base URL: https://api.dcdeeptech.ai/v1<br>
+                                        Model ID: moonshot-v1-200k
+                                    </div>
+                                    <div class="flex justify-between items-center border-t border-slate-100 pt-4">
+                                        <span class="text-xs font-medium text-slate-500">¥ 0.24 / 10K Tokens</span>
+                                        <button class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                            <span data-lang="zh">查看文档 &rarr;</span><span data-lang="en">View Docs &rarr;</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TAB 2: Compute Instances -->
+                        <div id="tab-compute" class="console-tab-content hidden relative z-10">
+                            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+                                <h3 class="text-2xl font-bold text-slate-800">
+                                    <span data-lang="zh">容器实例管理</span><span data-lang="en">Container Instances</span>
+                                </h3>
+                                <button class="bg-primary text-white px-4 py-2 rounded-lg text-sm shadow hover:bg-blue-600 transition shrink-0">
+                                    <i class="fa-solid fa-server mr-1"></i> 
+                                    <span data-lang="zh">创建实例</span><span data-lang="en">Create Instance</span>
+                                </button>
+                            </div>
+                            
+                            <div class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-left border-collapse min-w-[600px]">
+                                        <thead>
+                                            <tr class="bg-slate-50 text-slate-500 text-xs uppercase">
+                                                <th class="p-4 font-semibold"><span data-lang="zh">实例名称</span><span data-lang="en">Instance Name</span></th>
+                                                <th class="p-4 font-semibold"><span data-lang="zh">配置</span><span data-lang="en">Config</span></th>
+                                                <th class="p-4 font-semibold"><span data-lang="zh">状态</span><span data-lang="en">Status</span></th>
+                                                <th class="p-4 font-semibold"><span data-lang="zh">运行时间</span><span data-lang="en">Uptime</span></th>
+                                                <th class="p-4 font-semibold text-right"><span data-lang="zh">操作</span><span data-lang="en">Actions</span></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="text-sm divide-y divide-slate-100 text-slate-700">
+                                            <tr class="hover:bg-slate-50 transition">
+                                                <td class="p-4 font-medium text-slate-900">dcd-node-sg-01</td>
+                                                <td class="p-4">1x RTX 4090 · 24GB VRAM</td>
+                                                <td class="p-4"><span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full"><i class="fa-solid fa-circle text-[8px] mr-1"></i> Running</span></td>
+                                                <td class="p-4">12d 4h</td>
+                                                <td class="p-4 text-right">
+                                                    <button class="text-slate-400 hover:text-blue-600 mr-2"><i class="fa-solid fa-terminal"></i></button>
+                                                    <button class="text-slate-400 hover:text-red-600"><i class="fa-solid fa-stop"></i></button>
+                                                </td>
+                                            </tr>
+                                            <tr class="hover:bg-slate-50 transition">
+                                                <td class="p-4 font-medium text-slate-900">dcd-train-cq-05</td>
+                                                <td class="p-4">8x H800 · 80GB VRAM</td>
+                                                <td class="p-4"><span class="px-2 py-1 bg-slate-100 text-slate-500 text-xs rounded-full"><i class="fa-solid fa-circle text-[8px] mr-1"></i> Stopped</span></td>
+                                                <td class="p-4">-</td>
+                                                <td class="p-4 text-right">
+                                                    <button class="text-slate-400 hover:text-green-600 mr-2"><i class="fa-solid fa-play"></i></button>
+                                                    <button class="text-slate-400 hover:text-red-600"><i class="fa-solid fa-trash"></i></button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TAB 3: Generic Placeholder for others -->
+                        <div id="tab-generic" class="console-tab-content hidden relative z-10 h-full flex flex-col items-center justify-center text-slate-400">
+                            <i class="fa-solid fa-screwdriver-wrench text-6xl mb-4 opacity-20"></i>
+                            <h4 class="text-xl font-medium text-slate-600 mb-2">
+                                <span data-lang="zh">模块开发中 / 按需展示</span><span data-lang="en">Module preview only</span>
+                            </h4>
+                            <p class="text-sm max-w-sm text-center">
+                                <span data-lang="zh">该功能模块在完整版控制台中可用。欢迎预约演示以获取全套产品体验。</span>
+                                <span data-lang="en">This module is available in the full console. Book a demo to get the complete product experience.</span>
+                            </p>
+                            <button onclick="openModal()" class="mt-6 border border-slate-300 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded shadow-sm transition">
+                                <span data-lang="zh">预约演示</span><span data-lang="en">Book Demo</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Advantages / Why Us -->
-    <section id="advantages" class="py-20 bg-slate-900 border-t border-slate-800">
+    <section id="advantages" class="py-20 bg-deep border-t border-slate-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col lg:flex-row items-center gap-16">
                 <div class="lg:w-1/2">
@@ -357,7 +675,7 @@
     </section>
 
     <!-- Pricing Section -->
-    <section id="pricing" class="py-24 bg-deep">
+    <section id="pricing" class="py-24 bg-slate-900 border-t border-slate-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
                 <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
@@ -441,7 +759,7 @@
     </section>
 
     <!-- Global Resources Section -->
-    <section id="global" class="py-20 bg-slate-900 border-y border-slate-800">
+    <section id="global" class="py-20 bg-deep border-y border-slate-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 class="text-3xl font-bold text-white mb-12">
                 <span data-lang="zh">连接中国生态，服务全球业务</span>
@@ -507,7 +825,7 @@
     </section>
 
     <!-- Bottom CTA -->
-    <section class="py-24 relative overflow-hidden bg-deep">
+    <section class="py-24 relative overflow-hidden bg-slate-900">
         <div class="absolute inset-0 bg-gradient-to-b from-transparent to-primary/10"></div>
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
             <h2 class="text-3xl md:text-5xl font-bold text-white mb-6">
@@ -664,7 +982,7 @@
         </div>
     </div>
 
-    <!-- Scripts -->
+    <!-- Scripts (UPDATED) -->
     <script>
         // Change Navbar background on scroll
         window.addEventListener('scroll', () => {
@@ -675,6 +993,54 @@
                 nav.classList.remove('shadow-lg');
             }
         });
+
+        // Mobile Main Menu Logic
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Console Sidebar Logic (Mobile)
+        function toggleConsoleSidebar() {
+            const sidebar = document.getElementById('consoleSidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            sidebar.classList.toggle('-translate-x-full');
+            sidebar.classList.toggle('translate-x-0');
+            
+            overlay.classList.toggle('hidden');
+        }
+
+        // Console Tab Switching Logic
+        function switchConsoleTab(tabId, element) {
+            // Remove active class from all items
+            document.querySelectorAll('.console-menu-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            // Add active class to clicked item
+            element.classList.add('active');
+
+            // Hide all contents
+            document.querySelectorAll('.console-tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+
+            // Show target content (fallback to generic if id doesn't exist)
+            const targetContent = document.getElementById(tabId);
+            if (targetContent) {
+                targetContent.classList.remove('hidden');
+            } else {
+                document.getElementById('tab-generic').classList.remove('hidden');
+            }
+
+            // Close sidebar on mobile after clicking
+            if (window.innerWidth < 768) {
+                const sidebar = document.getElementById('consoleSidebar');
+                if (!sidebar.classList.contains('-translate-x-full')) {
+                    toggleConsoleSidebar();
+                }
+            }
+        }
 
         // Language Toggle Logic
         function toggleLanguage() {
