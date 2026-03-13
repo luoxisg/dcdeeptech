@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dcdeeptech | OCP Certification & Ecosystem Matrix</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+SC:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans SC', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            900: '#1e3a8a',
+                            950: '#0f172a',
+                        },
+                        ocp: {
+                            green: '#10b981',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        html { scroll-behavior: smooth; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .lang-en { display: none; }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body class="font-sans text-slate-800 bg-slate-50 antialiased selection:bg-brand-100 selection:text-brand-900">
+
+    <!-- Navbar -->
+    <nav class="fixed w-full z-50 transition-all duration-300 backdrop-blur-md bg-white/90 border-b border-slate-200" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex-shrink-0 flex items-center gap-3">
+                    <div class="w-10 h-10 bg-brand-600 rounded-lg flex items-center justify-center text-white shadow-lg shadow-brand-500/30">
+                        <i class="ph-fill ph-cpu text-2xl"></i>
+                    </div>
+                    <span class="font-bold text-2xl tracking-tight text-slate-900">dcdeeptech</span>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#certifications" class="text-sm font-semibold text-slate-600 hover:text-brand-600 transition-colors"><span class="lang-zh">认证服务</span><span class="lang-en">Certifications</span></a>
+                    <a href="#products" class="text-sm font-semibold text-slate-600 hover:text-brand-600 transition-colors"><span class="lang-zh">OCP 硬件生态</span><span class="lang-en">Hardware Ecosystem</span></a>
+                    <a href="#gtm" class="text-sm font-semibold text-slate-600 hover:text-brand-600 transition-colors"><span class="lang-zh">商业模式</span><span class="lang-en">Business Model</span></a>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button onclick="toggleLanguage()" class="flex items-center gap-2 px-4 py-2.5 rounded-full border border-slate-200 hover:border-brand-500 hover:text-brand-600 bg-white shadow-sm transition-all text-sm font-semibold">
+                        <i class="ph ph-translate text-lg"></i>
+                        <span id="lang-btn-text">English</span>
+                    </button>
+                    <a href="#contact" class="hidden lg:inline-flex bg-slate-900 hover:bg-slate-800 text-white px-6 py-2.5 rounded-full text-sm font-semibold transition-colors shadow-md">
+                        <span class="lang-zh">联系架构师</span>
+                        <span class="lang-en">Contact Architect</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative pt-32 pb-20 lg:pt-40 lg:pb-24 overflow-hidden bg-brand-950">
+        <div class="absolute inset-0 z-0">
+            <div class="absolute top-0 right-0 w-[40rem] h-[40rem] bg-brand-600/20 rounded-full blur-[100px] transform translate-x-1/3 -translate-y-1/3"></div>
+            <div class="absolute bottom-0 left-0 w-[40rem] h-[40rem] bg-ocp-green/10 rounded-full blur-[100px] transform -translate-x-1/3 translate-y-1/3"></div>
+            <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utb3BhY2l0eT0iMC4wNSIgZmlsbD0ibm9uZSI+PHBhdGggZD0iTTAgNjBoNjBNNjAgMEgwbTAgMGw2MCA2ME0wIDYwbDYwLTYwIi8+PC9nPjwvc3ZnPg==')] opacity-20"></div>
+        </div>
+
+        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-brand-100 text-sm font-semibold mb-8 backdrop-blur-md">
+                <i class="ph-fill ph-certificate text-ocp-green"></i>
+                <span class="lang-zh">OCP 官方企业会员生态服务</span>
+                <span class="lang-en">Official OCP Corporate Member Services</span>
+            </div>
+            
+            <h1 class="text-4xl md:text-5xl lg:text-7xl font-extrabold text-white tracking-tight mb-8 leading-[1.1]">
+                <span class="lang-zh">赋能中国产业链斩获<br><span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-brand-300 to-emerald-300">OCP 全球核心认证</span></span>
+                <span class="lang-en">Empowering the Chinese Supply Chain with<br><span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-brand-300 to-emerald-300">Core OCP Certifications</span></span>
+            </h1>
+            
+            <p class="max-w-3xl mx-auto text-lg md:text-xl text-slate-300 mb-12 leading-relaxed">
+                <span class="lang-zh">依托 dcdeeptech 深厚的工程底蕴，我们为您提供一站式合规导航：涵盖从 AI 加速器、48V液冷机架到开源固件的全面级硬件产品验证，协助企业获得 <b>OCP Accepted™</b> / <b>Inspired™</b> / <b>Ready™</b> 国际资质。</span>
+                <span class="lang-en">Leveraging dcdeeptech's engineering expertise, we provide end-to-end compliance navigation: from AI accelerators and 48V liquid-cooled racks to open-source firmware, helping enterprises attain <b>OCP Accepted™</b> / <b>Inspired™</b> / <b>Ready™</b> credentials.</span>
+            </p>
+            
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <a href="#products" class="px-8 py-4 rounded-full bg-brand-600 hover:bg-brand-500 text-white font-semibold shadow-lg shadow-brand-500/30 transition-all flex items-center gap-2 text-lg">
+                    <span class="lang-zh">探索 OCP 硬件生态矩阵</span>
+                    <span class="lang-en">Explore OCP Hardware Ecosystem</span>
+                    <i class="ph-bold ph-arrow-down"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Certification Tracks Section -->
+    <section id="certifications" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-brand-600 font-bold tracking-widest uppercase text-sm mb-3">
+                    <span class="lang-zh">核心合规模块</span>
+                    <span class="lang-en">Core Compliance Modules</span>
+                </h2>
+                <h3 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-6">
+                    <span class="lang-zh">四大 OCP 官方认证体系导航</span>
+                    <span class="lang-en">The 4 Official OCP Certification Pillars</span>
+                </h3>
+            </div>
+
+            <!-- 4 Pillar Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200 hover:border-ocp-green hover:shadow-lg transition-all">
+                    <i class="ph-fill ph-seal-check text-4xl text-ocp-green mb-4"></i>
+                    <h4 class="font-bold text-xl mb-2 text-slate-900">OCP Accepted™</h4>
+                    <p class="text-sm text-slate-600"><span class="lang-zh">最高级别的开放性。产品完全符合 OCP 规范，且制造商需向社区完全开源其物理硬件设计文件 (Design Packages)。</span><span class="lang-en">Highest level of openness. Complies fully with OCP specs, requiring manufacturers to open-source physical hardware Design Packages to the community.</span></p>
+                </div>
+                <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200 hover:border-brand-500 hover:shadow-lg transition-all">
+                    <i class="ph-fill ph-lightbulb text-4xl text-brand-500 mb-4"></i>
+                    <h4 class="font-bold text-xl mb-2 text-slate-900">OCP Inspired™</h4>
+                    <p class="text-sm text-slate-600"><span class="lang-zh">合规且保护产权。产品严格符合 OCP 规范，但制造商可保留专有设计图纸的知识产权，无需开源。</span><span class="lang-en">Compliant yet IP-protected. Fully meets OCP specs, but allows manufacturers to retain proprietary design blueprints without open-sourcing.</span></p>
+                </div>
+                <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200 hover:border-red-500 hover:shadow-lg transition-all">
+                    <i class="ph-fill ph-shield-check text-4xl text-red-500 mb-4"></i>
+                    <h4 class="font-bold text-xl mb-2 text-slate-900">OCP S.A.F.E.</h4>
+                    <p class="text-sm text-slate-600"><span class="lang-zh">安全评估框架。针对设备固件与安全架构，确保供应链的完整性并抵御恶意固件攻击。</span><span class="lang-en">Security Appraisal Framework. Targets device firmware and architecture to ensure supply chain integrity against malicious firmware attacks.</span></p>
+                </div>
+                <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200 hover:border-purple-500 hover:shadow-lg transition-all">
+                    <i class="ph-fill ph-buildings text-4xl text-purple-500 mb-4"></i>
+                    <h4 class="font-bold text-xl mb-2 text-slate-900">OCP Ready™</h4>
+                    <p class="text-sm text-slate-600"><span class="lang-zh">设施级认证。证明数据中心机房的承重、电力密度和空间布局足以为极高密度的 OCP 液冷机架提供支撑。</span><span class="lang-en">Facility-level certification. Proves a data center's floor loading, power density, and layout can support ultra-high-density OCP liquid-cooled racks.</span></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Detailed OCP Product Ecosystem Matrix -->
+    <section id="products" class="py-24 bg-slate-900 text-white relative border-y border-slate-800">
+        <!-- Decoration -->
+        <div class="absolute top-0 right-0 w-64 h-64 bg-brand-500 rounded-full blur-[120px] opacity-20"></div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center max-w-4xl mx-auto mb-16">
+                <h2 class="text-brand-400 font-bold tracking-widest uppercase text-sm mb-3">
+                    <span class="lang-zh">深度研究与产品分类</span>
+                    <span class="lang-en">Deep Research & Product Taxonomy</span>
+                </h2>
+                <h3 class="text-3xl md:text-5xl font-extrabold text-white mb-6 leading-tight">
+                    <span class="lang-zh">OCP 全场景硬件生态系统矩阵</span>
+                    <span class="lang-en">Full-Scenario OCP Hardware Ecosystem Matrix</span>
+                </h3>
+                <p class="text-slate-400 text-lg">
+                    <span class="lang-zh">从底层硅片、液冷架构到机架级供电，dcdeeptech 协助中国产业链制造商在以下 6 大核心 OCP 项目中完成工程对接与认证孵化。</span>
+                    <span class="lang-en">From core silicon and liquid cooling to rack-level power, dcdeeptech assists manufacturers in engineering integration and certification across 6 core OCP Projects.</span>
+                </p>
+            </div>
+
+            <!-- Bento Box Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                
+                <!-- 1. Server & AI -->
+                <div class="glass-card p-8 rounded-3xl border border-slate-700/50 hover:border-brand-500/50 transition-colors group">
+                    <div class="flex items-center gap-4 mb-6 pb-6 border-b border-slate-700/50">
+                        <div class="w-12 h-12 bg-blue-500/10 text-blue-400 rounded-xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform"><i class="ph-fill ph-cpu"></i></div>
+                        <h4 class="text-xl font-bold"><span class="lang-zh">核心计算与服务器</span><span class="lang-en">Compute & Server</span></h4>
+                    </div>
+                    <ul class="space-y-4 text-sm text-slate-300">
+                        <li><strong class="text-white block mb-1">开放加速器基础设施 (OAI)</strong>
+                            <span class="lang-zh">标准化 GPU/TPU 模块接口 (OAM) 与通用基板 (UBB)，打破 AI 算力物理锁定，支持单模块高达 400W 功耗。</span>
+                            <span class="lang-en">Standardized GPU/TPU module interfaces (OAM) and Universal Baseboards (UBB), breaking AI lock-in, supporting up to 400W per module.</span>
+                        </li>
+                        <li><strong class="text-white block mb-1">开放小芯片经济 (Chiplet)</strong>
+                            <span class="lang-zh">定义 Die-to-Die (D2D) 物理接口，推动异构硅芯片在单一系统级封装 (SiP) 中的集成。</span>
+                            <span class="lang-en">Defining Die-to-Die (D2D) physical interfaces, driving heterogeneous silicon integration into a single System-in-Package (SiP).</span>
+                        </li>
+                        <li><strong class="text-white block mb-1">OCP NIC 3.0 网卡规范</strong>
+                            <span class="lang-zh">前置热插拔夹层设计，涵盖 SFF 到 TDSFF 外形，支持高达 400 Gb/s 的网络吞吐与局域网旁路 (Bypass)。</span>
+                            <span class="lang-en">Front-pluggable mezzanine designs (SFF to TDSFF), supporting up to 400 Gb/s throughput and LAN Bypass.</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 2. Networking -->
+                <div class="glass-card p-8 rounded-3xl border border-slate-700/50 hover:border-emerald-500/50 transition-colors group">
+                    <div class="flex items-center gap-4 mb-6 pb-6 border-b border-slate-700/50">
+                        <div class="w-12 h-12 bg-emerald-500/10 text-emerald-400 rounded-xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform"><i class="ph-fill ph-share-network"></i></div>
+                        <h4 class="text-xl font-bold"><span class="lang-zh">网络解耦与横向扩展</span><span class="lang-en">Disaggregated Networking</span></h4>
+                    </div>
+                    <ul class="space-y-4 text-sm text-slate-300">
+                        <li><strong class="text-white block mb-1">裸金属交换机与 ONIE</strong>
+                            <span class="lang-zh">将物理交换机硬件与网络操作系统 (NOS/SONiC) 剥离，通过 SAI 接口实现跨 Broadcom/Barefoot 芯片的统一编程。</span>
+                            <span class="lang-en">Decoupling bare-metal switches from Network OS (SONiC) via SAI, allowing unified programming across Broadcom/Barefoot ASICs.</span>
+                        </li>
+                        <li><strong class="text-white block mb-1">ESUN 1.0 (面向 AI 的以太网)</strong>
+                            <span class="lang-zh">淘汰传统 IP/UDP 头部，引入紧凑的 4 字节 ESUN 头部。通过链路级优先流控，打造 AI 训练集群专用的无损网络结构。</span>
+                            <span class="lang-en">Replacing legacy IP/UDP headers with a compact 4-byte ESUN header. Enforces link-level flow control for lossless AI training fabrics.</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 3. Rack & Power -->
+                <div class="glass-card p-8 rounded-3xl border border-slate-700/50 hover:border-amber-500/50 transition-colors group">
+                    <div class="flex items-center gap-4 mb-6 pb-6 border-b border-slate-700/50">
+                        <div class="w-12 h-12 bg-amber-500/10 text-amber-400 rounded-xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform"><i class="ph-fill ph-lightning"></i></div>
+                        <h4 class="text-xl font-bold"><span class="lang-zh">机架架构与高级配电</span><span class="lang-en">Rack & Advanced Power</span></h4>
+                    </div>
+                    <ul class="space-y-4 text-sm text-slate-300">
+                        <li><strong class="text-white block mb-1">Open Rack V3 (ORv3)</strong>
+                            <span class="lang-zh">打破 19 英寸限制的 21 英寸内宽设计，极大提升单水平空间的计算与散热密度。</span>
+                            <span class="lang-en">21-inch inner-width design breaking the 19-inch legacy limit, vastly improving compute and thermal density per horizontal U.</span>
+                        </li>
+                        <li><strong class="text-white block mb-1">48V 直流母线配电架构</strong>
+                            <span class="lang-zh">取代传统 12V 架构，以 48V 直流母线排 (Busbar) 将线路热损耗降低 16 倍，支撑单机柜 100kW 以上超高功率。</span>
+                            <span class="lang-en">Replacing 12V with 48V DC busbars to reduce I²R loss by 16x, supporting extreme densities exceeding 100kW per rack.</span>
+                        </li>
+                        <li><strong class="text-white block mb-1">机架级电池备份 (BBU)</strong>
+                            <span class="lang-zh">将备用电池直接挂载机架母线，消除数据中心对庞大集中式 UPS 的依赖。</span>
+                            <span class="lang-en">Mounting Backup Battery Units directly to the rack busbar, eliminating DC reliance on massive centralized UPS rooms.</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 4. Cooling -->
+                <div class="glass-card p-8 rounded-3xl border border-slate-700/50 hover:border-cyan-500/50 transition-colors group">
+                    <div class="flex items-center gap-4 mb-6 pb-6 border-b border-slate-700/50">
+                        <div class="w-12 h-12 bg-cyan-500/10 text-cyan-400 rounded-xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform"><i class="ph-fill ph-drop"></i></div>
+                        <h4 class="text-xl font-bold"><span class="lang-zh">高级热管理与液冷</span><span class="lang-en">Thermal & Liquid Cooling</span></h4>
+                    </div>
+                    <ul class="space-y-4 text-sm text-slate-300">
+                        <li><strong class="text-white block mb-1">冷板技术 (Cold Plate) & CDU</strong>
+                            <span class="lang-zh">直接到芯片 (Direct-to-Chip) 的微通道散热与防漏盲插连接器。冷却液分配单元 (CDU) 提供精准流量调节。</span>
+                            <span class="lang-en">Direct-to-Chip micro-channel cooling and leak-proof blind-mate connectors. Coolant Distribution Units (CDU) for precise flow regulation.</span>
+                        </li>
+                        <li><strong class="text-white block mb-1">浸没式冷却 (Immersion)</strong>
+                            <span class="lang-zh">定义绝缘介电液体化学兼容性、水箱结构完整性及冷却液生命周期管理。</span>
+                            <span class="lang-en">Defining dielectric fluid chemical compatibility, tank structural integrity, and fluid lifecycle management.</span>
+                        </li>
+                        <li><strong class="text-white block mb-1">余热回收 (Heat Reuse)</strong>
+                            <span class="lang-zh">捕获数据中心庞大热能，引流至区域城市供暖或大型温室农业。</span>
+                            <span class="lang-en">Capturing massive thermal energy and directing it to district heating or large-scale greenhouse agriculture.</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 5. DCF & Edge -->
+                <div class="glass-card p-8 rounded-3xl border border-slate-700/50 hover:border-purple-500/50 transition-colors group">
+                    <div class="flex items-center gap-4 mb-6 pb-6 border-b border-slate-700/50">
+                        <div class="w-12 h-12 bg-purple-500/10 text-purple-400 rounded-xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform"><i class="ph-fill ph-broadcast"></i></div>
+                        <h4 class="text-xl font-bold"><span class="lang-zh">设施与边缘拓扑</span><span class="lang-en">Facilities & Edge Topology</span></h4>
+                    </div>
+                    <ul class="space-y-4 text-sm text-slate-300">
+                        <li><strong class="text-white block mb-1">模块化数据中心 (MDC)</strong>
+                            <span class="lang-zh">预制化、集装箱化单元规范，允许在偏远地区进行极速扩展部署。</span>
+                            <span class="lang-en">Prefabricated, containerized unit specifications enabling rapid expansion deployments in remote locations.</span>
+                        </li>
+                        <li><strong class="text-white block mb-1">openEDGE 与 DCSG</strong>
+                            <span class="lang-zh">定义短深度机箱以适应通信塔基站严苛环境；解耦蜂窝基站网关 (DCSG) 聚合 5G 流量。</span>
+                            <span class="lang-en">Short-depth chassis for harsh cell-tower environments; Disaggregated Cell Site Gateways (DCSG) to aggregate 5G traffic.</span>
+                        </li>
+                        <li><strong class="text-white block mb-1">EDSFF 高密度存储 (Storage)</strong>
+                            <span class="lang-zh">推广 E1.S / E3.S 等面向网络组合的 NVMe 独立资源池规范。</span>
+                            <span class="lang-en">Promoting E1.S / E3.S network-composable NVMe independent resource pool specifications.</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 6. Hardware Management & Security -->
+                <div class="glass-card p-8 rounded-3xl border border-slate-700/50 hover:border-red-500/50 transition-colors group">
+                    <div class="flex items-center gap-4 mb-6 pb-6 border-b border-slate-700/50">
+                        <div class="w-12 h-12 bg-red-500/10 text-red-400 rounded-xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform"><i class="ph-fill ph-shield-star"></i></div>
+                        <h4 class="text-xl font-bold"><span class="lang-zh">硬件管理与可信安全</span><span class="lang-en">Mgmt & Trusted Security</span></h4>
+                    </div>
+                    <ul class="space-y-4 text-sm text-slate-300">
+                        <li><strong class="text-white block mb-1">DC-SCM 安全控制模块</strong>
+                            <span class="lang-zh">物理剥离 BMC、闪存与主板，使得 CPU 代际升级时可保留并重用安全管理固件体系。</span>
+                            <span class="lang-en">Physically decouples BMC & Flash from mainboards, allowing reuse of secure management firmware across CPU generations.</span>
+                        </li>
+                        <li><strong class="text-white block mb-1">硬件信任根 (Root of Trust)</strong>
+                            <span class="lang-zh">平台主动信任根 (PA RoT) 结合外设证明，从硬件底层防范 Bootkit 等固件级攻击。</span>
+                            <span class="lang-en">Platform Active RoT (PA RoT) combined with peripheral attestation to prevent Bootkit firmware attacks at the hardware level.</span>
+                        </li>
+                        <li><strong class="text-white block mb-1">开放平台固件 (OSF) & 时间卡</strong>
+                            <span class="lang-zh">推广 Coreboot/LinuxBoot 开源堆栈；集成高精度时间卡 (TAP)，实现纳秒级 PTP 同步以太网。</span>
+                            <span class="lang-en">Promoting Coreboot/LinuxBoot stacks; Integrating precision Time Cards (TAP) for nanosecond PTP atomic ethernet synchronization.</span>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- GTM Section -->
+    <section id="gtm" class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+                <div>
+                    <h2 class="text-brand-600 font-bold tracking-widest uppercase text-sm mb-3">
+                        <span class="lang-zh">联合走向市场 (Go-to-Market)</span>
+                        <span class="lang-en">Joint Go-to-Market (GTM)</span>
+                    </h2>
+                    <h3 class="text-3xl md:text-5xl font-extrabold text-slate-900 mb-6 leading-tight">
+                        <span class="lang-zh">面向 AI 的开放系统：<br>从认证到变现</span>
+                        <span class="lang-en">Open Systems for AI:<br>From Certification to Revenue</span>
+                    </h3>
+                    <p class="text-slate-500 text-lg mb-8">
+                        <span class="lang-zh">根据第 14 章的战略指导，认证只是起点。dcdeeptech 将协助您将单一硬件组件，打包封装为预先验证的 <b>OCP 集成解决方案 (Integrated Solutions)</b>。</span>
+                        <span class="lang-en">Certification is just the start. We help package your single hardware components into pre-validated <b>OCP Integrated Solutions</b>.</span>
+                    </p>
+                    
+                    <ul class="space-y-6">
+                        <li class="flex gap-4">
+                            <i class="ph-fill ph-storefront text-2xl text-ocp-green shrink-0 mt-1"></i>
+                            <div>
+                                <h4 class="font-bold text-lg text-slate-900"><span class="lang-zh">OCP Marketplace 官方挂牌</span><span class="lang-en">Official Marketplace Listing</span></h4>
+                                <p class="text-slate-500 text-sm mt-1"><span class="lang-zh">作为专业服务提供商，我们协助将您的裸金属交换机、AI集群节点推向官方市场，直接触达全球超大规模云服务商客户。</span><span class="lang-en">We assist in listing your bare-metal switches and AI nodes on the official market, reaching hyperscaler clients globally.</span></p>
+                            </div>
+                        </li>
+                        <li class="flex gap-4">
+                            <i class="ph-fill ph-presentation-chart text-2xl text-blue-500 shrink-0 mt-1"></i>
+                            <div>
+                                <h4 class="font-bold text-lg text-slate-900"><span class="lang-zh">物理概念验证 (PoC) 中心体验</span><span class="lang-en">Physical PoC Centers</span></h4>
+                                <p class="text-slate-500 text-sm mt-1"><span class="lang-zh">引导设备入驻北京及海外 OCP 体验中心，让大型数据中心运营商现场实测您的 OAI 或液冷硬件性能。</span><span class="lang-en">Deploy equipment in OCP Experience Centers (Beijing/Overseas) for live performance testing by major DC operators.</span></p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="relative">
+                    <div class="absolute inset-0 bg-gradient-to-tr from-brand-100 to-purple-100 rounded-3xl transform rotate-3"></div>
+                    <div class="relative bg-white border border-slate-200 p-8 rounded-3xl shadow-xl">
+                        <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&q=80&w=800" alt="Server Room" class="rounded-2xl mb-6 shadow-md transition-all duration-500 hover:scale-[1.02]">
+                        <div class="flex items-center justify-between border-t border-slate-100 pt-6">
+                            <div>
+                                <div class="text-slate-400 text-sm"><span class="lang-zh">全球出海与生态拓展</span><span class="lang-en">Global Expansion & Ecosystem</span></div>
+                                <div class="font-bold text-xl text-slate-900"><span class="lang-zh">东南亚高精尖市场突破</span><span class="lang-en">Penetrating SEA DeepTech Markets</span></div>
+                            </div>
+                            <button class="w-12 h-12 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center hover:bg-brand-600 hover:text-white transition-colors">
+                                <i class="ph-bold ph-arrow-right text-xl"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Commercial Model Table -->
+    <section class="py-24 bg-slate-50 border-t border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-4">
+                    <span class="lang-zh">建议合作模式与报价估算</span>
+                    <span class="lang-en">Suggested Commercial Model & Estimation</span>
+                </h2>
+                <p class="text-slate-500">
+                    <span class="lang-zh">采用 基础咨询费 + 认证代理费 + 销售分润 的结构。(以下为基准预估 USD)</span>
+                    <span class="lang-en">Structured via Base Consulting + Agency Fees + Profit Sharing. (Baseline estimates in USD)</span>
+                </p>
+            </div>
+
+            <div class="bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-200 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse min-w-[800px]">
+                        <thead>
+                            <tr class="bg-slate-100/50 text-slate-600 text-sm uppercase tracking-wider border-b border-slate-200">
+                                <th class="p-6 font-bold w-1/4">
+                                    <span class="lang-zh">认证服务与范围</span>
+                                    <span class="lang-en">Certification Service & Scope</span>
+                                </th>
+                                <th class="p-6 font-bold w-1/4">
+                                    <span class="lang-zh">生态节点 / 适用对象</span>
+                                    <span class="lang-en">Ecosystem Target</span>
+                                </th>
+                                <th class="p-6 font-bold w-1/4 text-brand-600">
+                                    <span class="lang-zh">建议基础报价 (USD)</span>
+                                    <span class="lang-en">Est. Base Price (USD)</span>
+                                </th>
+                                <th class="p-6 font-bold w-1/4">
+                                    <span class="lang-zh">核心交付成果</span>
+                                    <span class="lang-en">Deliverables</span>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 text-slate-700">
+                            <!-- OCP Accepted/Inspired -->
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="p-6">
+                                    <div class="font-bold text-slate-900 text-lg mb-1">OCP Accepted/Inspired™</div>
+                                    <div class="text-sm text-slate-500"><span class="lang-zh">硬件合规导航与代理申请</span><span class="lang-en">Hardware compliance & agency</span></div>
+                                </td>
+                                <td class="p-6">
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-blue-50 text-brand-700 text-xs font-bold border border-blue-100">
+                                        <span class="lang-zh">计算/网络/存储/机架制造厂</span>
+                                        <span class="lang-en">Compute/Net/Storage/Rack OEMs</span>
+                                    </span>
+                                </td>
+                                <td class="p-6">
+                                    <div class="font-extrabold text-brand-600 text-xl">$25,000 - $60,000</div>
+                                    <div class="text-xs text-slate-400 mt-1"><span class="lang-zh">按单个产品 SKU 计费 (不含审计费)</span><span class="lang-en">Per SKU (Excludes Audit Fees)</span></div>
+                                </td>
+                                <td class="p-6 text-sm">
+                                    <span class="lang-zh">规范差距分析、开源/闭源设计文件准备、OCP 社区答辩辅导与挂牌。</span>
+                                    <span class="lang-en">Gap analysis, Design Package prep, community review coaching, official badge.</span>
+                                </td>
+                            </tr>
+                            
+                            <!-- OCP Ready -->
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="p-6">
+                                    <div class="font-bold text-purple-700 text-lg mb-1">OCP Ready™</div>
+                                    <div class="text-sm text-slate-500"><span class="lang-zh">数据中心设施(DCF)工程咨询</span><span class="lang-en">Facility engineering consulting</span></div>
+                                </td>
+                                <td class="p-6">
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-purple-50 text-purple-700 text-xs font-bold border border-purple-100">
+                                        <span class="lang-zh">托管机房 (Colo) / 园区运营商</span>
+                                        <span class="lang-en">Data Center / Colo Operators</span>
+                                    </span>
+                                </td>
+                                <td class="p-6">
+                                    <div class="font-extrabold text-purple-600 text-xl">$40,000 - $90,000</div>
+                                    <div class="text-xs text-slate-400 mt-1"><span class="lang-zh">按单体机房/项目区计费</span><span class="lang-en">Per Facility/Zone</span></div>
+                                </td>
+                                <td class="p-6 text-sm">
+                                    <span class="lang-zh">楼面承重/母线电力/液冷散热评估报告、合规升级设计方案及官方设施清单列入。</span>
+                                    <span class="lang-en">Structural/power/thermal assessment, compliance retrofit design, official directory listing.</span>
+                                </td>
+                            </tr>
+
+                            <!-- GTM -->
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="p-6">
+                                    <div class="font-bold text-slate-900 text-lg mb-1"><span class="lang-zh">面向 AI 的集成解决方案</span><span class="lang-en">AI Integrated Solutions GTM</span></div>
+                                </td>
+                                <td class="p-6">
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 text-xs font-bold border border-slate-200">
+                                        <span class="lang-zh">全生态系合作伙伴</span>
+                                        <span class="lang-en">All Certified Partners</span>
+                                    </span>
+                                </td>
+                                <td class="p-6">
+                                    <div class="font-extrabold text-slate-900 text-xl"><span class="lang-zh">集成底费 + 销售分润</span><span class="lang-en">Setup Fee + Margin</span></div>
+                                    <div class="text-xs text-slate-400 mt-1">10% - 20% <span class="lang-zh">业务提成</span><span class="lang-en">Profit Share</span></div>
+                                </td>
+                                <td class="p-6 text-sm">
+                                    <span class="lang-zh">软硬一体化打磨、Marketplace 官方上架销售、东南亚渠道推介及体验中心 PoC 落地。</span>
+                                    <span class="lang-en">HW/SW integration, Marketplace listing, SEA channel introductions, and PoC deployment.</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer / CTA -->
+    <footer id="contact" class="bg-brand-950 text-slate-400 py-20 border-t border-brand-900">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl md:text-5xl font-extrabold text-white mb-6">
+                <span class="lang-zh">跨越物理界限，重塑供应链</span>
+                <span class="lang-en">Reshape the Global Supply Chain</span>
+            </h2>
+            <p class="mb-10 text-lg">
+                <span class="lang-zh">联系 dcdeeptech 资深架构师，安排一次免费的产品线/设施初始工程评估会议 (Gap Analysis Workshop)。</span>
+                <span class="lang-en">Contact a dcdeeptech senior architect to schedule a complimentary initial Gap Analysis Workshop for your product line or facility.</span>
+            </p>
+            
+            <div class="bg-slate-900/80 rounded-3xl p-8 border border-slate-800 backdrop-blur-sm max-w-lg mx-auto text-left">
+                <div class="font-bold text-white text-xl mb-6 pb-4 border-b border-slate-800 flex items-center gap-3">
+                    <i class="ph-fill ph-paper-plane-right text-brand-500"></i>
+                    <span class="lang-zh">业务洽谈窗口</span>
+                    <span class="lang-en">Business Inquiry Contact</span>
+                </div>
+                <div class="space-y-4">
+                    <div class="flex items-center gap-4 group">
+                        <div class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-brand-400 group-hover:bg-brand-600 group-hover:text-white transition-colors">
+                            <i class="ph-fill ph-user"></i>
+                        </div>
+                        <div>
+                            <div class="text-white font-medium">[Name Placeholder]</div>
+                            <div class="text-sm">Partner Ecosystem Director, dcdeeptech</div>
+                        </div>
+                    </div>
+                    <a href="mailto:contact@dcdeeptech.com" class="flex items-center gap-4 group">
+                        <div class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-brand-400 group-hover:bg-brand-600 group-hover:text-white transition-colors">
+                            <i class="ph-fill ph-envelope"></i>
+                        </div>
+                        <span class="text-slate-300 group-hover:text-white transition-colors">contact@dcdeeptech.com</span>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="mt-20 text-sm text-slate-600 flex items-center justify-center gap-2">
+                <i class="ph-fill ph-copyright"></i> 2026 dcdeeptech. Empowering the Open Compute ecosystem.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Logic for bilingual toggle -->
+    <script>
+        let currentLang = 'zh';
+        
+        function toggleLanguage() {
+            currentLang = currentLang === 'zh' ? 'en' : 'zh';
+            
+            document.querySelectorAll('.lang-zh').forEach(el => {
+                el.style.display = currentLang === 'zh' ? '' : 'none';
+            });
+            
+            document.querySelectorAll('.lang-en').forEach(el => {
+                el.style.display = currentLang === 'en' ? '' : 'none';
+            });
+
+            document.getElementById('lang-btn-text').innerText = currentLang === 'zh' ? 'English' : '中文';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.lang-en').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.lang-zh').forEach(el => el.style.display = '');
+        });
+        
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 20) {
+                nav.classList.add('shadow-md');
+                nav.classList.remove('bg-white/90');
+                nav.classList.add('bg-white/95');
+            } else {
+                nav.classList.remove('shadow-md');
+                nav.classList.add('bg-white/90');
+                nav.classList.remove('bg-white/95');
+            }
+        });
+    </script>
+</body>
+</html>
