@@ -39,9 +39,9 @@ Global → Singapore Gateway → China Compute → Response
 
 ``` mermaid
 flowchart TD
-    A[Clients] --> B[Singapore API Gateway]
-    B --> C[Cross-border Inference Channel]
-    C --> D[Model Inference (China GPU / vLLM)]
+    A["Clients"] --> B["Singapore API Gateway"]
+    B --> C["Cross-border Inference Channel"]
+    C --> D["Model Inference: China GPU / vLLM"]
     D --> C
     C --> B
 ```
