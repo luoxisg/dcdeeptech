@@ -21,6 +21,8 @@
 - [Run](#run)
 - [API Usage](#api-usage)
 - [Project Structure](#project-structure)
+- [Get API Key](#get-api-key)
+- [Pricing](#pricing)
 - [Success Criteria](#success-criteria)
 - [Roadmap](#roadmap)
 - [中文版本](#中文版本)
@@ -206,6 +208,80 @@ sg-cn-gateway/
 
 ---
 
+## 🔐 Get API Key
+
+> Developer access is currently available via **invitation / waitlist** during the POC phase.
+
+### How to Apply
+
+1. Email **[dev@dcdeeptech.com](mailto:dev@dcdeeptech.com)** with subject: `API Key Request`
+2. Include your name, company, and intended use case
+3. You will receive a `sk-xxxx` key within 1–2 business days
+
+### What You'll Receive
+
+| Item | Detail |
+|------|--------|
+| API Key | `sk-xxxxxxxxxxxxxxxx` (keep secret, never commit to git) |
+| Base URL | `https://api.dcdeeptech.com` |
+| Default Quota | 100,000 tokens / day (POC tier) |
+| Models Access | `qwenvl` (text + multimodal) |
+
+### Key Management
+
+```bash
+# Set as environment variable (recommended)
+export DCDEEPTECH_API_KEY="sk-xxxx"
+
+# Use in requests
+curl https://api.dcdeeptech.com/v1/chat/completions \
+  -H "Authorization: Bearer $DCDEEPTECH_API_KEY" \
+  ...
+```
+
+> ⚠️ **Security:** Rotate your key immediately at [dev@dcdeeptech.com](mailto:dev@dcdeeptech.com) if you suspect it has been compromised.
+
+---
+
+## 💰 Pricing
+
+> POC phase pricing — subject to change in Phase 2 (Billing).
+
+### Token Pricing (Qwen-VL)
+
+| Type | Unit | Price (USD) |
+|------|------|-------------|
+| Input tokens (text) | per 1M tokens | $0.50 |
+| Output tokens (text) | per 1M tokens | $1.50 |
+| Input tokens (image) | per image | $0.003 |
+| Minimum charge | per request | — (no minimum) |
+
+> **Example:** A request with 500 input tokens + 200 output tokens costs approximately **$0.00058**.
+
+### POC Free Tier
+
+| Tier | Quota | Price |
+|------|-------|-------|
+| POC Developer | 100,000 tokens / day | **Free** (during POC) |
+| Overage | Beyond daily quota | Requests return `429` — contact us to upgrade |
+
+### Billing Notes
+
+- Token counting follows the **OpenAI tiktoken** convention for text
+- Images are counted as a **flat fee per image** regardless of resolution (during POC)
+- Streaming responses (`"stream": true`) are billed identically to non-streaming
+- Usage logs available on request — self-serve dashboard coming in Phase 3
+
+### Future Pricing (Phase 2 Roadmap)
+
+| Tier | Monthly Volume | Estimated Price |
+|------|---------------|-----------------|
+| Starter | up to 10M tokens | ~$10 / month |
+| Growth | up to 100M tokens | ~$80 / month |
+| Enterprise | Custom | Contact us |
+
+---
+
 ## 📊 Success Criteria
 
 | Criteria | Target |
@@ -328,6 +404,78 @@ curl https://api.dcdeeptech.com/v1/chat/completions \
     }]
   }'
 ```
+
+---
+
+## 🔐 获取 API Key（开发者入口）
+
+> POC 阶段目前通过**邀请 / 申请**方式开放。
+
+### 申请方式
+
+1. 发送邮件至 **[dev@dcdeeptech.com](mailto:dev@dcdeeptech.com)**，主题：`API Key 申请`
+2. 注明姓名、公司及使用场景
+3. 1–2 个工作日内收到 `sk-xxxx` Key
+
+### 你将获得
+
+| 内容 | 详情 |
+|------|------|
+| API Key | `sk-xxxxxxxxxxxxxxxx`（请勿提交至代码仓库） |
+| Base URL | `https://api.dcdeeptech.com` |
+| 默认配额 | 每日 100,000 tokens（POC 档） |
+| 可用模型 | `qwenvl`（文本 + 多模态） |
+
+### Key 使用方式
+
+```bash
+export DCDEEPTECH_API_KEY="sk-xxxx"
+
+curl https://api.dcdeeptech.com/v1/chat/completions \
+  -H "Authorization: Bearer $DCDEEPTECH_API_KEY" \
+  ...
+```
+
+> ⚠️ **安全提示：** 若怀疑 Key 泄露，请立即发邮件至 [dev@dcdeeptech.com](mailto:dev@dcdeeptech.com) 申请轮换。
+
+---
+
+## 💰 计费说明（Token Pricing）
+
+> 当前为 POC 阶段定价，Phase 2 上线正式计费系统后可能调整。
+
+### Qwen-VL Token 价格
+
+| 类型 | 单位 | 价格（USD） |
+|------|------|------------|
+| 输入 Token（文本） | 每 100 万 tokens | $0.50 |
+| 输出 Token（文本） | 每 100 万 tokens | $1.50 |
+| 输入（图片） | 每张图片 | $0.003 |
+| 最低消费 | 每次请求 | 无 |
+
+> **示例：** 500 输入 tokens + 200 输出 tokens，费用约 **$0.00058**。
+
+### POC 免费额度
+
+| 档位 | 配额 | 费用 |
+|------|------|------|
+| POC 开发者 | 每日 100,000 tokens | **免费**（POC 期间） |
+| 超额 | 超出每日配额后 | 返回 `429`，联系我们升级 |
+
+### 计费说明
+
+- 文本 Token 计数遵循 **OpenAI tiktoken** 规范
+- 图片按**每张固定费率**计费（POC 阶段不区分分辨率）
+- 流式响应（`"stream": true`）与非流式计费方式相同
+- 用量日志可按需提供，自助控制台将在 Phase 3 上线
+
+### 未来定价（Phase 2 规划）
+
+| 档位 | 月用量 | 预估价格 |
+|------|-------|---------|
+| 入门版 | 1000 万 tokens 以内 | ~$10 / 月 |
+| 成长版 | 1 亿 tokens 以内 | ~$80 / 月 |
+| 企业版 | 定制 | 联系我们 |
 
 ---
 
