@@ -1,4 +1,4 @@
- # 🌏 SG-CN AI Gateway POC
+  # 🌏 SG-CN AI Gateway POC
 
 **Singapore--China Cross-Border AI Gateway (OpenAI-Compatible)**
 
@@ -190,3 +190,45 @@ MIT
 ## 🧠 结论
 
 跨境AI基础设施层
+
+
+---
+
+## 👨‍💻 How to Use (for Clients)
+
+### Overview
+Use exactly like OpenAI API, just replace base URL:
+
+https://api.openai.com → https://api.dcdeeptech.com
+
+### Required Information
+- Endpoint: https://api.dcdeeptech.com/v1/chat/completions
+- API Key: Authorization: Bearer sk-xxxx
+- Model: qwen-7b / deepseek
+
+### Example (curl)
+curl https://api.dcdeeptech.com/v1/chat/completions \
+  -H "Authorization: Bearer sk-demo" \
+  -H "Content-Type: application/json" \
+  -d '{"model":"qwen-7b","messages":[{"role":"user","content":"Hello"}]}'
+
+---
+
+## 👨‍💻 客户使用方式
+
+### 使用方式
+与 OpenAI 完全一致，只需替换：
+
+https://api.openai.com → https://api.dcdeeptech.com
+
+### 必需信息
+- API地址：https://api.dcdeeptech.com/v1/chat/completions
+- API Key：Authorization: Bearer sk-xxxx
+- 模型：qwen-7b / deepseek
+
+### 示例
+curl https://api.dcdeeptech.com/v1/chat/completions \
+  -H "Authorization: Bearer sk-demo" \
+  -H "Content-Type: application/json" \
+  -d '{"model":"qwen-7b","messages":[{"role":"user","content":"你好"}]}'
+
