@@ -214,7 +214,7 @@ sg-cn-gateway/
 
 ### How to Apply
 
-1. Email **[dev@dcdeeptech.com](mailto:dev@dcdeeptech.com)** with subject: `API Key Request`
+1. Email **[info@dcdeeptech.com](mailto:info@dcdeeptech.com)** with subject: `API Key Request`
 2. Include your name, company, and intended use case
 3. You will receive a `sk-xxxx` key within 1–2 business days
 
@@ -239,7 +239,7 @@ curl https://api.dcdeeptech.com/v1/chat/completions \
   ...
 ```
 
-> ⚠️ **Security:** Rotate your key immediately at [dev@dcdeeptech.com](mailto:dev@dcdeeptech.com) if you suspect it has been compromised.
+> ⚠️ **Security:** Rotate your key immediately at [info@dcdeeptech.com](mailto:info@dcdeeptech.com) if you suspect it has been compromised.
 
 ---
 
@@ -413,7 +413,7 @@ curl https://api.dcdeeptech.com/v1/chat/completions \
 
 ### 申请方式
 
-1. 发送邮件至 **[dev@dcdeeptech.com](mailto:dev@dcdeeptech.com)**，主题：`API Key 申请`
+1. 发送邮件至 **[info@dcdeeptech.com](mailto:info@dcdeeptech.com)**，主题：`API Key 申请`
 2. 注明姓名、公司及使用场景
 3. 1–2 个工作日内收到 `sk-xxxx` Key
 
@@ -436,7 +436,7 @@ curl https://api.dcdeeptech.com/v1/chat/completions \
   ...
 ```
 
-> ⚠️ **安全提示：** 若怀疑 Key 泄露，请立即发邮件至 [dev@dcdeeptech.com](mailto:dev@dcdeeptech.com) 申请轮换。
+> ⚠️ **安全提示：** 若怀疑 Key 泄露，请立即发邮件至 [info@dcdeeptech.com](mailto:info@dcdeeptech.com) 申请轮换。
 
 ---
 
