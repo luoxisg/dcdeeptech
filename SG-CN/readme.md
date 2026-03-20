@@ -112,7 +112,7 @@ curl http://localhost:8000/v1/chat/completions \
 ## 📁 Project Structure
 
 ``` text
-sg-cn-ai-gateway-poc/
+SG-CN/
 ├── main.py
 ├── requirements.txt
 ├── README.md
