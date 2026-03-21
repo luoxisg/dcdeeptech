@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
@@ -41,7 +41,10 @@
         ::-webkit-scrollbar-track { background: #f1f1f1; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-        .lang-en { display: none; }
+        
+        /* 修复后的多语言切换 CSS 逻辑 (更稳定，无闪烁和消失 Bug) */
+        html[lang="zh"] .lang-en { display: none !important; }
+        html[lang="en"] .lang-zh { display: none !important; }
         
         .glass-card {
             background: rgba(255, 255, 255, 0.03);
@@ -56,12 +59,11 @@
     <nav class="fixed w-full z-50 transition-all duration-300 backdrop-blur-md bg-white/90 border-b border-slate-200" id="navbar">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
-                <div class="flex-shrink-0 flex items-center gap-3">
-                    <div class="w-10 h-10 bg-brand-600 rounded-lg flex items-center justify-center text-white shadow-lg shadow-brand-500/30">
-                        <i class="ph-fill ph-cpu text-2xl"></i>
-                    </div>
-                    <span class="font-bold text-2xl tracking-tight text-slate-900">dcdeeptech</span>
+                <!-- Logo 区域更新 -->
+                <div class="flex-shrink-0 flex items-center cursor-pointer" onclick="window.scrollTo(0,0)">
+                    <img src="https://raw.githubusercontent.com/luoxisg/dcdeeptech/main/image/DCdeeptech_logo-removebg-preview.png" alt="dcdeeptech Logo" class="h-12 w-auto object-contain drop-shadow-sm">
                 </div>
+                
                 <div class="hidden md:flex items-center space-x-8">
                     <a href="#certifications" class="text-sm font-semibold text-slate-600 hover:text-brand-600 transition-colors"><span class="lang-zh">认证服务</span><span class="lang-en">Certifications</span></a>
                     <a href="#products" class="text-sm font-semibold text-slate-600 hover:text-brand-600 transition-colors"><span class="lang-zh">OCP 硬件生态</span><span class="lang-en">Hardware Ecosystem</span></a>
@@ -187,15 +189,15 @@
                         <h4 class="text-xl font-bold"><span class="lang-zh">核心计算与服务器</span><span class="lang-en">Compute & Server</span></h4>
                     </div>
                     <ul class="space-y-4 text-sm text-slate-300">
-                        <li><strong class="text-white block mb-1">开放加速器基础设施 (OAI)</strong>
+                        <li><strong class="text-white block mb-1"><span class="lang-zh">开放加速器基础设施 (OAI)</span><span class="lang-en">Open Accelerator Infrastructure (OAI)</span></strong>
                             <span class="lang-zh">标准化 GPU/TPU 模块接口 (OAM) 与通用基板 (UBB)，打破 AI 算力物理锁定，支持单模块高达 400W 功耗。</span>
                             <span class="lang-en">Standardized GPU/TPU module interfaces (OAM) and Universal Baseboards (UBB), breaking AI lock-in, supporting up to 400W per module.</span>
                         </li>
-                        <li><strong class="text-white block mb-1">开放小芯片经济 (Chiplet)</strong>
+                        <li><strong class="text-white block mb-1"><span class="lang-zh">开放小芯片经济 (Chiplet)</span><span class="lang-en">Open Chiplet Economy (Chiplet)</span></strong>
                             <span class="lang-zh">定义 Die-to-Die (D2D) 物理接口，推动异构硅芯片在单一系统级封装 (SiP) 中的集成。</span>
                             <span class="lang-en">Defining Die-to-Die (D2D) physical interfaces, driving heterogeneous silicon integration into a single System-in-Package (SiP).</span>
                         </li>
-                        <li><strong class="text-white block mb-1">OCP NIC 3.0 网卡规范</strong>
+                        <li><strong class="text-white block mb-1"><span class="lang-zh">OCP NIC 3.0 网卡规范</span><span class="lang-en">OCP NIC 3.0 Specification</span></strong>
                             <span class="lang-zh">前置热插拔夹层设计，涵盖 SFF 到 TDSFF 外形，支持高达 400 Gb/s 的网络吞吐与局域网旁路 (Bypass)。</span>
                             <span class="lang-en">Front-pluggable mezzanine designs (SFF to TDSFF), supporting up to 400 Gb/s throughput and LAN Bypass.</span>
                         </li>
@@ -209,11 +211,11 @@
                         <h4 class="text-xl font-bold"><span class="lang-zh">网络解耦与横向扩展</span><span class="lang-en">Disaggregated Networking</span></h4>
                     </div>
                     <ul class="space-y-4 text-sm text-slate-300">
-                        <li><strong class="text-white block mb-1">裸金属交换机与 ONIE</strong>
+                        <li><strong class="text-white block mb-1"><span class="lang-zh">裸金属交换机与 ONIE</span><span class="lang-en">Bare-metal Switches & ONIE</span></strong>
                             <span class="lang-zh">将物理交换机硬件与网络操作系统 (NOS/SONiC) 剥离，通过 SAI 接口实现跨 Broadcom/Barefoot 芯片的统一编程。</span>
                             <span class="lang-en">Decoupling bare-metal switches from Network OS (SONiC) via SAI, allowing unified programming across Broadcom/Barefoot ASICs.</span>
                         </li>
-                        <li><strong class="text-white block mb-1">ESUN 1.0 (面向 AI 的以太网)</strong>
+                        <li><strong class="text-white block mb-1"><span class="lang-zh">ESUN 1.0 (面向 AI 的以太网)</span><span class="lang-en">ESUN 1.0 (Ethernet for AI)</span></strong>
                             <span class="lang-zh">淘汰传统 IP/UDP 头部，引入紧凑的 4 字节 ESUN 头部。通过链路级优先流控，打造 AI 训练集群专用的无损网络结构。</span>
                             <span class="lang-en">Replacing legacy IP/UDP headers with a compact 4-byte ESUN header. Enforces link-level flow control for lossless AI training fabrics.</span>
                         </li>
@@ -227,15 +229,15 @@
                         <h4 class="text-xl font-bold"><span class="lang-zh">机架架构与高级配电</span><span class="lang-en">Rack & Advanced Power</span></h4>
                     </div>
                     <ul class="space-y-4 text-sm text-slate-300">
-                        <li><strong class="text-white block mb-1">Open Rack V3 (ORv3)</strong>
+                        <li><strong class="text-white block mb-1"><span class="lang-zh">Open Rack V3 (ORv3)</span><span class="lang-en">Open Rack V3 (ORv3)</span></strong>
                             <span class="lang-zh">打破 19 英寸限制的 21 英寸内宽设计，极大提升单水平空间的计算与散热密度。</span>
                             <span class="lang-en">21-inch inner-width design breaking the 19-inch legacy limit, vastly improving compute and thermal density per horizontal U.</span>
                         </li>
-                        <li><strong class="text-white block mb-1">48V 直流母线配电架构</strong>
+                        <li><strong class="text-white block mb-1"><span class="lang-zh">48V 直流母线配电架构</span><span class="lang-en">48V DC Busbar Architecture</span></strong>
                             <span class="lang-zh">取代传统 12V 架构，以 48V 直流母线排 (Busbar) 将线路热损耗降低 16 倍，支撑单机柜 100kW 以上超高功率。</span>
                             <span class="lang-en">Replacing 12V with 48V DC busbars to reduce I²R loss by 16x, supporting extreme densities exceeding 100kW per rack.</span>
                         </li>
-                        <li><strong class="text-white block mb-1">机架级电池备份 (BBU)</strong>
+                        <li><strong class="text-white block mb-1"><span class="lang-zh">机架级电池备份 (BBU)</span><span class="lang-en">Rack-level Battery Backup (BBU)</span></strong>
                             <span class="lang-zh">将备用电池直接挂载机架母线，消除数据中心对庞大集中式 UPS 的依赖。</span>
                             <span class="lang-en">Mounting Backup Battery Units directly to the rack busbar, eliminating DC reliance on massive centralized UPS rooms.</span>
                         </li>
@@ -249,15 +251,15 @@
                         <h4 class="text-xl font-bold"><span class="lang-zh">高级热管理与液冷</span><span class="lang-en">Thermal & Liquid Cooling</span></h4>
                     </div>
                     <ul class="space-y-4 text-sm text-slate-300">
-                        <li><strong class="text-white block mb-1">冷板技术 (Cold Plate) & CDU</strong>
+                        <li><strong class="text-white block mb-1"><span class="lang-zh">冷板技术 (Cold Plate) & CDU</span><span class="lang-en">Cold Plate & CDU</span></strong>
                             <span class="lang-zh">直接到芯片 (Direct-to-Chip) 的微通道散热与防漏盲插连接器。冷却液分配单元 (CDU) 提供精准流量调节。</span>
                             <span class="lang-en">Direct-to-Chip micro-channel cooling and leak-proof blind-mate connectors. Coolant Distribution Units (CDU) for precise flow regulation.</span>
                         </li>
-                        <li><strong class="text-white block mb-1">浸没式冷却 (Immersion)</strong>
+                        <li><strong class="text-white block mb-1"><span class="lang-zh">浸没式冷却 (Immersion)</span><span class="lang-en">Immersion Cooling</span></strong>
                             <span class="lang-zh">定义绝缘介电液体化学兼容性、水箱结构完整性及冷却液生命周期管理。</span>
                             <span class="lang-en">Defining dielectric fluid chemical compatibility, tank structural integrity, and fluid lifecycle management.</span>
                         </li>
-                        <li><strong class="text-white block mb-1">余热回收 (Heat Reuse)</strong>
+                        <li><strong class="text-white block mb-1"><span class="lang-zh">余热回收 (Heat Reuse)</span><span class="lang-en">Heat Reuse</span></strong>
                             <span class="lang-zh">捕获数据中心庞大热能，引流至区域城市供暖或大型温室农业。</span>
                             <span class="lang-en">Capturing massive thermal energy and directing it to district heating or large-scale greenhouse agriculture.</span>
                         </li>
@@ -271,15 +273,15 @@
                         <h4 class="text-xl font-bold"><span class="lang-zh">设施与边缘拓扑</span><span class="lang-en">Facilities & Edge Topology</span></h4>
                     </div>
                     <ul class="space-y-4 text-sm text-slate-300">
-                        <li><strong class="text-white block mb-1">模块化数据中心 (MDC)</strong>
+                        <li><strong class="text-white block mb-1"><span class="lang-zh">模块化数据中心 (MDC)</span><span class="lang-en">Modular Data Center (MDC)</span></strong>
                             <span class="lang-zh">预制化、集装箱化单元规范，允许在偏远地区进行极速扩展部署。</span>
                             <span class="lang-en">Prefabricated, containerized unit specifications enabling rapid expansion deployments in remote locations.</span>
                         </li>
-                        <li><strong class="text-white block mb-1">openEDGE 与 DCSG</strong>
+                        <li><strong class="text-white block mb-1"><span class="lang-zh">openEDGE 与 DCSG</span><span class="lang-en">openEDGE & DCSG</span></strong>
                             <span class="lang-zh">定义短深度机箱以适应通信塔基站严苛环境；解耦蜂窝基站网关 (DCSG) 聚合 5G 流量。</span>
                             <span class="lang-en">Short-depth chassis for harsh cell-tower environments; Disaggregated Cell Site Gateways (DCSG) to aggregate 5G traffic.</span>
                         </li>
-                        <li><strong class="text-white block mb-1">EDSFF 高密度存储 (Storage)</strong>
+                        <li><strong class="text-white block mb-1"><span class="lang-zh">EDSFF 高密度存储 (Storage)</span><span class="lang-en">EDSFF High-Density Storage</span></strong>
                             <span class="lang-zh">推广 E1.S / E3.S 等面向网络组合的 NVMe 独立资源池规范。</span>
                             <span class="lang-en">Promoting E1.S / E3.S network-composable NVMe independent resource pool specifications.</span>
                         </li>
@@ -293,15 +295,15 @@
                         <h4 class="text-xl font-bold"><span class="lang-zh">硬件管理与可信安全</span><span class="lang-en">Mgmt & Trusted Security</span></h4>
                     </div>
                     <ul class="space-y-4 text-sm text-slate-300">
-                        <li><strong class="text-white block mb-1">DC-SCM 安全控制模块</strong>
+                        <li><strong class="text-white block mb-1"><span class="lang-zh">DC-SCM 安全控制模块</span><span class="lang-en">DC-SCM Secure Control Module</span></strong>
                             <span class="lang-zh">物理剥离 BMC、闪存与主板，使得 CPU 代际升级时可保留并重用安全管理固件体系。</span>
                             <span class="lang-en">Physically decouples BMC & Flash from mainboards, allowing reuse of secure management firmware across CPU generations.</span>
                         </li>
-                        <li><strong class="text-white block mb-1">硬件信任根 (Root of Trust)</strong>
+                        <li><strong class="text-white block mb-1"><span class="lang-zh">硬件信任根 (Root of Trust)</span><span class="lang-en">Hardware Root of Trust</span></strong>
                             <span class="lang-zh">平台主动信任根 (PA RoT) 结合外设证明，从硬件底层防范 Bootkit 等固件级攻击。</span>
                             <span class="lang-en">Platform Active RoT (PA RoT) combined with peripheral attestation to prevent Bootkit firmware attacks at the hardware level.</span>
                         </li>
-                        <li><strong class="text-white block mb-1">开放平台固件 (OSF) & 时间卡</strong>
+                        <li><strong class="text-white block mb-1"><span class="lang-zh">开放平台固件 (OSF) & 时间卡</span><span class="lang-en">Open System Firmware (OSF) & Time Card</span></strong>
                             <span class="lang-zh">推广 Coreboot/LinuxBoot 开源堆栈；集成高精度时间卡 (TAP)，实现纳秒级 PTP 同步以太网。</span>
                             <span class="lang-en">Promoting Coreboot/LinuxBoot stacks; Integrating precision Time Cards (TAP) for nanosecond PTP atomic ethernet synchronization.</span>
                         </li>
@@ -326,7 +328,7 @@
                         <span class="lang-en">Open Systems for AI:<br>From Certification to Revenue</span>
                     </h3>
                     <p class="text-slate-500 text-lg mb-8">
-                        <span class="lang-zh">根据第 14 章的战略指导，认证只是起点。dcdeeptech 将协助您将单一硬件组件，打包封装为预先验证的 <b>OCP 集成解决方案 (Integrated Solutions)</b>。</span>
+                        <span class="lang-zh">认证只是起点。dcdeeptech 将协助您将单一硬件组件，打包封装为预先验证的 <b>OCP 集成解决方案 (Integrated Solutions)</b>。</span>
                         <span class="lang-en">Certification is just the start. We help package your single hardware components into pre-validated <b>OCP Integrated Solutions</b>.</span>
                     </p>
                     
@@ -342,7 +344,7 @@
                             <i class="ph-fill ph-presentation-chart text-2xl text-blue-500 shrink-0 mt-1"></i>
                             <div>
                                 <h4 class="font-bold text-lg text-slate-900"><span class="lang-zh">物理概念验证 (PoC) 中心体验</span><span class="lang-en">Physical PoC Centers</span></h4>
-                                <p class="text-slate-500 text-sm mt-1"><span class="lang-zh">引导设备入驻北京及海外 OCP 体验中心，让大型数据中心运营商现场实测您的 OAI 或液冷硬件性能。</span><span class="lang-en">Deploy equipment in OCP Experience Centers (Beijing/Overseas) for live performance testing by major DC operators.</span></p>
+                                <p class="text-slate-500 text-sm mt-1"><span class="lang-zh">引导设备入驻新加坡及海外 OCP 体验中心，让大型数据中心运营商现场实测您的 OAI 或液冷硬件性能。</span><span class="lang-en">Deploy equipment in OCP Experience Centers (Singapore/Overseas) for live performance testing by major DC operators.</span></p>
                             </div>
                         </li>
                     </ul>
@@ -355,7 +357,7 @@
                         <div class="flex items-center justify-between border-t border-slate-100 pt-6">
                             <div>
                                 <div class="text-slate-400 text-sm"><span class="lang-zh">全球出海与生态拓展</span><span class="lang-en">Global Expansion & Ecosystem</span></div>
-                                <div class="font-bold text-xl text-slate-900"><span class="lang-zh">东南亚高精尖市场突破</span><span class="lang-en">Penetrating SEA DeepTech Markets</span></div>
+                                <div class="font-bold text-xl text-slate-900"><span class="lang-zh">全球高精尖市场突破</span><span class="lang-en">Penetrating Global DeepTech Markets</span></div>
                             </div>
                             <button class="w-12 h-12 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center hover:bg-brand-600 hover:text-white transition-colors">
                                 <i class="ph-bold ph-arrow-right text-xl"></i>
@@ -465,8 +467,8 @@
                                     <div class="text-xs text-slate-400 mt-1">10% - 20% <span class="lang-zh">业务提成</span><span class="lang-en">Profit Share</span></div>
                                 </td>
                                 <td class="p-6 text-sm">
-                                    <span class="lang-zh">软硬一体化打磨、Marketplace 官方上架销售、东南亚渠道推介及体验中心 PoC 落地。</span>
-                                    <span class="lang-en">HW/SW integration, Marketplace listing, SEA channel introductions, and PoC deployment.</span>
+                                    <span class="lang-zh">软硬一体化打磨、Marketplace 官方上架销售、全球渠道推介及体验中心 PoC 落地。</span>
+                                    <span class="lang-en">HW/SW integration, Marketplace listing, Global channel introductions, and PoC deployment.</span>
                                 </td>
                             </tr>
                         </tbody>
@@ -500,47 +502,43 @@
                             <i class="ph-fill ph-user"></i>
                         </div>
                         <div>
-                            <div class="text-white font-medium">[Name Placeholder]</div>
-                            <div class="text-sm">Partner Ecosystem Director, dcdeeptech</div>
+                            <div class="text-white font-medium">Suzy</div>
+                            <div class="text-sm">
+                                <span class="lang-zh">生态系统总监，dcdeeptech</span>
+                                <span class="lang-en">Partner Ecosystem Director, dcdeeptech</span>
+                            </div>
                         </div>
                     </div>
-                    <a href="mailto:contact@dcdeeptech.com" class="flex items-center gap-4 group">
+                    <a href="mailto:info@dcdeeptech.com" class="flex items-center gap-4 group">
                         <div class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-brand-400 group-hover:bg-brand-600 group-hover:text-white transition-colors">
                             <i class="ph-fill ph-envelope"></i>
                         </div>
-                        <span class="text-slate-300 group-hover:text-white transition-colors">contact@dcdeeptech.com</span>
+                        <span class="text-slate-300 group-hover:text-white transition-colors">info@dcdeeptech.com</span>
                     </a>
                 </div>
             </div>
             
             <div class="mt-20 text-sm text-slate-600 flex items-center justify-center gap-2">
-                <i class="ph-fill ph-copyright"></i> 2026 dcdeeptech. Empowering the Open Compute ecosystem.
+                <i class="ph-fill ph-copyright"></i> 
+                <span class="lang-zh">2026 dcdeeptech。赋能开放计算生态。</span>
+                <span class="lang-en">2026 dcdeeptech. Empowering the Open Compute ecosystem.</span>
             </div>
         </div>
     </footer>
 
     <!-- Logic for bilingual toggle -->
     <script>
-        let currentLang = 'zh';
-        
+        // 更稳定优雅的切换方式：通过控制 html 标签的 lang 属性，让 CSS 接管所有显隐逻辑
         function toggleLanguage() {
-            currentLang = currentLang === 'zh' ? 'en' : 'zh';
-            
-            document.querySelectorAll('.lang-zh').forEach(el => {
-                el.style.display = currentLang === 'zh' ? '' : 'none';
-            });
-            
-            document.querySelectorAll('.lang-en').forEach(el => {
-                el.style.display = currentLang === 'en' ? '' : 'none';
-            });
-
-            document.getElementById('lang-btn-text').innerText = currentLang === 'zh' ? 'English' : '中文';
+            const htmlTag = document.documentElement;
+            if (htmlTag.getAttribute('lang') === 'zh') {
+                htmlTag.setAttribute('lang', 'en');
+                document.getElementById('lang-btn-text').innerText = '中文';
+            } else {
+                htmlTag.setAttribute('lang', 'zh');
+                document.getElementById('lang-btn-text').innerText = 'English';
+            }
         }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('.lang-en').forEach(el => el.style.display = 'none');
-            document.querySelectorAll('.lang-zh').forEach(el => el.style.display = '');
-        });
         
         window.addEventListener('scroll', () => {
             const nav = document.getElementById('navbar');
