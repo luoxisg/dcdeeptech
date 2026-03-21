@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dcdeep tech 平台架构演示</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- Babel for in-browser JSX compilation -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Phosphor Icons (Alternative to Lucide for easy CDN usage) -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        /* Custom Animations */
+        @keyframes flowDash {
+            to { stroke-dashoffset: -40; }
+        }
+        @keyframes coolFluid {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+        .animate-flow {
+            animation: flowDash 1s linear infinite;
+        }
+        .isometric-container {
+            transform: rotateX(60deg) rotateZ(-45deg);
+            transform-style: preserve-3d;
+        }
+        .server-blade {
+            transform-style: preserve-3d;
+            transition: all 0.3s ease;
+        }
+        .server-blade:hover {
+            transform: translateZ(10px);
+            box-shadow: 0 0 20px rgba(6,182,212,0.5);
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569; 
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-300 font-sans selection:bg-cyan-500/30 overflow-x-hidden">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useMemo } = React;
+
+        // --- i18n Dictionary ---
+        const translations = {
+            zh: {
+                nav_overview: '全景概览',
+                nav_layer1: 'Layer 1: 物理基建',
+                nav_layer2: 'Layer 2: 算力聚合',
+                nav_layer3: 'Layer 3: 金融资产',
+                nav_about: '关于 DCDeepTech',
+                nav_ecosystem: '生态与联系方式',
+                
+                sys_status: '系统状态',
+                sys_running: '运行中',
+                sys_load: '当前负载',
+                
+                title_overview: '三层业务模型系统架构',
+                desc_overview: '打通从底层物理设施到顶层资本市场的完整价值链，重塑AI时代的生产力流转范式。',
+                
+                l1_title: 'Layer 1',
+                l1_desc: '能源转化为算力。依托48V OCP配电架构与先进液冷AI集群，将能源极致高效地转化为计算能力。',
+                l2_title: 'Layer 2',
+                l2_desc: '算力转化为API服务。智能化模型聚合引擎，兼容OpenAI接口格式的LLM/VLM交易平台。',
+                l3_title: 'Layer 3',
+                l3_desc: '收益转化为金融资产。通过AI基建资产证券化与Pre-REIT结构设计，实现收益规模化与资本配置最优化。',
+                
+                energy_label: '能源 1MW+',
+                api_revenue_label: 'API 调用收益',
+                financial_asset_label: '金融资产',
+                
+                l1_header: 'Layer 1: 基础设施与遥测可视化',
+                l1_header_desc: '基于WebGL/3D交互式数字孪生，极致优化能源向算力的转化。',
+                goodput: '当前系统有效吞吐量 (Goodput)',
+                digital_twin_title: '液冷热力数字孪生视图',
+                digital_twin_desc: '实时 GPU 节点温度及进回水温差监控',
+                ocp_monitor: '48V OCP 母线监控',
+                voltage: '实时电压',
+                rack_density: '机架功率密度',
+                pdu_msg: '智能 PDU API 已连接. 预防高密度谐波失真.',
+                esg_matrix: '绿色能源溯源矩阵 (ESG)',
+                pue_metric: 'PUE 指标',
+                renewable_match: '可再生能源匹配',
+                mpc_title: 'DCDeepTech MPC (模型预测控制)',
+                mpc_desc: '利用前沿的模型预测控制（MPC）算法，实现 AI 集群液冷与能耗的全局动态优化。',
+                
+                l2_header: 'Layer 2: 大模型聚合服务引擎',
+                l2_header_desc: '打破底层异构算力壁垒，提供全面兼容 OpenAI 格式的统一 API 路由网关。',
+                gen_api_key: '生成 API 密钥',
+                quick_start: '快速接入 (OpenAI 兼容)',
+                telemetry_title: '全景调用监控面板 (QPS & Latency)',
+                ttft: '首字延迟 (TTFT)',
+                success_rate: '请求成功率',
+                billing_title: '一维化成本与账单中心',
+                billing_desc: '微计费系统精确拆解各个模型的费用消耗情况，支持多租户隔离与实时预算告警。',
+                monthly_cost: '本月累计消耗 (按调用付费)',
+                
+                l3_header: 'Layer 3: 机构级资本与财务引擎',
+                l3_header_desc: '将固定的物理资产与高频API现金流剥离，通过Pre-REIT与ABS结构实现资产证券化。',
+                inst_access: '机构访问权限: 开启',
+                capex: '总资本支出 (Capex)',
+                arr: '年化经常性收入 (ARR)',
+                roi: '投资回报率 (ROI)',
+                wacc: '加权平均资本成本 (WACC)',
+                cap_stack_title: '资本拓扑结构全息沙盘',
+                pre_reit_view: 'Pre-REIT 结构透视',
+                senior_debt: '优先债务 (Senior Debt)',
+                senior_debt_desc: 'AAA 级 ABS 债券',
+                mezzanine: '夹层资本 (Mezzanine)',
+                mezzanine_desc: '交叉补贴建设期资产',
+                equity: '普通股权 (Equity)',
+                equity_desc: '最高风险/收益',
+                audit_note: '* 审计人员可点击任意证券化子包，向下打穿透视至 Layer 1 底层节点与 Layer 2 API 聚合流水的真实数据。',
+                vibe_coding_title: 'AI 驱动的氛围编码 (Vibe Coding)',
+                ai_greet: '您好，我是金融洞察分析大模型。您可以向我询问关于 Pre-REIT 资产包的动态现金流折现（DCF）模拟，或进行自然语言指令的图表生成。',
+                user_prompt: '对比一下基于传统风冷的数据中心与采用 48V 液冷架构的集群，在作为 ABS 资产抵押物时，不同硬件折旧率对估值底线的影响。',
+                ai_loading: '正在调用底层精算引擎与蒙特卡洛模拟...',
+                ai_conclusion: '分析表明：48V 液冷集群由于热损耗降低，实际有效服役周期延长 2.5 年，在 ABS 结构中能提供额外 18% 的估值溢价空间。',
+                chat_placeholder: '输入非结构化财务查询指令...',
+                
+                about_title: '公司介绍',
+                about_subtitle: '融合前沿硬科技与深层金融工程的复合型生态系统',
+                about_p1: '在全球数字化转型与人工智能算力需求呈指数级增长的历史性交汇点上，我们正见证着一场前所未有的基础设施超级周期。在如此庞大的资本与能源吞吐量面前，传统的云计算单体商业模式已显露出严重的流动性与操作性瓶颈。',
+                about_p2: 'DCDeepTech 平台正是在这一宏观背景下应运而生。作为一个融合了前沿硬科技与深层金融工程的复合型生态系统，我们旨在通过打通从底层物理设施到顶层资本市场的完整价值链，重塑人工智能时代的生产力流转范式。',
+                about_p3: '我们不仅仅解决物理机房的散热与供电极限，更通过智能化模型聚合引擎和前瞻性的金融资产证券化（Pre-REIT），建立起物理基础设施、全球算力调度与金融资本运作之间的全新桥梁。',
+                
+                arch_title: '跨境推理请求路由架构',
+                arch_global_clients: '全球客户端 (Global Clients)',
+                arch_sg_gateway: '新加坡 API 网关',
+                arch_cross_border: '跨境推理专用通道',
+                arch_china_gpu: '中国 GPU 算力集群',
+
+                eco_title: '开放生态与技术参考',
+                eco_subtitle: '基于开放标准的深度对齐与集成',
+                contact_title: 'Contact DCDeepTech',
+                contact_subtitle: 'Ready to discuss your AI infrastructure or application project?'
+            },
+            en: {
+                nav_overview: 'Global Overview',
+                nav_layer1: 'Layer 1: Physical Infra',
+                nav_layer2: 'Layer 2: Compute Aggregation',
+                nav_layer3: 'Layer 3: Financial Assets',
+                nav_about: 'About DCDeepTech',
+                nav_ecosystem: 'Ecosystem & Contact',
+                
+                sys_status: 'System Status',
+                sys_running: 'Operational',
+                sys_load: 'Current Load',
+                
+                title_overview: 'Three-Layer Business Architecture',
+                desc_overview: 'Bridging the value chain from physical infra to capital markets, reshaping the AI productivity paradigm.',
+                
+                l1_title: 'Layer 1',
+                l1_desc: 'Energy to Compute. Leveraging 48V OCP power architecture & liquid-cooled AI clusters for extreme efficiency.',
+                l2_title: 'Layer 2',
+                l2_desc: 'Compute to API. Intelligent model routing engine, fully compatible with OpenAI LLM/VLM interface standards.',
+                l3_title: 'Layer 3',
+                l3_desc: 'Revenue to Assets. Securitizing AI infra via Pre-REIT structures for optimal capital allocation and scale.',
+                
+                energy_label: 'Energy 1MW+',
+                api_revenue_label: 'API Revenue',
+                financial_asset_label: 'Financial Assets',
+                
+                l1_header: 'Layer 1: Infrastructure & Telemetry',
+                l1_header_desc: 'WebGL/3D digital twins to optimize energy-to-compute conversion at physical limits.',
+                goodput: 'Current System Goodput',
+                digital_twin_title: 'Liquid Cooling Thermal Twin',
+                digital_twin_desc: 'Real-time GPU node temp & coolant delta-T monitoring',
+                ocp_monitor: '48V OCP Busbar Telemetry',
+                voltage: 'Live Voltage',
+                rack_density: 'Rack Power Density',
+                pdu_msg: 'Smart PDU API Connected. Harmonic distortion prevented.',
+                esg_matrix: 'Green Energy Traceability (ESG)',
+                pue_metric: 'PUE Metric',
+                renewable_match: 'Renewables Match',
+                mpc_title: 'DCDeepTech MPC (Model Predictive Control)',
+                mpc_desc: 'Utilizing cutting-edge Model Predictive Control (MPC) algorithms for global dynamic optimization of liquid cooling and energy consumption.',
+                
+                l2_header: 'Layer 2: LLM Aggregation Engine',
+                l2_header_desc: 'Shattering heterogeneous compute silos with a unified, OpenAI-compatible API routing gateway.',
+                gen_api_key: 'Generate API Key',
+                quick_start: 'Quick Start (OpenAI Compatible)',
+                telemetry_title: 'Telemetry Dashboard (QPS & Latency)',
+                ttft: 'Time to First Token (TTFT)',
+                success_rate: 'Success Rate',
+                billing_title: 'Unified Billing Center',
+                billing_desc: 'Micro-billing system dissecting model costs with multi-tenant isolation and budget alerts.',
+                monthly_cost: 'MTD Consumption (Pay-as-you-go)',
+                
+                l3_header: 'Layer 3: Institutional Capital Engine',
+                l3_header_desc: 'Decoupling fixed physical assets from high-frequency API cash flows via Pre-REIT and ABS structures.',
+                inst_access: 'Institutional Access: Granted',
+                capex: 'Total Capex',
+                arr: 'Annual Recurring Rev (ARR)',
+                roi: 'Return on Investment (ROI)',
+                wacc: 'Weighted Avg Cost of Capital',
+                cap_stack_title: 'Capital Stack Topology',
+                pre_reit_view: 'Pre-REIT Perspective',
+                senior_debt: 'Senior Debt',
+                senior_debt_desc: 'AAA Rated ABS Bonds',
+                mezzanine: 'Mezzanine Capital',
+                mezzanine_desc: 'Cross-subsidizing Greenfield',
+                equity: 'Common Equity',
+                equity_desc: 'Highest Risk/Reward',
+                audit_note: '* Auditors can click any tranche to drill down to Layer 1 nodes and Layer 2 API ledgers.',
+                vibe_coding_title: 'AI-Driven Vibe Coding',
+                ai_greet: 'Hello, I am the Financial Insight LLM. You can ask me about dynamic DCF simulations for the Pre-REIT portfolio, or generate charts via natural language.',
+                user_prompt: 'Compare traditional air-cooled datacenters vs 48V liquid-cooled clusters as ABS collateral. How do different hardware depreciation rates impact the valuation floor?',
+                ai_loading: 'Invoking actuarial engine & Monte Carlo simulations...',
+                ai_conclusion: 'Analysis indicates: 48V liquid clusters extend viable lifespan by 2.5 yrs due to thermal efficiency, providing an 18% valuation premium buffer in ABS structures.',
+                chat_placeholder: 'Enter unstructured financial query...',
+                
+                about_title: 'Company Introduction',
+                about_subtitle: 'A composite ecosystem fusing frontier hard-tech with deep financial engineering',
+                about_p1: 'At the historic intersection of global digital transformation and the exponential growth in AI computing demand, we are witnessing an unprecedented infrastructure supercycle. Traditional cloud computing models are revealing severe liquidity and operational bottlenecks in the face of this massive capital and energy throughput.',
+                about_p2: 'The DCDeepTech platform was born against this macroeconomic backdrop. As a composite ecosystem fusing frontier hard-tech with deep financial engineering, we aim to reshape the productivity flow paradigm of the AI era by bridging the complete value chain from underlying physical facilities to top-tier capital markets.',
+                about_p3: 'We solve not only the cooling and power limits under extreme power density but also establish a novel bridge between physical infrastructure, global compute routing, and financial capital operations through intelligent model aggregation engines and forward-looking asset securitization (Pre-REIT).',
+                
+                arch_title: 'Cross-border Inference Routing Architecture',
+                arch_global_clients: 'Global Clients',
+                arch_sg_gateway: 'Singapore API Gateway',
+                arch_cross_border: 'Cross-border Inference Channel',
+                arch_china_gpu: 'China GPU Cluster',
+
+                eco_title: 'Open Ecosystem & Technical Reference',
+                eco_subtitle: 'Deep alignment and integration based on open standards',
+                contact_title: 'Contact DCDeepTech',
+                contact_subtitle: 'Ready to discuss your AI infrastructure or application project?'
+            }
+        };
+
+        // --- Animated Visualization Components ---
+
+        const SankeyDiagram = () => (
+            <svg width="100%" height="100%" viewBox="0 0 300 120" preserveAspectRatio="none">
+                <defs>
+                    <linearGradient id="gradGrid" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.8" />
+                        <stop offset="100%" stopColor="#10b981" stopOpacity="0.8" />
+                    </linearGradient>
+                    <linearGradient id="gradSolar" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stopColor="#fbbf24" stopOpacity="0.8" />
+                        <stop offset="100%" stopColor="#10b981" stopOpacity="0.8" />
+                    </linearGradient>
+                </defs>
+                <path d="M 10 30 C 100 30, 100 60, 150 60" fill="none" stroke="#1e293b" strokeWidth="15" strokeLinecap="round" />
+                <path d="M 10 90 C 100 90, 100 60, 150 60" fill="none" stroke="#1e293b" strokeWidth="15" strokeLinecap="round" />
+                <path d="M 150 60 C 200 60, 200 40, 280 40" fill="none" stroke="#1e293b" strokeWidth="20" strokeLinecap="round" />
+                <path d="M 150 60 C 200 60, 200 100, 280 100" fill="none" stroke="#1e293b" strokeWidth="8" strokeLinecap="round" />
+
+                <path d="M 10 30 C 100 30, 100 60, 150 60" fill="none" stroke="url(#gradGrid)" strokeWidth="15" strokeLinecap="round" strokeDasharray="10 5" className="animate-flow" />
+                <path d="M 10 90 C 100 90, 100 60, 150 60" fill="none" stroke="url(#gradSolar)" strokeWidth="15" strokeLinecap="round" strokeDasharray="10 5" className="animate-flow" />
+                <path d="M 150 60 C 200 60, 200 40, 280 40" fill="none" stroke="#10b981" strokeWidth="20" strokeLinecap="round" strokeDasharray="10 5" className="animate-flow" />
+                <path d="M 150 60 C 200 60, 200 100, 280 100" fill="none" stroke="#3b82f6" strokeWidth="8" strokeLinecap="round" strokeDasharray="10 5" className="animate-flow" />
+
+                <text x="5" y="25" fill="#94a3b8" fontSize="10">Grid (40%)</text>
+                <text x="5" y="85" fill="#94a3b8" fontSize="10">Wind/Solar (60%)</text>
+                <text x="120" y="55" fill="#fff" fontSize="10" fontWeight="bold">DC PDU</text>
+                <text x="235" y="30" fill="#94a3b8" fontSize="10">IT Load (85%)</text>
+                <text x="235" y="115" fill="#94a3b8" fontSize="10">Cooling (15%)</text>
+            </svg>
+        );
+
+        const ServerRack3D = () => {
+            return (
+                <div className="w-full h-full flex items-center justify-center perspective-[1000px] overflow-hidden">
+                    <div className="relative w-48 h-64 isometric-container">
+                        <div className="absolute inset-0 border-2 border-slate-700 bg-slate-900/50 rounded-lg shadow-[0_0_50px_rgba(0,0,0,0.8)_inset]"></div>
+                        {[...Array(6)].map((_, i) => {
+                            const heatColors = ['bg-cyan-500', 'bg-cyan-400', 'bg-blue-400', 'bg-indigo-400', 'bg-amber-400', 'bg-rose-500'];
+                            const shadowColors = ['shadow-cyan-500/50', 'shadow-cyan-400/50', 'shadow-blue-400/50', 'shadow-indigo-400/50', 'shadow-amber-400/50', 'shadow-rose-500/50'];
+                            return (
+                                <div key={i} className="server-blade absolute w-[90%] h-8 left-[5%] border border-slate-600 bg-slate-800 rounded flex items-center px-2 gap-2" style={{ bottom: `${10 + i * 15}%`, transform: `translateZ(${i*2}px)` }}>
+                                    <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
+                                    <div className={`w-2 h-2 rounded-full ${heatColors[i]} shadow-[0_0_8px] ${shadowColors[i]} opacity-80`}></div>
+                                    <div className="flex-1 h-1 bg-slate-700 rounded overflow-hidden">
+                                        <div className="h-full bg-gradient-to-r from-blue-500 to-cyan-400" style={{width: `${Math.random()*40 + 40}%`, animation: 'coolFluid 2s linear infinite', backgroundSize: '200% 100%'}}></div>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                        <div className="absolute -right-4 bottom-0 w-2 h-full bg-gradient-to-b from-blue-500 to-cyan-400 rounded-full opacity-70 blur-[1px]"></div>
+                        <div className="absolute -left-4 bottom-0 w-2 h-full bg-gradient-to-b from-rose-500 to-amber-500 rounded-full opacity-70 blur-[1px]"></div>
+                    </div>
+                </div>
+            );
+        };
+
+        const RealtimeChart = () => {
+            const [data, setData] = useState(Array.from({length: 40}, () => 50));
+            useEffect(() => {
+                const interval = setInterval(() => {
+                    setData(prev => {
+                        const newArr = [...prev.slice(1)];
+                        const noise = Math.random() * 20 - 10;
+                        const spike = Math.random() > 0.9 ? 40 : 0;
+                        let nextVal = newArr[newArr.length - 1] + noise + spike;
+                        nextVal = Math.max(10, Math.min(90, nextVal));
+                        newArr.push(nextVal);
+                        return newArr;
+                    });
+                }, 100);
+                return () => clearInterval(interval);
+            }, []);
+            const pathD = `M 0 100 ${data.map((val, i) => `L ${(i / 39) * 100} ${100 - val}`).join(' ')}`;
+            return (
+                <div className="w-full h-full relative">
+                    <svg className="w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 100">
+                        <path d={`${pathD} L 100 100 L 0 100 Z`} fill="url(#blueGradient)" opacity="0.2" />
+                        <path d={pathD} fill="none" stroke="#3b82f6" strokeWidth="2" strokeLinejoin="round" className="drop-shadow-[0_0_5px_#3b82f6]" />
+                        <defs>
+                            <linearGradient id="blueGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stopColor="#3b82f6" stopOpacity="1" />
+                                <stop offset="100%" stopColor="#3b82f6" stopOpacity="0" />
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    <div className="absolute w-2 h-2 bg-white rounded-full shadow-[0_0_10px_#fff]" style={{ right: '-4px', top: `calc(${100 - data[39]}% - 4px)` }}></div>
+                </div>
+            );
+        };
+
+        const FinancialBoxplot = ({ lang }) => {
+            const isEn = lang === 'en';
+            return (
+                <svg className="w-full h-full p-2" viewBox="0 0 300 120">
+                    <line x1="40" y1="100" x2="280" y2="100" stroke="#475569" strokeWidth="1" />
+                    <line x1="40" y1="20" x2="40" y2="100" stroke="#475569" strokeWidth="1" />
+                    <text x="10" y="30" fill="#94a3b8" fontSize="8">High</text>
+                    <text x="10" y="90" fill="#94a3b8" fontSize="8">Low</text>
+                    <text x="90" y="115" fill="#cbd5e1" fontSize="10">{isEn ? 'Air-Cooled' : '风冷资产'}</text>
+                    <text x="210" y="115" fill="#38bdf8" fontSize="10">{isEn ? '48V Liquid' : '液冷资产'}</text>
+                    <g transform="translate(100, 0)">
+                        <line x1="0" y1="40" x2="0" y2="85" stroke="#94a3b8" strokeWidth="1.5" strokeDasharray="2" />
+                        <rect x="-15" y="55" width="30" height="20" fill="#334155" stroke="#94a3b8" strokeWidth="1.5" />
+                        <line x1="-15" y1="65" x2="15" y2="65" stroke="#fff" strokeWidth="2" />
+                        <line x1="-5" y1="40" x2="5" y2="40" stroke="#94a3b8" strokeWidth="1.5" />
+                        <line x1="-5" y1="85" x2="5" y2="85" stroke="#94a3b8" strokeWidth="1.5" />
+                    </g>
+                    <g transform="translate(220, 0)">
+                        <line x1="0" y1="20" x2="0" y2="50" stroke="#38bdf8" strokeWidth="1.5" strokeDasharray="2" />
+                        <rect x="-15" y="25" width="30" height="15" fill="#0c4a6e" stroke="#38bdf8" strokeWidth="1.5" />
+                        <line x1="-15" y1="32" x2="15" y2="32" stroke="#fff" strokeWidth="2" />
+                        <line x1="-5" y1="20" x2="5" y2="20" stroke="#38bdf8" strokeWidth="1.5" />
+                        <line x1="-5" y1="50" x2="5" y2="50" stroke="#38bdf8" strokeWidth="1.5" />
+                        <path d="M -30 32 L -45 32 L -45 65 L -35 65 M -45 32 L -42 37 M -45 32 L -48 37" fill="none" stroke="#10b981" strokeWidth="1" />
+                        <text x="-75" y="50" fill="#10b981" fontSize="8">+18% Premium</text>
+                    </g>
+                </svg>
+            );
+        };
+
+        // --- Main Application ---
+        function App() {
+            const [activeTab, setActiveTab] = useState('overview');
+            const [lang, setLang] = useState('zh'); 
+
+            const t = (key) => translations[lang][key] || key;
+
+            const LangToggle = () => (
+                <button 
+                    onClick={() => setLang(lang === 'zh' ? 'en' : 'zh')}
+                    className="absolute top-8 right-8 z-50 flex items-center gap-2 bg-slate-900 border border-slate-700 hover:border-slate-500 text-slate-300 px-3 py-1.5 rounded-full transition-all text-sm font-medium shadow-lg"
+                >
+                    <i className="ph-fill ph-translate"></i>
+                    <span>{lang === 'zh' ? 'EN' : '中'}</span>
+                </button>
+            );
+
+            const Sidebar = () => {
+                const navItemsGroup1 = [
+                    { id: 'overview', name: t('nav_overview'), icon: <i className="ph-fill ph-globe text-xl"></i> },
+                    { id: 'layer1', name: t('nav_layer1'), icon: <i className="ph-fill ph-cpu text-xl"></i> },
+                    { id: 'layer2', name: t('nav_layer2'), icon: <i className="ph-fill ph-graph text-xl"></i> },
+                    { id: 'layer3', name: t('nav_layer3'), icon: <i className="ph-fill ph-currency-circle-dollar text-xl"></i> },
+                ];
+                
+                const navItemsGroup2 = [
+                    { id: 'about', name: t('nav_about'), icon: <i className="ph-fill ph-buildings text-xl"></i> },
+                    { id: 'ecosystem', name: t('nav_ecosystem'), icon: <i className="ph-fill ph-address-book text-xl"></i> },
+                ];
+
+                return (
+                    <div className="w-64 bg-slate-950 border-r border-slate-800 h-screen flex flex-col fixed left-0 top-0 z-40">
+                        <div className="p-6 flex items-center gap-3">
+                            <img src="https://raw.githubusercontent.com/luoxisg/dcdeeptech/main/image/DCdeeptech_logo-removebg-preview.png" alt="DCDeepTech Logo" className="h-10 w-auto object-contain" onError={(e) => {e.target.style.display='none'; e.target.nextSibling.style.display='flex'}} />
+                            <div className="hidden w-8 h-8 rounded bg-gradient-to-br from-cyan-500 to-blue-600 items-center justify-center text-white font-bold text-xl">
+                                d
+                            </div>
+                            <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-500">
+                                dcdeep tech
+                            </span>
+                        </div>
+                        <nav className="flex-1 px-4 space-y-6 mt-4 overflow-y-auto">
+                            <div className="space-y-2">
+                                {navItemsGroup1.map((item) => (
+                                    <button
+                                        key={item.id}
+                                        onClick={() => setActiveTab(item.id)}
+                                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
+                                            activeTab === item.id 
+                                            ? 'bg-blue-500/10 text-cyan-400 border border-blue-500/30 shadow-[0_0_15px_rgba(59,130,246,0.15)]' 
+                                            : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+                                        }`}
+                                    >
+                                        {item.icon}
+                                        <span className="font-medium">{item.name}</span>
+                                    </button>
+                                ))}
+                            </div>
+                            
+                            <div className="space-y-2 border-t border-slate-800 pt-4">
+                                {navItemsGroup2.map((item) => (
+                                    <button
+                                        key={item.id}
+                                        onClick={() => setActiveTab(item.id)}
+                                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
+                                            activeTab === item.id 
+                                            ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.15)]' 
+                                            : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+                                        }`}
+                                    >
+                                        {item.icon}
+                                        <span className="font-medium">{item.name}</span>
+                                    </button>
+                                ))}
+                            </div>
+                        </nav>
+                        <div className="p-6 text-xs text-slate-500 border-t border-slate-800">
+                            <p>{t('sys_status')}: <span className="text-emerald-400">{t('sys_running')} (99.99%)</span></p>
+                            <p className="mt-1">{t('sys_load')}: 1.25 MW</p>
+                        </div>
+                    </div>
+                );
+            };
+
+            const OverviewView = () => (
+                <div className="space-y-8 animate-in fade-in duration-500">
+                    <header>
+                        <h1 className="text-3xl font-bold text-white mb-2">{t('title_overview')}</h1>
+                        <p className="text-slate-400">{t('desc_overview')}</p>
+                    </header>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="relative bg-slate-900 border border-slate-800 rounded-xl p-6 hover:border-cyan-500/50 transition-all group cursor-pointer overflow-hidden" onClick={() => setActiveTab('layer1')}>
+                            <div className="absolute inset-0">
+                                <img src="/images/1-ocp-dc-architecture.jpg" alt="OCP Architecture" className="w-full h-full object-cover opacity-30 group-hover:scale-105 transition-transform duration-500" onError={(e) => e.target.style.display='none'} />
+                                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/80 to-slate-900/50"></div>
+                            </div>
+                            <div className="relative z-10">
+                                <div className="w-12 h-12 rounded-lg bg-cyan-500/10 text-cyan-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                    <i className="ph-fill ph-lightning text-2xl"></i>
+                                </div>
+                                <h3 className="text-xl font-bold text-white mb-2 flex items-center gap-2">
+                                    {t('l1_title')} <i className="ph-bold ph-caret-right text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                                </h3>
+                                <p className="text-slate-400 text-sm mb-4 h-16">{t('l1_desc')}</p>
+                                <div className="flex gap-2">
+                                    <span className="px-2 py-1 bg-slate-800 rounded text-xs text-slate-300">48V OCP</span>
+                                    <span className="px-2 py-1 bg-slate-800 rounded text-xs text-slate-300">Digital Twin</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="relative bg-slate-900 border border-slate-800 rounded-xl p-6 hover:border-blue-500/50 transition-all group cursor-pointer overflow-hidden" onClick={() => setActiveTab('layer2')}>
+                            <div className="absolute inset-0">
+                                <img src="/images/2-liquid-cooled-workstation.jpg" alt="Liquid Cooled Workstation" className="w-full h-full object-cover opacity-30 group-hover:scale-105 transition-transform duration-500" onError={(e) => e.target.style.display='none'} />
+                                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/80 to-slate-900/50"></div>
+                            </div>
+                            <div className="relative z-10">
+                                <div className="w-12 h-12 rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                    <i className="ph-fill ph-graph text-2xl"></i>
+                                </div>
+                                <h3 className="text-xl font-bold text-white mb-2 flex items-center gap-2">
+                                    {t('l2_title')} <i className="ph-bold ph-caret-right text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                                </h3>
+                                <p className="text-slate-400 text-sm mb-4 h-16">{t('l2_desc')}</p>
+                                <div className="flex gap-2">
+                                    <span className="px-2 py-1 bg-slate-800 rounded text-xs text-slate-300">OpenRouter</span>
+                                    <span className="px-2 py-1 bg-slate-800 rounded text-xs text-slate-300">Gateway</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="relative bg-slate-900 border border-slate-800 rounded-xl p-6 hover:border-indigo-500/50 transition-all group cursor-pointer overflow-hidden" onClick={() => setActiveTab('layer3')}>
+                             <div className="absolute inset-0">
+                                <img src="/images/6-singapore-global-hq.jpg" alt="Singapore HQ" className="w-full h-full object-cover opacity-30 group-hover:scale-105 transition-transform duration-500" onError={(e) => e.target.style.display='none'} />
+                                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/80 to-slate-900/50"></div>
+                            </div>
+                            <div className="relative z-10">
+                                <div className="w-12 h-12 rounded-lg bg-indigo-500/10 text-indigo-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                    <i className="ph-fill ph-chart-bar text-2xl"></i>
+                                </div>
+                                <h3 className="text-xl font-bold text-white mb-2 flex items-center gap-2">
+                                    {t('l3_title')} <i className="ph-bold ph-caret-right text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                                </h3>
+                                <p className="text-slate-400 text-sm mb-4 h-16">{t('l3_desc')}</p>
+                                <div className="flex gap-2">
+                                    <span className="px-2 py-1 bg-slate-800 rounded text-xs text-slate-300">Pre-REIT</span>
+                                    <span className="px-2 py-1 bg-slate-800 rounded text-xs text-slate-300">ABS/CMBS</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="mt-8 p-8 bg-slate-900 border border-slate-800 rounded-xl flex flex-col items-center justify-center relative overflow-hidden">
+                        <div className="absolute inset-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:14px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]"></div>
+                        <div className="relative z-10 w-full max-w-4xl flex items-center justify-between">
+                            <div className="flex flex-col items-center">
+                                <div className="w-20 h-20 rounded-full bg-cyan-950 border-2 border-cyan-500 flex items-center justify-center mb-3 shadow-[0_0_30px_rgba(6,182,212,0.3)]">
+                                    <i className="ph-fill ph-lightning text-cyan-400 text-4xl"></i>
+                                </div>
+                                <span className="text-cyan-400 font-bold">{t('energy_label')}</span>
+                            </div>
+                            <div className="flex-1 h-[2px] bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500 relative mx-4">
+                                <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-3 h-3 bg-cyan-400 rounded-full shadow-[0_0_10px_#22d3ee] animate-pulse"></div>
+                                <div className="absolute top-1/2 left-1/2 -translate-y-1/2 w-3 h-3 bg-blue-400 rounded-full shadow-[0_0_10px_#60a5fa] animate-pulse delay-75"></div>
+                                <div className="absolute top-1/2 left-3/4 -translate-y-1/2 w-3 h-3 bg-indigo-400 rounded-full shadow-[0_0_10px_#818cf8] animate-pulse delay-150"></div>
+                            </div>
+                            <div className="flex flex-col items-center">
+                                <div className="w-20 h-20 rounded-full bg-blue-950 border-2 border-blue-500 flex items-center justify-center mb-3 shadow-[0_0_30px_rgba(59,130,246,0.3)]">
+                                    <i className="ph-fill ph-code text-blue-400 text-4xl"></i>
+                                </div>
+                                <span className="text-blue-400 font-bold">{t('api_revenue_label')}</span>
+                            </div>
+                            <div className="flex-1 h-[2px] bg-gradient-to-r from-blue-500 to-purple-500 relative mx-4">
+                                <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-3 h-3 bg-purple-400 rounded-full shadow-[0_0_10px_#c084fc] animate-pulse delay-300"></div>
+                            </div>
+                            <div className="flex flex-col items-center">
+                                <div className="w-20 h-20 rounded-full bg-indigo-950 border-2 border-indigo-500 flex items-center justify-center mb-3 shadow-[0_0_30px_rgba(99,102,241,0.3)]">
+                                    <i className="ph-fill ph-chart-bar text-indigo-400 text-4xl"></i>
+                                </div>
+                                <span className="text-indigo-400 font-bold">{t('financial_asset_label')}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+
+            const Layer1View = () => (
+                <div className="space-y-6 animate-in slide-in-from-right-8 duration-500">
+                    <header className="flex justify-between items-end border-b border-slate-800 pb-4">
+                        <div>
+                            <h1 className="text-3xl font-bold text-white flex items-center gap-3 mb-2">
+                                <i className="ph-fill ph-cpu text-cyan-400"></i> {t('l1_header')}
+                            </h1>
+                            <p className="text-slate-400">{t('l1_header_desc')}</p>
+                        </div>
+                        <div className="text-right">
+                            <div className="text-3xl font-bold text-cyan-400">96.8%</div>
+                            <div className="text-xs text-slate-500 uppercase">{t('goodput')}</div>
+                        </div>
+                    </header>
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div className="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-xl overflow-hidden relative min-h-[400px]">
+                            <div className="absolute top-4 left-4 z-20 bg-black/50 backdrop-blur border border-slate-700 p-3 rounded-lg pointer-events-none">
+                                <h3 className="text-white font-medium mb-1">{t('digital_twin_title')}</h3>
+                                <p className="text-xs text-slate-400">{t('digital_twin_desc')}</p>
+                            </div>
+                            <div className="w-full h-full bg-slate-950 flex flex-col items-center justify-center relative overflow-hidden">
+                                <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:40px_40px] opacity-20 transform perspective-1000 rotateX-60 scale-150 pointer-events-none"></div>
+                                <ServerRack3D />
+                                <div className="absolute bottom-4 right-4 text-xs text-slate-500 flex items-center gap-2 z-20">
+                                    <span className="w-2 h-2 bg-cyan-400 rounded-full"></span> Cold Inlet (18°C)
+                                    <span className="w-2 h-2 bg-rose-500 rounded-full ml-2"></span> Hot Return (45°C)
+                                </div>
+                            </div>
+                        </div>
+                        <div className="space-y-6">
+                            <div className="bg-slate-900 border border-slate-800 rounded-xl p-5">
+                                <h3 className="text-white font-medium flex items-center gap-2 mb-4">
+                                    <i className="ph-fill ph-battery-high text-amber-400 text-lg"></i> {t('ocp_monitor')}
+                                </h3>
+                                <div className="space-y-4">
+                                    <div>
+                                        <div className="flex justify-between text-xs mb-1">
+                                            <span className="text-slate-400">{t('voltage')} (+/-400VDC to 48V)</span>
+                                            <span className="text-emerald-400 font-mono">48.2 V</span>
+                                        </div>
+                                        <div className="w-full h-2 bg-slate-800 rounded overflow-hidden">
+                                            <div className="w-[85%] h-full bg-emerald-500"></div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div className="flex justify-between text-xs mb-1">
+                                            <span className="text-slate-400">{t('rack_density')}</span>
+                                            <span className="text-amber-400 font-mono">124 kW / 500kW</span>
+                                        </div>
+                                        <div className="w-full h-2 bg-slate-800 rounded overflow-hidden relative">
+                                            <div className="w-[25%] h-full bg-amber-500 relative">
+                                                <div className="absolute right-0 top-0 bottom-0 w-4 bg-white/30 animate-pulse"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="mt-4 pt-4 border-t border-slate-800 text-xs text-slate-500">
+                                        {t('pdu_msg')}
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="relative bg-slate-900 border border-slate-800 rounded-xl p-5 flex-1 overflow-hidden">
+                                <div className="absolute inset-0">
+                                    <img src="/images/5-campus-cleaning.jpg" alt="Smart Campus" className="w-full h-full object-cover opacity-20" onError={(e) => e.target.style.display='none'} />
+                                    <div className="absolute inset-0 bg-gradient-to-br from-slate-950 to-slate-900/80"></div>
+                                </div>
+                                <div className="relative z-10">
+                                    <h3 className="text-white font-medium flex items-center gap-2 mb-4">
+                                        <i className="ph-fill ph-globe text-emerald-400 text-lg"></i> {t('esg_matrix')}
+                                    </h3>
+                                    <div className="h-32 border border-slate-700/50 rounded flex flex-col items-center justify-center bg-slate-950/50 relative overflow-hidden">
+                                        <SankeyDiagram />
+                                    </div>
+                                    <div className="flex justify-between mt-4">
+                                        <div className="text-center">
+                                            <div className="text-xl font-bold text-white">1.12</div>
+                                            <div className="text-[10px] text-slate-500 uppercase">{t('pue_metric')}</div>
+                                        </div>
+                                        <div className="text-center">
+                                            <div className="text-xl font-bold text-emerald-400">100%</div>
+                                            <div className="text-[10px] text-slate-500 uppercase">{t('renewable_match')}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* NEW: MPC Link Banner */}
+                    <a href="https://dcdeeptech.com/mpc/" target="_blank" rel="noopener noreferrer" className="block relative bg-slate-900 border border-slate-800 hover:border-cyan-500/50 rounded-xl p-6 transition-all group overflow-hidden mt-6 shadow-[0_4px_20px_rgba(0,0,0,0.2)]">
+                        <div className="absolute right-0 top-0 bottom-0 w-1/2 bg-gradient-to-l from-cyan-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                        <div className="flex flex-col md:flex-row items-start md:items-center justify-between relative z-10 gap-4">
+                            <div className="flex items-center gap-5">
+                                <div className="w-14 h-14 rounded-xl bg-cyan-500/10 flex items-center justify-center text-cyan-400 group-hover:scale-110 transition-transform duration-300">
+                                    <i className="ph-fill ph-cube text-3xl"></i>
+                                </div>
+                                <div>
+                                    <h3 className="text-xl font-bold text-white mb-1 group-hover:text-cyan-400 transition-colors">{t('mpc_title')}</h3>
+                                    <p className="text-sm text-slate-400">{t('mpc_desc')}</p>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-2 text-cyan-500 group-hover:text-cyan-400 font-medium transition-colors bg-slate-950 px-4 py-2 rounded-lg border border-slate-800 group-hover:border-cyan-500/30">
+                                <span>{lang === 'zh' ? '访问页面' : 'Visit Page'}</span>
+                                <i className="ph-bold ph-arrow-up-right text-lg"></i>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            );
+
+            const Layer2View = () => (
+                <div className="space-y-6 animate-in slide-in-from-right-8 duration-500">
+                    <header className="flex justify-between items-end border-b border-slate-800 pb-4">
+                        <div>
+                            <h1 className="text-3xl font-bold text-white flex items-center gap-3 mb-2">
+                                <i className="ph-fill ph-graph text-blue-400"></i> {t('l2_header')}
+                            </h1>
+                            <p className="text-slate-400">{t('l2_header_desc')}</p>
+                        </div>
+                        <div className="flex gap-3">
+                            <button className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-medium transition-colors">
+                                {t('gen_api_key')}
+                            </button>
+                        </div>
+                    </header>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden flex flex-col">
+                            <div className="bg-slate-950 px-4 py-3 border-b border-slate-800 flex justify-between items-center">
+                                <div className="flex gap-2">
+                                    <div className="w-3 h-3 rounded-full bg-rose-500"></div>
+                                    <div className="w-3 h-3 rounded-full bg-amber-500"></div>
+                                    <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
+                                </div>
+                                <span className="text-xs text-slate-500 font-mono">{t('quick_start')}</span>
+                            </div>
+                            <div className="p-6 bg-[#0d1117] flex-1 overflow-x-auto">
+<pre className="text-sm font-mono text-slate-300">
+<span className="text-purple-400">import</span> OpenAI <span className="text-purple-400">from</span> <span className="text-emerald-400">'openai'</span>;<br/><br/>
+<span className="text-slate-500">{lang === 'zh' ? '// 将 Base URL 修改为 dcdeep tech 平台网关' : '// Change Base URL to dcdeep tech gateway'}</span><br/>
+<span className="text-blue-400">const</span> client = <span className="text-purple-400">new</span> OpenAI({'{'}<br/>
+{'  '}baseURL: <span className="text-emerald-400">'https://api.dcdeep.tech/v1'</span>,<br/>
+{'  '}apiKey: process.env.<span className="text-blue-200">DCDEEP_API_KEY</span>,<br/>
+{'}'});<br/><br/>
+<span className="text-blue-400">const</span> response = <span className="text-purple-400">await</span> client.chat.completions.create({'{'}<br/>
+{'  '}model: <span className="text-emerald-400">'meta-llama/llama-3-70b-instruct'</span>,<br/>
+{'  '}messages: [{'{'} role: <span className="text-emerald-400">'user'</span>, content: <span className="text-emerald-400">'Hello world'</span> {'}'}],<br/>
+{'}'});
+</pre>
+                            </div>
+                        </div>
+                        <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
+                            <h3 className="text-white font-medium mb-6 flex items-center gap-2">
+                                <i className="ph-fill ph-activity text-blue-400 text-lg"></i> {t('telemetry_title')}
+                            </h3>
+                            <div className="h-48 border-b border-l border-slate-700 relative mb-6">
+                                <div className="absolute -left-8 bottom-0 text-[10px] text-slate-500">0</div>
+                                <div className="absolute -left-8 top-1/2 text-[10px] text-slate-500">500</div>
+                                <div className="absolute -left-8 top-0 text-[10px] text-slate-500">1k+</div>
+                                <RealtimeChart />
+                                <div className="absolute -bottom-6 left-0 text-[10px] text-slate-500">00:00</div>
+                                <div className="absolute -bottom-6 left-1/2 text-[10px] text-slate-500">12:00</div>
+                                <div className="absolute -bottom-6 right-0 text-[10px] text-slate-500">24:00</div>
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="bg-slate-950 p-4 rounded-lg border border-slate-800">
+                                    <div className="text-xs text-slate-400 mb-1">{t('ttft')}</div>
+                                    <div className="text-xl font-bold text-white flex items-baseline gap-1">
+                                        124 <span className="text-sm font-normal text-slate-500">ms</span>
+                                    </div>
+                                </div>
+                                <div className="bg-slate-950 p-4 rounded-lg border border-slate-800">
+                                    <div className="text-xs text-slate-400 mb-1">{t('success_rate')}</div>
+                                    <div className="text-xl font-bold text-emerald-400 flex items-baseline gap-1">
+                                        99.98 <span className="text-sm font-normal text-slate-500">%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* NEW ARCHITECTURE DIAGRAM */}
+                        <div className="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-xl p-6">
+                            <h3 className="text-white font-medium mb-6 flex items-center gap-2">
+                                <i className="ph-fill ph-git-merge text-blue-400 text-lg"></i> {t('arch_title')}
+                            </h3>
+                            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                                <div className="flex-1 w-full bg-slate-950 border border-slate-800 rounded-lg p-4 flex flex-col items-center text-center relative z-10 hover:border-slate-600 transition-colors">
+                                    <i className="ph-fill ph-globe-hemisphere-west text-3xl text-slate-400 mb-2"></i>
+                                    <div className="font-bold text-white text-sm">{t('arch_global_clients')}</div>
+                                </div>
+                                <div className="flex flex-col items-center justify-center text-slate-600">
+                                    <i className="ph-bold ph-arrows-left-right text-xl md:rotate-0 rotate-90"></i>
+                                </div>
+                                <div className="flex-1 w-full bg-slate-950 border border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.1)] rounded-lg p-4 flex flex-col items-center text-center relative z-10 hover:border-blue-400/80 transition-colors">
+                                    <i className="ph-fill ph-server text-3xl text-blue-400 mb-2"></i>
+                                    <div className="font-bold text-white text-sm">{t('arch_sg_gateway')}</div>
+                                    <div className="text-xs text-blue-400 mt-1">api.dcdeeptech.com</div>
+                                </div>
+                                <div className="flex flex-col items-center justify-center text-emerald-500/50">
+                                    <i className="ph-bold ph-arrows-left-right text-xl md:rotate-0 rotate-90"></i>
+                                </div>
+                                <div className="flex-1 w-full bg-slate-950 border border-emerald-500/30 rounded-lg p-4 flex flex-col items-center text-center relative z-10 hover:border-emerald-400/60 transition-colors">
+                                    <i className="ph-fill ph-lock-key text-3xl text-emerald-400 mb-2"></i>
+                                    <div className="font-bold text-white text-sm">{t('arch_cross_border')}</div>
+                                    <div className="text-xs text-emerald-400 mt-1">(Encrypted Tunnel)</div>
+                                </div>
+                                <div className="flex flex-col items-center justify-center text-emerald-500/50">
+                                    <i className="ph-bold ph-arrows-left-right text-xl md:rotate-0 rotate-90"></i>
+                                </div>
+                                <div className="flex-1 w-full bg-slate-950 border border-purple-500/50 shadow-[0_0_15px_rgba(168,85,247,0.1)] rounded-lg p-4 flex flex-col items-center text-center relative z-10 hover:border-purple-400/80 transition-colors">
+                                    <i className="ph-fill ph-cpu text-3xl text-purple-400 mb-2"></i>
+                                    <div className="font-bold text-white text-sm">{t('arch_china_gpu')}</div>
+                                    <div className="text-xs text-purple-400 mt-1">vLLM + Qwen-VL</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-xl p-6 flex flex-col md:flex-row gap-8 items-center">
+                            <div className="w-full md:w-1/3">
+                                <h3 className="text-white font-medium mb-2 flex items-center gap-2">
+                                    <i className="ph-fill ph-chart-pie-slice text-purple-400 text-lg"></i> {t('billing_title')}
+                                </h3>
+                                <p className="text-sm text-slate-400 mb-6">{t('billing_desc')}</p>
+                                <div className="text-3xl font-bold text-white mb-1">$4,285.50</div>
+                                <div className="text-xs text-slate-500">{t('monthly_cost')}</div>
+                            </div>
+                            <div className="w-full md:w-2/3 grid grid-cols-1 md:grid-cols-3 gap-4">
+                                {[
+                                    { name: 'GPT-4o', tokens: '45.2M', cost: '$2,100.00', color: 'bg-emerald-500' },
+                                    { name: 'Claude 3.5 Sonnet', tokens: '28.1M', cost: '$1,405.00', color: 'bg-amber-500' },
+                                    { name: 'Llama 3 70B', tokens: '150.4M', cost: '$780.50', color: 'bg-blue-500' }
+                                ].map((item, i) => (
+                                    <div key={i} className="bg-slate-950 p-4 rounded-lg border border-slate-800">
+                                        <div className="flex items-center gap-2 mb-2">
+                                            <div className={`w-2 h-2 rounded-full ${item.color}`}></div>
+                                            <span className="text-sm font-medium text-slate-300">{item.name}</span>
+                                        </div>
+                                        <div className="text-lg font-bold text-white">{item.cost}</div>
+                                        <div className="text-xs text-slate-500 mt-1">{item.tokens} Tokens</div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+
+            const Layer3View = () => (
+                <div className="space-y-6 animate-in slide-in-from-right-8 duration-500">
+                    <header className="flex justify-between items-end border-b border-slate-800 pb-4">
+                        <div>
+                            <h1 className="text-3xl font-bold text-white flex items-center gap-3 mb-2">
+                                <i className="ph-fill ph-currency-circle-dollar text-indigo-400"></i> {t('l3_header')}
+                            </h1>
+                            <p className="text-slate-400">{t('l3_header_desc')}</p>
+                        </div>
+                        <div>
+                            <span className="px-3 py-1 bg-indigo-500/20 text-indigo-400 border border-indigo-500/50 rounded-full text-xs font-medium">
+                                {t('inst_access')}
+                            </span>
+                        </div>
+                    </header>
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                        {[
+                            { label: t('capex'), value: '$1.2B', trend: '+12%' },
+                            { label: t('arr'), value: '$450M', trend: '+34%' },
+                            { label: t('roi'), value: '28.5%', trend: lang==='zh'?'稳健':'Stable' },
+                            { label: t('wacc'), value: '6.2%', trend: '-0.4%' }
+                        ].map((metric, i) => (
+                            <div key={i} className="bg-slate-900 border border-slate-800 rounded-xl p-5">
+                                <div className="text-xs text-slate-400 mb-2">{metric.label}</div>
+                                <div className="flex items-end justify-between">
+                                    <div className="text-2xl font-bold text-white">{metric.value}</div>
+                                    <div className="text-xs text-emerald-400">{metric.trend}</div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div className="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-xl p-6">
+                            <div className="flex justify-between items-center mb-6">
+                                <h3 className="text-white font-medium flex items-center gap-2">
+                                    <i className="ph-fill ph-stack text-indigo-400 text-lg"></i> {t('cap_stack_title')}
+                                </h3>
+                                <span className="text-xs text-slate-500 border border-slate-700 px-2 py-1 rounded">{t('pre_reit_view')}</span>
+                            </div>
+                            <div className="flex flex-col gap-2 h-64">
+                                <div className="flex-1 bg-slate-800 rounded-lg flex items-center px-6 group cursor-pointer hover:bg-slate-700 transition-colors border-l-4 border-emerald-500 relative overflow-hidden">
+                                    <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/10 to-transparent w-0 group-hover:w-full transition-all duration-500"></div>
+                                    <div className="w-1/3 text-sm font-bold text-slate-300 relative z-10">{t('senior_debt')}</div>
+                                    <div className="w-1/3 text-xs text-slate-400 relative z-10">{t('senior_debt_desc')}</div>
+                                    <div className="w-1/3 text-right font-mono text-emerald-400 relative z-10">65%</div>
+                                </div>
+                                <div className="h-16 bg-slate-800/80 rounded-lg flex items-center px-6 group cursor-pointer hover:bg-slate-700 transition-colors border-l-4 border-amber-500 relative overflow-hidden">
+                                    <div className="absolute inset-0 bg-gradient-to-r from-amber-500/10 to-transparent w-0 group-hover:w-full transition-all duration-500"></div>
+                                    <div className="w-1/3 text-sm font-bold text-slate-300 relative z-10">{t('mezzanine')}</div>
+                                    <div className="w-1/3 text-xs text-slate-400 relative z-10">{t('mezzanine_desc')}</div>
+                                    <div className="w-1/3 text-right font-mono text-amber-400 relative z-10">20%</div>
+                                </div>
+                                <div className="h-12 bg-slate-800/50 rounded-lg flex items-center px-6 group cursor-pointer hover:bg-slate-700 transition-colors border-l-4 border-rose-500 relative overflow-hidden">
+                                    <div className="absolute inset-0 bg-gradient-to-r from-rose-500/10 to-transparent w-0 group-hover:w-full transition-all duration-500"></div>
+                                    <div className="w-1/3 text-sm font-bold text-slate-300 relative z-10">{t('equity')}</div>
+                                    <div className="w-1/3 text-xs text-slate-400 relative z-10">{t('equity_desc')}</div>
+                                    <div className="w-1/3 text-right font-mono text-rose-400 relative z-10">15%</div>
+                                </div>
+                            </div>
+                            <p className="text-xs text-slate-500 mt-4 italic">
+                                {t('audit_note')}
+                            </p>
+                        </div>
+                        <div className="bg-slate-900 border border-indigo-500/30 rounded-xl overflow-hidden flex flex-col shadow-[0_0_20px_rgba(99,102,241,0.1)]">
+                            <div className="bg-indigo-950/50 px-4 py-3 border-b border-indigo-500/20 flex items-center gap-2">
+                                <i className="ph-fill ph-chat-circle-text text-indigo-400"></i>
+                                <span className="text-sm font-medium text-indigo-300">{t('vibe_coding_title')}</span>
+                            </div>
+                            <div className="flex-1 p-4 flex flex-col gap-4 text-sm bg-slate-950/50 overflow-y-auto">
+                                <div className="bg-slate-800 text-slate-300 p-3 rounded-lg rounded-tl-none self-start max-w-[90%]">
+                                    {t('ai_greet')}
+                                </div>
+                                <div className="bg-indigo-600 text-white p-3 rounded-lg rounded-tr-none self-end max-w-[90%] shadow-lg">
+                                    {t('user_prompt')}
+                                </div>
+                                <div className="bg-slate-800 border border-indigo-500/30 text-slate-300 p-3 rounded-lg rounded-tl-none self-start max-w-full w-full">
+                                    <div className="flex items-center gap-2 mb-2 text-indigo-400 text-xs font-bold">
+                                        <i className="ph-fill ph-play"></i> {t('ai_loading')}
+                                    </div>
+                                    <div className="w-full h-32 bg-slate-900/80 rounded border border-slate-700 flex items-center justify-center relative overflow-hidden my-3 shadow-inner">
+                                        <FinancialBoxplot lang={lang} />
+                                    </div>
+                                    <p className="text-xs mt-2 text-emerald-300/80">{t('ai_conclusion')}</p>
+                                </div>
+                            </div>
+                            <div className="p-3 border-t border-slate-800 bg-slate-900">
+                                <div className="relative">
+                                    <input type="text" placeholder={t('chat_placeholder')} className="w-full bg-slate-950 border border-slate-700 rounded-lg py-2 pl-3 pr-10 text-sm text-white focus:outline-none focus:border-indigo-500 transition-colors" disabled />
+                                    <button className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-indigo-400">
+                                        <i className="ph-bold ph-arrow-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+
+            // NEW: Company Introduction View
+            const AboutView = () => (
+                <div className="space-y-6 animate-in fade-in duration-500">
+                    <header className="border-b border-slate-800 pb-4">
+                        <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
+                            <i className="ph-fill ph-buildings text-cyan-400"></i> {t('about_title')}
+                        </h1>
+                        <p className="text-slate-400">{t('about_subtitle')}</p>
+                    </header>
+                    <div className="relative bg-slate-900 border border-slate-800 rounded-xl p-8 overflow-hidden min-h-[500px] flex items-center">
+                        {/* Background Image & Overlay */}
+                        <div className="absolute inset-0">
+                            <img src="/images/6-singapore-global-hq.jpg" alt="Singapore HQ" className="w-full h-full object-cover" onError={(e) => e.target.style.display='none'} />
+                            <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm"></div>
+                        </div>
+                        
+                        <div className="relative z-10 max-w-4xl space-y-6">
+                            <h2 className="text-2xl font-bold text-white">DCDeepTech</h2>
+                            <p className="text-slate-300 leading-relaxed text-lg">
+                                {t('about_p1')}
+                            </p>
+                            <p className="text-slate-300 leading-relaxed text-lg">
+                                {t('about_p2')}
+                            </p>
+                            <p className="text-slate-300 leading-relaxed text-lg">
+                                {t('about_p3')}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            );
+
+            // NEW: Ecosystem & Contact View
+            const EcosystemContactView = () => (
+                <div className="space-y-10 animate-in fade-in duration-500 pb-10">
+                    <header className="border-b border-slate-800 pb-4">
+                        <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
+                            <i className="ph-fill ph-address-book text-blue-400"></i> {t('nav_ecosystem')}
+                        </h1>
+                        <p className="text-slate-400">{t('eco_subtitle')}</p>
+                    </header>
+
+                    {/* Ecosystem Section */}
+                    <div>
+                        <h2 className="text-2xl font-bold text-white mb-6">{t('eco_title')}</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            {/* OCP */}
+                            <a href="https://www.opencompute.org/" target="_blank" rel="noopener noreferrer" className="block bg-slate-900 border border-slate-800 rounded-xl p-6 hover:border-cyan-500/50 transition-all group">
+                                <img src="images/1OCP.jpg" alt="Open Compute Project" className="h-12 w-auto mb-4 object-contain rounded" onError={(e) => {e.target.style.display='none'; e.target.nextSibling.style.display='flex'}} />
+                                <div className="hidden h-12 w-12 bg-slate-800 rounded items-center justify-center mb-4 text-cyan-400 font-bold text-xl">OCP</div>
+                                <h3 className="text-lg font-bold text-white mb-1 group-hover:text-cyan-400 transition-colors">Open Compute Project</h3>
+                                <div className="text-xs text-cyan-400 mb-3">{lang === 'zh' ? '开放计算项目' : 'Open Compute Project'} • opencompute.org</div>
+                                <p className="text-sm text-slate-400">
+                                    {lang === 'zh' ? '覆盖数据中心、服务器、网络与设施创新的开放基础设施社区，DCDeepTech 基础设施设计理念与其深度对齐。' : 'Open infrastructure community covering data center, server, networking and facility innovation; deeply aligned with DCDeepTech’s infra design philosophy.'}
+                                </p>
+                            </a>
+                            
+                            {/* OpenRouter */}
+                            <a href="https://openrouter.ai/" target="_blank" rel="noopener noreferrer" className="block bg-slate-900 border border-slate-800 rounded-xl p-6 hover:border-blue-500/50 transition-all group">
+                                <img src="images/openrouter_logo.png" alt="OpenRouter" className="h-12 w-auto mb-4 object-contain rounded" onError={(e) => {e.target.style.display='none'; e.target.nextSibling.style.display='flex'}} />
+                                <div className="hidden h-12 w-12 bg-slate-800 rounded items-center justify-center mb-4 text-blue-400 font-bold text-xl">OR</div>
+                                <h3 className="text-lg font-bold text-white mb-1 group-hover:text-blue-400 transition-colors">OpenRouter</h3>
+                                <div className="text-xs text-blue-400 mb-3">{lang === 'zh' ? 'OpenRouter 模型路由平台' : 'OpenRouter Model Gateway'} • openrouter.ai</div>
+                                <p className="text-sm text-slate-400">
+                                    {lang === 'zh' ? '以 OpenAI 兼容集成模式提供多 AI 模型统一 API 访问，是 Layer 2 模型聚合服务的重要参考标杆。' : 'Provides unified API access to multiple AI models in an OpenAI-compatible integration mode; a key benchmark for Layer 2 model aggregation services.'}
+                                </p>
+                            </a>
+                            
+                            {/* NVIDIA */}
+                            <a href="https://www.nvidia.com/en-sg/" target="_blank" rel="noopener noreferrer" className="block bg-slate-900 border border-slate-800 rounded-xl p-6 hover:border-green-500/50 transition-all group">
+                                <img src="images/nvidia_logo.png" alt="NVIDIA Singapore" className="h-12 w-auto mb-4 object-contain rounded" onError={(e) => {e.target.style.display='none'; e.target.nextSibling.style.display='flex'}} />
+                                <div className="hidden h-12 w-12 bg-slate-800 rounded items-center justify-center mb-4 text-green-400 font-bold text-xl">NV</div>
+                                <h3 className="text-lg font-bold text-white mb-1 group-hover:text-green-400 transition-colors">NVIDIA Singapore</h3>
+                                <div className="text-xs text-green-400 mb-3">{lang === 'zh' ? '英伟达新加坡' : 'NVIDIA Singapore'} • nvidia.com/en-sg</div>
+                                <p className="text-sm text-slate-400">
+                                    {lang === 'zh' ? '加速计算、企业 AI、边缘 AI 及全栈基础设施参考，DCDeepTech AI 集群设计与 NVIDIA 加速平台深度集成。' : 'Accelerated computing, enterprise AI, edge AI, and full-stack infra reference; DCDeepTech AI clusters integrate deeply with NVIDIA platforms.'}
+                                </p>
+                            </a>
+                        </div>
+                    </div>
+
+                    {/* Contact Section */}
+                    <div className="relative bg-slate-900 border border-slate-800 rounded-xl p-8 flex flex-col md:flex-row gap-10 overflow-hidden">
+                        {/* Background Image & Overlay */}
+                        <div className="absolute inset-0">
+                            <img src="/images/6HQSG.jpg" alt="Singapore HQ" className="w-full h-full object-cover opacity-20" onError={(e) => e.target.style.display='none'} />
+                            <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/90 to-slate-900/80"></div>
+                        </div>
+                        <div className="relative z-10 flex flex-col md:flex-row gap-10 w-full">
+                            <div className="md:w-1/2 flex flex-col justify-center">
+                                <h2 className="text-3xl font-bold text-white mb-3">{t('contact_title')}</h2>
+                                <p className="text-slate-400 mb-8 text-lg">{t('contact_subtitle')}</p>
+                                
+                                <div className="flex items-center gap-4">
+                                    <img src="https://raw.githubusercontent.com/luoxisg/dcdeeptech/main/image/DCdeeptech_logo-removebg-preview.png" alt="DCDeepTech Logo" className="h-14 w-auto object-contain" onError={(e) => {e.target.style.display='none'; e.target.nextSibling.style.display='flex'}} />
+                                    <div className="hidden w-12 h-12 rounded bg-gradient-to-br from-cyan-500 to-blue-600 items-center justify-center text-white font-bold text-2xl">d</div>
+                                    <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-500">DCDeepTech</span>
+                                </div>
+                            </div>
+                            
+                            <div className="md:w-1/2 space-y-8 bg-slate-950/50 p-6 rounded-lg border border-slate-800 backdrop-blur-sm">
+                                <div className="flex items-start gap-4">
+                                    <div className="p-3 bg-cyan-500/10 rounded-lg">
+                                        <i className="ph-fill ph-map-pin text-2xl text-cyan-400"></i>
+                                    </div>
+                                    <div>
+                                        <h4 className="text-white font-bold mb-1 text-lg">Address</h4>
+                                        <p className="text-slate-400 leading-relaxed">
+                                            71 Ayer Rajah Crescent, #02-01<br/>Singapore 139951
+                                        </p>
+                                    </div>
+                                </div>
+                                
+                                <div className="flex items-start gap-4">
+                                    <div className="p-3 bg-blue-500/10 rounded-lg">
+                                        <i className="ph-fill ph-envelope-simple text-2xl text-blue-400"></i>
+                                    </div>
+                                    <div>
+                                        <h4 className="text-white font-bold mb-1 text-lg">Email</h4>
+                                        <a href="mailto:info@DCdeeptech.com" className="text-slate-400 hover:text-blue-400 transition-colors">info@DCdeeptech.com</a>
+                                    </div>
+                                </div>
+                                
+                                <div className="flex items-start gap-4">
+                                    <div className="p-3 bg-green-500/10 rounded-lg">
+                                        <i className="ph-fill ph-whatsapp-logo text-2xl text-green-400"></i>
+                                    </div>
+                                    <div>
+                                        <h4 className="text-white font-bold mb-1 text-lg">WhatsApp</h4>
+                                        <a href="https://wa.me/6583785068" className="text-slate-400 hover:text-green-400 transition-colors">+65 8378 5068</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+
+
+            const renderContent = () => {
+                switch(activeTab) {
+                    case 'overview': return <OverviewView />;
+                    case 'layer1': return <Layer1View />;
+                    case 'layer2': return <Layer2View />;
+                    case 'layer3': return <Layer3View />;
+                    case 'about': return <AboutView />;
+                    case 'ecosystem': return <EcosystemContactView />;
+                    default: return <OverviewView />;
+                }
+            };
+
+            return (
+                <React.Fragment>
+                    <LangToggle />
+                    <Sidebar />
+                    <main className="ml-64 p-8 min-h-screen relative">
+                        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-cyan-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
+                        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-indigo-500/5 rounded-full blur-3xl translate-y-1/3 -translate-x-1/3 pointer-events-none"></div>
+                        <div className="max-w-6xl mx-auto relative z-10">
+                            {renderContent()}
+                        </div>
+                    </main>
+                </React.Fragment>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
