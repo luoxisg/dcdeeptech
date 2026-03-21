@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
@@ -27,8 +27,38 @@
             0% { background-position: 0% 50%; }
             100% { background-position: 100% 50%; }
         }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(34, 211, 238, 0.7); }
+            70% { transform: scale(1.1); box-shadow: 0 0 0 15px rgba(34, 211, 238, 0); }
+            100% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(34, 211, 238, 0); }
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        @keyframes scanline {
+            0% { transform: translateY(-100%); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateY(500%); opacity: 0; }
+        }
+        @keyframes dash-flow {
+            to { stroke-dashoffset: -20; }
+        }
         .animate-flow {
             animation: flowDash 1s linear infinite;
+        }
+        .animate-float { 
+            animation: float 6s ease-in-out infinite; 
+        }
+        .animate-dash-flow { 
+            stroke-dasharray: 10; 
+            animation: dash-flow 1s linear infinite; 
+        }
+        .animate-scanline { 
+            animation: scanline 4s linear infinite; 
+        }
+        .animate-pulse-slow { 
+            animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite; 
         }
         .isometric-container {
             transform: rotateX(60deg) rotateZ(-45deg);
@@ -148,6 +178,9 @@
                 about_p2: 'DCDeepTech 平台正是在这一宏观背景下应运而生。作为一个融合了前沿硬科技与深层金融工程的复合型生态系统，我们旨在通过打通从底层物理设施到顶层资本市场的完整价值链，重塑人工智能时代的生产力流转范式。',
                 about_p3: '我们不仅仅解决物理机房的散热与供电极限，更通过智能化模型聚合引擎和前瞻性的金融资产证券化（Pre-REIT），建立起物理基础设施、全球算力调度与金融资本运作之间的全新桥梁。',
                 
+                ocp_banner_title: 'OCP 认证与全球营销',
+                ocp_banner_desc: '探索 DCDeepTech 基于 Open Compute Project 标准的认证硬件生态与全球市场布局。',
+                
                 arch_title: '跨境推理请求路由架构',
                 arch_global_clients: '全球客户端 (Global Clients)',
                 arch_sg_gateway: '新加坡 API 网关',
@@ -240,6 +273,9 @@
                 about_p2: 'The DCDeepTech platform was born against this macroeconomic backdrop. As a composite ecosystem fusing frontier hard-tech with deep financial engineering, we aim to reshape the productivity flow paradigm of the AI era by bridging the complete value chain from underlying physical facilities to top-tier capital markets.',
                 about_p3: 'We solve not only the cooling and power limits under extreme power density but also establish a novel bridge between physical infrastructure, global compute routing, and financial capital operations through intelligent model aggregation engines and forward-looking asset securitization (Pre-REIT).',
                 
+                ocp_banner_title: 'OCP Certification & Global Marketing',
+                ocp_banner_desc: 'Explore DCDeepTech’s OCP-certified hardware ecosystem and global market footprint.',
+                
                 arch_title: 'Cross-border Inference Routing Architecture',
                 arch_global_clients: 'Global Clients',
                 arch_sg_gateway: 'Singapore API Gateway',
@@ -285,27 +321,73 @@
             </svg>
         );
 
-        const ServerRack3D = () => {
+        const MPCTwinAnimation = () => {
             return (
-                <div className="w-full h-full flex items-center justify-center perspective-[1000px] overflow-hidden">
-                    <div className="relative w-48 h-64 isometric-container">
-                        <div className="absolute inset-0 border-2 border-slate-700 bg-slate-900/50 rounded-lg shadow-[0_0_50px_rgba(0,0,0,0.8)_inset]"></div>
-                        {[...Array(6)].map((_, i) => {
-                            const heatColors = ['bg-cyan-500', 'bg-cyan-400', 'bg-blue-400', 'bg-indigo-400', 'bg-amber-400', 'bg-rose-500'];
-                            const shadowColors = ['shadow-cyan-500/50', 'shadow-cyan-400/50', 'shadow-blue-400/50', 'shadow-indigo-400/50', 'shadow-amber-400/50', 'shadow-rose-500/50'];
-                            return (
-                                <div key={i} className="server-blade absolute w-[90%] h-8 left-[5%] border border-slate-600 bg-slate-800 rounded flex items-center px-2 gap-2" style={{ bottom: `${10 + i * 15}%`, transform: `translateZ(${i*2}px)` }}>
-                                    <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
-                                    <div className={`w-2 h-2 rounded-full ${heatColors[i]} shadow-[0_0_8px] ${shadowColors[i]} opacity-80`}></div>
-                                    <div className="flex-1 h-1 bg-slate-700 rounded overflow-hidden">
-                                        <div className="h-full bg-gradient-to-r from-blue-500 to-cyan-400" style={{width: `${Math.random()*40 + 40}%`, animation: 'coolFluid 2s linear infinite', backgroundSize: '200% 100%'}}></div>
-                                    </div>
-                                </div>
-                            );
-                        })}
-                        <div className="absolute -right-4 bottom-0 w-2 h-full bg-gradient-to-b from-blue-500 to-cyan-400 rounded-full opacity-70 blur-[1px]"></div>
-                        <div className="absolute -left-4 bottom-0 w-2 h-full bg-gradient-to-b from-rose-500 to-amber-500 rounded-full opacity-70 blur-[1px]"></div>
+                <div className="w-full h-full relative flex items-center justify-center overflow-hidden bg-slate-950">
+                    {/* Dynamic Grid Background */}
+                    <div className="absolute inset-0 bg-[linear-gradient(to_right,#0ea5e911_1px,transparent_1px),linear-gradient(to_bottom,#0ea5e911_1px,transparent_1px)] bg-[size:2rem_2rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] animate-[pulse_4s_ease-in-out_infinite]"></div>
+
+                    {/* Central Glowing Core */}
+                    <div className="relative w-72 h-72 flex items-center justify-center">
+                        <div className="absolute inset-0 bg-cyan-500/20 blur-[60px] rounded-full animate-pulse-slow"></div>
+
+                        {/* Core Graphic (SVG) */}
+                        <svg viewBox="0 0 200 200" className="w-full h-full relative z-10 animate-float">
+                            {/* Outer rotating rings */}
+                            <circle cx="100" cy="100" r="90" fill="none" stroke="#0ea5e9" strokeWidth="1" strokeDasharray="4 8" className="animate-[spin_20s_linear_infinite] origin-center" />
+                            <circle cx="100" cy="100" r="80" fill="none" stroke="#3b82f6" strokeWidth="2" strokeDasharray="20 10 5 10" className="animate-[spin_15s_linear_infinite_reverse] origin-center opacity-70" />
+
+                            {/* Liquid Pipes IN (Cold - Cyan) */}
+                            <path d="M10,100 C40,100 60,60 90,80" fill="none" stroke="#22d3ee" strokeWidth="4" className="opacity-40" />
+                            <path d="M10,100 C40,100 60,60 90,80" fill="none" stroke="#fff" strokeWidth="2" className="animate-dash-flow drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]" />
+
+                            {/* Liquid Pipes OUT (Hot - Rose) */}
+                            <path d="M110,120 C140,140 160,100 190,100" fill="none" stroke="#f43f5e" strokeWidth="4" className="opacity-40" />
+                            <path d="M110,120 C140,140 160,100 190,100" fill="none" stroke="#fff" strokeWidth="2" className="animate-dash-flow drop-shadow-[0_0_8px_rgba(244,63,94,0.8)]" />
+
+                            {/* Central Processor Node (Hexagon) */}
+                            <polygon points="100,50 143.3,75 143.3,125 100,150 56.7,125 56.7,75" fill="#0f172a" stroke="#0ea5e9" strokeWidth="2" className="drop-shadow-[0_0_20px_rgba(14,165,233,0.6)]" />
+                            <polygon points="100,60 134.6,80 134.6,120 100,140 65.4,120 65.4,80" fill="url(#coreGrad)" />
+
+                            {/* Inner Pulse */}
+                            <circle cx="100" cy="100" r="15" fill="#fff" className="animate-[pulse-ring_2s_infinite]" />
+                            <circle cx="100" cy="100" r="6" fill="#0ea5e9" />
+
+                            {/* Connection lines inside hexagon */}
+                            <line x1="100" y1="100" x2="100" y2="60" stroke="#fff" strokeWidth="1" className="opacity-50" />
+                            <line x1="100" y1="100" x2="134.6" y2="120" stroke="#fff" strokeWidth="1" className="opacity-50" />
+                            <line x1="100" y1="100" x2="65.4" y2="120" stroke="#fff" strokeWidth="1" className="opacity-50" />
+
+                            <defs>
+                                <linearGradient id="coreGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stopColor="#0ea5e9" stopOpacity="0.8" />
+                                    <stop offset="100%" stopColor="#3b82f6" stopOpacity="0.2" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
                     </div>
+
+                    {/* Holographic Overlay Stats */}
+                    <div className="absolute top-8 left-8 border border-cyan-500/30 bg-slate-900/80 backdrop-blur p-3 rounded-lg text-xs animate-float shadow-[0_0_15px_rgba(6,182,212,0.15)] z-20" style={{ animationDelay: '0.5s' }}>
+                        <div className="text-cyan-400 font-mono mb-2 flex items-center gap-2">
+                            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+                            MPC.OPTIMIZE()
+                        </div>
+                        <div className="text-slate-400 mb-1">Predictive Horizon: <span className="text-white font-mono">15m</span></div>
+                        <div className="text-slate-400">Coolant Flow: <span className="text-emerald-400 font-mono">120 L/min</span></div>
+                    </div>
+
+                    <div className="absolute bottom-8 right-8 border border-rose-500/30 bg-slate-900/80 backdrop-blur p-3 rounded-lg text-xs animate-float shadow-[0_0_15px_rgba(244,63,94,0.15)] z-20" style={{ animationDelay: '1s' }}>
+                        <div className="text-rose-400 font-mono mb-2 flex items-center gap-2">
+                            <span className="w-2 h-2 rounded-full bg-rose-400 animate-pulse"></span>
+                            THERMAL.LOAD
+                        </div>
+                        <div className="text-slate-400 mb-1">Delta-T: <span className="text-white font-mono">12.4°C</span></div>
+                        <div className="text-slate-400">Chip Temp: <span className="text-amber-400 font-mono">72°C</span></div>
+                    </div>
+
+                    {/* Scanline effect */}
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-cyan-500/20 to-transparent w-full h-[20%] animate-scanline pointer-events-none z-30"></div>
                 </div>
             );
         };
@@ -377,7 +459,7 @@
         // --- Main Application ---
         function App() {
             const [activeTab, setActiveTab] = useState('overview');
-            const [lang, setLang] = useState('zh'); 
+            const [lang, setLang] = useState('en'); 
 
             const t = (key) => translations[lang][key] || key;
 
@@ -411,9 +493,6 @@
                             <div className="hidden w-8 h-8 rounded bg-gradient-to-br from-cyan-500 to-blue-600 items-center justify-center text-white font-bold text-xl">
                                 d
                             </div>
-                            <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-500">
-                                dcdeep tech
-                            </span>
                         </div>
                         <nav className="flex-1 px-4 space-y-6 mt-4 overflow-y-auto">
                             <div className="space-y-2">
@@ -554,6 +633,26 @@
                             </div>
                         </div>
                     </div>
+
+                    {/* NEW: OCP Certification & Global Marketing Banner */}
+                    <a href="https://dcdeeptech.com/ocp/" target="_blank" rel="noopener noreferrer" className="block relative bg-slate-900 border border-slate-800 hover:border-blue-500/50 rounded-xl p-6 transition-all group overflow-hidden mt-6 shadow-[0_4px_20px_rgba(0,0,0,0.2)]">
+                        <div className="absolute right-0 top-0 bottom-0 w-1/2 bg-gradient-to-l from-blue-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                        <div className="flex flex-col md:flex-row items-start md:items-center justify-between relative z-10 gap-4">
+                            <div className="flex items-center gap-5">
+                                <div className="w-14 h-14 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-400 group-hover:scale-110 transition-transform duration-300">
+                                    <i className="ph-fill ph-seal-check text-3xl"></i>
+                                </div>
+                                <div>
+                                    <h3 className="text-xl font-bold text-white mb-1 group-hover:text-blue-400 transition-colors">{t('ocp_banner_title')}</h3>
+                                    <p className="text-sm text-slate-400">{t('ocp_banner_desc')}</p>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-2 text-blue-500 group-hover:text-blue-400 font-medium transition-colors bg-slate-950 px-4 py-2 rounded-lg border border-slate-800 group-hover:border-blue-500/30">
+                                <span>{lang === 'zh' ? '访问页面' : 'Visit Page'}</span>
+                                <i className="ph-bold ph-arrow-up-right text-lg"></i>
+                            </div>
+                        </div>
+                    </a>
                 </div>
             );
 
@@ -573,17 +672,14 @@
                     </header>
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         <div className="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-xl overflow-hidden relative min-h-[400px]">
-                            <div className="absolute top-4 left-4 z-20 bg-black/50 backdrop-blur border border-slate-700 p-3 rounded-lg pointer-events-none">
-                                <h3 className="text-white font-medium mb-1">{t('digital_twin_title')}</h3>
-                                <p className="text-xs text-slate-400">{t('digital_twin_desc')}</p>
+                            <div className="absolute top-4 left-4 z-40 bg-slate-900/80 backdrop-blur border border-slate-700 p-4 rounded-xl pointer-events-none shadow-lg">
+                                <h3 className="text-white font-bold mb-1 flex items-center gap-2">
+                                    <i className="ph-fill ph-cpu text-cyan-400"></i> MPC 动态控制核心
+                                </h3>
+                                <p className="text-xs text-slate-400">基于神经网络的液冷预测与全局能耗调优模型</p>
                             </div>
-                            <div className="w-full h-full bg-slate-950 flex flex-col items-center justify-center relative overflow-hidden">
-                                <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:40px_40px] opacity-20 transform perspective-1000 rotateX-60 scale-150 pointer-events-none"></div>
-                                <ServerRack3D />
-                                <div className="absolute bottom-4 right-4 text-xs text-slate-500 flex items-center gap-2 z-20">
-                                    <span className="w-2 h-2 bg-cyan-400 rounded-full"></span> Cold Inlet (18°C)
-                                    <span className="w-2 h-2 bg-rose-500 rounded-full ml-2"></span> Hot Return (45°C)
-                                </div>
+                            <div className="w-full h-full relative">
+                                <MPCTwinAnimation />
                             </div>
                         </div>
                         <div className="space-y-6">
@@ -996,7 +1092,6 @@
                                 <div className="flex items-center gap-4">
                                     <img src="https://raw.githubusercontent.com/luoxisg/dcdeeptech/main/image/DCdeeptech_logo-removebg-preview.png" alt="DCDeepTech Logo" className="h-14 w-auto object-contain" onError={(e) => {e.target.style.display='none'; e.target.nextSibling.style.display='flex'}} />
                                     <div className="hidden w-12 h-12 rounded bg-gradient-to-br from-cyan-500 to-blue-600 items-center justify-center text-white font-bold text-2xl">d</div>
-                                    <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-500">DCDeepTech</span>
                                 </div>
                             </div>
                             
