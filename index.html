@@ -126,8 +126,14 @@
                 l1_header: 'Layer 1: 基础设施与遥测可视化',
                 l1_header_desc: '基于WebGL/3D交互式数字孪生，极致优化能源向算力的转化。',
                 goodput: '当前系统有效吞吐量 (Goodput)',
-                digital_twin_title: '液冷热力数字孪生视图',
-                digital_twin_desc: '实时 GPU 节点温度及进回水温差监控',
+                
+                mpc_core_title: 'MPC 动态控制核心',
+                mpc_core_desc: '基于神经网络的液冷预测与全局能耗调优模型',
+                pred_horizon: '预测视界',
+                coolant_flow: '冷却液流速',
+                delta_t: '进回水温差',
+                chip_temp: '芯片温度',
+
                 ocp_monitor: '48V OCP 母线监控',
                 voltage: '实时电压',
                 rack_density: '机架功率密度',
@@ -221,8 +227,14 @@
                 l1_header: 'Layer 1: Infrastructure & Telemetry',
                 l1_header_desc: 'WebGL/3D digital twins to optimize energy-to-compute conversion at physical limits.',
                 goodput: 'Current System Goodput',
-                digital_twin_title: 'Liquid Cooling Thermal Twin',
-                digital_twin_desc: 'Real-time GPU node temp & coolant delta-T monitoring',
+                
+                mpc_core_title: 'MPC Dynamic Control Core',
+                mpc_core_desc: 'Neural network-based predictive liquid cooling & global energy optimization model',
+                pred_horizon: 'Predictive Horizon',
+                coolant_flow: 'Coolant Flow',
+                delta_t: 'Delta-T',
+                chip_temp: 'Chip Temp',
+
                 ocp_monitor: '48V OCP Busbar Telemetry',
                 voltage: 'Live Voltage',
                 rack_density: 'Rack Power Density',
@@ -321,7 +333,7 @@
             </svg>
         );
 
-        const MPCTwinAnimation = () => {
+        const MPCTwinAnimation = ({ t }) => {
             return (
                 <div className="w-full h-full relative flex items-center justify-center overflow-hidden bg-slate-950">
                     {/* Dynamic Grid Background */}
@@ -373,8 +385,8 @@
                             <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
                             MPC.OPTIMIZE()
                         </div>
-                        <div className="text-slate-400 mb-1">Predictive Horizon: <span className="text-white font-mono">15m</span></div>
-                        <div className="text-slate-400">Coolant Flow: <span className="text-emerald-400 font-mono">120 L/min</span></div>
+                        <div className="text-slate-400 mb-1">{t('pred_horizon')}: <span className="text-white font-mono">15m</span></div>
+                        <div className="text-slate-400">{t('coolant_flow')}: <span className="text-emerald-400 font-mono">120 L/min</span></div>
                     </div>
 
                     <div className="absolute bottom-8 right-8 border border-rose-500/30 bg-slate-900/80 backdrop-blur p-3 rounded-lg text-xs animate-float shadow-[0_0_15px_rgba(244,63,94,0.15)] z-20" style={{ animationDelay: '1s' }}>
@@ -382,8 +394,8 @@
                             <span className="w-2 h-2 rounded-full bg-rose-400 animate-pulse"></span>
                             THERMAL.LOAD
                         </div>
-                        <div className="text-slate-400 mb-1">Delta-T: <span className="text-white font-mono">12.4°C</span></div>
-                        <div className="text-slate-400">Chip Temp: <span className="text-amber-400 font-mono">72°C</span></div>
+                        <div className="text-slate-400 mb-1">{t('delta_t')}: <span className="text-white font-mono">12.4°C</span></div>
+                        <div className="text-slate-400">{t('chip_temp')}: <span className="text-amber-400 font-mono">72°C</span></div>
                     </div>
 
                     {/* Scanline effect */}
@@ -672,14 +684,15 @@
                     </header>
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         <div className="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-xl overflow-hidden relative min-h-[400px]">
-                            <div className="absolute top-4 left-4 z-40 bg-slate-900/80 backdrop-blur border border-slate-700 p-4 rounded-xl pointer-events-none shadow-lg">
-                                <h3 className="text-white font-bold mb-1 flex items-center gap-2">
-                                    <i className="ph-fill ph-cpu text-cyan-400"></i> MPC 动态控制核心
+                            {/* FIX: Moved title card to top-right to avoid blocking hologram, added translation */}
+                            <div className="absolute top-4 right-4 z-40 bg-slate-900/60 backdrop-blur-md border border-slate-700/50 p-3 rounded-xl pointer-events-none shadow-lg max-w-[220px]">
+                                <h3 className="text-white font-bold text-sm mb-1 flex items-center gap-2">
+                                    <i className="ph-fill ph-cpu text-cyan-400"></i> {t('mpc_core_title')}
                                 </h3>
-                                <p className="text-xs text-slate-400">基于神经网络的液冷预测与全局能耗调优模型</p>
+                                <p className="text-[10px] text-slate-400 leading-tight">{t('mpc_core_desc')}</p>
                             </div>
                             <div className="w-full h-full relative">
-                                <MPCTwinAnimation />
+                                <MPCTwinAnimation t={t} />
                             </div>
                         </div>
                         <div className="space-y-6">
