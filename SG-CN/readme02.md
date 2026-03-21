@@ -1,4 +1,3 @@
-下面是一版可直接放进 `README.md` 的完整章节版内容。
 
 ````md
 # SG-CN AI Gateway POC
