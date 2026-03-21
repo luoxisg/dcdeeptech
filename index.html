@@ -3,8 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>dcdeep tech 平台架构演示</title>
     
+    <!-- GEO & SEO Optimized Metadata (Year 2026 Recency Signal) -->
+    <title>DCDeepTech 2026: Next-Gen AI Infrastructure, Liquid Cooling & Pre-REIT Ecosystem</title>
+    <meta name="description" content="Discover DCDeepTech's 2026 AI infrastructure solutions. We convert energy to compute via 48V OCP liquid cooling, route models via OpenAI-compatible API, and securitize assets with Pre-REIT structures.">
+    
+    <!-- AI Crawler Permissions & Open Graph -->
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    <meta property="og:title" content="DCDeepTech: AI Infrastructure & Financial Engineering">
+    <meta property="og:description" content="Global leader in 48V liquid-cooled AI clusters, LLM aggregation routing, and Pre-REIT asset securitization.">
+    <meta property="og:type" content="website">
+    <link rel="canonical" href="https://dcdeeptech.com/">
+    
+    <!-- LLMs.txt integration for AI Chatbot standard parsing -->
+    <link rel="alternate" type="text/plain" title="LLMs.txt" href="/llms.txt">
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
@@ -15,8 +28,77 @@
     <!-- Babel for in-browser JSX compilation -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     
-    <!-- Phosphor Icons (Alternative to Lucide for easy CDN usage) -->
+    <!-- Phosphor Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- Deep Tech JSON-LD Schema Matrix for Generative Engine Optimization -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://dcdeeptech.com/#organization",
+          "name": "DCDeepTech",
+          "url": "https://dcdeeptech.com/",
+          "logo": "https://raw.githubusercontent.com/luoxisg/dcdeeptech/main/image/DCdeeptech_logo-removebg-preview.png",
+          "sameAs": [
+            "https://www.linkedin.com/company/dcdeeptech"
+          ],
+          "knowsAbout": [
+            { "@type": "Thing", "name": "Large Language Model", "sameAs": "https://www.wikidata.org/wiki/Q115082823" },
+            { "@type": "Thing", "name": "Liquid Cooling", "sameAs": "https://www.wikidata.org/wiki/Q15290" },
+            { "@type": "Thing", "name": "Asset-backed security", "sameAs": "https://www.wikidata.org/wiki/Q741006" }
+          ]
+        },
+        {
+          "@type": "Service",
+          "@id": "https://dcdeeptech.com/#layer1-service",
+          "name": "48V OCP Liquid Cooling AI Infrastructure",
+          "provider": {"@id": "https://dcdeeptech.com/#organization"},
+          "serviceType": "AI Data Center Infrastructure",
+          "description": "Extreme efficiency energy-to-compute conversion using 48V OCP power architecture and liquid-cooled GPU clusters."
+        },
+        {
+          "@type": "Service",
+          "@id": "https://dcdeeptech.com/#layer2-service",
+          "name": "OpenAI-Compatible LLM Routing Gateway",
+          "provider": {"@id": "https://dcdeeptech.com/#organization"},
+          "serviceType": "API Aggregation",
+          "description": "Intelligent model routing engine providing unified API access to multiple LLM/VLMs."
+        },
+        {
+          "@type": "FAQPage",
+          "@id": "https://dcdeeptech.com/#faq",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "What is the core architecture of DCDeepTech?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "DCDeepTech utilizes a three-layer business model: Layer 1 for physical 48V liquid-cooled AI infrastructure, Layer 2 for OpenAI-compatible LLM aggregation routing, and Layer 3 for financial asset securitization via Pre-REIT structures."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How does DCDeepTech optimize AI energy consumption?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "We deploy cutting-edge Model Predictive Control (MPC) algorithms alongside digital thermal twins to dynamically optimize cooling and minimize energy loss, achieving extreme physical limits."
+              }
+            }
+          ]
+        },
+        {
+          "@type": "SoftwareSourceCode",
+          "@id": "https://dcdeeptech.com/#api-code",
+          "name": "OpenAI Compatible API Routing Code",
+          "programmingLanguage": "JavaScript",
+          "targetProduct": {"@type": "SoftwareApplication", "name": "OpenAI Client Implementation"}
+        }
+      ]
+    }
+    </script>
 
     <style>
         /* Custom Animations */
@@ -44,22 +126,11 @@
         @keyframes dash-flow {
             to { stroke-dashoffset: -20; }
         }
-        .animate-flow {
-            animation: flowDash 1s linear infinite;
-        }
-        .animate-float { 
-            animation: float 6s ease-in-out infinite; 
-        }
-        .animate-dash-flow { 
-            stroke-dasharray: 10; 
-            animation: dash-flow 1s linear infinite; 
-        }
-        .animate-scanline { 
-            animation: scanline 4s linear infinite; 
-        }
-        .animate-pulse-slow { 
-            animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite; 
-        }
+        .animate-flow { animation: flowDash 1s linear infinite; }
+        .animate-float { animation: float 6s ease-in-out infinite; }
+        .animate-dash-flow { stroke-dasharray: 10; animation: dash-flow 1s linear infinite; }
+        .animate-scanline { animation: scanline 4s linear infinite; }
+        .animate-pulse-slow { animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
         .isometric-container {
             transform: rotateX(60deg) rotateZ(-45deg);
             transform-style: preserve-3d;
@@ -72,21 +143,10 @@
             transform: translateZ(10px);
             box-shadow: 0 0 20px rgba(6,182,212,0.5);
         }
-        
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #0f172a; 
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #334155; 
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #475569; 
-        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
     </style>
 </head>
 <body class="bg-slate-950 text-slate-300 font-sans selection:bg-cyan-500/30 overflow-x-hidden">
@@ -304,7 +364,7 @@
         // --- Animated Visualization Components ---
 
         const SankeyDiagram = () => (
-            <svg width="100%" height="100%" viewBox="0 0 300 120" preserveAspectRatio="none">
+            <svg width="100%" height="100%" viewBox="0 0 300 120" preserveAspectRatio="none" aria-label="Energy Flow Sankey Diagram">
                 <defs>
                     <linearGradient id="gradGrid" x1="0%" y1="0%" x2="100%" y2="0%">
                         <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.8" />
@@ -336,36 +396,27 @@
         const MPCTwinAnimation = ({ t }) => {
             return (
                 <div className="w-full h-full relative flex items-center justify-center overflow-hidden bg-slate-950">
-                    {/* Dynamic Grid Background */}
                     <div className="absolute inset-0 bg-[linear-gradient(to_right,#0ea5e911_1px,transparent_1px),linear-gradient(to_bottom,#0ea5e911_1px,transparent_1px)] bg-[size:2rem_2rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] animate-[pulse_4s_ease-in-out_infinite]"></div>
 
-                    {/* Central Glowing Core */}
                     <div className="relative w-72 h-72 flex items-center justify-center">
                         <div className="absolute inset-0 bg-cyan-500/20 blur-[60px] rounded-full animate-pulse-slow"></div>
 
-                        {/* Core Graphic (SVG) */}
-                        <svg viewBox="0 0 200 200" className="w-full h-full relative z-10 animate-float">
-                            {/* Outer rotating rings */}
+                        <svg viewBox="0 0 200 200" className="w-full h-full relative z-10 animate-float" aria-label="MPC Core Visual">
                             <circle cx="100" cy="100" r="90" fill="none" stroke="#0ea5e9" strokeWidth="1" strokeDasharray="4 8" className="animate-[spin_20s_linear_infinite] origin-center" />
                             <circle cx="100" cy="100" r="80" fill="none" stroke="#3b82f6" strokeWidth="2" strokeDasharray="20 10 5 10" className="animate-[spin_15s_linear_infinite_reverse] origin-center opacity-70" />
 
-                            {/* Liquid Pipes IN (Cold - Cyan) */}
                             <path d="M10,100 C40,100 60,60 90,80" fill="none" stroke="#22d3ee" strokeWidth="4" className="opacity-40" />
                             <path d="M10,100 C40,100 60,60 90,80" fill="none" stroke="#fff" strokeWidth="2" className="animate-dash-flow drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]" />
 
-                            {/* Liquid Pipes OUT (Hot - Rose) */}
                             <path d="M110,120 C140,140 160,100 190,100" fill="none" stroke="#f43f5e" strokeWidth="4" className="opacity-40" />
                             <path d="M110,120 C140,140 160,100 190,100" fill="none" stroke="#fff" strokeWidth="2" className="animate-dash-flow drop-shadow-[0_0_8px_rgba(244,63,94,0.8)]" />
 
-                            {/* Central Processor Node (Hexagon) */}
                             <polygon points="100,50 143.3,75 143.3,125 100,150 56.7,125 56.7,75" fill="#0f172a" stroke="#0ea5e9" strokeWidth="2" className="drop-shadow-[0_0_20px_rgba(14,165,233,0.6)]" />
                             <polygon points="100,60 134.6,80 134.6,120 100,140 65.4,120 65.4,80" fill="url(#coreGrad)" />
 
-                            {/* Inner Pulse */}
                             <circle cx="100" cy="100" r="15" fill="#fff" className="animate-[pulse-ring_2s_infinite]" />
                             <circle cx="100" cy="100" r="6" fill="#0ea5e9" />
 
-                            {/* Connection lines inside hexagon */}
                             <line x1="100" y1="100" x2="100" y2="60" stroke="#fff" strokeWidth="1" className="opacity-50" />
                             <line x1="100" y1="100" x2="134.6" y2="120" stroke="#fff" strokeWidth="1" className="opacity-50" />
                             <line x1="100" y1="100" x2="65.4" y2="120" stroke="#fff" strokeWidth="1" className="opacity-50" />
@@ -379,7 +430,6 @@
                         </svg>
                     </div>
 
-                    {/* Holographic Overlay Stats */}
                     <div className="absolute top-8 left-8 border border-cyan-500/30 bg-slate-900/80 backdrop-blur p-3 rounded-lg text-xs animate-float shadow-[0_0_15px_rgba(6,182,212,0.15)] z-20" style={{ animationDelay: '0.5s' }}>
                         <div className="text-cyan-400 font-mono mb-2 flex items-center gap-2">
                             <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
@@ -398,20 +448,17 @@
                         <div className="text-slate-400">{t('chip_temp')}: <span className="text-amber-400 font-mono">72°C</span></div>
                     </div>
 
-                    {/* Scanline effect */}
                     <div className="absolute inset-0 bg-gradient-to-b from-transparent via-cyan-500/20 to-transparent w-full h-[20%] animate-scanline pointer-events-none z-30"></div>
                 </div>
             );
         };
 
-        // NEW: Ph.D. Level Value Chain Animation for Overview
         const PhdValueChainAnimation = ({ t }) => {
             return (
-                <div className="mt-8 bg-slate-900 border border-slate-800 rounded-xl flex flex-col items-center justify-center relative overflow-hidden h-[350px] shadow-[0_0_30px_rgba(0,0,0,0.5)] w-full">
-                    {/* Background Grid */}
+                <section className="mt-8 bg-slate-900 border border-slate-800 rounded-xl flex flex-col items-center justify-center relative overflow-hidden h-[350px] shadow-[0_0_30px_rgba(0,0,0,0.5)] w-full">
                     <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:20px_20px] opacity-30"></div>
 
-                    <svg viewBox="0 0 1000 300" className="w-full h-full max-w-5xl relative z-10">
+                    <svg viewBox="0 0 1000 300" className="w-full h-full max-w-5xl relative z-10" aria-label="Value Chain Visualization">
                         <defs>
                             <linearGradient id="lineGrad1" x1="0%" y1="0%" x2="100%" y2="0%">
                                 <stop offset="0%" stopColor="#06b6d4" stopOpacity="0.2"/>
@@ -432,20 +479,13 @@
                             </filter>
                         </defs>
 
-                        {/* --- CONNECTIONS --- */}
                         {/* Energy to API */}
                         <g className="connections">
-                            {/* Main Bus */}
                             <path d="M 150 150 L 500 150" stroke="url(#lineGrad1)" strokeWidth="4" fill="none" opacity="0.6"/>
                             <path d="M 150 150 L 500 150" stroke="#fff" strokeWidth="1" fill="none" strokeDasharray="5 15" className="animate-dash-flow" opacity="0.5"/>
-
-                            {/* Top Data Stream (Sine wave simulation via Bezier) */}
                             <path d="M 150 150 C 250 80, 400 80, 500 150" stroke="url(#lineGrad1)" strokeWidth="1" fill="none" strokeDasharray="4 8" opacity="0.4"/>
-                            
-                            {/* Bottom Data Stream */}
                             <path d="M 150 150 C 250 220, 400 220, 500 150" stroke="url(#lineGrad1)" strokeWidth="1" fill="none" strokeDasharray="2 6" opacity="0.4"/>
 
-                            {/* Particles traveling along paths */}
                             <circle r="3" fill="#22d3ee" filter="url(#neonGlow)">
                                 <animateMotion dur="2.5s" repeatCount="indefinite" path="M 150 150 C 250 80, 400 80, 500 150" />
                             </circle>
@@ -459,17 +499,11 @@
 
                         {/* API to Finance */}
                         <g className="connections">
-                            {/* Main Bus */}
                             <path d="M 500 150 L 850 150" stroke="url(#lineGrad2)" strokeWidth="4" fill="none" opacity="0.6"/>
                             <path d="M 500 150 L 850 150" stroke="#fff" strokeWidth="1" fill="none" strokeDasharray="5 15" className="animate-dash-flow" opacity="0.5"/>
-
-                            {/* Circuit Stream Top */}
                             <path d="M 500 150 L 560 150 L 600 90 L 750 90 L 790 150 L 850 150" stroke="url(#lineGrad2)" strokeWidth="1" fill="none" strokeDasharray="4 4" opacity="0.4"/>
-                            
-                            {/* Circuit Stream Bottom */}
                             <path d="M 500 150 L 560 150 L 600 210 L 750 210 L 790 150 L 850 150" stroke="url(#lineGrad2)" strokeWidth="1" fill="none" strokeDasharray="6 6" opacity="0.4"/>
 
-                            {/* Particles */}
                             <circle r="4" fill="#8b5cf6" filter="url(#neonGlow)">
                                 <animateMotion dur="2s" repeatCount="indefinite" path="M 500 150 L 850 150" />
                             </circle>
@@ -481,24 +515,17 @@
                             </circle>
                         </g>
 
-                        {/* --- NODES --- */}
-                        {/* NODE 1: Energy */}
+                        {/* Energy Node */}
                         <g transform="translate(150, 150)">
-                            {/* Background Glow */}
                             <circle cx="0" cy="0" r="50" fill="#082f49" stroke="#06b6d4" strokeWidth="2" filter="url(#neonGlow)" opacity="0.8"/>
-                            {/* Rotating Tech Rings */}
                             <circle cx="0" cy="0" r="60" fill="none" stroke="#22d3ee" strokeWidth="1" strokeDasharray="5 10" className="animate-[spin_10s_linear_infinite] origin-center"/>
                             <circle cx="0" cy="0" r="70" fill="none" stroke="#0891b2" strokeWidth="1" strokeDasharray="20 10 5 10" className="animate-[spin_15s_linear_infinite_reverse] origin-center"/>
-                            {/* Icon embedded via foreignObject */}
                             <foreignObject x="-24" y="-24" width="48" height="48">
                                 <div className="w-full h-full flex items-center justify-center text-cyan-400">
                                     <i className="ph-fill ph-lightning text-4xl animate-pulse"></i>
                                 </div>
                             </foreignObject>
-                            {/* Label */}
                             <text x="0" y="95" fill="#22d3ee" fontSize="16" fontWeight="bold" textAnchor="middle" filter="url(#neonGlow)">{t('energy_label')}</text>
-                            
-                            {/* Floating Data Badges */}
                             <g className="animate-float" style={{animationDelay: '0s'}}>
                                 <rect x="-80" y="-100" width="60" height="20" rx="4" fill="#0f172a" stroke="#06b6d4" strokeWidth="1"/>
                                 <text x="-50" y="-86" fill="#94a3b8" fontSize="10" textAnchor="middle">1.02 PUE</text>
@@ -509,21 +536,17 @@
                             </g>
                         </g>
 
-                        {/* NODE 2: API Revenue */}
+                        {/* API Node */}
                         <g transform="translate(500, 150)">
-                            {/* Hexagon Base */}
                             <polygon points="0,-55 47.6,-27.5 47.6,27.5 0,55 -47.6,27.5 -47.6,-27.5" fill="#172554" stroke="#3b82f6" strokeWidth="2" filter="url(#neonGlow)"/>
                             <circle cx="0" cy="0" r="70" fill="none" stroke="#60a5fa" strokeWidth="1" strokeDasharray="10 15 5 15" className="animate-[spin_12s_linear_infinite] origin-center"/>
                             <circle cx="0" cy="0" r="85" fill="none" stroke="#1e3a8a" strokeWidth="2" strokeDasharray="40 20" className="animate-[spin_20s_linear_infinite_reverse] origin-center"/>
-                            
                             <foreignObject x="-24" y="-24" width="48" height="48">
                                 <div className="w-full h-full flex items-center justify-center text-blue-400">
                                     <i className="ph-fill ph-code text-4xl"></i>
                                 </div>
                             </foreignObject>
                             <text x="0" y="110" fill="#60a5fa" fontSize="16" fontWeight="bold" textAnchor="middle" filter="url(#neonGlow)">{t('api_revenue_label')}</text>
-                            
-                            {/* Floating Data Badges */}
                             <g className="animate-float" style={{animationDelay: '0.5s'}}>
                                 <rect x="-40" y="-110" width="80" height="20" rx="4" fill="#0f172a" stroke="#3b82f6" strokeWidth="1"/>
                                 <text x="0" y="-96" fill="#94a3b8" fontSize="10" textAnchor="middle">70B Params</text>
@@ -534,26 +557,20 @@
                             </g>
                         </g>
 
-                        {/* NODE 3: Financial Assets */}
+                        {/* Finance Node */}
                         <g transform="translate(850, 150)">
                             <circle cx="0" cy="0" r="50" fill="#2e1065" stroke="#a855f7" strokeWidth="2" filter="url(#neonGlow)"/>
                             <circle cx="0" cy="0" r="65" fill="none" stroke="#c084fc" strokeWidth="1" strokeDasharray="8 8" className="animate-[spin_8s_linear_infinite] origin-center"/>
-                            
-                            {/* Dynamic Radar/Equalizer Sweep inside outer ring */}
                             <g>
                                  <circle cx="0" cy="0" r="80" fill="none" stroke="#4c1d95" strokeWidth="3"/>
-                                 {/* Animated Sweeping Arc */}
                                  <path d="M 0 -80 A 80 80 0 0 1 80 0" fill="none" stroke="#a855f7" strokeWidth="4" strokeLinecap="round" className="origin-center animate-[spin_4s_ease-in-out_infinite_alternate]"/>
                             </g>
-
                             <foreignObject x="-24" y="-24" width="48" height="48">
                                 <div className="w-full h-full flex items-center justify-center text-purple-400">
                                     <i className="ph-fill ph-chart-bar text-4xl"></i>
                                 </div>
                             </foreignObject>
                             <text x="0" y="110" fill="#c084fc" fontSize="16" fontWeight="bold" textAnchor="middle" filter="url(#neonGlow)">{t('financial_asset_label')}</text>
-                            
-                            {/* Floating Data Badges */}
                             <g className="animate-float" style={{animationDelay: '0.2s'}}>
                                 <rect x="-80" y="-100" width="60" height="20" rx="4" fill="#0f172a" stroke="#a855f7" strokeWidth="1"/>
                                 <text x="-50" y="-86" fill="#94a3b8" fontSize="10" textAnchor="middle">Pre-REIT</text>
@@ -563,9 +580,8 @@
                                 <text x="50" y="-86" fill="#94a3b8" fontSize="10" textAnchor="middle">AAA ABS</text>
                             </g>
                         </g>
-
                     </svg>
-                </div>
+                </section>
             );
         };
 
@@ -650,6 +666,7 @@
                 </button>
             );
 
+            // Added ARIA-label for GEO semantics
             const Sidebar = () => {
                 const navItemsGroup1 = [
                     { id: 'overview', name: t('nav_overview'), icon: <i className="ph-fill ph-globe text-xl"></i> },
@@ -664,14 +681,14 @@
                 ];
 
                 return (
-                    <div className="w-64 bg-slate-950 border-r border-slate-800 h-screen flex flex-col fixed left-0 top-0 z-40">
+                    <aside className="w-64 bg-slate-950 border-r border-slate-800 h-screen flex flex-col fixed left-0 top-0 z-40">
                         <div className="p-6 flex justify-center w-full">
                             <img src="https://raw.githubusercontent.com/luoxisg/dcdeeptech/main/image/DCdeeptech_logo-removebg-preview.png" alt="DCDeepTech Logo" className="h-14 w-auto object-contain" onError={(e) => {e.target.style.display='none'; e.target.nextSibling.style.display='flex'}} />
                             <div className="hidden w-12 h-12 rounded bg-gradient-to-br from-cyan-500 to-blue-600 items-center justify-center text-white font-bold text-2xl">
                                 d
                             </div>
                         </div>
-                        <nav className="flex-1 px-4 space-y-6 mt-4 overflow-y-auto">
+                        <nav aria-label="Main Navigation" className="flex-1 px-4 space-y-6 mt-4 overflow-y-auto">
                             <div className="space-y-2">
                                 {navItemsGroup1.map((item) => (
                                     <button
@@ -710,17 +727,18 @@
                             <p>{t('sys_status')}: <span className="text-emerald-400">{t('sys_running')} (99.99%)</span></p>
                             <p className="mt-1">{t('sys_load')}: 1.25 MW</p>
                         </div>
-                    </div>
+                    </aside>
                 );
             };
 
+            // Using <article> and conversational <h2> for GEO chunking
             const OverviewView = () => (
-                <div className="space-y-8 animate-in fade-in duration-500">
+                <article className="space-y-8 animate-in fade-in duration-500">
                     <header>
-                        <h1 className="text-3xl font-bold text-white mb-2">{t('title_overview')}</h1>
+                        <h2 className="text-3xl font-bold text-white mb-2">{t('title_overview')}</h2>
                         <p className="text-slate-400">{t('desc_overview')}</p>
                     </header>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div className="relative bg-slate-900 border border-slate-800 rounded-xl p-6 hover:border-cyan-500/50 transition-all group cursor-pointer overflow-hidden" onClick={() => setActiveTab('layer1')}>
                             <div className="absolute inset-0">
                                 <img src="/images/1-ocp-dc-architecture.jpg" alt="OCP Architecture" className="w-full h-full object-cover opacity-30 group-hover:scale-105 transition-transform duration-500" onError={(e) => e.target.style.display='none'} />
@@ -778,12 +796,10 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </section>
                     
-                    {/* NEW: Ph.D. Level Value Chain Animation */}
                     <PhdValueChainAnimation t={t} />
 
-                    {/* NEW: OCP Certification & Global Marketing Banner */}
                     <a href="https://dcdeeptech.com/ocp/" target="_blank" rel="noopener noreferrer" className="block relative bg-slate-900 border border-slate-800 hover:border-blue-500/50 rounded-xl p-6 transition-all group overflow-hidden mt-6 shadow-[0_4px_20px_rgba(0,0,0,0.2)]">
                         <div className="absolute right-0 top-0 bottom-0 w-1/2 bg-gradient-to-l from-blue-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                         <div className="flex flex-col md:flex-row items-start md:items-center justify-between relative z-10 gap-4">
@@ -802,16 +818,16 @@
                             </div>
                         </div>
                     </a>
-                </div>
+                </article>
             );
 
             const Layer1View = () => (
-                <div className="space-y-6 animate-in slide-in-from-right-8 duration-500">
+                <article className="space-y-6 animate-in slide-in-from-right-8 duration-500">
                     <header className="flex justify-between items-end border-b border-slate-800 pb-4">
                         <div>
-                            <h1 className="text-3xl font-bold text-white flex items-center gap-3 mb-2">
+                            <h2 className="text-3xl font-bold text-white flex items-center gap-3 mb-2">
                                 <i className="ph-fill ph-cpu text-cyan-400"></i> {t('l1_header')}
-                            </h1>
+                            </h2>
                             <p className="text-slate-400">{t('l1_header_desc')}</p>
                         </div>
                         <div className="text-right">
@@ -819,9 +835,8 @@
                             <div className="text-xs text-slate-500 uppercase">{t('goodput')}</div>
                         </div>
                     </header>
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         <div className="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-xl overflow-hidden relative min-h-[400px]">
-                            {/* FIX: Moved title card to top-right to avoid blocking hologram, added translation */}
                             <div className="absolute top-4 right-4 z-40 bg-slate-900/60 backdrop-blur-md border border-slate-700/50 p-3 rounded-xl pointer-events-none shadow-lg max-w-[220px]">
                                 <h3 className="text-white font-bold text-sm mb-1 flex items-center gap-2">
                                     <i className="ph-fill ph-cpu text-cyan-400"></i> {t('mpc_core_title')}
@@ -888,9 +903,8 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </section>
 
-                    {/* NEW: MPC Link Banner */}
                     <a href="https://dcdeeptech.com/mpc/" target="_blank" rel="noopener noreferrer" className="block relative bg-slate-900 border border-slate-800 hover:border-cyan-500/50 rounded-xl p-6 transition-all group overflow-hidden mt-6 shadow-[0_4px_20px_rgba(0,0,0,0.2)]">
                         <div className="absolute right-0 top-0 bottom-0 w-1/2 bg-gradient-to-l from-cyan-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                         <div className="flex flex-col md:flex-row items-start md:items-center justify-between relative z-10 gap-4">
@@ -909,16 +923,16 @@
                             </div>
                         </div>
                     </a>
-                </div>
+                </article>
             );
 
             const Layer2View = () => (
-                <div className="space-y-6 animate-in slide-in-from-right-8 duration-500">
+                <article className="space-y-6 animate-in slide-in-from-right-8 duration-500">
                     <header className="flex justify-between items-end border-b border-slate-800 pb-4">
                         <div>
-                            <h1 className="text-3xl font-bold text-white flex items-center gap-3 mb-2">
+                            <h2 className="text-3xl font-bold text-white flex items-center gap-3 mb-2">
                                 <i className="ph-fill ph-graph text-blue-400"></i> {t('l2_header')}
-                            </h1>
+                            </h2>
                             <p className="text-slate-400">{t('l2_header_desc')}</p>
                         </div>
                         <div className="flex gap-3">
@@ -927,7 +941,7 @@
                             </button>
                         </div>
                     </header>
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden flex flex-col">
                             <div className="bg-slate-950 px-4 py-3 border-b border-slate-800 flex justify-between items-center">
                                 <div className="flex gap-2">
@@ -981,7 +995,6 @@
                             </div>
                         </div>
 
-                        {/* NEW ARCHITECTURE DIAGRAM */}
                         <div className="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-xl p-6">
                             <h3 className="text-white font-medium mb-6 flex items-center gap-2">
                                 <i className="ph-fill ph-git-merge text-blue-400 text-lg"></i> {t('arch_title')}
@@ -1044,17 +1057,17 @@
                                 ))}
                             </div>
                         </div>
-                    </div>
-                </div>
+                    </section>
+                </article>
             );
 
             const Layer3View = () => (
-                <div className="space-y-6 animate-in slide-in-from-right-8 duration-500">
+                <article className="space-y-6 animate-in slide-in-from-right-8 duration-500">
                     <header className="flex justify-between items-end border-b border-slate-800 pb-4">
                         <div>
-                            <h1 className="text-3xl font-bold text-white flex items-center gap-3 mb-2">
+                            <h2 className="text-3xl font-bold text-white flex items-center gap-3 mb-2">
                                 <i className="ph-fill ph-currency-circle-dollar text-indigo-400"></i> {t('l3_header')}
-                            </h1>
+                            </h2>
                             <p className="text-slate-400">{t('l3_header_desc')}</p>
                         </div>
                         <div>
@@ -1063,7 +1076,7 @@
                             </span>
                         </div>
                     </header>
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                    <section className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                         {[
                             { label: t('capex'), value: '$1.2B', trend: '+12%' },
                             { label: t('arr'), value: '$450M', trend: '+34%' },
@@ -1078,8 +1091,8 @@
                                 </div>
                             </div>
                         ))}
-                    </div>
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    </section>
+                    <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         <div className="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-xl p-6">
                             <div className="flex justify-between items-center mb-6">
                                 <h3 className="text-white font-medium flex items-center gap-2">
@@ -1114,7 +1127,7 @@
                         <div className="bg-slate-900 border border-indigo-500/30 rounded-xl overflow-hidden flex flex-col shadow-[0_0_20px_rgba(99,102,241,0.1)]">
                             <div className="bg-indigo-950/50 px-4 py-3 border-b border-indigo-500/20 flex items-center gap-2">
                                 <i className="ph-fill ph-chat-circle-text text-indigo-400"></i>
-                                <span className="text-sm font-medium text-indigo-300">{t('vibe_coding_title')}</span>
+                                <h3 className="text-sm font-medium text-indigo-300 m-0">{t('vibe_coding_title')}</h3>
                             </div>
                             <div className="flex-1 p-4 flex flex-col gap-4 text-sm bg-slate-950/50 overflow-y-auto">
                                 <div className="bg-slate-800 text-slate-300 p-3 rounded-lg rounded-tl-none self-start max-w-[90%]">
@@ -1135,35 +1148,34 @@
                             </div>
                             <div className="p-3 border-t border-slate-800 bg-slate-900">
                                 <div className="relative">
-                                    <input type="text" placeholder={t('chat_placeholder')} className="w-full bg-slate-950 border border-slate-700 rounded-lg py-2 pl-3 pr-10 text-sm text-white focus:outline-none focus:border-indigo-500 transition-colors" disabled />
-                                    <button className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-indigo-400">
+                                    <input type="text" placeholder={t('chat_placeholder')} className="w-full bg-slate-950 border border-slate-700 rounded-lg py-2 pl-3 pr-10 text-sm text-white focus:outline-none focus:border-indigo-500 transition-colors" disabled aria-label="AI Prompt Input" />
+                                    <button className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-indigo-400" aria-label="Send Prompt">
                                         <i className="ph-bold ph-arrow-right"></i>
                                     </button>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                    </section>
+                </article>
             );
 
-            // NEW: Company Introduction View
+            // Added semantic sections for content chunks
             const AboutView = () => (
-                <div className="space-y-6 animate-in fade-in duration-500">
+                <article className="space-y-6 animate-in fade-in duration-500">
                     <header className="border-b border-slate-800 pb-4">
-                        <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
+                        <h2 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
                             <i className="ph-fill ph-buildings text-cyan-400"></i> {t('about_title')}
-                        </h1>
+                        </h2>
                         <p className="text-slate-400">{t('about_subtitle')}</p>
                     </header>
-                    <div className="relative bg-slate-900 border border-slate-800 rounded-xl p-8 overflow-hidden min-h-[500px] flex items-center">
-                        {/* Background Image & Overlay */}
+                    <section className="relative bg-slate-900 border border-slate-800 rounded-xl p-8 overflow-hidden min-h-[500px] flex items-center">
                         <div className="absolute inset-0">
                             <img src="/images/6-singapore-global-hq.jpg" alt="Singapore HQ" className="w-full h-full object-cover" onError={(e) => e.target.style.display='none'} />
                             <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm"></div>
                         </div>
                         
                         <div className="relative z-10 max-w-4xl space-y-6">
-                            <h2 className="text-2xl font-bold text-white">DCDeepTech</h2>
+                            <h3 className="text-2xl font-bold text-white">DCDeepTech</h3>
                             <p className="text-slate-300 leading-relaxed text-lg">
                                 {t('about_p1')}
                             </p>
@@ -1174,72 +1186,65 @@
                                 {t('about_p3')}
                             </p>
                         </div>
-                    </div>
-                </div>
+                    </section>
+                </article>
             );
 
-            // NEW: Ecosystem & Contact View
             const EcosystemContactView = () => (
-                <div className="space-y-10 animate-in fade-in duration-500 pb-10">
+                <article className="space-y-10 animate-in fade-in duration-500 pb-10">
                     <header className="border-b border-slate-800 pb-4">
-                        <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
+                        <h2 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
                             <i className="ph-fill ph-address-book text-blue-400"></i> {t('nav_ecosystem')}
-                        </h1>
+                        </h2>
                         <p className="text-slate-400">{t('eco_subtitle')}</p>
                     </header>
 
-                    {/* Ecosystem Section */}
-                    <div>
-                        <h2 className="text-2xl font-bold text-white mb-6">{t('eco_title')}</h2>
+                    <section>
+                        <h3 className="text-2xl font-bold text-white mb-6">{t('eco_title')}</h3>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            {/* OCP */}
                             <a href="https://www.opencompute.org/" target="_blank" rel="noopener noreferrer" className="block bg-slate-900 border border-slate-800 rounded-xl p-6 hover:border-cyan-500/50 transition-all group">
                                 <img src="images/1OCP.jpg" alt="Open Compute Project" className="h-12 w-auto mb-4 object-contain rounded" onError={(e) => {e.target.style.display='none'; e.target.nextSibling.style.display='flex'}} />
                                 <div className="hidden h-12 w-12 bg-slate-800 rounded items-center justify-center mb-4 text-cyan-400 font-bold text-xl">OCP</div>
-                                <h3 className="text-lg font-bold text-white mb-1 group-hover:text-cyan-400 transition-colors">Open Compute Project</h3>
+                                <h4 className="text-lg font-bold text-white mb-1 group-hover:text-cyan-400 transition-colors">Open Compute Project</h4>
                                 <div className="text-xs text-cyan-400 mb-3">{lang === 'zh' ? '开放计算项目' : 'Open Compute Project'} • opencompute.org</div>
                                 <p className="text-sm text-slate-400">
                                     {lang === 'zh' ? '覆盖数据中心、服务器、网络与设施创新的开放基础设施社区，DCDeepTech 基础设施设计理念与其深度对齐。' : 'Open infrastructure community covering data center, server, networking and facility innovation; deeply aligned with DCDeepTech’s infra design philosophy.'}
                                 </p>
                             </a>
                             
-                            {/* OpenRouter */}
                             <a href="https://openrouter.ai/" target="_blank" rel="noopener noreferrer" className="block bg-slate-900 border border-slate-800 rounded-xl p-6 hover:border-blue-500/50 transition-all group">
                                 <img src="images/openrouter_logo.png" alt="OpenRouter" className="h-12 w-auto mb-4 object-contain rounded" onError={(e) => {e.target.style.display='none'; e.target.nextSibling.style.display='flex'}} />
                                 <div className="hidden h-12 w-12 bg-slate-800 rounded items-center justify-center mb-4 text-blue-400 font-bold text-xl">OR</div>
-                                <h3 className="text-lg font-bold text-white mb-1 group-hover:text-blue-400 transition-colors">OpenRouter</h3>
+                                <h4 className="text-lg font-bold text-white mb-1 group-hover:text-blue-400 transition-colors">OpenRouter</h4>
                                 <div className="text-xs text-blue-400 mb-3">{lang === 'zh' ? 'OpenRouter 模型路由平台' : 'OpenRouter Model Gateway'} • openrouter.ai</div>
                                 <p className="text-sm text-slate-400">
                                     {lang === 'zh' ? '以 OpenAI 兼容集成模式提供多 AI 模型统一 API 访问，是 Layer 2 模型聚合服务的重要参考标杆。' : 'Provides unified API access to multiple AI models in an OpenAI-compatible integration mode; a key benchmark for Layer 2 model aggregation services.'}
                                 </p>
                             </a>
                             
-                            {/* NVIDIA */}
                             <a href="https://www.nvidia.com/en-sg/" target="_blank" rel="noopener noreferrer" className="block bg-slate-900 border border-slate-800 rounded-xl p-6 hover:border-green-500/50 transition-all group">
                                 <img src="images/nvidia_logo.png" alt="NVIDIA Singapore" className="h-12 w-auto mb-4 object-contain rounded" onError={(e) => {e.target.style.display='none'; e.target.nextSibling.style.display='flex'}} />
                                 <div className="hidden h-12 w-12 bg-slate-800 rounded items-center justify-center mb-4 text-green-400 font-bold text-xl">NV</div>
-                                <h3 className="text-lg font-bold text-white mb-1 group-hover:text-green-400 transition-colors">NVIDIA Singapore</h3>
+                                <h4 className="text-lg font-bold text-white mb-1 group-hover:text-green-400 transition-colors">NVIDIA Singapore</h4>
                                 <div className="text-xs text-green-400 mb-3">{lang === 'zh' ? '英伟达新加坡' : 'NVIDIA Singapore'} • nvidia.com/en-sg</div>
                                 <p className="text-sm text-slate-400">
                                     {lang === 'zh' ? '加速计算、企业 AI、边缘 AI 及全栈基础设施参考，DCDeepTech AI 集群设计与 NVIDIA 加速平台深度集成。' : 'Accelerated computing, enterprise AI, edge AI, and full-stack infra reference; DCDeepTech AI clusters integrate deeply with NVIDIA platforms.'}
                                 </p>
                             </a>
                         </div>
-                    </div>
+                    </section>
 
-                    {/* Contact Section */}
-                    <div className="relative bg-slate-900 border border-slate-800 rounded-xl p-8 flex flex-col md:flex-row gap-10 overflow-hidden">
-                        {/* Background Image & Overlay */}
+                    <section className="relative bg-slate-900 border border-slate-800 rounded-xl p-8 flex flex-col md:flex-row gap-10 overflow-hidden">
                         <div className="absolute inset-0">
                             <img src="/images/6HQSG.jpg" alt="Singapore HQ" className="w-full h-full object-cover opacity-20" onError={(e) => e.target.style.display='none'} />
                             <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/90 to-slate-900/80"></div>
                         </div>
                         <div className="relative z-10 flex flex-col md:flex-row gap-10 w-full">
                             <div className="md:w-1/2 flex flex-col justify-center text-center md:text-left">
-                                <h2 className="text-3xl font-bold text-white mb-3">{t('contact_title')}</h2>
+                                <h3 className="text-3xl font-bold text-white mb-3">{t('contact_title')}</h3>
                                 <p className="text-slate-400 mb-8 text-lg">{t('contact_subtitle')}</p>
                                 
-                                <div className="flex justify-center w-full mt-4">
+                                <div className="flex justify-center md:justify-start w-full mt-4">
                                     <img src="https://raw.githubusercontent.com/luoxisg/dcdeeptech/main/image/DCdeeptech_logo-removebg-preview.png" alt="DCDeepTech Logo" className="h-20 w-auto object-contain" onError={(e) => {e.target.style.display='none'; e.target.nextSibling.style.display='flex'}} />
                                     <div className="hidden w-16 h-16 rounded bg-gradient-to-br from-cyan-500 to-blue-600 items-center justify-center text-white font-bold text-3xl">d</div>
                                 </div>
@@ -1279,10 +1284,9 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                    </section>
+                </article>
             );
-
 
             const renderContent = () => {
                 switch(activeTab) {
@@ -1300,6 +1304,7 @@
                 <React.Fragment>
                     <LangToggle />
                     <Sidebar />
+                    {/* Semantic <main> tag to encapsulate primary content for bots */}
                     <main className="ml-64 p-8 min-h-screen relative">
                         <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-cyan-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
                         <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-indigo-500/5 rounded-full blur-3xl translate-y-1/3 -translate-x-1/3 pointer-events-none"></div>
