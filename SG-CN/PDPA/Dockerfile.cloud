@@ -1,0 +1,57 @@
+# docker/Dockerfile.cloud
+# 重庆 AIDC 推理网关容器镜像
+#
+# 生产环境部署建议：
+#   - 使用支持 CUDA 的基础镜像（nvidia/cuda:12.4.0-runtime-ubuntu22.04）
+#   - 挂载 /mnt/models 目录以使用预下载的 VLM 权重
+#   - SM2 私钥通过 Kubernetes Secret 或 HashiCorp Vault 注入
+
+FROM python:3.11-slim
+
+LABEL maintainer="sg-cq-vlm-api@example.com"
+LABEL description="重庆 AIDC PDPA 合规 VLM 推理网关"
+
+# 系统依赖
+RUN apt-get update && apt-get install -y \
+    curl \
+    libssl-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# 安装 Python 依赖
+COPY requirements.txt .
+RUN pip install --no-cache-dir \
+    fastapi>=0.111.0 \
+    uvicorn[standard]>=0.29.0 \
+    numpy>=1.26.0 \
+    cryptography>=42.0.0 \
+    python-jose[cryptography]>=3.3.0 \
+    requests>=2.31.0
+
+# 复制源码
+COPY cq_cloud/ ./cq_cloud/
+COPY sg_edge/differential_privacy.py ./sg_edge/
+COPY sg_edge/__init__.py ./sg_edge/
+
+# 创建密钥目录（生产环境通过挂载卷覆盖）
+RUN mkdir -p /opt/security/keys /opt/security/certs
+
+# 生成开发模式自签名证书（仅用于本地测试）
+RUN openssl req -x509 -newkey rsa:2048 \
+    -keyout /opt/security/keys/aidc_private.pem \
+    -out /opt/security/certs/aidc_cert.pem \
+    -days 365 -nodes \
+    -subj "/CN=cq-aidc-gateway/O=AIDC/C=CN" 2>/dev/null || true
+
+EXPOSE 8443
+
+# 健康检查
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:8443/healthz || exit 1
+
+CMD ["uvicorn", "cq_cloud.server:app", \
+     "--host", "0.0.0.0", \
+     "--port", "8443", \
+     "--workers", "4", \
+     "--log-level", "info"]

@@ -1,0 +1,40 @@
+# docker/Dockerfile.edge
+# 新加坡边缘节点容器镜像（K3s / 轻量级边缘部署）
+#
+# 设计目标：
+#   - 最小化镜像体积（不含 GPU 驱动）
+#   - 所有 AI 计算均在 CPU 上执行（边缘设备）
+#   - 完全离线运行（不依赖外部 Python 包索引）
+
+FROM python:3.11-slim
+
+LABEL maintainer="sg-cq-vlm-api@example.com"
+LABEL description="新加坡边缘节点 PDPA 隐私提取客户端"
+
+RUN apt-get update && apt-get install -y \
+    libgomp1 \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# 安装边缘端 Python 依赖（仅 CPU，无 CUDA）
+RUN pip install --no-cache-dir \
+    numpy>=1.26.0 \
+    Pillow>=10.2.0 \
+    requests>=2.31.0 \
+    cryptography>=42.0.0
+
+# 可选：安装轻量级 ViT 推理依赖（取消注释）
+# RUN pip install --no-cache-dir torch==2.2.0+cpu torchvision==0.17.0+cpu \
+#     --index-url https://download.pytorch.org/whl/cpu
+
+# 复制边缘端源码
+COPY sg_edge/ ./sg_edge/
+
+# 边缘端模型目录（通过挂载卷注入预训练权重）
+RUN mkdir -p /opt/edge_models /etc/ssl/certs
+
+ENV PYTHONPATH=/app
+ENV PYTHONUNBUFFERED=1
+
+CMD ["python", "-c", "from sg_edge.client import SgEdgePrivacyClient; print('Edge SDK Ready')"]
