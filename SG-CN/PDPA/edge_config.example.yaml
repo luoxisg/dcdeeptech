@@ -1,0 +1,40 @@
+# config/edge_config.example.yaml
+# 新加坡边缘节点配置模板
+# 复制为 edge_config.yaml 并填入实际值
+
+# ─── 重庆 AIDC 服务端点 ──────────────────────────────────────────
+api:
+  target_url: "https://aidc-gateway.cq.example.com:8443"
+  timeout_seconds: 60
+
+# ─── 租户身份验证 ────────────────────────────────────────────────
+auth:
+  token_env_var: "SG_CQ_BEARER_TOKEN"  # 从环境变量读取，避免硬编码
+  # 或直接填入（非生产环境）：
+  # bearer_token: "eyJhbGciOiJSUzI1NiJ9..."
+
+# ─── 差分隐私配置 ────────────────────────────────────────────────
+differential_privacy:
+  epsilon: 1.0           # 隐私预算（ε）。医疗/金融场景建议 ≤ 0.5
+  mechanism: laplace     # 噪声机制：laplace（推荐）| gaussian
+  l1_sensitivity: 1.0    # ViT 特征 L1 范数敏感度上限
+  clip_norm: null        # 可选梯度裁剪范数（null = 不裁剪）
+
+# ─── 视觉编码器配置 ──────────────────────────────────────────────
+vision_encoder:
+  model_name: "vit-small-patch16"   # 可选：vit-tiny | vit-small | vit-base | vit-large
+  model_weights_path: null          # 本地预训练权重路径（null = 开发模拟模式）
+  device: "cpu"                     # cpu | cuda（边缘设备通常为 CPU）
+
+# ─── 国密 TLS 配置 ───────────────────────────────────────────────
+tls:
+  ca_bundle: "/etc/ssl/certs/ca-bundle-tlcp-compliant.crt"
+  # 生产环境请提供符合 RFC 8998 / TLCP 规范的 CA 证书链
+
+# ─── PII 探测模型配置 ────────────────────────────────────────────
+pii_profiler:
+  model_dir: "/opt/edge_models"   # 本地离线模型目录
+
+# ─── 日志配置 ────────────────────────────────────────────────────
+logging:
+  level: "INFO"   # DEBUG | INFO | WARNING | ERROR
