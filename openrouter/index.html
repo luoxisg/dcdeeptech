@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OpenRouter Provider 入驻申请</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+  :root {
+    --bg: #0d0d0d;
+    --surface: #161616;
+    --border: #2a2a2a;
+    --border-focus: #7c5cfc;
+    --text: #e8e8e8;
+    --text-sub: #aaa;
+    --text-muted: #555;
+    --accent: #7c5cfc;
+    --accent-light: #a78bfa;
+    --amber: #f59e0b;
+    --amber-dim: rgba(245,158,11,0.07);
+    --teal: #2dd4bf;
+    --success: #22c55e;
+    --input-bg: #111;
+    --note-bg: rgba(124,92,252,0.05);
+    --note-border: rgba(124,92,252,0.22);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  .header {
+    border-bottom: 1px solid var(--border);
+    padding: 20px 48px;
+    display: flex; align-items: center; gap: 14px;
+    position: sticky; top: 0;
+    background: rgba(13,13,13,0.94);
+    backdrop-filter: blur(14px);
+    z-index: 100;
+  }
+  .logo {
+    width: 30px; height: 30px;
+    background: var(--accent); border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; flex-shrink: 0;
+  }
+  .header-titles { flex: 1; }
+  .header-titles h1 { font-size: 14px; font-weight: 600; letter-spacing: -0.01em; }
+  .header-titles p  { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+  .badge {
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    color: var(--text-muted); border: 1px solid var(--border);
+    padding: 3px 8px; border-radius: 4px; white-space: nowrap;
+  }
+
+  .container { max-width: 760px; margin: 0 auto; padding: 52px 24px 108px; }
+
+  .hero { margin-bottom: 48px; }
+  .hero h2 {
+    font-size: 30px; font-weight: 600;
+    letter-spacing: -0.03em; line-height: 1.15; margin-bottom: 10px;
+  }
+  .hero h2 small {
+    display: block; font-size: 15px; font-weight: 400;
+    color: var(--text-sub); margin-top: 4px; letter-spacing: -0.01em;
+  }
+  .hero p { font-size: 13px; color: var(--text-muted); line-height: 1.65; }
+
+  .progress-wrap { margin-bottom: 44px; }
+  .progress-bar { height: 2px; background: var(--border); border-radius: 2px; }
+  .progress-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.3s; width: 0%; }
+  .progress-label {
+    display: flex; justify-content: space-between; margin-top: 6px;
+    font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-muted);
+  }
+
+  .section-divider {
+    margin: 48px 0 26px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .section-divider .num {
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--accent); white-space: nowrap;
+  }
+  .section-divider .titles { flex: 1; }
+  .section-divider .titles .en { font-size: 13px; font-weight: 600; color: var(--text); letter-spacing: -0.01em; }
+  .section-divider .titles .zh { font-size: 11px; color: var(--text-muted); }
+  .section-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  .field { margin-bottom: 28px; }
+  .field-label { display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px; flex-wrap: wrap; }
+  .field-label .en { font-size: 13px; font-weight: 600; color: var(--text); letter-spacing: -0.01em; }
+  .field-label .zh { font-size: 12px; color: var(--text-sub); font-weight: 400; }
+  .field-label .req { color: var(--accent); font-size: 13px; }
+
+  .hint { font-size: 12px; color: var(--text-sub); margin-bottom: 6px; line-height: 1.55; }
+  .hint a { color: var(--accent-light); text-decoration: none; }
+
+  .anno {
+    background: var(--note-bg);
+    border-left: 2px solid var(--note-border);
+    border-radius: 0 6px 6px 0;
+    padding: 9px 13px; margin-bottom: 9px;
+    font-size: 12px; color: #8a8a9c; line-height: 1.7;
+  }
+  .anno strong { color: var(--accent-light); font-weight: 500; }
+  .anno code {
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    background: rgba(255,255,255,0.07);
+    padding: 1px 5px; border-radius: 3px; color: var(--teal);
+  }
+  .anno-warn {
+    background: var(--amber-dim);
+    border-left-color: rgba(245,158,11,0.4);
+    color: #9a8060;
+  }
+  .anno-warn strong { color: var(--amber); }
+
+  input[type="text"], input[type="email"], textarea {
+    width: 100%; background: var(--input-bg);
+    border: 1px solid var(--border); border-radius: 8px;
+    padding: 10px 14px; color: var(--text);
+    font-family: 'DM Sans', sans-serif; font-size: 14px;
+    outline: none; transition: border-color 0.15s, box-shadow 0.15s; resize: vertical;
+  }
+  input:focus, textarea:focus {
+    border-color: var(--border-focus);
+    box-shadow: 0 0 0 3px rgba(124,92,252,0.11);
+  }
+  textarea { min-height: 90px; }
+
+  .checkbox-group, .radio-group { display: flex; flex-direction: column; gap: 7px; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+
+  .check-item, .radio-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 9px 12px; border: 1px solid var(--border);
+    border-radius: 7px; cursor: pointer;
+    transition: border-color 0.13s, background 0.13s;
+  }
+  .check-item:hover, .radio-item:hover { border-color: #3a3a3a; background: #181818; }
+  .check-item.selected, .radio-item.selected {
+    border-color: var(--accent); background: rgba(124,92,252,0.07);
+  }
+  .check-item input, .radio-item input {
+    accent-color: var(--accent); width: 15px; height: 15px;
+    cursor: pointer; flex-shrink: 0; margin-top: 2px;
+  }
+  .item-label { display: flex; flex-direction: column; gap: 2px; }
+  .item-label .en { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text); }
+  .item-label .zh { font-size: 11px; color: var(--text-muted); line-height: 1.4; }
+
+  .submit-bar {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: rgba(13,13,13,0.96); backdrop-filter: blur(14px);
+    border-top: 1px solid var(--border);
+    padding: 13px 48px;
+    display: flex; align-items: center; justify-content: space-between;
+    z-index: 100;
+  }
+  .status-text { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-muted); }
+  .btn-group { display: flex; gap: 9px; }
+  button {
+    padding: 8px 18px; border-radius: 7px;
+    font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
+    cursor: pointer; border: none; transition: all 0.13s;
+  }
+  .btn-primary   { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: #6d4ee8; }
+  .btn-secondary { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
+  .btn-secondary:hover { color: var(--text); border-color: #444; }
+  .btn-outline   { background: transparent; color: var(--accent-light); border: 1px solid rgba(124,92,252,0.45); }
+  .btn-outline:hover { background: rgba(124,92,252,0.09); }
+
+  .toast {
+    position: fixed; top: 18px; right: 18px;
+    background: var(--surface); border: 1px solid var(--success); color: var(--success);
+    padding: 10px 16px; border-radius: 8px;
+    font-size: 12px; font-family: 'DM Mono', monospace;
+    opacity: 0; transform: translateY(-6px);
+    transition: all 0.18s; z-index: 999; pointer-events: none;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">⇄</div>
+  <div class="header-titles">
+    <h1>OpenRouter — Provider Listing Application</h1>
+    <p>入驻申请表 · 中英双语 · 附技术注解</p>
+  </div>
+  <span class="badge">Provider Onboarding</span>
+</div>
+
+<div class="container">
+
+  <div class="hero">
+    <h2>List on OpenRouter<small>申请在 OpenRouter 上架推理服务</small></h2>
+    <p>So you want to sell inference on OpenRouter. We're revamping how new LLM providers come online — fill out the form below so we can figure out the right time to list you.<br><br>
+    如果您希望在 OpenRouter 平台销售推理服务，请填写以下表单。OpenRouter 正在重构 Provider 上线流程，提交后他们将在合适时机与您联系。</p>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label">
+      <span id="statusText">0 / 13 必填项已完成</span>
+      <span id="pctText">0%</span>
+    </div>
+  </div>
+
+  <!-- ══ 01 BASIC INFO ══ -->
+  <div class="section-divider">
+    <span class="num">01</span>
+    <div class="titles"><div class="en">Basic Info</div><div class="zh">基本信息</div></div>
+  </div>
+
+  <div class="field">
+    <div class="field-label"><span class="en">Company name</span><span class="zh">公司名称</span><span class="req">*</span></div>
+    <div class="anno"><strong>注：</strong>填写法定或品牌名称。OpenRouter 会用此名称在平台展示您的服务，并出现在 <code>/models</code> API 响应的 <code>provider</code> 字段中。建议与域名品牌保持一致。</div>
+    <input type="text" id="company_name" placeholder="e.g., Acme Inference Labs" oninput="updateProgress()">
+  </div>
+
+  <div class="field">
+    <div class="field-label"><span class="en">Your email</span><span class="zh">联系邮箱</span><span class="req">*</span></div>
+    <div class="hint">Please use your company email — this will be invited into a Slack Connect channel for ongoing communication.</div>
+    <div class="anno"><strong>注：</strong>必须使用企业域名邮箱（非 Gmail/Outlook 个人邮箱）。OpenRouter 会通过 Slack Connect 进行技术对接、上线协调和问题排查，整个合作周期内此邮箱是主要联系通道。推荐使用 <code>partnerships@</code> 或 <code>api@</code> 类型邮箱。</div>
+    <input type="email" id="email" placeholder="partnerships@yourcompany.com" oninput="updateProgress()">
+  </div>
+
+  <!-- ══ 02 DIFFERENTIATION ══ -->
+  <div class="section-divider">
+    <span class="num">02</span>
+    <div class="titles"><div class="en">What Distinguishes You</div><div class="zh">差异化优势</div></div>
+  </div>
+
+  <div class="field">
+    <div class="field-label"><span class="en">Differentiators</span><span class="zh">核心差异化标签</span><span class="req">*</span></div>
+    <div class="hint">Select all that apply. Used to prioritize providers during onboarding.</div>
+    <div class="anno"><strong>注：</strong>这些标签直接影响 OpenRouter 内部的优先级排序。平台核心价值是"智能路由"——让用户在多 Provider 间按延迟、价格、能力自动择优。对平台最有吸引力的 Provider 通常具备：① 独家模型（护城河最深）；② 价格显著低于 AWS/Azure（≥30%）；③ 基础设施创新（自研 ASIC、去中心化 GPU 网络）。"Strategic Partnership"指与模型原厂（如 Meta、Mistral）有授权合作关系。</div>
+    <div class="checkbox-group" id="differentiators">
+      <label class="check-item"><input type="checkbox" value="Low Latency"><div class="item-label"><span class="en">Low Latency</span><span class="zh">低延迟：TTFT（首 token 延迟）/ TPS 优于行业均值</span></div></label>
+      <label class="check-item"><input type="checkbox" value="High throughput"><div class="item-label"><span class="en">High throughput</span><span class="zh">高吞吐：大并发下仍能维持稳定输出速率（tokens/s）</span></div></label>
+      <label class="check-item"><input type="checkbox" value="Unique models"><div class="item-label"><span class="en">Unique models</span><span class="zh">独家模型：仅您托管，其他平台无法获取</span></div></label>
+      <label class="check-item"><input type="checkbox" value="Low Pricing"><div class="item-label"><span class="en">Low Pricing</span><span class="zh">低价格：USD/M tokens 低于主流竞品</span></div></label>
+      <label class="check-item"><input type="checkbox" value="Volume/Committed Discount"><div class="item-label"><span class="en">Volume / Committed Discount</span><span class="zh">量承诺折扣：按月/年预付流量可降价</span></div></label>
+      <label class="check-item"><input type="checkbox" value="Unique Infrastructure"><div class="item-label"><span class="en">Unique Infrastructure</span><span class="zh">独特基础设施：自研芯片 / 专有集群 / KV cache 等架构创新</span></div></label>
+      <label class="check-item"><input type="checkbox" value="Decentralized"><div class="item-label"><span class="en">Decentralized</span><span class="zh">去中心化：分布式 GPU 网络（如 Akash / Bittensor 等）</span></div></label>
+      <label class="check-item"><input type="checkbox" value="Strategic Partnership"><div class="item-label"><span class="en">Strategic Partnership</span><span class="zh">战略合作：与模型原厂有授权 / 独家合作关系</span></div></label>
+    </div>
+  </div>
+
+  <div class="field">
+    <div class="field-label"><span class="en">Extra details</span><span class="zh">详细说明</span><span class="req">*</span></div>
+    <div class="hint">Elaborate on what makes you a great inference provider. More context = better prioritization.</div>
+    <div class="anno"><strong>注：</strong>这是您 pitch 的核心段落，建议量化描述：<br>
+    • P50/P99 TTFT = X ms（对应模型、区域）<br>
+    • 持续吞吐 = X tokens/s/并发<br>
+    • 定价：输入 $X/M tokens，输出 $Y/M tokens<br>
+    • 托管模型列表（附参数规模）<br>
+    • 基础设施亮点（硬件型号、自研组件、KV cache 命中率等）<br>
+    OpenRouter 工程师会直接阅读此段，数字越具体越有说服力。</div>
+    <textarea id="extra_details" placeholder="e.g., We run Llama 3.1 70B on H100 clusters in US-East with p50 TTFT < 300ms, $0.35/M input tokens (30% below market)..." oninput="updateProgress()"></textarea>
+  </div>
+
+  <div class="field">
+    <div class="field-label"><span class="en">Volume Discount</span><span class="zh">量折扣方案</span></div>
+    <div class="hint">Can you give OpenRouter volume discounts? If so, what kind and how much?</div>
+    <div class="anno"><strong>注：</strong>OpenRouter 作为聚合路由层本身是您的大客户。给 OpenRouter 提供折扣等于给平台所有用户降价，有助于在价格敏感的路由竞争中胜出。可描述：梯度折扣（如 &gt;1B tokens/月享 X% 折扣）、预付年费折扣、定向协议价。无量折扣也请明确填"无"。</div>
+    <textarea id="volume_discount" placeholder="e.g., 10% off at 500M tokens/month, 20% off at 2B tokens/month via signed agreement..."></textarea>
+  </div>
+
+  <div class="field">
+    <div class="field-label"><span class="en">Rate Limits</span><span class="zh">速率限制</span></div>
+    <div class="hint">What rate limits will we have initially? Can they be raised or removed?</div>
+    <div class="anno"><strong>注：</strong>速率限制直接影响 OpenRouter 能否将您纳入高流量路由。关键指标：<br>
+    • <strong>RPM</strong>（requests per minute）：API 请求频率上限<br>
+    • <strong>TPM</strong>（tokens per minute）：每分钟 token 消耗上限<br>
+    • <strong>并发连接数</strong>：同时 in-flight 的 streaming 连接上限<br>
+    OpenRouter 会同时发起大量并发 streaming 请求，若并发上限过低，路由层会触发降级切换至其他 Provider。请说明初始限制及调整机制（如能否在 Slack 频道申请临时提额）。</div>
+    <textarea id="rate_limits" placeholder="e.g., Initial: 500 RPM / 2M TPM / 200 concurrent streams. Raised on Slack request within 24h..."></textarea>
+  </div>
+
+  <!-- ══ 03 PRICING & PAYMENT ══ -->
+  <div class="section-divider">
+    <span class="num">03</span>
+    <div class="titles"><div class="en">Pricing &amp; Payment</div><div class="zh">定价与支付</div></div>
+  </div>
+
+  <div class="field">
+    <div class="field-label"><span class="en">Pricing features — confirm all that apply</span><span class="zh">定价功能确认</span><span class="req">*</span></div>
+    <div class="anno"><strong>注（四项硬性技术要求）：</strong><br>
+    • <strong>usage 字段</strong>：无论 stream 还是非 stream，每次响应必须包含 <code>usage.prompt_tokens</code> 和 <code>usage.completion_tokens</code>。stream 模式下通常附在最后一个 chunk 的 <code>data: [DONE]</code> 之前。<br>
+    • <strong>cache usage</strong>：若实现了 KV cache（prompt caching），需在 <code>usage</code> 中返回 <code>cache_read_input_tokens</code> 和 <code>cache_creation_input_tokens</code>，OpenRouter 据此给用户计费。<br>
+    • <strong>公开定价</strong>：必须有可被程序爬取的公开 URL（或内嵌于 <code>/models</code> API）标注 USD/M tokens 定价。<br>
+    • <strong>自动付款</strong>：不接受纯人工对账，必须支持某种形式的自动付款。</div>
+    <div class="checkbox-group" id="pricing_features">
+      <label class="check-item"><input type="checkbox" value="usage_tokens"><div class="item-label"><span class="en">Returns <code style="font-family:monospace;font-size:11px;color:var(--teal)">usage</code> (tokens) for both stream &amp; non-stream</span><span class="zh">stream / 非 stream 均返回 token 用量（prompt + completion tokens）</span></div></label>
+      <label class="check-item"><input type="checkbox" value="cache_usage"><div class="item-label"><span class="en">Returns cache read/write usage when caching is available</span><span class="zh">启用 prompt caching 时返回 cache_read / cache_creation 用量</span></div></label>
+      <label class="check-item"><input type="checkbox" value="public_pricing"><div class="item-label"><span class="en">Publicly available pricing in USD per million tokens</span><span class="zh">有公开可访问的定价页面，以 USD/M tokens 计价</span></div></label>
+      <label class="check-item"><input type="checkbox" value="auto_payment"><div class="item-label"><span class="en">Automated payment method (invoicing or auto top-up)</span><span class="zh">支持自动付款：周期发票或自动充值，无需人工操作</span></div></label>
+    </div>
+  </div>
+
+  <div class="field">
+    <div class="field-label"><span class="en">Invoicing / Payment</span><span class="zh">发票与支付方式</span><span class="req">*</span></div>
+    <div class="hint">Credit card? Automated payment? Or invoiced?</div>
+    <div class="anno"><strong>注：</strong>请说明：① 是否接受信用卡（Visa/MC/Amex）；② 是否支持 Stripe 或类似平台的自动扣款；③ 若使用发票制，周期是月结/季结，Net 几天付款（如 Net 30）；④ 是否支持预付充值余额（prepaid credit）。自动化程度越高，OpenRouter 接入意愿越强——人工对账会引入运营风险。</div>
+    <textarea id="invoicing" placeholder="e.g., Credit card (Stripe) for < $10k/month. Larger volumes: monthly NET-30 invoices via bill.com or wire transfer..." oninput="updateProgress()"></textarea>
+  </div>
+
+  <div class="field">
+    <div class="field-label"><span class="en">Tokenization</span><span class="zh">分词器（Tokenizer）</span><span class="req">*</span></div>
+    <div class="hint">How do you count tokens? What tokenizer do you use?</div>
+    <div class="anno"><strong>注：</strong>这是计费精度的核心问题。不同 tokenizer 对同一文本的计数可能相差 5–20%。需说明：<br>
+    • Tokenizer 名称（如 <code>tiktoken cl100k_base</code>、<code>llama-sentencepiece</code>、<code>gemma-tokenizer</code>）<br>
+    • 是否与模型原厂计数完全一致，或存在近似偏差<br>
+    • 图片/视频 token 的折算方式（多模态时）<br>
+    • Prompt caching 命中时，cached tokens 是否计入 <code>prompt_tokens</code> 或单独计算<br>
+    OpenRouter 需要此信息向终端用户展示准确的预估用量和费用。</div>
+    <textarea id="tokenization" placeholder="e.g., Official LLaMA 3 SentencePiece tokenizer (same as Meta reference). Vision: 1 tile (224×224) = 256 tokens..." oninput="updateProgress()"></textarea>
+  </div>
+
+  <!-- ══ 04 API ENDPOINTS ══ -->
+  <div class="section-divider">
+    <span class="num">04</span>
+    <div class="titles"><div class="en">API Endpoints</div><div class="zh">API 接口地址</div></div>
+  </div>
+
+  <div class="field">
+    <div class="field-label"><span class="en">URL to /completions API</span><span class="zh">文本补全接口（legacy completions）</span><span class="req">*</span></div>
+    <div class="hint">Must be OpenAI-compatible AND always return <code>usage</code> for both stream and non-stream.</div>
+    <div class="anno"><strong>注：</strong><code>POST /v1/completions</code> 是 OpenAI 的旧式文本补全接口，接受 <code>prompt</code> 字符串而非 <code>messages</code> 数组。虽已被 <code>/chat/completions</code> 取代，但部分旧版客户端（某些 LangChain 版本、text-generation-webui）仍会调用。OpenAI 兼容意味着请求/响应 schema 与 OpenAI 官方文档完全一致，包括 <code>finish_reason</code>、<code>id</code>、<code>model</code>、<code>object</code> 字段。</div>
+    <input type="text" id="completions_url" placeholder="https://api.yourcompany.com/v1/completions" oninput="updateProgress()">
+  </div>
+
+  <div class="field">
+    <div class="field-label"><span class="en">URL to /chat/completions API</span><span class="zh">对话补全接口（主要接口）</span><span class="req">*</span></div>
+    <div class="hint">Must be OpenAI-compatible AND always return <code>usage</code> for both stream and non-stream.</div>
+    <div class="anno"><strong>注：</strong>这是 OpenRouter 实际路由流量的<strong>主接口</strong>。关键要求：<br>
+    • <strong>Stream 模式</strong>：使用 SSE 格式，逐 chunk 返回 <code>data: {...}\n\n</code>，最后一个有意义的 chunk 或 <code>data: [DONE]</code> 前必须附 <code>usage</code> 字段。<br>
+    • <code>finish_reason</code> 必须准确（<code>stop</code> / <code>length</code> / <code>tool_calls</code> / <code>content_filter</code>），OpenRouter 用此判断是否需要重试或切换 Provider。<br>
+    • 注意：OpenRouter <strong>只发 streaming 请求</strong>（见第 10 节），非 stream 支持仍需实现，但实际流量几乎全为 stream。</div>
+    <input type="text" id="chat_completions_url" placeholder="https://api.yourcompany.com/v1/chat/completions" oninput="updateProgress()">
+  </div>
+
+  <div class="field">
+    <div class="field-label"><span class="en">URL to /models API</span><span class="zh">模型列表接口</span><span class="req">*</span></div>
+    <div class="hint">Must return up-to-date model info: <strong>max output tokens</strong> and <strong>context length</strong> per model. Schema: <a href="https://openrouter.ai/api/v1/models" target="_blank">openrouter.ai/api/v1/models</a>.</div>
+    <div class="anno"><strong>注：</strong>OpenRouter 会定期轮询您的 <code>/models</code> 端点（通常每小时或每次路由决策前），以获取在线模型、上下文窗口大小、最大输出长度和定价。关键字段：<code>id</code>、<code>context_length</code>、<code>max_completion_tokens</code>、<code>pricing.prompt</code>（每 token USD）、<code>pricing.completion</code>。若某模型下线维护，应将其从响应中移除，而非返回错误状态——OpenRouter 以模型列表的存在与否判断路由可用性。</div>
+    <input type="text" id="models_url" placeholder="https://api.yourcompany.com/v1/models" oninput="updateProgress()">
+  </div>
+
+  <!-- ══ 05 FAILURE STATES ══ -->
+  <div class="section-divider">
+    <span class="num">05</span>
+    <div class="titles"><div class="en">Failure States &amp; Billing</div><div class="zh">故障状态与计费策略</div></div>
+  </div>
+
+  <div class="field">
+    <div class="field-label"><span class="en">Mid-request cancellations — do you charge?</span><span class="zh">客户端中途断开连接——是否计费？</span></div>
+    <div class="hint">Many clients disconnect or abort mid-stream.</div>
+    <div class="anno anno-warn"><strong>⚠ 注（计费敏感）：</strong>浏览器端用户经常刷新页面、关闭标签页，导致 SSE 连接被单方面断开（TCP RST 或 FIN）。若您在 GPU 已开始生成时仍<strong>按已生成 tokens 计费</strong>，OpenRouter 需要将这部分成本转嫁给用户，增加计费复杂度。若<strong>不收取取消费用</strong>，则无需特殊处理，集成更简洁。无论哪种，请说明您如何检测客户端断连（<code>EPIPE</code>/<code>ECONNRESET</code>），以及响应中是否会有截断标记。</div>
+    <div class="radio-group" id="cancellation_charge">
+      <label class="radio-item"><input type="radio" name="cancellation" value="Yes we charge"><div class="item-label"><span class="en">Yes — charge for tokens generated up to cancellation point</span><span class="zh">收费：按实际已生成的 token 数计费</span></div></label>
+      <label class="radio-item"><input type="radio" name="cancellation" value="No we do not charge"><div class="item-label"><span class="en">No — cancelled requests are not charged</span><span class="zh">不收费：客户端取消则该请求不计费</span></div></label>
+    </div>
+  </div>
+
+  <div class="field">
+    <div class="field-label"><span class="en">Model / engine failure — do you charge?</span><span class="zh">模型/引擎错误时——是否计费？</span></div>
+    <div class="anno anno-warn"><strong>⚠ 注（计费敏感）：</strong>"Engine failure"指服务端内部错误导致请求未能正常完成，如：OOM（GPU 显存不足）、CUDA 错误、模型加载失败、生成中途崩溃（返回 HTTP 500/503）。若此类情况仍然计费，OpenRouter 面临向用户收费却未交付内容的尴尬。行业惯例是<strong>不收费</strong>，但"生成了一半然后报错"的情况各家处理方式不同。请明确您的定义边界，以及对应的 HTTP 状态码和错误响应格式。</div>
+    <div class="radio-group" id="engine_failure_charge">
+      <label class="radio-item"><input type="radio" name="engine_failure" value="Yes we charge"><div class="item-label"><span class="en">Yes — charge even on engine/model errors</span><span class="zh">收费：即使服务端报错也按已生成量计费</span></div></label>
+      <label class="radio-item"><input type="radio" name="engine_failure" value="No we do not charge"><div class="item-label"><span class="en">No — engine failures result in zero charge</span><span class="zh">不收费：服务端错误不产生任何费用</span></div></label>
+    </div>
+  </div>
+
+  <div class="field">
+    <div class="field-label"><span class="en">Special error shapes or finish reasons</span><span class="zh">自定义错误格式与结束原因</span></div>
+    <div class="anno"><strong>注：</strong>OpenAI 标准定义了 <code>finish_reason</code> 合法值：<code>stop</code>（正常结束）、<code>length</code>（达到 max_tokens）、<code>tool_calls</code>、<code>content_filter</code>。若您使用了额外自定义值（如 <code>"cancelled"</code>、<code>"error"</code>、<code>"timeout"</code>），或在 stream 中途以特殊 chunk 格式表示错误，请详细描述。若您的 <code>4xx</code>/<code>5xx</code> 错误响应体格式与 OpenAI 标准（<code>{"error":{"message":...,"type":...,"code":...}}</code>）不同，也需说明——OpenRouter 的错误处理和重试逻辑依赖于此。</div>
+    <textarea id="error_shapes" placeholder='e.g., finish_reason: "cancelled" for client aborts. Rate limit errors: HTTP 429 with {"error": {"type": "rate_limit_exceeded", "retry_after": 60}}...'></textarea>
+  </div>
+
+  <!-- ══ 06 PRIVACY & DATA ══ -->
+  <div class="section-divider">
+    <span class="num">06</span>
+    <div class="titles"><div class="en">Privacy &amp; Data Policy</div><div class="zh">隐私政策与数据处理</div></div>
+  </div>
+
+  <div class="field">
+    <div class="field-label"><span class="en">URL to Privacy Policy</span><span class="zh">隐私政策页面 URL</span><span class="req">*</span></div>
+    <div class="anno"><strong>注：</strong>OpenRouter 会在平台上向用户展示每个 Provider 的隐私政策链接，作为数据去向透明度机制的一部分。URL 必须公开可访问，内容应涵盖：数据收集范围、存储方式、是否用于训练、数据删除政策、GDPR/CCPA 合规声明。建议为 API 用户提供单独的"Data Processing Agreement (DPA)"页面。</div>
+    <input type="text" id="privacy_url" placeholder="https://yourcompany.com/legal/privacy" oninput="updateProgress()">
+  </div>
+
+  <div class="field">
+    <div class="field-label"><span class="en">Data Policy</span><span class="zh">数据处理政策详情</span><span class="req">*</span></div>
+    <div class="hint">Training policy for prompts/completions? How long do you store logs?</div>
+    <div class="anno"><strong>注：</strong>企业客户和隐私敏感用户最关心的问题。请明确说明：<br>
+    • <strong>是否将 API 请求内容用于模型训练</strong>（默认行为和 opt-out 机制）<br>
+    • <strong>日志保留期</strong>：请求/响应日志保留多少天？是否有 zero-retention 选项？<br>
+    • <strong>数据隔离</strong>：用户数据在多租户环境中是否有逻辑/物理隔离？<br>
+    • <strong>员工访问权限</strong>：贵公司员工是否可查看明文 prompt？<br>
+    OpenRouter 的部分企业用户（金融、医疗、法律）有严格合规要求（HIPAA、SOC 2、ISO 27001）。</div>
+    <textarea id="data_policy" placeholder="e.g., We do not train on API data. Logs retained 30 days for abuse detection only. Zero-retention mode available on request. SOC 2 Type II certified..." oninput="updateProgress()"></textarea>
+  </div>
+
+  <!-- ══ 07 PARAMETERS ══ -->
+  <div class="section-divider">
+    <span class="num">07</span>
+    <div class="titles"><div class="en">Sampling Parameters</div><div class="zh">采样参数支持情况</div></div>
+  </div>
+
+  <div class="field">
+    <div class="field-label"><span class="en">Required params — confirm all supported</span><span class="zh">必须支持的参数（全部勾选方可接入）</span><span class="req">*</span></div>
+    <div class="hint">All five are mandatory. See <a href="https://openrouter.ai/docs/parameters" target="_blank">openrouter.ai/docs/parameters</a> for ranges and defaults.</div>
+    <div class="anno"><strong>注（参数技术说明）：</strong><br>
+    • <code>max_tokens</code>：限制生成的最大 token 数，与 <code>context_length</code> 区别在于：前者是输出上限，后者是输入+输出总上限。<br>
+    • <code>temperature</code>：控制采样随机性，范围 [0, 2]。0 = 贪心解码（greedy），logits 除以 temperature 后再做 nucleus sampling。<br>
+    • <code>top_p</code>：Nucleus sampling，保留累积概率前 p 的 token 集合进行采样。通常建议只调 temperature 或 top_p 其中之一。<br>
+    • <code>stop</code>：遇到指定字符串时停止生成，支持字符串数组。必须在生成完该 stop token 后立即截断（不含 stop 字符串本身）。<br>
+    • <code>seed</code>：固定随机种子以实现可复现生成。注意：同一 seed 在不同硬件/批次大小下可能不完全一致，应在文档中如实说明确定性保证级别。</div>
+    <div class="checkbox-group two-col" id="required_params">
+      <label class="check-item"><input type="checkbox" value="max_tokens"><div class="item-label"><span class="en">max_tokens</span><span class="zh">最大生成 token 数（输出上限）</span></div></label>
+      <label class="check-item"><input type="checkbox" value="temperature"><div class="item-label"><span class="en">temperature</span><span class="zh">温度（采样随机性）[0, 2]</span></div></label>
+      <label class="check-item"><input type="checkbox" value="top_p"><div class="item-label"><span class="en">top_p</span><span class="zh">核采样概率阈值（nucleus sampling）</span></div></label>
+      <label class="check-item"><input type="checkbox" value="stop"><div class="item-label"><span class="en">stop</span><span class="zh">停止词序列（字符串数组）</span></div></label>
+      <label class="check-item"><input type="checkbox" value="seed"><div class="item-label"><span class="en">seed</span><span class="zh">随机种子（输出可复现性）</span></div></label>
+    </div>
+  </div>
+
+  <div class="field">
+    <div class="field-label"><span class="en">Optional params — check all supported</span><span class="zh">可选参数（支持的全部勾选）</span></div>
+    <div class="anno"><strong>注（可选参数技术说明）：</strong><br>
+    • <code>top_k</code>：每步仅从概率最高的 k 个 token 中采样，可与 top_p 叠加（先 top_k 再 top_p）。<br>
+    • <code>frequency_penalty</code> / <code>presence_penalty</code>：OpenAI 定义的加法惩罚。frequency 按词频惩罚，presence 对已出现词一律惩罚，范围 [-2, 2]。<br>
+    • <code>repetition_penalty</code>：HuggingFace / vLLM 风格的乘法惩罚（&gt;1 = 惩罚），与 frequency/presence_penalty 语义不同，不能混用。<br>
+    • <code>min_p</code>：过滤概率低于最高概率 × min_p 的 token，是 top_p 的变体，动态调整截断阈值。<br>
+    • <code>logit_bias</code>：直接修改特定 token 的 logit 值，用于强制/禁止特定词汇出现。<br>
+    • <code>logprobs</code> / <code>top_logprobs</code>：返回每个生成位置的 log 概率，用于评估和不确定性估计。<br>
+    • <code>response_format</code>：强制输出为 JSON（<code>{"type":"json_object"}</code>），底层通常是 constrained decoding。<br>
+    • <code>structured_outputs</code>：严格 JSON Schema 约束输出，需要 grammar-constrained generation（如 llama.cpp GBNF grammar、vLLM xgrammar）。<br>
+    • <code>tools</code> / <code>tool_choice</code>：Function Calling——模型输出结构化 tool call 请求，由客户端执行后返回结果。</div>
+    <div class="checkbox-group two-col" id="optional_params">
+      <label class="check-item"><input type="checkbox" value="top_k"><div class="item-label"><span class="en">top_k</span><span class="zh">Top-K 采样</span></div></label>
+      <label class="check-item"><input type="checkbox" value="frequency_penalty"><div class="item-label"><span class="en">frequency_penalty</span><span class="zh">频率惩罚（加法，按词频）</span></div></label>
+      <label class="check-item"><input type="checkbox" value="presence_penalty"><div class="item-label"><span class="en">presence_penalty</span><span class="zh">存在惩罚（加法，出现即惩罚）</span></div></label>
+      <label class="check-item"><input type="checkbox" value="repetition_penalty"><div class="item-label"><span class="en">repetition_penalty</span><span class="zh">重复惩罚（乘法，HuggingFace 风格）</span></div></label>
+      <label class="check-item"><input type="checkbox" value="min_p"><div class="item-label"><span class="en">min_p</span><span class="zh">最低相对概率阈值（动态 nucleus）</span></div></label>
+      <label class="check-item"><input type="checkbox" value="top_a"><div class="item-label"><span class="en">top_a</span><span class="zh">Top-A 动态截断采样</span></div></label>
+      <label class="check-item"><input type="checkbox" value="logit_bias"><div class="item-label"><span class="en">logit_bias</span><span class="zh">Logit 偏置（强制/禁止词汇）</span></div></label>
+      <label class="check-item"><input type="checkbox" value="logprobs"><div class="item-label"><span class="en">logprobs</span><span class="zh">返回 token 对数概率</span></div></label>
+      <label class="check-item"><input type="checkbox" value="top_logprobs"><div class="item-label"><span class="en">top_logprobs</span><span class="zh">每步返回 Top-N 候选 token 概率</span></div></label>
+      <label class="check-item"><input type="checkbox" value="response_format"><div class="item-label"><span class="en">response_format</span><span class="zh">输出格式约束（JSON mode）</span></div></label>
+      <label class="check-item"><input type="checkbox" value="structured_outputs"><div class="item-label"><span class="en">structured_outputs</span><span class="zh">结构化输出（JSON Schema 约束解码）</span></div></label>
+      <label class="check-item"><input type="checkbox" value="tools"><div class="item-label"><span class="en">tools</span><span class="zh">工具定义（Function Calling）</span></div></label>
+      <label class="check-item"><input type="checkbox" value="tool_choice"><div class="item-label"><span class="en">tool_choice</span><span class="zh">工具调用策略（auto / required / none）</span></div></label>
+    </div>
+  </div>
+
+  <!-- ══ 08 ADVANCED ══ -->
+  <div class="section-divider">
+    <span class="num">08</span>
+    <div class="titles"><div class="en">Advanced Capabilities</div><div class="zh">高级功能</div></div>
+  </div>
+
+  <div class="field">
+    <div class="field-label"><span class="en">Tool calling (Function Calling)</span><span class="zh">工具调用 / 函数调用</span></div>
+    <div class="hint">Support tool calling with streaming? Well tested or beta?</div>
+    <div class="anno"><strong>注：</strong>Tool calling 是 Agent 和 RAG 应用的基础能力。Stream 模式下实现尤为复杂：<code>tool_calls</code> 字段需要在多个 SSE chunk 中累积拼接（<code>index</code> / <code>id</code> / <code>type</code> / <code>function.name</code> / <code>function.arguments</code> 分别在不同 chunk 中逐步填充），客户端需要做状态机解析。<br>
+    请说明：① 是否支持并行多 tool call（<code>tool_calls</code> 数组 &gt;1 个元素）；② streaming tool calls 是否充分测试；③ <code>tool_choice: "required"</code> 是否强制模型必须调用工具；④ 是否支持 parallel tool calling（同一轮生成多个 tool call）。</div>
+    <textarea id="tool_calling" placeholder="e.g., Full streaming tool calls including parallel calling. Tested with OpenAI SDK + LangChain. tool_choice: required supported..."></textarea>
+  </div>
+
+  <div class="field">
+    <div class="field-label"><span class="en">Structured outputs (JSON Schema)</span><span class="zh">结构化输出（JSON Schema 约束解码）</span></div>
+    <div class="hint">JSON Schema structured output? Always working even with streaming?</div>
+    <div class="anno"><strong>注：</strong><code>response_format: {"type":"json_object"}</code> 只要求输出合法 JSON，而 <code>structured_outputs</code>（OpenAI 2024 年引入）要求严格符合指定 JSON Schema（字段类型、required、enum 约束）。实现方案：① Grammar-constrained decoding（如 llama.cpp GBNF、outlines 库、vLLM xgrammar），在解码阶段屏蔽不合法 token，保证 100% Schema 合规；② Post-processing（生成后校验/修复），不能保证 100% 合规。请说明您采用哪种方案，以及 streaming 模式下是否同样可靠（需增量验证 JSON）。</div>
+    <textarea id="structured_outputs" placeholder="e.g., JSON Schema via vLLM guided decoding (xgrammar). 100% schema compliance. Streaming supported with incremental validation..."></textarea>
+  </div>
+
+  <div class="field">
+    <div class="field-label"><span class="en">Extra sampling parameters</span><span class="zh">其他采样参数</span></div>
+    <div class="hint">Any additional parameters beyond the lists above.</div>
+    <div class="anno"><strong>注：</strong>不同推理框架有各自扩展参数，例如：vLLM 的 <code>best_of</code>、<code>use_beam_search</code>；llama.cpp 的 <code>mirostat</code> / <code>mirostat_tau</code> / <code>mirostat_eta</code>（自适应采样算法，动态调整温度以控制生成的"惊讶度"）；TGI 的 <code>typical_p</code>（典型性采样，基于信息论的采样方式）。若这些参数可以通过 OpenRouter 的 <code>extra_body</code> 透传，请说明，高级用户会很感兴趣。</div>
+    <textarea id="extra_params" placeholder="e.g., mirostat (modes 1 and 2), mirostat_tau, mirostat_eta via extra_body pass-through. Also typical_p and eta_cutoff..."></textarea>
+  </div>
+
+  <div class="field">
+    <div class="field-label"><span class="en">Multi-modal models</span><span class="zh">多模态模型支持</span></div>
+    <div class="hint">What image MIME types or file formats do you accept via API?</div>
+    <div class="anno"><strong>注：</strong>视觉模态（Vision）接入涉及图像传递方式（URL 还是 base64）和格式限制。OpenAI 标准 Vision 格式是在 <code>messages.content</code> 数组中混入 <code>{"type":"image_url","image_url":{"url":"data:image/jpeg;base64,..."}}</code>。<br>
+    请说明：① 支持的图像格式（<code>image/jpeg</code>、<code>image/png</code>、<code>image/webp</code>、<code>image/gif</code>）；② 单图最大尺寸（像素和字节）；③ 是否支持多图（单次请求多张图片）；④ 是否支持视频帧/PDF 等非图像多模态；⑤ 图像 token 折算方式（tile 计算逻辑，影响计费准确性）。</div>
+    <textarea id="multimodal" placeholder="e.g., image/jpeg, image/png, image/webp. Max 20MB/image, up to 10 images/request. URL + base64. Each 512×512 tile = 170 tokens..."></textarea>
+  </div>
+
+  <!-- ══ 09 LOCATION ══ -->
+  <div class="section-divider">
+    <span class="num">09</span>
+    <div class="titles"><div class="en">Inference Location</div><div class="zh">推理服务地理位置</div></div>
+  </div>
+
+  <div class="field">
+    <div class="field-label"><span class="en">Country codes where inference is served</span><span class="zh">推理节点所在国家/地区代码</span><span class="req">*</span></div>
+    <div class="hint">ISO 3166-1 alpha-2 country codes.</div>
+    <div class="anno"><strong>注：</strong>此信息有多重用途：<br>
+    • <strong>延迟优化</strong>：OpenRouter 可根据用户地理位置将请求路由至就近节点，降低网络延迟。<br>
+    • <strong>数据驻留合规</strong>：EU GDPR 要求某些数据不得流出 EEA；部分企业客户（金融、政府）有数据主权要求，必须在境内处理。<br>
+    • <strong>出口管制合规</strong>：美国 EAR 对向特定国家（CN、RU、IR、KP 等）提供高性能计算服务有限制，OpenRouter 需了解您的节点分布评估合规风险。<br>
+    使用 ISO 3166-1 两字母代码，如 <code>US</code>、<code>DE</code>、<code>SG</code>、<code>JP</code>。若多区域节点托管的可用模型有差异，也请注明。</div>
+    <input type="text" id="inference_location" placeholder="e.g., US, DE, SG, JP" oninput="updateProgress()">
+  </div>
+
+  <!-- ══ 10 FINAL NOTES ══ -->
+  <div class="section-divider">
+    <span class="num">10</span>
+    <div class="titles"><div class="en">Final Notes &amp; Confirmation</div><div class="zh">最终确认</div></div>
+  </div>
+
+  <div class="field">
+    <div class="field-label"><span class="en">Operational requirements — please confirm</span><span class="zh">运营要求确认</span><span class="req">*</span></div>
+    <div class="hint">Let OpenRouter know if these cause latency or QoS issues on your end.</div>
+    <div class="anno anno-warn"><strong>⚠ 注（两条不可协商的硬性技术要求）：</strong><br>
+    <strong>① OpenRouter 只发 streaming 请求（<code>"stream": true</code>）</strong>：您的 streaming 实现路径必须是生产级别的。理由：OpenRouter 的前端是实时流式 UI，non-stream 模式无法提供良好用户体验，也无法实现首 token 延迟的可见性监控。这意味着您的 non-stream 代码路径实际上几乎不会被调用，但仍需实现（某些健康检查和测试会用到）。<br>
+    <strong>② 每次响应必须返回 <code>usage</code> 字段</strong>：包括 stream 模式最后一个数据 chunk。这是计费和路由质量监控的数据来源。若您的服务在高负载下偶尔省略 <code>usage</code>，会导致 OpenRouter 侧计费数据丢失——这是严重的集成问题，可能导致您被降级路由或下线。<br>
+    若这两条要求会对您的服务产生延迟或 QoS 影响（例如计算 usage 本身引入延迟），请在备注中说明，OpenRouter 团队可以共同讨论解决方案。</div>
+    <div class="checkbox-group" id="final_notes">
+      <label class="check-item"><input type="checkbox" value="Confirmed">
+        <div class="item-label">
+          <span class="en">Confirmed — I understand and accept: streaming-only requests + always return usage</span>
+          <span class="zh">已确认：理解并接受两条要求（仅 streaming 请求 + 必须返回 usage 字段）</span>
+        </div>
+      </label>
+    </div>
+  </div>
+
+</div>
+
+<!-- ████ BOTTOM BAR ████ -->
+<div class="submit-bar">
+  <span class="status-text" id="statusText">0 / 13 必填项已完成</span>
+  <div class="btn-group">
+    <button class="btn-secondary" onclick="clearForm()">清空 / Clear</button>
+    <button class="btn-outline" onclick="exportTxt()">导出 .txt</button>
+    <button class="btn-primary" onclick="exportJson()">导出 JSON</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  document.querySelectorAll('.check-item input[type=checkbox]').forEach(cb => {
+    cb.addEventListener('change', () => {
+      cb.closest('.check-item').classList.toggle('selected', cb.checked);
+      updateProgress();
+    });
+  });
+
+  document.querySelectorAll('.radio-item input[type=radio]').forEach(rb => {
+    rb.addEventListener('change', () => {
+      document.querySelectorAll(`input[name="${rb.name}"]`).forEach(r =>
+        r.closest('.radio-item').classList.remove('selected'));
+      rb.closest('.radio-item').classList.add('selected');
+      updateProgress();
+    });
+  });
+
+  const requiredTextFields = [
+    'company_name','email','extra_details','invoicing','tokenization',
+    'completions_url','chat_completions_url','models_url',
+    'privacy_url','data_policy','inference_location'
+  ];
+
+  function getVal(id) {
+    const el = document.getElementById(id);
+    return el ? el.value.trim() : '';
+  }
+
+  function updateProgress() {
+    let filled = 0;
+    requiredTextFields.forEach(id => { if (getVal(id)) filled++; });
+    if (document.querySelectorAll('#differentiators input:checked').length > 0) filled++;
+    if (document.querySelectorAll('#final_notes input:checked').length > 0) filled++;
+
+    const total = requiredTextFields.length + 2;
+    const pct = Math.round((filled / total) * 100);
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('statusText').textContent = `${filled} / ${total} 必填项已完成`;
+    document.getElementById('pctText').textContent = pct + '%';
+  }
+
+  function collectData() {
+    const getChecked = id => [...document.querySelectorAll(`#${id} input:checked`)].map(c => c.value);
+    const getRadio = name => { const el = document.querySelector(`input[name="${name}"]:checked`); return el ? el.value : ''; };
+    return {
+      company_name: getVal('company_name'),
+      email: getVal('email'),
+      differentiators: getChecked('differentiators'),
+      extra_details: getVal('extra_details'),
+      volume_discount: getVal('volume_discount'),
+      rate_limits: getVal('rate_limits'),
+      pricing_features: getChecked('pricing_features'),
+      invoicing: getVal('invoicing'),
+      tokenization: getVal('tokenization'),
+      completions_url: getVal('completions_url'),
+      chat_completions_url: getVal('chat_completions_url'),
+      models_url: getVal('models_url'),
+      cancellation_charge: getRadio('cancellation'),
+      engine_failure_charge: getRadio('engine_failure'),
+      error_shapes: getVal('error_shapes'),
+      privacy_url: getVal('privacy_url'),
+      data_policy: getVal('data_policy'),
+      required_params: getChecked('required_params'),
+      optional_params: getChecked('optional_params'),
+      tool_calling: getVal('tool_calling'),
+      structured_outputs: getVal('structured_outputs'),
+      extra_params: getVal('extra_params'),
+      multimodal: getVal('multimodal'),
+      inference_location: getVal('inference_location'),
+      final_notes_confirmed: getChecked('final_notes').length > 0,
+      submitted_at: new Date().toISOString(),
+    };
+  }
+
+  function exportJson() {
+    const data = collectData();
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    download(blob, `openrouter_listing_${(data.company_name||'submission').replace(/\s+/g,'_')}.json`);
+    showToast('✓ JSON 已导出');
+  }
+
+  function exportTxt() {
+    const d = collectData();
+    const s = '─'.repeat(56);
+    const lines = [
+      'OPENROUTER PROVIDER LISTING APPLICATION',
+      'OpenRouter Provider 入驻申请表',
+      '='.repeat(56), '',
+      `公司名称 Company:          ${d.company_name||'—'}`,
+      `联系邮箱 Email:            ${d.email||'—'}`,
+      '', s, '差异化优势 Differentiators', s,
+      `标签 Tags:                ${d.differentiators.join(', ')||'—'}`,
+      `详情 Details:\n${d.extra_details||'—'}`,
+      `量折扣 Volume Discount:\n${d.volume_discount||'—'}`,
+      `速率限制 Rate Limits:\n${d.rate_limits||'—'}`,
+      '', s, '定价与支付 Pricing & Payment', s,
+      `支持功能 Features:        ${d.pricing_features.join(', ')||'—'}`,
+      `支付方式 Invoicing:\n${d.invoicing||'—'}`,
+      `分词器 Tokenization:\n${d.tokenization||'—'}`,
+      '', s, 'API 端点 Endpoints', s,
+      `/completions URL:          ${d.completions_url||'—'}`,
+      `/chat/completions URL:     ${d.chat_completions_url||'—'}`,
+      `/models URL:               ${d.models_url||'—'}`,
+      '', s, '故障计费 Failure Billing', s,
+      `取消计费 Cancellation:    ${d.cancellation_charge||'—'}`,
+      `引擎错误 Engine failure:  ${d.engine_failure_charge||'—'}`,
+      `错误格式 Error shapes:\n${d.error_shapes||'—'}`,
+      '', s, '隐私与数据 Privacy & Data', s,
+      `隐私政策 Privacy URL:     ${d.privacy_url||'—'}`,
+      `数据政策 Data Policy:\n${d.data_policy||'—'}`,
+      '', s, '参数支持 Parameter Support', s,
+      `必需参数 Required:        ${d.required_params.join(', ')||'—'}`,
+      `可选参数 Optional:        ${d.optional_params.join(', ')||'—'}`,
+      '', s, '高级功能 Advanced', s,
+      `工具调用 Tool calling:\n${d.tool_calling||'—'}`,
+      `结构化输出 Structured outputs:\n${d.structured_outputs||'—'}`,
+      `额外参数 Extra params:\n${d.extra_params||'—'}`,
+      `多模态 Multimodal:\n${d.multimodal||'—'}`,
+      '', s, '地理位置与确认', s,
+      `推理节点 Inference location: ${d.inference_location||'—'}`,
+      `最终确认 Confirmed:          ${d.final_notes_confirmed ? '✓ YES' : '✗ NOT YET'}`,
+      '', `提交时间 Submitted: ${d.submitted_at}`,
+    ];
+    const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
+    download(blob, `openrouter_listing_${(d.company_name||'submission').replace(/\s+/g,'_')}.txt`);
+    showToast('✓ 文本文件已导出');
+  }
+
+  function download(blob, filename) {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
+  function clearForm() {
+    if (!confirm('确认清空所有已填内容？\nClear all fields?')) return;
+    document.querySelectorAll('input[type=text], input[type=email], textarea').forEach(el => el.value = '');
+    document.querySelectorAll('input[type=checkbox], input[type=radio]').forEach(el => el.checked = false);
+    document.querySelectorAll('.check-item, .radio-item').forEach(el => el.classList.remove('selected'));
+    updateProgress();
+    showToast('表单已清空');
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2600);
+  }
+
+  updateProgress();
+</script>
+</body>
+</html>
