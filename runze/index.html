@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DCDeepTech 重庆总部 · 董事会决策讨论投票单</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #ffffff;
+    --bg2: #f7f6f3;
+    --bg3: #f1efe8;
+    --text: #1a1a18;
+    --text2: #5f5e5a;
+    --text3: #888780;
+    --border: rgba(0,0,0,0.12);
+    --border2: rgba(0,0,0,0.22);
+    --blue50: #e6f1fb; --blue200: #85b7eb; --blue600: #185fa5; --blue800: #0c447c;
+    --teal50: #e1f5ee; --teal200: #5dcaa5; --teal600: #0f6e56; --teal800: #085041;
+    --amber50: #faeeda; --amber200: #ef9f27; --amber600: #854f0b; --amber800: #633806;
+    --red50: #fcebeb; --red200: #f09595; --red600: #a32d2d; --red800: #791f1f;
+    --green50: #eaf3de; --green200: #97c459; --green600: #3b6d11; --green800: #27500a;
+    --purple50: #eeedfe; --purple200: #afa9ec; --purple600: #534ab7; --purple800: #3c3489;
+    --gray50: #f1efe8; --gray200: #b4b2a9; --gray600: #5f5e5a;
+    --radius: 10px;
+    --radius-lg: 14px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1e1e1c; --bg2: #252523; --bg3: #2c2c2a;
+      --text: #f0efe8; --text2: #b4b2a9; --text3: #888780;
+      --border: rgba(255,255,255,0.1); --border2: rgba(255,255,255,0.2);
+      --blue50: #042c53; --blue200: #0c447c; --blue600: #85b7eb; --blue800: #b5d4f4;
+      --teal50: #04342c; --teal200: #085041; --teal600: #5dcaa5; --teal800: #9fe1cb;
+      --amber50: #412402; --amber200: #633806; --amber600: #ef9f27; --amber800: #fac775;
+      --red50: #501313; --red200: #791f1f; --red600: #f09595; --red800: #f7c1c1;
+      --green50: #173404; --green200: #27500a; --green600: #97c459; --green800: #c0dd97;
+      --purple50: #26215c; --purple200: #3c3489; --purple600: #afa9ec; --purple800: #cecbf6;
+      --gray50: #2c2c2a; --gray200: #444441; --gray600: #b4b2a9;
+    }
+  }
+  body {
+    font-family: -apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif;
+    background: var(--bg3);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.6;
+    padding: 0;
+  }
+  .page {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  /* Header */
+  .header {
+    background: var(--bg);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem 2rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .header-left h1 { font-size: 20px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+  .header-left p { font-size: 13px; color: var(--text2); }
+  .header-meta {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .badge {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.3px;
+  }
+  .badge-blue { background: var(--blue50); color: var(--blue800); }
+  .badge-amber { background: var(--amber50); color: var(--amber800); }
+  .badge-teal { background: var(--teal50); color: var(--teal800); }
+  .badge-purple { background: var(--purple50); color: var(--purple800); }
+  .badge-red { background: var(--red50); color: var(--red800); }
+  .badge-green { background: var(--green50); color: var(--green800); }
+
+  /* Links bar */
+  .links-bar {
+    background: var(--bg);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1rem 1.5rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .links-bar span { font-size: 12px; color: var(--text3); font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
+  .links-bar a {
+    font-size: 13px;
+    color: var(--blue600);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border: 0.5px solid var(--border);
+    border-radius: 6px;
+    background: var(--bg2);
+    transition: border-color 0.15s;
+  }
+  .links-bar a:hover { border-color: var(--border2); }
+  .link-arrow { font-size: 10px; }
+
+  /* Section */
+  .section {
+    background: var(--bg);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    margin-bottom: 1.25rem;
+    overflow: hidden;
+  }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 1rem 1.5rem;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.1s;
+  }
+  .section-header:hover { background: var(--bg2); }
+  .section-num {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 500; flex-shrink: 0;
+  }
+  .section-title { font-size: 15px; font-weight: 500; flex: 1; }
+  .section-subtitle { font-size: 12px; color: var(--text2); margin-top: 1px; }
+  .chevron {
+    width: 20px; height: 20px; flex-shrink: 0;
+    color: var(--text3);
+    transition: transform 0.2s;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px;
+  }
+  .chevron.open { transform: rotate(180deg); }
+  .section-body {
+    display: none;
+    padding: 0 1.5rem 1.5rem;
+    border-top: 0.5px solid var(--border);
+  }
+  .section-body.open { display: block; }
+
+  /* Matrix table */
+  .matrix-table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 13px; }
+  .matrix-table th {
+    text-align: left; padding: 8px 12px;
+    background: var(--bg2); font-weight: 500;
+    font-size: 12px; color: var(--text2);
+    border-bottom: 0.5px solid var(--border);
+  }
+  .matrix-table td {
+    padding: 10px 12px;
+    border-bottom: 0.5px solid var(--border);
+    vertical-align: top;
+  }
+  .matrix-table tr:last-child td { border-bottom: none; }
+  .matrix-table tr:hover td { background: var(--bg2); }
+  .level { font-size: 12px; font-weight: 500; padding: 2px 8px; border-radius: 4px; white-space: nowrap; }
+  .level-high { background: var(--green50); color: var(--green800); }
+  .level-very-high { background: var(--blue50); color: var(--blue800); }
+  .level-mid-high { background: var(--teal50); color: var(--teal800); }
+  .level-risk { background: var(--red50); color: var(--red800); }
+
+  /* Priority blocks */
+  .priority-list { margin-top: 1rem; display: flex; flex-direction: column; gap: 12px; }
+  .priority-item {
+    display: flex; gap: 12px; align-items: flex-start;
+    background: var(--bg2); border-radius: var(--radius);
+    padding: 12px 14px;
+    border: 0.5px solid var(--border);
+  }
+  .priority-rank {
+    width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 500; flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .rank-1 { background: var(--amber200); color: var(--amber800); }
+  .rank-2 { background: var(--blue200); color: var(--blue800); }
+  .rank-3 { background: var(--gray200); color: var(--gray600); }
+  .rank-4 { background: var(--purple200); color: var(--purple800); }
+  .priority-content h4 { font-size: 13px; font-weight: 500; margin-bottom: 4px; }
+  .priority-content p { font-size: 12px; color: var(--text2); line-height: 1.5; }
+
+  /* Module cards */
+  .module-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px; margin-top: 1rem; }
+  .module-card {
+    background: var(--bg2); border: 0.5px solid var(--border);
+    border-radius: var(--radius); padding: 12px 14px;
+  }
+  .module-card h4 { font-size: 13px; font-weight: 500; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+  .module-card p { font-size: 12px; color: var(--text2); line-height: 1.5; margin-bottom: 6px; }
+  .module-tag { font-size: 11px; padding: 2px 7px; border-radius: 4px; }
+
+  /* Resolution voting */
+  .resolution-list { display: flex; flex-direction: column; gap: 12px; margin-top: 1rem; }
+  .resolution-item {
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .resolution-top {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 12px 14px;
+    background: var(--bg2);
+  }
+  .res-num {
+    font-size: 11px; font-weight: 500; color: var(--text3);
+    border: 0.5px solid var(--border); border-radius: 4px;
+    padding: 2px 7px; white-space: nowrap; margin-top: 1px; flex-shrink: 0;
+  }
+  .res-text { font-size: 13px; line-height: 1.55; color: var(--text); flex: 1; }
+  .vote-area {
+    display: flex; gap: 8px; padding: 10px 14px;
+    border-top: 0.5px solid var(--border);
+    background: var(--bg);
+    flex-wrap: wrap; align-items: center;
+  }
+  .vote-label { font-size: 11px; color: var(--text3); font-weight: 500; margin-right: 4px; }
+  .vote-btn {
+    font-size: 12px; padding: 5px 14px; border-radius: 6px;
+    border: 0.5px solid var(--border); background: transparent;
+    color: var(--text2); cursor: pointer;
+    transition: background 0.1s, border-color 0.1s, color 0.1s;
+    font-family: inherit;
+  }
+  .vote-btn:hover { border-color: var(--border2); }
+  .vote-btn.active-approve { background: var(--green50); color: var(--green800); border-color: var(--green600); }
+  .vote-btn.active-abstain { background: var(--amber50); color: var(--amber800); border-color: var(--amber600); }
+  .vote-btn.active-reject { background: var(--red50); color: var(--red800); border-color: var(--red600); }
+  .vote-note {
+    font-size: 12px; width: 100%; margin-top: 6px;
+  }
+  .vote-note input {
+    width: 100%; padding: 5px 10px; border-radius: 6px;
+    border: 0.5px solid var(--border); background: var(--bg2);
+    font-size: 12px; color: var(--text); font-family: inherit;
+    outline: none;
+  }
+  .vote-note input:focus { border-color: var(--border2); }
+  .vote-tally { font-size: 11px; color: var(--text3); margin-left: auto; }
+
+  /* Risk list */
+  .risk-list { display: flex; flex-direction: column; gap: 10px; margin-top: 1rem; }
+  .risk-item {
+    display: flex; gap: 10px; align-items: flex-start;
+    padding: 10px 12px; border-radius: var(--radius);
+    border: 0.5px solid var(--border);
+    background: var(--bg2);
+  }
+  .risk-icon {
+    width: 22px; height: 22px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; flex-shrink: 0; font-weight: 500;
+    background: var(--red50); color: var(--red800); margin-top: 1px;
+  }
+  .risk-content h4 { font-size: 13px; font-weight: 500; margin-bottom: 3px; }
+  .risk-content p { font-size: 12px; color: var(--text2); line-height: 1.5; }
+
+  /* Summary bar */
+  .summary-bar {
+    background: var(--bg);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem 1.5rem;
+    margin-top: 1.5rem;
+    display: flex; gap: 2rem; flex-wrap: wrap; align-items: center;
+  }
+  .summary-stat { text-align: center; }
+  .summary-stat .num { font-size: 28px; font-weight: 500; }
+  .summary-stat .lbl { font-size: 11px; color: var(--text3); margin-top: 2px; }
+  .num-approve { color: var(--green600); }
+  .num-abstain { color: var(--amber600); }
+  .num-reject { color: var(--red600); }
+  .num-pending { color: var(--text3); }
+  .summary-divider { width: 0.5px; background: var(--border); height: 48px; }
+  .export-btn {
+    margin-left: auto;
+    font-size: 13px; padding: 8px 18px; border-radius: 8px;
+    border: 0.5px solid var(--border2); background: var(--bg2);
+    color: var(--text2); cursor: pointer; font-family: inherit;
+    transition: background 0.1s;
+  }
+  .export-btn:hover { background: var(--bg3); }
+
+  /* Prose in sections */
+  .prose { font-size: 13px; color: var(--text2); line-height: 1.65; margin-top: 1rem; }
+  .prose strong { color: var(--text); font-weight: 500; }
+
+  /* Divider */
+  .divider { height: 0.5px; background: var(--border); margin: 1rem 0; }
+
+  @media (max-width: 600px) {
+    .header { flex-direction: column; }
+    .module-grid { grid-template-columns: 1fr; }
+    .summary-bar { gap: 1rem; }
+    .summary-divider { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-left">
+      <h1>DCDeepTech 重庆总部 · 润泽项目群<br>董事会决策讨论投票单</h1>
+      <p>机密文件 · 仅限董事会内部使用 · 请在会议结束前完成投票</p>
+    </div>
+    <div class="header-meta">
+      <span class="badge badge-blue">战略评估</span>
+      <span class="badge badge-amber">2025 Q3</span>
+      <span class="badge badge-teal">OCP 适航</span>
+      <span class="badge badge-purple">中新通道</span>
+    </div>
+  </div>
+
+  <!-- Links bar -->
+  <div class="links-bar">
+    <span>关键链接</span>
+    <a href="https://dcdeeptech.com/openrouter/" target="_blank">OpenRouter 算力聚合平台 <span class="link-arrow">↗</span></a>
+    <a href="https://dcdeeptech.com/mpc/" target="_blank">MPC 多方算力协议 <span class="link-arrow">↗</span></a>
+    <a href="https://www.coolestdc.com/" target="_blank">CoolestDC 绿色数据中心 <span class="link-arrow">↗</span></a>
+  </div>
+
+  <!-- Section 1: Executive Summary -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-num badge-blue badge" style="width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;">一</div>
+      <div style="flex:1">
+        <div class="section-title">执行摘要</div>
+        <div class="section-subtitle">润泽定位：三大战略主线的潜在锚点平台</div>
+      </div>
+      <div class="chevron">▼</div>
+    </div>
+    <div class="section-body">
+      <div class="prose">
+        润泽不应被视为单一客户，应被定义为 <strong>DCDeepTech 重庆总部三大战略主线的潜在锚点平台</strong>：
+        <br><br>
+        <strong>主线一</strong> · 验证中国智算供应链的 OCP 全球适航引擎<br>
+        <strong>主线二</strong> · 验证"算力产自重庆，价值消费在新加坡"的跨国 AI Token 合规运营与中新低延迟中台<br>
+        <strong>主线三</strong> · 验证 OCP Ready 设施升级、RWA 与 DC REITs 咨询的金融化路径
+        <br><br>
+        董事会评估核心问题：<strong>润泽是否足以支撑重庆总部在未来 1 年打通标准适航与中新合规通道，在 3 年推进 OCP Ready 设施咨询与资产金融化，并在 5 年帮助总部确立「重庆标准」的区域规则权？</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 2: Evaluation Matrix -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-num badge-blue badge" style="width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;">二</div>
+      <div style="flex:1">
+        <div class="section-title">五维评估矩阵</div>
+        <div class="section-subtitle">战略锚点 · 商业兑现 · 可复制性 · 平台化能力 · 风险暴露</div>
+      </div>
+      <div class="chevron">▼</div>
+    </div>
+    <div class="section-body">
+      <table class="matrix-table">
+        <thead>
+          <tr>
+            <th>评估维度</th>
+            <th>董事会问题</th>
+            <th>判断重点</th>
+            <th>初步结论</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>战略锚点价值</strong></td>
+            <td>是否支撑总部三大战略主线</td>
+            <td>OCP 样板、跨境 Token 样板、资产金融化样板</td>
+            <td><span class="level level-high">高</span></td>
+          </tr>
+          <tr>
+            <td><strong>商业兑现能力</strong></td>
+            <td>是否形成可确认收入与后续复购</td>
+            <td>民航交付、MPC 课题、出海服务、后续运维</td>
+            <td><span class="level level-mid-high">中高</span></td>
+          </tr>
+          <tr>
+            <td><strong>可复制性</strong></td>
+            <td>是否能复制到更多园区/运营商/出海节点</td>
+            <td>模板化 BOM、API 中台、节能模型、资本化方法论</td>
+            <td><span class="level level-high">高</span></td>
+          </tr>
+          <tr>
+            <td><strong>平台化能力</strong></td>
+            <td>是否帮助总部从项目公司升级为平台公司</td>
+            <td>OpenRouter 式聚合能力、OCP Ready 咨询、规则语言输出</td>
+            <td><span class="level level-very-high">很高</span></td>
+          </tr>
+          <tr>
+            <td><strong>风险暴露</strong></td>
+            <td>是否承担过重责任与不确定性</td>
+            <td>交付责任、跨境合规、供应链、补贴兑现、资本叙事透支</td>
+            <td><span class="level level-risk">高风险 需管控</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div style="margin-top: 1.25rem;">
+        <div style="font-size: 12px; font-weight: 500; color: var(--text2); margin-bottom: 8px;">六个具体模块评估</div>
+        <div class="module-grid">
+          <div class="module-card">
+            <h4><span class="badge badge-blue module-tag">OCP 适航</span> 民航算力项目交付</h4>
+            <p>验证 rack/power/cooling/server/GPU 一体化交付能力，形成样板工程</p>
+            <span class="badge badge-amber module-tag">可做 · 须控责任边界</span>
+          </div>
+          <div class="module-card">
+            <h4><span class="badge badge-teal module-tag">节能优先</span> 发改委节能减碳课题</h4>
+            <p>形成 MPC 节能实证、液冷升级逻辑、REITs 估值语言</p>
+            <span class="badge badge-green module-tag">应优先推进</span>
+          </div>
+          <div class="module-card">
+            <h4><span class="badge badge-purple module-tag">国际背书</span> NUS 冷板合作与新加坡对标</h4>
+            <p>将重庆总部与新加坡 OCP 热带数据中心生态"校时"</p>
+            <span class="badge badge-blue module-tag">背书加速器</span>
+          </div>
+          <div class="module-card">
+            <h4><span class="badge badge-amber module-tag">战略最高优</span> 算力出海 / 中新通道 / OpenRouter provider</h4>
+            <p>打通重庆供给、新加坡消费、token 路由与聚合器能力</p>
+            <span class="badge badge-amber module-tag">战略优先级最高</span>
+          </div>
+          <div class="module-card">
+            <h4><span class="badge badge-teal module-tag">场景验证</span> 大华港务 Qwen VL 测试</h4>
+            <p>证明远程推理在港务/工业场景可商用</p>
+            <span class="badge badge-blue module-tag">PoC · 不宜重投入</span>
+          </div>
+          <div class="module-card">
+            <h4><span class="badge badge-purple module-tag">金融化</span> 润泽南方 DC REITs / RWA 研究</h4>
+            <p>为 OCP Ready 设施咨询、资产证券化与融资成本优化做前置研究</p>
+            <span class="badge badge-gray module-tag" style="background:var(--gray50);color:var(--gray600);">中长期期权</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 3: Priority -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-num badge-amber badge" style="width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;">三</div>
+      <div style="flex:1">
+        <div class="section-title">优先级排序</div>
+        <div class="section-subtitle">四大推进序列 · 分阶段落地</div>
+      </div>
+      <div class="chevron">▼</div>
+    </div>
+    <div class="section-body">
+      <div class="priority-list">
+        <div class="priority-item">
+          <div class="priority-rank rank-1">P1</div>
+          <div class="priority-content">
+            <h4>算力出海模块</h4>
+            <p>最贴近总部愿景中心。"算力产自重庆，价值消费在新加坡"，中新专用通道 + 合规中台 + 动态隐私清洗 + 零信任架构 + OpenRouter 聚合器，将中国模型能力输出至东南亚及全球市场。</p>
+          </div>
+        </div>
+        <div class="priority-item">
+          <div class="priority-rank rank-2">P2</div>
+          <div class="priority-content">
+            <h4>发改委节能减碳课题</h4>
+            <p>最适合先落地、最容易形成"工程结果 + 资本结果"双输出。OCP Ready 设施可降低保险费率并提升 REITs 估值，是 MPC 节能实证的关键工程证明器。</p>
+          </div>
+        </div>
+        <div class="priority-item">
+          <div class="priority-rank rank-3">P3</div>
+          <div class="priority-content">
+            <h4>民航算力项目交付</h4>
+            <p>高价值品牌样板，但须定位为 OCP 高密度系统交付样板，重点验证 Sidecar Rack、OPEN-72、双宽机柜、140kW+ 单柜演进能力。</p>
+          </div>
+        </div>
+        <div class="priority-item">
+          <div class="priority-rank rank-4">P4</div>
+          <div class="priority-content">
+            <h4>REITs / RWA 研究</h4>
+            <p>必须保留，但不应吞噬当前经营资源。是总部估值与融资的放大器，不是当期利润中心。底层资产、现金流、升级路径成熟前克制推进节奏。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 4: Resolutions + Voting -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-num badge-teal badge" style="width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;">四</div>
+      <div style="flex:1">
+        <div class="section-title">六项决议 · 实时投票</div>
+        <div class="section-subtitle">赞成 / 弃权 / 反对 · 支持输入意见备注</div>
+      </div>
+      <div class="chevron open">▼</div>
+    </div>
+    <div class="section-body open">
+      <div class="resolution-list" id="resolutions">
+
+        <div class="resolution-item" data-res="1">
+          <div class="resolution-top">
+            <span class="res-num">决议一</span>
+            <div class="res-text">将润泽合作项目群从"客户项目管理"升级为"重庆总部<strong>战略项目群管理</strong>"，考核目标不再局限于订单金额，而以是否支撑 OCP 适航、跨境 Token 中台、资产金融化三大战略主线为核心。</div>
+          </div>
+          <div class="vote-area">
+            <span class="vote-label">投票</span>
+            <button class="vote-btn" onclick="vote(this,1,'approve')">赞成</button>
+            <button class="vote-btn" onclick="vote(this,1,'abstain')">弃权</button>
+            <button class="vote-btn" onclick="vote(this,1,'reject')">反对</button>
+            <span class="vote-tally" id="tally-1">尚未投票</span>
+            <div class="vote-note" style="margin-top:8px"><input type="text" placeholder="输入意见或备注（可选）" id="note-1"></div>
+          </div>
+        </div>
+
+        <div class="resolution-item" data-res="2">
+          <div class="resolution-top">
+            <span class="res-num">决议二</span>
+            <div class="res-text">优先批准推进"<strong>算力出海</strong>"模块：先完成中新通道接口梳理、API 中台样板、权限与合规边界设计、小规模 Qwen VL 场景验证，再决定是否进入 provider 化与市场化阶段。</div>
+          </div>
+          <div class="vote-area">
+            <span class="vote-label">投票</span>
+            <button class="vote-btn" onclick="vote(this,2,'approve')">赞成</button>
+            <button class="vote-btn" onclick="vote(this,2,'abstain')">弃权</button>
+            <button class="vote-btn" onclick="vote(this,2,'reject')">反对</button>
+            <span class="vote-tally" id="tally-2">尚未投票</span>
+            <div class="vote-note"><input type="text" placeholder="输入意见或备注（可选）" id="note-2"></div>
+          </div>
+        </div>
+
+        <div class="resolution-item" data-res="3">
+          <div class="resolution-top">
+            <span class="res-num">决议三</span>
+            <div class="res-text">批准将发改委节能减碳课题列为总部<strong>一级样板项目</strong>，要求同时输出工程指标（PUE、节电量、液冷路径）与资本市场语言（OCP Ready、AI Ready、REITs 估值优化逻辑）。</div>
+          </div>
+          <div class="vote-area">
+            <span class="vote-label">投票</span>
+            <button class="vote-btn" onclick="vote(this,3,'approve')">赞成</button>
+            <button class="vote-btn" onclick="vote(this,3,'abstain')">弃权</button>
+            <button class="vote-btn" onclick="vote(this,3,'reject')">反对</button>
+            <span class="vote-tally" id="tally-3">尚未投票</span>
+            <div class="vote-note"><input type="text" placeholder="输入意见或备注（可选）" id="note-3"></div>
+          </div>
+        </div>
+
+        <div class="resolution-item" data-res="4">
+          <div class="resolution-top">
+            <span class="res-num">决议四</span>
+            <div class="res-text">支持参与民航算力项目，但<strong>不得在责任边界不清的情况下承担事实总包责任</strong>。AxiomDeta 制造交付责任、DCDeepTech 咨询/控制/集成责任必须在合同与验收中清晰分层。</div>
+          </div>
+          <div class="vote-area">
+            <span class="vote-label">投票</span>
+            <button class="vote-btn" onclick="vote(this,4,'approve')">赞成</button>
+            <button class="vote-btn" onclick="vote(this,4,'abstain')">弃权</button>
+            <button class="vote-btn" onclick="vote(this,4,'reject')">反对</button>
+            <span class="vote-tally" id="tally-4">尚未投票</span>
+            <div class="vote-note"><input type="text" placeholder="输入意见或备注（可选）" id="note-4"></div>
+          </div>
+        </div>
+
+        <div class="resolution-item" data-res="5">
+          <div class="resolution-top">
+            <span class="res-num">决议五</span>
+            <div class="res-text">同意将润泽南方 DC REITs / 新加坡 RWA-DC REITs 研究纳入总部<strong>战略预研</strong>，作为未来融资与估值叙事储备；但在底层资产、现金流、升级路径未成熟前，不作为年度经营 KPI 核心项目。</div>
+          </div>
+          <div class="vote-area">
+            <span class="vote-label">投票</span>
+            <button class="vote-btn" onclick="vote(this,5,'approve')">赞成</button>
+            <button class="vote-btn" onclick="vote(this,5,'abstain')">弃权</button>
+            <button class="vote-btn" onclick="vote(this,5,'reject')">反对</button>
+            <span class="vote-tally" id="tally-5">尚未投票</span>
+            <div class="vote-note"><input type="text" placeholder="输入意见或备注（可选）" id="note-5"></div>
+          </div>
+        </div>
+
+        <div class="resolution-item" data-res="6">
+          <div class="resolution-top">
+            <span class="res-num">决议六</span>
+            <div class="res-text">要求管理层在下一阶段提交<strong>五份配套材料</strong>：项目优先级路线图、责任边界图、跨境合规数据流图、预算与回款测算表、样板工程沉淀清单。只有形成模板，润泽才符合总部"输出全球通用技术语言"的愿景。</div>
+          </div>
+          <div class="vote-area">
+            <span class="vote-label">投票</span>
+            <button class="vote-btn" onclick="vote(this,6,'approve')">赞成</button>
+            <button class="vote-btn" onclick="vote(this,6,'abstain')">弃权</button>
+            <button class="vote-btn" onclick="vote(this,6,'reject')">反对</button>
+            <span class="vote-tally" id="tally-6">尚未投票</span>
+            <div class="vote-note"><input type="text" placeholder="输入意见或备注（可选）" id="note-6"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 5: Risks -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-num badge-red badge" style="width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;">五</div>
+      <div style="flex:1">
+        <div class="section-title">七大风险清单</div>
+        <div class="section-subtitle">愿景级风险 · 非普通项目管理风险</div>
+      </div>
+      <div class="chevron">▼</div>
+    </div>
+    <div class="section-body">
+      <div class="risk-list">
+        <div class="risk-item">
+          <div class="risk-icon">R1</div>
+          <div class="risk-content">
+            <h4>平台叙事空心化风险</h4>
+            <p>OCP 适航、OpenRouter provider、跨境 Token、中新通道、RWA 若停留在 PPT，总部会被认为是概念型公司，对长期融资与外部信任伤害最大。</p>
+          </div>
+        </div>
+        <div class="risk-item">
+          <div class="risk-icon">R2</div>
+          <div class="risk-content">
+            <h4>责任错位风险</h4>
+            <p>最危险情况：DCDeepTech 拿平台溢价，实际却在合同里承担总包级责任。"收益像顾问，责任像总包"结构必须避免。</p>
+          </div>
+        </div>
+        <div class="risk-item">
+          <div class="risk-icon">R3</div>
+          <div class="risk-content">
+            <h4>跨境合规风险</h4>
+            <p>数据分类、PII masking、零信任边界、权限审计、接口责任分层若不到位，"算力产自重庆，价值消费在新加坡"的模式将停在叙事层。</p>
+          </div>
+        </div>
+        <div class="risk-item">
+          <div class="risk-icon">R4</div>
+          <div class="risk-content">
+            <h4>供应链与交付风险</h4>
+            <p>OCP、Sidecar Rack、OPEN-72、液冷、高压直流、GPU 模块化交付系统工程复杂度高，极易在各环节出现责任扯皮。</p>
+          </div>
+        </div>
+        <div class="risk-item">
+          <div class="risk-icon">R5</div>
+          <div class="risk-content">
+            <h4>补贴与现金流风险</h4>
+            <p>JIDF、发改课题、联合试点、跨境 PoC 都存在"先投入、后确认"问题。每个模块必须提交现金流测算，而非只看合同额或政策预期。</p>
+          </div>
+        </div>
+        <div class="risk-item">
+          <div class="risk-icon">R6</div>
+          <div class="risk-content">
+            <h4>资本故事透支风险</h4>
+            <p>RWA、GNFT、miniGPU、DC REITs 概念若在底层设施、收入合同、资产边界、运维数据不成熟时过早强调，会透支市场信任。</p>
+          </div>
+        </div>
+        <div class="risk-item">
+          <div class="risk-icon">R7</div>
+          <div class="risk-content">
+            <h4>战略分散风险</h4>
+            <p>真正的风险不是项目少，而是总部资源被过早摊薄。董事会必须坚持两条主线：<strong>绿色智算升级</strong> 与 <strong>跨境算力服务</strong>，其他事项都应服务于这两条主线。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Summary Bar -->
+  <div class="summary-bar" id="summary-bar">
+    <div class="summary-stat">
+      <div class="num num-approve" id="sum-approve">0</div>
+      <div class="lbl">赞成</div>
+    </div>
+    <div class="summary-divider"></div>
+    <div class="summary-stat">
+      <div class="num num-abstain" id="sum-abstain">0</div>
+      <div class="lbl">弃权</div>
+    </div>
+    <div class="summary-divider"></div>
+    <div class="summary-stat">
+      <div class="num num-reject" id="sum-reject">0</div>
+      <div class="lbl">反对</div>
+    </div>
+    <div class="summary-divider"></div>
+    <div class="summary-stat">
+      <div class="num num-pending" id="sum-pending">6</div>
+      <div class="lbl">待决</div>
+    </div>
+    <button class="export-btn" onclick="exportResults()">导出投票结果 ↗</button>
+  </div>
+
+</div>
+
+<script>
+  const votes = {};
+
+  function toggle(header) {
+    const body = header.nextElementSibling;
+    const chevron = header.querySelector('.chevron');
+    body.classList.toggle('open');
+    chevron.classList.toggle('open');
+  }
+
+  function vote(btn, res, type) {
+    const area = btn.closest('.vote-area');
+    const btns = area.querySelectorAll('.vote-btn');
+    btns.forEach(b => b.className = 'vote-btn');
+
+    if (votes[res] === type) {
+      delete votes[res];
+      document.getElementById('tally-' + res).textContent = '尚未投票';
+    } else {
+      votes[res] = type;
+      const cls = type === 'approve' ? 'active-approve' : type === 'abstain' ? 'active-abstain' : 'active-reject';
+      btn.classList.add(cls);
+      const label = type === 'approve' ? '已赞成' : type === 'abstain' ? '已弃权' : '已反对';
+      document.getElementById('tally-' + res).textContent = label;
+    }
+    updateSummary();
+  }
+
+  function updateSummary() {
+    let approve = 0, abstain = 0, reject = 0, pending = 0;
+    for (let i = 1; i <= 6; i++) {
+      if (!votes[i]) pending++;
+      else if (votes[i] === 'approve') approve++;
+      else if (votes[i] === 'abstain') abstain++;
+      else reject++;
+    }
+    document.getElementById('sum-approve').textContent = approve;
+    document.getElementById('sum-abstain').textContent = abstain;
+    document.getElementById('sum-reject').textContent = reject;
+    document.getElementById('sum-pending').textContent = pending;
+  }
+
+  function exportResults() {
+    const resLabels = ['升级为战略项目群管理','优先推进算力出海模块','发改委课题列一级样板','民航算力项目分层责任','REITs/RWA 纳入战略预研','要求五份配套材料'];
+    const voteLabels = { approve: '赞成', abstain: '弃权', reject: '反对' };
+    let text = 'DCDeepTech 重庆总部 · 润泽项目群董事会投票结果\n';
+    text += '=' .repeat(50) + '\n\n';
+    for (let i = 1; i <= 6; i++) {
+      const v = votes[i] ? voteLabels[votes[i]] : '（未投票）';
+      const note = document.getElementById('note-' + i).value;
+      text += `决议${i}：${resLabels[i-1]}\n`;
+      text += `  投票：${v}\n`;
+      if (note) text += `  备注：${note}\n`;
+      text += '\n';
+    }
+    text += `\n汇总：赞成 ${document.getElementById('sum-approve').textContent} | 弃权 ${document.getElementById('sum-abstain').textContent} | 反对 ${document.getElementById('sum-reject').textContent} | 待决 ${document.getElementById('sum-pending').textContent}`;
+    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'DCDeepTech_董事会投票结果.txt';
+    a.click(); URL.revokeObjectURL(url);
+  }
+</script>
+</body>
+</html>
