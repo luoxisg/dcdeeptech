@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DCDeepTech — One Platform for AI Compute Export & OCP Infrastructure</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,300;400;600;700;800&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #050810;
+  --bg1:      #080d18;
+  --bg2:      #0c1424;
+  --bg3:      #101c30;
+  --border:   rgba(99,179,255,0.10);
+  --border2:  rgba(99,179,255,0.18);
+  --blue:     #4da6ff;
+  --blue2:    #1a6fff;
+  --cyan:     #00d4ff;
+  --green:    #00e5a0;
+  --orange:   #ff8040;
+  --red:      #ff4d6a;
+  --text:     #ddeeff;
+  --text2:    #6a8faf;
+  --text3:    #2a4060;
+  --mono:     'IBM Plex Mono', monospace;
+  --sans:     'Bricolage Grotesque', sans-serif;
+  --zh:       'Noto Sans SC', 'Bricolage Grotesque', sans-serif;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;font-size:15px}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);overflow-x:hidden;cursor:none}
+body.zh{font-family:var(--zh)}
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--blue2);border-radius:2px}
+
+/* CURSOR */
+#cur{position:fixed;width:8px;height:8px;background:var(--cyan);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .25s,height .25s,background .25s;mix-blend-mode:screen}
+#cur-r{position:fixed;width:32px;height:32px;border:1px solid rgba(0,212,255,.4);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width .25s,height .25s}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:800;height:56px;display:flex;align-items:center;padding:0 32px;gap:32px;background:rgba(5,8,16,.88);backdrop-filter:blur(24px);border-bottom:1px solid var(--border)}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0}
+.nav-logo-icon{width:28px;height:28px}
+.nav-logo-text{font-size:15px;font-weight:800;color:var(--text);letter-spacing:-.01em}
+.nav-logo-text em{color:var(--blue);font-style:normal}
+.nav-tabs{display:flex;gap:2px;flex:1}
+.nav-tab{padding:6px 14px;color:var(--text2);font-size:13px;font-weight:500;border-radius:6px;cursor:none;transition:all .18s;border:none;background:none;font-family:inherit;letter-spacing:.01em}
+.nav-tab:hover,.nav-tab.active{color:var(--text);background:var(--bg3)}
+.nav-right{display:flex;align-items:center;gap:8px;margin-left:auto}
+.lang-pill{display:flex;background:var(--bg2);border:1px solid var(--border);border-radius:6px;overflow:hidden}
+.lpb{padding:5px 12px;font-size:11px;font-weight:700;letter-spacing:.06em;cursor:none;border:none;background:none;color:var(--text2);font-family:var(--mono);transition:all .18s}
+.lpb.on{background:var(--blue2);color:#fff}
+.nav-cta{padding:7px 18px;background:var(--blue2);color:#fff;font-size:12px;font-weight:700;letter-spacing:.04em;border-radius:6px;border:none;cursor:none;font-family:inherit;transition:all .2s}
+.nav-cta:hover{background:var(--blue);transform:translateY(-1px)}
+
+/* SECTIONS / TABS */
+.page-section{display:none;padding-top:56px;min-height:100vh}
+.page-section.show{display:block}
+
+/* ━━━ HOME ━━━ */
+.hero{padding:80px 32px 60px;max-width:1100px;margin:0 auto}
+.hero-kicker{display:inline-flex;align-items:center;gap:8px;padding:4px 14px 4px 8px;border:1px solid var(--border2);border-radius:100px;font-family:var(--mono);font-size:11px;color:var(--blue);letter-spacing:.08em;margin-bottom:32px}
+.hero-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:blink 2s ease infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.hero h1{font-size:clamp(38px,5.5vw,72px);font-weight:800;line-height:1.04;letter-spacing:-.03em;margin-bottom:20px;max-width:820px}
+.hero h1 .hl{color:var(--blue)}
+.hero h1 .hl2{color:var(--green)}
+.zh .hero h1{font-size:clamp(32px,4.5vw,60px);line-height:1.2;letter-spacing:-.01em}
+.hero-sub{font-size:17px;color:var(--text2);max-width:580px;line-height:1.72;margin-bottom:36px;font-weight:300}
+.zh .hero-sub{font-size:15px}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 22px;border-radius:7px;font-size:13px;font-weight:700;letter-spacing:.03em;cursor:none;border:none;font-family:inherit;transition:all .2s;text-decoration:none}
+.btn-blue{background:var(--blue2);color:#fff}
+.btn-blue:hover{background:var(--blue);transform:translateY(-2px);box-shadow:0 6px 24px rgba(26,111,255,.4)}
+.btn-outline{background:none;border:1px solid var(--border2);color:var(--text2)}
+.btn-outline:hover{border-color:var(--cyan);color:var(--cyan);transform:translateY(-2px)}
+.btn-green{background:rgba(0,229,160,.12);border:1px solid rgba(0,229,160,.3);color:var(--green)}
+.btn-green:hover{background:rgba(0,229,160,.2);transform:translateY(-2px)}
+
+/* STATS BAR */
+.stats-bar{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin:0 0 0 0}
+.stat{padding:20px 32px;border-right:1px solid var(--border)}
+.stat:last-child{border-right:none}
+.stat-n{font-family:var(--mono);font-size:28px;font-weight:700;color:var(--blue);line-height:1}
+.stat-l{font-size:12px;color:var(--text2);margin-top:4px}
+
+/* TWO PLATFORM CARDS */
+.platform-split{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border);margin:40px 0}
+.plat-card{background:var(--bg1);padding:40px;position:relative;overflow:hidden;transition:background .3s}
+.plat-card:hover{background:var(--bg2)}
+.plat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--blue2);transform:scaleX(0);transform-origin:left;transition:transform .5s}
+.plat-card.g::before{background:var(--green)}
+.plat-card:hover::before{transform:scaleX(1)}
+.plat-num{font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:.12em;margin-bottom:20px}
+.plat-title{font-size:22px;font-weight:800;margin-bottom:12px;letter-spacing:-.02em}
+.zh .plat-title{font-size:19px}
+.plat-title .a{color:var(--blue)}
+.plat-title .b{color:var(--green)}
+.plat-desc{font-size:14px;color:var(--text2);line-height:1.75;margin-bottom:24px;font-weight:300}
+.chip-row{display:flex;flex-wrap:wrap;gap:6px}
+.chip{padding:3px 10px;border:1px solid var(--border2);border-radius:4px;font-family:var(--mono);font-size:10px;color:var(--text2);letter-spacing:.04em;transition:all .2s}
+.chip:hover{border-color:var(--blue);color:var(--blue)}
+.plat-card.g .chip:hover{border-color:var(--green);color:var(--green)}
+
+/* ━━━ MODELS PAGE ━━━ */
+.page-inner{max-width:1100px;margin:0 auto;padding:40px 32px}
+.page-header{margin-bottom:32px}
+.page-header h2{font-size:clamp(24px,3vw,38px);font-weight:800;letter-spacing:-.025em;margin-bottom:8px}
+.zh .page-header h2{font-size:clamp(20px,2.5vw,32px);line-height:1.3}
+.page-header p{font-size:14px;color:var(--text2);line-height:1.7;max-width:560px;font-weight:300}
+.filter-row{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.filter-btn{padding:5px 14px;border-radius:100px;border:1px solid var(--border);background:none;color:var(--text2);font-size:12px;font-weight:600;cursor:none;font-family:inherit;transition:all .18s;letter-spacing:.02em}
+.filter-btn.on,.filter-btn:hover{background:var(--bg3);border-color:var(--border2);color:var(--text)}
+.search-box{display:flex;align-items:center;gap:8px;background:var(--bg2);border:1px solid var(--border);border-radius:7px;padding:8px 14px;margin-bottom:20px}
+.search-box input{background:none;border:none;color:var(--text);font-family:var(--mono);font-size:13px;outline:none;flex:1}
+.search-box input::placeholder{color:var(--text3)}
+
+/* MODEL TABLE */
+.model-table{width:100%;border-collapse:collapse;border:1px solid var(--border)}
+.model-table th{padding:10px 16px;text-align:left;font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--text3);border-bottom:1px solid var(--border);background:var(--bg1);font-weight:500}
+.model-table td{padding:14px 16px;border-bottom:1px solid rgba(99,179,255,.05);font-size:13px;vertical-align:middle}
+.model-table tr:hover td{background:var(--bg2)}
+.model-table tr:last-child td{border-bottom:none}
+.model-name{font-weight:700;color:var(--text)}
+.model-id{font-family:var(--mono);font-size:11px;color:var(--text2);margin-top:2px}
+.model-badge{display:inline-block;padding:2px 8px;border-radius:3px;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.06em;margin-left:6px}
+.badge-new{background:rgba(0,229,160,.12);color:var(--green);border:1px solid rgba(0,229,160,.3)}
+.badge-free{background:rgba(77,166,255,.12);color:var(--blue);border:1px solid rgba(77,166,255,.3)}
+.badge-fast{background:rgba(255,128,64,.12);color:var(--orange);border:1px solid rgba(255,128,64,.3)}
+.price-cell{font-family:var(--mono);font-size:12px;color:var(--text)}
+.price-free{color:var(--green);font-weight:700}
+.ctx-cell{font-family:var(--mono);font-size:11px;color:var(--text2)}
+.lat-bar{width:60px;height:4px;background:var(--bg3);border-radius:2px;overflow:hidden;display:inline-block}
+.lat-fill{height:100%;border-radius:2px}
+.provider-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px}
+
+/* CODE BLOCK */
+.code-block{background:var(--bg1);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin:20px 0}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--border);background:var(--bg2)}
+.code-lang{font-family:var(--mono);font-size:10px;color:var(--text2);letter-spacing:.08em}
+.code-copy{font-family:var(--mono);font-size:10px;color:var(--blue);cursor:none;border:none;background:none;letter-spacing:.04em;transition:color .2s}
+.code-copy:hover{color:var(--cyan)}
+.code-body{padding:20px;overflow-x:auto}
+.code-body pre{font-family:var(--mono);font-size:12px;line-height:1.8;color:#8ab4d8}
+.kw{color:#4da6ff}.str{color:#00e5a0}.cm{color:#2a4060}.fn{color:#ff8040}.num{color:#e0c070}.var{color:#c0d8f0}
+
+/* PROVIDERS */
+.provider-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin-top:24px}
+.prov-card{background:var(--bg1);padding:28px;transition:background .3s;position:relative}
+.prov-card:hover{background:var(--bg2)}
+.prov-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px}
+.prov-name{font-size:16px;font-weight:800;letter-spacing:-.01em}
+.prov-region{font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:.08em;margin-top:2px}
+.prov-status{display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:10px}
+.status-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:blink 3s ease infinite}
+.prov-stat-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.prov-stat{background:var(--bg2);padding:10px 12px;border-radius:5px}
+.prov-stat-n{font-family:var(--mono);font-size:14px;font-weight:700;color:var(--text)}
+.prov-stat-l{font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:.06em;margin-top:2px}
+.prov-models{font-size:12px;color:var(--text2);line-height:1.6}
+.prov-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:10px}
+.prov-tag{padding:2px 8px;border:1px solid var(--border);border-radius:3px;font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:.04em}
+
+/* PRICING */
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:24px}
+.price-card{background:var(--bg1);border:1px solid var(--border);border-radius:10px;padding:32px;position:relative;overflow:hidden;transition:border-color .3s,transform .3s}
+.price-card:hover{border-color:var(--border2);transform:translateY(-4px)}
+.price-card.featured{border-color:rgba(77,166,255,.4);background:var(--bg2)}
+.featured-badge{position:absolute;top:16px;right:16px;padding:3px 10px;background:var(--blue2);color:#fff;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.06em;border-radius:100px}
+.plan-name{font-size:13px;font-weight:700;letter-spacing:.04em;color:var(--text2);text-transform:uppercase;margin-bottom:16px;font-family:var(--mono)}
+.plan-price{font-family:var(--mono);font-size:36px;font-weight:700;color:var(--text);line-height:1;margin-bottom:4px}
+.plan-price sub{font-size:14px;color:var(--text2);font-weight:400}
+.plan-unit{font-size:12px;color:var(--text3);margin-bottom:24px;font-family:var(--mono)}
+.plan-divider{height:1px;background:var(--border);margin-bottom:20px}
+.plan-features{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
+.plan-features li{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--text2);line-height:1.5}
+.pf-icon{color:var(--green);flex-shrink:0;font-size:12px;margin-top:1px}
+.pf-icon.no{color:var(--text3)}
+.token-table{width:100%;border-collapse:collapse;margin-top:24px;border:1px solid var(--border)}
+.token-table th{padding:8px 14px;font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--text3);border-bottom:1px solid var(--border);text-align:left;background:var(--bg1)}
+.token-table td{padding:12px 14px;font-family:var(--mono);font-size:12px;border-bottom:1px solid rgba(99,179,255,.05);vertical-align:middle}
+.token-table tr:last-child td{border-bottom:none}
+.token-table tr:hover td{background:var(--bg2)}
+
+/* OCP PAGE */
+.ocp-spec-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:24px}
+.spec-card{background:var(--bg1);border:1px solid var(--border);padding:28px;border-radius:8px;transition:all .3s}
+.spec-card:hover{border-color:rgba(0,229,160,.3);background:var(--bg2)}
+.spec-icon{width:40px;height:40px;margin-bottom:16px}
+.spec-title{font-size:16px;font-weight:800;margin-bottom:8px;letter-spacing:-.01em}
+.spec-desc{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:16px;font-weight:300}
+.spec-list{list-style:none;display:flex;flex-direction:column;gap:6px}
+.spec-list li{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;color:var(--text2)}
+.spec-list li::before{content:'→';color:var(--green);flex-shrink:0}
+.readiness-table{width:100%;border-collapse:collapse;border:1px solid var(--border);margin-top:24px}
+.readiness-table th{padding:10px 14px;font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--text3);border-bottom:1px solid var(--border);text-align:left;background:var(--bg1)}
+.readiness-table td{padding:12px 14px;font-size:13px;border-bottom:1px solid rgba(99,179,255,.05)}
+.readiness-table tr:last-child td{border-bottom:none}
+.readiness-table tr:hover td{background:var(--bg2)}
+.rt-check{color:var(--green);font-weight:700;font-family:var(--mono)}
+.rt-warn{color:var(--orange);font-weight:700;font-family:var(--mono)}
+.rt-no{color:var(--red);font-weight:700;font-family:var(--mono)}
+.progress-row{display:flex;align-items:center;gap:10px}
+.progress-bar{flex:1;height:4px;background:var(--bg3);border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--blue2),var(--cyan))}
+.progress-fill.g{background:linear-gradient(90deg,var(--green),#00b8a0)}
+.progress-fill.o{background:linear-gradient(90deg,var(--orange),#ffb060)}
+.progress-pct{font-family:var(--mono);font-size:11px;color:var(--text2);width:36px;text-align:right}
+
+/* SOLUTIONS */
+.sol-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:24px}
+.sol-card{background:var(--bg1);border:1px solid var(--border);padding:28px;border-radius:8px;position:relative;transition:all .3s}
+.sol-card:hover{border-color:var(--border2);background:var(--bg2);transform:translateY(-3px)}
+.sol-num{position:absolute;top:20px;right:20px;font-family:var(--mono);font-size:40px;font-weight:700;color:var(--bg3);line-height:1}
+.sol-tag{display:inline-block;padding:3px 10px;border-radius:100px;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.08em;margin-bottom:14px}
+.tag-port{background:rgba(77,166,255,.1);color:var(--blue);border:1px solid rgba(77,166,255,.25)}
+.tag-ent{background:rgba(0,229,160,.1);color:var(--green);border:1px solid rgba(0,229,160,.25)}
+.tag-dc{background:rgba(255,128,64,.1);color:var(--orange);border:1px solid rgba(255,128,64,.25)}
+.tag-gov{background:rgba(255,77,106,.1);color:var(--red);border:1px solid rgba(255,77,106,.25)}
+.sol-title{font-size:18px;font-weight:800;margin-bottom:10px;letter-spacing:-.02em}
+.sol-desc{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:18px;font-weight:300}
+.sol-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.sol-metric{background:var(--bg2);padding:10px;border-radius:5px;text-align:center}
+.sol-metric-n{font-family:var(--mono);font-size:16px;font-weight:700;color:var(--text)}
+.sol-metric-l{font-size:10px;color:var(--text3);margin-top:2px}
+
+/* DOCS */
+.docs-layout{display:grid;grid-template-columns:220px 1fr;gap:32px;max-width:1100px;margin:0 auto;padding:40px 32px}
+.docs-nav{position:sticky;top:72px;height:fit-content}
+.docs-nav-section{margin-bottom:20px}
+.docs-nav-label{font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--text3);text-transform:uppercase;margin-bottom:8px}
+.docs-nav-link{display:block;padding:6px 12px;font-size:13px;color:var(--text2);border-radius:5px;cursor:none;transition:all .18s;border-left:2px solid transparent;margin-bottom:2px;text-decoration:none}
+.docs-nav-link:hover,.docs-nav-link.active{color:var(--text);background:var(--bg2);border-left-color:var(--blue)}
+.docs-content h3{font-size:20px;font-weight:800;letter-spacing:-.02em;margin-bottom:12px;margin-top:32px}
+.docs-content h3:first-child{margin-top:0}
+.docs-content p{font-size:14px;color:var(--text2);line-height:1.78;margin-bottom:16px;font-weight:300}
+.docs-content .note{background:rgba(77,166,255,.07);border:1px solid rgba(77,166,255,.2);border-radius:6px;padding:14px 16px;font-size:13px;color:var(--text2);line-height:1.65;margin:16px 0}
+.docs-content .note strong{color:var(--blue)}
+.endpoint-row{display:flex;align-items:center;gap:10px;background:var(--bg1);border:1px solid var(--border);border-radius:6px;padding:12px 16px;margin-bottom:8px;font-family:var(--mono);font-size:12px}
+.method{padding:3px 9px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.04em}
+.method.post{background:rgba(0,229,160,.15);color:var(--green)}
+.method.get{background:rgba(77,166,255,.15);color:var(--blue)}
+.ep-path{color:var(--text);flex:1}
+.ep-desc{color:var(--text3);font-size:11px}
+.param-table{width:100%;border-collapse:collapse;border:1px solid var(--border);margin-bottom:20px;border-radius:6px;overflow:hidden}
+.param-table th{padding:8px 14px;font-family:var(--mono);font-size:9px;letter-spacing:.08em;color:var(--text3);border-bottom:1px solid var(--border);background:var(--bg1);text-align:left}
+.param-table td{padding:10px 14px;font-size:12px;border-bottom:1px solid rgba(99,179,255,.05)}
+.param-table tr:last-child td{border-bottom:none}
+.param-name{font-family:var(--mono);color:var(--cyan)}
+.param-type{font-family:var(--mono);font-size:10px;color:var(--orange)}
+.param-req{font-family:var(--mono);font-size:9px;color:var(--green)}
+.param-desc{color:var(--text2);font-size:12px}
+
+/* DIVIDER */
+.section-divider{height:1px;background:var(--border);margin:48px 0}
+
+/* FLOW DIAGRAM */
+.flow-wrap{overflow-x:auto;margin:24px 0}
+.flow-svg-container{min-width:700px}
+
+/* RESPONSIVE */
+@media(max-width:860px){
+  nav{padding:0 16px;gap:12px}
+  .nav-tabs .nav-tab:nth-child(n+4){display:none}
+  .page-inner,.hero,.docs-layout{padding:24px 16px}
+  .stats-bar{grid-template-columns:1fr 1fr}
+  .platform-split{grid-template-columns:1fr}
+  .provider-grid{grid-template-columns:1fr}
+  .pricing-grid{grid-template-columns:1fr}
+  .ocp-spec-grid{grid-template-columns:1fr}
+  .sol-grid{grid-template-columns:1fr}
+  .docs-layout{grid-template-columns:1fr}
+  .docs-nav{display:none}
+}
+
+/* ANIMATIONS */
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .6s,transform .6s}
+.reveal.vis{opacity:1;transform:translateY(0)}
+
+/* FOOTER */
+.footer{background:var(--bg1);border-top:1px solid var(--border);padding:32px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.footer-copy{font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:.04em}
+.footer-links{display:flex;gap:20px}
+.footer-links a{font-family:var(--mono);font-size:10px;color:var(--text3);text-decoration:none;letter-spacing:.04em;transition:color .2s;cursor:none}
+.footer-links a:hover{color:var(--blue)}
+.uptime-badge{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;color:var(--green)}
+
+/* LIVE INDICATOR */
+.live-row{display:flex;align-items:center;gap:16px;padding:10px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;margin-bottom:20px;font-family:var(--mono);font-size:11px;color:var(--text2);flex-wrap:wrap}
+.live-item{display:flex;align-items:center;gap:6px}
+.live-dot{width:5px;height:5px;border-radius:50%;animation:blink 2s ease infinite}
+.live-dot.g{background:var(--green)}
+.live-dot.o{background:var(--orange)}
+.live-dot.b{background:var(--blue)}
+
+/* TABS within page */
+.inner-tabs{display:flex;gap:2px;border-bottom:1px solid var(--border);margin-bottom:24px}
+.inner-tab{padding:8px 18px;font-size:13px;font-weight:600;color:var(--text2);cursor:none;border:none;background:none;font-family:inherit;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .18s;letter-spacing:.01em}
+.inner-tab.on,.inner-tab:hover{color:var(--text);border-bottom-color:var(--blue)}
+
+/* COMPACT */
+.section-label{font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--blue);text-transform:uppercase;margin-bottom:8px}
+.inline-code{font-family:var(--mono);font-size:12px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:1px 7px;color:var(--cyan)}
+</style>
+</head>
+<body>
+
+<div id="cur"></div>
+<div id="cur-r"></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#" onclick="showPage('home')">
+    <svg class="nav-logo-icon" viewBox="0 0 28 28" fill="none">
+      <rect x="1" y="1" width="11" height="11" stroke="#1a6fff" stroke-width="1.2"/>
+      <rect x="16" y="1" width="11" height="11" fill="#1a6fff" opacity=".7"/>
+      <rect x="1" y="16" width="11" height="11" fill="#4da6ff" opacity=".35"/>
+      <rect x="16" y="16" width="11" height="11" stroke="#00e5a0" stroke-width="1.2"/>
+      <line x1="12" y1="6.5" x2="16" y2="6.5" stroke="#4da6ff" stroke-width="1"/>
+      <line x1="6.5" y1="12" x2="6.5" y2="16" stroke="#4da6ff" stroke-width="1"/>
+      <line x1="21.5" y1="12" x2="21.5" y2="16" stroke="#00e5a0" stroke-width="1"/>
+      <line x1="12" y1="21.5" x2="16" y2="21.5" stroke="#4da6ff" stroke-width="1"/>
+    </svg>
+    <span class="nav-logo-text">DC<em>Deep</em>Tech</span>
+  </a>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showPage('home')"><span data-en>Platform</span><span data-zh>平台</span></button>
+    <button class="nav-tab" onclick="showPage('models')"><span data-en>Models</span><span data-zh>模型</span></button>
+    <button class="nav-tab" onclick="showPage('providers')"><span data-en>Providers</span><span data-zh>供应商</span></button>
+    <button class="nav-tab" onclick="showPage('ocp')">OCP</button>
+    <button class="nav-tab" onclick="showPage('solutions')"><span data-en>Solutions</span><span data-zh>解决方案</span></button>
+    <button class="nav-tab" onclick="showPage('pricing')"><span data-en>Pricing</span><span data-zh>定价</span></button>
+    <button class="nav-tab" onclick="showPage('docs')">Docs</button>
+  </div>
+  <div class="nav-right">
+    <div class="lang-pill">
+      <button class="lpb on" id="btnEn" onclick="setLang('en')">EN</button>
+      <button class="lpb" id="btnZh" onclick="setLang('zh')">中文</button>
+    </div>
+    <button class="nav-cta"><span data-en>Get API Key</span><span data-zh>获取 API 密钥</span></button>
+  </div>
+</nav>
+
+<!-- ════════════════════════════════════ HOME ════════════════════════════════════ -->
+<div class="page-section show" id="pg-home">
+  <div class="hero">
+    <div class="hero-kicker">
+      <span class="hero-dot"></span>
+      <span data-en>Chongqing HQ &nbsp;·&nbsp; Singapore API Gateway &nbsp;·&nbsp; Global OCP Standard</span>
+      <span data-zh>重庆总部 &nbsp;·&nbsp; 新加坡 API 中台 &nbsp;·&nbsp; 全球 OCP 标准</span>
+    </div>
+    <h1>
+      <span data-en><span class="hl">One Platform</span> for<br>AI Compute Export<br>&amp; <span class="hl2">OCP Infrastructure.</span></span>
+      <span data-zh><span class="hl">一个平台</span>，打通<br>中国算力出海<br>与 <span class="hl2">OCP 全球适航</span></span>
+    </h1>
+    <p class="hero-sub">
+      <span data-en>DCDeepTech connects China-based compute capacity with global demand through a Singapore API gateway, while certifying infrastructure vendors for the OCP AI-ready era. One integration. Two control layers.</span>
+      <span data-zh>DCDeepTech 通过新加坡 API 中台将中国算力与全球需求相连，同时推动基础设施厂商完成 OCP AI 就绪认证。一次集成，两层控制能力。</span>
+    </p>
+    <div class="hero-actions">
+      <button class="btn btn-blue" onclick="showPage('models')">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="5" height="5" stroke="white" stroke-width="1"/><rect x="8" y="1" width="5" height="5" fill="white" opacity=".6"/><rect x="1" y="8" width="5" height="5" stroke="white" stroke-width="1" opacity=".5"/><rect x="8" y="8" width="5" height="5" stroke="white" stroke-width="1"/></svg>
+        <span data-en>Browse Models</span><span data-zh>浏览模型目录</span>
+      </button>
+      <button class="btn btn-green" onclick="showPage('ocp')">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5" stroke="#00e5a0" stroke-width="1"/><circle cx="7" cy="7" r="2.5" stroke="#00e5a0" stroke-width="1" stroke-dasharray="2 1.5"/></svg>
+        <span data-en>OCP Readiness</span><span data-zh>OCP 适航评估</span>
+      </button>
+      <button class="btn btn-outline" onclick="showPage('docs')">
+        <span data-en>Read Docs →</span><span data-zh>阅读文档 →</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stat"><div class="stat-n">38+</div><div class="stat-l"><span data-en>AI Models Available</span><span data-zh>可用 AI 模型数</span></div></div>
+    <div class="stat"><div class="stat-n">12</div><div class="stat-l"><span data-en>Compute Providers (CQ)</span><span data-zh>重庆算力供应商</span></div></div>
+    <div class="stat"><div class="stat-n">~28ms</div><div class="stat-l"><span data-en>SG Gateway Latency</span><span data-zh>新加坡中台时延</span></div></div>
+    <div class="stat"><div class="stat-n">99.7%</div><div class="stat-l"><span data-en>Platform Uptime (30d)</span><span data-zh>平台可用率 (30天)</span></div></div>
+  </div>
+
+  <div style="max-width:1100px;margin:0 auto;padding:40px 32px">
+    <div class="platform-split">
+      <div class="plat-card">
+        <div class="plat-num">01 · COMPUTE EXPORT PLATFORM</div>
+        <div class="plat-title"><span data-en>Compute <span class="a">Gateway</span></span><span data-zh>算力<span class="a">出海中台</span></span></div>
+        <p class="plat-desc">
+          <span data-en>Route inference requests from Southeast Asian clients to Chongqing-based GPU clusters via the Singapore API gateway. OpenAI-compatible API, PDPA-compliant routing, per-token billing, automatic fallback across providers.</span>
+          <span data-zh>将东南亚客户的推理请求，经新加坡 API 网关路由至重庆 GPU 集群。兼容 OpenAI API，符合 PDPA，按 token 计费，多供应商自动降级。</span>
+        </p>
+        <div class="chip-row">
+          <span class="chip">API Gateway</span>
+          <span class="chip">Provider Routing</span>
+          <span class="chip">PDPA-Aware</span>
+          <span class="chip">Fallback</span>
+          <span class="chip">ZDR Mode</span>
+          <span class="chip">Cross-Border</span>
+        </div>
+      </div>
+      <div class="plat-card g">
+        <div class="plat-num">02 · OCP AIRWORTHINESS PLATFORM</div>
+        <div class="plat-title"><span data-en>OCP <span class="b">Airworthiness</span></span><span data-zh>OCP <span class="b">适航平台</span></span></div>
+        <p class="plat-desc">
+          <span data-en>Gap assessment, retrofit design, and certification path advisory for rack, power, and cooling systems. Help Chinese hardware vendors and park operators achieve OCP Ready status and prepare for AI-era power densities of 30–60 kW/rack.</span>
+          <span data-zh>对机柜、供电、液冷系统进行差距评估、改造设计与认证路径咨询。帮助中国硬件厂商与园区运营商达到 OCP Ready 状态，适配 AI 时代 30–60 kW/机柜功率密度。</span>
+        </p>
+        <div class="chip-row">
+          <span class="chip">OCP Ready</span>
+          <span class="chip">Rack / Power / Cooling</span>
+          <span class="chip">OPEN-72</span>
+          <span class="chip">Liquid Cooling</span>
+          <span class="chip">Certification Path</span>
+          <span class="chip">Retrofit Advisory</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUICKSTART CODE -->
+    <div class="section-label" style="margin-top:48px">
+      <span data-en>QUICKSTART — 3 lines to first inference</span>
+      <span data-zh>快速开始 — 3 行代码完成首次推理</span>
+    </div>
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">PYTHON</span>
+        <button class="code-copy" onclick="this.textContent='Copied!';setTimeout(()=>this.textContent='Copy',1500)">Copy</button>
+      </div>
+      <div class="code-body"><pre><span class="kw">from</span> openai <span class="kw">import</span> OpenAI
+
+client = OpenAI(
+    base_url=<span class="str">"https://api.dcdeeptech.io/v1"</span>,  <span class="cm"># Singapore gateway endpoint</span>
+    api_key=<span class="str">"dct-xxxxxxxxxxxxxxxx"</span>,        <span class="cm"># Your DCDeepTech API key</span>
+)
+
+response = client.chat.completions.create(
+    model=<span class="str">"qwen/qwen2.5-72b-instruct"</span>,     <span class="cm"># Any model from the catalog</span>
+    messages=[{<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: <span class="str">"Hello"</span>}],
+    extra_headers={
+        <span class="str">"X-DCT-Region"</span>: <span class="str">"cq-main"</span>,          <span class="cm"># Pin to Chongqing cluster</span>
+        <span class="str">"X-DCT-ZDR"</span>: <span class="str">"true"</span>,               <span class="cm"># Zero data retention mode</span>
+    }
+)
+<span class="fn">print</span>(response.choices[<span class="num">0</span>].message.content)</pre></div>
+    </div>
+
+    <div class="section-label" style="margin-top:40px"><span data-en>PLATFORM ARCHITECTURE</span><span data-zh>平台架构流程</span></div>
+    <div class="flow-wrap">
+      <svg viewBox="0 0 860 160" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;min-width:700px">
+        <!-- boxes -->
+        <rect x="10" y="40" width="140" height="80" rx="4" fill="#0c1424" stroke="#1a3a6a" stroke-width="1"/>
+        <text x="80" y="75" text-anchor="middle" fill="#ddeeff" font-family="Bricolage Grotesque,sans-serif" font-weight="700" font-size="12">Chongqing</text>
+        <text x="80" y="92" text-anchor="middle" fill="#6a8faf" font-family="IBM Plex Mono,monospace" font-size="9">GPU CLUSTERS</text>
+        <text x="80" y="107" text-anchor="middle" fill="#4da6ff" font-family="IBM Plex Mono,monospace" font-size="9">12 PROVIDERS</text>
+        <!-- arrow 1 -->
+        <line x1="150" y1="80" x2="200" y2="80" stroke="#1a6fff" stroke-width="1" stroke-dasharray="4 3"/>
+        <polygon points="200,76 208,80 200,84" fill="#1a6fff"/>
+        <text x="175" y="72" text-anchor="middle" fill="#2a4060" font-family="IBM Plex Mono,monospace" font-size="8">BACKEND</text>
+        <circle cx="180" cy="80" r="3" fill="#4da6ff"><animate attributeName="cx" values="150;200;150" dur="2s" repeatCount="indefinite"/></circle>
+        <!-- sg gateway -->
+        <rect x="208" y="28" width="160" height="104" rx="4" fill="#0a1628" stroke="#1a6fff" stroke-width="1.5"/>
+        <text x="288" y="62" text-anchor="middle" fill="#4da6ff" font-family="IBM Plex Mono,monospace" font-size="9" letter-spacing="1">SINGAPORE</text>
+        <text x="288" y="78" text-anchor="middle" fill="#ddeeff" font-family="Bricolage Grotesque,sans-serif" font-weight="700" font-size="13">API Gateway</text>
+        <text x="288" y="96" text-anchor="middle" fill="#6a8faf" font-family="IBM Plex Mono,monospace" font-size="9">Auth · Route · Log</text>
+        <text x="288" y="113" text-anchor="middle" fill="#6a8faf" font-family="IBM Plex Mono,monospace" font-size="9">PDPA · ZDR · Fallback</text>
+        <!-- arrow 2 -->
+        <line x1="368" y1="80" x2="418" y2="80" stroke="#00d4ff" stroke-width="1" stroke-dasharray="4 3"/>
+        <polygon points="418,76 426,80 418,84" fill="#00d4ff"/>
+        <text x="393" y="72" text-anchor="middle" fill="#2a4060" font-family="IBM Plex Mono,monospace" font-size="8">COMPLIANT</text>
+        <circle cx="390" cy="80" r="3" fill="#00d4ff"><animate attributeName="cx" values="368;418;368" dur="2s" begin="0.5s" repeatCount="indefinite"/></circle>
+        <!-- clients -->
+        <rect x="426" y="10" width="120" height="56" rx="4" fill="#0c1424" stroke="#1a3a6a" stroke-width="1"/>
+        <text x="486" y="36" text-anchor="middle" fill="#ddeeff" font-family="Bricolage Grotesque,sans-serif" font-weight="700" font-size="11">Enterprise AI</text>
+        <text x="486" y="54" text-anchor="middle" fill="#6a8faf" font-family="IBM Plex Mono,monospace" font-size="8">SG / MY / ID / TH</text>
+        <rect x="426" y="94" width="120" height="56" rx="4" fill="#0c1424" stroke="#1a3a6a" stroke-width="1"/>
+        <text x="486" y="120" text-anchor="middle" fill="#ddeeff" font-family="Bricolage Grotesque,sans-serif" font-weight="700" font-size="11">Port Logistics</text>
+        <text x="486" y="138" text-anchor="middle" fill="#6a8faf" font-family="IBM Plex Mono,monospace" font-size="8">VLM / OCR / RTAI</text>
+        <!-- arrow 3 -->
+        <line x1="546" y1="38" x2="596" y2="38" stroke="#4da6ff" stroke-width="1" stroke-dasharray="4 3"/>
+        <polygon points="596,34 604,38 596,42" fill="#4da6ff"/>
+        <line x1="546" y1="122" x2="596" y2="122" stroke="#4da6ff" stroke-width="1" stroke-dasharray="4 3"/>
+        <polygon points="596,118 604,122 596,126" fill="#4da6ff"/>
+        <!-- models -->
+        <rect x="604" y="10" width="130" height="56" rx="4" fill="#0c1424" stroke="#1a3a6a" stroke-width="1"/>
+        <text x="669" y="33" text-anchor="middle" fill="#00e5a0" font-family="IBM Plex Mono,monospace" font-size="8">MODEL INFERENCE</text>
+        <text x="669" y="50" text-anchor="middle" fill="#6a8faf" font-family="IBM Plex Mono,monospace" font-size="8">Qwen / VLM / DeepSeek</text>
+        <text x="669" y="62" text-anchor="middle" fill="#6a8faf" font-family="IBM Plex Mono,monospace" font-size="7">LLM / OCR / Embedding</text>
+        <rect x="604" y="94" width="130" height="56" rx="4" fill="#0c1424" stroke="#1a3a6a" stroke-width="1"/>
+        <text x="669" y="117" text-anchor="middle" fill="#00e5a0" font-family="IBM Plex Mono,monospace" font-size="8">OCP ADVISORY</text>
+        <text x="669" y="134" text-anchor="middle" fill="#6a8faf" font-family="IBM Plex Mono,monospace" font-size="8">Assess · Design · Certify</text>
+        <text x="669" y="146" text-anchor="middle" fill="#6a8faf" font-family="IBM Plex Mono,monospace" font-size="7">Rack · Power · Liquid Cool</text>
+        <!-- billing node -->
+        <rect x="750" y="52" width="100" height="56" rx="4" fill="#0a1628" stroke="#00e5a0" stroke-width="1"/>
+        <text x="800" y="76" text-anchor="middle" fill="#00e5a0" font-family="IBM Plex Mono,monospace" font-size="9">BILLING</text>
+        <text x="800" y="93" text-anchor="middle" fill="#6a8faf" font-family="IBM Plex Mono,monospace" font-size="8">Per-Token / PoC</text>
+        <text x="800" y="103" text-anchor="middle" fill="#6a8faf" font-family="IBM Plex Mono,monospace" font-size="7">Enterprise / Annual</text>
+        <line x1="734" y1="60" x2="750" y2="70" stroke="#00e5a0" stroke-width="1" stroke-dasharray="3 2"/>
+        <line x1="734" y1="122" x2="750" y2="98" stroke="#00e5a0" stroke-width="1" stroke-dasharray="3 2"/>
+      </svg>
+    </div>
+  </div>
+  <div class="footer">
+    <div class="footer-copy">© 2025 DCDeepTech Chongqing HQ &nbsp;·&nbsp; <span data-en>Singapore Node</span><span data-zh>新加坡节点</span></div>
+    <div class="uptime-badge"><span class="live-dot g"></span> <span data-en>All systems operational</span><span data-zh>所有系统运行正常</span></div>
+    <div class="footer-links">
+      <a href="#" onclick="showPage('docs')">Docs</a>
+      <a href="#" onclick="showPage('pricing')"><span data-en>Pricing</span><span data-zh>定价</span></a>
+      <a href="#">Privacy</a>
+      <a href="#">Contact</a>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════ MODELS ════════════════════════════════════ -->
+<div class="page-section" id="pg-models">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="section-label"><span data-en>MODEL CATALOG</span><span data-zh>模型目录</span></div>
+      <h2><span data-en>38 Models, One API Key</span><span data-zh>38 个模型，一个 API 密钥</span></h2>
+      <p><span data-en>All models route through the Singapore gateway with automatic Chongqing backend selection. OpenAI-compatible. Pay per token, no commitments. Switch models by changing one parameter.</span><span data-zh>所有模型经新加坡网关路由，自动选择重庆后端。兼容 OpenAI API。按 token 付费，无最低消费。更换模型只需修改一个参数。</span></p>
+    </div>
+
+    <div class="live-row">
+      <div class="live-item"><span class="live-dot g"></span><span>SG Gateway: Online</span></div>
+      <div class="live-item"><span class="live-dot g"></span><span>CQ-Main: Online</span></div>
+      <div class="live-item"><span class="live-dot g"></span><span>CQ-Reserve: Online</span></div>
+      <div class="live-item"><span class="live-dot o"></span><span>CQ-West: Degraded</span></div>
+      <span style="margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--text3)"><span data-en>Last updated: 2 min ago</span><span data-zh>最近更新：2分钟前</span></span>
+    </div>
+
+    <div class="filter-row" id="model-filters">
+      <button class="filter-btn on" onclick="filterModels('all',this)"><span data-en>All</span><span data-zh>全部</span></button>
+      <button class="filter-btn" onclick="filterModels('llm',this)">LLM</button>
+      <button class="filter-btn" onclick="filterModels('vlm',this)">VLM</button>
+      <button class="filter-btn" onclick="filterModels('embedding',this)">Embedding</button>
+      <button class="filter-btn" onclick="filterModels('free',this)"><span data-en>Free</span><span data-zh>免费</span></button>
+    </div>
+
+    <div class="search-box">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="6" cy="6" r="4" stroke="#6a8faf" stroke-width="1.2"/><line x1="9.2" y1="9.2" x2="12" y2="12" stroke="#6a8faf" stroke-width="1.2" stroke-linecap="round"/></svg>
+      <input type="text" id="model-search" placeholder="Search models... e.g. qwen, deepseek, vlm" oninput="searchModels(this.value)">
+    </div>
+
+    <table class="model-table" id="model-table">
+      <thead>
+        <tr>
+          <th><span data-en>MODEL</span><span data-zh>模型</span></th>
+          <th><span data-en>TYPE</span><span data-zh>类型</span></th>
+          <th><span data-en>INPUT / 1M tokens</span><span data-zh>输入 / 1M tokens</span></th>
+          <th><span data-en>OUTPUT / 1M tokens</span><span data-zh>输出 / 1M tokens</span></th>
+          <th><span data-en>CONTEXT</span><span data-zh>上下文</span></th>
+          <th><span data-en>LATENCY</span><span data-zh>时延</span></th>
+          <th><span data-en>PROVIDER</span><span data-zh>供应商</span></th>
+        </tr>
+      </thead>
+      <tbody id="model-tbody"></tbody>
+    </table>
+
+    <div style="margin-top:32px">
+      <div class="section-label"><span data-en>MODEL ROUTING — HOW IT WORKS</span><span data-zh>模型路由 — 运作原理</span></div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">ROUTING VARIANTS</span><button class="code-copy" onclick="this.textContent='Copied!';setTimeout(()=>this.textContent='Copy',1500)">Copy</button></div>
+        <div class="code-body"><pre><span class="cm"># Speed-optimized (lowest latency, :nitro variant)</span>
+model=<span class="str">"qwen/qwen2.5-72b-instruct:nitro"</span>
+
+<span class="cm"># Cost-optimized (lowest price, :floor variant)</span>
+model=<span class="str">"qwen/qwen2.5-72b-instruct:floor"</span>
+
+<span class="cm"># Auto-route: DCDeepTech picks best provider for request</span>
+model=<span class="str">"qwen/qwen2.5-72b-instruct"</span>
+
+<span class="cm"># Pin to Chongqing main cluster for data residency</span>
+extra_headers={<span class="str">"X-DCT-Region"</span>: <span class="str">"cq-main"</span>}
+
+<span class="cm"># Zero Data Retention — no prompt logging at provider</span>
+extra_headers={<span class="str">"X-DCT-ZDR"</span>: <span class="str">"true"</span>}
+
+<span class="cm"># Fallback: if primary provider fails, try secondary</span>
+extra_body={<span class="str">"fallback"</span>: [<span class="str">"cq-reserve"</span>, <span class="str">"cq-west"</span>]}</pre></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════ PROVIDERS ════════════════════════════════════ -->
+<div class="page-section" id="pg-providers">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="section-label"><span data-en>PROVIDER NETWORK</span><span data-zh>算力供应商网络</span></div>
+      <h2><span data-en>12 Active Providers<br>in Chongqing Cluster</span><span data-zh>重庆集群内<br>12 个在线供应商</span></h2>
+      <p><span data-en>All providers are contracted, compliance-verified, and monitored in real time. DCDeepTech does not mark up provider pricing — you see the raw compute cost plus a transparent platform fee.</span><span data-zh>所有供应商均已签约、合规审查，并实时监控。DCDeepTech 不对供应商定价加价——您看到的是原始算力成本加上透明平台费用。</span></p>
+    </div>
+
+    <div class="live-row">
+      <div class="live-item"><span class="live-dot g"></span><span data-en>10 providers online</span><span data-zh>10 个供应商在线</span></div>
+      <div class="live-item"><span class="live-dot o"></span><span data-en>1 degraded</span><span data-zh>1 个降级</span></div>
+      <div class="live-item"><span class="live-dot b"></span><span data-en>1 maintenance</span><span data-zh>1 个维护中</span></div>
+    </div>
+
+    <div class="provider-grid">
+      <div class="prov-card">
+        <div class="prov-header">
+          <div><div class="prov-name">CQ-Compute Alpha</div><div class="prov-region">CHONGQING · LIANGJIANG NEW AREA</div></div>
+          <div class="prov-status"><span class="status-dot"></span><span style="color:var(--green)">Online</span></div>
+        </div>
+        <div class="prov-stat-row">
+          <div class="prov-stat"><div class="prov-stat-n">H100×128</div><div class="prov-stat-l">GPU CAPACITY</div></div>
+          <div class="prov-stat"><div class="prov-stat-n">18ms</div><div class="prov-stat-l">TTFT AVG</div></div>
+        </div>
+        <div class="prov-models"><span data-en>Models:</span><span data-zh>模型：</span> Qwen2.5-72B, Qwen2.5-VL-72B, DeepSeek-R1-Distill</div>
+        <div class="prov-tags"><span class="prov-tag">ZDR</span><span class="prov-tag">PDPA</span><span class="prov-tag">AIIA L4</span></div>
+      </div>
+      <div class="prov-card">
+        <div class="prov-header">
+          <div><div class="prov-name">CQ-Vision Hub</div><div class="prov-region">CHONGQING · HIGH-TECH ZONE</div></div>
+          <div class="prov-status"><span class="status-dot"></span><span style="color:var(--green)">Online</span></div>
+        </div>
+        <div class="prov-stat-row">
+          <div class="prov-stat"><div class="prov-stat-n">A100×64</div><div class="prov-stat-l">GPU CAPACITY</div></div>
+          <div class="prov-stat"><div class="prov-stat-n">24ms</div><div class="prov-stat-l">TTFT AVG</div></div>
+        </div>
+        <div class="prov-models"><span data-en>Models:</span><span data-zh>模型：</span> InternVL2-76B, CogVLM2, DocLayout-YOLO, OCR-2.0</div>
+        <div class="prov-tags"><span class="prov-tag">VLM-SPEC</span><span class="prov-tag">OCR</span><span class="prov-tag">PORT-OPT</span></div>
+      </div>
+      <div class="prov-card">
+        <div class="prov-header">
+          <div><div class="prov-name">CQ-Industrial AI</div><div class="prov-region">CHONGQING · BISHAN DISTRICT</div></div>
+          <div class="prov-status"><span class="status-dot" style="background:var(--orange)"></span><span style="color:var(--orange)">Degraded</span></div>
+        </div>
+        <div class="prov-stat-row">
+          <div class="prov-stat"><div class="prov-stat-n">L40S×48</div><div class="prov-stat-l">GPU CAPACITY</div></div>
+          <div class="prov-stat"><div class="prov-stat-n">41ms</div><div class="prov-stat-l">TTFT AVG</div></div>
+        </div>
+        <div class="prov-models"><span data-en>Models:</span><span data-zh>模型：</span> Qwen2.5-32B, Yi-34B, ERNIE-Speed</div>
+        <div class="prov-tags"><span class="prov-tag">FALLBACK</span><span class="prov-tag">COST-OPT</span></div>
+      </div>
+      <div class="prov-card">
+        <div class="prov-header">
+          <div><div class="prov-name">SG-Relay Node</div><div class="prov-region">SINGAPORE · EQUINIX SG1</div></div>
+          <div class="prov-status"><span class="status-dot"></span><span style="color:var(--green)">Online</span></div>
+        </div>
+        <div class="prov-stat-row">
+          <div class="prov-stat"><div class="prov-stat-n">Gateway</div><div class="prov-stat-l">FUNCTION</div></div>
+          <div class="prov-stat"><div class="prov-stat-n">4ms</div><div class="prov-stat-l">RELAY LATENCY</div></div>
+        </div>
+        <div class="prov-models"><span data-en>Handles:</span><span data-zh>负责：</span> Auth, routing, billing, logging, PDPA compliance, ZDR enforcement</div>
+        <div class="prov-tags"><span class="prov-tag">PDPA</span><span class="prov-tag">MAS-AWARE</span><span class="prov-tag">SOC2</span></div>
+      </div>
+      <div class="prov-card">
+        <div class="prov-header">
+          <div><div class="prov-name">CQ-Embedding Farm</div><div class="prov-region">CHONGQING · LIANGJIANG NEW AREA</div></div>
+          <div class="prov-status"><span class="status-dot"></span><span style="color:var(--green)">Online</span></div>
+        </div>
+        <div class="prov-stat-row">
+          <div class="prov-stat"><div class="prov-stat-n">A10×32</div><div class="prov-stat-l">GPU CAPACITY</div></div>
+          <div class="prov-stat"><div class="prov-stat-n">8ms</div><div class="prov-stat-l">EMBED LATENCY</div></div>
+        </div>
+        <div class="prov-models"><span data-en>Models:</span><span data-zh>模型：</span> BGE-M3, text-embedding-3-compatible, BCE-Embedding</div>
+        <div class="prov-tags"><span class="prov-tag">EMBED-SPEC</span><span class="prov-tag">RAG-OPT</span></div>
+      </div>
+      <div class="prov-card">
+        <div class="prov-header">
+          <div><div class="prov-name">CQ-Reserve Beta</div><div class="prov-region">CHONGQING · YUBEI DISTRICT</div></div>
+          <div class="prov-status"><span class="status-dot" style="background:var(--blue);animation:none"></span><span style="color:var(--blue)">Maintenance</span></div>
+        </div>
+        <div class="prov-stat-row">
+          <div class="prov-stat"><div class="prov-stat-n">H800×32</div><div class="prov-stat-l">GPU CAPACITY</div></div>
+          <div class="prov-stat"><div class="prov-stat-n">—</div><div class="prov-stat-l">TTFT AVG</div></div>
+        </div>
+        <div class="prov-models"><span data-en>Planned:</span><span data-zh>规划中：</span> Qwen2.5-72B, DeepSeek-V3, CogVideoX — <span style="color:var(--orange)">ETA 2025-Q4</span></div>
+        <div class="prov-tags"><span class="prov-tag">SCHEDULED</span><span class="prov-tag">VIDEO-AI</span></div>
+      </div>
+    </div>
+
+    <div style="margin-top:32px">
+      <div class="section-label"><span data-en>BECOME A PROVIDER — ONBOARDING REQUIREMENTS</span><span data-zh>成为供应商 — 接入要求</span></div>
+      <table class="readiness-table">
+        <thead><tr><th><span data-en>REQUIREMENT</span><span data-zh>要求</span></th><th><span data-en>DETAIL</span><span data-zh>说明</span></th><th><span data-en>STATUS CHECK</span><span data-zh>审核项</span></th></tr></thead>
+        <tbody>
+          <tr><td><span data-en>Business Registration</span><span data-zh>企业工商注册</span></td><td style="color:var(--text2);font-size:12px"><span data-en>Valid PRC entity, ICP filing if applicable</span><span data-zh>有效大陆主体，适用时需 ICP 备案</span></td><td class="rt-check">✓ Required</td></tr>
+          <tr><td><span data-en>Network Connectivity</span><span data-zh>网络连通性</span></td><td style="color:var(--text2);font-size:12px"><span data-en>≥10 Gbps uplink to Singapore relay, ≤30ms RTT</span><span data-zh>≥10 Gbps 上联至新加坡中继，RTT ≤30ms</span></td><td class="rt-check">✓ Required</td></tr>
+          <tr><td><span data-en>API Compatibility</span><span data-zh>API 兼容性</span></td><td style="color:var(--text2);font-size:12px"><span data-en>OpenAI-compatible /v1/chat/completions endpoint</span><span data-zh>兼容 OpenAI /v1/chat/completions 接口</span></td><td class="rt-check">✓ Required</td></tr>
+          <tr><td><span data-en>Compliance Attestation</span><span data-zh>合规声明</span></td><td style="color:var(--text2);font-size:12px"><span data-en>PDPA-aware data handling, no cross-border unauthorized transfer</span><span data-zh>PDPA 数据处理规范，无未授权跨境传输</span></td><td class="rt-check">✓ Required</td></tr>
+          <tr><td><span data-en>SLA Commitment</span><span data-zh>SLA 承诺</span></td><td style="color:var(--text2);font-size:12px"><span data-en>99.5% uptime, ≤100ms TTFT p95, 24h incident response</span><span data-zh>99.5% 可用率，TTFT p95 ≤100ms，24小时事故响应</span></td><td class="rt-warn">△ Negotiable</td></tr>
+          <tr><td>ZDR Support</td><td style="color:var(--text2);font-size:12px"><span data-en>Zero Data Retention mode: no prompt/response logging</span><span data-zh>零数据留存模式：不记录提示词与响应内容</span></td><td class="rt-warn">△ Preferred</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════ OCP ════════════════════════════════════ -->
+<div class="page-section" id="pg-ocp">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="section-label">OCP AIRWORTHINESS PLATFORM</div>
+      <h2><span data-en>Make Your Infrastructure<br>OCP-Ready for the AI Era</span><span data-zh>让基础设施完成<br>OCP 适航，进入 AI 时代</span></h2>
+      <p><span data-en>AI-era GPU racks demand 30–60 kW/rack. Legacy DCs max at 8–12 kW. DCDeepTech runs gap assessments, retrofit designs, and guides Chinese vendors and operators through OCP certification — the global standard for open, interoperable AI infrastructure.</span><span data-zh>AI 时代 GPU 机柜需求 30–60 kW/机柜，而传统数据中心上限仅 8–12 kW。DCDeepTech 提供差距评估、改造设计，并指导中国厂商与运营商完成 OCP 认证——这是全球开放互通 AI 基础设施的核心标准。</span></p>
+    </div>
+
+    <div class="inner-tabs">
+      <button class="inner-tab on" onclick="ocpTab('assess',this)"><span data-en>Gap Assessment</span><span data-zh>差距评估</span></button>
+      <button class="inner-tab" onclick="ocpTab('specs',this)"><span data-en>OCP Specs</span><span data-zh>OCP 规格</span></button>
+      <button class="inner-tab" onclick="ocpTab('path',this)"><span data-en>Certification Path</span><span data-zh>认证路径</span></button>
+    </div>
+
+    <div id="ocp-assess">
+      <div class="section-label"><span data-en>SELF-ASSESSMENT — WHERE DOES YOUR DC STAND?</span><span data-zh>自评估 — 您的数据中心现状如何？</span></div>
+      <table class="readiness-table">
+        <thead>
+          <tr>
+            <th><span data-en>DIMENSION</span><span data-zh>维度</span></th>
+            <th><span data-en>LEGACY DC (TYPICAL)</span><span data-zh>传统数据中心（典型值）</span></th>
+            <th><span data-en>OCP AI-READY TARGET</span><span data-zh>OCP AI 就绪目标</span></th>
+            <th><span data-en>RETROFIT FEASIBILITY</span><span data-zh>改造可行性</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong><span data-en>Power Density</span><span data-zh>功率密度</span></strong></td>
+            <td style="font-family:var(--mono);font-size:12px;color:var(--text2)">6–12 kW/rack</td>
+            <td style="font-family:var(--mono);font-size:12px;color:var(--green)">30–60 kW/rack</td>
+            <td class="rt-warn">△ Requires PDU upgrade + UPS</td>
+          </tr>
+          <tr>
+            <td><strong><span data-en>Cooling Method</span><span data-zh>冷却方式</span></strong></td>
+            <td style="font-family:var(--mono);font-size:12px;color:var(--text2)">Air (CRAC/CRAH)</td>
+            <td style="font-family:var(--mono);font-size:12px;color:var(--green)">Liquid (RDHx / DLC)</td>
+            <td class="rt-warn">△ Rear-door HX possible</td>
+          </tr>
+          <tr>
+            <td><strong><span data-en>Rack Form Factor</span><span data-zh>机柜规格</span></strong></td>
+            <td style="font-family:var(--mono);font-size:12px;color:var(--text2)">19" RETMA</td>
+            <td style="font-family:var(--mono);font-size:12px;color:var(--green)">21" Open Rack v3 / v2</td>
+            <td class="rt-no">✗ Full replacement required</td>
+          </tr>
+          <tr>
+            <td><strong><span data-en>Power Distribution</span><span data-zh>配电方式</span></strong></td>
+            <td style="font-family:var(--mono);font-size:12px;color:var(--text2)">AC, single-bus</td>
+            <td style="font-family:var(--mono);font-size:12px;color:var(--green)">DC 48V or AC dual-bus</td>
+            <td class="rt-warn">△ Bus upgrade + OCP BBU</td>
+          </tr>
+          <tr>
+            <td><strong><span data-en>Management Plane</span><span data-zh>管理平面</span></strong></td>
+            <td style="font-family:var(--mono);font-size:12px;color:var(--text2)">Vendor-proprietary IPMI</td>
+            <td style="font-family:var(--mono);font-size:12px;color:var(--green)">OpenBMC + Redfish API</td>
+            <td class="rt-warn">△ Firmware + BMC swap</td>
+          </tr>
+          <tr>
+            <td><strong><span data-en>Network Fabric</span><span data-zh>网络架构</span></strong></td>
+            <td style="font-family:var(--mono);font-size:12px;color:var(--text2)">10/25G legacy TOR</td>
+            <td style="font-family:var(--mono);font-size:12px;color:var(--green)">100/400G OSFP, WEDGE/MINIPACK</td>
+            <td class="rt-warn">△ Switch + cabling upgrade</td>
+          </tr>
+          <tr>
+            <td><strong>PUE</strong></td>
+            <td style="font-family:var(--mono);font-size:12px;color:var(--text2)">1.6–2.0</td>
+            <td style="font-family:var(--mono);font-size:12px;color:var(--green)">≤1.3 target</td>
+            <td class="rt-check">✓ Achievable with DLC</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="section-label" style="margin-top:32px"><span data-en>TYPICAL RETROFIT TIMELINE</span><span data-zh>典型改造周期</span></div>
+      <table class="readiness-table">
+        <thead><tr><th><span data-en>PHASE</span><span data-zh>阶段</span></th><th><span data-en>SCOPE</span><span data-zh>内容</span></th><th><span data-en>DURATION</span><span data-zh>周期</span></th><th><span data-en>ENGAGEMENT</span><span data-zh>参与方式</span></th></tr></thead>
+        <tbody>
+          <tr><td><strong>1. Assessment</strong></td><td style="color:var(--text2);font-size:12px"><span data-en>On-site audit, gap report, OCP delta scorecard</span><span data-zh>现场审计、差距报告、OCP 差距评分卡</span></td><td style="font-family:var(--mono);font-size:12px">2–3 weeks</td><td style="font-family:var(--mono);font-size:11px;color:var(--blue)">Fixed-fee advisory</td></tr>
+          <tr><td><strong>2. Design</strong></td><td style="color:var(--text2);font-size:12px"><span data-en>OCP-aligned retrofit BOM, drawing set, vendor RFQ package</span><span data-zh>OCP 对齐改造 BOM、图纸集、供应商 RFQ 包</span></td><td style="font-family:var(--mono);font-size:12px">4–6 weeks</td><td style="font-family:var(--mono);font-size:11px;color:var(--blue)">Fixed-fee design</td></tr>
+          <tr><td><strong>3. Pilot Rack</strong></td><td style="color:var(--text2);font-size:12px"><span data-en>Install 1 OCP Open Rack v3, liquid cooling loop, OpenBMC, validate power budget</span><span data-zh>安装 1 个 OCP Open Rack v3、液冷环路、OpenBMC，验证功率预算</span></td><td style="font-family:var(--mono);font-size:12px">6–8 weeks</td><td style="font-family:var(--mono);font-size:11px;color:var(--blue)">PoC delivery</td></tr>
+          <tr><td><strong>4. Scale</strong></td><td style="color:var(--text2);font-size:12px"><span data-en>Row-level deployment, power + cooling commissioning, OCP submission prep</span><span data-zh>排级部署，供电 + 冷却调试，OCP 提交准备</span></td><td style="font-family:var(--mono);font-size:12px">12–20 weeks</td><td style="font-family:var(--mono);font-size:11px;color:var(--blue)">Project management</td></tr>
+          <tr><td><strong>5. Certification</strong></td><td style="color:var(--text2);font-size:12px"><span data-en>OCP Ready application, technical review support, Accepted / Inspired status</span><span data-zh>OCP Ready 申请、技术审查支持、Accepted / Inspired 认证状态</span></td><td style="font-family:var(--mono);font-size:12px">8–12 weeks</td><td style="font-family:var(--mono);font-size:11px;color:var(--blue)">Certification advisory</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div id="ocp-specs" style="display:none">
+      <div class="ocp-spec-grid">
+        <div class="spec-card">
+          <div class="spec-title">🏗️ Open Rack v3 (ORv3)</div>
+          <p class="spec-desc"><span data-en>The OCP standard rack form factor for high-density AI. 21" wide, accommodates DC power and liquid cooling manifolds at the rear.</span><span data-zh>面向高密度 AI 的 OCP 标准机柜规格，21 英寸宽，后部集成直流供电与液冷歧管。</span></p>
+          <ul class="spec-list">
+            <li>21" wide rack vs 19" legacy</li>
+            <li>48V DC native power bus</li>
+            <li>Rear liquid cooling manifold ready</li>
+            <li>Open Rack Bus Bar (ORBB) compatible</li>
+            <li>Up to 60 kW/rack power budget</li>
+          </ul>
+        </div>
+        <div class="spec-card">
+          <div class="spec-title">💧 Direct Liquid Cooling (DLC)</div>
+          <p class="spec-desc"><span data-en>Server-level liquid cooling for >400W GPU TDP. Works with rear-door heat exchangers (RDHx) or direct-to-chip (D2C) coldplate loops.</span><span data-zh>面向 >400W GPU TDP 的服务器级液冷，兼容后门换热器 (RDHx) 或直接芯片冷板回路 (D2C)。</span></p>
+          <ul class="spec-list">
+            <li>CDU (Coolant Distribution Unit) design</li>
+            <li>35°C inlet water temperature target</li>
+            <li>Manifold pressure ≤2.0 bar operating</li>
+            <li>Compatible with H100/H800/B200 coldplates</li>
+            <li>PUE improvement: 1.6→1.15 typical</li>
+          </ul>
+        </div>
+        <div class="spec-card">
+          <div class="spec-title">⚡ OCP Power Architecture</div>
+          <p class="spec-desc"><span data-en>OCP favors 48V DC distribution (HVDC) to eliminate intermediate AC/DC conversion losses and support Battery Backup Units (BBU) at rack level.</span><span data-zh>OCP 推广 48V 直流配电 (HVDC)，消除中间 AC/DC 转换损耗，支持机架级电池备用单元 (BBU)。</span></p>
+          <ul class="spec-list">
+            <li>48V HVDC vs 12V legacy loss reduction</li>
+            <li>Open Rack PSU (ORPS) form factor</li>
+            <li>Rack-level BBU replaces UPS rooms</li>
+            <li>Dual-bus redundancy (A+B feeds)</li>
+            <li>Power Cap API via OpenBMC/Redfish</li>
+          </ul>
+        </div>
+        <div class="spec-card">
+          <div class="spec-title">🖥️ OpenBMC + Redfish</div>
+          <p class="spec-desc"><span data-en>OCP mandates open management firmware. OpenBMC replaces vendor-locked IPMI implementations and exposes hardware via Redfish REST API.</span><span data-zh>OCP 要求开放管理固件。OpenBMC 替换供应商锁定的 IPMI，通过 Redfish REST API 暴露硬件接口。</span></p>
+          <ul class="spec-list">
+            <li>OpenBMC firmware (Meta/Linux Foundation)</li>
+            <li>Redfish v1.x REST API for all CRUD ops</li>
+            <li>OOB management over dedicated NIC</li>
+            <li>Telemetry: thermal, power, health metrics</li>
+            <li>OCP OSIE (OS Install Environment)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div id="ocp-path" style="display:none">
+      <div class="section-label"><span data-en>OCP READY — CERTIFICATION LEVELS</span><span data-zh>OCP READY — 认证级别</span></div>
+      <table class="readiness-table">
+        <thead><tr><th>LEVEL</th><th><span data-en>DESCRIPTION</span><span data-zh>说明</span></th><th><span data-en>REQUIREMENTS</span><span data-zh>要求</span></th><th><span data-en>TYPICAL TIMELINE</span><span data-zh>典型周期</span></th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong style="color:var(--blue)">OCP Accepted</strong></td>
+            <td style="color:var(--text2);font-size:12px"><span data-en>Contribution accepted by OCP community; hardware spec published in OCP specification library</span><span data-zh>贡献被 OCP 社区接受，硬件规格发布在 OCP 规格库</span></td>
+            <td style="color:var(--text2);font-size:12px"><span data-en>Technical submission, peer review, OCP hardware review board approval</span><span data-zh>技术提交、同行评审、OCP 硬件评审委员会批准</span></td>
+            <td style="font-family:var(--mono);font-size:12px">6–12 months</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--green)">OCP Inspired</strong></td>
+            <td style="color:var(--text2);font-size:12px"><span data-en>Product built to OCP principles, self-attested compliance, listed in OCP Marketplace</span><span data-zh>产品遵循 OCP 原则构建，自我声明合规，列入 OCP Marketplace</span></td>
+            <td style="color:var(--text2);font-size:12px"><span data-en>OCP compatibility checklist, vendor attestation, optional hardware test report</span><span data-zh>OCP 兼容性核查表、供应商声明、可选硬件测试报告</span></td>
+            <td style="font-family:var(--mono);font-size:12px">2–4 months</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--orange)">OCP Ready (DC)</strong></td>
+            <td style="color:var(--text2);font-size:12px"><span data-en>Data center facility certified to host OCP hardware; covers power, cooling, space, and management plane readiness</span><span data-zh>数据中心设施通过认证，可托管 OCP 硬件；涵盖供电、冷却、空间与管理平面就绪性</span></td>
+            <td style="color:var(--text2);font-size:12px"><span data-en>On-site audit by OCP-recognized assessor, infrastructure gap remediation, facility submission</span><span data-zh>OCP 认可评估机构现场审计，基础设施差距整改，设施提交</span></td>
+            <td style="font-family:var(--mono);font-size:12px">3–6 months</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div style="margin-top:28px">
+        <div class="section-label"><span data-en>DCDeepTech ENGAGEMENT MODELS</span><span data-zh>DCDeepTech 参与模式</span></div>
+        <div class="ocp-spec-grid">
+          <div class="spec-card" style="border-color:rgba(77,166,255,.25)">
+            <div class="spec-title" style="color:var(--blue)">📋 <span data-en>Assessment-Only</span><span data-zh>仅评估</span></div>
+            <p class="spec-desc"><span data-en>2–3 week on-site gap audit. Output: OCP delta scorecard, prioritized remediation roadmap, vendor shortlist for retrofit components.</span><span data-zh>2–3 周现场差距审计。交付物：OCP 差距评分卡、优先级整改路线图、改造组件供应商候选名单。</span></p>
+            <ul class="spec-list"><li><span data-en>Fixed-fee engagement</span><span data-zh>固定费用参与</span></li><li><span data-en>No retrofit commitment required</span><span data-zh>无需承诺改造</span></li><li><span data-en>Deliverable: 40–60p report</span><span data-zh>交付物：40–60页报告</span></li></ul>
+          </div>
+          <div class="spec-card" style="border-color:rgba(0,229,160,.25)">
+            <div class="spec-title" style="color:var(--green)">🔧 <span data-en>Design + PoC</span><span data-zh>设计 + 概念验证</span></div>
+            <p class="spec-desc"><span data-en>Full retrofit design package + single pilot rack deployment. Validate OCP power budget, liquid cooling loop, OpenBMC integration, and Redfish API in real environment.</span><span data-zh>完整改造设计包 + 单机柜试点部署。在真实环境中验证 OCP 功率预算、液冷回路、OpenBMC 集成与 Redfish API。</span></p>
+            <ul class="spec-list"><li><span data-en>Design BOM + drawing set</span><span data-zh>设计 BOM + 图纸集</span></li><li><span data-en>Pilot rack commissioning</span><span data-zh>试点机柜调试</span></li><li><span data-en>Vendor RFQ package</span><span data-zh>供应商 RFQ 包</span></li></ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════ SOLUTIONS ════════════════════════════════════ -->
+<div class="page-section" id="pg-solutions">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="section-label"><span data-en>INDUSTRY SOLUTIONS</span><span data-zh>行业解决方案</span></div>
+      <h2><span data-en>Four Verticals.<br>Specific Deployments.</span><span data-zh>四大行业。<br>具体部署场景。</span></h2>
+      <p><span data-en>Each solution is a defined engagement with specific models, infrastructure requirements, compliance scope, and delivery milestones.</span><span data-zh>每个解决方案均有明确的模型选型、基础设施要求、合规范围和交付里程碑。</span></p>
+    </div>
+    <div class="sol-grid">
+      <div class="sol-card">
+        <div class="sol-num">01</div>
+        <div class="sol-tag tag-port">PORT / LOGISTICS</div>
+        <div class="sol-title"><span data-en>Port & Industrial Vision AI</span><span data-zh>港务与工业视觉 AI</span></div>
+        <p class="sol-desc"><span data-en>VLM-powered container number recognition, damage detection, and crane safety monitoring. Edge inference via Singapore gateway to on-site terminals. RTAI latency ≤200ms. OCR accuracy target ≥99.2%.</span><span data-zh>VLM 驱动的集装箱编号识别、损伤检测与吊机安全监控。经新加坡网关向现场终端进行边缘推理。RTAI 时延 ≤200ms，OCR 准确率目标 ≥99.2%。</span></p>
+        <div class="sol-metrics">
+          <div class="sol-metric"><div class="sol-metric-n">99.2%</div><div class="sol-metric-l">OCR accuracy</div></div>
+          <div class="sol-metric"><div class="sol-metric-n">≤200ms</div><div class="sol-metric-l">RTAI latency</div></div>
+          <div class="sol-metric"><div class="sol-metric-n">VLM+OCR</div><div class="sol-metric-l">Model stack</div></div>
+        </div>
+      </div>
+      <div class="sol-card">
+        <div class="sol-num">02</div>
+        <div class="sol-tag tag-ent">ENTERPRISE AI</div>
+        <div class="sol-title"><span data-en>Enterprise LLM Integration</span><span data-zh>企业 LLM 集成</span></div>
+        <p class="sol-desc"><span data-en>Private knowledge-base RAG, internal copilots, and API integration for SEA enterprise clients. Qwen2.5-72B or DeepSeek-V3 backend. PDPA-compliant data handling, ZDR mode available, SSO (SAML) for enterprise plans.</span><span data-zh>面向东南亚企业客户的私有知识库 RAG、内部 Copilot 与 API 集成。Qwen2.5-72B 或 DeepSeek-V3 后端。PDPA 合规数据处理，可选 ZDR 模式，企业版支持 SSO (SAML)。</span></p>
+        <div class="sol-metrics">
+          <div class="sol-metric"><div class="sol-metric-n">PDPA</div><div class="sol-metric-l">Compliant</div></div>
+          <div class="sol-metric"><div class="sol-metric-n">ZDR</div><div class="sol-metric-l">Available</div></div>
+          <div class="sol-metric"><div class="sol-metric-n">RAG+LLM</div><div class="sol-metric-l">Architecture</div></div>
+        </div>
+      </div>
+      <div class="sol-card">
+        <div class="sol-num">03</div>
+        <div class="sol-tag tag-dc">DATA CENTER UPGRADE</div>
+        <div class="sol-title"><span data-en>DC Retrofit to OCP-Ready</span><span data-zh>数据中心 OCP 适航改造</span></div>
+        <p class="sol-desc"><span data-en>End-to-end retrofit: power density from 8kW to 40kW/rack, air-to-liquid cooling transition, Open Rack v3 deployment, OpenBMC/Redfish management plane. Includes OCP Ready certification support and vendor RFQ package for CQ supply chain.</span><span data-zh>全流程改造：功率密度从 8kW 升级至 40kW/机柜，风冷转液冷，部署 Open Rack v3 与 OpenBMC/Redfish 管理平面。含 OCP Ready 认证支持与重庆供应链 RFQ 包。</span></p>
+        <div class="sol-metrics">
+          <div class="sol-metric"><div class="sol-metric-n">40kW</div><div class="sol-metric-l">Target density</div></div>
+          <div class="sol-metric"><div class="sol-metric-n">1.15</div><div class="sol-metric-l">PUE target</div></div>
+          <div class="sol-metric"><div class="sol-metric-n">ORv3</div><div class="sol-metric-l">Rack standard</div></div>
+        </div>
+      </div>
+      <div class="sol-card">
+        <div class="sol-num">04</div>
+        <div class="sol-tag tag-gov">GOVERNMENT / CII</div>
+        <div class="sol-title"><span data-en>Secure Public Sector AI</span><span data-zh>安全政务 AI 部署</span></div>
+        <p class="sol-desc"><span data-en>Air-gapped or private-cloud LLM deployment for government and CII operators. On-premise Qwen2.5 or domestic models, no cross-border data transfer, compliant with CSA TRM (SG), MLPS 2.0 (CN), and sector-specific regulatory frameworks.</span><span data-zh>面向政府与关键信息基础设施运营商的气隙隔离或私有云 LLM 部署。本地化 Qwen2.5 或国产模型，无跨境数据传输，符合 CSA TRM（新加坡）、等保 2.0（中国）及行业监管框架。</span></p>
+        <div class="sol-metrics">
+          <div class="sol-metric"><div class="sol-metric-n">Air-gap</div><div class="sol-metric-l">Available</div></div>
+          <div class="sol-metric"><div class="sol-metric-n">MLPS 2.0</div><div class="sol-metric-l">CN compliant</div></div>
+          <div class="sol-metric"><div class="sol-metric-n">CSA TRM</div><div class="sol-metric-l">SG aligned</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════ PRICING ════════════════════════════════════ -->
+<div class="page-section" id="pg-pricing">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="section-label"><span data-en>PRICING & ENGAGEMENT</span><span data-zh>定价与参与方式</span></div>
+      <h2><span data-en>Transparent Pricing.<br>No Markup on Compute.</span><span data-zh>透明定价。<br>算力成本不加价。</span></h2>
+      <p><span data-en>DCDeepTech passes through provider compute pricing without markup. We charge a platform fee on credits purchased. OCP advisory is fixed-fee per engagement scope.</span><span data-zh>DCDeepTech 将供应商算力定价原价传递，不加价。平台费用按充值金额收取。OCP 咨询按参与范围固定收费。</span></p>
+    </div>
+
+    <div class="pricing-grid">
+      <div class="price-card">
+        <div class="plan-name">Developer</div>
+        <div class="plan-price">$0<sub>/mo</sub></div>
+        <div class="plan-unit">+ <span data-en>compute at cost</span><span data-zh>算力原价</span> + 5.5% <span data-en>platform fee</span><span data-zh>平台费</span></div>
+        <div class="plan-divider"></div>
+        <ul class="plan-features">
+          <li><span class="pf-icon">✓</span><span data-en>Free tier: 3 models, rate-limited (50 req/day)</span><span data-zh>免费层：3 个模型，限速（50 次/天）</span></li>
+          <li><span class="pf-icon">✓</span><span data-en>Pay-as-you-go credits, no expiry on active account</span><span data-zh>按需充值积分，活跃账户不过期</span></li>
+          <li><span class="pf-icon">✓</span><span data-en>Separate API keys per environment</span><span data-zh>每个环境独立 API 密钥</span></li>
+          <li><span class="pf-icon">✓</span><span data-en>Activity log + usage dashboard</span><span data-zh>调用日志 + 用量仪表盘</span></li>
+          <li><span class="pf-icon no">—</span><span data-en>ZDR mode, SSO, SLA</span><span data-zh>ZDR 模式、SSO、SLA</span></li>
+        </ul>
+        <button class="btn btn-outline" style="width:100%;justify-content:center"><span data-en>Start Free</span><span data-zh>免费开始</span></button>
+      </div>
+
+      <div class="price-card featured">
+        <div class="featured-badge">POPULAR</div>
+        <div class="plan-name">Pay-as-you-go</div>
+        <div class="plan-price">$10<sub>+</sub></div>
+        <div class="plan-unit"><span data-en>minimum credit purchase</span><span data-zh>最低充值金额</span> · 5.5% <span data-en>fee on top-up</span><span data-zh>充值手续费</span></div>
+        <div class="plan-divider"></div>
+        <ul class="plan-features">
+          <li><span class="pf-icon">✓</span><span data-en>All 38 models unlocked</span><span data-zh>全部 38 个模型解锁</span></li>
+          <li><span class="pf-icon">✓</span><span data-en>Free tier raised to 1,000 req/day</span><span data-zh>免费层提升至 1,000 次/天</span></li>
+          <li><span class="pf-icon">✓</span><span data-en>Auto top-up with spend cap + alerts</span><span data-zh>自动补充，设定消费上限与提醒</span></li>
+          <li><span class="pf-icon">✓</span><span data-en>ZDR mode on all providers</span><span data-zh>所有供应商开启 ZDR 模式</span></li>
+          <li><span class="pf-icon">✓</span><span data-en>Regional routing (CQ pin)</span><span data-zh>区域路由（重庆固定）</span></li>
+          <li><span class="pf-icon no">—</span><span data-en>SSO, invoicing, annual commit</span><span data-zh>SSO、开票、年度承诺</span></li>
+        </ul>
+        <button class="btn btn-blue" style="width:100%;justify-content:center"><span data-en>Add Credits</span><span data-zh>充值积分</span></button>
+      </div>
+
+      <div class="price-card">
+        <div class="plan-name">Enterprise</div>
+        <div class="plan-price"><span style="font-size:22px">Custom</span></div>
+        <div class="plan-unit"><span data-en>Volume · Annual commits · Invoicing</span><span data-zh>量折 · 年度承诺 · 开票</span></div>
+        <div class="plan-divider"></div>
+        <ul class="plan-features">
+          <li><span class="pf-icon">✓</span><span data-en>Volume discounts on compute credits</span><span data-zh>算力积分量折</span></li>
+          <li><span class="pf-icon">✓</span><span data-en>Annual commit + prepaid invoicing</span><span data-zh>年度承诺 + 预付发票</span></li>
+          <li><span class="pf-icon">✓</span><span data-en>SSO (SAML) + org management</span><span data-zh>SSO (SAML) + 组织管理</span></li>
+          <li><span class="pf-icon">✓</span><span data-en>Dedicated SLA + 4h incident response</span><span data-zh>专属 SLA + 4小时事故响应</span></li>
+          <li><span class="pf-icon">✓</span><span data-en>BYOK (Bring Your Own Keys) option</span><span data-zh>BYOK（自带密钥）选项</span></li>
+          <li><span class="pf-icon">✓</span><span data-en>OCP advisory bundling available</span><span data-zh>可捆绑 OCP 咨询服务</span></li>
+        </ul>
+        <button class="btn btn-outline" style="width:100%;justify-content:center"><span data-en>Contact Sales</span><span data-zh>联系销售</span></button>
+      </div>
+    </div>
+
+    <div style="margin-top:40px">
+      <div class="section-label"><span data-en>SAMPLE TOKEN PRICING (Top Models)</span><span data-zh>样本 Token 定价（热门模型）</span></div>
+      <table class="token-table">
+        <thead>
+          <tr>
+            <th><span data-en>MODEL</span><span data-zh>模型</span></th>
+            <th><span data-en>INPUT /1M</span><span data-zh>输入 /1M</span></th>
+            <th><span data-en>OUTPUT /1M</span><span data-zh>输出 /1M</span></th>
+            <th><span data-en>CONTEXT</span><span data-zh>上下文</span></th>
+            <th><span data-en>NOTE</span><span data-zh>备注</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>qwen/qwen2.5-72b-instruct</td><td style="color:var(--green)">$0.23</td><td style="color:var(--green)">$0.40</td><td>128K</td><td style="color:var(--text3);font-size:11px">CQ-Main · fastest</td></tr>
+          <tr><td>qwen/qwen2.5-7b-instruct</td><td style="color:var(--green)">$0.04</td><td style="color:var(--green)">$0.08</td><td>128K</td><td style="color:var(--text3);font-size:11px">Cost-optimized</td></tr>
+          <tr><td>deepseek/deepseek-r1-distill-qwen-32b</td><td style="color:var(--green)">$0.18</td><td style="color:var(--green)">$0.55</td><td>64K</td><td style="color:var(--text3);font-size:11px">Reasoning model</td></tr>
+          <tr><td>qwen/qwen2.5-vl-72b-instruct</td><td style="color:var(--green)">$0.30</td><td style="color:var(--green)">$0.60</td><td>128K</td><td style="color:var(--text3);font-size:11px">VLM · image+text</td></tr>
+          <tr><td>internvl/internvl2-76b</td><td style="color:var(--green)">$0.28</td><td style="color:var(--green)">$0.58</td><td>8K</td><td style="color:var(--text3);font-size:11px">VLM · port-optimized</td></tr>
+          <tr><td>bge/bge-m3</td><td style="color:var(--blue)">$0.02</td><td style="color:var(--text3)">—</td><td>8K</td><td style="color:var(--text3);font-size:11px">Embedding · RAG</td></tr>
+          <tr><td>free/qwen2.5-7b</td><td class="price-free">FREE</td><td class="price-free">FREE</td><td>32K</td><td style="color:var(--text3);font-size:11px">Rate-limited · dev only</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="margin-top:40px">
+      <div class="section-label">OCP ADVISORY PRICING</div>
+      <table class="token-table">
+        <thead><tr><th><span data-en>ENGAGEMENT</span><span data-zh>服务</span></th><th><span data-en>SCOPE</span><span data-zh>范围</span></th><th><span data-en>DURATION</span><span data-zh>周期</span></th><th><span data-en>FEE STRUCTURE</span><span data-zh>收费方式</span></th></tr></thead>
+        <tbody>
+          <tr><td>OCP Gap Assessment</td><td style="color:var(--text2);font-size:12px"><span data-en>On-site audit + delta report</span><span data-zh>现场审计 + 差距报告</span></td><td style="font-size:12px">2–3 weeks</td><td style="color:var(--green);font-family:var(--mono);font-size:12px"><span data-en>Fixed fee, quoted per site</span><span data-zh>固定费用，按场地报价</span></td></tr>
+          <tr><td>Retrofit Design Package</td><td style="color:var(--text2);font-size:12px"><span data-en>BOM + drawings + RFQ pack</span><span data-zh>BOM + 图纸 + RFQ 包</span></td><td style="font-size:12px">4–6 weeks</td><td style="color:var(--green);font-family:var(--mono);font-size:12px"><span data-en>Fixed fee</span><span data-zh>固定费用</span></td></tr>
+          <tr><td>Pilot Rack PoC</td><td style="color:var(--text2);font-size:12px"><span data-en>1×ORv3, DLC, OpenBMC commission</span><span data-zh>1×ORv3，液冷，OpenBMC 调试</span></td><td style="font-size:12px">6–8 weeks</td><td style="color:var(--green);font-family:var(--mono);font-size:12px"><span data-en>T&M + hardware cost</span><span data-zh>时间物料 + 硬件成本</span></td></tr>
+          <tr><td>Certification Advisory</td><td style="color:var(--text2);font-size:12px"><span data-en>OCP Ready / Inspired submission support</span><span data-zh>OCP Ready / Inspired 提交支持</span></td><td style="font-size:12px">8–12 weeks</td><td style="color:var(--green);font-family:var(--mono);font-size:12px"><span data-en>Monthly retainer</span><span data-zh>月度顾问费</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════ DOCS ════════════════════════════════════ -->
+<div class="page-section" id="pg-docs">
+  <div class="docs-layout">
+    <div class="docs-nav">
+      <div class="docs-nav-section">
+        <div class="docs-nav-label">Getting Started</div>
+        <a class="docs-nav-link active" href="#">Quickstart</a>
+        <a class="docs-nav-link" href="#">Authentication</a>
+        <a class="docs-nav-link" href="#">Your First Request</a>
+      </div>
+      <div class="docs-nav-section">
+        <div class="docs-nav-label">API Reference</div>
+        <a class="docs-nav-link" href="#">Chat Completions</a>
+        <a class="docs-nav-link" href="#">Models List</a>
+        <a class="docs-nav-link" href="#">Embeddings</a>
+        <a class="docs-nav-link" href="#">Streaming</a>
+      </div>
+      <div class="docs-nav-section">
+        <div class="docs-nav-label">Features</div>
+        <a class="docs-nav-link" href="#">Provider Routing</a>
+        <a class="docs-nav-link" href="#">Fallback Config</a>
+        <a class="docs-nav-link" href="#">ZDR Mode</a>
+        <a class="docs-nav-link" href="#">Regional Pinning</a>
+      </div>
+      <div class="docs-nav-section">
+        <div class="docs-nav-label">OCP Resources</div>
+        <a class="docs-nav-link" href="#">OCP Architecture Notes</a>
+        <a class="docs-nav-link" href="#">Retrofit Playbook</a>
+        <a class="docs-nav-link" href="#">RFQ Templates</a>
+        <a class="docs-nav-link" href="#">Compliance Notes</a>
+      </div>
+    </div>
+
+    <div class="docs-content">
+      <h3><span data-en>Quickstart</span><span data-zh>快速开始</span></h3>
+      <p><span data-en>DCDeepTech's Compute Gateway is fully OpenAI-compatible. If you're already using the OpenAI Python or JS SDK, you only need to change two things: the base URL and your API key. Everything else — streaming, function calling, tool use, embeddings — works the same.</span><span data-zh>DCDeepTech 算力中台完全兼容 OpenAI。如果您已在使用 OpenAI Python 或 JS SDK，只需更改两项：base URL 和 API 密钥。其余一切——流式输出、function calling、工具调用、embedding——均保持不变。</span></p>
+
+      <div class="note"><strong>Base URL:</strong> <span class="inline-code">https://api.dcdeeptech.io/v1</span> &nbsp;·&nbsp; <strong><span data-en>Hosted at:</span><span data-zh>托管位置：</span></strong> <span data-en>Singapore (Equinix SG1)</span><span data-zh>新加坡 (Equinix SG1)</span></div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">PYTHON — openai SDK</span><button class="code-copy" onclick="this.textContent='Copied!';setTimeout(()=>this.textContent='Copy',1500)">Copy</button></div>
+        <div class="code-body"><pre><span class="kw">pip install</span> openai
+
+<span class="kw">from</span> openai <span class="kw">import</span> OpenAI
+
+client = OpenAI(
+    base_url=<span class="str">"https://api.dcdeeptech.io/v1"</span>,
+    api_key=<span class="str">"dct-your-key-here"</span>,
+)
+
+<span class="cm"># List available models</span>
+models = client.models.list()
+<span class="kw">for</span> m <span class="kw">in</span> models.data:
+    <span class="fn">print</span>(m.id, m.pricing)
+
+<span class="cm"># Chat completion</span>
+response = client.chat.completions.create(
+    model=<span class="str">"qwen/qwen2.5-72b-instruct"</span>,
+    messages=[
+        {<span class="str">"role"</span>: <span class="str">"system"</span>, <span class="str">"content"</span>: <span class="str">"You are a helpful assistant."</span>},
+        {<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: <span class="str">"Summarize OCP Open Rack v3 in 3 bullets."</span>}
+    ],
+    max_tokens=<span class="num">512</span>,
+    stream=<span class="kw">True</span>,               <span class="cm"># SSE streaming supported</span>
+)
+<span class="kw">for</span> chunk <span class="kw">in</span> response:
+    <span class="fn">print</span>(chunk.choices[<span class="num">0</span>].delta.content, end=<span class="str">""</span>)</pre></div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">JAVASCRIPT / NODE</span><button class="code-copy" onclick="this.textContent='Copied!';setTimeout(()=>this.textContent='Copy',1500)">Copy</button></div>
+        <div class="code-body"><pre><span class="kw">import</span> OpenAI <span class="kw">from</span> <span class="str">'openai'</span>;
+
+<span class="kw">const</span> client = <span class="kw">new</span> <span class="fn">OpenAI</span>({
+  baseURL: <span class="str">'https://api.dcdeeptech.io/v1'</span>,
+  apiKey: <span class="str">'dct-your-key-here'</span>,
+});
+
+<span class="kw">const</span> response = <span class="kw">await</span> client.chat.completions.<span class="fn">create</span>({
+  model: <span class="str">'qwen/qwen2.5-vl-72b-instruct'</span>,    <span class="cm">// VLM for image tasks</span>
+  messages: [{
+    role: <span class="str">'user'</span>,
+    content: [
+      { type: <span class="str">'image_url'</span>, image_url: { url: <span class="str">'https://...'</span> } },
+      { type: <span class="str">'text'</span>, text: <span class="str">'Read the container number in this image.'</span> }
+    ]
+  }],
+});
+console.<span class="fn">log</span>(response.choices[<span class="num">0</span>].message.content);</pre></div>
+      </div>
+
+      <h3><span data-en>API Endpoints</span><span data-zh>API 接口</span></h3>
+      <div class="endpoint-row"><span class="method post">POST</span><span class="ep-path">/v1/chat/completions</span><span class="ep-desc"><span data-en>Chat + function calling + VLM</span><span data-zh>对话 + 函数调用 + 多模态</span></span></div>
+      <div class="endpoint-row"><span class="method get">GET</span><span class="ep-path">/v1/models</span><span class="ep-desc"><span data-en>List all available models with pricing</span><span data-zh>列出所有可用模型及定价</span></span></div>
+      <div class="endpoint-row"><span class="method post">POST</span><span class="ep-path">/v1/embeddings</span><span class="ep-desc"><span data-en>Text embeddings (BGE-M3, BCE)</span><span data-zh>文本 Embedding（BGE-M3, BCE）</span></span></div>
+      <div class="endpoint-row"><span class="method get">GET</span><span class="ep-path">/v1/providers</span><span class="ep-desc"><span data-en>Real-time provider status + latency</span><span data-zh>实时供应商状态 + 时延</span></span></div>
+      <div class="endpoint-row"><span class="method get">GET</span><span class="ep-path">/v1/usage</span><span class="ep-desc"><span data-en>Token usage + cost breakdown by key</span><span data-zh>按密钥的 Token 用量 + 费用明细</span></span></div>
+
+      <h3><span data-en>Request Headers</span><span data-zh>请求头参数</span></h3>
+      <table class="param-table">
+        <thead><tr><th><span data-en>HEADER</span><span data-zh>请求头</span></th><th><span data-en>TYPE</span><span data-zh>类型</span></th><th><span data-en>REQUIRED</span><span data-zh>必填</span></th><th><span data-en>DESCRIPTION</span><span data-zh>说明</span></th></tr></thead>
+        <tbody>
+          <tr><td class="param-name">Authorization</td><td class="param-type">string</td><td class="param-req">required</td><td class="param-desc">Bearer dct-xxxx</td></tr>
+          <tr><td class="param-name">X-DCT-Region</td><td class="param-type">string</td><td class="param-req">optional</td><td class="param-desc">cq-main | cq-reserve | cq-west | auto (default)</td></tr>
+          <tr><td class="param-name">X-DCT-ZDR</td><td class="param-type">boolean</td><td class="param-req">optional</td><td class="param-desc"><span data-en>Zero Data Retention — routes only to ZDR-compliant providers</span><span data-zh>零数据留存——仅路由至合规供应商</span></td></tr>
+          <tr><td class="param-name">X-DCT-Fallback</td><td class="param-type">string[]</td><td class="param-req">optional</td><td class="param-desc"><span data-en>Ordered fallback provider list if primary fails</span><span data-zh>主供应商失败时的降级顺序列表</span></td></tr>
+          <tr><td class="param-name">X-DCT-App-ID</td><td class="param-type">string</td><td class="param-req">optional</td><td class="param-desc"><span data-en>Tag requests by application for usage analytics</span><span data-zh>按应用标记请求，用于用量分析</span></td></tr>
+        </tbody>
+      </table>
+
+      <div class="note"><strong><span data-en>Zero Completion Insurance:</span><span data-zh>零补偿保险：</span></strong> <span data-en>When fallback routing is enabled, you are only billed for the successful model run. Failed attempts are not charged.</span><span data-zh>开启降级路由时，仅对成功的模型调用计费。失败请求不收费。</span></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── CURSOR ──────────────────────────────────────────────
+const cur = document.getElementById('cur');
+const curR = document.getElementById('cur-r');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px'});
+(function drift(){rx+=(mx-rx)*.13;ry+=(my-ry)*.13;curR.style.left=rx+'px';curR.style.top=ry+'px';requestAnimationFrame(drift)})();
+document.querySelectorAll('a,button,.sol-card,.plat-card,.prov-card,.spec-card,.price-card').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{cur.style.width='16px';cur.style.height='16px';cur.style.background='#00e5a0';curR.style.width='44px';curR.style.height='44px'});
+  el.addEventListener('mouseleave',()=>{cur.style.width='8px';cur.style.height='8px';cur.style.background='var(--cyan)';curR.style.width='32px';curR.style.height='32px'});
+});
+
+// ── LANG ────────────────────────────────────────────────
+function setLang(l){
+  document.body.classList.toggle('zh',l==='zh');
+  document.getElementById('btnEn').classList.toggle('on',l==='en');
+  document.getElementById('btnZh').classList.toggle('on',l==='zh');
+  // toggle display
+  document.querySelectorAll('[data-en]').forEach(el=>{
+    el.style.display = l==='zh' ? 'none' : (el.tagName==='SPAN'?'inline':'block');
+  });
+  document.querySelectorAll('[data-zh]').forEach(el=>{
+    el.style.display = l==='zh' ? (el.tagName==='SPAN'?'inline':'block') : 'none';
+  });
+}
+// init
+document.querySelectorAll('[data-zh]').forEach(el=>el.style.display='none');
+
+// ── PAGES ────────────────────────────────────────────────
+const pages=['home','models','providers','ocp','solutions','pricing','docs'];
+function showPage(id){
+  pages.forEach(p=>{
+    document.getElementById('pg-'+p).classList.toggle('show',p===id);
+  });
+  document.querySelectorAll('.nav-tab').forEach((t,i)=>{
+    t.classList.toggle('active',pages[i]===id);
+  });
+  window.scrollTo(0,0);
+}
+
+// ── OCP TABS ─────────────────────────────────────────────
+function ocpTab(tab,btn){
+  ['assess','specs','path'].forEach(t=>{
+    const el = document.getElementById('ocp-'+t);
+    if(el) el.style.display = t===tab?'block':'none';
+  });
+  document.querySelectorAll('.inner-tab').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+}
+
+// ── MODEL DATA ────────────────────────────────────────────
+const models=[
+  {name:'Qwen2.5 72B Instruct',id:'qwen/qwen2.5-72b-instruct',type:'llm',inp:'$0.23',out:'$0.40',ctx:'128K',lat:20,latW:32,provider:'CQ-Alpha',provColor:'#4da6ff',badge:'fast'},
+  {name:'Qwen2.5 7B Instruct',id:'qwen/qwen2.5-7b-instruct',type:'llm',inp:'$0.04',out:'$0.08',ctx:'128K',lat:12,latW:20,provider:'CQ-Alpha',provColor:'#4da6ff',badge:''},
+  {name:'Qwen2.5 32B Instruct',id:'qwen/qwen2.5-32b-instruct',type:'llm',inp:'$0.10',out:'$0.18',ctx:'128K',lat:16,latW:26,provider:'CQ-Industrial',provColor:'#ff8040',badge:''},
+  {name:'DeepSeek R1 Distill 32B',id:'deepseek/deepseek-r1-distill-qwen-32b',type:'llm',inp:'$0.18',out:'$0.55',ctx:'64K',lat:38,latW:55,provider:'CQ-Alpha',provColor:'#4da6ff',badge:'new'},
+  {name:'DeepSeek V3 (0324)',id:'deepseek/deepseek-v3-0324',type:'llm',inp:'$0.28',out:'$0.90',ctx:'128K',lat:45,latW:65,provider:'CQ-Reserve',provColor:'#6a8faf',badge:'new'},
+  {name:'Qwen2.5 VL 72B',id:'qwen/qwen2.5-vl-72b-instruct',type:'vlm',inp:'$0.30',out:'$0.60',ctx:'128K',lat:28,latW:42,provider:'CQ-Vision',provColor:'#00e5a0',badge:''},
+  {name:'InternVL2 76B',id:'internvl/internvl2-76b',type:'vlm',inp:'$0.28',out:'$0.58',ctx:'8K',lat:32,latW:48,provider:'CQ-Vision',provColor:'#00e5a0',badge:''},
+  {name:'CogVLM2 (19B)',id:'cogvlm/cogvlm2-19b',type:'vlm',inp:'$0.12',out:'$0.22',ctx:'4K',lat:22,latW:34,provider:'CQ-Vision',provColor:'#00e5a0',badge:''},
+  {name:'BGE-M3',id:'bge/bge-m3',type:'embedding',inp:'$0.02',out:'—',ctx:'8K',lat:8,latW:12,provider:'CQ-Embed',provColor:'#a0c0ff',badge:''},
+  {name:'BCE Embedding',id:'bce/bce-embedding-base',type:'embedding',inp:'$0.01',out:'—',ctx:'512',lat:6,latW:9,provider:'CQ-Embed',provColor:'#a0c0ff',badge:''},
+  {name:'Qwen2.5 7B (Free)',id:'free/qwen2.5-7b',type:'llm',inp:'FREE',out:'FREE',ctx:'32K',lat:18,latW:28,provider:'CQ-Alpha',provColor:'#4da6ff',badge:'free'},
+];
+
+let activeFilter='all', activeSearch='';
+function renderModels(){
+  const tbody=document.getElementById('model-tbody');
+  const filtered=models.filter(m=>{
+    const typeOk = activeFilter==='all'||m.type===activeFilter||(activeFilter==='free'&&m.badge==='free');
+    const searchOk = !activeSearch || m.name.toLowerCase().includes(activeSearch) || m.id.toLowerCase().includes(activeSearch) || m.type.includes(activeSearch);
+    return typeOk && searchOk;
+  });
+  tbody.innerHTML=filtered.map(m=>`
+    <tr>
+      <td>
+        <div class="model-name">${m.name}${m.badge?`<span class="model-badge badge-${m.badge}">${m.badge.toUpperCase()}</span>`:''}</div>
+        <div class="model-id">${m.id}</div>
+      </td>
+      <td style="font-family:var(--mono);font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.04em">${m.type}</td>
+      <td class="price-cell ${m.inp==='FREE'?'price-free':''}">${m.inp}</td>
+      <td class="price-cell ${m.out==='FREE'?'price-free':''}">${m.out}</td>
+      <td class="ctx-cell">${m.ctx}</td>
+      <td>
+        <div class="progress-row">
+          <div class="lat-bar"><div class="lat-fill" style="width:${m.latW}%;background:${m.lat<20?'#00e5a0':m.lat<40?'#4da6ff':'#ff8040'}"></div></div>
+          <span style="font-family:var(--mono);font-size:10px;color:var(--text2)">${m.lat}ms</span>
+        </div>
+      </td>
+      <td><span class="provider-dot" style="background:${m.provColor}"></span><span style="font-size:12px;color:var(--text2)">${m.provider}</span></td>
+    </tr>
+  `).join('');
+}
+function filterModels(f,btn){
+  activeFilter=f;
+  document.querySelectorAll('#model-filters .filter-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  renderModels();
+}
+function searchModels(v){
+  activeSearch=v.toLowerCase();
+  renderModels();
+}
+renderModels();
+
+// ── SCROLL REVEAL ─────────────────────────────────────────
+const revObs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('vis');revObs.unobserve(e.target)}}),{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>revObs.observe(el));
+</script>
+</body>
+</html>
