@@ -1,0 +1,95 @@
+version: "3.9"
+
+# 新加坡算力 API 中台 - 完整部署栈
+# 组件：Nginx(TLS终止) + FastAPI网关 + Redis(限流缓存)
+
+services:
+
+  # ── Redis - 限流滑动窗口 + API Key缓存 ──────────────────────────
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: >
+      redis-server
+      --requirepass ${REDIS_PASSWORD:-changeme_redis_pass}
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+      --save ""
+      --appendonly no
+    ports:
+      - "127.0.0.1:6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-changeme_redis_pass}", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks:
+      - internal
+
+  # ── FastAPI 网关 ─────────────────────────────────────────────────
+  gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: final
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      REDIS_URL: "redis://:${REDIS_PASSWORD:-changeme_redis_pass}@redis:6379/0"
+      ENVIRONMENT: ${ENVIRONMENT:-production}
+    ports:
+      - "127.0.0.1:8000:8000"   # 仅暴露给 Nginx，不对外直接开放
+    volumes:
+      - gateway_logs:/var/log/sg-gateway
+      - ./certs:/certs:ro        # TLS 证书挂载
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:8000/health/live"]
+      interval: 30s
+      timeout: 5s
+      start_period: 15s
+      retries: 3
+    networks:
+      - internal
+      - external
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "2"
+
+  # ── Nginx - TLS终止 + 反向代理 ──────────────────────────────────
+  nginx:
+    image: nginx:1.25-alpine
+    restart: unless-stopped
+    ports:
+      - "443:443"
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./certs:/etc/nginx/certs:ro
+      - nginx_logs:/var/log/nginx
+    depends_on:
+      gateway:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "nginx", "-t"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    networks:
+      - external
+      - internal
+
+volumes:
+  gateway_logs:
+  nginx_logs:
+
+networks:
+  internal:
+    driver: bridge
+    internal: true    # Redis 和 Gateway 内部通信，不对外暴露
+  external:
+    driver: bridge
