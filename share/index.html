@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DCDeepTech 战略合伙人第二次筹备会议</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0f1117;
+    --paper: #f5f0e8;
+    --accent: #c8382a;
+    --gold: #b8960c;
+    --muted: #6b6560;
+    --border: #d4cfc4;
+    --yes-color: #1a6b3a;
+    --no-color: #c8382a;
+    --abstain-color: #7a6f5a;
+    --card-bg: #faf7f2;
+    --shadow: 0 2px 20px rgba(15,17,23,0.08);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans SC', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.8;
+    min-height: 100vh;
+  }
+
+  /* Header */
+  .site-header {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .site-header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 60px,
+      rgba(255,255,255,0.02) 60px,
+      rgba(255,255,255,0.02) 61px
+    );
+  }
+  .header-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 48px 32px 40px;
+    position: relative;
+  }
+  .header-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .header-title {
+    font-family: 'Noto Serif SC', serif;
+    font-size: clamp(22px, 4vw, 34px);
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 12px;
+  }
+  .header-sub {
+    font-size: 14px;
+    color: rgba(245,240,232,0.55);
+    letter-spacing: 1px;
+  }
+  .header-meta {
+    display: flex;
+    gap: 24px;
+    margin-top: 28px;
+    flex-wrap: wrap;
+  }
+  .meta-item {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: rgba(245,240,232,0.45);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .meta-item span { color: rgba(245,240,232,0.75); }
+
+  /* Main layout */
+  .main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 32px 80px;
+  }
+
+  /* Section */
+  .section {
+    margin-bottom: 48px;
+  }
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .section-title {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--ink);
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--ink);
+    margin-bottom: 20px;
+  }
+
+  /* Content cards */
+  .content-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 24px 28px;
+    margin-bottom: 16px;
+    position: relative;
+  }
+  .content-card::before {
+    content: attr(data-num);
+    position: absolute;
+    top: 20px;
+    left: -1px;
+    width: 4px;
+    height: 32px;
+    background: var(--accent);
+    border-radius: 0 2px 2px 0;
+  }
+  .card-title {
+    font-family: 'Noto Serif SC', serif;
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--ink);
+    margin-bottom: 10px;
+  }
+  .card-body {
+    font-size: 14px;
+    color: #3a3530;
+    line-height: 1.9;
+  }
+  .card-body ul {
+    padding-left: 20px;
+    margin-top: 8px;
+  }
+  .card-body li {
+    margin-bottom: 6px;
+  }
+  .highlight-box {
+    background: rgba(200,56,42,0.05);
+    border-left: 3px solid var(--accent);
+    padding: 10px 14px;
+    margin-top: 12px;
+    font-size: 13px;
+    color: var(--muted);
+    border-radius: 0 2px 2px 0;
+  }
+  .tax-badge {
+    display: inline-block;
+    background: var(--gold);
+    color: white;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 2px;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+
+  /* Divider */
+  .divider {
+    text-align: center;
+    color: var(--border);
+    letter-spacing: 6px;
+    font-size: 12px;
+    margin: 40px 0;
+    user-select: none;
+  }
+
+  /* === VOTING SECTION === */
+  .vote-section {
+    background: var(--ink);
+    color: var(--paper);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 48px;
+  }
+  .vote-header {
+    padding: 28px 32px 20px;
+    border-bottom: 1px solid rgba(245,240,232,0.1);
+  }
+  .vote-header-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+  .vote-header-title {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 18px;
+    font-weight: 700;
+  }
+  .vote-items {
+    padding: 20px 32px 32px;
+  }
+  .vote-item {
+    margin-bottom: 32px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid rgba(245,240,232,0.08);
+  }
+  .vote-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+  .vote-item-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--gold);
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+  .vote-item-title {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    line-height: 1.6;
+  }
+  .vote-item-desc {
+    font-size: 13px;
+    color: rgba(245,240,232,0.5);
+    margin-bottom: 16px;
+    line-height: 1.7;
+  }
+
+  /* Voter name input */
+  .voter-name-section {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 20px 28px;
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .voter-name-label {
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    color: var(--ink);
+  }
+  .voter-name-input {
+    flex: 1;
+    min-width: 200px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 8px 14px;
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 14px;
+    background: white;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .voter-name-input:focus { border-color: var(--accent); }
+  .voter-name-input::placeholder { color: var(--border); }
+
+  /* Vote buttons */
+  .vote-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .vote-btn {
+    flex: 1;
+    min-width: 80px;
+    padding: 10px 16px;
+    border: 2px solid transparent;
+    border-radius: 2px;
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: rgba(245,240,232,0.08);
+    color: rgba(245,240,232,0.7);
+    border-color: rgba(245,240,232,0.12);
+    letter-spacing: 1px;
+  }
+  .vote-btn:hover { background: rgba(245,240,232,0.15); border-color: rgba(245,240,232,0.25); color: var(--paper); }
+  .vote-btn.selected-yes { background: var(--yes-color); border-color: var(--yes-color); color: white; }
+  .vote-btn.selected-no { background: var(--no-color); border-color: var(--no-color); color: white; }
+  .vote-btn.selected-abstain { background: var(--abstain-color); border-color: var(--abstain-color); color: white; }
+  .vote-btn:active { transform: scale(0.97); }
+
+  /* Submit btn */
+  .submit-area {
+    padding: 0 32px 32px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .submit-btn {
+    background: var(--gold);
+    color: white;
+    border: none;
+    padding: 14px 36px;
+    font-family: 'Noto Serif SC', serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 2px;
+    letter-spacing: 2px;
+    transition: all 0.2s;
+  }
+  .submit-btn:hover { background: #a07d0a; transform: translateY(-1px); }
+  .submit-btn:active { transform: translateY(0); }
+  .reset-btn {
+    background: transparent;
+    color: rgba(245,240,232,0.4);
+    border: 1px solid rgba(245,240,232,0.15);
+    padding: 14px 24px;
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s;
+  }
+  .reset-btn:hover { color: rgba(245,240,232,0.7); border-color: rgba(245,240,232,0.3); }
+
+  /* === RESULTS === */
+  .results-section {
+    margin-bottom: 48px;
+  }
+  .results-table-wrap {
+    overflow-x: auto;
+  }
+  .results-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .results-table th {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 10px 16px;
+    text-align: left;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    font-weight: 400;
+    white-space: nowrap;
+  }
+  .results-table td {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    background: var(--card-bg);
+    vertical-align: top;
+  }
+  .results-table tr:hover td { background: #f0ece4; }
+  .badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 2px;
+    font-size: 12px;
+    font-weight: 500;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .badge-yes { background: rgba(26,107,58,0.12); color: var(--yes-color); }
+  .badge-no { background: rgba(200,56,42,0.12); color: var(--no-color); }
+  .badge-abstain { background: rgba(122,111,90,0.12); color: var(--abstain-color); }
+
+  /* Tally cards */
+  .tally-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .tally-card {
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 20px;
+    background: var(--card-bg);
+    text-align: center;
+  }
+  .tally-card-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+  }
+  .tally-num {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 42px;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .tally-yes .tally-num { color: var(--yes-color); }
+  .tally-no .tally-num { color: var(--no-color); }
+  .tally-abstain .tally-num { color: var(--abstain-color); }
+  .tally-total .tally-num { color: var(--ink); }
+  .tally-label { font-size: 12px; color: var(--muted); }
+
+  /* Per-vote summary */
+  .vote-summary-list {
+    margin-top: 24px;
+  }
+  .vote-summary-item {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 16px 20px;
+    margin-bottom: 12px;
+  }
+  .vs-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .vs-bar-wrap {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+  .vs-bar-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    width: 36px;
+    color: var(--muted);
+  }
+  .vs-bar-bg {
+    flex: 1;
+    height: 8px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .vs-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.5s ease;
+  }
+  .fill-yes { background: var(--yes-color); }
+  .fill-no { background: var(--no-color); }
+  .fill-abstain { background: var(--abstain-color); }
+  .vs-bar-count {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    width: 24px;
+    text-align: right;
+    color: var(--ink);
+  }
+
+  /* Alert */
+  .alert {
+    padding: 12px 16px;
+    border-radius: 2px;
+    font-size: 13px;
+    margin-bottom: 20px;
+    display: none;
+  }
+  .alert.show { display: block; }
+  .alert-success { background: rgba(26,107,58,0.1); border-left: 3px solid var(--yes-color); color: var(--yes-color); }
+  .alert-error { background: rgba(200,56,42,0.1); border-left: 3px solid var(--no-color); color: var(--no-color); }
+
+  /* Empty state */
+  .empty-state {
+    text-align: center;
+    padding: 40px;
+    color: var(--muted);
+    font-size: 14px;
+    border: 2px dashed var(--border);
+    border-radius: 2px;
+  }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .main, .header-inner { padding-left: 16px; padding-right: 16px; }
+    .vote-items, .vote-header, .submit-area { padding-left: 16px; padding-right: 16px; }
+    .tally-grid { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* Print timestamp */
+  .print-note {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    text-align: right;
+    margin-bottom: 8px;
+  }
+
+  .footer {
+    text-align: center;
+    padding: 32px;
+    font-size: 12px;
+    color: var(--border);
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 1px;
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <div class="header-tag">DCDEEPTECH · STRATEGIC PARTNER MEETING II</div>
+    <h1 class="header-title">战略合伙人第二次筹备会议讨论稿<br>股权、治理与双利润中心架构</h1>
+    <div class="header-sub">DCDeepTech Internal · Confidential</div>
+    <div class="header-meta">
+      <div class="meta-item">📍 <span>重庆 / 新加坡</span></div>
+      <div class="meta-item">🗓 <span>2026年</span></div>
+      <div class="meta-item">📄 <span>议程：三项表决事项</span></div>
+    </div>
+  </div>
+</header>
+
+<main class="main">
+
+  <!-- 一、背景 -->
+  <section class="section">
+    <div class="section-label">SECTION I</div>
+    <h2 class="section-title">一、会议背景与总体架构定位</h2>
+    <div class="content-card" data-num="">
+      <div class="card-body">
+        基于第一次合伙人会议确立的战略升级决议，本次会议旨在从顶层设计层面，正式确立 DCDeepTech 的<strong>跨国股权结构</strong>、<strong>公司治理规则</strong>以及<strong>"中新（重庆-新加坡）双利润中心"财务模型</strong>。
+        <br><br>
+        公司将采取<strong>「董事会领导下的CEO负责制」</strong>，依托中新战略性互联互通示范项目（CCI）的通道优势，打造既能利用中国工程师与供应链红利，又能链接全球算力资本的合规化出海平台。
+      </div>
+    </div>
+  </section>
+
+  <!-- 二、注册实体 -->
+  <section class="section">
+    <div class="section-label">SECTION II</div>
+    <h2 class="section-title">二、注册实体设立与股权结构分配</h2>
+
+    <div class="content-card" data-num="">
+      <div class="card-title">🏢 重庆合资公司（集团母公司 & 核心IP/研发中台）</div>
+      <div class="card-body">
+        架构设计明确为「中国重庆母公司 + 新加坡全资子公司」的跨境控制模式。
+        <br><br>
+        <strong>初始股权结构（A轮/早期基准）：</strong>
+        <ul>
+          <li><strong>创始团队与战略合资方（60%）：</strong>绑定核心团队并引入重庆地方产业资本，以获取廉价电力、场地政策及供应链支持。</li>
+          <li><strong>风险投资预留池（20%）：</strong>专为引入深科技与重资产基建属性的PE/VC预留，确保新加坡和中国VC的资本弹药。</li>
+          <li><strong>员工期权池 ESOP（15%–20%）：</strong>通过设立境内有限合伙企业（LP）作为持股平台持有。</li>
+        </ul>
+        <div class="highlight-box">
+          ⚠️ <strong>风控要点：</strong>绝大多数风投机构在2026年均要求在「投资前（Pre-Money）」设立或扩充期权池。必须在公司设立之初即完成该15%–20%份额的隔离，避免后续融资时对投资人份额造成稀释，从而保护公司整体的资本估值模型。
+        </div>
+      </div>
+    </div>
+
+    <div class="content-card" data-num="">
+      <div class="card-title">🌏 新加坡全资子公司（全球商业化与运维中心）</div>
+      <div class="card-body">
+        <ul>
+          <li><strong>设立路径：</strong>由重庆母公司通过中国商务部、发改委和外管局的「企业境外投资证书（ODI）」审批通道，100%全资设立。</li>
+          <li><strong>业务职能：</strong>作为集团对外的唯一商业实体，负责与全球云客户签订算力租赁合同并收取美元/新币；同时负责海外物理数据中心API中台的实地部署与日常运维。</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 三、治理结构 -->
+  <section class="section">
+    <div class="section-label">SECTION III</div>
+    <h2 class="section-title">三、治理结构：董事会领导下的CEO负责制</h2>
+
+    <div class="content-card" data-num="">
+      <div class="card-title">📋 董事会职权与保留事项（Reserved Matters）</div>
+      <div class="card-body">
+        董事会作为最高战略和风控机构，必须在股东协议（SHA）中明确「保留事项清单」。对于超出日常经营的重大事项，设定特别表决门槛或否决权，包括：
+        <ul>
+          <li>核心AI调度算法与OCP标准的IP转移许可</li>
+          <li>超出年度预算的重型资产（液冷数据中心、GPU硬件）资本支出（CapEx）</li>
+          <li>股权稀释与融资方案</li>
+          <li>跨境数据合规红线问题</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="content-card" data-num="">
+      <div class="card-title">👤 CEO全权负责与管理授权</div>
+      <div class="card-body">
+        CEO在董事会批准的年度战略KPI和预算框架内，全权负责跨国双实体的日常经营与人员管理。CEO需对以下核心指标负责：
+        <ul>
+          <li>全局每Token综合成本</li>
+          <li>OCP全球适航节点交付完成率</li>
+          <li>全球经常性收入（ARR）</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="content-card" data-num="">
+      <div class="card-title">🔒 工程与合规责任防火墙</div>
+      <div class="card-body">
+        CEO在带领重庆团队执行民航算力等高端OCP高密度硬件（如单柜140kW+）交付时，必须严格执行法律边界：<strong>坚决拒绝承担高风险的「事实总包」工程责任</strong>，将制造交付责任交由合作方，自身仅获取咨询、控制与系统集成溢价。
+      </div>
+    </div>
+  </section>
+
+  <!-- 四、双利润中心 -->
+  <section class="section">
+    <div class="section-label">SECTION IV</div>
+    <h2 class="section-title">四、重庆与新加坡「双利润中心」财务/税务模式</h2>
+
+    <div class="content-card" data-num="">
+      <div class="card-title">🇸🇬 做大新加坡利润中心（算力美元计费网关）</div>
+      <div class="card-body">
+        新加坡子公司向全球出租GPU算力，赚取高毛利美元收益。
+        <br><br>
+        <strong>税务杠杆：</strong>
+        <ul>
+          <li>
+            <span class="tax-badge">EIS 2026</span>
+            充分利用新加坡企业创新计划（EIS），将符合条件的AI相关资本支出作为抵扣项，享受高达<strong>400%税收扣除</strong>，每年上限5万新元，大幅对冲算力租赁带来的应税利润。
+          </li>
+          <li>
+            <span class="tax-badge">IDI</span>
+            集团核心软件在新加坡注册的IP，可通过「知识产权发展奖励计划 (IDI)」享受<strong>5%或10%的超低优惠税率</strong>。
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="content-card" data-num="">
+      <div class="card-title">🇨🇳 做实重庆利润中心（高价值IP与标准研发底座）</div>
+      <div class="card-body">
+        重庆公司通过沉淀出模板化的OCP BOM（物料清单）与API调度中台，向全球及国内项目收取高额的授权与服务溢价。
+        <br><br>
+        <strong>税务杠杆：</strong>
+        <ul>
+          <li>
+            <span class="tax-badge">西部大开发</span>
+            利用国家西部大开发政策（延续至2030年）或申请高新技术企业（HNTE），长期享受<strong>15%的优惠企业所得税率</strong>（大幅低于全国标准25%），以极低税务损耗沉淀资金，支持国内顶尖AI工程师团队的高薪开支。
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="content-card" data-num="">
+      <div class="card-title">⚖️ 内部转移定价（Transfer Pricing）动态演进策略</div>
+      <div class="card-body">
+        <ul>
+          <li>
+            <strong>第一阶段（成本加成法 Cost-Plus Method）：</strong>业务初期，新加坡作为结算中心，依据「独立交易原则（Arm's Length Principle）」与重庆母公司签署《技术开发与维护服务协议》。在重庆实际研发与人力成本之上，附加<strong>10%–15%的行业合理利润率</strong>支付回国内，确保重庆拥有稳定净利润。
+          </li>
+          <li>
+            <strong>第二阶段（利润分割法 Profit Split Method）：</strong>随着重庆研发的AI算力调度算法成为驱动新加坡海外营收的核心壁垒，转移定价向利润分割法过渡。将全球高毛利GPU租赁的超额利润，按双方核心价值贡献比例在两地进行科学切分，使重庆真正成为高增长的利润蓄水池。
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider">· · · · · · · · · · · · · · ·</div>
+
+  <!-- VOTING -->
+  <div class="vote-section">
+    <div class="vote-header">
+      <div class="vote-header-label">RESOLUTION · 表决事项</div>
+      <div class="vote-header-title">五、会议提请表决事项</div>
+    </div>
+
+    <div class="vote-items">
+      <!-- 投票人姓名 -->
+      <div id="voter-name-section" style="margin-bottom: 4px;">
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--gold); letter-spacing: 2px; margin-bottom: 12px;">VOTER IDENTITY · 投票人信息</div>
+      </div>
+
+      <!-- 议案1 -->
+      <div class="vote-item">
+        <div class="vote-item-num">RESOLUTION 01 · 议案一</div>
+        <div class="vote-item-title">审议通过「重庆合资（母）+ 新加坡全资（子）」的法律实体搭建架构及相应的ODI资金出境时间表</div>
+        <div class="vote-item-desc">确立中国重庆母公司与新加坡全资子公司的跨境控制架构，并明确通过商务部、发改委、外管局ODI审批通道的资金出境时间表。</div>
+        <div class="vote-buttons" id="vote-buttons-1">
+          <button class="vote-btn" onclick="selectVote(1,'赞成')" id="btn-1-赞成">✓ 赞成</button>
+          <button class="vote-btn" onclick="selectVote(1,'反对')" id="btn-1-反对">✗ 反对</button>
+          <button class="vote-btn" onclick="selectVote(1,'弃权')" id="btn-1-弃权">— 弃权</button>
+        </div>
+      </div>
+
+      <!-- 议案2 -->
+      <div class="vote-item">
+        <div class="vote-item-num">RESOLUTION 02 · 议案二</div>
+        <div class="vote-item-title">审议批准60-20-20的核心股权切分结构，并启动境内ESOP有限合伙企业的工商注册</div>
+        <div class="vote-item-desc">批准创始团队60%、VC预留池20%、员工期权池20%的股权切分方案，同步启动ESOP有限合伙持股平台的工商注册程序。</div>
+        <div class="vote-buttons" id="vote-buttons-2">
+          <button class="vote-btn" onclick="selectVote(2,'赞成')" id="btn-2-赞成">✓ 赞成</button>
+          <button class="vote-btn" onclick="selectVote(2,'反对')" id="btn-2-反对">✗ 反对</button>
+          <button class="vote-btn" onclick="selectVote(2,'弃权')" id="btn-2-弃权">— 弃权</button>
+        </div>
+      </div>
+
+      <!-- 议案3 -->
+      <div class="vote-item">
+        <div class="vote-item-num">RESOLUTION 03 · 议案三</div>
+        <div class="vote-item-title">授权法务及财务负责团队，依据「双利润中心」目标，着手起草关联交易下的《跨境技术服务协议》与转移定价基准说明文档</div>
+        <div class="vote-item-desc">授权相关团队起草跨境技术服务协议及转移定价基准文件，为中新两地的合规关联交易提供法律与财务依据。</div>
+        <div class="vote-buttons" id="vote-buttons-3">
+          <button class="vote-btn" onclick="selectVote(3,'赞成')" id="btn-3-赞成">✓ 赞成</button>
+          <button class="vote-btn" onclick="selectVote(3,'反对')" id="btn-3-反对">✗ 反对</button>
+          <button class="vote-btn" onclick="selectVote(3,'弃权')" id="btn-3-弃权">— 弃权</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="submit-area">
+      <button class="submit-btn" onclick="submitVote()">提交表决 →</button>
+      <button class="reset-btn" onclick="resetForm()">重置</button>
+    </div>
+  </div>
+
+  <!-- Alert -->
+  <div class="alert alert-success" id="alert-success">✓ 表决已提交并记录</div>
+  <div class="alert alert-error" id="alert-error">⚠ 请填写姓名并完成所有议案的表决选项</div>
+
+  <!-- RESULTS -->
+  <section class="results-section">
+    <div class="section-label">VOTE RECORDS</div>
+    <h2 class="section-title">投票汇总记录</h2>
+
+    <!-- Overall tally -->
+    <div class="tally-grid" id="tally-grid">
+      <div class="tally-card tally-total">
+        <div class="tally-card-title">参与投票人数</div>
+        <div class="tally-num" id="total-count">0</div>
+        <div class="tally-label">人</div>
+      </div>
+    </div>
+
+    <!-- Per-resolution summary -->
+    <div class="vote-summary-list" id="vote-summary-list">
+      <div class="empty-state" id="empty-state">暂无表决记录，请在上方完成并提交表决。</div>
+    </div>
+
+    <!-- Detail table -->
+    <div style="margin-top: 28px;">
+      <div style="font-family: 'JetBrains Mono', sans-serif; font-size: 11px; color: var(--muted); letter-spacing: 2px; margin-bottom: 12px; text-transform: uppercase;">详细记录 · Detail Log</div>
+      <div class="print-note" id="last-updated"></div>
+      <div class="results-table-wrap">
+        <table class="results-table" id="results-table">
+          <thead>
+            <tr>
+              <th>投票人</th>
+              <th>议案一</th>
+              <th>议案二</th>
+              <th>议案三</th>
+              <th>时间</th>
+            </tr>
+          </thead>
+          <tbody id="results-tbody">
+            <tr><td colspan="5" style="text-align:center; color:var(--muted); padding: 24px;">暂无记录</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  DCDeepTech · CONFIDENTIAL · 2026 · 战略合伙人第二次筹备会议
+</footer>
+
+<script>
+  // State
+  let currentVotes = { 1: null, 2: null, 3: null };
+  let voterName = '';
+  let allRecords = JSON.parse(localStorage.getItem('dcdeeptech_votes') || '[]');
+
+  // Inject voter name input
+  (function() {
+    const el = document.getElementById('voter-name-section');
+    el.innerHTML = `
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--gold); letter-spacing: 2px; margin-bottom: 12px;">VOTER IDENTITY · 投票人信息</div>
+      <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 20px;">
+        <label style="font-size: 13px; color: rgba(245,240,232,0.7); white-space: nowrap;">投票人姓名：</label>
+        <input type="text" id="voter-name-input" placeholder="请输入您的姓名或代号"
+          style="flex:1; min-width:200px; border:1px solid rgba(245,240,232,0.2); border-radius:2px; padding:8px 14px;
+          font-family:'Noto Sans SC',sans-serif; font-size:14px; background:rgba(245,240,232,0.06); color:var(--paper);
+          outline:none; transition: border-color 0.2s;"
+          oninput="voterName = this.value"
+          onfocus="this.style.borderColor='rgba(184,150,12,0.6)'"
+          onblur="this.style.borderColor='rgba(245,240,232,0.2)'"
+        />
+      </div>
+    `;
+  })();
+
+  function selectVote(res, choice) {
+    currentVotes[res] = choice;
+    [' 赞成', '反对', '弃权'].forEach(c => {
+      const btn = document.getElementById(`btn-${res}-${c.trim()}`);
+      if (btn) {
+        btn.classList.remove('selected-yes', 'selected-no', 'selected-abstain');
+      }
+    });
+    const selected = document.getElementById(`btn-${res}-${choice}`);
+    if (selected) {
+      if (choice === '赞成') selected.classList.add('selected-yes');
+      else if (choice === '反对') selected.classList.add('selected-no');
+      else selected.classList.add('selected-abstain');
+    }
+  }
+
+  function submitVote() {
+    const nameInput = document.getElementById('voter-name-input');
+    const name = nameInput ? nameInput.value.trim() : '';
+    if (!name || !currentVotes[1] || !currentVotes[2] || !currentVotes[3]) {
+      showAlert('error');
+      return;
+    }
+    const now = new Date();
+    const record = {
+      name,
+      v1: currentVotes[1],
+      v2: currentVotes[2],
+      v3: currentVotes[3],
+      time: now.toLocaleString('zh-CN', { hour12: false })
+    };
+    allRecords.push(record);
+    localStorage.setItem('dcdeeptech_votes', JSON.stringify(allRecords));
+    showAlert('success');
+    resetForm();
+    renderResults();
+  }
+
+  function resetForm() {
+    currentVotes = { 1: null, 2: null, 3: null };
+    const nameInput = document.getElementById('voter-name-input');
+    if (nameInput) nameInput.value = '';
+    voterName = '';
+    [1, 2, 3].forEach(res => {
+      ['赞成', '反对', '弃权'].forEach(c => {
+        const btn = document.getElementById(`btn-${res}-${c}`);
+        if (btn) btn.classList.remove('selected-yes', 'selected-no', 'selected-abstain');
+      });
+    });
+  }
+
+  function showAlert(type) {
+    const success = document.getElementById('alert-success');
+    const error = document.getElementById('alert-error');
+    success.classList.remove('show');
+    error.classList.remove('show');
+    if (type === 'success') success.classList.add('show');
+    else error.classList.add('show');
+    setTimeout(() => {
+      success.classList.remove('show');
+      error.classList.remove('show');
+    }, 3000);
+  }
+
+  function getBadgeHTML(val) {
+    if (val === '赞成') return `<span class="badge badge-yes">✓ 赞成</span>`;
+    if (val === '反对') return `<span class="badge badge-no">✗ 反对</span>`;
+    return `<span class="badge badge-abstain">— 弃权</span>`;
+  }
+
+  function renderResults() {
+    const total = allRecords.length;
+    document.getElementById('total-count').textContent = total;
+
+    // Compute per-resolution tallies
+    const resolutions = [
+      { key: 'v1', label: '议案一：法律实体架构及ODI时间表' },
+      { key: 'v2', label: '议案二：60-20-20股权结构及ESOP注册' },
+      { key: 'v3', label: '议案三：授权起草跨境服务协议及转移定价文件' },
+    ];
+
+    // Empty state
+    const emptyState = document.getElementById('empty-state');
+    if (total === 0) {
+      emptyState.style.display = 'block';
+    } else {
+      emptyState.style.display = 'none';
+    }
+
+    // Summary bars
+    const summaryEl = document.getElementById('vote-summary-list');
+    if (total > 0) {
+      let html = '';
+      resolutions.forEach((res, idx) => {
+        const yes = allRecords.filter(r => r[res.key] === '赞成').length;
+        const no = allRecords.filter(r => r[res.key] === '反对').length;
+        const abs = allRecords.filter(r => r[res.key] === '弃权').length;
+        const yPct = total ? (yes / total * 100).toFixed(0) : 0;
+        const nPct = total ? (no / total * 100).toFixed(0) : 0;
+        const aPct = total ? (abs / total * 100).toFixed(0) : 0;
+        html += `
+          <div class="vote-summary-item">
+            <div class="vs-title">议案${idx+1}：${res.label}</div>
+            <div class="vs-bar-wrap">
+              <div class="vs-bar-label" style="color:var(--yes-color);">赞成</div>
+              <div class="vs-bar-bg"><div class="vs-bar-fill fill-yes" style="width:${yPct}%"></div></div>
+              <div class="vs-bar-count">${yes}</div>
+            </div>
+            <div class="vs-bar-wrap">
+              <div class="vs-bar-label" style="color:var(--no-color);">反对</div>
+              <div class="vs-bar-bg"><div class="vs-bar-fill fill-no" style="width:${nPct}%"></div></div>
+              <div class="vs-bar-count">${no}</div>
+            </div>
+            <div class="vs-bar-wrap">
+              <div class="vs-bar-label" style="color:var(--abstain-color);">弃权</div>
+              <div class="vs-bar-bg"><div class="vs-bar-fill fill-abstain" style="width:${aPct}%"></div></div>
+              <div class="vs-bar-count">${abs}</div>
+            </div>
+          </div>
+        `;
+      });
+      summaryEl.innerHTML = html;
+    }
+
+    // Table
+    const tbody = document.getElementById('results-tbody');
+    if (total === 0) {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--muted); padding: 24px;">暂无记录</td></tr>';
+    } else {
+      tbody.innerHTML = allRecords.map(r => `
+        <tr>
+          <td><strong>${r.name}</strong></td>
+          <td>${getBadgeHTML(r.v1)}</td>
+          <td>${getBadgeHTML(r.v2)}</td>
+          <td>${getBadgeHTML(r.v3)}</td>
+          <td style="font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted); white-space:nowrap;">${r.time}</td>
+        </tr>
+      `).join('');
+    }
+
+    // Last updated
+    const lu = document.getElementById('last-updated');
+    if (total > 0) {
+      lu.textContent = `最后更新：${allRecords[allRecords.length-1].time}`;
+    }
+  }
+
+  // Init
+  renderResults();
+</script>
+</body>
+</html>
