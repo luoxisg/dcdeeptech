@@ -7,45 +7,59 @@
   <meta name="description" content="OCP Cooling 与 HVDC 如何一起定义下一代 AI 数据中心。包含冷板液冷、CDU、800V HVDC、功率密度、PUE/TCO 与 DCDeepTech 新加坡平台定位。" />
   <style>
     :root {
-      --bg: #050b15;
-      --bg-soft: #091322;
-      --bg-soft-2: #0d1a2f;
-      --panel: rgba(10, 21, 38, 0.72);
-      --panel-strong: rgba(9, 19, 34, 0.92);
-      --line: rgba(129, 168, 255, 0.16);
-      --line-strong: rgba(129, 168, 255, 0.34);
-      --text: #edf5ff;
+      --bg: #040914;
+      --bg-deep: #06101c;
+      --bg-soft: #0a1627;
+      --bg-soft-2: #0d1d34;
+      --panel: rgba(10, 21, 38, 0.66);
+      --panel-strong: rgba(7, 16, 30, 0.9);
+      --line: rgba(129, 168, 255, 0.14);
+      --line-strong: rgba(129, 168, 255, 0.3);
+      --text: #eef6ff;
       --muted: #97aecf;
-      --muted-2: #bcd0ea;
+      --muted-2: #bed0e7;
       --teal: #45e6c4;
       --blue: #6fa9ff;
       --violet: #9b8dff;
       --amber: #ffca6a;
       --danger: #ff6c8f;
-      --shadow: 0 24px 90px rgba(0, 0, 0, 0.38);
-      --shadow-soft: 0 12px 40px rgba(0, 0, 0, 0.2);
-      --radius: 28px;
+      --shadow: 0 26px 110px rgba(0, 0, 0, 0.42);
+      --shadow-soft: 0 16px 46px rgba(0, 0, 0, 0.22);
+      --radius: 30px;
       --radius-sm: 18px;
-      --max: 1240px;
+      --max: 1280px;
       --grid-size: 44px;
-      --nav-height: 76px;
+      --nav-height: 78px;
+      --content-offset: 0px;
+      --parallax-y: 0px;
+      --hero-shift: 0px;
+      --hero-spin: 0deg;
+      --section-gap: clamp(64px, 8vw, 120px);
+      --step-color: var(--blue);
+      --fs-hero: clamp(2.75rem, 6vw, 5.5rem);
+      --fs-h2: clamp(2rem, 4vw, 3.8rem);
+      --fs-h3: clamp(1.28rem, 2vw, 1.7rem);
+      --fs-body: clamp(0.96rem, 1.14vw, 1.06rem);
+      --fs-small: clamp(0.8rem, 0.94vw, 0.9rem);
+      --transition-smooth: 0.6s cubic-bezier(.22,1,.36,1);
     }
 
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
     body {
       margin: 0;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
       color: var(--text);
       background:
         radial-gradient(circle at 12% 14%, rgba(111, 169, 255, 0.16), transparent 24%),
         radial-gradient(circle at 88% 16%, rgba(69, 230, 196, 0.14), transparent 22%),
         radial-gradient(circle at 62% 74%, rgba(155, 141, 255, 0.12), transparent 24%),
-        linear-gradient(180deg, #040914 0%, #07101d 42%, #050c16 100%);
+        linear-gradient(180deg, #030811 0%, #060f1b 42%, #050b15 100%);
       min-height: 100vh;
       overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
       text-rendering: optimizeLegibility;
+      font-size: 16px;
     }
 
     body::before,
@@ -54,7 +68,7 @@
       position: fixed;
       inset: 0;
       pointer-events: none;
-      z-index: -3;
+      z-index: -4;
     }
 
     body::before {
@@ -62,39 +76,41 @@
         linear-gradient(rgba(111, 169, 255, 0.05) 1px, transparent 1px),
         linear-gradient(90deg, rgba(111, 169, 255, 0.05) 1px, transparent 1px);
       background-size: var(--grid-size) var(--grid-size);
-      mask-image: radial-gradient(circle at center, rgba(0,0,0,1) 30%, rgba(0,0,0,0.18) 78%, transparent 96%);
+      mask-image: radial-gradient(circle at center, rgba(0,0,0,1) 28%, rgba(0,0,0,0.2) 78%, transparent 96%);
+      transform: translateY(calc(var(--parallax-y) * 0.12));
       animation: gridFloat 24s linear infinite;
     }
 
     body::after {
       background:
         radial-gradient(circle at 20% 20%, rgba(69,230,196,0.14), transparent 20%),
-        radial-gradient(circle at 80% 18%, rgba(111,169,255,0.12), transparent 20%),
+        radial-gradient(circle at 80% 18%, rgba(111,169,255,0.13), transparent 20%),
         radial-gradient(circle at 58% 80%, rgba(155,141,255,0.12), transparent 24%);
-      filter: blur(40px);
+      filter: blur(46px);
       opacity: 0.95;
       animation: auroraDrift 16s ease-in-out infinite alternate;
+      transform: translateY(calc(var(--parallax-y) * -0.08));
     }
 
     .noise,
     .aurora,
-    .particles {
+    .particles,
+    .scroll-glow {
       position: fixed;
       inset: 0;
       pointer-events: none;
     }
 
     .noise {
-      z-index: -2;
+      z-index: -3;
       opacity: 0.08;
-      background-image:
-        radial-gradient(rgba(255,255,255,0.65) 0.7px, transparent 0.7px);
+      background-image: radial-gradient(rgba(255,255,255,0.65) 0.7px, transparent 0.7px);
       background-size: 12px 12px;
       mix-blend-mode: soft-light;
     }
 
     .aurora {
-      z-index: -1;
+      z-index: -2;
       overflow: hidden;
     }
 
@@ -105,7 +121,7 @@
       min-width: 320px;
       min-height: 320px;
       border-radius: 50%;
-      filter: blur(50px);
+      filter: blur(52px);
       opacity: 0.18;
       mix-blend-mode: screen;
       animation: blobFloat 16s ease-in-out infinite;
@@ -127,7 +143,7 @@
     .aurora span:nth-child(3) {
       left: 30vw;
       bottom: -12vh;
-      background: radial-gradient(circle, rgba(155,141,255,0.85) 0%, rgba(155,141,255,0) 70%);
+      background: radial-gradient(circle, rgba(155,141,255,0.86) 0%, rgba(155,141,255,0) 70%);
       animation-delay: -9s;
     }
 
@@ -147,6 +163,15 @@
       opacity: 0.45;
     }
 
+    .scroll-glow {
+      z-index: -1;
+      background:
+        radial-gradient(circle at 50% calc(8% + var(--scroll-progress, 0) * 70%), rgba(111,169,255,0.08), transparent 24%),
+        radial-gradient(circle at 50% calc(12% + var(--scroll-progress, 0) * 70%), rgba(69,230,196,0.05), transparent 24%);
+      filter: blur(32px);
+      opacity: 0.92;
+    }
+
     a { color: inherit; text-decoration: none; }
     img { max-width: 100%; display: block; }
     button { font: inherit; }
@@ -154,12 +179,19 @@
     .container {
       width: min(calc(100% - 40px), var(--max));
       margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .parallax-layer {
+      transform: translate3d(0, calc(var(--parallax-speed, 0) * var(--parallax-y)), 0);
+      will-change: transform;
     }
 
     .topbar {
       position: sticky;
       top: 0;
-      z-index: 80;
+      z-index: 120;
       backdrop-filter: blur(20px);
       background: rgba(5, 12, 22, 0.62);
       border-bottom: 1px solid rgba(129, 168, 255, 0.08);
@@ -323,18 +355,34 @@
 
     .hero {
       position: relative;
-      padding: 86px 0 64px;
+      padding: 92px 0 52px;
+      overflow: clip;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 0;
+      width: 1200px;
+      height: 1200px;
+      transform: translate(-50%, calc(-38% + var(--hero-shift) * -0.2)) rotate(var(--hero-spin));
+      background: radial-gradient(circle, rgba(69,230,196,0.10), transparent 54%);
+      filter: blur(24px);
+      pointer-events: none;
+      z-index: 0;
     }
 
     .hero-grid {
       display: grid;
-      grid-template-columns: 1.08fr 0.92fr;
+      grid-template-columns: 1.04fr 0.96fr;
       gap: 28px;
       align-items: stretch;
     }
 
     .hero-copy,
     .hero-visual,
+    .hero-demo,
     .section-card,
     .architecture,
     .timeline,
@@ -342,7 +390,9 @@
     .value-grid > article,
     .footer-panel,
     .quote,
-    .stat-bar {
+    .stat-bar,
+    .transition-strip,
+    .scene-note {
       background: var(--panel);
       border: 1px solid var(--line);
       box-shadow: var(--shadow);
@@ -351,21 +401,29 @@
 
     .hero-copy,
     .hero-visual,
+    .hero-demo,
     .tilt-card {
       transform-style: preserve-3d;
       will-change: transform;
     }
 
-    .hero-copy {
-      border-radius: 30px;
-      padding: 36px;
+    .hero-copy,
+    .hero-visual,
+    .hero-demo,
+    .section-card,
+    .architecture,
+    .timeline,
+    .footer-panel,
+    .quote {
       position: relative;
       overflow: hidden;
       isolation: isolate;
+      border-radius: var(--radius);
     }
 
     .hero-copy::before,
     .hero-visual::before,
+    .hero-demo::before,
     .section-card::before,
     .architecture::before,
     .timeline::before,
@@ -376,12 +434,17 @@
       inset: 0;
       border-radius: inherit;
       padding: 1px;
-      background: linear-gradient(130deg, rgba(69,230,196,0.35), rgba(111,169,255,0.24), rgba(155,141,255,0.22), transparent 70%);
+      background: linear-gradient(130deg, rgba(69,230,196,0.34), rgba(111,169,255,0.24), rgba(155,141,255,0.22), transparent 72%);
       -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
       -webkit-mask-composite: xor;
               mask-composite: exclude;
-      opacity: 0.9;
+      opacity: 0.95;
       pointer-events: none;
+    }
+
+    .hero-copy {
+      padding: 36px;
+      transform: translateY(calc(var(--hero-shift) * -0.06));
     }
 
     .hero-copy::after {
@@ -421,17 +484,22 @@
       animation: dotPulse 2.8s ease-in-out infinite;
     }
 
+    h1, h2, h3, h4 {
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
+      font-weight: 800;
+    }
+
     h1 {
       margin: 20px 0 16px;
-      font-size: clamp(44px, 6vw, 78px);
-      line-height: 0.93;
-      letter-spacing: -0.05em;
-      max-width: 11ch;
+      font-size: var(--fs-hero);
+      line-height: 0.94;
+      letter-spacing: -0.06em;
+      max-width: 10.8ch;
       text-wrap: balance;
     }
 
     .lead {
-      font-size: 18px;
+      font-size: clamp(1rem, 1.18vw, 1.12rem);
       line-height: 1.82;
       color: var(--muted);
       max-width: 68ch;
@@ -520,7 +588,7 @@
 
     .mini-stats strong {
       display: block;
-      font-size: 30px;
+      font-size: clamp(1.7rem, 2.4vw, 2.1rem);
       letter-spacing: -0.05em;
       line-height: 1;
     }
@@ -534,15 +602,12 @@
     }
 
     .hero-visual {
-      border-radius: 30px;
       padding: 24px;
-      position: relative;
-      overflow: hidden;
       min-height: 640px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      isolation: isolate;
+      transform: translateY(calc(var(--hero-shift) * -0.03));
     }
 
     .hero-visual::after {
@@ -606,7 +671,7 @@
       inset: 84px auto auto 50%;
       width: 300px;
       height: 300px;
-      transform: translateX(-50%);
+      transform: translateX(-50%) rotate(var(--hero-spin));
       border: 1px solid rgba(111,169,255,0.12);
       border-radius: 50%;
       box-shadow: 0 0 0 18px rgba(111,169,255,0.03), inset 0 0 20px rgba(255,255,255,0.02);
@@ -663,6 +728,7 @@
       line-height: 1.45;
       color: #dce9ff;
       box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03), 0 20px 38px rgba(0,0,0,0.22);
+      transform: translateY(calc(var(--parallax-y) * -0.04));
     }
 
     .facility-node.top-left { top: 22px; left: 20px; }
@@ -670,7 +736,7 @@
 
     .rack {
       left: 50%;
-      transform: translateX(-50%);
+      transform: translateX(-50%) translateY(calc(var(--parallax-y) * -0.02));
       top: 112px;
       width: 250px;
       height: 286px;
@@ -750,6 +816,7 @@
       border: 1px solid rgba(155,141,255,0.22);
       box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03), 0 24px 46px rgba(0,0,0,0.28);
       overflow: hidden;
+      transform: translateY(calc(var(--parallax-y) * 0.02));
     }
 
     .power-sidecar::before {
@@ -808,6 +875,7 @@
       padding: 18px;
       box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03), 0 22px 42px rgba(0,0,0,0.28);
       overflow: hidden;
+      transform: translateY(calc(var(--parallax-y) * 0.03));
     }
 
     .cooling-loop::before {
@@ -924,7 +992,7 @@
 
     .stat-bar strong {
       display: block;
-      font-size: 22px;
+      font-size: clamp(1.2rem, 1.7vw, 1.45rem);
       letter-spacing: -0.04em;
       line-height: 1;
     }
@@ -937,9 +1005,639 @@
       line-height: 1.4;
     }
 
+    .hero-demo-wrap {
+      padding-top: 16px;
+    }
+
+    .hero-demo {
+      padding: 24px;
+      display: grid;
+      grid-template-columns: 0.94fr 1.06fr;
+      gap: 20px;
+      align-items: stretch;
+      transform: translateY(calc(var(--parallax-y) * 0.015));
+    }
+
+    .demo-copy {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 18px;
+      min-width: 0;
+    }
+
+    .demo-copy h2 {
+      margin: 0 0 10px;
+      font-size: clamp(1.8rem, 3vw, 2.9rem);
+      letter-spacing: -0.05em;
+      line-height: 0.98;
+    }
+
+    .demo-copy p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.82;
+      font-size: var(--fs-body);
+    }
+
+    .scene-meta {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 12px;
+    }
+
+    .scene-note {
+      border-radius: 18px;
+      padding: 14px 16px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .scene-note strong {
+      display: block;
+      font-size: 13px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #dce9ff;
+      margin-bottom: 6px;
+    }
+
+    .scene-note span {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .demo-stage {
+      position: relative;
+      min-height: 560px;
+      border-radius: 28px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 52% 8%, rgba(69,230,196,0.10), transparent 16%),
+        radial-gradient(circle at 80% 16%, rgba(155,141,255,0.12), transparent 20%),
+        linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+      border: 1px solid rgba(255,255,255,0.06);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03);
+      perspective: 1400px;
+      transform-style: preserve-3d;
+    }
+
+    .demo-stage::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.035), transparent 24%),
+        repeating-linear-gradient(90deg, rgba(255,255,255,0.04) 0 1px, transparent 1px 28px),
+        repeating-linear-gradient(180deg, rgba(255,255,255,0.03) 0 1px, transparent 1px 28px);
+      opacity: 0.45;
+      mix-blend-mode: screen;
+      animation: sceneGrid 10s linear infinite;
+    }
+
+    .demo-stage::after {
+      content: "";
+      position: absolute;
+      inset: auto 10% 8% 10%;
+      height: 160px;
+      background: radial-gradient(ellipse at center, rgba(111,169,255,0.16), transparent 68%);
+      filter: blur(28px);
+      transform: translateZ(0);
+    }
+
+    .scene-camera {
+      position: absolute;
+      inset: 0;
+      transform-style: preserve-3d;
+      transform: rotateX(12deg) rotateY(-8deg) translateY(calc(var(--parallax-y) * 0.012));
+    }
+
+    .scene-core {
+      position: absolute;
+      left: 50%;
+      top: 53%;
+      width: 240px;
+      height: 320px;
+      transform-style: preserve-3d;
+      transform: translate3d(-50%, -50%, 40px) scale(1.02);
+    }
+
+    .rack-shell {
+      position: absolute;
+      inset: 0;
+      border-radius: 28px;
+      background: linear-gradient(180deg, rgba(17,31,57,0.96), rgba(9,18,34,0.96));
+      border: 1px solid rgba(111,169,255,0.26);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03), 0 34px 90px rgba(0,0,0,0.34);
+      transform: translateZ(6px);
+    }
+
+    .rack-shell::before {
+      content: "3D OCP Rack";
+      position: absolute;
+      left: 18px;
+      top: 14px;
+      color: #dce7fb;
+      font-size: 12px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .rack-shell::after {
+      content: "";
+      position: absolute;
+      inset: auto 18px 18px 18px;
+      height: 8px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(69,230,196,0.12), rgba(111,169,255,0.6), rgba(69,230,196,0.12));
+      box-shadow: 0 0 24px rgba(111,169,255,0.32);
+      animation: rackEnergy 3.5s linear infinite;
+    }
+
+    .explode-layer {
+      position: absolute;
+      left: 20px;
+      right: 20px;
+      height: 38px;
+      border-radius: 14px;
+      background: linear-gradient(90deg, rgba(69,230,196,0.08), rgba(111,169,255,0.13));
+      border: 1px solid rgba(111,169,255,0.18);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02), 0 14px 30px rgba(0,0,0,0.14);
+      transform-style: preserve-3d;
+      transition: transform 0.95s cubic-bezier(.22,1,.36,1), opacity 0.75s ease;
+      overflow: hidden;
+    }
+
+    .explode-layer::before {
+      content: attr(data-label);
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 11px;
+      color: #dce9ff;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      z-index: 2;
+    }
+
+    .explode-layer::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.08) 50%, transparent 100%);
+      transform: translateX(-120%);
+      animation: unitSweep 4.2s linear infinite;
+    }
+
+    .explode-layer:nth-child(2) { top: 54px; }
+    .explode-layer:nth-child(3) { top: 100px; }
+    .explode-layer:nth-child(4) { top: 146px; }
+    .explode-layer:nth-child(5) { top: 192px; }
+    .explode-layer:nth-child(6) { top: 238px; }
+
+    .demo-stage[data-scene="0"] .explode-layer,
+    .demo-stage[data-scene="1"] .explode-layer,
+    .demo-stage[data-scene="2"] .explode-layer,
+    .demo-stage[data-scene="3"] .explode-layer,
+    .demo-stage[data-scene="4"] .explode-layer {
+      opacity: 0.96;
+    }
+
+    .demo-stage[data-scene="0"] .explode-layer:nth-child(2) { transform: translate3d(0, 0, 34px); }
+    .demo-stage[data-scene="0"] .explode-layer:nth-child(3) { transform: translate3d(0, 0, 24px); }
+    .demo-stage[data-scene="0"] .explode-layer:nth-child(4) { transform: translate3d(0, 0, 18px); }
+    .demo-stage[data-scene="0"] .explode-layer:nth-child(5) { transform: translate3d(0, 0, 12px); }
+    .demo-stage[data-scene="0"] .explode-layer:nth-child(6) { transform: translate3d(0, 0, 8px); }
+
+    .demo-stage[data-scene="1"] .explode-layer:nth-child(2) { transform: translate3d(-70px, -84px, 140px) rotateY(-12deg); }
+    .demo-stage[data-scene="1"] .explode-layer:nth-child(3) { transform: translate3d(68px, -30px, 100px) rotateY(12deg); }
+    .demo-stage[data-scene="1"] .explode-layer:nth-child(4) { transform: translate3d(-84px, 26px, 120px) rotateY(-10deg); }
+    .demo-stage[data-scene="1"] .explode-layer:nth-child(5) { transform: translate3d(82px, 74px, 110px) rotateY(10deg); }
+    .demo-stage[data-scene="1"] .explode-layer:nth-child(6) { transform: translate3d(0, 130px, 80px) rotateX(8deg); }
+
+    .demo-stage[data-scene="2"] .explode-layer:nth-child(2) { transform: translate3d(-30px, -40px, 70px); }
+    .demo-stage[data-scene="2"] .explode-layer:nth-child(3) { transform: translate3d(30px, -12px, 56px); }
+    .demo-stage[data-scene="2"] .explode-layer:nth-child(4) { transform: translate3d(-18px, 18px, 54px); }
+    .demo-stage[data-scene="2"] .explode-layer:nth-child(5) { transform: translate3d(22px, 52px, 60px); }
+    .demo-stage[data-scene="2"] .explode-layer:nth-child(6) { transform: translate3d(0, 84px, 66px); }
+
+    .demo-stage[data-scene="3"] .explode-layer:nth-child(2) { transform: translate3d(-22px, -48px, 84px) rotateY(-6deg); }
+    .demo-stage[data-scene="3"] .explode-layer:nth-child(3) { transform: translate3d(26px, -10px, 72px); }
+    .demo-stage[data-scene="3"] .explode-layer:nth-child(4) { transform: translate3d(-26px, 20px, 70px); }
+    .demo-stage[data-scene="3"] .explode-layer:nth-child(5) { transform: translate3d(24px, 58px, 72px); }
+    .demo-stage[data-scene="3"] .explode-layer:nth-child(6) { transform: translate3d(0, 98px, 76px); }
+
+    .demo-stage[data-scene="4"] .explode-layer:nth-child(2) { transform: translate3d(-42px, -60px, 120px); }
+    .demo-stage[data-scene="4"] .explode-layer:nth-child(3) { transform: translate3d(40px, -24px, 112px); }
+    .demo-stage[data-scene="4"] .explode-layer:nth-child(4) { transform: translate3d(-46px, 14px, 116px); }
+    .demo-stage[data-scene="4"] .explode-layer:nth-child(5) { transform: translate3d(42px, 56px, 114px); }
+    .demo-stage[data-scene="4"] .explode-layer:nth-child(6) { transform: translate3d(0, 104px, 108px); }
+
+    .scene-floor {
+      position: absolute;
+      left: 50%;
+      bottom: 72px;
+      width: 520px;
+      height: 220px;
+      transform: translateX(-50%) rotateX(78deg);
+      border-radius: 24px;
+      background:
+        radial-gradient(circle at center, rgba(111,169,255,0.18), transparent 58%),
+        repeating-linear-gradient(90deg, rgba(255,255,255,0.05) 0 1px, transparent 1px 24px),
+        repeating-linear-gradient(180deg, rgba(255,255,255,0.04) 0 1px, transparent 1px 24px),
+        linear-gradient(180deg, rgba(9, 19, 35, 0.85), rgba(4, 8, 16, 0.95));
+      border: 1px solid rgba(111,169,255,0.14);
+      box-shadow: 0 0 60px rgba(111,169,255,0.18);
+      opacity: 0.9;
+    }
+
+    .scene-orbit {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 520px;
+      height: 520px;
+      transform: translate(-50%, -50%) rotateZ(var(--hero-spin));
+      border-radius: 50%;
+      border: 1px solid rgba(111,169,255,0.08);
+      box-shadow: 0 0 0 24px rgba(111,169,255,0.02), 0 0 0 54px rgba(69,230,196,0.02);
+      animation: spinSlow 30s linear infinite reverse;
+    }
+
+    .scene-orbit::before,
+    .scene-orbit::after {
+      content: "";
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--blue);
+      box-shadow: 0 0 18px rgba(111,169,255,0.8);
+    }
+
+    .scene-orbit::before { top: 18px; left: 50%; transform: translateX(-50%); }
+    .scene-orbit::after { top: 50%; right: 18px; transform: translateY(-50%); background: var(--teal); box-shadow: 0 0 18px rgba(69,230,196,0.8); }
+
+    .power-path,
+    .cool-path,
+    .demo-node,
+    .flow-pulse,
+    .telemetry-beam,
+    .scene-label,
+    .scene-panel,
+    .scene-hud,
+    .step-indicators {
+      position: absolute;
+    }
+
+    .demo-node {
+      width: 124px;
+      min-height: 70px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(9, 19, 35, 0.88);
+      color: #e8f2ff;
+      font-size: 12px;
+      line-height: 1.5;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 10px 12px;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03), 0 18px 40px rgba(0,0,0,0.22);
+      transition: transform var(--transition-smooth), border-color var(--transition-smooth), box-shadow var(--transition-smooth), opacity var(--transition-smooth);
+    }
+
+    .demo-node strong {
+      display: block;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #bcd0ea;
+      margin-bottom: 4px;
+    }
+
+    .node-grid { left: 38px; top: 44px; }
+    .node-sst { right: 42px; top: 44px; }
+    .node-sidecar { right: 34px; top: 228px; }
+    .node-cdu { left: 34px; bottom: 48px; }
+    .node-telemetry { right: 92px; bottom: 42px; }
+
+    .demo-stage[data-scene="0"] .node-grid,
+    .demo-stage[data-scene="1"] .node-grid,
+    .demo-stage[data-scene="2"] .node-grid,
+    .demo-stage[data-scene="3"] .node-grid,
+    .demo-stage[data-scene="4"] .node-grid,
+    .demo-stage[data-scene="0"] .node-sst,
+    .demo-stage[data-scene="1"] .node-sst,
+    .demo-stage[data-scene="2"] .node-sst,
+    .demo-stage[data-scene="3"] .node-sst,
+    .demo-stage[data-scene="4"] .node-sst,
+    .demo-stage[data-scene="0"] .node-sidecar,
+    .demo-stage[data-scene="1"] .node-sidecar,
+    .demo-stage[data-scene="2"] .node-sidecar,
+    .demo-stage[data-scene="3"] .node-sidecar,
+    .demo-stage[data-scene="4"] .node-sidecar,
+    .demo-stage[data-scene="0"] .node-cdu,
+    .demo-stage[data-scene="1"] .node-cdu,
+    .demo-stage[data-scene="2"] .node-cdu,
+    .demo-stage[data-scene="3"] .node-cdu,
+    .demo-stage[data-scene="4"] .node-cdu,
+    .demo-stage[data-scene="0"] .node-telemetry,
+    .demo-stage[data-scene="1"] .node-telemetry,
+    .demo-stage[data-scene="2"] .node-telemetry,
+    .demo-stage[data-scene="3"] .node-telemetry,
+    .demo-stage[data-scene="4"] .node-telemetry {
+      opacity: 0.92;
+    }
+
+    .demo-stage[data-scene="0"] .node-grid,
+    .demo-stage[data-scene="0"] .node-sst { border-color: rgba(111,169,255,0.18); }
+    .demo-stage[data-scene="1"] .node-sidecar { border-color: rgba(155,141,255,0.24); box-shadow: 0 0 0 1px rgba(255,255,255,0.03), 0 0 38px rgba(155,141,255,0.16); }
+    .demo-stage[data-scene="2"] .node-cdu { border-color: rgba(69,230,196,0.24); box-shadow: 0 0 0 1px rgba(255,255,255,0.03), 0 0 38px rgba(69,230,196,0.14); }
+    .demo-stage[data-scene="3"] .node-telemetry { border-color: rgba(111,169,255,0.24); box-shadow: 0 0 0 1px rgba(255,255,255,0.03), 0 0 38px rgba(111,169,255,0.16); }
+    .demo-stage[data-scene="4"] .demo-node { transform: translateZ(6px) scale(1.02); }
+
+    .power-path,
+    .cool-path,
+    .telemetry-beam {
+      height: 2px;
+      border-radius: 999px;
+      transform-origin: left center;
+      opacity: 0.3;
+      transition: opacity 0.45s ease, filter 0.45s ease;
+    }
+
+    .power-path {
+      background: linear-gradient(90deg, rgba(155,141,255,0.05), rgba(155,141,255,0.92), rgba(111,169,255,0.18));
+      box-shadow: 0 0 12px rgba(155,141,255,0.45);
+    }
+
+    .cool-path {
+      background: linear-gradient(90deg, rgba(69,230,196,0.05), rgba(69,230,196,0.92), rgba(69,230,196,0.16));
+      box-shadow: 0 0 12px rgba(69,230,196,0.4);
+    }
+
+    .telemetry-beam {
+      background: linear-gradient(90deg, rgba(111,169,255,0.03), rgba(111,169,255,0.8), rgba(69,230,196,0.12));
+      box-shadow: 0 0 10px rgba(111,169,255,0.34);
+    }
+
+    .p-grid-sst { width: 166px; top: 106px; left: 158px; transform: rotate(0deg); }
+    .p-sst-sidecar { width: 112px; top: 178px; left: 382px; transform: rotate(64deg); }
+    .p-sidecar-rack { width: 120px; top: 272px; left: 360px; transform: rotate(166deg); }
+
+    .c-cdu-rack { width: 138px; top: 370px; left: 164px; transform: rotate(-26deg); }
+    .c-rack-return { width: 126px; top: 408px; left: 218px; transform: rotate(26deg); }
+
+    .t-rack-telemetry { width: 164px; top: 386px; left: 314px; transform: rotate(0deg); }
+    .t-sidecar-telemetry { width: 92px; top: 314px; left: 430px; transform: rotate(84deg); }
+
+    .flow-pulse {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .flow-pulse.power {
+      background: var(--violet);
+      box-shadow: 0 0 16px rgba(155,141,255,0.8);
+      animation: powerDemoFlow 3.2s ease-in-out infinite;
+    }
+
+    .flow-pulse.cool {
+      background: var(--teal);
+      box-shadow: 0 0 16px rgba(69,230,196,0.8);
+      animation: coolDemoFlow 2.8s ease-in-out infinite;
+    }
+
+    .flow-pulse.telemetry {
+      background: var(--blue);
+      box-shadow: 0 0 16px rgba(111,169,255,0.8);
+      animation: telemetryFlow 3s ease-in-out infinite;
+    }
+
+    .scene-panel {
+      left: 22px;
+      right: 22px;
+      bottom: 18px;
+      display: grid;
+      grid-template-columns: 0.86fr 1.14fr;
+      gap: 16px;
+      z-index: 10;
+    }
+
+    .scene-hud,
+    .step-indicators {
+      border-radius: 20px;
+      padding: 14px 16px;
+      background: rgba(6, 13, 25, 0.8);
+      border: 1px solid rgba(255,255,255,0.08);
+      backdrop-filter: blur(14px);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .scene-hud strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 12px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #dce9ff;
+    }
+
+    .scene-hud h3 {
+      margin: 0;
+      font-size: clamp(1.1rem, 1.8vw, 1.45rem);
+      line-height: 1.1;
+      letter-spacing: -0.04em;
+    }
+
+    .scene-hud p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .step-indicators {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0,1fr));
+      gap: 10px;
+    }
+
+    .step-chip {
+      min-height: 58px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.06);
+      background: rgba(255,255,255,0.02);
+      padding: 10px 10px 8px;
+      color: var(--muted);
+      transition: all 0.35s ease;
+    }
+
+    .step-chip strong {
+      display: block;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      color: #b9cde6;
+    }
+
+    .step-chip span {
+      display: block;
+      font-size: 12px;
+      line-height: 1.36;
+    }
+
+    .step-chip.active {
+      color: var(--text);
+      border-color: rgba(111,169,255,0.22);
+      background: linear-gradient(135deg, rgba(111,169,255,0.12), rgba(69,230,196,0.08));
+      box-shadow: 0 0 22px rgba(111,169,255,0.14);
+      transform: translateY(-4px);
+    }
+
+    .demo-stage[data-scene="0"] .step-chip:nth-child(1),
+    .demo-stage[data-scene="1"] .step-chip:nth-child(2),
+    .demo-stage[data-scene="2"] .step-chip:nth-child(3),
+    .demo-stage[data-scene="3"] .step-chip:nth-child(4),
+    .demo-stage[data-scene="4"] .step-chip:nth-child(5) {
+      color: var(--text);
+      border-color: rgba(111,169,255,0.22);
+      background: linear-gradient(135deg, rgba(111,169,255,0.12), rgba(69,230,196,0.08));
+      box-shadow: 0 0 22px rgba(111,169,255,0.14);
+      transform: translateY(-4px);
+    }
+
+    .scene-hud [data-scene-title],
+    .scene-hud [data-scene-copy] {
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+
+    .scene-hud.switching [data-scene-title],
+    .scene-hud.switching [data-scene-copy] {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+
+    .demo-stage[data-scene="0"] .p-grid-sst,
+    .demo-stage[data-scene="0"] .flow-pulse.power,
+    .demo-stage[data-scene="0"] .node-grid,
+    .demo-stage[data-scene="0"] .node-sst,
+    .demo-stage[data-scene="1"] .p-sst-sidecar,
+    .demo-stage[data-scene="1"] .p-sidecar-rack,
+    .demo-stage[data-scene="1"] .flow-pulse.power,
+    .demo-stage[data-scene="1"] .node-sidecar,
+    .demo-stage[data-scene="2"] .c-cdu-rack,
+    .demo-stage[data-scene="2"] .c-rack-return,
+    .demo-stage[data-scene="2"] .flow-pulse.cool,
+    .demo-stage[data-scene="2"] .node-cdu,
+    .demo-stage[data-scene="3"] .t-rack-telemetry,
+    .demo-stage[data-scene="3"] .t-sidecar-telemetry,
+    .demo-stage[data-scene="3"] .flow-pulse.telemetry,
+    .demo-stage[data-scene="3"] .node-telemetry,
+    .demo-stage[data-scene="4"] .power-path,
+    .demo-stage[data-scene="4"] .cool-path,
+    .demo-stage[data-scene="4"] .telemetry-beam,
+    .demo-stage[data-scene="4"] .flow-pulse,
+    .demo-stage[data-scene="4"] .demo-node {
+      opacity: 1;
+    }
+
+    .demo-stage[data-scene="0"] .p-grid-sst,
+    .demo-stage[data-scene="0"] .flow-pulse.power,
+    .demo-stage[data-scene="1"] .p-sst-sidecar,
+    .demo-stage[data-scene="1"] .p-sidecar-rack,
+    .demo-stage[data-scene="1"] .flow-pulse.power,
+    .demo-stage[data-scene="2"] .c-cdu-rack,
+    .demo-stage[data-scene="2"] .c-rack-return,
+    .demo-stage[data-scene="2"] .flow-pulse.cool,
+    .demo-stage[data-scene="3"] .t-rack-telemetry,
+    .demo-stage[data-scene="3"] .t-sidecar-telemetry,
+    .demo-stage[data-scene="3"] .flow-pulse.telemetry {
+      filter: saturate(1.2);
+    }
+
+    .transition-strip {
+      border-radius: 999px;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      box-shadow: var(--shadow-soft);
+      margin: 0 auto;
+      max-width: 860px;
+      transform: translateY(calc(var(--parallax-y) * -0.01));
+    }
+
+    .transition-strip span {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: #dce7fb;
+      font-size: 12px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .transition-strip i {
+      display: block;
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(69,230,196,0.06), rgba(111,169,255,0.44), rgba(155,141,255,0.14));
+      position: relative;
+      overflow: hidden;
+    }
+
+    .transition-strip i::after {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 22%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.55), transparent);
+      animation: stripPulse 3.6s linear infinite;
+    }
+
     .section {
       padding: 34px 0;
       position: relative;
+      overflow: clip;
+    }
+
+    .section::before,
+    .section::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      width: 1200px;
+      height: 320px;
+      transform: translateX(-50%);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.8;
+    }
+
+    .section::before {
+      top: -120px;
+      background: radial-gradient(ellipse at center, rgba(111,169,255,0.06), transparent 62%);
+      filter: blur(20px);
+    }
+
+    .section::after {
+      bottom: -160px;
+      background: radial-gradient(ellipse at center, rgba(69,230,196,0.05), transparent 62%);
+      filter: blur(24px);
     }
 
     .section-header {
@@ -948,12 +1646,14 @@
       gap: 24px;
       align-items: end;
       margin-bottom: 22px;
+      position: relative;
+      z-index: 1;
     }
 
     .section-header h2 {
       margin: 0;
-      font-size: clamp(30px, 4vw, 54px);
-      letter-spacing: -0.04em;
+      font-size: var(--fs-h2);
+      letter-spacing: -0.05em;
       line-height: 1.02;
       text-wrap: balance;
     }
@@ -962,7 +1662,7 @@
       margin: 0;
       color: var(--muted);
       line-height: 1.84;
-      font-size: 16px;
+      font-size: var(--fs-body);
     }
 
     .grid-3,
@@ -971,6 +1671,8 @@
     .value-grid {
       display: grid;
       gap: 18px;
+      position: relative;
+      z-index: 1;
     }
 
     .grid-3 { grid-template-columns: repeat(3, minmax(0,1fr)); }
@@ -981,12 +1683,10 @@
     .section-card,
     .ecosystem-grid > article,
     .value-grid > article {
-      border-radius: 26px;
       padding: 24px;
       min-height: 100%;
-      position: relative;
-      overflow: hidden;
       transition: transform 0.32s ease, border-color 0.32s ease, box-shadow 0.32s ease, background 0.32s ease;
+      transform: translateY(calc(var(--card-shift, 0px) * 0.04));
     }
 
     .section-card:hover,
@@ -1017,8 +1717,8 @@
     .ecosystem-grid h3,
     .value-grid h3 {
       margin: 0 0 10px;
-      font-size: 24px;
-      letter-spacing: -0.03em;
+      font-size: var(--fs-h3);
+      letter-spacing: -0.04em;
       line-height: 1.1;
     }
 
@@ -1065,9 +1765,7 @@
     .metric-row span:last-child { color: #f4fbff; font-weight: 700; text-align: right; }
 
     .architecture {
-      border-radius: 30px;
       padding: 28px;
-      position: relative;
       overflow: hidden;
     }
 
@@ -1155,7 +1853,7 @@
 
     .arch-copy h3 {
       margin: 0 0 12px;
-      font-size: 24px;
+      font-size: var(--fs-h3);
       letter-spacing: -0.03em;
       line-height: 1.12;
     }
@@ -1179,9 +1877,7 @@
     }
 
     .timeline {
-      border-radius: 28px;
       padding: 26px;
-      position: relative;
       overflow: hidden;
     }
 
@@ -1211,6 +1907,13 @@
       border: 1px solid rgba(255,255,255,0.07);
       position: relative;
       overflow: hidden;
+      transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+    }
+
+    .timeline-item:hover {
+      transform: translateY(-6px);
+      border-color: rgba(111,169,255,0.22);
+      box-shadow: 0 18px 44px rgba(0,0,0,0.22);
     }
 
     .timeline-item::before {
@@ -1236,7 +1939,7 @@
 
     .timeline-item h4 {
       margin: 0 0 10px;
-      font-size: 22px;
+      font-size: var(--fs-h3);
       letter-spacing: -0.03em;
       line-height: 1.12;
     }
@@ -1287,13 +1990,11 @@
     }
 
     .quote {
-      position: relative;
       padding: 28px;
-      border-radius: 28px;
       background: linear-gradient(135deg, rgba(111,169,255,0.10), rgba(155,141,255,0.10));
       border: 1px solid rgba(111,169,255,0.18);
       box-shadow: var(--shadow);
-      overflow: hidden;
+      transform: translateY(calc(var(--parallax-y) * -0.01));
     }
 
     .quote::after {
@@ -1309,10 +2010,11 @@
     .quote p {
       margin: 0;
       font-size: clamp(24px, 3vw, 40px);
-      letter-spacing: -0.045em;
+      letter-spacing: -0.05em;
       line-height: 1.16;
       position: relative;
       z-index: 1;
+      text-wrap: balance;
     }
 
     .quote span {
@@ -1327,18 +2029,16 @@
     }
 
     .footer {
-      padding: 36px 0 64px;
+      padding: 44px 0 74px;
+      position: relative;
     }
 
     .footer-panel {
-      border-radius: 30px;
       padding: 30px;
       display: grid;
       grid-template-columns: 1.1fr 0.9fr;
       gap: 24px;
       align-items: end;
-      position: relative;
-      overflow: hidden;
     }
 
     .footer-panel::after {
@@ -1354,7 +2054,7 @@
     .footer-panel h2 {
       margin: 0 0 12px;
       font-size: clamp(30px, 4vw, 54px);
-      letter-spacing: -0.04em;
+      letter-spacing: -0.05em;
       line-height: 1.02;
       text-wrap: balance;
     }
@@ -1491,8 +2191,40 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
+    @keyframes sceneGrid {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(28px); }
+    }
+
+    @keyframes powerDemoFlow {
+      0% { transform: translate3d(100px, 102px, 0) scale(0.8); opacity: 0; }
+      12% { opacity: 1; }
+      42% { transform: translate3d(310px, 106px, 0) scale(1); opacity: 1; }
+      74% { transform: translate3d(422px, 240px, 0) scale(1); opacity: 1; }
+      100% { transform: translate3d(338px, 272px, 0) scale(0.85); opacity: 0; }
+    }
+
+    @keyframes coolDemoFlow {
+      0% { transform: translate3d(126px, 410px, 0) scale(0.8); opacity: 0; }
+      14% { opacity: 1; }
+      55% { transform: translate3d(244px, 368px, 0) scale(1); opacity: 1; }
+      100% { transform: translate3d(290px, 416px, 0) scale(0.85); opacity: 0; }
+    }
+
+    @keyframes telemetryFlow {
+      0% { transform: translate3d(316px, 386px, 0) scale(0.8); opacity: 0; }
+      15% { opacity: 1; }
+      100% { transform: translate3d(500px, 386px, 0) scale(0.85); opacity: 0; }
+    }
+
+    @keyframes stripPulse {
+      0% { transform: translateX(-120%); }
+      100% { transform: translateX(520%); }
+    }
+
     @media (max-width: 1180px) {
       .hero-grid,
+      .hero-demo,
       .section-header,
       .arch-panel,
       .footer-panel {
@@ -1508,17 +2240,27 @@
 
       .footer-actions { justify-content: flex-start; }
       .hero-visual { min-height: 600px; }
-      .stat-bar { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .stat-bar,
+      .scene-meta { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .scene-panel { grid-template-columns: 1fr; }
     }
 
     @media (max-width: 900px) {
-      :root { --nav-height: 72px; }
+      :root {
+        --nav-height: 72px;
+        --fs-hero: clamp(2.5rem, 10vw, 4rem);
+        --fs-h2: clamp(2rem, 6vw, 3rem);
+      }
+
       .container { width: min(calc(100% - 28px), var(--max)); }
-      .hero { padding-top: 62px; }
-      .hero-copy, .hero-visual, .architecture, .timeline, .footer-panel { padding: 24px; }
+      .hero { padding-top: 64px; }
+      .hero-copy, .hero-visual, .hero-demo, .architecture, .timeline, .footer-panel { padding: 24px; }
       .hero-visual { min-height: 580px; }
       .section { padding: 28px 0; }
       .timeline::after { display: none; }
+      .demo-stage { min-height: 660px; }
+      .scene-core { top: 44%; }
+      .scene-floor { width: 460px; height: 200px; }
     }
 
     @media (max-width: 760px) {
@@ -1526,22 +2268,17 @@
         --grid-size: 34px;
         --radius: 24px;
         --radius-sm: 16px;
+        --fs-hero: clamp(2.25rem, 12vw, 3.25rem);
+        --fs-h2: clamp(1.85rem, 8vw, 2.45rem);
+        --fs-h3: clamp(1.2rem, 5.6vw, 1.45rem);
       }
 
       .desktop-only { display: none; }
       .mobile-only { display: block; }
 
-      .topbar-inner {
-        min-height: 72px;
-      }
-
-      .nav-toggle {
-        display: inline-flex;
-      }
-
-      .nav-wrap {
-        position: relative;
-      }
+      .topbar-inner { min-height: 72px; }
+      .nav-toggle { display: inline-flex; }
+      .nav-wrap { position: relative; }
 
       .nav {
         position: absolute;
@@ -1573,8 +2310,8 @@
       }
 
       .hero {
-        padding-top: 44px;
-        padding-bottom: 40px;
+        padding-top: 46px;
+        padding-bottom: 34px;
       }
 
       .hero-grid,
@@ -1584,12 +2321,15 @@
       .value-grid,
       .timeline-track,
       .mini-stats,
-      .stat-bar {
+      .stat-bar,
+      .scene-meta,
+      .step-indicators {
         grid-template-columns: 1fr;
       }
 
       .hero-copy,
       .hero-visual,
+      .hero-demo,
       .architecture,
       .timeline,
       .footer-panel,
@@ -1602,6 +2342,7 @@
 
       .hero-copy,
       .hero-visual,
+      .hero-demo,
       .architecture,
       .timeline,
       .footer-panel {
@@ -1611,7 +2352,7 @@
       .hero-copy { padding-top: 22px; }
 
       h1 {
-        font-size: clamp(34px, 12vw, 50px);
+        font-size: var(--fs-hero);
         line-height: 0.98;
         max-width: 100%;
       }
@@ -1621,14 +2362,8 @@
         line-height: 1.76;
       }
 
-      .hero-actions {
-        gap: 10px;
-      }
-
-      .btn {
-        width: 100%;
-        justify-content: center;
-      }
+      .hero-actions { gap: 10px; }
+      .btn { width: 100%; justify-content: center; }
 
       .visual-caption,
       .section-header p,
@@ -1637,7 +2372,8 @@
       .timeline-item p,
       .section-card p,
       .ecosystem-grid p,
-      .value-grid p {
+      .value-grid p,
+      .demo-copy p {
         font-size: 14px;
         line-height: 1.78;
       }
@@ -1648,19 +2384,20 @@
       }
 
       .section-header h2,
-      .footer-panel h2 {
-        font-size: clamp(28px, 9vw, 38px);
+      .footer-panel h2 { font-size: var(--fs-h2); }
+
+      .transition-strip {
+        gap: 10px;
+        padding: 10px 12px;
       }
 
-      .diagram {
-        height: 560px;
+      .transition-strip span {
+        font-size: 10px;
+        letter-spacing: 0.1em;
       }
 
-      .orbital-ring {
-        width: 230px;
-        height: 230px;
-        top: 120px;
-      }
+      .diagram { height: 560px; }
+      .orbital-ring { width: 230px; height: 230px; top: 120px; }
 
       .facility-node.top-left,
       .facility-node.top-right {
@@ -1690,6 +2427,7 @@
         padding: 0 10px;
         height: 40px;
       }
+
       .rack-unit small { font-size: 9px; }
 
       .power-sidecar {
@@ -1767,11 +2505,87 @@
       .label-1 { left: 12px; top: 96px; }
       .label-2 { right: 10px; top: 364px; }
       .label-3 { left: 52%; bottom: 160px; transform: translateX(-50%); }
+      .power-core { right: 24px; top: 96px; }
 
-      .power-core {
-        right: 24px;
-        top: 96px;
+      .hero-demo { padding: 18px; }
+      .demo-stage { min-height: 760px; }
+      .scene-camera { transform: rotateX(10deg) rotateY(-6deg); }
+      .scene-core {
+        width: 196px;
+        height: 286px;
+        top: 41%;
       }
+
+      .rack-shell::before {
+        font-size: 10px;
+        left: 14px;
+      }
+
+      .explode-layer {
+        left: 16px;
+        right: 16px;
+        height: 34px;
+      }
+
+      .explode-layer:nth-child(2) { top: 50px; }
+      .explode-layer:nth-child(3) { top: 92px; }
+      .explode-layer:nth-child(4) { top: 134px; }
+      .explode-layer:nth-child(5) { top: 176px; }
+      .explode-layer:nth-child(6) { top: 218px; }
+
+      .demo-stage[data-scene="1"] .explode-layer:nth-child(2) { transform: translate3d(-52px, -72px, 110px) rotateY(-10deg); }
+      .demo-stage[data-scene="1"] .explode-layer:nth-child(3) { transform: translate3d(54px, -26px, 90px) rotateY(10deg); }
+      .demo-stage[data-scene="1"] .explode-layer:nth-child(4) { transform: translate3d(-58px, 18px, 100px) rotateY(-8deg); }
+      .demo-stage[data-scene="1"] .explode-layer:nth-child(5) { transform: translate3d(56px, 58px, 96px) rotateY(8deg); }
+      .demo-stage[data-scene="1"] .explode-layer:nth-child(6) { transform: translate3d(0, 96px, 76px); }
+
+      .scene-floor {
+        width: 360px;
+        height: 180px;
+        bottom: 136px;
+      }
+
+      .scene-orbit {
+        width: 380px;
+        height: 380px;
+      }
+
+      .demo-node {
+        width: 108px;
+        min-height: 62px;
+        font-size: 11px;
+        padding: 8px 10px;
+      }
+
+      .node-grid { left: 14px; top: 22px; }
+      .node-sst { right: 14px; top: 22px; }
+      .node-sidecar { right: 10px; top: 188px; }
+      .node-cdu { left: 10px; bottom: 184px; }
+      .node-telemetry { right: 50%; bottom: 96px; transform: translateX(50%); }
+
+      .p-grid-sst { width: 126px; top: 84px; left: 118px; }
+      .p-sst-sidecar { width: 86px; top: 150px; left: 310px; transform: rotate(64deg); }
+      .p-sidecar-rack { width: 78px; top: 236px; left: 284px; transform: rotate(160deg); }
+      .c-cdu-rack { width: 104px; top: 338px; left: 114px; transform: rotate(-24deg); }
+      .c-rack-return { width: 100px; top: 372px; left: 168px; transform: rotate(24deg); }
+      .t-rack-telemetry { width: 122px; top: 388px; left: 246px; transform: rotate(20deg); }
+      .t-sidecar-telemetry { width: 96px; top: 280px; left: 308px; transform: rotate(102deg); }
+
+      .scene-panel {
+        left: 12px;
+        right: 12px;
+        bottom: 12px;
+        gap: 10px;
+      }
+
+      .scene-hud,
+      .step-indicators,
+      .scene-note {
+        padding: 12px 12px;
+        border-radius: 16px;
+      }
+
+      .step-chip { min-height: auto; padding: 10px 12px; }
 
       .comparison-table,
       .comparison-table thead,
@@ -1808,19 +2622,16 @@
         font-size: clamp(22px, 8vw, 32px);
       }
 
-      .footer-actions {
-        justify-content: stretch;
-      }
-
-      .footer-actions .btn {
-        width: 100%;
-      }
+      .footer-actions { justify-content: stretch; }
+      .footer-actions .btn { width: 100%; }
     }
 
     @media (max-width: 420px) {
       .container { width: min(calc(100% - 22px), var(--max)); }
+
       .hero-copy,
       .hero-visual,
+      .hero-demo,
       .architecture,
       .timeline,
       .footer-panel,
@@ -1830,8 +2641,15 @@
       .quote {
         padding: 18px;
       }
+
       .diagram { height: 540px; }
       .rack { width: calc(100% - 120px); }
+      .demo-stage { min-height: 780px; }
+      .scene-core { width: 182px; }
+      .scene-floor { width: 320px; }
+      .demo-node { width: 98px; }
+      .node-telemetry { bottom: 104px; }
+      .step-chip span { font-size: 11px; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -1841,6 +2659,21 @@
         transition: none !important;
       }
       .fade-up { opacity: 1; transform: none; }
+      .parallax-layer,
+      .hero-copy,
+      .hero-visual,
+      .hero-demo,
+      .section-card,
+      .quote,
+      .demo-node,
+      .explode-layer,
+      .scene-camera,
+      .facility-node,
+      .rack,
+      .power-sidecar,
+      .cooling-loop {
+        transform: none !important;
+      }
     }
   </style>
 </head>
@@ -1852,6 +2685,7 @@
     <span></span>
   </div>
   <div class="particles" id="particles" aria-hidden="true"></div>
+  <div class="scroll-glow" aria-hidden="true"></div>
 
   <header class="topbar">
     <div class="container topbar-inner">
@@ -1880,7 +2714,7 @@
   </header>
 
   <main id="top">
-    <section class="hero">
+    <section class="hero parallax-layer" style="--parallax-speed:-0.04;">
       <div class="container hero-grid">
         <div class="hero-copy fade-up tilt-card" data-tilt>
           <div class="eyebrow"><span class="eyebrow-dot"></span> AI Infrastructure Narrative Page</div>
@@ -1890,7 +2724,7 @@
             而是能不能把电高效送进去，把热稳定拿出来，并且让整套系统具备可认证、可交付、可扩展、可销售的全球化能力。
           </p>
           <div class="hero-actions">
-            <a class="btn btn-primary" href="#architecture">查看架构路线</a>
+            <a class="btn btn-primary" href="#demo-scene">查看自动演示场景</a>
             <a class="btn btn-secondary" href="#dcdeeptech">查看新加坡平台角色</a>
           </div>
           <div class="mini-stats">
@@ -1983,8 +2817,101 @@
       </div>
     </section>
 
+    <section class="hero-demo-wrap" id="demo-scene">
+      <div class="container">
+        <div class="transition-strip fade-up">
+          <span>Scroll-driven Parallax</span>
+          <i></i>
+          <span>3D Exploded Rack</span>
+          <i></i>
+          <span>Auto Power/Cooling Demo</span>
+        </div>
+
+        <div class="hero-demo fade-up tilt-card" data-tilt style="transition-delay: 0.06s; margin-top: 16px;">
+          <div class="demo-copy">
+            <div>
+              <div class="kicker">Autoplay Demo Scene</div>
+              <h2>一段自动播放的 power / cooling demo，把“送电”和“带热”同时讲清楚</h2>
+              <p>
+                这个场景不是静态插图，而是一个自动切换的演示：从 Grid / SST 进电，到 Sidecar 条件化供电，再到 Rack 内部分层爆炸，随后展示 CDU 液路、回水与 telemetry 闭环优化。
+                这样用户滚动时，不只是看到内容，而是能“看见系统在工作”。
+              </p>
+            </div>
+
+            <div class="scene-meta">
+              <div class="scene-note">
+                <strong>Scene Logic</strong>
+                <span>Power ingress → conditioning → rack distribution → cooling loop → telemetry optimization</span>
+              </div>
+              <div class="scene-note">
+                <strong>Visual Goal</strong>
+                <span>比“示意图”更强，但依然保持工程感和高级感，不走廉价炫光路线。</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="demo-stage" id="demoStage" data-scene="0" aria-label="Autoplay power and cooling demo scene">
+            <div class="scene-camera">
+              <div class="scene-orbit"></div>
+              <div class="scene-floor"></div>
+
+              <div class="demo-node node-grid"><div><strong>Grid / MVAC</strong>Power Ingress</div></div>
+              <div class="demo-node node-sst"><div><strong>SST / Front End</strong>HVDC Conversion</div></div>
+              <div class="demo-node node-sidecar"><div><strong>Sidecar</strong>BBU · CBU · Protection</div></div>
+              <div class="demo-node node-cdu"><div><strong>CDU</strong>Liquid Exchange · Flow Control</div></div>
+              <div class="demo-node node-telemetry"><div><strong>Telemetry</strong>Thermal + Power Optimization</div></div>
+
+              <div class="power-path p-grid-sst"></div>
+              <div class="power-path p-sst-sidecar"></div>
+              <div class="power-path p-sidecar-rack"></div>
+              <div class="cool-path c-cdu-rack"></div>
+              <div class="cool-path c-rack-return"></div>
+              <div class="telemetry-beam t-rack-telemetry"></div>
+              <div class="telemetry-beam t-sidecar-telemetry"></div>
+
+              <div class="flow-pulse power"></div>
+              <div class="flow-pulse cool"></div>
+              <div class="flow-pulse telemetry"></div>
+
+              <div class="scene-core">
+                <div class="rack-shell"></div>
+                <div class="explode-layer" data-label="GPU / CPU Tray"></div>
+                <div class="explode-layer" data-label="NVLink / Fabric"></div>
+                <div class="explode-layer" data-label="Compute Tray"></div>
+                <div class="explode-layer" data-label="Memory / DIMM"></div>
+                <div class="explode-layer" data-label="Power Shelf"></div>
+              </div>
+            </div>
+
+            <div class="scene-panel">
+              <div class="scene-hud" id="sceneHud">
+                <strong>Current Scene</strong>
+                <h3 data-scene-title>Power ingress through MVAC and front-end conversion</h3>
+                <p data-scene-copy>先把外部电力送进系统，再通过 SST / front-end 组织成更适合高密度 AI 的电力形式。</p>
+              </div>
+              <div class="step-indicators">
+                <div class="step-chip"><strong>01</strong><span>Grid / MVAC</span></div>
+                <div class="step-chip"><strong>02</strong><span>HVDC Sidecar</span></div>
+                <div class="step-chip"><strong>03</strong><span>CDU Liquid Loop</span></div>
+                <div class="step-chip"><strong>04</strong><span>Telemetry</span></div>
+                <div class="step-chip"><strong>05</strong><span>Integrated AI Factory</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section class="section" id="challenge">
       <div class="container">
+        <div class="transition-strip fade-up" style="margin-bottom: 18px;">
+          <span>Thermal Limits</span>
+          <i></i>
+          <span>Power Limits</span>
+          <i></i>
+          <span>Architecture Shift</span>
+        </div>
+
         <div class="section-header fade-up">
           <h2>问题已经不是“能不能上 AI”，而是基础设施能不能扛住 AI</h2>
           <p>
@@ -1994,7 +2921,7 @@
         </div>
 
         <div class="grid-3">
-          <article class="section-card fade-up">
+          <article class="section-card fade-up parallax-layer" style="--parallax-speed:0.02;">
             <div class="kicker">热力学边界</div>
             <h3>空气的传热能力不够了</h3>
             <p>
@@ -2008,7 +2935,7 @@
             </div>
           </article>
 
-          <article class="section-card fade-up" style="transition-delay: 0.06s;">
+          <article class="section-card fade-up parallax-layer" style="transition-delay: 0.06s; --parallax-speed:-0.015;">
             <div class="kicker">电动力学边界</div>
             <h3>多级 AC 转换链路开始变重</h3>
             <p>
@@ -2022,7 +2949,7 @@
             </div>
           </article>
 
-          <article class="section-card fade-up" style="transition-delay: 0.12s;">
+          <article class="section-card fade-up parallax-layer" style="transition-delay: 0.12s; --parallax-speed:0.025;">
             <div class="kicker">系统级结论</div>
             <h3>Cooling 和 Power 必须一起设计</h3>
             <p>
@@ -2039,6 +2966,14 @@
 
     <section class="section" id="cooling">
       <div class="container">
+        <div class="transition-strip fade-up" style="margin-bottom: 18px;">
+          <span>Cold Plate</span>
+          <i></i>
+          <span>CDU</span>
+          <i></i>
+          <span>Rack-Level Cooling</span>
+        </div>
+
         <div class="section-header fade-up">
           <h2>OCP Cooling：不是“加水冷”，而是从服务器到机房的热管理重构</h2>
           <p>
@@ -2048,7 +2983,7 @@
         </div>
 
         <div class="grid-2">
-          <article class="section-card fade-up">
+          <article class="section-card fade-up parallax-layer" style="--parallax-speed:0.018;">
             <div class="kicker">Cold Plate + Direct-to-Chip</div>
             <h3>把液体带到热源附近</h3>
             <p>
@@ -2062,7 +2997,7 @@
             </div>
           </article>
 
-          <article class="section-card fade-up" style="transition-delay: 0.08s;">
+          <article class="section-card fade-up parallax-layer" style="transition-delay: 0.08s; --parallax-speed:-0.018;">
             <div class="kicker">CDU + Manifold</div>
             <h3>CDU 是液冷系统的循环中枢</h3>
             <p>
@@ -2078,7 +3013,7 @@
         </div>
 
         <div class="grid-3" style="margin-top: 18px;">
-          <article class="section-card fade-up">
+          <article class="section-card fade-up parallax-layer" style="--parallax-speed:0.02;">
             <div class="kicker">Rack-Level Cooling</div>
             <h3>热管理从单机升级到整柜</h3>
             <p>
@@ -2086,7 +3021,7 @@
               cooling 的单位自然从单台服务器上升到整个 rack。
             </p>
           </article>
-          <article class="section-card fade-up" style="transition-delay: 0.06s;">
+          <article class="section-card fade-up parallax-layer" style="transition-delay: 0.06s; --parallax-speed:-0.012;">
             <div class="kicker">Approach Temperature</div>
             <h3>不是只比冷不冷，而是比系统效率</h3>
             <p>
@@ -2094,7 +3029,7 @@
               让数据中心获得更高的自由冷却空间与更好的全系统能效。
             </p>
           </article>
-          <article class="section-card fade-up" style="transition-delay: 0.12s;">
+          <article class="section-card fade-up parallax-layer" style="transition-delay: 0.12s; --parallax-speed:0.024;">
             <div class="kicker">Warm Water Future</div>
             <h3>更高供水温度，意味着更低 PUE 压力</h3>
             <p>
@@ -2108,6 +3043,14 @@
 
     <section class="section" id="hvdc">
       <div class="container">
+        <div class="transition-strip fade-up" style="margin-bottom: 18px;">
+          <span>UPS Limits</span>
+          <i></i>
+          <span>Sidecar</span>
+          <i></i>
+          <span>800V HVDC</span>
+        </div>
+
         <div class="section-header fade-up">
           <h2>HVDC：给 AI 机柜一条更直接的电力高速公路</h2>
           <p>
@@ -2117,7 +3060,7 @@
         </div>
 
         <div class="grid-2">
-          <article class="section-card fade-up">
+          <article class="section-card fade-up parallax-layer" style="--parallax-speed:0.018;">
             <div class="kicker">Why HVDC</div>
             <h3>当功率密度上去，多级转换就开始成为负担</h3>
             <p>
@@ -2129,7 +3072,7 @@
             </div>
           </article>
 
-          <article class="section-card fade-up" style="transition-delay: 0.08s;">
+          <article class="section-card fade-up parallax-layer" style="transition-delay: 0.08s; --parallax-speed:-0.016;">
             <div class="kicker">What Changes</div>
             <h3>更少弯路，更少损耗，更少无效热</h3>
             <p>
@@ -2175,6 +3118,14 @@
 
     <section class="section" id="architecture">
       <div class="container">
+        <div class="transition-strip fade-up" style="margin-bottom: 18px;">
+          <span>AC Era</span>
+          <i></i>
+          <span>Sidecar Transition</span>
+          <i></i>
+          <span>Native HVDC Future</span>
+        </div>
+
         <div class="section-header fade-up">
           <h2>几条路线不是互相排斥，而是对应不同阶段与不同功率密度</h2>
           <p>
@@ -2333,6 +3284,14 @@
 
     <section class="section" id="dcdeeptech">
       <div class="container">
+        <div class="transition-strip fade-up" style="margin-bottom: 18px;">
+          <span>Engineering</span>
+          <i></i>
+          <span>Certification</span>
+          <i></i>
+          <span>Market Entry</span>
+        </div>
+
         <div class="section-header fade-up">
           <h2>DCDeepTech：把工程能力翻译成全球 OEM、超级数据中心与 SI 听得懂的市场语言</h2>
           <p>
@@ -2342,7 +3301,7 @@
         </div>
 
         <div class="value-grid">
-          <article class="fade-up">
+          <article class="fade-up parallax-layer" style="--parallax-speed:0.018;">
             <div class="kicker">Singapore Platform</div>
             <h3>新加坡，不只是地理节点</h3>
             <p>
@@ -2350,7 +3309,7 @@
             </p>
           </article>
 
-          <article class="fade-up" style="transition-delay: 0.06s;">
+          <article class="fade-up parallax-layer" style="transition-delay: 0.06s; --parallax-speed:-0.014;">
             <div class="kicker">OEM / Hyperscale / SI</div>
             <h3>协助进入更高门槛生态</h3>
             <p>
@@ -2358,7 +3317,7 @@
             </p>
           </article>
 
-          <article class="fade-up" style="transition-delay: 0.12s;">
+          <article class="fade-up parallax-layer" style="transition-delay: 0.12s; --parallax-speed:0.02;">
             <div class="kicker">Certification + Narrative</div>
             <h3>认证路径与数字营销同样重要</h3>
             <p>
@@ -2368,7 +3327,7 @@
         </div>
 
         <div class="grid-2" style="margin-top: 18px;">
-          <article class="section-card fade-up">
+          <article class="section-card fade-up parallax-layer" style="--parallax-speed:0.016;">
             <div class="kicker">What DCDeepTech Helps With</div>
             <h3>从技术理解，到市场进入</h3>
             <p>
@@ -2382,7 +3341,7 @@
             </div>
           </article>
 
-          <article class="section-card fade-up" style="transition-delay: 0.08s;">
+          <article class="section-card fade-up parallax-layer" style="transition-delay: 0.08s; --parallax-speed:-0.014;">
             <div class="kicker">Business Translation Layer</div>
             <h3>工程能力，必须被“翻译”成可采购能力</h3>
             <p>
@@ -2399,6 +3358,16 @@
 
     <section class="section" id="ecosystem">
       <div class="container">
+        <div class="transition-strip fade-up" style="margin-bottom: 18px;">
+          <span>Compute</span>
+          <i></i>
+          <span>Thermal</span>
+          <i></i>
+          <span>Power</span>
+          <i></i>
+          <span>Delivery</span>
+        </div>
+
         <div class="section-header fade-up">
           <h2>这是一场整套数据中心范式迁移，不是单一部件升级</h2>
           <p>
@@ -2408,22 +3377,22 @@
         </div>
 
         <div class="ecosystem-grid">
-          <article class="fade-up">
+          <article class="fade-up parallax-layer" style="--parallax-speed:0.018;">
             <div class="kicker">Compute Vendors</div>
             <h3>服务器与加速器厂商</h3>
             <p>他们推动更高计算密度，也自然倒逼更先进的散热与供电组织方式。</p>
           </article>
-          <article class="fade-up" style="transition-delay: 0.04s;">
+          <article class="fade-up parallax-layer" style="transition-delay: 0.04s; --parallax-speed:-0.012;">
             <div class="kicker">Power Ecosystem</div>
             <h3>电源与器件厂商</h3>
             <p>从 sidecar 到 board-level conversion，HVDC 让新一代器件与拓扑价值凸显。</p>
           </article>
-          <article class="fade-up" style="transition-delay: 0.08s;">
+          <article class="fade-up parallax-layer" style="transition-delay: 0.08s; --parallax-speed:0.016;">
             <div class="kicker">Thermal Ecosystem</div>
             <h3>冷却与热管理厂商</h3>
             <p>CDU、cold plate、manifold、facility loop 从配件升级为系统核心。</p>
           </article>
-          <article class="fade-up" style="transition-delay: 0.12s;">
+          <article class="fade-up parallax-layer" style="transition-delay: 0.12s; --parallax-speed:-0.015;">
             <div class="kicker">Delivery Ecosystem</div>
             <h3>Hyperscale / Colocation / SI</h3>
             <p>最终决定哪些技术可以被带进真实项目，哪些方案真正具备规模化交付资格。</p>
@@ -2443,6 +3412,16 @@
 
   <footer class="footer">
     <div class="container">
+      <div class="transition-strip fade-up" style="margin-bottom: 18px;">
+        <span>Chip</span>
+        <i></i>
+        <span>Rack</span>
+        <i></i>
+        <span>Power</span>
+        <i></i>
+        <span>Market</span>
+      </div>
+
       <div class="footer-panel fade-up">
         <div>
           <div class="eyebrow"><span class="eyebrow-dot"></span> Single HTML Landing Page</div>
@@ -2462,13 +3441,12 @@
 
   <script>
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const root = document.documentElement;
+    const body = document.body;
 
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('in-view');
-          if (entry.target.classList.contains('counter-trigger')) runCounters(entry.target);
-        }
+        if (entry.isIntersecting) entry.target.classList.add('in-view');
       });
     }, { threshold: 0.14 });
 
@@ -2546,16 +3524,19 @@
     }
 
     const heroSection = document.querySelector('.hero');
-    if (heroSection) {
-      observer.observe(heroSection);
-      heroSection.classList.add('counter-trigger');
-    }
+    const counterObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) runCounters();
+      });
+    }, { threshold: 0.22 });
+
+    if (heroSection) counterObserver.observe(heroSection);
 
     if (!prefersReduced) {
       const tiltCards = document.querySelectorAll('[data-tilt]');
       tiltCards.forEach((card) => {
         const reset = () => {
-          card.style.transform = 'perspective(1200px) rotateX(0deg) rotateY(0deg) translateY(0)';
+          card.style.transform = '';
         };
 
         card.addEventListener('pointermove', (e) => {
@@ -2563,9 +3544,9 @@
           const rect = card.getBoundingClientRect();
           const px = (e.clientX - rect.left) / rect.width;
           const py = (e.clientY - rect.top) / rect.height;
-          const ry = (px - 0.5) * 7;
-          const rx = (0.5 - py) * 7;
-          card.style.transform = `perspective(1200px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-2px)`;
+          const ry = (px - 0.5) * 6;
+          const rx = (0.5 - py) * 6;
+          card.style.transform = `perspective(1300px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-2px)`;
         });
 
         card.addEventListener('pointerleave', reset);
@@ -2589,6 +3570,85 @@
         dot.style.opacity = (0.18 + Math.random() * 0.45).toFixed(2);
         particles.appendChild(dot);
       }
+    }
+
+    let ticking = false;
+    function updateParallax() {
+      const scrollY = window.scrollY || window.pageYOffset;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = docHeight > 0 ? Math.min(scrollY / docHeight, 1) : 0;
+      root.style.setProperty('--parallax-y', `${scrollY}px`);
+      root.style.setProperty('--hero-shift', `${Math.min(scrollY, 800)}px`);
+      root.style.setProperty('--hero-spin', `${scrollY * 0.025}deg`);
+      root.style.setProperty('--scroll-progress', progress.toFixed(4));
+
+      document.querySelectorAll('.section-card, .timeline-item, .value-grid > article, .ecosystem-grid > article').forEach((el, index) => {
+        const rect = el.getBoundingClientRect();
+        const center = rect.top + rect.height / 2;
+        const viewportCenter = window.innerHeight / 2;
+        const delta = (center - viewportCenter) * 0.05;
+        el.style.setProperty('--card-shift', `${delta.toFixed(2)}px`);
+      });
+
+      ticking = false;
+    }
+
+    window.addEventListener('scroll', () => {
+      if (!ticking && !prefersReduced) {
+        window.requestAnimationFrame(updateParallax);
+        ticking = true;
+      }
+    }, { passive: true });
+
+    updateParallax();
+
+    const demoStage = document.getElementById('demoStage');
+    const sceneHud = document.getElementById('sceneHud');
+    const titleNode = sceneHud?.querySelector('[data-scene-title]');
+    const copyNode = sceneHud?.querySelector('[data-scene-copy]');
+
+    const scenes = [
+      {
+        title: 'Power ingress through MVAC and front-end conversion',
+        copy: '先把外部电力送进系统，再通过 SST / front-end 组织成更适合高密度 AI 的电力形式。'
+      },
+      {
+        title: 'Sidecar conditions power for dense rack delivery',
+        copy: 'Sidecar 把 BBU、CBU、保护和局部高压组织在一起，减少 rack 内部的挤占与复杂度。'
+      },
+      {
+        title: 'CDU and liquid loop pull heat away from the rack',
+        copy: 'CDU 负责换热、流量控制和循环稳定性，把 direct-to-chip 产生的热及时带离计算层。'
+      },
+      {
+        title: 'Telemetry closes the loop between power and thermal state',
+        copy: '真正先进的系统不是静态配置，而是持续感知电力与热状态，并动态优化运行边界。'
+      },
+      {
+        title: 'Integrated AI factory: power and cooling become one architecture',
+        copy: '当 power delivery 和 thermal management 被一起设计时，AI 工厂才真正具备持续扩展能力。'
+      }
+    ];
+
+    let currentScene = 0;
+    function setScene(index) {
+      if (!demoStage) return;
+      currentScene = index % scenes.length;
+      demoStage.dataset.scene = String(currentScene);
+      if (sceneHud && titleNode && copyNode) {
+        sceneHud.classList.add('switching');
+        setTimeout(() => {
+          titleNode.textContent = scenes[currentScene].title;
+          copyNode.textContent = scenes[currentScene].copy;
+          sceneHud.classList.remove('switching');
+        }, 160);
+      }
+    }
+
+    if (!prefersReduced && demoStage) {
+      setInterval(() => {
+        setScene((currentScene + 1) % scenes.length);
+      }, 3000);
     }
   </script>
 </body>
