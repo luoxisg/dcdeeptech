@@ -1,0 +1,1475 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OCP Cooling + HVDC | 下一代 AI 数据中心架构</title>
+  <meta name="description" content="OCP Cooling 与 HVDC 如何一起定义下一代 AI 数据中心。包含冷板液冷、CDU、800V HVDC、功率密度、PUE/TCO 与 DCDeepTech 新加坡平台定位。" />
+  <style>
+    :root {
+      --bg: #07111f;
+      --bg-soft: #0b1729;
+      --panel: rgba(10, 21, 38, 0.82);
+      --panel-strong: rgba(10, 22, 40, 0.96);
+      --line: rgba(129, 168, 255, 0.18);
+      --line-strong: rgba(129, 168, 255, 0.35);
+      --text: #ecf4ff;
+      --muted: #9bb1cf;
+      --teal: #45e6c4;
+      --blue: #6fa9ff;
+      --violet: #9b8dff;
+      --amber: #ffca6a;
+      --danger: #ff6c8f;
+      --shadow: 0 20px 80px rgba(0, 0, 0, 0.35);
+      --radius: 24px;
+      --radius-sm: 16px;
+      --max: 1240px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 15% 20%, rgba(111, 169, 255, 0.14), transparent 28%),
+        radial-gradient(circle at 82% 18%, rgba(69, 230, 196, 0.12), transparent 24%),
+        radial-gradient(circle at 55% 78%, rgba(155, 141, 255, 0.10), transparent 26%),
+        linear-gradient(180deg, #050c16 0%, #081120 42%, #060d18 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -2;
+    }
+
+    body::before {
+      background-image:
+        linear-gradient(rgba(111, 169, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(111, 169, 255, 0.05) 1px, transparent 1px);
+      background-size: 44px 44px;
+      mask-image: radial-gradient(circle at center, black 45%, transparent 90%);
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    .container {
+      width: min(calc(100% - 40px), var(--max));
+      margin: 0 auto;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      backdrop-filter: blur(18px);
+      background: rgba(5, 12, 22, 0.55);
+      border-bottom: 1px solid rgba(129, 168, 255, 0.10);
+    }
+
+    .topbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      min-height: 76px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      position: relative;
+      background: linear-gradient(135deg, rgba(69,230,196,0.22), rgba(111,169,255,0.18));
+      border: 1px solid rgba(129, 168, 255, 0.24);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04), 0 12px 30px rgba(69,230,196,0.12);
+    }
+
+    .brand-mark::before,
+    .brand-mark::after {
+      content: "";
+      position: absolute;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--teal), var(--blue));
+    }
+
+    .brand-mark::before {
+      width: 22px;
+      height: 4px;
+      left: 10px;
+      top: 12px;
+      box-shadow: 0 10px 0 rgba(111, 169, 255, 0.95);
+    }
+
+    .brand-mark::after {
+      width: 4px;
+      height: 22px;
+      right: 12px;
+      top: 10px;
+      opacity: 0.95;
+    }
+
+    .nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    .nav a {
+      padding: 10px 14px;
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 14px;
+      transition: 0.25s ease;
+    }
+
+    .nav a:hover {
+      color: var(--text);
+      background: rgba(111, 169, 255, 0.08);
+    }
+
+    .hero {
+      position: relative;
+      padding: 82px 0 56px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.08fr 0.92fr;
+      gap: 28px;
+      align-items: stretch;
+    }
+
+    .hero-copy,
+    .hero-visual,
+    .section-card,
+    .architecture,
+    .timeline,
+    .ecosystem-grid > article,
+    .value-grid > article,
+    .footer-panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+    }
+
+    .hero-copy {
+      border-radius: 30px;
+      padding: 34px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #c9daff;
+      background: rgba(111, 169, 255, 0.08);
+      border: 1px solid rgba(111, 169, 255, 0.18);
+    }
+
+    .eyebrow-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--teal), var(--blue));
+      box-shadow: 0 0 0 6px rgba(69, 230, 196, 0.10);
+    }
+
+    h1 {
+      margin: 20px 0 16px;
+      font-size: clamp(42px, 6vw, 72px);
+      line-height: 0.95;
+      letter-spacing: -0.04em;
+      max-width: 11ch;
+    }
+
+    .lead {
+      font-size: 18px;
+      line-height: 1.75;
+      color: var(--muted);
+      max-width: 68ch;
+      margin: 0 0 22px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 26px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 18px;
+      border-radius: 999px;
+      font-weight: 700;
+      transition: transform 0.25s ease, background 0.25s ease, border-color 0.25s ease;
+      border: 1px solid transparent;
+    }
+
+    .btn:hover { transform: translateY(-2px); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, rgba(69,230,196,0.18), rgba(111,169,255,0.22));
+      border-color: rgba(111,169,255,0.24);
+      color: var(--text);
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.02);
+      border-color: rgba(255,255,255,0.10);
+      color: #d7e5ff;
+    }
+
+    .mini-stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .mini-stats article {
+      padding: 18px 16px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .mini-stats strong {
+      display: block;
+      font-size: 28px;
+      letter-spacing: -0.04em;
+    }
+
+    .mini-stats span {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .hero-visual {
+      border-radius: 30px;
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+      min-height: 620px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .visual-caption {
+      max-width: 48ch;
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--muted);
+    }
+
+    .diagram {
+      position: relative;
+      height: 460px;
+      border-radius: 24px;
+      background:
+        radial-gradient(circle at 52% 12%, rgba(69,230,196,0.10), transparent 20%),
+        linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015));
+      border: 1px solid rgba(255,255,255,0.06);
+      overflow: hidden;
+    }
+
+    .rack,
+    .power-sidecar,
+    .cooling-loop,
+    .facility-node,
+    .chip,
+    .signal-line,
+    .pulse {
+      position: absolute;
+    }
+
+    .facility-node {
+      width: 160px;
+      height: 88px;
+      border-radius: 22px;
+      border: 1px solid rgba(111, 169, 255, 0.22);
+      background: rgba(11, 22, 39, 0.90);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: #dce9ff;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03);
+    }
+
+    .facility-node.top-left { top: 22px; left: 20px; }
+    .facility-node.top-right { top: 22px; right: 20px; }
+
+    .rack {
+      left: 50%;
+      transform: translateX(-50%);
+      top: 112px;
+      width: 250px;
+      height: 280px;
+      border-radius: 28px;
+      padding: 18px;
+      background: linear-gradient(180deg, rgba(16,31,54,0.95), rgba(10,20,36,0.95));
+      border: 1px solid rgba(111,169,255,0.24);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03), 0 24px 60px rgba(0,0,0,0.35);
+    }
+
+    .rack::before {
+      content: "OCP AI Rack";
+      display: block;
+      font-size: 13px;
+      color: #c8d8f7;
+      margin-bottom: 12px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .rack-stack {
+      display: grid;
+      gap: 10px;
+    }
+
+    .rack-unit {
+      height: 42px;
+      border-radius: 12px;
+      background: linear-gradient(90deg, rgba(69,230,196,0.08), rgba(111,169,255,0.10));
+      border: 1px solid rgba(111,169,255,0.18);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 14px;
+      font-size: 12px;
+      color: #dce9ff;
+    }
+
+    .rack-unit small { color: #97b1d6; }
+
+    .power-sidecar {
+      top: 138px;
+      right: 42px;
+      width: 148px;
+      height: 224px;
+      border-radius: 24px;
+      padding: 18px 14px;
+      background: linear-gradient(180deg, rgba(26,22,47,0.94), rgba(13,17,34,0.94));
+      border: 1px solid rgba(155,141,255,0.22);
+    }
+
+    .power-sidecar::before {
+      content: "HVDC Sidecar";
+      display: block;
+      margin-bottom: 10px;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #ddd8ff;
+    }
+
+    .power-sidecar .cell {
+      height: 34px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      background: rgba(155,141,255,0.08);
+      border: 1px solid rgba(155,141,255,0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #d7d2ff;
+      font-size: 11px;
+    }
+
+    .cooling-loop {
+      left: 44px;
+      bottom: 42px;
+      width: 196px;
+      height: 150px;
+      border-radius: 26px;
+      background: linear-gradient(180deg, rgba(8,35,42,0.95), rgba(8,21,27,0.95));
+      border: 1px solid rgba(69,230,196,0.22);
+      padding: 18px;
+    }
+
+    .cooling-loop::before {
+      content: "CDU + Manifold";
+      display: block;
+      margin-bottom: 10px;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #d6fff7;
+    }
+
+    .loop-bar {
+      height: 16px;
+      border-radius: 999px;
+      margin-bottom: 10px;
+      background: linear-gradient(90deg, rgba(69,230,196,0.30), rgba(69,230,196,0.08));
+      border: 1px solid rgba(69,230,196,0.18);
+    }
+
+    .signal-line {
+      height: 2px;
+      background: linear-gradient(90deg, rgba(111,169,255,0.05), rgba(111,169,255,0.82), rgba(111,169,255,0.05));
+      transform-origin: left center;
+    }
+
+    .line-power-a { width: 120px; top: 198px; left: calc(50% + 124px); }
+    .line-facility-a { width: 150px; top: 64px; left: 148px; }
+    .line-facility-b { width: 150px; top: 64px; right: 148px; transform: rotate(180deg); }
+    .line-cooling-a { width: 160px; top: 320px; left: 78px; transform: rotate(-22deg); }
+
+    .pulse {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--blue);
+      box-shadow: 0 0 16px rgba(111,169,255,0.8);
+      animation: pulseMove 3.4s ease-in-out infinite;
+    }
+
+    .pulse.power { top: 194px; left: calc(50% + 128px); animation-delay: 0.4s; }
+    .pulse.cooling { background: var(--teal); box-shadow: 0 0 16px rgba(69,230,196,0.7); top: 315px; left: 96px; animation-delay: 1.2s; }
+
+    @keyframes pulseMove {
+      0% { transform: translateX(0) scale(0.8); opacity: 0.3; }
+      45% { transform: translateX(86px) scale(1.15); opacity: 1; }
+      100% { transform: translateX(0) scale(0.8); opacity: 0.3; }
+    }
+
+    .section {
+      padding: 34px 0;
+    }
+
+    .section-header {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 24px;
+      align-items: end;
+      margin-bottom: 22px;
+    }
+
+    .section-header h2 {
+      margin: 0;
+      font-size: clamp(30px, 4vw, 52px);
+      letter-spacing: -0.04em;
+      line-height: 1.02;
+    }
+
+    .section-header p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.8;
+      font-size: 16px;
+    }
+
+    .grid-3,
+    .grid-2,
+    .ecosystem-grid,
+    .value-grid {
+      display: grid;
+      gap: 18px;
+    }
+
+    .grid-3 { grid-template-columns: repeat(3, minmax(0,1fr)); }
+    .grid-2 { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    .ecosystem-grid { grid-template-columns: repeat(4, minmax(0,1fr)); }
+    .value-grid { grid-template-columns: repeat(3, minmax(0,1fr)); }
+
+    .section-card {
+      border-radius: 26px;
+      padding: 24px;
+      min-height: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .section-card h3 {
+      margin: 0 0 10px;
+      font-size: 24px;
+      letter-spacing: -0.03em;
+    }
+
+    .section-card p,
+    .section-card li {
+      color: var(--muted);
+      line-height: 1.8;
+      font-size: 15px;
+    }
+
+    .kicker {
+      display: inline-block;
+      padding: 7px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.03);
+      color: #d8e6ff;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    .metric {
+      margin-top: 18px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .metric-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 12px 0;
+      border-bottom: 1px dashed rgba(255,255,255,0.08);
+      color: #dce7fb;
+      font-size: 14px;
+    }
+
+    .metric-row span:last-child { color: #f4fbff; font-weight: 700; }
+
+    .architecture {
+      border-radius: 30px;
+      padding: 28px;
+    }
+
+    .arch-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .arch-tab {
+      appearance: none;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.02);
+      color: var(--muted);
+      padding: 11px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.25s ease;
+    }
+
+    .arch-tab.active,
+    .arch-tab:hover {
+      color: var(--text);
+      border-color: rgba(111,169,255,0.22);
+      background: rgba(111,169,255,0.10);
+    }
+
+    .arch-panel {
+      display: none;
+      grid-template-columns: 0.86fr 1.14fr;
+      gap: 20px;
+      align-items: stretch;
+    }
+
+    .arch-panel.active { display: grid; }
+
+    .arch-visual,
+    .arch-copy {
+      border-radius: 24px;
+      padding: 22px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+      min-height: 100%;
+    }
+
+    .arch-visual svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .arch-copy h3 {
+      margin: 0 0 12px;
+      font-size: 24px;
+      letter-spacing: -0.03em;
+    }
+
+    .arch-copy p { color: var(--muted); line-height: 1.8; }
+
+    .arch-points {
+      display: grid;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .arch-points div {
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      color: #dce7fb;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .timeline {
+      border-radius: 28px;
+      padding: 26px;
+    }
+
+    .timeline-track {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 18px;
+      position: relative;
+    }
+
+    .timeline-item {
+      padding: 22px;
+      border-radius: 22px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .timeline-item strong {
+      display: inline-block;
+      font-size: 13px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #d7e4ff;
+      margin-bottom: 12px;
+    }
+
+    .timeline-item h4 {
+      margin: 0 0 10px;
+      font-size: 22px;
+      letter-spacing: -0.03em;
+    }
+
+    .timeline-item p { margin: 0; color: var(--muted); line-height: 1.8; }
+
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+      overflow: hidden;
+      border-radius: 20px;
+    }
+
+    .comparison-table th,
+    .comparison-table td {
+      padding: 16px 14px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      vertical-align: top;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .comparison-table th {
+      color: #dce7fb;
+      font-size: 13px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: rgba(255,255,255,0.03);
+    }
+
+    .comparison-table td { color: var(--muted); }
+    .comparison-table td strong { color: var(--text); }
+
+    .ecosystem-grid > article,
+    .value-grid > article {
+      border-radius: 24px;
+      padding: 22px;
+    }
+
+    .ecosystem-grid h3,
+    .value-grid h3 {
+      margin: 0 0 10px;
+      font-size: 22px;
+      letter-spacing: -0.03em;
+    }
+
+    .ecosystem-grid p,
+    .value-grid p { margin: 0; color: var(--muted); line-height: 1.8; }
+
+    .highlight-band {
+      padding: 14px 16px;
+      border-radius: 18px;
+      margin-top: 16px;
+      background: linear-gradient(135deg, rgba(69,230,196,0.08), rgba(111,169,255,0.08));
+      border: 1px solid rgba(111,169,255,0.16);
+      color: #dce9ff;
+      line-height: 1.75;
+      font-size: 14px;
+    }
+
+    .quote {
+      position: relative;
+      padding: 26px;
+      border-radius: 28px;
+      background: linear-gradient(135deg, rgba(111,169,255,0.10), rgba(155,141,255,0.10));
+      border: 1px solid rgba(111,169,255,0.18);
+      box-shadow: var(--shadow);
+    }
+
+    .quote p {
+      margin: 0;
+      font-size: clamp(24px, 3vw, 38px);
+      letter-spacing: -0.04em;
+      line-height: 1.16;
+    }
+
+    .quote span {
+      display: block;
+      margin-top: 14px;
+      color: #d0dfff;
+      font-size: 14px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .footer {
+      padding: 34px 0 56px;
+    }
+
+    .footer-panel {
+      border-radius: 30px;
+      padding: 30px;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 24px;
+      align-items: end;
+    }
+
+    .footer-panel h2 {
+      margin: 0 0 12px;
+      font-size: clamp(30px, 4vw, 52px);
+      letter-spacing: -0.04em;
+      line-height: 1.02;
+    }
+
+    .footer-panel p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    .footer-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: flex-end;
+    }
+
+    .fade-up {
+      opacity: 0;
+      transform: translateY(26px);
+      transition: 0.75s ease;
+    }
+
+    .fade-up.in-view {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .accent-teal { color: var(--teal); }
+    .accent-blue { color: var(--blue); }
+    .accent-violet { color: #c6bdff; }
+
+    @media (max-width: 1100px) {
+      .hero-grid,
+      .section-header,
+      .arch-panel,
+      .footer-panel {
+        grid-template-columns: 1fr;
+      }
+
+      .grid-3,
+      .ecosystem-grid,
+      .value-grid,
+      .timeline-track {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .footer-actions { justify-content: flex-start; }
+    }
+
+    @media (max-width: 760px) {
+      .topbar-inner {
+        align-items: flex-start;
+        padding: 14px 0;
+        flex-direction: column;
+      }
+
+      .nav { justify-content: flex-start; }
+      .hero { padding-top: 52px; }
+      .hero-copy, .hero-visual, .architecture, .timeline, .footer-panel { padding: 22px; }
+      .mini-stats,
+      .grid-3,
+      .grid-2,
+      .ecosystem-grid,
+      .value-grid,
+      .timeline-track {
+        grid-template-columns: 1fr;
+      }
+
+      .diagram {
+        height: 520px;
+      }
+
+      .facility-node.top-left,
+      .facility-node.top-right {
+        width: 132px;
+        height: 78px;
+        font-size: 12px;
+      }
+
+      .rack {
+        width: 210px;
+        top: 122px;
+      }
+
+      .power-sidecar {
+        right: 16px;
+        width: 124px;
+        height: 210px;
+      }
+
+      .cooling-loop {
+        left: 16px;
+        width: 164px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="#top">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>OCP Cooling + HVDC</span>
+      </a>
+      <nav class="nav">
+        <a href="#challenge">问题</a>
+        <a href="#cooling">Cooling</a>
+        <a href="#hvdc">HVDC</a>
+        <a href="#architecture">架构路线</a>
+        <a href="#dcdeeptech">DCDeepTech</a>
+        <a href="#ecosystem">生态</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-copy fade-up">
+          <div class="eyebrow"><span class="eyebrow-dot"></span> AI Infrastructure Narrative Page</div>
+          <h1>下一代 AI 数据中心，必须同时重构 <span class="accent-teal">Cooling</span> 与 <span class="accent-blue">Power</span></h1>
+          <p class="lead">
+            当机柜从 10–25kW 迈向 100kW、250kW 乃至更高，真正限制 AI 工厂的，不再只是 GPU 数量，
+            而是能不能把电高效送进去，把热稳定拿出来，并且让整套系统具备可认证、可交付、可扩展、可销售的全球化能力。
+          </p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#architecture">查看架构路线</a>
+            <a class="btn btn-secondary" href="#dcdeeptech">查看新加坡平台角色</a>
+          </div>
+          <div class="mini-stats">
+            <article>
+              <strong>100kW+</strong>
+              <span>AI 机柜正在从传统功率密度跃迁到超高密度区间</span>
+            </article>
+            <article>
+              <strong>CDU</strong>
+              <span>从冷板液冷的配液节点，升级为系统级热管理中枢</span>
+            </article>
+            <article>
+              <strong>800V HVDC</strong>
+              <span>从电力链路层面减少转换级数与寄生损耗</span>
+            </article>
+          </div>
+        </div>
+
+        <div class="hero-visual fade-up" style="transition-delay: 0.08s;">
+          <div>
+            <div class="kicker">从芯片 · 机柜 · 电力链路 · 走向整座 AI 工厂</div>
+            <div class="diagram" aria-label="OCP Cooling and HVDC architecture visualization">
+              <div class="facility-node top-left">Facility Water / Chiller Interface</div>
+              <div class="facility-node top-right">MVAC / SST / Power Entry</div>
+              <div class="signal-line line-facility-a"></div>
+              <div class="signal-line line-facility-b"></div>
+              <div class="signal-line line-power-a"></div>
+              <div class="signal-line line-cooling-a"></div>
+              <div class="pulse power"></div>
+              <div class="pulse cooling"></div>
+
+              <div class="rack">
+                <div class="rack-stack">
+                  <div class="rack-unit"><span>GPU / CPU Tray</span><small>Cold Plate</small></div>
+                  <div class="rack-unit"><span>NVLink / Fabric</span><small>Dense IO</small></div>
+                  <div class="rack-unit"><span>Compute Tray</span><small>Direct-to-Chip</small></div>
+                  <div class="rack-unit"><span>Memory / DIMM</span><small>Thermal Path</small></div>
+                  <div class="rack-unit"><span>Power Shelf</span><small>High Current</small></div>
+                </div>
+              </div>
+
+              <div class="power-sidecar">
+                <div class="cell">AC / DC Front End</div>
+                <div class="cell">BBU / CBU</div>
+                <div class="cell">800V Bus</div>
+                <div class="cell">Rack Feed</div>
+                <div class="cell">Protection</div>
+              </div>
+
+              <div class="cooling-loop">
+                <div class="loop-bar"></div>
+                <div class="loop-bar"></div>
+                <div class="loop-bar"></div>
+                <div class="highlight-band" style="margin-top: 8px; font-size: 12px; line-height: 1.6;">
+                  冷板、歧管、泵组、换热、流量控制、监测告警，共同决定热稳定边界。
+                </div>
+              </div>
+            </div>
+          </div>
+          <p class="visual-caption">
+            这不是“服务器加点水冷”或“把 UPS 换个方案”那么简单。真正的变化，是 OCP cooling 与 HVDC 正在一起重写
+            <strong>rack power density、PUE、可维护性、空间效率</strong> 与 <strong>全球市场进入逻辑</strong>。
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="challenge">
+      <div class="container">
+        <div class="section-header fade-up">
+          <h2>问题已经不是“能不能上 AI”，而是基础设施能不能扛住 AI</h2>
+          <p>
+            传统风冷与传统交流供电架构，原本服务的是较低功率密度的通算时代。今天的 AI 数据中心，面对的是更高热流密度、
+            更强脉冲负载、更密集的机柜布局，以及更严苛的部署效率和运营成本约束。
+          </p>
+        </div>
+
+        <div class="grid-3">
+          <article class="section-card fade-up">
+            <div class="kicker">热力学边界</div>
+            <h3>空气的传热能力不够了</h3>
+            <p>
+              当 GPU、CPU、DIMM、power shelf 同时堆进高密度机柜，空气对流不再足以承担主要散热任务。
+              你需要让液体直接贴近发热器件，把热从硅片附近更快、更稳定地带走。
+            </p>
+            <div class="metric">
+              <div class="metric-row"><span>传统风冷更擅长</span><span>中低密度负载</span></div>
+              <div class="metric-row"><span>AI 时代更需要</span><span>Direct-to-Chip</span></div>
+              <div class="metric-row"><span>决定因素</span><span>结温、热阻、流量控制</span></div>
+            </div>
+          </article>
+
+          <article class="section-card fade-up" style="transition-delay: 0.06s;">
+            <div class="kicker">电动力学边界</div>
+            <h3>多级 AC 转换链路开始变重</h3>
+            <p>
+              当单柜功率不断上升，传统 AC → UPS → PSU → 低压直流路径中的转换损耗、空间占用、铜排需求和寄生热都会同步上升。
+              电力链路越长，损失越多，散热压力也越大。
+            </p>
+            <div class="metric">
+              <div class="metric-row"><span>链路越长</span><span>损耗越大</span></div>
+              <div class="metric-row"><span>功率越高</span><span>铜与散热越吃紧</span></div>
+              <div class="metric-row"><span>工程目标</span><span>更少转换级数</span></div>
+            </div>
+          </article>
+
+          <article class="section-card fade-up" style="transition-delay: 0.12s;">
+            <div class="kicker">系统级结论</div>
+            <h3>Cooling 和 Power 必须一起设计</h3>
+            <p>
+              更高效率的供电能减少损耗热，更高效率的液冷能释放更高功率密度。两者不再是两个独立系统，
+              而是同一个 rack-scale architecture 的两面。
+            </p>
+            <div class="highlight-band">
+              到了 AI 工厂阶段，真正的竞争力，是把电送进去、把热拿出来、并且持续稳定运行的能力。
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="cooling">
+      <div class="container">
+        <div class="section-header fade-up">
+          <h2>OCP Cooling：不是“加水冷”，而是从服务器到机房的热管理重构</h2>
+          <p>
+            在 OCP / open architecture 语境下，cooling 不是单一零部件，而是围绕 cold plate、CDU、manifold、rack-level cooling、
+            direct-to-chip 所形成的完整系统设计语言。
+          </p>
+        </div>
+
+        <div class="grid-2">
+          <article class="section-card fade-up">
+            <div class="kicker">Cold Plate + Direct-to-Chip</div>
+            <h3>把液体带到热源附近</h3>
+            <p>
+              冷板液冷的核心逻辑，是让冷却液直接面对最热的器件，而不是先把热交给空气再慢慢带走。
+              对高热密度 GPU、CPU、HBM、DIMM 以及 power shelf 来说，这种路径更短、更稳定，也更适合持续重载运行。
+            </p>
+            <div class="metric">
+              <div class="metric-row"><span>优先散热对象</span><span>GPU / CPU / DIMM / PSU</span></div>
+              <div class="metric-row"><span>关键目标</span><span>更低热阻</span></div>
+              <div class="metric-row"><span>工程意义</span><span>支撑更高 rack density</span></div>
+            </div>
+          </article>
+
+          <article class="section-card fade-up" style="transition-delay: 0.08s;">
+            <div class="kicker">CDU + Manifold</div>
+            <h3>CDU 是液冷系统的循环中枢</h3>
+            <p>
+              CDU 不只是一个“冷却箱”。它承担冷却液分配、一次侧/二次侧换热、流量控制、压力管理、冗余设计、告警监测和运维接口等职责。
+              换句话说，CDU 是冷板系统能否工程化、规模化、可运维的关键节点。
+            </p>
+            <div class="metric">
+              <div class="metric-row"><span>系统角色</span><span>Distribution + Exchange + Control</span></div>
+              <div class="metric-row"><span>可靠性关键词</span><span>N+1 / 1+1 冗余</span></div>
+              <div class="metric-row"><span>运维关键词</span><span>Leak Detection / Monitoring</span></div>
+            </div>
+          </article>
+        </div>
+
+        <div class="grid-3" style="margin-top: 18px;">
+          <article class="section-card fade-up">
+            <div class="kicker">Rack-Level Cooling</div>
+            <h3>热管理从单机升级到整柜</h3>
+            <p>
+              当一个机柜里放的不只是服务器，还有 fabric、power shelf、high-speed IO 和更复杂的机械结构时，
+              cooling 的单位自然从单台服务器上升到整个 rack。
+            </p>
+          </article>
+          <article class="section-card fade-up" style="transition-delay: 0.06s;">
+            <div class="kicker">Approach Temperature</div>
+            <h3>不是只比冷不冷，而是比系统效率</h3>
+            <p>
+              更好的 CDU 与冷板系统，不只是追求“温度更低”，而是以更低能耗实现更稳定的结温边界，
+              让数据中心获得更高的自由冷却空间与更好的全系统能效。
+            </p>
+          </article>
+          <article class="section-card fade-up" style="transition-delay: 0.12s;">
+            <div class="kicker">Warm Water Future</div>
+            <h3>更高供水温度，意味着更低 PUE 压力</h3>
+            <p>
+              当系统开始支持更高温度液冷，意味着对机械制冷依赖更低，对自然冷却与余热回收更友好。
+              这会直接改变数据中心的能效经济学。
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="hvdc">
+      <div class="container">
+        <div class="section-header fade-up">
+          <h2>HVDC：给 AI 机柜一条更直接的电力高速公路</h2>
+          <p>
+            这里讲的 HVDC，不是传统电网语境里的远距离输电，而是数据中心内部的新一代高压直流供配电架构。
+            它的意义，在于减少转换级数、降低损耗、释放空间，并让超高功率密度机柜更可实现。
+          </p>
+        </div>
+
+        <div class="grid-2">
+          <article class="section-card fade-up">
+            <div class="kicker">Why HVDC</div>
+            <h3>当功率密度上去，多级转换就开始成为负担</h3>
+            <p>
+              传统 AC + UPS + 多级 PSU 路径，会在每一个转换节点产生损耗、热量、空间占用和复杂度。
+              对几十千瓦的时代还能承受，对 100kW、250kW 乃至更高的 AI 机柜，问题会被成倍放大。
+            </p>
+            <div class="highlight-band">
+              HVDC 的价值，不只是“效率更高”，而是把整个 power delivery 重新变成适合超高密度 AI 的体系。
+            </div>
+          </article>
+
+          <article class="section-card fade-up" style="transition-delay: 0.08s;">
+            <div class="kicker">What Changes</div>
+            <h3>更少弯路，更少损耗，更少无效热</h3>
+            <p>
+              在新一代 HVDC 架构中，sidecar、BBU、CBU、rack bus、板级降压等环节会重新组合。
+              目标不是为了“看起来先进”，而是为了把更多电力真正留给计算，而不是浪费在基础设施内部。
+            </p>
+            <div class="metric">
+              <div class="metric-row"><span>设计方向</span><span>少级变换</span></div>
+              <div class="metric-row"><span>系统效果</span><span>更高端到端效率</span></div>
+              <div class="metric-row"><span>业务结果</span><span>更多有效算力输出</span></div>
+            </div>
+          </article>
+        </div>
+
+        <div class="timeline fade-up" style="margin-top: 18px;">
+          <div class="kicker">HVDC Evolution</div>
+          <div class="timeline-track">
+            <div class="timeline-item">
+              <strong>Phase 1</strong>
+              <h4>传统 AC 主导</h4>
+              <p>
+                以 UPS、PSU 和低压直流为主，适合较低功率密度时代，但在 AI 机柜持续升高后，效率和空间压力开始显现。
+              </p>
+            </div>
+            <div class="timeline-item">
+              <strong>Phase 2</strong>
+              <h4>Sidecar 过渡期</h4>
+              <p>
+                将部分高压变换与储能单元从计算机柜中抽离出来，通过 sidecar 形成更合理的机柜级供电组织方式。
+              </p>
+            </div>
+            <div class="timeline-item">
+              <strong>Phase 3</strong>
+              <h4>±400V / 800V HVDC</h4>
+              <p>
+                面向更高 rack power density 的终局路线。核心不只是高压，而是更适合大规模 AI 工厂的 power-and-thermal architecture。
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="architecture">
+      <div class="container">
+        <div class="section-header fade-up">
+          <h2>几条路线不是互相排斥，而是对应不同阶段与不同功率密度</h2>
+          <p>
+            市场不会在一天之内从传统 AC 架构跳到原生 800V HVDC。真正发生的，是从传统方案到过渡型 sidecar，再到更高压直流架构的渐进式重构。
+          </p>
+        </div>
+
+        <div class="architecture fade-up">
+          <div class="arch-tabs">
+            <button class="arch-tab active" data-tab="tab1">传统 AC + 低压直流</button>
+            <button class="arch-tab" data-tab="tab2">过渡型 Sidecar</button>
+            <button class="arch-tab" data-tab="tab3">±400V / 800V HVDC</button>
+          </div>
+
+          <div class="arch-panel active" id="tab1">
+            <div class="arch-visual">
+              <svg viewBox="0 0 640 340" role="img" aria-label="Traditional AC architecture diagram">
+                <defs>
+                  <linearGradient id="g1" x1="0" x2="1">
+                    <stop offset="0%" stop-color="#6fa9ff" stop-opacity="0.2"/>
+                    <stop offset="100%" stop-color="#6fa9ff" stop-opacity="0.6"/>
+                  </linearGradient>
+                </defs>
+                <rect x="20" y="120" width="110" height="80" rx="22" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.12)"/>
+                <rect x="165" y="120" width="110" height="80" rx="22" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.12)"/>
+                <rect x="310" y="120" width="110" height="80" rx="22" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.12)"/>
+                <rect x="455" y="120" width="160" height="80" rx="22" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.12)"/>
+                <text x="75" y="166" fill="#eaf2ff" font-size="16" text-anchor="middle">Grid AC</text>
+                <text x="220" y="166" fill="#eaf2ff" font-size="16" text-anchor="middle">UPS</text>
+                <text x="365" y="166" fill="#eaf2ff" font-size="16" text-anchor="middle">PSU</text>
+                <text x="535" y="156" fill="#eaf2ff" font-size="16" text-anchor="middle">Rack / Server</text>
+                <text x="535" y="176" fill="#9bb1cf" font-size="12" text-anchor="middle">Low-Voltage DC</text>
+                <line x1="130" y1="160" x2="165" y2="160" stroke="url(#g1)" stroke-width="8" stroke-linecap="round"/>
+                <line x1="275" y1="160" x2="310" y2="160" stroke="url(#g1)" stroke-width="8" stroke-linecap="round"/>
+                <line x1="420" y1="160" x2="455" y2="160" stroke="url(#g1)" stroke-width="8" stroke-linecap="round"/>
+                <text x="320" y="60" fill="#d7e4ff" font-size="24" text-anchor="middle">更多级数，更多损耗，更多空间占用</text>
+              </svg>
+            </div>
+            <div class="arch-copy">
+              <h3>传统 AC + PSU + 低压直流</h3>
+              <p>
+                这条路径在通算时代非常成熟，生态与维护体系都完整。但随着 AI 机柜功率提升，多级转换带来的损耗、热量与空间占用会快速累积。
+              </p>
+              <div class="arch-points">
+                <div><strong>适合阶段：</strong>较低到中等功率密度，已有 AC 体系为主的机房。</div>
+                <div><strong>优点：</strong>成熟、熟悉、短期部署阻力小。</div>
+                <div><strong>挑战：</strong>难以持续支撑更高的 rack power density 与更激进的空间效率目标。</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="arch-panel" id="tab2">
+            <div class="arch-visual">
+              <svg viewBox="0 0 640 340" role="img" aria-label="Sidecar architecture diagram">
+                <defs>
+                  <linearGradient id="g2" x1="0" x2="1">
+                    <stop offset="0%" stop-color="#9b8dff" stop-opacity="0.28"/>
+                    <stop offset="100%" stop-color="#6fa9ff" stop-opacity="0.62"/>
+                  </linearGradient>
+                </defs>
+                <rect x="36" y="90" width="120" height="160" rx="26" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.12)"/>
+                <rect x="196" y="58" width="150" height="224" rx="26" fill="rgba(155,141,255,0.08)" stroke="rgba(155,141,255,0.22)"/>
+                <rect x="390" y="90" width="214" height="160" rx="26" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.12)"/>
+                <text x="96" y="176" fill="#eaf2ff" font-size="16" text-anchor="middle">Grid / AC</text>
+                <text x="271" y="126" fill="#efeaff" font-size="16" text-anchor="middle">Sidecar</text>
+                <text x="271" y="150" fill="#c6bdff" font-size="12" text-anchor="middle">AC/DC + BBU + CBU</text>
+                <text x="497" y="166" fill="#eaf2ff" font-size="16" text-anchor="middle">AI Rack Cluster</text>
+                <line x1="156" y1="170" x2="196" y2="170" stroke="url(#g2)" stroke-width="8" stroke-linecap="round"/>
+                <line x1="346" y1="170" x2="390" y2="170" stroke="url(#g2)" stroke-width="8" stroke-linecap="round"/>
+                <text x="320" y="44" fill="#d7e4ff" font-size="22" text-anchor="middle">先把最占空间、最吃散热的电力模块移出计算机柜</text>
+              </svg>
+            </div>
+            <div class="arch-copy">
+              <h3>过渡型 Sidecar / 边柜供电</h3>
+              <p>
+                这是一个非常现实的中间阶段。它不要求所有系统一步到位进入原生 HVDC 终局，但已经开始把机柜电力结构重新组织，释放 rack 内部空间，并改善热与电的耦合关系。
+              </p>
+              <div class="arch-points">
+                <div><strong>适合阶段：</strong>高密度 AI 集群的过渡部署、改造与混合架构。</div>
+                <div><strong>优点：</strong>更好适配 sidecar、BBU、CBU、局部高压路线和机柜级运维。</div>
+                <div><strong>挑战：</strong>仍然需要在 AC 传统体系与新直流逻辑之间做系统协调。</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="arch-panel" id="tab3">
+            <div class="arch-visual">
+              <svg viewBox="0 0 640 340" role="img" aria-label="Native HVDC architecture diagram">
+                <defs>
+                  <linearGradient id="g3" x1="0" x2="1">
+                    <stop offset="0%" stop-color="#45e6c4" stop-opacity="0.35"/>
+                    <stop offset="100%" stop-color="#6fa9ff" stop-opacity="0.72"/>
+                  </linearGradient>
+                </defs>
+                <rect x="22" y="118" width="130" height="86" rx="22" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.12)"/>
+                <rect x="190" y="98" width="160" height="126" rx="24" fill="rgba(69,230,196,0.08)" stroke="rgba(69,230,196,0.22)"/>
+                <rect x="388" y="86" width="226" height="150" rx="26" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.12)"/>
+                <text x="87" y="168" fill="#eaf2ff" font-size="16" text-anchor="middle">MVAC</text>
+                <text x="270" y="148" fill="#eafbf8" font-size="16" text-anchor="middle">SST / Front-End</text>
+                <text x="270" y="170" fill="#b6fff1" font-size="12" text-anchor="middle">800V HVDC Bus</text>
+                <text x="501" y="152" fill="#eaf2ff" font-size="16" text-anchor="middle">Native HVDC AI Racks</text>
+                <text x="501" y="174" fill="#9bb1cf" font-size="12" text-anchor="middle">Board-Level DC/DC</text>
+                <line x1="152" y1="161" x2="190" y2="161" stroke="url(#g3)" stroke-width="8" stroke-linecap="round"/>
+                <line x1="350" y1="161" x2="388" y2="161" stroke="url(#g3)" stroke-width="8" stroke-linecap="round"/>
+                <text x="320" y="48" fill="#d7e4ff" font-size="22" text-anchor="middle">更少转换级数，更高效率，更适合超高功率密度终局</text>
+              </svg>
+            </div>
+            <div class="arch-copy">
+              <h3>±400V / 800V HVDC 路线</h3>
+              <p>
+                这是面向下一代 AI 工厂的核心方向。重点不是“电压更高”这件事本身，而是它让系统有机会摆脱低压重铜、高损耗、多级转换和机柜拥堵，进入真正面向超高密度 AI 的基础设施时代。
+              </p>
+              <div class="arch-points">
+                <div><strong>适合阶段：</strong>新建高密度 AI 工厂、超大规模机柜、未来架构卡位。</div>
+                <div><strong>优点：</strong>减少寄生功耗，释放空间，匹配更高 rack density 与更先进冷却架构。</div>
+                <div><strong>挑战：</strong>需要标准、保护、器件、认证、生态和运维体系一起成熟。</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-card fade-up" style="margin-top: 18px;">
+          <div class="kicker">Power + Thermal Coupling</div>
+          <h3>为什么 OCP Cooling 和 HVDC 会一起定义下一代 AI 基础设施</h3>
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th>维度</th>
+                <th>Cooling 影响</th>
+                <th>HVDC 影响</th>
+                <th>系统结果</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>功率密度</strong></td>
+                <td>更高效带走热量</td>
+                <td>更高效送入电力</td>
+                <td>支持更高 rack power density</td>
+              </tr>
+              <tr>
+                <td><strong>能效</strong></td>
+                <td>减少风机与制冷负担</td>
+                <td>减少多级变换损耗</td>
+                <td>更低 PUE 与更高有效算力占比</td>
+              </tr>
+              <tr>
+                <td><strong>空间</strong></td>
+                <td>优化机柜与机房热管理</td>
+                <td>释放电力模块占用空间</td>
+                <td>更多空间留给计算</td>
+              </tr>
+              <tr>
+                <td><strong>可靠性</strong></td>
+                <td>更稳定的结温与热边界</td>
+                <td>更可控的电力组织方式</td>
+                <td>更适合持续高负载运行</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="dcdeeptech">
+      <div class="container">
+        <div class="section-header fade-up">
+          <h2>DCDeepTech：把工程能力翻译成全球 OEM、超级数据中心与 SI 听得懂的市场语言</h2>
+          <p>
+            在这个行业里，只有产品本身还不够。厂商还需要把自己的 OCP cooling、rack power、HVDC、液冷机柜、供配电一体化能力，
+            变成国际客户、渠道伙伴和生态体系能理解、能验证、能采购的能力表达。
+          </p>
+        </div>
+
+        <div class="value-grid">
+          <article class="fade-up">
+            <div class="kicker">Singapore Platform</div>
+            <h3>新加坡，不只是地理节点</h3>
+            <p>
+              新加坡同时连接国际数据中心资本、区域客户、标准讨论、渠道伙伴与全球技术品牌。它既是展示窗口，也是全球厂商进入国际 AI 基础设施市场的可信平台。
+            </p>
+          </article>
+
+          <article class="fade-up" style="transition-delay: 0.06s;">
+            <div class="kicker">OEM / Hyperscale / SI</div>
+            <h3>协助进入更高门槛生态</h3>
+            <p>
+              DCDeepTech 立足新加坡，帮助全球厂商对接英伟达 OEM 体系、超级数据中心客户和系统集成商 SI 渠道，让技术方案不只停留在工厂和实验室，而能进入真实国际项目路径。
+            </p>
+          </article>
+
+          <article class="fade-up" style="transition-delay: 0.12s;">
+            <div class="kicker">Certification + Narrative</div>
+            <h3>认证路径与数字营销同样重要</h3>
+            <p>
+              OCP 相关认证理解、生态沟通、技术叙事、官网表达、销售资料、数字营销与国际话语体系，本身就是全球化能力的一部分。看见，往往是成交的前提。
+            </p>
+          </article>
+        </div>
+
+        <div class="grid-2" style="margin-top: 18px;">
+          <article class="section-card fade-up">
+            <div class="kicker">What DCDeepTech Helps With</div>
+            <h3>从技术理解，到市场进入</h3>
+            <p>
+              DCDeepTech 的价值，不是把自己写成唯一主角，而是作为一个理解 OCP cooling、HVDC、机柜供配电、液冷制造、系统集成交付与国际客户需求的
+              新加坡平台，帮助厂商把复杂工程语言变成更有说服力的市场进入语言。
+            </p>
+            <div class="arch-points" style="margin-top: 18px;">
+              <div>梳理厂商在 cold plate、CDU、rack cooling、power shelf、HVDC 等方面的能力表达</div>
+              <div>协助对接英伟达 OEM 体系、超级数据中心客户和 SI 渠道伙伴</div>
+              <div>支持 OCP 相关认证路径理解、产品定位、生态沟通与国际数字营销</div>
+            </div>
+          </article>
+
+          <article class="section-card fade-up" style="transition-delay: 0.08s;">
+            <div class="kicker">Business Translation Layer</div>
+            <h3>工程能力，必须被“翻译”成可采购能力</h3>
+            <p>
+              顶级客户采购的从来不只是一个零部件，而是一种可以落地的系统能力：能不能进 OEM 生态、能不能满足 hyperscale 场景、能不能被 SI 带进项目、
+              能不能用国际客户听得懂的方式展示你的可靠性、效率、交付力与扩展性。
+            </p>
+            <div class="highlight-band">
+              所以，OCP 相关认证、技术叙事、官网呈现、数字营销与国际化销售材料，并不是“附属品”，而是全球 AI 基础设施市场的入口条件。
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="ecosystem">
+      <div class="container">
+        <div class="section-header fade-up">
+          <h2>这是一场整套数据中心范式迁移，不是单一部件升级</h2>
+          <p>
+            OCP、服务器厂商、电源厂商、冷却厂商、云厂商、数据中心运营商、SI 与资本方正在同一时间推动这两条路线，原因很简单：AI 时代的数据中心，
+            已经进入 power architecture 与 thermal architecture 同时重写的阶段。
+          </p>
+        </div>
+
+        <div class="ecosystem-grid">
+          <article class="fade-up">
+            <div class="kicker">Compute Vendors</div>
+            <h3>服务器与加速器厂商</h3>
+            <p>他们推动更高计算密度，也自然倒逼更先进的散热与供电组织方式。</p>
+          </article>
+          <article class="fade-up" style="transition-delay: 0.04s;">
+            <div class="kicker">Power Ecosystem</div>
+            <h3>电源与器件厂商</h3>
+            <p>从 sidecar 到 board-level conversion，HVDC 让新一代器件与拓扑价值凸显。</p>
+          </article>
+          <article class="fade-up" style="transition-delay: 0.08s;">
+            <div class="kicker">Thermal Ecosystem</div>
+            <h3>冷却与热管理厂商</h3>
+            <p>CDU、cold plate、manifold、facility loop 从配件升级为系统核心。</p>
+          </article>
+          <article class="fade-up" style="transition-delay: 0.12s;">
+            <div class="kicker">Delivery Ecosystem</div>
+            <h3>Hyperscale / Colocation / SI</h3>
+            <p>最终决定哪些技术可以被带进真实项目，哪些方案真正具备规模化交付资格。</p>
+          </article>
+        </div>
+
+        <div class="quote fade-up" style="margin-top: 20px;">
+          <p>
+            未来 AI 基础设施的核心，不是“更多机器”，而是更先进的 <span class="accent-teal">power-and-thermal architecture</span>，
+            以及把这种架构能力成功带入全球客户与生态体系的能力。
+          </p>
+          <span>OCP Cooling · HVDC · DCDeepTech Singapore</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-panel fade-up">
+        <div>
+          <div class="eyebrow"><span class="eyebrow-dot"></span> Single HTML Landing Page</div>
+          <h2>从芯片散热，到机柜供电，再到全球生态进入路径</h2>
+          <p>
+            这不是一页普通公司官网，而是一页面向 AI 基础设施客户、OEM、hyperscale 与 SI 渠道的叙事型网页：
+            先讲清 OCP cooling 与 HVDC 的技术逻辑，再自然引出 DCDeepTech 在新加坡的平台角色与市场进入价值。
+          </p>
+        </div>
+        <div class="footer-actions">
+          <a class="btn btn-primary" href="#top">回到顶部</a>
+          <a class="btn btn-secondary" href="#dcdeeptech">查看平台定位</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) entry.target.classList.add('in-view');
+      });
+    }, { threshold: 0.14 });
+
+    document.querySelectorAll('.fade-up').forEach((el) => observer.observe(el));
+
+    const tabs = document.querySelectorAll('.arch-tab');
+    const panels = document.querySelectorAll('.arch-panel');
+
+    tabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        tabs.forEach((t) => t.classList.remove('active'));
+        panels.forEach((p) => p.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(tab.dataset.tab).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
