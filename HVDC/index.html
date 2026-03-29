@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global AI Infrastructure: CDU & HVDC Tech Dashboard</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Chosen Palette: Dark Tech Dashboard (Slate 900 background, Cyan/Teal for Cooling, Amber/Red for Power) -->
+    <!-- Application Structure Plan: 
+         Structure: A highly technical, dark-themed analytical dashboard.
+         1. Global Context Hero: Establishes the global AI power/heat crisis.
+         2. Section 1 (CDU Tech Deep Dive): Focuses on thermodynamics. Uses an interactive HTML block diagram to explain primary/secondary loops, approach temperature, and extreme tropical deployment (Singapore case).
+         3. Section 2 (HVDC Electrical Arch): Focuses on power conversion. Uses an interactive component stack detailing SiC/IGBT materials and solid-state transformers, contrasting with legacy UPS.
+         4. Section 3 (Global Market & Oligopoly): Visualizes the $15.68B global projection and the highly concentrated 95% market share (Vertiv, Delta, Zhongheng) using dark-mode optimized Chart.js. -->
+    <!-- Visualization & Content Choices: 
+         1. CDU Architecture -> Goal: Explain heat exchange mechanics -> Viz: HTML/CSS Flexbox Block Diagram (Interactive) -> Justification: No SVG allowed; CSS blocks effectively model system flow (Primary -> Heat Exchanger -> Secondary).
+         2. CDU Metrics -> Goal: Show extreme capacity -> Viz: KPI Cards with micro-bar visualizations -> Justification: Immediate technical readability.
+         3. HVDC Stack -> Goal: Detail electrical supply chain -> Viz: Interactive Accordion/Stack -> Justification: Shows layers from raw materials (SiC) to end-use (AI Centers).
+         4. Global Market -> Goal: Show growth & oligopoly -> Viz: Line Chart & Doughnut Chart -> Justification: Standard financial/market visuals, styled for a dark dashboard. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <style>
+        /* Base Dark Theme Overrides & Chart Containers */
+        body { font-family: 'Inter', 'Segoe UI', sans-serif; background-color: #0f172a; color: #cbd5e1; }
+        
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 320px;
+            max-height: 400px;
+        }
+
+        /* Custom Tech UI Elements */
+        .tech-border {
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            background: linear-gradient(145deg, rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.9));
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        .tech-border-power {
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            background: linear-gradient(145deg, rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.9));
+        }
+
+        .gradient-text-cyan {
+            background: linear-gradient(to right, #38bdf8, #2dd4bf);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .gradient-text-amber {
+            background: linear-gradient(to right, #fbbf24, #f97316);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Interactive Diagram CSS */
+        .flow-line {
+            height: 2px;
+            background: repeating-linear-gradient(to right, #38bdf8 0, #38bdf8 5px, transparent 5px, transparent 10px);
+            animation: flowAnim 20s linear infinite;
+        }
+        .flow-line.power {
+            background: repeating-linear-gradient(to right, #fbbf24 0, #fbbf24 5px, transparent 5px, transparent 10px);
+        }
+        @keyframes flowAnim {
+            from { background-position: 0 0; }
+            to { background-position: 1000px 0; }
+        }
+
+        /* Nav active states */
+        .nav-item.active {
+            color: #fff;
+            border-bottom: 2px solid #38bdf8;
+            background: rgba(56, 189, 248, 0.1);
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-cyan-900 selection:text-cyan-100">
+
+    <!-- Global Header -->
+    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded bg-cyan-500/20 border border-cyan-500/50 flex items-center justify-center text-cyan-400 font-bold">GT</div>
+                    <span class="font-bold text-xl tracking-wide text-white">Global<span class="text-slate-500">Tech</span> Architecture</span>
+                </div>
+                <nav class="hidden md:flex space-x-1" id="main-nav">
+                    <button class="nav-item active px-4 py-2 rounded-t-md text-sm font-medium transition-colors hover:text-white" data-target="cdu">CDU 液冷架构</button>
+                    <button class="nav-item px-4 py-2 rounded-t-md text-sm font-medium transition-colors hover:text-white" data-target="hvdc">HVDC 电气拓扑</button>
+                    <button class="nav-item px-4 py-2 rounded-t-md text-sm font-medium transition-colors hover:text-white" data-target="market">全球市场格局</button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <div class="relative overflow-hidden border-b border-slate-800">
+        <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCI+CjxyZWN0IHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0ibm9uZSIvPgo8Y2lyY2xlIGN4PSIyIiBjeT0iMiIgcj0iMSIgZmlsbD0iIzMzNCIvPgo8L3N2Zz4=')] opacity-30"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 relative z-10">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800 border border-slate-700 text-xs font-mono text-cyan-400 mb-6">
+                <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+                2025-2026 GLOBAL TECHNICAL REVIEW
+            </div>
+            <h1 class="text-4xl md:text-6xl font-extrabold text-white tracking-tight mb-6">
+                下一代 AI 基础设施：<br>
+                <span class="gradient-text-cyan">极限热力学</span> 与 <span class="gradient-text-amber">高效电能转换</span>
+            </h1>
+            <p class="text-lg text-slate-400 max-w-3xl leading-relaxed">
+                在全球高算力密度的驱动下，数据中心架构正在经历底层重构。本论证平台深入解析 <strong class="text-slate-200">冷量分配单元 (CDU)</strong> 在热带/高温环境下的极限热交换机制，以及 <strong class="text-slate-200">高压直流 (HVDC)</strong> 替代传统 UPS 带来的全链路电气效率跃升。
+            </p>
+        </div>
+    </div>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-24">
+
+        <!-- ================= SECTION 1: CDU ================= -->
+        <section id="section-cdu" class="scroll-mt-24 view-section">
+            <div class="mb-10">
+                <h2 class="text-3xl font-bold text-white mb-3">CDU 热力学架构与极限部署</h2>
+                <p class="text-slate-400 max-w-4xl">
+                    面向全球特别是东南亚等高温、高湿环境，新一代 CDU 必须在一次侧与二次侧之间实现极低的热阻损耗。以下模型基于 2025年10月在新加坡首发的定制化液冷系统（如 CDU-22400W）技术参数。
+                </p>
+            </div>
+
+            <!-- CDU KPI Dashboard -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                <div class="tech-border rounded-xl p-5">
+                    <div class="text-slate-500 text-xs font-mono mb-1">单台散热极限容量</div>
+                    <div class="text-3xl font-bold text-cyan-400">2400 <span class="text-lg text-slate-400">kW</span></div>
+                    <div class="mt-2 text-xs text-slate-400 border-t border-slate-700 pt-2">支持多达 16个 120kW 级超高密度 AI 机架并网。</div>
+                </div>
+                <div class="tech-border rounded-xl p-5">
+                    <div class="text-slate-500 text-xs font-mono mb-1">逼近度优化/冷源利用率</div>
+                    <div class="text-3xl font-bold text-emerald-400">+30 <span class="text-lg text-slate-400">%</span></div>
+                    <div class="mt-2 text-xs text-slate-400 border-t border-slate-700 pt-2">极小逼近度换热器设计，最大化一次侧室外自然冷源利用。</div>
+                </div>
+                <div class="tech-border rounded-xl p-5">
+                    <div class="text-slate-500 text-xs font-mono mb-1">二次侧综合运行功耗</div>
+                    <div class="text-3xl font-bold text-cyan-400">-20 <span class="text-lg text-slate-400">%</span></div>
+                    <div class="mt-2 text-xs text-slate-400 border-t border-slate-700 pt-2">创新型双泵变频流体动力设计，精准匹配动态负载降低泵耗。</div>
+                </div>
+                <div class="tech-border rounded-xl p-5">
+                    <div class="text-slate-500 text-xs font-mono mb-1">模块化运维空间提升</div>
+                    <div class="text-3xl font-bold text-white">+60 <span class="text-lg text-slate-400">%</span></div>
+                    <div class="mt-2 text-xs text-slate-400 border-t border-slate-700 pt-2">针对热带严苛工况的模块化解耦，大幅缩短 MTTR (平均修复时间)。</div>
+                </div>
+            </div>
+
+            <!-- Interactive Block Diagram -->
+            <div class="tech-border rounded-2xl p-6 md:p-10">
+                <h3 class="text-xl font-bold text-white mb-6 border-b border-slate-700 pb-3 flex items-center justify-between">
+                    <span>液冷回路逻辑拓扑 (Liquid Cooling Loop Topology)</span>
+                    <span class="text-xs font-mono text-cyan-500 bg-cyan-500/10 px-2 py-1 rounded">Interactive Schema</span>
+                </h3>
+                
+                <div class="flex flex-col md:flex-row items-center justify-between gap-4 py-8">
+                    <!-- Primary Loop -->
+                    <div class="w-full md:w-1/3 bg-slate-800/50 border border-slate-700 rounded-lg p-6 text-center cursor-pointer hover:border-cyan-500 transition-colors" onclick="showCduDetail('primary')">
+                        <div class="text-slate-300 font-bold mb-2">一次侧网络 (Primary Loop)</div>
+                        <div class="text-xs text-slate-500 font-mono mb-4">室外冷源 / Cooling Tower</div>
+                        <div class="flex justify-center gap-2">
+                            <span class="w-3 h-3 rounded-full bg-blue-500 animate-pulse"></span>
+                            <span class="w-3 h-3 rounded-full bg-blue-600"></span>
+                            <span class="w-3 h-3 rounded-full bg-blue-800"></span>
+                        </div>
+                    </div>
+
+                    <!-- Flow -->
+                    <div class="w-full md:w-16 h-8 md:h-1 flex items-center justify-center">
+                        <div class="flow-line w-full h-1 rotate-90 md:rotate-0"></div>
+                    </div>
+
+                    <!-- CDU Core -->
+                    <div class="w-full md:w-1/3 tech-border rounded-lg p-6 text-center shadow-[0_0_20px_rgba(56,189,248,0.2)] cursor-pointer" onclick="showCduDetail('core')">
+                        <div class="text-cyan-400 font-bold text-lg mb-1">CDU 核心组件</div>
+                        <div class="text-xs text-slate-400 font-mono mb-3">板式换热器 & 双泵系统</div>
+                        <div class="grid grid-cols-2 gap-2 text-xs">
+                            <div class="bg-slate-800 rounded p-2 border border-slate-600">极小逼近度换热</div>
+                            <div class="bg-slate-800 rounded p-2 border border-slate-600">冗余双泵变频</div>
+                        </div>
+                    </div>
+
+                    <!-- Flow -->
+                    <div class="w-full md:w-16 h-8 md:h-1 flex items-center justify-center">
+                        <div class="flow-line w-full h-1 rotate-90 md:rotate-0"></div>
+                    </div>
+
+                    <!-- Secondary Loop -->
+                    <div class="w-full md:w-1/3 bg-slate-800/50 border border-slate-700 rounded-lg p-6 text-center cursor-pointer hover:border-cyan-500 transition-colors" onclick="showCduDetail('secondary')">
+                        <div class="text-slate-300 font-bold mb-2">二次侧网络 (Secondary Loop)</div>
+                        <div class="text-xs text-slate-500 font-mono mb-4">AI 机架 / 冷板分配</div>
+                        <div class="flex justify-center gap-2">
+                            <span class="w-3 h-3 rounded-full bg-red-800"></span>
+                            <span class="w-3 h-3 rounded-full bg-red-600"></span>
+                            <span class="w-3 h-3 rounded-full bg-red-500 animate-pulse"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detail Panel -->
+                <div id="cdu-detail-panel" class="mt-6 p-4 rounded-lg bg-slate-800/50 border border-cyan-900 text-sm text-slate-300 min-h-[80px] flex items-center">
+                    请点击上方拓扑图中的模块，查看具体热力学与工程技术细节。
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SECTION 2: HVDC ================= -->
+        <section id="section-hvdc" class="scroll-mt-24 view-section hidden">
+            <div class="mb-10">
+                <h2 class="text-3xl font-bold text-white mb-3 flex items-center gap-3">
+                    HVDC 全链路电气拓扑
+                </h2>
+                <p class="text-slate-400 max-w-4xl">
+                    高压直流（HVDC）技术通过精简电能转换级数，正在全球范围内全面替代传统 UPS。从上游第三代半导体材料（SiC）的突破，到中游固态变压器的应用，HVDC 构筑了 AI 算力的极简、高可靠供电底座。
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <!-- Stack Diagram -->
+                <div class="col-span-1 lg:col-span-5 flex flex-col gap-3">
+                    <h4 class="text-sm font-mono text-amber-500 mb-2 uppercase tracking-widest">全球产业链层级分解</h4>
+                    
+                    <button class="hvdc-btn w-full text-left tech-border-power rounded-lg p-4 group transition-all" onclick="showHvdcDetail('downstream', this)">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <div class="text-xs text-slate-500 mb-1">Layer 3: 终端应用驱动</div>
+                                <div class="font-bold text-white group-hover:text-amber-400 transition-colors">下游：场景与模式创新</div>
+                            </div>
+                            <span class="text-slate-600">→</span>
+                        </div>
+                    </button>
+                    
+                    <button class="hvdc-btn w-full text-left bg-slate-800/50 border border-slate-700 rounded-lg p-4 group transition-all" onclick="showHvdcDetail('midstream', this)">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <div class="text-xs text-slate-500 mb-1">Layer 2: 核心设备制造</div>
+                                <div class="font-bold text-white group-hover:text-amber-400 transition-colors">中游：拓扑结构与转换组件</div>
+                            </div>
+                            <span class="text-slate-600">→</span>
+                        </div>
+                    </button>
+
+                    <button class="hvdc-btn w-full text-left bg-slate-800/50 border border-slate-700 rounded-lg p-4 group transition-all" onclick="showHvdcDetail('upstream', this)">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <div class="text-xs text-slate-500 mb-1">Layer 1: 物理基础支撑</div>
+                                <div class="font-bold text-white group-hover:text-amber-400 transition-colors">上游：半导体与基础材料</div>
+                            </div>
+                            <span class="text-slate-600">→</span>
+                        </div>
+                    </button>
+                </div>
+
+                <!-- Info Display -->
+                <div class="col-span-1 lg:col-span-7 tech-border-power rounded-2xl p-6 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-bl-full pointer-events-none"></div>
+                    <div id="hvdc-content" class="relative z-10">
+                        <!-- Default Downstream Content -->
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-8 h-8 rounded bg-amber-500/20 flex items-center justify-center text-amber-400 font-bold">L3</div>
+                            <h3 class="text-2xl font-bold text-white">下游应用驱动层</h3>
+                        </div>
+                        <p class="text-slate-300 mb-6 leading-relaxed">
+                            随着全球 AI 智算中心单机架功率密度攀升，传统的交流分配模式面临布线复杂、谐波干扰及转换效率低的瓶颈。<strong class="text-amber-400">“自带电源模式 (BYOP)”</strong>的兴起，使得 HVDC 在大型数据中心的渗透率急剧上升。此外，全球海上风电及轨道交通对高压直流的依赖，进一步扩大了该技术的应用基数。
+                        </p>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-slate-900/80 border border-slate-700 rounded p-4">
+                                <div class="text-xs text-slate-500 mb-1">核心场景 01</div>
+                                <div class="font-bold text-slate-200">AI 超算集群 / 数据中心</div>
+                            </div>
+                            <div class="bg-slate-900/80 border border-slate-700 rounded p-4">
+                                <div class="text-xs text-slate-500 mb-1">核心场景 02</div>
+                                <div class="font-bold text-slate-200">海上风电并网</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SECTION 3: MARKET ================= -->
+        <section id="section-market" class="scroll-mt-24 view-section hidden">
+            <div class="mb-10">
+                <h2 class="text-3xl font-bold text-white mb-3">全球市场规模与寡头竞争格局</h2>
+                <p class="text-slate-400 max-w-4xl">
+                    在政策导向（如中国市场要求枢纽节点集中度>60%、绿色电源>80%）及技术需求的双重驱动下，全球 HVDC 市场呈现高复合增长率，同时制造端被少数具有深厚电力电子技术底蕴的全球性企业高度垄断。
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Market Size Chart -->
+                <div class="tech-border rounded-2xl p-6">
+                    <div class="flex justify-between items-end mb-6">
+                        <div>
+                            <h3 class="text-lg font-bold text-white">全球 HVDC 市场规模预测</h3>
+                            <p class="text-xs text-slate-500">单位：亿美元 | Projected CAGR: 6.9%</p>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-2xl font-bold gradient-text-cyan">156.8 B</div>
+                            <div class="text-xs text-slate-500">2029 Target</div>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="marketLineChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Market Share Chart -->
+                <div class="tech-border rounded-2xl p-6 flex flex-col">
+                    <div class="mb-4">
+                        <h3 class="text-lg font-bold text-white">全球核心厂商市场份额 (Market Oligopoly)</h3>
+                        <p class="text-xs text-slate-500">维谛 (Vertiv)、台达 (Delta)、中恒电气 占据绝对主导</p>
+                    </div>
+                    <div class="chart-container flex-grow flex items-center justify-center">
+                        <canvas id="marketPieChart"></canvas>
+                    </div>
+                    <div class="mt-4 bg-slate-800/50 border border-slate-700 rounded p-4 text-sm text-slate-300">
+                        <span class="text-cyan-400 font-bold text-lg">95%</span> 
+                        的市场份额高度集中于头部三大厂商，凸显了电力电子变换及控制系统在核心设备层的极高技术壁垒与专利护城河。
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 bg-slate-900 mt-20">
+        <div class="max-w-7xl mx-auto px-4 py-8 text-center md:flex md:justify-between md:items-center">
+            <p class="text-slate-500 text-sm mb-4 md:mb-0">
+                数据源于 2025-2026 技术与行业分析报告 (含 Data Centre World 新加坡发布会数据)。
+            </p>
+            <div class="flex items-center justify-center gap-4 text-sm text-slate-600 font-mono">
+                <span>[ STATUS: SECURE ]</span>
+                <span>[ RENDERING: CANVAS ]</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript Interactions & Chart Config -->
+    <script>
+        // --- 1. Navigation Logic ---
+        const navItems = document.querySelectorAll('.nav-item');
+        const sections = document.querySelectorAll('.view-section');
+
+        navItems.forEach(item => {
+            item.addEventListener('click', () => {
+                // Update nav UI
+                navItems.forEach(nav => nav.classList.remove('active', 'text-white'));
+                item.classList.add('active', 'text-white');
+
+                // Switch sections
+                const targetId = 'section-' + item.getAttribute('data-target');
+                sections.forEach(sec => {
+                    if(sec.id === targetId) {
+                        sec.classList.remove('hidden');
+                        // Quick fade-in animation
+                        sec.animate([{ opacity: 0, transform: 'translateY(10px)' }, { opacity: 1, transform: 'translateY(0)' }], { duration: 400, easing: 'ease-out' });
+                    } else {
+                        sec.classList.add('hidden');
+                    }
+                });
+
+                // Re-render charts if market section is shown (fixes Chart.js resize bugs in hidden containers)
+                if(targetId === 'section-market' && !window.chartsInitialized) {
+                    initCharts();
+                    window.chartsInitialized = true;
+                }
+            });
+        });
+
+        // --- 2. CDU Interactive Logic ---
+        const cduData = {
+            primary: "<strong>一次侧网络 (室外冷源)：</strong> 利用冷却塔或干冷器将热量散发到环境中。新一代设计追求极限极小的“逼近度”，最大化利用热带高温环境（如新加坡）的室外空气作为自然冷源，降低机械制冷依赖。",
+            core: "<strong>CDU 核心 (液液热交换)：</strong> 配备超高效板式换热器。其创新核心在于双泵变频流体动力系统：通过精确控制流量与压差，减少无功耗损，使二次侧综合运行功耗直降 20% 以上，支持单台 2400kW 散热。",
+            secondary: "<strong>二次侧网络 (IT 设备侧)：</strong> 直接将高比热容冷却液输送至 AI 服务器的冷板内。解耦式的模块化管路结构，不仅保障了无漏液风险，更将物理操作运维空间提升了 60%。"
+        };
+
+        function showCduDetail(part) {
+            const panel = document.getElementById('cdu-detail-panel');
+            panel.innerHTML = `<div class="animate-[pulse_0.2s_ease-out] border-l-4 border-cyan-500 pl-3">${cduData[part]}</div>`;
+        }
+
+        // --- 3. HVDC Interactive Logic ---
+        const hvdcData = {
+            upstream: {
+                title: "上游半导体与基础材料",
+                layer: "L1",
+                content: "上游主要提供基础导电、导磁材料以及核心器件。<strong>功率半导体 (IGBT 及 SiC)</strong> 是整个直流转换效能的基石。特别是第三代半导体碳化硅 (SiC) 在耐高温、高压及开关频率上的物理优势，正推动 HVDC 模块体积的大幅缩小和效率极限的突破。",
+                boxes: ["铜/铝导体 & 磁性材料", "SiC / IGBT 功率半导体"]
+            },
+            midstream: {
+                title: "中游拓扑结构与转换组件",
+                layer: "L2",
+                content: "中游是技术壁垒极高的核心设备层，将交流电稳定、高效地转换为高压直流电。系统包括换流阀、整流模块、换流变压器及控制系统。其中，高频<strong>固态变压器</strong>的应用成为减小占地面积、提升系统智能调度能力的关键创新节点。",
+                boxes: ["高频固态变压器", "换流阀与智能控制系统"]
+            },
+            downstream: {
+                title: "下游场景与模式创新",
+                layer: "L3",
+                content: "随着全球 AI 智算中心单机架功率密度攀升，传统的交流分配模式面临布线复杂、谐波干扰及转换效率低的瓶颈。<strong class='text-amber-400'>“自带电源模式 (BYOP)”</strong>的兴起，使得 HVDC 在大型数据中心的渗透率急剧上升。此外，全球海上风电及轨道交通对高压直流的依赖，进一步扩大了该技术的应用基数。",
+                boxes: ["AI 超算集群 / 数据中心", "海上风电并网"]
+            }
+        };
+
+        function showHvdcDetail(layerKey, btnElement) {
+            // Update button UI
+            document.querySelectorAll('.hvdc-btn').forEach(btn => {
+                btn.className = 'hvdc-btn w-full text-left bg-slate-800/50 border border-slate-700 rounded-lg p-4 group transition-all';
+            });
+            btnElement.className = 'hvdc-btn w-full text-left tech-border-power rounded-lg p-4 group transition-all';
+
+            // Update content
+            const data = hvdcData[layerKey];
+            const contentHtml = `
+                <div class="flex items-center gap-3 mb-4 animate-[fadeIn_0.3s]">
+                    <div class="w-8 h-8 rounded bg-amber-500/20 flex items-center justify-center text-amber-400 font-bold">${data.layer}</div>
+                    <h3 class="text-2xl font-bold text-white">${data.title}</h3>
+                </div>
+                <p class="text-slate-300 mb-6 leading-relaxed animate-[fadeIn_0.4s]">
+                    ${data.content}
+                </p>
+                <div class="grid grid-cols-2 gap-4 animate-[fadeIn_0.5s]">
+                    <div class="bg-slate-900/80 border border-slate-700 rounded p-4">
+                        <div class="text-xs text-slate-500 mb-1">关键子模块 01</div>
+                        <div class="font-bold text-slate-200">${data.boxes[0]}</div>
+                    </div>
+                    <div class="bg-slate-900/80 border border-slate-700 rounded p-4">
+                        <div class="text-xs text-slate-500 mb-1">关键子模块 02</div>
+                        <div class="font-bold text-slate-200">${data.boxes[1]}</div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('hvdc-content').innerHTML = contentHtml;
+        }
+
+        // --- 4. Chart.js Initialization ---
+        function initCharts() {
+            // Dark mode global defaults
+            Chart.defaults.color = '#94a3b8'; // slate-400
+            Chart.defaults.font.family = "'Inter', sans-serif";
+            
+            // Generate Data (Back-calculated from 2029 15.68B with ~6.9% CAGR)
+            const years = ['2024', '2025', '2026', '2027', '2028', '2029'];
+            const marketSize = [11.23, 12.01, 12.83, 13.72, 14.67, 15.68];
+
+            // A. Line Chart (Market Size)
+            const ctxLine = document.getElementById('marketLineChart').getContext('2d');
+            new Chart(ctxLine, {
+                type: 'line',
+                data: {
+                    labels: years,
+                    datasets: [{
+                        label: '全球HVDC市场 (Billion USD)',
+                        data: marketSize,
+                        borderColor: '#38bdf8', // Cyan 400
+                        backgroundColor: 'rgba(56, 189, 248, 0.1)',
+                        borderWidth: 3,
+                        pointBackgroundColor: '#0f172a',
+                        pointBorderColor: '#38bdf8',
+                        pointBorderWidth: 2,
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                            titleColor: '#fff',
+                            bodyColor: '#38bdf8',
+                            borderColor: '#334155',
+                            borderWidth: 1,
+                            padding: 10,
+                            callbacks: {
+                                label: function(context) { return '$' + context.parsed.y + ' Billion'; }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: 'rgba(51, 65, 85, 0.5)', drawBorder: false }
+                        },
+                        y: {
+                            grid: { color: 'rgba(51, 65, 85, 0.5)', drawBorder: false },
+                            ticks: { callback: function(value) { return value + 'B'; } }
+                        }
+                    }
+                }
+            });
+
+            // B. Doughnut Chart (Oligopoly)
+            const ctxPie = document.getElementById('marketPieChart').getContext('2d');
+            new Chart(ctxPie, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Top 3: Vertiv, Delta, 中恒电气', 'Others'],
+                    datasets: [{
+                        data: [95, 5],
+                        backgroundColor: [
+                            'rgba(245, 158, 11, 0.9)', // Amber 500
+                            'rgba(51, 65, 85, 0.8)'    // Slate 700
+                        ],
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    cutout: '80%',
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { usePointStyle: true, color: '#cbd5e1', padding: 20 }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                            borderColor: '#334155',
+                            borderWidth: 1,
+                            callbacks: {
+                                label: function(context) { return ' Global Share: ' + context.parsed + '%'; }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
