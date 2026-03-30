@@ -3,2131 +3,745 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>OCP Cooling + HVDC — Next-Generation AI Data Centre Architecture | DCDeepTech</title>
+<title>OCP Cooling + HVDC — AI Data Centre Architecture | DCDeepTech</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,600&family=Crimson+Pro:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
 <style>
-  /* ─────────────────────────────────────────────
-     DESIGN TOKENS
-  ───────────────────────────────────────────── */
-  :root {
-    --bg:         #080c14;
-    --bg-2:       #0d1220;
-    --surface:    #111827;
-    --surface-2:  rgba(17,24,39,0.72);
-    --border:     rgba(148,163,184,0.10);
-    --border-hi:  rgba(148,163,184,0.22);
-    --text:       #e2e8f4;
-    --muted:      #8a99b5;
-    --muted-2:    #b8c4d8;
-    --teal:       #00d4a8;
-    --teal-dim:   rgba(0,212,168,0.15);
-    --blue:       #4f8ef7;
-    --blue-dim:   rgba(79,142,247,0.12);
-    --gold:       #e8c96a;
-    --gold-dim:   rgba(232,201,106,0.12);
-    --violet:     #a78bfa;
-    --shadow:     0 24px 80px rgba(0,0,0,0.6);
-    --r:          20px;
-    --r-sm:       12px;
-    --max:        1160px;
-    --ff-head:    'Playfair Display', Georgia, 'Times New Roman', serif;
-    --ff-body:    'Crimson Pro', Georgia, serif;
-    --ff-mono:    'JetBrains Mono', 'Courier New', monospace;
-    --transition: 0.55s cubic-bezier(0.22,1,0.36,1);
-  }
-
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  html { scroll-behavior: smooth; font-size: 16px; }
-
-  body {
-    font-family: var(--ff-body);
-    font-size: 1.05rem;
-    line-height: 1.75;
-    color: var(--text);
-    background: var(--bg);
-    overflow-x: hidden;
-    -webkit-font-smoothing: antialiased;
-  }
-
-  /* ─── CANVAS BACKGROUND ─── */
-  #bgCanvas {
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    opacity: 0.55;
-    pointer-events: none;
-  }
-
-  .content-wrap { position: relative; z-index: 1; }
-
-  /* ─── CUSTOM CURSOR ─── */
-  .cursor-glow {
-    position: fixed;
-    width: 320px;
-    height: 320px;
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9999;
-    transform: translate(-50%,-50%);
-    background: radial-gradient(circle, rgba(0,212,168,0.06) 0%, transparent 70%);
-    transition: background 0.4s ease;
-    mix-blend-mode: screen;
-  }
-
-  /* ─────────────────────────────────────────────
-     JOURNAL HEADER / NAV
-  ───────────────────────────────────────────── */
-  .journal-header {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background: rgba(8,12,20,0.85);
-    backdrop-filter: blur(24px) saturate(1.4);
-    border-bottom: 1px solid var(--border);
-  }
-
-  .journal-header::after {
-    content: '';
-    position: absolute;
-    inset: auto 0 0 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--teal), var(--blue), transparent);
-    opacity: 0.4;
-    animation: scanLine 4s ease-in-out infinite alternate;
-  }
-
-  @keyframes scanLine {
-    0%   { transform: scaleX(0.3); opacity: 0.2; }
-    100% { transform: scaleX(1);   opacity: 0.6; }
-  }
-
-  .header-inner {
-    max-width: var(--max);
-    margin: 0 auto;
-    padding: 0 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-    height: 68px;
-  }
-
-  .journal-brand {
-    display: flex;
-    flex-direction: column;
-    gap: 1px;
-    text-decoration: none;
-  }
-
-  .journal-brand .name {
-    font-family: var(--ff-head);
-    font-size: 1.05rem;
-    font-weight: 700;
-    color: var(--text);
-    letter-spacing: 0.01em;
-    line-height: 1;
-  }
-
-  .journal-brand .sub {
-    font-family: var(--ff-mono);
-    font-size: 0.62rem;
-    color: var(--teal);
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-  }
-
-  .site-nav {
-    display: flex;
-    gap: 4px;
-    align-items: center;
-  }
-
-  .site-nav a {
-    font-family: var(--ff-mono);
-    font-size: 0.7rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--muted);
-    text-decoration: none;
-    padding: 7px 13px;
-    border-radius: 999px;
-    transition: 0.2s ease;
-    border: 1px solid transparent;
-  }
-
-  .site-nav a:hover {
-    color: var(--text);
-    border-color: var(--border-hi);
-    background: rgba(255,255,255,0.04);
-  }
-
-  /* ─────────────────────────────────────────────
-     ARTICLE MASTHEAD
-  ───────────────────────────────────────────── */
-  .masthead {
-    padding: 100px 24px 80px;
-    max-width: var(--max);
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: 1fr 380px;
-    gap: 60px;
-    align-items: start;
-  }
-
-  .article-meta {
-    font-family: var(--ff-mono);
-    font-size: 0.68rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--teal);
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-  }
-
-  .article-meta::before {
-    content: '';
-    display: inline-block;
-    width: 28px;
-    height: 1px;
-    background: var(--teal);
-  }
-
-  h1.article-title {
-    font-family: var(--ff-head);
-    font-size: clamp(2.4rem, 4.5vw, 4rem);
-    font-weight: 700;
-    line-height: 1.08;
-    letter-spacing: -0.02em;
-    color: var(--text);
-    margin-bottom: 28px;
-    text-wrap: balance;
-  }
-
-  h1.article-title em {
-    font-style: italic;
-    color: var(--teal);
-  }
-
-  .article-subtitle {
-    font-size: 1.12rem;
-    color: var(--muted-2);
-    line-height: 1.75;
-    max-width: 60ch;
-    margin-bottom: 36px;
-    font-weight: 300;
-  }
-
-  .article-actions {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-
-  .btn {
-    font-family: var(--ff-mono);
-    font-size: 0.72rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    text-decoration: none;
-    padding: 12px 22px;
-    border-radius: 999px;
-    transition: var(--transition);
-    border: 1px solid transparent;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .btn::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
-    transform: translateX(-120%);
-    transition: 0.5s ease;
-  }
-
-  .btn:hover::after { transform: translateX(120%); }
-
-  .btn-primary {
-    background: linear-gradient(135deg, rgba(0,212,168,0.18), rgba(79,142,247,0.18));
-    border-color: rgba(0,212,168,0.4);
-    color: var(--text);
-  }
-
-  .btn-primary:hover {
-    background: linear-gradient(135deg, rgba(0,212,168,0.28), rgba(79,142,247,0.28));
-    transform: translateY(-2px);
-    box-shadow: 0 12px 32px rgba(0,212,168,0.15);
-  }
-
-  .btn-ghost {
-    border-color: var(--border-hi);
-    color: var(--muted-2);
-  }
-
-  .btn-ghost:hover {
-    border-color: var(--border-hi);
-    color: var(--text);
-    background: rgba(255,255,255,0.04);
-    transform: translateY(-2px);
-  }
-
-  /* ─── STAT PANEL (masthead right) ─── */
-  .stat-panel {
-    background: var(--surface-2);
-    border: 1px solid var(--border);
-    border-radius: var(--r);
-    padding: 28px;
-    backdrop-filter: blur(20px);
-    box-shadow: var(--shadow);
-    position: relative;
-    overflow: hidden;
-  }
-
-  .stat-panel::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    padding: 1px;
-    background: linear-gradient(140deg, rgba(0,212,168,0.3), rgba(79,142,247,0.2), transparent 60%);
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    mask-composite: exclude;
-    -webkit-mask-composite: xor;
-    pointer-events: none;
-  }
-
-  .stat-panel-label {
-    font-family: var(--ff-mono);
-    font-size: 0.65rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--teal);
-    margin-bottom: 20px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .stat-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 14px;
-  }
-
-  .stat-cell {
-    padding: 14px;
-    background: rgba(255,255,255,0.025);
-    border: 1px solid var(--border);
-    border-radius: var(--r-sm);
-    transition: 0.3s ease;
-  }
-
-  .stat-cell:hover {
-    border-color: var(--border-hi);
-    background: rgba(255,255,255,0.05);
-  }
-
-  .stat-cell .val {
-    font-family: var(--ff-mono);
-    font-size: 1.5rem;
-    font-weight: 500;
-    color: var(--text);
-    line-height: 1;
-    margin-bottom: 6px;
-    display: block;
-  }
-
-  .stat-cell .val.teal { color: var(--teal); }
-  .stat-cell .val.blue { color: var(--blue); }
-  .stat-cell .val.gold { color: var(--gold); }
-
-  .stat-cell .lbl {
-    font-size: 0.78rem;
-    color: var(--muted);
-    line-height: 1.4;
-    display: block;
-  }
-
-  /* ─────────────────────────────────────────────
-     ABSTRACT BAND
-  ───────────────────────────────────────────── */
-  .abstract-band {
-    background: linear-gradient(135deg, rgba(0,212,168,0.06), rgba(79,142,247,0.06));
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-    padding: 52px 24px;
-  }
-
-  .abstract-inner {
-    max-width: var(--max);
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: 160px 1fr;
-    gap: 52px;
-    align-items: start;
-  }
-
-  .abstract-aside {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    position: sticky;
-    top: 88px;
-  }
-
-  .aside-label {
-    font-family: var(--ff-mono);
-    font-size: 0.62rem;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--teal);
-    writing-mode: vertical-lr;
-    transform: rotate(180deg);
-    align-self: flex-start;
-  }
-
-  .abstract-divider {
-    width: 1px;
-    height: 120px;
-    background: linear-gradient(to bottom, var(--teal), transparent);
-    align-self: center;
-  }
-
-  .abstract-body h2 {
-    font-family: var(--ff-head);
-    font-size: 1.75rem;
-    font-weight: 600;
-    color: var(--text);
-    margin-bottom: 14px;
-    font-style: italic;
-  }
-
-  .abstract-body p {
-    font-size: 1.05rem;
-    line-height: 1.9;
-    color: var(--muted-2);
-    max-width: 72ch;
-  }
-
-  .abstract-body p + p { margin-top: 14px; }
-
-  .abstract-keywords {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 20px;
-  }
-
-  .keyword {
-    font-family: var(--ff-mono);
-    font-size: 0.65rem;
-    letter-spacing: 0.1em;
-    padding: 5px 12px;
-    border-radius: 999px;
-    border: 1px solid var(--border-hi);
-    color: var(--muted-2);
-    text-transform: uppercase;
-    transition: 0.2s;
-  }
-
-  .keyword:hover {
-    border-color: var(--teal);
-    color: var(--teal);
-  }
-
-  /* ─────────────────────────────────────────────
-     SECTION COMMON
-  ───────────────────────────────────────────── */
-  .section {
-    padding: 80px 24px;
-    max-width: var(--max);
-    margin: 0 auto;
-  }
-
-  .section-header {
-    display: grid;
-    grid-template-columns: 48px 1fr;
-    gap: 24px;
-    align-items: start;
-    margin-bottom: 52px;
-  }
-
-  .section-num {
-    font-family: var(--ff-mono);
-    font-size: 0.7rem;
-    letter-spacing: 0.18em;
-    color: var(--teal);
-    padding-top: 8px;
-    border-top: 2px solid var(--teal);
-    line-height: 1;
-  }
-
-  .section-title-block h2 {
-    font-family: var(--ff-head);
-    font-size: clamp(1.8rem, 3vw, 2.6rem);
-    font-weight: 700;
-    color: var(--text);
-    line-height: 1.12;
-    letter-spacing: -0.02em;
-    margin-bottom: 12px;
-  }
-
-  .section-title-block p {
-    font-size: 1.02rem;
-    color: var(--muted);
-    line-height: 1.8;
-    max-width: 70ch;
-  }
-
-  /* ─── ARTICLE CARD ─── */
-  .a-card {
-    background: var(--surface-2);
-    border: 1px solid var(--border);
-    border-radius: var(--r);
-    padding: 32px;
-    backdrop-filter: blur(16px);
-    position: relative;
-    overflow: hidden;
-    transition: var(--transition);
-  }
-
-  .a-card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    padding: 1px;
-    background: linear-gradient(130deg, rgba(0,212,168,0.2), rgba(79,142,247,0.15), transparent 55%);
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    mask-composite: exclude;
-    -webkit-mask-composite: xor;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.4s ease;
-  }
-
-  .a-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
-  .a-card:hover::before { opacity: 1; }
-
-  .a-card-label {
-    font-family: var(--ff-mono);
-    font-size: 0.62rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--teal);
-    margin-bottom: 14px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .a-card-label::before {
-    content: '';
-    display: inline-block;
-    width: 16px;
-    height: 1px;
-    background: var(--teal);
-  }
-
-  .a-card h3 {
-    font-family: var(--ff-head);
-    font-size: 1.28rem;
-    font-weight: 600;
-    color: var(--text);
-    margin-bottom: 12px;
-    line-height: 1.25;
-  }
-
-  .a-card p {
-    font-size: 0.95rem;
-    color: var(--muted);
-    line-height: 1.8;
-  }
-
-  /* ─────────────────────────────────────────────
-     CHALLENGE SECTION  
-  ───────────────────────────────────────────── */
-  .challenge-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 16px;
-    margin-bottom: 32px;
-  }
-
-  /* ─── ANIMATED DENSITY BAR ─── */
-  .density-chart {
-    background: var(--surface-2);
-    border: 1px solid var(--border);
-    border-radius: var(--r);
-    padding: 28px;
-    margin-top: 20px;
-  }
-
-  .density-chart h4 {
-    font-family: var(--ff-mono);
-    font-size: 0.68rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 24px;
-  }
-
-  .density-row {
-    display: grid;
-    grid-template-columns: 140px 1fr 60px;
-    gap: 14px;
-    align-items: center;
-    margin-bottom: 14px;
-  }
-
-  .density-row:last-child { margin-bottom: 0; }
-
-  .density-label {
-    font-family: var(--ff-mono);
-    font-size: 0.72rem;
-    color: var(--muted-2);
-    text-align: right;
-  }
-
-  .density-track {
-    height: 12px;
-    background: rgba(255,255,255,0.04);
-    border-radius: 999px;
-    overflow: hidden;
-    border: 1px solid var(--border);
-  }
-
-  .density-fill {
-    height: 100%;
-    border-radius: 999px;
-    width: 0;
-    transition: width 1.4s cubic-bezier(0.22,1,0.36,1);
-    position: relative;
-    overflow: hidden;
-  }
-
-  .density-fill::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
-    transform: translateX(-100%);
-    animation: shimmer 2.2s linear infinite;
-  }
-
-  @keyframes shimmer {
-    to { transform: translateX(100%); }
-  }
-
-  .density-fill.low    { background: linear-gradient(90deg, #4f8ef7, #7bb8ff); }
-  .density-fill.mid    { background: linear-gradient(90deg, #00d4a8, #4fd4b5); }
-  .density-fill.hi     { background: linear-gradient(90deg, #e8c96a, #f0a050); }
-  .density-fill.ultra  { background: linear-gradient(90deg, #f77462, #ff4d8c); }
-
-  .density-val {
-    font-family: var(--ff-mono);
-    font-size: 0.72rem;
-    color: var(--text);
-    text-align: right;
-  }
-
-  /* ─────────────────────────────────────────────
-     COOLING SECTION
-  ───────────────────────────────────────────── */
-  .cooling-layout {
-    display: grid;
-    grid-template-columns: 1fr 380px;
-    gap: 24px;
-  }
-
-  .cooling-diagram {
-    background: var(--surface-2);
-    border: 1px solid var(--border);
-    border-radius: var(--r);
-    padding: 28px;
-    min-height: 420px;
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-
-  .diagram-label {
-    font-family: var(--ff-mono);
-    font-size: 0.65rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--teal);
-    margin-bottom: 16px;
-  }
-
-  /* Animated SVG cooling loop */
-  .svg-cooling { width: 100%; height: 260px; }
-
-  .cooling-stats {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-top: 16px;
-  }
-
-  .cooling-stat {
-    padding: 12px;
-    background: rgba(0,212,168,0.06);
-    border: 1px solid rgba(0,212,168,0.15);
-    border-radius: var(--r-sm);
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-
-  .cooling-stat strong {
-    font-family: var(--ff-mono);
-    font-size: 1.1rem;
-    color: var(--teal);
-    font-weight: 400;
-  }
-
-  .cooling-stat span {
-    font-size: 0.8rem;
-    color: var(--muted);
-  }
-
-  .cooling-steps {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .step-item {
-    display: flex;
-    gap: 16px;
-    align-items: flex-start;
-    padding: 16px;
-    background: rgba(255,255,255,0.025);
-    border: 1px solid var(--border);
-    border-radius: var(--r-sm);
-    transition: 0.3s ease;
-  }
-
-  .step-item:hover {
-    border-color: var(--border-hi);
-    background: rgba(255,255,255,0.04);
-  }
-
-  .step-num {
-    font-family: var(--ff-mono);
-    font-size: 0.7rem;
-    color: var(--teal);
-    width: 24px;
-    flex-shrink: 0;
-    padding-top: 2px;
-  }
-
-  .step-content h4 {
-    font-family: var(--ff-body);
-    font-size: 0.92rem;
-    font-weight: 600;
-    color: var(--text);
-    margin-bottom: 4px;
-  }
-
-  .step-content p {
-    font-size: 0.82rem;
-    color: var(--muted);
-    line-height: 1.6;
-  }
-
-  /* ─────────────────────────────────────────────
-     HVDC SECTION
-  ───────────────────────────────────────────── */
-  .hvdc-grid {
-    display: grid;
-    grid-template-columns: 360px 1fr;
-    gap: 24px;
-  }
-
-  .hvdc-card {
-    background: var(--surface-2);
-    border: 1px solid var(--border);
-    border-radius: var(--r);
-    padding: 28px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .hvdc-card::after {
-    content: '';
-    position: absolute;
-    right: -60px;
-    bottom: -60px;
-    width: 200px;
-    height: 200px;
-    background: radial-gradient(circle, rgba(79,142,247,0.12), transparent 65%);
-    pointer-events: none;
-  }
-
-  .voltage-display {
-    font-family: var(--ff-mono);
-    font-size: 3.6rem;
-    font-weight: 300;
-    color: var(--blue);
-    line-height: 1;
-    margin: 20px 0 8px;
-    letter-spacing: -0.04em;
-    text-shadow: 0 0 40px rgba(79,142,247,0.4);
-    animation: voltageGlow 3s ease-in-out infinite alternate;
-  }
-
-  @keyframes voltageGlow {
-    0%   { text-shadow: 0 0 30px rgba(79,142,247,0.3); }
-    100% { text-shadow: 0 0 60px rgba(79,142,247,0.6), 0 0 100px rgba(0,212,168,0.2); }
-  }
-
-  .voltage-unit {
-    font-family: var(--ff-mono);
-    font-size: 1rem;
-    color: var(--muted);
-  }
-
-  .hvdc-metrics {
-    display: grid;
-    gap: 10px;
-    margin-top: 20px;
-  }
-
-  .hvdc-metric-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 14px;
-    background: rgba(79,142,247,0.06);
-    border: 1px solid rgba(79,142,247,0.12);
-    border-radius: var(--r-sm);
-  }
-
-  .hvdc-metric-row span:first-child {
-    font-size: 0.84rem;
-    color: var(--muted-2);
-  }
-
-  .hvdc-metric-row span:last-child {
-    font-family: var(--ff-mono);
-    font-size: 0.8rem;
-    color: var(--blue);
-  }
-
-  /* Animated power flow SVG */
-  .svg-hvdc { width: 100%; height: auto; }
-
-  /* ─────────────────────────────────────────────
-     ARCHITECTURE SECTION (Coupling Table)
-  ───────────────────────────────────────────── */
-  .coupling-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 8px;
-  }
-
-  .coupling-table thead th {
-    font-family: var(--ff-mono);
-    font-size: 0.65rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--muted);
-    padding: 12px 16px;
-    text-align: left;
-    border-bottom: 1px solid var(--border-hi);
-    background: rgba(255,255,255,0.02);
-  }
-
-  .coupling-table thead th:first-child {
-    border-radius: var(--r-sm) 0 0 0;
-  }
-
-  .coupling-table thead th:last-child {
-    border-radius: 0 var(--r-sm) 0 0;
-  }
-
-  .coupling-table tbody tr {
-    transition: background 0.2s;
-    opacity: 0;
-    transform: translateX(-12px);
-    transition: opacity 0.5s ease, transform 0.5s ease, background 0.2s ease;
-  }
-
-  .coupling-table tbody tr.row-visible {
-    opacity: 1;
-    transform: translateX(0);
-  }
-
-  .coupling-table tbody tr:hover {
-    background: rgba(255,255,255,0.025);
-  }
-
-  .coupling-table td {
-    padding: 16px;
-    font-size: 0.9rem;
-    border-bottom: 1px solid var(--border);
-    vertical-align: top;
-    line-height: 1.65;
-    color: var(--muted);
-  }
-
-  .coupling-table td:first-child {
-    color: var(--text);
-    font-weight: 600;
-    font-family: var(--ff-body);
-    white-space: nowrap;
-  }
-
-  .coupling-table td:last-child {
-    color: var(--teal);
-    font-size: 0.85rem;
-  }
-
-  .arch-tabs {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
-  }
-
-  .arch-tab {
-    font-family: var(--ff-mono);
-    font-size: 0.68rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    padding: 9px 18px;
-    border-radius: 999px;
-    border: 1px solid var(--border);
-    color: var(--muted);
-    cursor: pointer;
-    transition: 0.2s;
-    background: none;
-  }
-
-  .arch-tab.active,
-  .arch-tab:hover {
-    border-color: rgba(0,212,168,0.4);
-    color: var(--teal);
-    background: rgba(0,212,168,0.08);
-  }
-
-  .arch-panel { display: none; }
-  .arch-panel.active { display: block; animation: fadeIn 0.4s ease; }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(8px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  /* ─────────────────────────────────────────────
-     DCDEEPTECH SECTION
-  ───────────────────────────────────────────── */
-  .platform-hero {
-    background: linear-gradient(135deg, rgba(0,212,168,0.08), rgba(79,142,247,0.08));
-    border: 1px solid var(--border);
-    border-radius: var(--r);
-    padding: 48px;
-    margin-bottom: 24px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .platform-hero::before {
-    content: 'DCDeepTech';
-    position: absolute;
-    right: -20px;
-    bottom: -40px;
-    font-family: var(--ff-head);
-    font-size: 9rem;
-    font-weight: 900;
-    color: rgba(255,255,255,0.025);
-    letter-spacing: -0.05em;
-    pointer-events: none;
-    white-space: nowrap;
-    line-height: 1;
-  }
-
-  .platform-hero h2 {
-    font-family: var(--ff-head);
-    font-size: clamp(1.6rem, 2.8vw, 2.4rem);
-    font-weight: 700;
-    color: var(--text);
-    line-height: 1.2;
-    margin-bottom: 16px;
-    position: relative;
-    z-index: 1;
-    max-width: 58ch;
-  }
-
-  .platform-hero p {
-    font-size: 1.02rem;
-    color: var(--muted-2);
-    line-height: 1.85;
-    max-width: 72ch;
-    position: relative;
-    z-index: 1;
-  }
-
-  .value-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 16px;
-    margin-bottom: 24px;
-  }
-
-  .platform-grid-2 {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-  }
-
-  /* ─────────────────────────────────────────────
-     ECOSYSTEM SECTION
-  ───────────────────────────────────────────── */
-  .ecosystem-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin-bottom: 24px;
-  }
-
-  /* ─── PULL QUOTE ─── */
-  .pull-quote {
-    background: linear-gradient(135deg, rgba(79,142,247,0.10), rgba(167,139,250,0.08));
-    border: 1px solid rgba(79,142,247,0.22);
-    border-left: 3px solid var(--blue);
-    border-radius: 0 var(--r) var(--r) 0;
-    padding: 40px 48px;
-    position: relative;
-    overflow: hidden;
-    margin-top: 24px;
-  }
-
-  .pull-quote::before {
-    content: '"';
-    position: absolute;
-    left: 20px;
-    top: -20px;
-    font-family: var(--ff-head);
-    font-size: 8rem;
-    color: rgba(79,142,247,0.12);
-    line-height: 1;
-    font-style: italic;
-    pointer-events: none;
-  }
-
-  .pull-quote p {
-    font-family: var(--ff-head);
-    font-size: clamp(1.3rem, 2.2vw, 1.9rem);
-    font-style: italic;
-    color: var(--text);
-    line-height: 1.5;
-    margin-bottom: 16px;
-    position: relative;
-    z-index: 1;
-  }
-
-  .pull-quote cite {
-    font-family: var(--ff-mono);
-    font-size: 0.65rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--muted);
-  }
-
-  /* ─────────────────────────────────────────────
-     FOOTER
-  ───────────────────────────────────────────── */
-  footer {
-    border-top: 1px solid var(--border);
-    padding: 48px 24px;
-  }
-
-  .footer-inner {
-    max-width: var(--max);
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 24px;
-    flex-wrap: wrap;
-  }
-
-  .footer-brand {
-    font-family: var(--ff-head);
-    font-size: 1.4rem;
-    font-weight: 700;
-    color: var(--text);
-  }
-
-  .footer-meta {
-    font-family: var(--ff-mono);
-    font-size: 0.65rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--muted);
-    line-height: 1.8;
-  }
-
-  .footer-links {
-    display: flex;
-    gap: 24px;
-  }
-
-  .footer-links a {
-    font-family: var(--ff-mono);
-    font-size: 0.68rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--muted);
-    text-decoration: none;
-    transition: 0.2s;
-  }
-
-  .footer-links a:hover { color: var(--teal); }
-
-  /* ─────────────────────────────────────────────
-     SCROLL REVEAL  
-  ───────────────────────────────────────────── */
-  .reveal {
-    opacity: 0;
-    transform: translateY(32px);
-    transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.22,1,0.36,1);
-  }
-
-  .reveal.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  .reveal-delay-1 { transition-delay: 0.1s; }
-  .reveal-delay-2 { transition-delay: 0.2s; }
-  .reveal-delay-3 { transition-delay: 0.3s; }
-  .reveal-delay-4 { transition-delay: 0.4s; }
-
-  /* ─────────────────────────────────────────────
-     DIVIDERS  
-  ───────────────────────────────────────────── */
-  .section-divider {
-    max-width: var(--max);
-    margin: 0 auto 0;
-    padding: 0 24px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-
-  .section-divider::before,
-  .section-divider::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border);
-  }
-
-  .divider-tag {
-    font-family: var(--ff-mono);
-    font-size: 0.6rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--muted);
-    white-space: nowrap;
-  }
-
-  /* ─────────────────────────────────────────────
-     PROGRESS READ INDICATOR
-  ───────────────────────────────────────────── */
-  #readProgress {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 2px;
-    width: 0%;
-    background: linear-gradient(90deg, var(--teal), var(--blue));
-    z-index: 200;
-    transition: width 0.1s linear;
-    box-shadow: 0 0 12px rgba(0,212,168,0.6);
-  }
-
-  /* ─────────────────────────────────────────────
-     RESPONSIVE
-  ───────────────────────────────────────────── */
-  @media (max-width: 960px) {
-    .masthead,
-    .cooling-layout,
-    .hvdc-grid { grid-template-columns: 1fr; }
-
-    .masthead { gap: 40px; }
-
-    .abstract-inner { grid-template-columns: 80px 1fr; gap: 24px; }
-
-    .challenge-grid,
-    .value-grid,
-    .ecosystem-grid { grid-template-columns: 1fr 1fr; }
-
-    .platform-grid-2 { grid-template-columns: 1fr; }
-
-    .site-nav { display: none; }
-  }
-
-  @media (max-width: 600px) {
-    .challenge-grid,
-    .value-grid,
-    .ecosystem-grid { grid-template-columns: 1fr; }
-
-    .abstract-inner { grid-template-columns: 1fr; }
-    .abstract-aside { display: none; }
-
-    .section-header { grid-template-columns: 1fr; }
-    .section-num { display: none; }
-
-    .pull-quote { padding: 28px 24px; }
-
-    .footer-inner { flex-direction: column; text-align: center; }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
-      animation: none !important;
-      transition: none !important;
-    }
-    .reveal, .reveal-delay-1, .reveal-delay-2, .reveal-delay-3 {
-      opacity: 1 !important;
-      transform: none !important;
-    }
-  }
+:root{
+  --bg:#080c14;--sf:rgba(17,24,39,.72);--bd:rgba(148,163,184,.1);--bdh:rgba(148,163,184,.22);
+  --tx:#e2e8f4;--mu:#8a99b5;--m2:#b8c4d8;
+  --tl:#00d4a8;--bl:#4f8ef7;--gd:#e8c96a;--vl:#a78bfa;
+  --sh:0 24px 80px rgba(0,0,0,.6);--r:18px;--rs:11px;
+  --max:1160px;--nav:64px;
+  --fh:'Playfair Display',Georgia,serif;
+  --fb:'Crimson Pro',Georgia,serif;
+  --fm:'JetBrains Mono',monospace;
+  --ez:cubic-bezier(.22,1,.36,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--fb);font-size:1rem;line-height:1.78;color:var(--tx);background:var(--bg);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+#bgc{position:fixed;inset:0;z-index:0;opacity:.42;pointer-events:none}
+.w{position:relative;z-index:1}
+.cg{position:fixed;width:260px;height:260px;border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(0,212,168,.05) 0%,transparent 70%);mix-blend-mode:screen}
+@media(hover:none){.cg{display:none}}
+#rp{position:fixed;top:0;left:0;height:2px;width:0%;background:linear-gradient(90deg,var(--tl),var(--bl));z-index:300;box-shadow:0 0 10px rgba(0,212,168,.6);transition:width .1s linear}
+
+/* ── HEADER ── */
+.jh{position:sticky;top:0;z-index:200;background:rgba(8,12,20,.88);backdrop-filter:blur(22px) saturate(1.5);border-bottom:1px solid var(--bd)}
+.jh::after{content:'';position:absolute;inset:auto 0 0 0;height:1px;background:linear-gradient(90deg,transparent,var(--tl),var(--bl),transparent);opacity:.3;animation:sl 5s ease-in-out infinite alternate}
+@keyframes sl{0%{opacity:.12;transform:scaleX(.35)}100%{opacity:.5;transform:scaleX(1)}}
+.ji{max-width:var(--max);margin:0 auto;padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:var(--nav);gap:14px}
+.br{text-decoration:none;display:flex;flex-direction:column;gap:2px;min-width:0}
+.br .nm{font-family:var(--fh);font-size:.98rem;font-weight:700;color:var(--tx);line-height:1;white-space:nowrap}
+.br .sb{font-family:var(--fm);font-size:.56rem;color:var(--tl);letter-spacing:.2em;text-transform:uppercase}
+.dn{display:flex;gap:2px;align-items:center}
+.dn a{font-family:var(--fm);font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--mu);text-decoration:none;padding:7px 11px;border-radius:999px;border:1px solid transparent;transition:.2s}
+.dn a:hover{color:var(--tx);border-color:var(--bdh);background:rgba(255,255,255,.04)}
+.hm{display:none;flex-direction:column;justify-content:center;align-items:center;gap:5px;width:44px;height:44px;border:1px solid var(--bdh);border-radius:10px;background:rgba(255,255,255,.03);cursor:pointer;-webkit-tap-highlight-color:transparent;flex-shrink:0}
+.hm span{display:block;width:18px;height:1.5px;background:var(--m2);border-radius:2px;transition:.28s ease}
+.hm.op span:nth-child(1){transform:rotate(45deg) translate(4.5px,4.5px)}
+.hm.op span:nth-child(2){opacity:0;transform:scaleX(0)}
+.hm.op span:nth-child(3){transform:rotate(-45deg) translate(4.5px,-4.5px)}
+.mn{position:fixed;inset:var(--nav) 0 0 0;background:rgba(8,12,20,.97);backdrop-filter:blur(24px);z-index:199;flex-direction:column;padding:18px 16px;gap:3px;border-top:1px solid var(--bd);overflow-y:auto;opacity:0;transform:translateY(-8px);transition:opacity .22s ease,transform .22s ease;pointer-events:none;display:flex}
+.mn.op{opacity:1;transform:none;pointer-events:auto}
+.mn a{font-family:var(--fm);font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;color:var(--m2);text-decoration:none;padding:14px 16px;border-radius:12px;border:1px solid transparent;transition:.2s;min-height:48px;display:flex;align-items:center}
+.mn a:active,.mn a:hover{color:var(--tl);background:rgba(0,212,168,.06);border-color:rgba(0,212,168,.18)}
+
+/* ── CARD ── */
+.ca{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:26px;backdrop-filter:blur(16px);position:relative;overflow:hidden;transition:transform .4s var(--ez),box-shadow .4s var(--ez)}
+.ca::before{content:'';position:absolute;inset:0;border-radius:inherit;padding:1px;background:linear-gradient(130deg,rgba(0,212,168,.2),rgba(79,142,247,.14),transparent 55%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude;-webkit-mask-composite:xor;pointer-events:none;opacity:0;transition:opacity .32s ease}
+.ca:hover{transform:translateY(-3px);box-shadow:var(--sh)}
+.ca:hover::before{opacity:1}
+@media(hover:none){.ca:hover{transform:none;box-shadow:none}}
+.cl{font-family:var(--fm);font-size:.59rem;letter-spacing:.2em;text-transform:uppercase;color:var(--tl);margin-bottom:11px;display:flex;align-items:center;gap:7px}
+.cl::before{content:'';display:inline-block;width:13px;height:1px;background:var(--tl)}
+.ca h3{font-family:var(--fh);font-size:1.18rem;font-weight:600;color:var(--tx);margin-bottom:9px;line-height:1.27}
+.ca p{font-size:.9rem;color:var(--mu);line-height:1.78}
+
+/* ── MASTHEAD ── */
+.mh{max-width:var(--max);margin:0 auto;padding:76px 20px 60px;display:grid;grid-template-columns:1fr 354px;gap:44px;align-items:start}
+.am{font-family:var(--fm);font-size:.63rem;letter-spacing:.18em;text-transform:uppercase;color:var(--tl);margin-bottom:16px;display:flex;align-items:center;gap:11px}
+.am::before{content:'';display:inline-block;width:22px;height:1px;background:var(--tl)}
+h1.tt{font-family:var(--fh);font-size:clamp(2rem,5vw,3.7rem);font-weight:700;line-height:1.08;letter-spacing:-.02em;color:var(--tx);margin-bottom:18px;text-wrap:balance}
+h1.tt em{font-style:italic;color:var(--tl)}
+.st{font-size:1rem;color:var(--m2);line-height:1.82;max-width:57ch;margin-bottom:26px;font-weight:300}
+.aa{display:flex;gap:9px;flex-wrap:wrap}
+.btn{font-family:var(--fm);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;padding:13px 21px;border-radius:999px;border:1px solid transparent;cursor:pointer;position:relative;overflow:hidden;transition:transform .3s var(--ez),box-shadow .3s var(--ez);display:inline-flex;align-items:center;min-height:48px;-webkit-tap-highlight-color:transparent}
+.btn::after{content:'';position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.11) 50%,transparent 70%);transform:translateX(-120%);transition:.46s ease}
+.btn:hover::after{transform:translateX(120%)}
+.bp{background:linear-gradient(135deg,rgba(0,212,168,.16),rgba(79,142,247,.16));border-color:rgba(0,212,168,.36);color:var(--tx)}
+.bp:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(0,212,168,.13)}
+.bg{border-color:var(--bdh);color:var(--m2)}
+.bg:hover{color:var(--tx);background:rgba(255,255,255,.04);transform:translateY(-2px)}
+
+/* Stat panel */
+.sp{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:22px;backdrop-filter:blur(20px);box-shadow:var(--sh);position:relative;overflow:hidden}
+.sp::before{content:'';position:absolute;inset:0;border-radius:inherit;padding:1px;background:linear-gradient(140deg,rgba(0,212,168,.26),rgba(79,142,247,.17),transparent 56%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude;-webkit-mask-composite:xor;pointer-events:none}
+.spl{font-family:var(--fm);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--tl);margin-bottom:14px;padding-bottom:11px;border-bottom:1px solid var(--bd)}
+.sg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px}
+.sc{padding:11px;background:rgba(255,255,255,.025);border:1px solid var(--bd);border-radius:var(--rs);transition:.22s}
+.sc:hover{border-color:var(--bdh)}
+.sc .v{font-family:var(--fm);font-size:1.32rem;font-weight:500;line-height:1;display:block;margin-bottom:4px}
+.sc .v.tc{color:var(--tl)}.sc .v.bl{color:var(--bl)}.sc .v.gd{color:var(--gd)}
+.sc .l{font-size:.72rem;color:var(--mu);line-height:1.38;display:block}
+
+/* ── ABSTRACT ── */
+.ab{background:linear-gradient(135deg,rgba(0,212,168,.052),rgba(79,142,247,.052));border-top:1px solid var(--bd);border-bottom:1px solid var(--bd);padding:46px 20px}
+.ai{max-width:var(--max);margin:0 auto;display:grid;grid-template-columns:130px 1fr;gap:40px;align-items:start}
+.aas{display:flex;flex-direction:column;gap:16px;position:sticky;top:76px}
+.al{font-family:var(--fm);font-size:.58rem;letter-spacing:.22em;text-transform:uppercase;color:var(--tl);writing-mode:vertical-lr;transform:rotate(180deg);align-self:flex-start}
+.ad{width:1px;height:90px;background:linear-gradient(to bottom,var(--tl),transparent);align-self:center}
+.ab2 h2{font-family:var(--fh);font-size:1.55rem;font-weight:600;font-style:italic;margin-bottom:11px}
+.ab2 p{font-size:.96rem;color:var(--m2);line-height:1.88;max-width:68ch}
+.ab2 p+p{margin-top:11px}
+.kws{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px}
+.kw{font-family:var(--fm);font-size:.6rem;letter-spacing:.1em;padding:5px 11px;border-radius:999px;border:1px solid var(--bdh);color:var(--m2);text-transform:uppercase;transition:.2s}
+.kw:hover{border-color:var(--tl);color:var(--tl)}
+
+/* ── SECTIONS ── */
+.sec{padding:68px 20px;max-width:var(--max);margin:0 auto}
+.sh{display:grid;grid-template-columns:42px 1fr;gap:18px;align-items:start;margin-bottom:40px}
+.sn{font-family:var(--fm);font-size:.66rem;letter-spacing:.16em;color:var(--tl);padding-top:5px;border-top:2px solid var(--tl);line-height:1}
+.stb h2{font-family:var(--fh);font-size:clamp(1.55rem,3vw,2.35rem);font-weight:700;line-height:1.12;letter-spacing:-.02em;margin-bottom:9px}
+.stb p{font-size:.94rem;color:var(--mu);line-height:1.8;max-width:66ch}
+.dv{max-width:var(--max);margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:13px}
+.dv::before,.dv::after{content:'';flex:1;height:1px;background:var(--bd)}
+.dt{font-family:var(--fm);font-size:.57rem;letter-spacing:.2em;text-transform:uppercase;color:var(--mu);white-space:nowrap}
+.rv{opacity:0;transform:translateY(26px);transition:opacity .72s ease,transform .72s var(--ez)}
+.rv.in{opacity:1;transform:none}
+.rv.d1{transition-delay:.08s}.rv.d2{transition-delay:.16s}.rv.d3{transition-delay:.24s}
+
+/* ── §I CHALLENGE ── */
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:13px;margin-bottom:22px}
+.dc{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:22px}
+.dc h4{font-family:var(--fm);font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--mu);margin-bottom:18px}
+.dr{display:grid;grid-template-columns:122px 1fr 60px;gap:11px;align-items:center;margin-bottom:11px}
+.dr:last-child{margin-bottom:0}
+.dl{font-family:var(--fm);font-size:.68rem;color:var(--m2);text-align:right}
+.dt2{height:11px;background:rgba(255,255,255,.04);border-radius:999px;overflow:hidden;border:1px solid var(--bd)}
+.df{height:100%;border-radius:999px;width:0;transition:width 1.3s var(--ez);position:relative;overflow:hidden}
+.df::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.22),transparent);transform:translateX(-100%);animation:sh2 2s linear infinite}
+@keyframes sh2{to{transform:translateX(100%)}}
+.df.lo{background:linear-gradient(90deg,#4f8ef7,#7bb8ff)}
+.df.mi{background:linear-gradient(90deg,#00d4a8,#4fd4b5)}
+.df.hi{background:linear-gradient(90deg,#e8c96a,#f0a050)}
+.df.ul{background:linear-gradient(90deg,#f77462,#ff4d8c)}
+.dv2{font-family:var(--fm);font-size:.68rem;color:var(--tx);text-align:right}
+
+/* ── §II COOLING ── */
+.cl2{display:grid;grid-template-columns:1fr 350px;gap:18px}
+.cd{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:22px;display:flex;flex-direction:column}
+.dlb{font-family:var(--fm);font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--tl);margin-bottom:13px}
+.svgc{width:100%;height:200px}
+.cs2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:13px}
+.cs3{padding:10px;background:rgba(0,212,168,.06);border:1px solid rgba(0,212,168,.13);border-radius:var(--rs)}
+.cs3 strong{font-family:var(--fm);font-size:.94rem;color:var(--tl);font-weight:400;display:block;margin-bottom:3px}
+.cs3 span{font-size:.74rem;color:var(--mu)}
+.stp{display:flex;flex-direction:column;gap:9px}
+.si{display:flex;gap:13px;align-items:flex-start;padding:13px;background:rgba(255,255,255,.022);border:1px solid var(--bd);border-radius:var(--rs);transition:.22s}
+.si:hover{border-color:var(--bdh)}
+@media(hover:none){.si:hover{border-color:var(--bd)}}
+.snum{font-family:var(--fm);font-size:.66rem;color:var(--tl);width:20px;flex-shrink:0;padding-top:1px}
+.sc4 h4{font-family:var(--fb);font-size:.88rem;font-weight:600;color:var(--tx);margin-bottom:3px}
+.sc4 p{font-size:.78rem;color:var(--mu);line-height:1.6}
+
+/* ── §III HVDC ── */
+.hg{display:grid;grid-template-columns:330px 1fr;gap:18px}
+.hc{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:22px;position:relative;overflow:hidden}
+.hc::after{content:'';position:absolute;right:-44px;bottom:-44px;width:160px;height:160px;background:radial-gradient(circle,rgba(79,142,247,.1),transparent 65%);pointer-events:none}
+.vd{font-family:var(--fm);font-size:3rem;font-weight:300;color:var(--bl);line-height:1;margin:14px 0 5px;letter-spacing:-.04em;animation:vg 3s ease-in-out infinite alternate}
+@keyframes vg{0%{text-shadow:0 0 22px rgba(79,142,247,.28)}100%{text-shadow:0 0 48px rgba(79,142,247,.58),0 0 72px rgba(0,212,168,.16)}}
+.vu{font-family:var(--fm);font-size:.86rem;color:var(--mu)}
+.hm2{display:grid;gap:7px;margin-top:16px}
+.hmr{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:rgba(79,142,247,.06);border:1px solid rgba(79,142,247,.11);border-radius:var(--rs)}
+.hmr span:first-child{font-size:.82rem;color:var(--m2)}
+.hmr span:last-child{font-family:var(--fm);font-size:.76rem;color:var(--bl)}
+
+/* ── §IV TABS ── */
+.tbs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+.tb{font-family:var(--fm);font-size:.64rem;letter-spacing:.12em;text-transform:uppercase;padding:9px 15px;border-radius:999px;border:1px solid var(--bd);color:var(--mu);cursor:pointer;transition:.2s;background:none;min-height:42px;-webkit-tap-highlight-color:transparent}
+.tb.on,.tb:hover{border-color:rgba(0,212,168,.36);color:var(--tl);background:rgba(0,212,168,.07)}
+.tp{display:none}.tp.on{display:block;animation:fu .36s ease}
+@keyframes fu{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.ct{width:100%;border-collapse:collapse}
+.ct thead th{font-family:var(--fm);font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--mu);padding:10px 13px;text-align:left;border-bottom:1px solid var(--bdh);background:rgba(255,255,255,.02);white-space:nowrap}
+.ct tbody tr{opacity:0;transform:translateX(-9px);transition:opacity .4s ease,transform .4s ease,background .18s}
+.ct tbody tr.ri{opacity:1;transform:none}
+.ct tbody tr:hover{background:rgba(255,255,255,.02)}
+.ct td{padding:13px;font-size:.86rem;border-bottom:1px solid var(--bd);color:var(--mu);vertical-align:top;line-height:1.62}
+.ct td:first-child{color:var(--tx);font-weight:600;white-space:nowrap}
+.ct td:last-child{color:var(--tl);font-size:.8rem}
+.ts{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:var(--r)}
+.tg3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-top:13px}
+.tbx{padding:12px;border-radius:var(--rs)}
+.tbx .tl{font-family:var(--fm);font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;margin-bottom:6px}
+.tbx p{font-size:.8rem;color:var(--mu);line-height:1.6}
+
+/* ── §V DCDEEPTECH ── */
+.ph{background:linear-gradient(135deg,rgba(0,212,168,.07),rgba(79,142,247,.07));border:1px solid var(--bd);border-radius:var(--r);padding:38px;margin-bottom:18px;position:relative;overflow:hidden}
+.ph::before{content:'DCDeepTech';position:absolute;right:-8px;bottom:-32px;font-family:var(--fh);font-size:min(7.5rem,18vw);font-weight:900;color:rgba(255,255,255,.02);letter-spacing:-.05em;pointer-events:none;white-space:nowrap;line-height:1}
+.ph h2{font-family:var(--fh);font-size:clamp(1.38rem,2.8vw,2.1rem);font-weight:700;line-height:1.22;margin-bottom:13px;position:relative;z-index:1;max-width:52ch}
+.ph p{font-size:.94rem;color:var(--m2);line-height:1.85;max-width:68ch;position:relative;z-index:1}
+.vg3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:13px;margin-bottom:18px}
+.pg2{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:18px}
+
+/* Services scope */
+.ss{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:30px;margin-bottom:18px}
+.ss>.cl{margin-bottom:18px}
+.ss h3{font-family:var(--fh);font-size:1.45rem;font-weight:700;margin-bottom:8px}
+.ss>.pp{font-size:.93rem;color:var(--m2);line-height:1.82;margin-bottom:24px;max-width:70ch}
+.sg2{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}
+.si2{padding:18px;background:rgba(255,255,255,.024);border:1px solid var(--bd);border-radius:var(--rs);transition:.28s;position:relative;overflow:hidden}
+.si2::after{content:'';position:absolute;right:-18px;bottom:-18px;width:72px;height:72px;border-radius:50%;pointer-events:none}
+.si2.tc::after{background:radial-gradient(circle,rgba(0,212,168,.13),transparent 65%)}
+.si2.bl::after{background:radial-gradient(circle,rgba(79,142,247,.13),transparent 65%)}
+.si2.gd::after{background:radial-gradient(circle,rgba(232,201,106,.11),transparent 65%)}
+.si2.vl::after{background:radial-gradient(circle,rgba(167,139,250,.12),transparent 65%)}
+.si2:hover{border-color:var(--bdh);background:rgba(255,255,255,.04)}
+@media(hover:none){.si2:hover{border-color:var(--bd);background:rgba(255,255,255,.024)}}
+.se{font-size:1.5rem;margin-bottom:11px;display:block}
+.si2 h4{font-family:var(--fh);font-size:1.02rem;font-weight:600;color:var(--tx);margin-bottom:7px;line-height:1.24}
+.si2 p{font-size:.8rem;color:var(--mu);line-height:1.66;margin-bottom:9px}
+.si2 ul{list-style:none;display:flex;flex-direction:column;gap:4px}
+.si2 ul li{font-size:.77rem;color:var(--mu);padding-left:13px;position:relative;line-height:1.52}
+.si2 ul li::before{content:'—';position:absolute;left:0;color:var(--tl);opacity:.65}
+.si2.tc h4{color:var(--tl)}.si2.bl h4{color:var(--bl)}.si2.gd h4{color:var(--gd)}.si2.vl h4{color:var(--vl)}
+
+/* CTA strip */
+.ctas{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:26px 30px;background:linear-gradient(135deg,rgba(0,212,168,.07),rgba(79,142,247,.07));border:1px solid rgba(0,212,168,.2);border-radius:var(--r);flex-wrap:wrap}
+.ctas h3{font-family:var(--fh);font-size:1.25rem;font-weight:600;margin-bottom:4px}
+.ctas p{font-size:.86rem;color:var(--m2)}
+.ctas .bts{display:flex;gap:9px;flex-wrap:wrap;flex-shrink:0}
+
+/* ── §VI ECOSYSTEM ── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:18px}
+.pq{background:linear-gradient(135deg,rgba(79,142,247,.09),rgba(167,139,250,.07));border:1px solid rgba(79,142,247,.19);border-left:3px solid var(--bl);border-radius:0 var(--r) var(--r) 0;padding:34px 42px;position:relative;overflow:hidden;margin-top:18px}
+.pq::before{content:'"';position:absolute;left:14px;top:-16px;font-family:var(--fh);font-size:6.5rem;color:rgba(79,142,247,.1);line-height:1;font-style:italic;pointer-events:none}
+.pq p{font-family:var(--fh);font-size:clamp(1.15rem,2.2vw,1.7rem);font-style:italic;color:var(--tx);line-height:1.52;margin-bottom:13px;position:relative;z-index:1}
+.pq cite{font-family:var(--fm);font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--mu)}
+
+/* ── FOOTER ── */
+footer{border-top:1px solid var(--bd);padding:40px 20px}
+.ft{max-width:var(--max);margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap}
+.ftb{font-family:var(--fh);font-size:1.25rem;font-weight:700;color:var(--tx)}
+.ftm{font-family:var(--fm);font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--mu);line-height:1.78}
+.ftl{display:flex;gap:18px;flex-wrap:wrap}
+.ftl a{font-family:var(--fm);font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--mu);text-decoration:none;transition:.2s;min-height:44px;display:flex;align-items:center}
+.ftl a:hover{color:var(--tl)}
+
+/* ── RESPONSIVE 960 ── */
+@media(max-width:960px){
+  .dn{display:none}.hm{display:flex}
+  .mh{grid-template-columns:1fr;gap:26px;padding:52px 20px 44px}
+  .sg{grid-template-columns:repeat(3,1fr)}
+  .ai{grid-template-columns:48px 1fr;gap:16px}
+  .g3{grid-template-columns:1fr 1fr}
+  .cl2{grid-template-columns:1fr}
+  .hg{grid-template-columns:1fr}
+  .vg3,.g2{grid-template-columns:1fr 1fr}
+  .sg2{grid-template-columns:1fr 1fr}
+  .pg2{grid-template-columns:1fr}
+  .tg3{grid-template-columns:1fr 1fr}
+  .dr{grid-template-columns:96px 1fr 52px}
+  .sec{padding:52px 20px}
+}
+
+/* ── RESPONSIVE 600 ── */
+@media(max-width:600px){
+  :root{--r:14px;--rs:9px}
+  html{font-size:15px}
+  .g3,.vg3,.g2,.sg2{grid-template-columns:1fr}
+  .ai{grid-template-columns:1fr}
+  .aas{display:none}
+  .sh{grid-template-columns:1fr}
+  .sn{display:none}
+  .sec{padding:40px 16px}
+  .mh{padding:40px 16px 34px}
+  h1.tt{font-size:clamp(1.85rem,9.5vw,2.6rem)}
+  .st{font-size:.94rem}
+  .aa{flex-direction:column}
+  .aa .btn{width:100%;justify-content:center}
+  .sg{grid-template-columns:1fr 1fr 1fr}
+  .sc .v{font-size:1.1rem}
+  .sc .l{font-size:.66rem}
+  .sp{padding:16px}
+  .ab{padding:34px 16px}
+  .ph{padding:22px 18px}
+  .ph h2{font-size:clamp(1.2rem,6vw,1.72rem)}
+  .ph::before{font-size:13vw}
+  .ss{padding:20px 16px}
+  .sg2{gap:9px}
+  .si2{padding:14px}
+  .tg3{grid-template-columns:1fr}
+  .pq{padding:22px 18px}
+  .pq::before{font-size:4.5rem}
+  .ctas{padding:20px 18px;flex-direction:column;align-items:flex-start}
+  .ctas .bts{width:100%}
+  .ctas .bts .btn{flex:1;justify-content:center}
+  .ft{flex-direction:column;text-align:center;gap:14px}
+  .ftl{justify-content:center}
+  .ts{border-radius:var(--rs)}
+  .ct td,.ct th{padding:9px 10px;font-size:.78rem}
+  .dr{grid-template-columns:76px 1fr 46px;gap:7px}
+  .dl,.dv2{font-size:.62rem}
+  .cs2,.cs3{display:grid}
+}
+
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .rv{opacity:1!important;transform:none!important}
+}
 </style>
 </head>
 <body>
-<!-- Reading progress bar -->
-<div id="readProgress"></div>
-<div class="cursor-glow" id="cursorGlow"></div>
+<div id="rp"></div>
+<div class="cg" id="cglow"></div>
+<canvas id="bgc"></canvas>
+<div class="w">
 
-<!-- Canvas background -->
-<canvas id="bgCanvas"></canvas>
-
-<div class="content-wrap">
-
-<!-- ═══════════════════════════════════════
-     HEADER
-════════════════════════════════════════ -->
-<header class="journal-header">
-  <div class="header-inner">
-    <a href="#top" class="journal-brand">
-      <span class="name">OCP Cooling + HVDC</span>
-      <span class="sub">DCDeepTech · Research</span>
+<!-- HEADER -->
+<header class="jh">
+  <div class="ji">
+    <a href="#top" class="br">
+      <span class="nm">OCP Cooling + HVDC</span>
+      <span class="sb">DCDeepTech · Research</span>
     </a>
-    <nav class="site-nav">
-      <a href="#challenge">问题</a>
-      <a href="#cooling">液冷架构</a>
-      <a href="#hvdc">HVDC</a>
-      <a href="#architecture">架构耦合</a>
-      <a href="#dcdeeptech">平台</a>
-      <a href="#ecosystem">生态</a>
+    <nav class="dn">
+      <a href="#challenge">问题</a><a href="#cooling">液冷</a><a href="#hvdc">HVDC</a>
+      <a href="#arch">架构耦合</a><a href="#dct">DCDeepTech</a><a href="#eco">生态</a>
     </nav>
+    <button class="hm" id="ham" aria-label="打开导航" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </header>
+<nav class="mn" id="mobNav">
+  <a href="#challenge">§ I — 问题陈述</a>
+  <a href="#cooling">§ II — OCP 液冷架构</a>
+  <a href="#hvdc">§ III — HVDC 供电</a>
+  <a href="#arch">§ IV — 架构耦合</a>
+  <a href="#dct">§ V — DCDeepTech 平台</a>
+  <a href="#eco">§ VI — 生态系统</a>
+</nav>
 
-<!-- ═══════════════════════════════════════
-     MASTHEAD
-════════════════════════════════════════ -->
-<section class="masthead" id="top">
-  <div class="masthead-copy reveal">
-    <div class="article-meta">Technical Analysis · 2024</div>
-    <h1 class="article-title">
-      下一代 AI 数据中心，<br/>
-      必须同时重构<em> Cooling</em> 与 <em>Power</em>
-    </h1>
-    <p class="article-subtitle">
-      当机柜功率密度从 10–25 kW 迈向 100 kW、250 kW 乃至更高，真正制约 AI 工厂的不再是
-      GPU 数量本身，而是能否高效送入电力、稳定移出热量，并以可认证、可交付、可全球化的方式实现系统级整合。
-    </p>
-    <div class="article-actions">
-      <a class="btn btn-primary" href="#challenge">开始阅读</a>
-      <a class="btn btn-ghost" href="#dcdeeptech">DCDeepTech 平台</a>
+<!-- MASTHEAD -->
+<section class="mh" id="top">
+  <div class="rv">
+    <div class="am">Technical Analysis · 2024</div>
+    <h1 class="tt">下一代 AI 数据中心，必须同时重构<em> Cooling</em> 与 <em>Power</em></h1>
+    <p class="st">当机柜功率密度从 10–25 kW 迈向 100 kW、250 kW 乃至更高，真正制约 AI 工厂的不再只是 GPU 数量，而是能否高效送入电力、稳定移出热量，并以可认证、可交付、可全球化的方式实现系统级整合。</p>
+    <div class="aa">
+      <a class="btn bp" href="#challenge">开始阅读</a>
+      <a class="btn bg" href="#dct">DCDeepTech 平台</a>
     </div>
   </div>
-
-  <div class="stat-panel reveal reveal-delay-2">
-    <div class="stat-panel-label">Key Metrics · AI Infrastructure</div>
-    <div class="stat-grid">
-      <div class="stat-cell">
-        <span class="val teal counter" data-target="100">0</span>
-        <span class="lbl">kW+ AI 机柜目标功率密度</span>
-      </div>
-      <div class="stat-cell">
-        <span class="val blue">CDU</span>
-        <span class="lbl">升级为系统级热管理中枢</span>
-      </div>
-      <div class="stat-cell">
-        <span class="val gold counter" data-target="800">0</span>
-        <span class="lbl">V HVDC 总线电压</span>
-      </div>
-      <div class="stat-cell">
-        <span class="val teal">PUE</span>
-        <span class="lbl">接近物理极限 1.0×</span>
-      </div>
-      <div class="stat-cell">
-        <span class="val blue counter" data-target="250">0</span>
-        <span class="lbl">kW 超高密度目标</span>
-      </div>
-      <div class="stat-cell">
-        <span class="val gold counter" data-target="5">0</span>
-        <span class="lbl">× 空间效率潜力</span>
-      </div>
+  <div class="sp rv d2">
+    <div class="spl">Key Metrics · AI Infrastructure</div>
+    <div class="sg">
+      <div class="sc"><span class="v tc counter" data-t="100">0</span><span class="l">kW+ 机柜目标功率</span></div>
+      <div class="sc"><span class="v bl">CDU</span><span class="l">系统级热管理中枢</span></div>
+      <div class="sc"><span class="v gd counter" data-t="800">0</span><span class="l">V HVDC 总线</span></div>
+      <div class="sc"><span class="v tc">PUE</span><span class="l">趋近 1.0× 极限</span></div>
+      <div class="sc"><span class="v bl counter" data-t="250">0</span><span class="l">kW 超高密度</span></div>
+      <div class="sc"><span class="v gd counter" data-t="5">0</span><span class="l">× 空间效率潜力</span></div>
     </div>
   </div>
 </section>
 
 <!-- ABSTRACT -->
-<div class="abstract-band">
-  <div class="abstract-inner">
-    <div class="abstract-aside">
-      <div class="aside-label">Abstract</div>
-      <div class="abstract-divider"></div>
-    </div>
-    <div class="abstract-body reveal">
+<div class="ab">
+  <div class="ai rv">
+    <div class="aas"><div class="al">Abstract</div><div class="ad"></div></div>
+    <div class="ab2">
       <h2>摘要</h2>
-      <p>
-        本文分析 OCP（Open Compute Project）液冷架构与 HVDC（高压直流）供电体系如何共同定义下一代 AI 数据中心。
-        随着 GPU 集群功率密度的持续跃迁，传统风冷与低压 AC 供电在空间效率、能效与扩展性上的固有局限已无法支撑超大规模 AI 工厂的部署需求。
-      </p>
-      <p>
-        OCP 冷板液冷、CDU（冷量分配单元）与 ±400V/800V HVDC 的协同部署，构成了当前技术路线中最具前景的系统性解决方案。
-        本文进一步探讨 DCDeepTech 作为新加坡跨境 AI 基础设施平台，在链接工程能力与全球市场进入路径方面的战略角色。
-      </p>
-      <div class="abstract-keywords">
-        <span class="keyword">OCP Cooling</span>
-        <span class="keyword">Liquid Cooling</span>
-        <span class="keyword">HVDC 800V</span>
-        <span class="keyword">CDU</span>
-        <span class="keyword">Cold Plate</span>
-        <span class="keyword">Rack Density</span>
-        <span class="keyword">PUE</span>
-        <span class="keyword">DCDeepTech</span>
-        <span class="keyword">Singapore</span>
+      <p>本文分析 OCP（Open Compute Project）液冷架构与 HVDC（高压直流）供电体系如何共同定义下一代 AI 数据中心。随着 GPU 集群功率密度的持续跃迁，传统风冷与低压 AC 供电在空间效率、能效与扩展性上的固有局限已无法支撑超大规模 AI 工厂的部署需求。</p>
+      <p>OCP 冷板液冷、CDU 与 ±400V/800V HVDC 的协同部署，构成了当前技术路线中最具前景的系统性解决方案。本文进一步探讨 DCDeepTech 在新加坡的战略角色与具体服务范围。</p>
+      <div class="kws">
+        <span class="kw">OCP Cooling</span><span class="kw">Liquid Cooling</span><span class="kw">HVDC 800V</span>
+        <span class="kw">CDU</span><span class="kw">Cold Plate</span><span class="kw">Rack Density</span>
+        <span class="kw">PUE</span><span class="kw">DCDeepTech</span><span class="kw">Singapore</span>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════
-     SECTION I: CHALLENGE
-════════════════════════════════════════ -->
-<div class="section-divider" style="margin-top:60px;">
-  <span class="divider-tag">Section I</span>
-</div>
-
-<section class="section" id="challenge">
-  <div class="section-header reveal">
-    <div class="section-num">§ I</div>
-    <div class="section-title-block">
-      <h2>问题陈述：功率密度跃迁与架构范式失效</h2>
-      <p>当 AI 训练与推理集群的机柜功率突破传统边界，整个数据中心架构体系必须系统性重建。</p>
-    </div>
+<!-- §I -->
+<div class="dv" style="margin-top:52px"><span class="dt">Section I</span></div>
+<section class="sec" id="challenge">
+  <div class="sh rv"><div class="sn">§ I</div><div class="stb"><h2>问题陈述：功率密度跃迁与架构范式失效</h2><p>当 AI 集群机柜功率突破传统边界，整个数据中心架构体系必须系统性重建。</p></div></div>
+  <div class="g3">
+    <div class="ca rv d1"><div class="cl">Thermal Limit</div><h3>热管理边界失效</h3><p>传统风冷散热上限约 25–30 kW/机柜。AI 加速器局部热流密度已令机柜风冷从根本上失效，直接面向芯片的液冷是唯一工程可行路径。</p></div>
+    <div class="ca rv d2"><div class="cl">Power Delivery</div><h3>低压供电体系瓶颈</h3><p>传统 AC 供电在 100 kW 以上机柜中面临铜排过重、多级变换损耗叠加、UPS 空间占用大等系统性问题，成为提升功率密度的直接制约。</p></div>
+    <div class="ca rv d3"><div class="cl">Scale Challenge</div><h3>规模化交付壁垒</h3><p>OEM 认证、全球供应链整合、超大规模客户准入条件，构成了传统数据中心厂商难以逾越的市场进入门槛。</p></div>
   </div>
-
-  <div class="challenge-grid">
-    <div class="a-card reveal reveal-delay-1">
-      <div class="a-card-label">Thermal Limit</div>
-      <h3>热管理边界失效</h3>
-      <p>传统风冷的散热上限约 25–30 kW/机柜。AI 加速器产生的局部热流密度已令机柜风冷设计从根本上失效。直接面向芯片的液冷是唯一工程可行路径。</p>
-    </div>
-    <div class="a-card reveal reveal-delay-2">
-      <div class="a-card-label">Power Delivery</div>
-      <h3>低压供电体系瓶颈</h3>
-      <p>传统 AC/低压 DC 供电在 100 kW 以上机柜中面临铜排过重、多级变换损耗叠加、UPS 空间占用大等系统性问题，成为提升功率密度的直接制约。</p>
-    </div>
-    <div class="a-card reveal reveal-delay-3">
-      <div class="a-card-label">Scale Challenge</div>
-      <h3>规模化交付能力壁垒</h3>
-      <p>技术可行不等于可交付。OEM 认证、全球供应链整合、超大规模客户准入条件，构成了传统数据中心厂商难以逾越的市场进入门槛。</p>
-    </div>
-  </div>
-
-  <!-- Density chart -->
-  <div class="density-chart reveal">
+  <div class="dc rv">
     <h4>AI Data Centre · Rack Power Density Evolution</h4>
-    <div class="density-row">
-      <div class="density-label">Traditional Air</div>
-      <div class="density-track"><div class="density-fill low" data-width="12%"></div></div>
-      <div class="density-val">10–25 kW</div>
-    </div>
-    <div class="density-row">
-      <div class="density-label">Gen-1 Liquid</div>
-      <div class="density-track"><div class="density-fill mid" data-width="28%"></div></div>
-      <div class="density-val">50–80 kW</div>
-    </div>
-    <div class="density-row">
-      <div class="density-label">OCP Cold Plate</div>
-      <div class="density-track"><div class="density-fill hi" data-width="55%"></div></div>
-      <div class="density-val">100–150 kW</div>
-    </div>
-    <div class="density-row">
-      <div class="density-label">HVDC + OCP</div>
-      <div class="density-track"><div class="density-fill ultra" data-width="92%"></div></div>
-      <div class="density-val">250 kW+</div>
-    </div>
+    <div class="dr"><div class="dl">Traditional Air</div><div class="dt2"><div class="df lo" data-w="11%"></div></div><div class="dv2">10–25 kW</div></div>
+    <div class="dr"><div class="dl">Gen-1 Liquid</div><div class="dt2"><div class="df mi" data-w="27%"></div></div><div class="dv2">50–80 kW</div></div>
+    <div class="dr"><div class="dl">OCP Cold Plate</div><div class="dt2"><div class="df hi" data-w="54%"></div></div><div class="dv2">100–150 kW</div></div>
+    <div class="dr"><div class="dl">HVDC + OCP</div><div class="dt2"><div class="df ul" data-w="92%"></div></div><div class="dv2">250 kW+</div></div>
   </div>
 </section>
 
-<!-- DIVIDER -->
-<div class="section-divider"><span class="divider-tag">Section II</span></div>
-
-<!-- ═══════════════════════════════════════
-     SECTION II: COOLING
-════════════════════════════════════════ -->
-<section class="section" id="cooling">
-  <div class="section-header reveal">
-    <div class="section-num">§ II</div>
-    <div class="section-title-block">
-      <h2>OCP 液冷架构：从冷板到系统级热管理</h2>
-      <p>Open Compute Project 液冷规范将散热从机柜配件升级为 AI 工厂的核心基础设施层。</p>
-    </div>
-  </div>
-
-  <div class="cooling-layout">
-    <div class="cooling-diagram reveal">
-      <div class="diagram-label">Liquid Cooling Loop · Animated Diagram</div>
-      <svg class="svg-cooling" viewBox="0 0 600 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+<!-- §II -->
+<div class="dv"><span class="dt">Section II</span></div>
+<section class="sec" id="cooling">
+  <div class="sh rv"><div class="sn">§ II</div><div class="stb"><h2>OCP 液冷架构：从冷板到系统级热管理</h2><p>OCP 液冷规范将散热从机柜配件升级为 AI 工厂的核心基础设施层。</p></div></div>
+  <div class="cl2">
+    <div class="cd rv">
+      <div class="dlb">Liquid Cooling Loop · Animated</div>
+      <svg class="svgc" viewBox="0 0 560 198" fill="none" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          <linearGradient id="loopGrad1" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stop-color="#00d4a8" stop-opacity="0.9"/>
-            <stop offset="100%" stop-color="#4f8ef7" stop-opacity="0.7"/>
-          </linearGradient>
-          <linearGradient id="loopGrad2" x1="100%" y1="0%" x2="0%" y2="0%">
-            <stop offset="0%" stop-color="#f77462" stop-opacity="0.8"/>
-            <stop offset="100%" stop-color="#e8c96a" stop-opacity="0.5"/>
-          </linearGradient>
-          <filter id="glow1">
-            <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-            <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
-          </filter>
-          <!-- Animated flow dash -->
-          <marker id="arrow1" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
-            <circle cx="4" cy="4" r="2" fill="#00d4a8" opacity="0.8"/>
-          </marker>
+          <linearGradient id="lg1" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#00d4a8"/><stop offset="100%" stop-color="#4f8ef7"/></linearGradient>
+          <linearGradient id="lg2" x1="1" y1="0" x2="0" y2="0"><stop offset="0%" stop-color="#f77462"/><stop offset="100%" stop-color="#e8c96a" stop-opacity=".5"/></linearGradient>
+          <filter id="gf"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
         </defs>
-        <!-- Facility Water -->
-        <rect x="20" y="90" width="90" height="60" rx="12" fill="rgba(0,212,168,0.08)" stroke="rgba(0,212,168,0.35)" stroke-width="1.5"/>
-        <text x="65" y="116" fill="#00d4a8" font-size="10" text-anchor="middle" font-family="'JetBrains Mono'">Facility</text>
-        <text x="65" y="130" fill="#00d4a8" font-size="10" text-anchor="middle" font-family="'JetBrains Mono'">Water</text>
-        <!-- CDU -->
-        <rect x="220" y="70" width="100" height="100" rx="16" fill="rgba(79,142,247,0.10)" stroke="rgba(79,142,247,0.4)" stroke-width="1.5"/>
-        <text x="270" y="117" fill="#7bb8ff" font-size="11" text-anchor="middle" font-family="'JetBrains Mono'" font-weight="500">CDU</text>
-        <text x="270" y="133" fill="#8a99b5" font-size="9" text-anchor="middle" font-family="'JetBrains Mono'">Coolant Dist.</text>
-        <!-- Rack / Cold Plate -->
-        <rect x="440" y="60" width="140" height="120" rx="14" fill="rgba(232,201,106,0.07)" stroke="rgba(232,201,106,0.3)" stroke-width="1.5"/>
-        <text x="510" y="105" fill="#e8c96a" font-size="11" text-anchor="middle" font-family="'JetBrains Mono'" font-weight="500">AI Rack</text>
-        <text x="510" y="120" fill="#8a99b5" font-size="9" text-anchor="middle" font-family="'JetBrains Mono'">GPU Cold Plate</text>
-        <text x="510" y="134" fill="#8a99b5" font-size="9" text-anchor="middle" font-family="'JetBrains Mono'">Direct-to-Chip</text>
-        <!-- Supply line (cool) -->
-        <path d="M 110 108 L 220 108" stroke="url(#loopGrad1)" stroke-width="3" stroke-linecap="round">
-          <animate attributeName="stroke-dasharray" values="0 200;200 0" dur="2s" repeatCount="indefinite"/>
-        </path>
-        <path d="M 320 105 L 440 105" stroke="url(#loopGrad1)" stroke-width="3" stroke-linecap="round">
-          <animate attributeName="stroke-dasharray" values="0 200;200 0" dur="2s" begin="0.4s" repeatCount="indefinite"/>
-        </path>
-        <!-- Return line (warm) -->
-        <path d="M 440 135 L 320 135" stroke="url(#loopGrad2)" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="6 4">
-          <animate attributeName="stroke-dashoffset" values="20;0" dur="1.2s" repeatCount="indefinite"/>
-        </path>
-        <path d="M 220 132 L 110 132" stroke="url(#loopGrad2)" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="6 4">
-          <animate attributeName="stroke-dashoffset" values="20;0" dur="1.2s" begin="0.2s" repeatCount="indefinite"/>
-        </path>
-        <!-- Labels -->
-        <text x="165" y="100" fill="#00d4a8" font-size="9" text-anchor="middle" font-family="'JetBrains Mono'" opacity="0.8">Supply ↓</text>
-        <text x="165" y="150" fill="#f77462" font-size="9" text-anchor="middle" font-family="'JetBrains Mono'" opacity="0.8">Return ↑</text>
-        <text x="380" y="100" fill="#00d4a8" font-size="9" text-anchor="middle" font-family="'JetBrains Mono'" opacity="0.8">Cool →</text>
-        <text x="380" y="150" fill="#f77462" font-size="9" text-anchor="middle" font-family="'JetBrains Mono'" opacity="0.8">Hot ←</text>
-        <!-- Glow dot on CDU -->
-        <circle cx="270" cy="70" r="5" fill="#4f8ef7" filter="url(#glow1)" opacity="0.8">
-          <animate attributeName="r" values="4;7;4" dur="2.5s" repeatCount="indefinite"/>
-          <animate attributeName="opacity" values="0.8;1;0.8" dur="2.5s" repeatCount="indefinite"/>
-        </circle>
+        <rect x="10" y="70" width="80" height="56" rx="10" fill="rgba(0,212,168,.07)" stroke="rgba(0,212,168,.3)" stroke-width="1.5"/>
+        <text x="50" y="95" fill="#00d4a8" font-size="10" text-anchor="middle" font-family="'JetBrains Mono'">Facility</text>
+        <text x="50" y="109" fill="#00d4a8" font-size="10" text-anchor="middle" font-family="'JetBrains Mono'">Water</text>
+        <rect x="202" y="55" width="92" height="88" rx="13" fill="rgba(79,142,247,.08)" stroke="rgba(79,142,247,.34)" stroke-width="1.5"/>
+        <text x="248" y="96" fill="#7bb8ff" font-size="11" text-anchor="middle" font-family="'JetBrains Mono'" font-weight="500">CDU</text>
+        <text x="248" y="111" fill="#8a99b5" font-size="9" text-anchor="middle" font-family="'JetBrains Mono'">Coolant Dist.</text>
+        <rect x="412" y="46" width="136" height="106" rx="12" fill="rgba(232,201,106,.06)" stroke="rgba(232,201,106,.27)" stroke-width="1.5"/>
+        <text x="480" y="90" fill="#e8c96a" font-size="11" text-anchor="middle" font-family="'JetBrains Mono'" font-weight="500">AI Rack</text>
+        <text x="480" y="105" fill="#8a99b5" font-size="9" text-anchor="middle" font-family="'JetBrains Mono'">GPU Cold Plate</text>
+        <text x="480" y="118" fill="#8a99b5" font-size="9" text-anchor="middle" font-family="'JetBrains Mono'">Direct-to-Chip</text>
+        <path d="M90 90 L202 90" stroke="url(#lg1)" stroke-width="3" stroke-linecap="round"><animate attributeName="stroke-dasharray" values="0 170;170 0" dur="1.9s" repeatCount="indefinite"/></path>
+        <path d="M294 88 L412 88" stroke="url(#lg1)" stroke-width="3" stroke-linecap="round"><animate attributeName="stroke-dasharray" values="0 170;170 0" dur="1.9s" begin=".38s" repeatCount="indefinite"/></path>
+        <path d="M412 116 L294 116" stroke="url(#lg2)" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="6 4"><animate attributeName="stroke-dashoffset" values="20;0" dur="1.1s" repeatCount="indefinite"/></path>
+        <path d="M202 114 L90 114" stroke="url(#lg2)" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="6 4"><animate attributeName="stroke-dashoffset" values="20;0" dur="1.1s" begin=".18s" repeatCount="indefinite"/></path>
+        <text x="146" y="82" fill="#00d4a8" font-size="9" text-anchor="middle" font-family="'JetBrains Mono'" opacity=".8">Supply</text>
+        <text x="146" y="133" fill="#f77462" font-size="9" text-anchor="middle" font-family="'JetBrains Mono'" opacity=".8">Return</text>
+        <text x="353" y="82" fill="#00d4a8" font-size="9" text-anchor="middle" font-family="'JetBrains Mono'" opacity=".8">Cool →</text>
+        <text x="353" y="133" fill="#f77462" font-size="9" text-anchor="middle" font-family="'JetBrains Mono'" opacity=".8">Hot ←</text>
+        <circle cx="248" cy="55" r="5" fill="#4f8ef7" filter="url(#gf)" opacity=".8"><animate attributeName="r" values="4;7;4" dur="2.4s" repeatCount="indefinite"/></circle>
       </svg>
-      <div class="cooling-stats">
-        <div class="cooling-stat">
-          <strong>Cold Plate</strong>
-          <span>直接接触芯片热源，导热效率最优</span>
-        </div>
-        <div class="cooling-stat">
-          <strong>CDU</strong>
-          <span>换热、流控、循环稳定性核心节点</span>
-        </div>
-        <div class="cooling-stat">
-          <strong>Manifold</strong>
-          <span>多机柜并联液路配液与均流</span>
-        </div>
-        <div class="cooling-stat">
-          <strong>Telemetry</strong>
-          <span>实时热状态感知与动态优化</span>
-        </div>
+      <div class="cs2">
+        <div class="cs3"><strong>Cold Plate</strong><span>直接接触芯片，导热效率最优</span></div>
+        <div class="cs3"><strong>CDU</strong><span>换热、流控、循环稳定性中枢</span></div>
+        <div class="cs3"><strong>Manifold</strong><span>多机柜并联液路均流配液</span></div>
+        <div class="cs3"><strong>Telemetry</strong><span>实时热状态感知与动态优化</span></div>
       </div>
     </div>
-
-    <div class="cooling-steps reveal reveal-delay-2">
-      <div class="step-item">
-        <div class="step-num">01</div>
-        <div class="step-content">
-          <h4>Cold Plate — 芯片级导热</h4>
-          <p>直接贴附 GPU / CPU 封装表面，通过微槽道结构将热量高效传导至循环冷却液，消除热界面材料叠加的额外热阻。</p>
-        </div>
-      </div>
-      <div class="step-item">
-        <div class="step-num">02</div>
-        <div class="step-content">
-          <h4>Manifold — 歧管与流量均衡</h4>
-          <p>机柜内多块冷板的并联液路分配，确保每路供液温度和流量一致性，避免局部热点积累。</p>
-        </div>
-      </div>
-      <div class="step-item">
-        <div class="step-num">03</div>
-        <div class="step-content">
-          <h4>CDU — 冷量分配单元</h4>
-          <p>负责一次侧（设施水）与二次侧（机柜循环液）间的换热隔离，集成泵组、流量控制、压力监测与异常告警。</p>
-        </div>
-      </div>
-      <div class="step-item">
-        <div class="step-num">04</div>
-        <div class="step-content">
-          <h4>Telemetry 闭环 — 动态热管理</h4>
-          <p>持续采集供回水温度、流量与压差数据，驱动 CDU 实时调节，将系统维持在最优热效率边界内运行。</p>
-        </div>
-      </div>
-      <div class="step-item">
-        <div class="step-num">05</div>
-        <div class="step-content">
-          <h4>OCP 认证生态</h4>
-          <p>遵循 OCP 液冷规范意味着组件互换性、全球供应商对接能力与超大规模客户采购准入资质。</p>
-        </div>
-      </div>
+    <div class="stp rv d2">
+      <div class="si"><div class="snum">01</div><div class="sc4"><h4>Cold Plate — 芯片级导热</h4><p>直接贴附 GPU/CPU 封装表面，通过微槽道结构高效传导热量至循环冷却液，消除热界面材料额外热阻。</p></div></div>
+      <div class="si"><div class="snum">02</div><div class="sc4"><h4>Manifold — 歧管与流量均衡</h4><p>机柜内多块冷板并联液路分配，确保每路供液温度和流量一致性，避免局部热点积累。</p></div></div>
+      <div class="si"><div class="snum">03</div><div class="sc4"><h4>CDU — 冷量分配单元</h4><p>负责设施水与机柜循环液换热隔离，集成泵组、流量控制、压力监测与异常告警。</p></div></div>
+      <div class="si"><div class="snum">04</div><div class="sc4"><h4>Telemetry 闭环 — 动态热管理</h4><p>持续采集供回水温度、流量与压差，驱动 CDU 实时调节，维持系统在最优热效率边界内运行。</p></div></div>
+      <div class="si"><div class="snum">05</div><div class="sc4"><h4>OCP 认证生态</h4><p>遵循 OCP 液冷规范意味着组件互换性、全球供应商对接能力与超大规模客户采购准入资质。</p></div></div>
     </div>
   </div>
 </section>
 
-<!-- DIVIDER -->
-<div class="section-divider"><span class="divider-tag">Section III</span></div>
-
-<!-- ═══════════════════════════════════════
-     SECTION III: HVDC
-════════════════════════════════════════ -->
-<section class="section" id="hvdc">
-  <div class="section-header reveal">
-    <div class="section-num">§ III</div>
-    <div class="section-title-block">
-      <h2>HVDC 供电架构：800V 总线与 AI 工厂电力拓扑</h2>
-      <p>高压直流重新定义了数据中心的电力链路：更少转换级、更低损耗、更适合超高功率密度终局。</p>
-    </div>
-  </div>
-
-  <div class="hvdc-grid">
-    <div class="hvdc-card reveal">
-      <div class="a-card-label">HVDC Bus Voltage</div>
-      <div class="voltage-display"><span class="counter" data-target="800">0</span><span class="voltage-unit">V</span></div>
-      <p style="font-size:0.88rem; color:var(--muted); margin-bottom:20px;">
-        ±400 V / 800 V HVDC 是面向超高密度 AI 机柜的核心电力总线方案，从根本上减少多级变换损耗。
-      </p>
-      <div class="hvdc-metrics">
-        <div class="hvdc-metric-row">
-          <span>电力转换级数</span>
-          <span>减少 2–3 级</span>
-        </div>
-        <div class="hvdc-metric-row">
-          <span>配电效率</span>
-          <span>提升 3–5%</span>
-        </div>
-        <div class="hvdc-metric-row">
-          <span>铜排截面积需求</span>
-          <span>大幅减少</span>
-        </div>
-        <div class="hvdc-metric-row">
-          <span>机柜空间释放</span>
-          <span>电力模块占用↓</span>
-        </div>
-        <div class="hvdc-metric-row">
-          <span>BBU 集成方式</span>
-          <span>Sidecar / 内置</span>
-        </div>
+<!-- §III -->
+<div class="dv"><span class="dt">Section III</span></div>
+<section class="sec" id="hvdc">
+  <div class="sh rv"><div class="sn">§ III</div><div class="stb"><h2>HVDC 供电架构：800V 总线与 AI 工厂电力拓扑</h2><p>高压直流重新定义数据中心电力链路：更少转换级、更低损耗、更适合超高功率密度终局。</p></div></div>
+  <div class="hg">
+    <div class="hc rv">
+      <div class="cl">HVDC Bus Voltage</div>
+      <div class="vd"><span class="counter" data-t="800">0</span><span class="vu">V</span></div>
+      <p style="font-size:.84rem;color:var(--mu);margin-bottom:16px;line-height:1.7;">±400V / 800V HVDC 是面向超高密度 AI 机柜的核心电力总线方案，从根本上减少多级变换损耗。</p>
+      <div class="hm2">
+        <div class="hmr"><span>电力转换级数</span><span>减少 2–3 级</span></div>
+        <div class="hmr"><span>配电效率</span><span>提升 3–5%</span></div>
+        <div class="hmr"><span>铜排截面积需求</span><span>大幅减少</span></div>
+        <div class="hmr"><span>机柜空间释放</span><span>电力模块占用↓</span></div>
+        <div class="hmr"><span>BBU 集成方式</span><span>Sidecar / 内置</span></div>
       </div>
     </div>
-
-    <div class="reveal reveal-delay-2" style="display:flex; flex-direction:column; gap:16px;">
-      <!-- SVG power topology -->
-      <div class="hvdc-card" style="flex:1;">
-        <div class="a-card-label">Power Flow Topology · Animated</div>
-        <svg class="svg-hvdc" viewBox="0 0 560 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="pg1" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stop-color="#4f8ef7"/>
-              <stop offset="100%" stop-color="#00d4a8"/>
-            </linearGradient>
-          </defs>
-          <!-- MVAC -->
-          <rect x="10" y="70" width="80" height="60" rx="10" fill="rgba(255,255,255,0.03)" stroke="rgba(148,163,184,0.2)" stroke-width="1.5"/>
-          <text x="50" y="97" fill="#b8c4d8" font-size="10" text-anchor="middle" font-family="'JetBrains Mono'">MVAC</text>
-          <text x="50" y="112" fill="#8a99b5" font-size="9" text-anchor="middle" font-family="'JetBrains Mono'">Grid</text>
-          <!-- SST -->
-          <rect x="165" y="55" width="100" height="90" rx="12" fill="rgba(0,212,168,0.07)" stroke="rgba(0,212,168,0.3)" stroke-width="1.5"/>
-          <text x="215" y="97" fill="#00d4a8" font-size="11" text-anchor="middle" font-family="'JetBrains Mono'" font-weight="500">SST</text>
-          <text x="215" y="112" fill="#8a99b5" font-size="9" text-anchor="middle" font-family="'JetBrains Mono'">800V HVDC</text>
-          <!-- Sidecar -->
-          <rect x="350" y="20" width="90" height="70" rx="10" fill="rgba(167,139,250,0.07)" stroke="rgba(167,139,250,0.25)" stroke-width="1.5"/>
-          <text x="395" y="52" fill="#a78bfa" font-size="9.5" text-anchor="middle" font-family="'JetBrains Mono'">Sidecar</text>
-          <text x="395" y="66" fill="#8a99b5" font-size="8" text-anchor="middle" font-family="'JetBrains Mono'">BBU/CBU</text>
-          <!-- AI Rack -->
-          <rect x="450" y="55" width="100" height="90" rx="12" fill="rgba(232,201,106,0.07)" stroke="rgba(232,201,106,0.3)" stroke-width="1.5"/>
-          <text x="500" y="95" fill="#e8c96a" font-size="10" text-anchor="middle" font-family="'JetBrains Mono'">AI Rack</text>
-          <text x="500" y="110" fill="#8a99b5" font-size="9" text-anchor="middle" font-family="'JetBrains Mono'">Board DC/DC</text>
-          <!-- Power flow lines -->
-          <path d="M 90 100 L 165 100" stroke="url(#pg1)" stroke-width="4" stroke-linecap="round">
-            <animate attributeName="stroke-dasharray" values="0 120;120 0" dur="1.8s" repeatCount="indefinite"/>
-          </path>
-          <path d="M 265 100 L 350 55" stroke="url(#pg1)" stroke-width="3" stroke-linecap="round">
-            <animate attributeName="stroke-dasharray" values="0 120;120 0" dur="1.8s" begin="0.3s" repeatCount="indefinite"/>
-          </path>
-          <path d="M 265 100 L 450 100" stroke="url(#pg1)" stroke-width="4" stroke-linecap="round">
-            <animate attributeName="stroke-dasharray" values="0 220;220 0" dur="1.8s" begin="0.6s" repeatCount="indefinite"/>
-          </path>
-          <!-- Moving power dots -->
-          <circle r="4" fill="#00d4a8" filter="url(#glow1)">
-            <animateMotion dur="1.8s" repeatCount="indefinite" path="M 90 100 L 450 100"/>
-          </circle>
+    <div class="rv d2" style="display:flex;flex-direction:column;gap:13px">
+      <div class="hc">
+        <div class="cl">Power Flow · Animated</div>
+        <svg style="width:100%;height:auto" viewBox="0 0 530 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs><linearGradient id="pg1" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#4f8ef7"/><stop offset="100%" stop-color="#00d4a8"/></linearGradient></defs>
+          <rect x="8" y="62" width="74" height="54" rx="9" fill="rgba(255,255,255,.03)" stroke="rgba(148,163,184,.17)" stroke-width="1.5"/>
+          <text x="45" y="86" fill="#b8c4d8" font-size="9.5" text-anchor="middle" font-family="'JetBrains Mono'">MVAC</text>
+          <text x="45" y="100" fill="#8a99b5" font-size="8.5" text-anchor="middle" font-family="'JetBrains Mono'">Grid</text>
+          <rect x="154" y="48" width="92" height="80" rx="10" fill="rgba(0,212,168,.07)" stroke="rgba(0,212,168,.27)" stroke-width="1.5"/>
+          <text x="200" y="86" fill="#00d4a8" font-size="10" text-anchor="middle" font-family="'JetBrains Mono'" font-weight="500">SST</text>
+          <text x="200" y="100" fill="#8a99b5" font-size="8" text-anchor="middle" font-family="'JetBrains Mono'">800V HVDC</text>
+          <rect x="332" y="16" width="80" height="62" rx="9" fill="rgba(167,139,250,.07)" stroke="rgba(167,139,250,.22)" stroke-width="1.5"/>
+          <text x="372" y="45" fill="#a78bfa" font-size="9" text-anchor="middle" font-family="'JetBrains Mono'">Sidecar</text>
+          <text x="372" y="58" fill="#8a99b5" font-size="7.5" text-anchor="middle" font-family="'JetBrains Mono'">BBU/CBU</text>
+          <rect x="432" y="48" width="88" height="80" rx="10" fill="rgba(232,201,106,.07)" stroke="rgba(232,201,106,.27)" stroke-width="1.5"/>
+          <text x="476" y="86" fill="#e8c96a" font-size="9.5" text-anchor="middle" font-family="'JetBrains Mono'">AI Rack</text>
+          <text x="476" y="100" fill="#8a99b5" font-size="8" text-anchor="middle" font-family="'JetBrains Mono'">Board DC/DC</text>
+          <path d="M82 89 L154 89" stroke="url(#pg1)" stroke-width="3.5" stroke-linecap="round"><animate attributeName="stroke-dasharray" values="0 105;105 0" dur="1.7s" repeatCount="indefinite"/></path>
+          <path d="M246 89 L332 47" stroke="url(#pg1)" stroke-width="2.5" stroke-linecap="round"><animate attributeName="stroke-dasharray" values="0 100;100 0" dur="1.7s" begin=".28s" repeatCount="indefinite"/></path>
+          <path d="M246 89 L432 89" stroke="url(#pg1)" stroke-width="3.5" stroke-linecap="round"><animate attributeName="stroke-dasharray" values="0 200;200 0" dur="1.7s" begin=".55s" repeatCount="indefinite"/></path>
+          <circle r="4" fill="#00d4a8"><animateMotion dur="1.7s" repeatCount="indefinite" path="M82 89 L432 89"/></circle>
         </svg>
       </div>
-
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-        <div class="a-card" style="padding:20px;">
-          <div class="a-card-label">240V LVAC 路线</div>
-          <h3 style="font-size:1rem;">渐进升级路径</h3>
-          <p style="font-size:0.82rem;">适合现有数据中心改造，兼容既有保护体系，前端做好准备即可局部引入 HVDC 机柜。</p>
-        </div>
-        <div class="a-card" style="padding:20px;">
-          <div class="a-card-label">800V HVDC 路线</div>
-          <h3 style="font-size:1rem;">面向终局设计</h3>
-          <p style="font-size:0.82rem;">新建高密度 AI 工厂的最优选择，真正释放 OCP 液冷与超高密度机柜的完整技术价值。</p>
-        </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px">
+        <div class="ca" style="padding:16px"><div class="cl">240V LVAC 路线</div><h3 style="font-size:.98rem">渐进升级路径</h3><p style="font-size:.8rem">适合存量数据中心改造，兼容既有保护体系，可局部引入 HVDC 机柜。</p></div>
+        <div class="ca" style="padding:16px"><div class="cl">800V HVDC 路线</div><h3 style="font-size:.98rem">面向终局设计</h3><p style="font-size:.8rem">新建高密度 AI 工厂最优选择，完整释放 OCP 液冷与超高密度机柜技术价值。</p></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- DIVIDER -->
-<div class="section-divider"><span class="divider-tag">Section IV</span></div>
+<!-- §IV -->
+<div class="dv"><span class="dt">Section IV</span></div>
+<section class="sec" id="arch">
+  <div class="sh rv"><div class="sn">§ IV</div><div class="stb"><h2>系统耦合：OCP Cooling 与 HVDC 为何必须一起设计</h2><p>电力架构与热管理架构的协同优化，才能真正突破 AI 工厂的系统性天花板。</p></div></div>
+  <div class="tbs rv">
+    <button class="tb on" data-t="tc1">耦合效应分析</button>
+    <button class="tb" data-t="tc2">240V LVAC 路线</button>
+    <button class="tb" data-t="tc3">800V HVDC 路线</button>
+  </div>
+  <div id="tc1" class="tp on rv">
+    <div class="ca"><div class="ts"><table class="ct">
+      <thead><tr><th>系统维度</th><th>OCP Cooling 效益</th><th>HVDC 效益</th><th>耦合系统结果</th></tr></thead>
+      <tbody>
+        <tr><td>功率密度</td><td>高效带走芯片热量，突破热管理上限</td><td>高效送入电力，减少多级损耗热</td><td>支持 250 kW+ rack density</td></tr>
+        <tr><td>能效 / PUE</td><td>消除风机与压缩制冷附加能耗</td><td>减少 AC→DC→DC 多级变换损耗</td><td>PUE 趋近 1.0×</td></tr>
+        <tr><td>空间效率</td><td>冷板液路替代机柜内大量散热风道</td><td>释放电力模块、铜排空间占用</td><td>更多空间用于计算单元</td></tr>
+        <tr><td>系统可靠性</td><td>结温稳定，延长 GPU 工作寿命</td><td>电力拓扑可控，减少转换故障点</td><td>适合持续满载 7×24</td></tr>
+        <tr><td>TCO</td><td>降低 CRAC 与传统制冷运营成本</td><td>降低配电线损与变压器采购成本</td><td>大幅改善全生命周期成本</td></tr>
+      </tbody>
+    </table></div></div>
+  </div>
+  <div id="tc2" class="tp">
+    <div class="ca"><h3 style="font-family:var(--fh);margin-bottom:13px">240V LVAC 渐进路线</h3><p style="color:var(--m2);margin-bottom:14px;line-height:1.85">适合现有数据中心存量改造场景，液冷系统可先于 HVDC 独立部署。</p>
+    <div class="tg3">
+      <div class="tbx" style="background:rgba(255,255,255,.024);border:1px solid var(--bd)"><div class="tl" style="color:var(--tl)">适合阶段</div><p>存量改造、过渡期部署、30–80 kW 密度区间</p></div>
+      <div class="tbx" style="background:rgba(255,255,255,.024);border:1px solid var(--bd)"><div class="tl" style="color:var(--bl)">主要优势</div><p>与现有保护体系兼容，改造成本低，可分阶段推进</p></div>
+      <div class="tbx" style="background:rgba(255,255,255,.024);border:1px solid var(--bd)"><div class="tl" style="color:var(--gd)">主要制约</div><p>多级变换损耗仍在，难以支撑 100 kW 以上超高密度</p></div>
+    </div></div>
+  </div>
+  <div id="tc3" class="tp">
+    <div class="ca"><h3 style="font-family:var(--fh);margin-bottom:13px">±400V / 800V HVDC 终局路线</h3><p style="color:var(--m2);margin-bottom:14px;line-height:1.85">面向新建高密度 AI 工厂的核心架构方向，实现最少转换级数与最高系统效率。</p>
+    <div class="tg3">
+      <div class="tbx" style="background:rgba(0,212,168,.05);border:1px solid rgba(0,212,168,.13)"><div class="tl" style="color:var(--tl)">适合阶段</div><p>新建超高密度 AI 工厂、超大规模机柜、未来架构卡位</p></div>
+      <div class="tbx" style="background:rgba(0,212,168,.05);border:1px solid rgba(0,212,168,.13)"><div class="tl" style="color:var(--tl)">系统优势</div><p>减少寄生功耗，释放空间，匹配更高 rack density 与液冷架构</p></div>
+      <div class="tbx" style="background:rgba(0,212,168,.05);border:1px solid rgba(0,212,168,.13)"><div class="tl" style="color:var(--tl)">成熟要件</div><p>需要标准、保护、器件、认证、生态与运维体系共同成熟</p></div>
+    </div></div>
+  </div>
+</section>
 
-<!-- ═══════════════════════════════════════
-     SECTION IV: ARCHITECTURE COUPLING
-════════════════════════════════════════ -->
-<section class="section" id="architecture">
-  <div class="section-header reveal">
-    <div class="section-num">§ IV</div>
-    <div class="section-title-block">
-      <h2>系统耦合：OCP Cooling 与 HVDC 为何必须一起设计</h2>
-      <p>电力架构与热管理架构的协同优化，才能真正突破 AI 工厂的系统性天花板。</p>
-    </div>
+<!-- §V DCDEEPTECH -->
+<div class="dv"><span class="dt">Section V</span></div>
+<section class="sec" id="dct">
+  <div class="sh rv"><div class="sn">§ V</div><div class="stb"><h2>DCDeepTech：从工程能力到全球市场进入</h2><p>在 AI 基础设施市场，技术领先是必要条件，但不是充分条件。</p></div></div>
+
+  <div class="ph rv">
+    <h2>新加坡跨境 AI 算力与 API 平台，连接工程能力与全球 OEM、Hyperscale、SI 生态</h2>
+    <p>DCDeepTech 立足新加坡，依托中新（重庆）互联互通 CCI 数据通道，以跨境 AI 算力与 OpenAI 兼容 API 网关为核心，帮助技术厂商将 OCP cooling、HVDC、液冷机柜、供配电一体化等工程能力转化为国际客户可理解、可验证、可采购的市场表达。</p>
   </div>
 
-  <div class="arch-tabs reveal">
-    <button class="arch-tab active" data-tab="tab-coupling">耦合效应分析</button>
-    <button class="arch-tab" data-tab="tab-240v">240V LVAC 路线</button>
-    <button class="arch-tab" data-tab="tab-800v">800V HVDC 路线</button>
+  <div class="vg3 rv">
+    <div class="ca"><div class="cl">Singapore Platform</div><h3>新加坡：可信准入节点</h3><p>同时连接国际数据中心资本、区域客户、标准讨论、渠道伙伴与全球技术品牌。既是展示窗口，也是进入国际 AI 基础设施市场的可信准入平台。</p></div>
+    <div class="ca d1"><div class="cl">OEM / Hyperscale / SI</div><h3>进入更高门槛生态</h3><p>协助对接英伟达 OEM 体系、超级数据中心客户和系统集成商 SI 渠道，让技术方案不只停留在工厂与实验室，进入真实国际项目路径。</p></div>
+    <div class="ca d2"><div class="cl">CCI Data Channel</div><h3>中新数据通道枢纽</h3><p>依托中新（重庆）互联互通官方 CCI 数据通道，在合规框架下实现跨境算力调度与数据流转，是平台独特的基础设施资产。</p></div>
   </div>
 
-  <div id="tab-coupling" class="arch-panel active reveal">
-    <div class="a-card">
-      <table class="coupling-table">
-        <thead>
-          <tr>
-            <th>系统维度</th>
-            <th>OCP Cooling 效益</th>
-            <th>HVDC 效益</th>
-            <th>耦合系统结果</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>功率密度</td>
-            <td>高效带走芯片热量，突破热管理上限</td>
-            <td>高效送入电力，减少多级损耗热</td>
-            <td>支持 250 kW+ rack power density</td>
-          </tr>
-          <tr>
-            <td>能效 / PUE</td>
-            <td>消除风机与压缩制冷附加能耗</td>
-            <td>减少 AC→DC→DC 多级变换损耗</td>
-            <td>PUE 趋近 1.0× 物理极限</td>
-          </tr>
-          <tr>
-            <td>空间效率</td>
-            <td>冷板液路替代机柜内大量散热风道</td>
-            <td>释放电力模块、铜排等空间占用</td>
-            <td>更多机柜空间用于计算单元</td>
-          </tr>
-          <tr>
-            <td>系统可靠性</td>
-            <td>结温稳定，延长 GPU 工作寿命</td>
-            <td>电力拓扑可控，减少转换故障点</td>
-            <td>适合持续满载 7×24 运行</td>
-          </tr>
-          <tr>
-            <td>TCO</td>
-            <td>降低 CRAC 与传统制冷运营成本</td>
-            <td>降低配电线损与变压器采购成本</td>
-            <td>大幅改善全生命周期成本结构</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <div id="tab-240v" class="arch-panel">
-    <div class="a-card">
-      <h3 style="font-family:var(--ff-head); margin-bottom:16px;">240V LVAC 渐进路线</h3>
-      <p style="color:var(--muted-2); line-height:1.9; margin-bottom:16px;">适合现有数据中心存量改造场景。前端通过 SST/Front-End 做好准备，机柜内 Sidecar 承担 BBU、CBU 和保护功能，液冷系统可先于 HVDC 独立部署。</p>
-      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-top:16px;">
-        <div style="padding:14px; background:rgba(255,255,255,0.025); border:1px solid var(--border); border-radius:var(--r-sm);">
-          <div style="font-family:var(--ff-mono); font-size:0.65rem; color:var(--teal); margin-bottom:8px; letter-spacing:0.15em; text-transform:uppercase;">适合阶段</div>
-          <p style="font-size:0.84rem; color:var(--muted); line-height:1.65;">存量改造、过渡期部署、30–80 kW 密度区间</p>
-        </div>
-        <div style="padding:14px; background:rgba(255,255,255,0.025); border:1px solid var(--border); border-radius:var(--r-sm);">
-          <div style="font-family:var(--ff-mono); font-size:0.65rem; color:var(--blue); margin-bottom:8px; letter-spacing:0.15em; text-transform:uppercase;">主要优势</div>
-          <p style="font-size:0.84rem; color:var(--muted); line-height:1.65;">与现有保护体系兼容，改造成本低，可分阶段推进</p>
-        </div>
-        <div style="padding:14px; background:rgba(255,255,255,0.025); border:1px solid var(--border); border-radius:var(--r-sm);">
-          <div style="font-family:var(--ff-mono); font-size:0.65rem; color:var(--gold); margin-bottom:8px; letter-spacing:0.15em; text-transform:uppercase;">主要制约</div>
-          <p style="font-size:0.84rem; color:var(--muted); line-height:1.65;">多级变换损耗仍在，难以支撑 100 kW 以上超高密度</p>
-        </div>
+  <!-- SERVICES SCOPE -->
+  <div class="ss rv">
+    <div class="cl">Services Scope · 服务范围</div>
+    <h3>DCDeepTech 六大服务模块</h3>
+    <p class="pp">平台提供覆盖 AI 算力接入、API 技术集成、市场进入咨询、认证路径协助、数字营销到战略合作的全链路支持。</p>
+    <div class="sg2">
+      <div class="si2 tc">
+        <span class="se">⚡</span>
+        <h4>跨境 AI 算力接入</h4>
+        <p>通过 CCI 数据通道，为东南亚与 APAC 企业客户提供稳定、合规的中国 AI 算力资源接入。</p>
+        <ul>
+          <li>GPU 云实例按需调度</li>
+          <li>训练与推理工作负载路由</li>
+          <li>多区域算力价格套利</li>
+          <li>预付费积分 / 企业账单</li>
+        </ul>
+      </div>
+      <div class="si2 bl">
+        <span class="se">🔌</span>
+        <h4>OpenAI 兼容 API 网关</h4>
+        <p>多模型 API 聚合平台，兼容 OpenAI SDK，支持 APAC 开发者用熟悉的接口调用主流 LLM 模型。</p>
+        <ul>
+          <li>/v1/chat/completions 兼容接口</li>
+          <li>智能路由 + 优先级 fallback</li>
+          <li>按 token 计量 / 预付积分余额</li>
+          <li>SGD 本地结算</li>
+        </ul>
+      </div>
+      <div class="si2 gd">
+        <span class="se">🏭</span>
+        <h4>OCP 基础设施市场进入咨询</h4>
+        <p>帮助中国液冷、供配电、机柜厂商梳理能力定位，制定面向国际客户的市场进入策略。</p>
+        <ul>
+          <li>OCP Cooling / HVDC 能力定位梳理</li>
+          <li>英伟达 OEM 体系对接路径</li>
+          <li>超大规模客户准入条件研究</li>
+          <li>SI 渠道合作伙伴识别</li>
+        </ul>
+      </div>
+      <div class="si2 vl">
+        <span class="se">📋</span>
+        <h4>OCP 认证路径协助</h4>
+        <p>协助厂商理解 OCP 相关认证框架、测试要求与全球准入标准，降低认证信息不对称成本。</p>
+        <ul>
+          <li>OCP 生态认证框架解读</li>
+          <li>测试实验室对接协调</li>
+          <li>IMDA / MAS 合规准备（新加坡）</li>
+          <li>PDPA / PIPL 数据合规咨询</li>
+        </ul>
+      </div>
+      <div class="si2 tc">
+        <span class="se">🌐</span>
+        <h4>技术叙事与国际数字营销</h4>
+        <p>将复杂工程语言转化为国际客户、投资方和生态伙伴听得懂的市场叙事，并通过数字渠道放大。</p>
+        <ul>
+          <li>英文技术白皮书与产品文档</li>
+          <li>官网国际化内容与 SEO</li>
+          <li>行业媒体与 KOL 传播策略</li>
+          <li>展会与技术大会内容准备</li>
+        </ul>
+      </div>
+      <div class="si2 bl">
+        <span class="se">🤝</span>
+        <h4>战略合作伙伴网络</h4>
+        <p>借助新加坡区位优势与 CCI 双边机制，为技术厂商搭建面向 APAC 与全球 AI 基础设施生态的合作桥梁。</p>
+        <ul>
+          <li>数据中心运营商接触</li>
+          <li>Colocation 资源对接</li>
+          <li>产业基金与资本方引荐</li>
+          <li>技术联合方案开发</li>
+        </ul>
       </div>
     </div>
   </div>
 
-  <div id="tab-800v" class="arch-panel">
-    <div class="a-card">
-      <h3 style="font-family:var(--ff-head); margin-bottom:16px;">±400V / 800V HVDC 终局路线</h3>
-      <p style="color:var(--muted-2); line-height:1.9; margin-bottom:16px;">面向新建高密度 AI 工厂的核心架构方向。从设施供电入口到机柜板级 DC/DC，实现最少转换级数与最高系统效率，是 OCP Cooling 真正释放全部潜力的配套前提。</p>
-      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-top:16px;">
-        <div style="padding:14px; background:rgba(0,212,168,0.06); border:1px solid rgba(0,212,168,0.15); border-radius:var(--r-sm);">
-          <div style="font-family:var(--ff-mono); font-size:0.65rem; color:var(--teal); margin-bottom:8px; letter-spacing:0.15em; text-transform:uppercase;">适合阶段</div>
-          <p style="font-size:0.84rem; color:var(--muted); line-height:1.65;">新建超高密度 AI 工厂、超大规模机柜、未来架构卡位</p>
-        </div>
-        <div style="padding:14px; background:rgba(0,212,168,0.06); border:1px solid rgba(0,212,168,0.15); border-radius:var(--r-sm);">
-          <div style="font-family:var(--ff-mono); font-size:0.65rem; color:var(--teal); margin-bottom:8px; letter-spacing:0.15em; text-transform:uppercase;">系统优势</div>
-          <p style="font-size:0.84rem; color:var(--muted); line-height:1.65;">减少寄生功耗，释放空间，匹配更高 rack density 与液冷架构</p>
-        </div>
-        <div style="padding:14px; background:rgba(0,212,168,0.06); border:1px solid rgba(0,212,168,0.15); border-radius:var(--r-sm);">
-          <div style="font-family:var(--ff-mono); font-size:0.65rem; color:var(--teal); margin-bottom:8px; letter-spacing:0.15em; text-transform:uppercase;">成熟要件</div>
-          <p style="font-size:0.84rem; color:var(--muted); line-height:1.65;">需要标准、保护、器件、认证、生态与运维体系共同成熟</p>
-        </div>
-      </div>
+  <div class="ctas rv">
+    <div>
+      <h3>准备好让工程能力被世界看见了吗？</h3>
+      <p>DCDeepTech 新加坡团队，随时准备深度对话。</p>
+    </div>
+    <div class="bts">
+      <a class="btn bp" href="mailto:hello@dcdeeptech.com">联系我们</a>
+      <a class="btn bg" href="#eco">了解生态系统</a>
     </div>
   </div>
 </section>
 
-<!-- DIVIDER -->
-<div class="section-divider"><span class="divider-tag">Section V</span></div>
-
-<!-- ═══════════════════════════════════════
-     SECTION V: DCDEEPTECH
-════════════════════════════════════════ -->
-<section class="section" id="dcdeeptech">
-  <div class="section-header reveal">
-    <div class="section-num">§ V</div>
-    <div class="section-title-block">
-      <h2>DCDeepTech：工程能力向全球市场语言的转化</h2>
-      <p>在 AI 基础设施市场，技术领先是必要条件，但不是充分条件。</p>
-    </div>
+<!-- §VI -->
+<div class="dv"><span class="dt">Section VI</span></div>
+<section class="sec" id="eco">
+  <div class="sh rv"><div class="sn">§ VI</div><div class="stb"><h2>范式迁移：这不是单一部件升级，而是整套数据中心重构</h2><p>OCP、服务器厂商、电源厂商、冷却厂商、云厂商与资本方正在同一时间推动这两条路线。</p></div></div>
+  <div class="g2">
+    <div class="ca rv"><div class="cl">Compute Vendors</div><h3>服务器与加速器厂商</h3><p>推动更高计算密度，自然倒逼更先进的散热与供电组织方式。GPU 功率密度增长是整个技术迁移的根本驱动力。</p></div>
+    <div class="ca rv d1"><div class="cl">Power Ecosystem</div><h3>电源与器件厂商</h3><p>从 Sidecar 到 board-level conversion，HVDC 让新一代宽禁带器件（GaN/SiC）与新型拓扑的价值得以完整体现。</p></div>
+    <div class="ca rv d2"><div class="cl">Thermal Ecosystem</div><h3>冷却与热管理厂商</h3><p>CDU、cold plate、manifold、facility loop 从数据中心配件升级为系统架构核心，液冷供应链正在重构全球格局。</p></div>
+    <div class="ca rv d3"><div class="cl">Delivery Ecosystem</div><h3>Hyperscale / Colo / SI</h3><p>最终决定哪些技术进入真实项目、哪些方案具备规模化交付资格，并形成可持续的市场份额。</p></div>
   </div>
-
-  <div class="platform-hero reveal">
-    <h2>从芯片散热、机柜供电，到全球 OEM、Hyperscale 与 SI 生态进入路径</h2>
-    <p>
-      DCDeepTech 立足新加坡，依托中新（重庆）互联互通 CCI 数据通道，以跨境 AI 算力与 API 平台为核心，
-      帮助全球技术厂商将 OCP cooling、HVDC、液冷机柜、供配电一体化等工程能力，
-      转化为国际客户、渠道伙伴与生态体系可理解、可验证、可采购的市场表达。
-    </p>
-  </div>
-
-  <div class="value-grid reveal">
-    <div class="a-card">
-      <div class="a-card-label">Singapore Platform</div>
-      <h3>新加坡：不只是地理节点</h3>
-      <p>同时连接国际数据中心资本、区域客户、标准讨论、渠道伙伴与全球技术品牌。既是展示窗口，也是全球厂商进入国际 AI 基础设施市场的可信准入平台。</p>
-    </div>
-    <div class="a-card reveal-delay-1">
-      <div class="a-card-label">OEM / Hyperscale / SI</div>
-      <h3>进入更高门槛生态</h3>
-      <p>协助对接英伟达 OEM 体系、超级数据中心客户和系统集成商 SI 渠道，让技术方案不只停留在工厂与实验室，而能进入真实国际项目路径。</p>
-    </div>
-    <div class="a-card reveal-delay-2">
-      <div class="a-card-label">Certification + Narrative</div>
-      <h3>认证路径与技术叙事</h3>
-      <p>OCP 相关认证理解、生态沟通、技术叙事、数字营销与国际话语体系，本身就是全球化能力的一部分。能被"看见"，往往是成交的前提。</p>
-    </div>
-  </div>
-
-  <div class="platform-grid-2 reveal">
-    <div class="a-card">
-      <div class="a-card-label">What DCDeepTech Helps With</div>
-      <h3>从技术理解到市场进入</h3>
-      <p style="margin-bottom:16px;">DCDeepTech 作为理解 OCP cooling、HVDC、机柜供配电、液冷制造、系统集成交付与国际客户需求的新加坡平台，帮助厂商将复杂工程语言变成更有说服力的市场进入语言。</p>
-      <div style="display:flex; flex-direction:column; gap:8px;">
-        <div style="padding:10px 14px; background:rgba(0,212,168,0.05); border:1px solid rgba(0,212,168,0.12); border-radius:var(--r-sm); font-size:0.85rem; color:var(--muted-2); line-height:1.6;">
-          梳理厂商在 cold plate、CDU、rack cooling、power shelf、HVDC 等方面的能力表达
-        </div>
-        <div style="padding:10px 14px; background:rgba(0,212,168,0.05); border:1px solid rgba(0,212,168,0.12); border-radius:var(--r-sm); font-size:0.85rem; color:var(--muted-2); line-height:1.6;">
-          协助对接英伟达 OEM 体系、超级数据中心客户和 SI 渠道伙伴
-        </div>
-        <div style="padding:10px 14px; background:rgba(0,212,168,0.05); border:1px solid rgba(0,212,168,0.12); border-radius:var(--r-sm); font-size:0.85rem; color:var(--muted-2); line-height:1.6;">
-          支持 OCP 相关认证路径理解、产品定位、生态沟通与国际数字营销
-        </div>
-      </div>
-    </div>
-    <div class="a-card reveal-delay-1">
-      <div class="a-card-label">Business Translation Layer</div>
-      <h3>工程能力必须被"翻译"成可采购能力</h3>
-      <p style="margin-bottom:16px;">顶级客户采购的从来不只是零部件，而是一种可以落地的系统能力：能否进入 OEM 生态、满足 hyperscale 场景、被 SI 带进项目、用国际客户听得懂的方式展示可靠性与交付力。</p>
-      <div style="padding:16px; background:linear-gradient(135deg,rgba(0,212,168,0.08),rgba(79,142,247,0.08)); border:1px solid rgba(79,142,247,0.18); border-radius:var(--r-sm); font-size:0.9rem; color:var(--muted-2); line-height:1.8;">
-        OCP 相关认证、技术叙事、官网呈现、数字营销与国际化销售材料，并不是附属品，而是全球 AI 基础设施市场的入口条件。
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- DIVIDER -->
-<div class="section-divider"><span class="divider-tag">Section VI</span></div>
-
-<!-- ═══════════════════════════════════════
-     SECTION VI: ECOSYSTEM
-════════════════════════════════════════ -->
-<section class="section" id="ecosystem">
-  <div class="section-header reveal">
-    <div class="section-num">§ VI</div>
-    <div class="section-title-block">
-      <h2>范式迁移：这不是单一部件升级，而是整套数据中心重构</h2>
-      <p>OCP、服务器厂商、电源厂商、冷却厂商、云厂商与资本方正在同一时间推动这两条路线。</p>
-    </div>
-  </div>
-
-  <div class="ecosystem-grid">
-    <div class="a-card reveal">
-      <div class="a-card-label">Compute Vendors</div>
-      <h3>服务器与加速器厂商</h3>
-      <p>推动更高计算密度，自然倒逼更先进的散热与供电组织方式。GPU 功率密度增长是整个技术迁移的根本驱动力。</p>
-    </div>
-    <div class="a-card reveal reveal-delay-1">
-      <div class="a-card-label">Power Ecosystem</div>
-      <h3>电源与器件厂商</h3>
-      <p>从 Sidecar 到 board-level conversion，HVDC 让新一代宽禁带器件（GaN/SiC）与新型拓扑的价值得以完整体现。</p>
-    </div>
-    <div class="a-card reveal reveal-delay-2">
-      <div class="a-card-label">Thermal Ecosystem</div>
-      <h3>冷却与热管理厂商</h3>
-      <p>CDU、cold plate、manifold、facility loop 从数据中心配件升级为系统架构核心。液冷供应链正在建立全新的全球格局。</p>
-    </div>
-    <div class="a-card reveal reveal-delay-3">
-      <div class="a-card-label">Delivery Ecosystem</div>
-      <h3>Hyperscale / Colo / SI</h3>
-      <p>最终决定哪些技术可以被带进真实项目、哪些方案真正具备规模化交付资格，并形成可持续的市场份额。</p>
-    </div>
-  </div>
-
-  <div class="pull-quote reveal">
-    <p>
-      未来 AI 基础设施的核心，不是"更多机器"，而是更先进的
-      <span style="color:var(--teal);">power-and-thermal architecture</span>，
-      以及把这种架构能力成功带入全球客户与生态体系的能力。
-    </p>
+  <div class="pq rv">
+    <p>未来 AI 基础设施的核心，不是"更多机器"，而是更先进的 <span style="color:var(--tl)">power-and-thermal architecture</span>，以及把这种架构能力成功带入全球客户与生态体系的能力。</p>
     <cite>OCP Cooling · HVDC · DCDeepTech Singapore</cite>
   </div>
 </section>
 
-<!-- ═══════════════════════════════════════
-     FOOTER
-════════════════════════════════════════ -->
 <footer>
-  <div class="footer-inner">
-    <div class="footer-brand">DCDeepTech</div>
-    <div class="footer-meta">
-      Singapore · Chongqing · CCI Data Channel<br/>
-      AI Computing &amp; API Platform · Research Paper
-    </div>
-    <div class="footer-links">
+  <div class="ft">
+    <div class="ftb">DCDeepTech</div>
+    <div class="ftm">Singapore · Chongqing · CCI Data Channel<br/>AI Computing &amp; API Platform</div>
+    <div class="ftl">
       <a href="#top">回到顶部</a>
-      <a href="#dcdeeptech">平台定位</a>
+      <a href="#dct">平台服务</a>
       <a href="#challenge">问题陈述</a>
     </div>
   </div>
 </footer>
-
-</div><!-- /content-wrap -->
+</div>
 
 <script>
-/* ─────────────────────────────────────────────
-   CANVAS NEURAL NET BACKGROUND
-───────────────────────────────────────────── */
-(function() {
-  const canvas = document.getElementById('bgCanvas');
-  const ctx = canvas.getContext('2d');
-  const nodes = [];
-  const NODE_COUNT = 56;
-  const MAX_DIST = 160;
-
-  function resize() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  }
-
-  window.addEventListener('resize', resize);
-  resize();
-
-  for (let i = 0; i < NODE_COUNT; i++) {
-    nodes.push({
-      x: Math.random() * window.innerWidth,
-      y: Math.random() * window.innerHeight,
-      vx: (Math.random() - 0.5) * 0.3,
-      vy: (Math.random() - 0.5) * 0.3,
-      r: Math.random() * 1.8 + 0.8,
-      color: ['#00d4a8', '#4f8ef7', '#a78bfa', '#e8c96a'][Math.floor(Math.random() * 4)]
-    });
-  }
-
-  function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Draw edges
-    for (let i = 0; i < nodes.length; i++) {
-      for (let j = i + 1; j < nodes.length; j++) {
-        const dx = nodes[i].x - nodes[j].x;
-        const dy = nodes[i].y - nodes[j].y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < MAX_DIST) {
-          const alpha = (1 - dist / MAX_DIST) * 0.18;
-          ctx.beginPath();
-          ctx.strokeStyle = `rgba(79,142,247,${alpha})`;
-          ctx.lineWidth = 0.7;
-          ctx.moveTo(nodes[i].x, nodes[i].y);
-          ctx.lineTo(nodes[j].x, nodes[j].y);
-          ctx.stroke();
-        }
-      }
+/* Canvas */
+(()=>{
+  const c=document.getElementById('bgc'),x=c.getContext('2d');
+  const cols=['#00d4a8','#4f8ef7','#a78bfa','#e8c96a'];
+  let ns=[];
+  const rsz=()=>{c.width=innerWidth;c.height=innerHeight;};
+  addEventListener('resize',rsz);rsz();
+  for(let i=0;i<50;i++)ns.push({x:Math.random()*innerWidth,y:Math.random()*innerHeight,vx:(Math.random()-.5)*.26,vy:(Math.random()-.5)*.26,r:Math.random()*1.5+.7,col:cols[i%4]});
+  function draw(){
+    x.clearRect(0,0,c.width,c.height);
+    for(let i=0;i<ns.length;i++)for(let j=i+1;j<ns.length;j++){
+      const d=Math.hypot(ns[i].x-ns[j].x,ns[i].y-ns[j].y);
+      if(d<148){x.beginPath();x.strokeStyle=`rgba(79,142,247,${(1-d/148)*.14})`;x.lineWidth=.6;x.moveTo(ns[i].x,ns[i].y);x.lineTo(ns[j].x,ns[j].y);x.stroke();}
     }
-
-    // Draw nodes
-    nodes.forEach(n => {
-      ctx.beginPath();
-      ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
-      ctx.fillStyle = n.color;
-      ctx.globalAlpha = 0.55;
-      ctx.fill();
-      ctx.globalAlpha = 1;
-    });
-
-    // Update
-    nodes.forEach(n => {
-      n.x += n.vx;
-      n.y += n.vy;
-      if (n.x < 0 || n.x > canvas.width)  n.vx *= -1;
-      if (n.y < 0 || n.y > canvas.height) n.vy *= -1;
-    });
-
+    ns.forEach(n=>{x.beginPath();x.arc(n.x,n.y,n.r,0,Math.PI*2);x.fillStyle=n.col;x.globalAlpha=.48;x.fill();x.globalAlpha=1;n.x+=n.vx;n.y+=n.vy;if(n.x<0||n.x>c.width)n.vx*=-1;if(n.y<0||n.y>c.height)n.vy*=-1;});
     requestAnimationFrame(draw);
   }
   draw();
 })();
 
-/* ─────────────────────────────────────────────
-   CURSOR GLOW
-───────────────────────────────────────────── */
-const glow = document.getElementById('cursorGlow');
-let glowX = 0, glowY = 0;
-let targetX = 0, targetY = 0;
+/* Cursor */
+const cg=document.getElementById('cglow');let gx=0,gy=0,tx=0,ty=0;
+document.addEventListener('mousemove',e=>{tx=e.clientX;ty=e.clientY;});
+(function ag(){gx+=(tx-gx)*.08;gy+=(ty-gy)*.08;cg.style.left=gx+'px';cg.style.top=gy+'px';requestAnimationFrame(ag);})();
 
-document.addEventListener('mousemove', e => {
-  targetX = e.clientX;
-  targetY = e.clientY;
+/* Progress */
+const rp=document.getElementById('rp');
+addEventListener('scroll',()=>{const d=document.documentElement;rp.style.width=(d.scrollTop/(d.scrollHeight-d.clientHeight)*100).toFixed(1)+'%';},{passive:true});
+
+/* Reveal */
+const ro=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');ro.unobserve(e.target);}});},{threshold:.08});
+document.querySelectorAll('.rv').forEach(el=>ro.observe(el));
+
+/* Counters */
+function cnt(el){const t=+el.dataset.t,dur=1450,s=performance.now();(function f(n){const p=Math.min((n-s)/dur,1),e=1-Math.pow(1-p,3);el.textContent=Math.round(e*t);if(p<1)requestAnimationFrame(f);else el.textContent=t;})(performance.now());}
+const co=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.querySelectorAll('.counter').forEach(cnt);co.unobserve(e.target);}});},{threshold:.28});
+document.querySelectorAll('.sp,.hc').forEach(el=>co.observe(el));
+
+/* Density bars */
+const bo=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.querySelectorAll('.df').forEach(b=>b.style.width=b.dataset.w);bo.unobserve(e.target);}});},{threshold:.22});
+const dc=document.querySelector('.dc');if(dc)bo.observe(dc);
+
+/* Table stagger */
+function stag(w){w.querySelectorAll('tbody tr').forEach((r,i)=>{r.classList.remove('ri');setTimeout(()=>r.classList.add('ri'),i*78);});}
+const to=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){stag(e.target);to.unobserve(e.target);}});},{threshold:.12});
+document.querySelectorAll('.ct').forEach(t=>to.observe(t));
+
+/* Tabs */
+document.querySelectorAll('.tb').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const sec=btn.closest('.sec');
+    sec.querySelectorAll('.tb').forEach(b=>b.classList.remove('on'));
+    sec.querySelectorAll('.tp').forEach(p=>p.classList.remove('on'));
+    btn.classList.add('on');
+    const p=document.getElementById(btn.dataset.t);
+    if(p){p.classList.add('on');stag(p);}
+  });
 });
 
-function animGlow() {
-  glowX += (targetX - glowX) * 0.08;
-  glowY += (targetY - glowY) * 0.08;
-  glow.style.left = glowX + 'px';
-  glow.style.top  = glowY + 'px';
-  requestAnimationFrame(animGlow);
-}
-animGlow();
-
-/* ─────────────────────────────────────────────
-   SCROLL REVEAL
-───────────────────────────────────────────── */
-const revealObserver = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      e.target.classList.add('visible');
-      revealObserver.unobserve(e.target);
-    }
-  });
-}, { threshold: 0.12 });
-
-document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
-
-/* ─────────────────────────────────────────────
-   COUNTER ANIMATION
-───────────────────────────────────────────── */
-function animCounter(el) {
-  const target = +el.dataset.target;
-  const dur = 1600;
-  const start = performance.now();
-  function frame(now) {
-    const p = Math.min((now - start) / dur, 1);
-    const ease = 1 - Math.pow(1 - p, 3);
-    el.textContent = Math.round(ease * target);
-    if (p < 1) requestAnimationFrame(frame);
-    else el.textContent = target;
+/* Hamburger */
+const ham=document.getElementById('ham'),mn=document.getElementById('mobNav');
+ham.addEventListener('click',()=>{
+  const op=ham.classList.toggle('op');
+  ham.setAttribute('aria-expanded',op);
+  mn.classList.toggle('op',op);
+  document.body.style.overflow=op?'hidden':'';
+});
+mn.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{
+  ham.classList.remove('op');mn.classList.remove('op');
+  ham.setAttribute('aria-expanded','false');document.body.style.overflow='';
+}));
+document.addEventListener('click',e=>{
+  if(!ham.contains(e.target)&&!mn.contains(e.target)){
+    ham.classList.remove('op');mn.classList.remove('op');
+    ham.setAttribute('aria-expanded','false');document.body.style.overflow='';
   }
-  requestAnimationFrame(frame);
-}
-
-const counterObs = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      e.target.querySelectorAll('.counter').forEach(animCounter);
-      counterObs.unobserve(e.target);
-    }
-  });
-}, { threshold: 0.3 });
-
-document.querySelectorAll('.stat-panel, .hvdc-card').forEach(el => counterObs.observe(el));
-
-/* ─────────────────────────────────────────────
-   DENSITY BARS
-───────────────────────────────────────────── */
-const barObs = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      e.target.querySelectorAll('.density-fill').forEach(bar => {
-        bar.style.width = bar.dataset.width;
-      });
-      barObs.unobserve(e.target);
-    }
-  });
-}, { threshold: 0.3 });
-
-const densityChart = document.querySelector('.density-chart');
-if (densityChart) barObs.observe(densityChart);
-
-/* ─────────────────────────────────────────────
-   TABLE ROW STAGGER
-───────────────────────────────────────────── */
-const tableObs = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      e.target.querySelectorAll('tbody tr').forEach((row, i) => {
-        setTimeout(() => row.classList.add('row-visible'), i * 90);
-      });
-      tableObs.unobserve(e.target);
-    }
-  });
-}, { threshold: 0.2 });
-
-document.querySelectorAll('.coupling-table').forEach(t => tableObs.observe(t));
-
-/* ─────────────────────────────────────────────
-   ARCH TABS
-───────────────────────────────────────────── */
-document.querySelectorAll('.arch-tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('.arch-tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.arch-panel').forEach(p => p.classList.remove('active'));
-    tab.classList.add('active');
-    document.getElementById(tab.dataset.tab).classList.add('active');
-    // Re-animate table rows
-    document.querySelectorAll('#' + tab.dataset.tab + ' tbody tr').forEach((row, i) => {
-      row.classList.remove('row-visible');
-      setTimeout(() => row.classList.add('row-visible'), i * 90);
-    });
-  });
 });
 
-/* ─────────────────────────────────────────────
-   READ PROGRESS BAR
-───────────────────────────────────────────── */
-const prog = document.getElementById('readProgress');
-window.addEventListener('scroll', () => {
-  const doc = document.documentElement;
-  const pct = doc.scrollTop / (doc.scrollHeight - doc.clientHeight) * 100;
-  prog.style.width = pct.toFixed(1) + '%';
-}, { passive: true });
-
-/* ─────────────────────────────────────────────
-   3D TILT CARDS
-───────────────────────────────────────────── */
-const prefersReduced = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
-if (!prefersReduced) {
-  document.querySelectorAll('.a-card, .stat-panel, .hvdc-card, .cooling-diagram').forEach(card => {
-    card.addEventListener('mousemove', e => {
-      if (window.innerWidth < 900) return;
-      const r = card.getBoundingClientRect();
-      const px = (e.clientX - r.left) / r.width;
-      const py = (e.clientY - r.top) / r.height;
-      const ry = (px - 0.5) * 10;
-      const rx = (0.5 - py) * 10;
-      card.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-4px)`;
+/* 3D tilt — pointer devices only */
+if(matchMedia('(hover:hover)').matches){
+  document.querySelectorAll('.ca,.sp,.hc,.cd').forEach(c=>{
+    c.addEventListener('mousemove',e=>{
+      const r=c.getBoundingClientRect(),px=(e.clientX-r.left)/r.width,py=(e.clientY-r.top)/r.height;
+      c.style.transform=`perspective(860px) rotateX(${((.5-py)*8).toFixed(2)}deg) rotateY(${((px-.5)*8).toFixed(2)}deg) translateY(-3px)`;
     });
-    card.addEventListener('mouseleave', () => {
-      card.style.transform = '';
-    });
+    c.addEventListener('mouseleave',()=>c.style.transform='');
   });
-}
-
-/* ─────────────────────────────────────────────
-   TYPEWRITER on pull quote (on first view)
-───────────────────────────────────────────── */
-const pullQuote = document.querySelector('.pull-quote p');
-if (pullQuote) {
-  const originalHTML = pullQuote.innerHTML;
-  let revealed = false;
-
-  const pqObs = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting && !revealed) {
-        revealed = true;
-        pullQuote.innerHTML = '';
-        const text = originalHTML.replace(/<[^>]+>/g, c => c); // keep HTML tags
-        let i = 0;
-        const raw = originalHTML;
-        pullQuote.innerHTML = '';
-
-        // Simple character reveal with preserved HTML
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = raw;
-        const fullText = tempDiv.textContent;
-        let ci = 0;
-        const total = fullText.length;
-
-        function revealChar() {
-          if (ci >= total) { pullQuote.innerHTML = raw; return; }
-          ci += 3;
-          const fraction = Math.min(ci / total, 1);
-          pullQuote.style.opacity = fraction;
-          if (ci < total) requestAnimationFrame(revealChar);
-          else pullQuote.innerHTML = raw;
-        }
-        pullQuote.style.opacity = '0';
-        requestAnimationFrame(revealChar);
-      }
-    });
-  }, { threshold: 0.5 });
-  pqObs.observe(document.querySelector('.pull-quote'));
 }
 </script>
 </body>
