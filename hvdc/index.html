@@ -1,3655 +1,2134 @@
  <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>OCP Cooling + HVDC | 下一代 AI 数据中心架构</title>
-  <meta name="description" content="OCP Cooling 与 HVDC 如何一起定义下一代 AI 数据中心。包含冷板液冷、CDU、800V HVDC、功率密度、PUE/TCO 与 DCDeepTech 新加坡平台定位。" />
-  <style>
-    :root {
-      --bg: #040914;
-      --bg-deep: #06101c;
-      --bg-soft: #0a1627;
-      --bg-soft-2: #0d1d34;
-      --panel: rgba(10, 21, 38, 0.66);
-      --panel-strong: rgba(7, 16, 30, 0.9);
-      --line: rgba(129, 168, 255, 0.14);
-      --line-strong: rgba(129, 168, 255, 0.3);
-      --text: #eef6ff;
-      --muted: #97aecf;
-      --muted-2: #bed0e7;
-      --teal: #45e6c4;
-      --blue: #6fa9ff;
-      --violet: #9b8dff;
-      --amber: #ffca6a;
-      --danger: #ff6c8f;
-      --shadow: 0 26px 110px rgba(0, 0, 0, 0.42);
-      --shadow-soft: 0 16px 46px rgba(0, 0, 0, 0.22);
-      --radius: 30px;
-      --radius-sm: 18px;
-      --max: 1280px;
-      --grid-size: 44px;
-      --nav-height: 78px;
-      --content-offset: 0px;
-      --parallax-y: 0px;
-      --hero-shift: 0px;
-      --hero-spin: 0deg;
-      --section-gap: clamp(64px, 8vw, 120px);
-      --step-color: var(--blue);
-      --fs-hero: clamp(2.75rem, 6vw, 5.5rem);
-      --fs-h2: clamp(2rem, 4vw, 3.8rem);
-      --fs-h3: clamp(1.28rem, 2vw, 1.7rem);
-      --fs-body: clamp(0.96rem, 1.14vw, 1.06rem);
-      --fs-small: clamp(0.8rem, 0.94vw, 0.9rem);
-      --transition-smooth: 0.6s cubic-bezier(.22,1,.36,1);
-    }
-
-    * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    body {
-      margin: 0;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
-      color: var(--text);
-      background:
-        radial-gradient(circle at 12% 14%, rgba(111, 169, 255, 0.16), transparent 24%),
-        radial-gradient(circle at 88% 16%, rgba(69, 230, 196, 0.14), transparent 22%),
-        radial-gradient(circle at 62% 74%, rgba(155, 141, 255, 0.12), transparent 24%),
-        linear-gradient(180deg, #030811 0%, #060f1b 42%, #050b15 100%);
-      min-height: 100vh;
-      overflow-x: hidden;
-      -webkit-font-smoothing: antialiased;
-      text-rendering: optimizeLegibility;
-      font-size: 16px;
-    }
-
-    body::before,
-    body::after {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: -4;
-    }
-
-    body::before {
-      background-image:
-        linear-gradient(rgba(111, 169, 255, 0.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(111, 169, 255, 0.05) 1px, transparent 1px);
-      background-size: var(--grid-size) var(--grid-size);
-      mask-image: radial-gradient(circle at center, rgba(0,0,0,1) 28%, rgba(0,0,0,0.2) 78%, transparent 96%);
-      transform: translateY(calc(var(--parallax-y) * 0.12));
-      animation: gridFloat 24s linear infinite;
-    }
-
-    body::after {
-      background:
-        radial-gradient(circle at 20% 20%, rgba(69,230,196,0.14), transparent 20%),
-        radial-gradient(circle at 80% 18%, rgba(111,169,255,0.13), transparent 20%),
-        radial-gradient(circle at 58% 80%, rgba(155,141,255,0.12), transparent 24%);
-      filter: blur(46px);
-      opacity: 0.95;
-      animation: auroraDrift 16s ease-in-out infinite alternate;
-      transform: translateY(calc(var(--parallax-y) * -0.08));
-    }
-
-    .noise,
-    .aurora,
-    .particles,
-    .scroll-glow {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-    }
-
-    .noise {
-      z-index: -3;
-      opacity: 0.08;
-      background-image: radial-gradient(rgba(255,255,255,0.65) 0.7px, transparent 0.7px);
-      background-size: 12px 12px;
-      mix-blend-mode: soft-light;
-    }
-
-    .aurora {
-      z-index: -2;
-      overflow: hidden;
-    }
-
-    .aurora span {
-      position: absolute;
-      width: 42vw;
-      height: 42vw;
-      min-width: 320px;
-      min-height: 320px;
-      border-radius: 50%;
-      filter: blur(52px);
-      opacity: 0.18;
-      mix-blend-mode: screen;
-      animation: blobFloat 16s ease-in-out infinite;
-    }
-
-    .aurora span:nth-child(1) {
-      left: -6vw;
-      top: 8vh;
-      background: radial-gradient(circle, rgba(111,169,255,0.82) 0%, rgba(111,169,255,0) 66%);
-    }
-
-    .aurora span:nth-child(2) {
-      right: -10vw;
-      top: 12vh;
-      background: radial-gradient(circle, rgba(69,230,196,0.82) 0%, rgba(69,230,196,0) 68%);
-      animation-delay: -5s;
-    }
-
-    .aurora span:nth-child(3) {
-      left: 30vw;
-      bottom: -12vh;
-      background: radial-gradient(circle, rgba(155,141,255,0.86) 0%, rgba(155,141,255,0) 70%);
-      animation-delay: -9s;
-    }
-
-    .particles {
-      z-index: -1;
-      overflow: hidden;
-    }
-
-    .particle {
-      position: absolute;
-      width: 2px;
-      height: 2px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.75);
-      box-shadow: 0 0 12px rgba(111,169,255,0.6);
-      animation: particleFloat linear infinite;
-      opacity: 0.45;
-    }
-
-    .scroll-glow {
-      z-index: -1;
-      background:
-        radial-gradient(circle at 50% calc(8% + var(--scroll-progress, 0) * 70%), rgba(111,169,255,0.08), transparent 24%),
-        radial-gradient(circle at 50% calc(12% + var(--scroll-progress, 0) * 70%), rgba(69,230,196,0.05), transparent 24%);
-      filter: blur(32px);
-      opacity: 0.92;
-    }
-
-    a { color: inherit; text-decoration: none; }
-    img { max-width: 100%; display: block; }
-    button { font: inherit; }
-
-    .container {
-      width: min(calc(100% - 40px), var(--max));
-      margin: 0 auto;
-      position: relative;
-      z-index: 1;
-    }
-
-    .parallax-layer {
-      transform: translate3d(0, calc(var(--parallax-speed, 0) * var(--parallax-y)), 0);
-      will-change: transform;
-    }
-
-    .topbar {
-      position: sticky;
-      top: 0;
-      z-index: 120;
-      backdrop-filter: blur(20px);
-      background: rgba(5, 12, 22, 0.62);
-      border-bottom: 1px solid rgba(129, 168, 255, 0.08);
-    }
-
-    .topbar::after {
-      content: "";
-      position: absolute;
-      inset: auto 0 -1px 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(69,230,196,0.28), rgba(111,169,255,0.36), transparent);
-      opacity: 0.6;
-    }
-
-    .topbar-inner {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 18px;
-      min-height: var(--nav-height);
-      position: relative;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      font-weight: 800;
-      letter-spacing: 0.02em;
-      position: relative;
-      z-index: 2;
-    }
-
-    .brand-text {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      line-height: 1;
-    }
-
-    .brand-text small {
-      color: var(--muted);
-      font-size: 11px;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      font-weight: 600;
-    }
-
-    .brand-mark {
-      width: 44px;
-      height: 44px;
-      border-radius: 15px;
-      position: relative;
-      background: linear-gradient(135deg, rgba(69,230,196,0.22), rgba(111,169,255,0.18));
-      border: 1px solid rgba(129, 168, 255, 0.24);
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04), 0 12px 30px rgba(69,230,196,0.12);
-      overflow: hidden;
-    }
-
-    .brand-mark::before,
-    .brand-mark::after {
-      content: "";
-      position: absolute;
-      border-radius: 999px;
-      background: linear-gradient(90deg, var(--teal), var(--blue));
-    }
-
-    .brand-mark::before {
-      width: 22px;
-      height: 4px;
-      left: 10px;
-      top: 12px;
-      box-shadow: 0 10px 0 rgba(111, 169, 255, 0.95);
-      animation: brandSweep 4.8s ease-in-out infinite;
-    }
-
-    .brand-mark::after {
-      width: 4px;
-      height: 22px;
-      right: 12px;
-      top: 10px;
-      opacity: 0.95;
-    }
-
-    .nav-wrap {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .nav {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      justify-content: flex-end;
-      align-items: center;
-    }
-
-    .nav a {
-      padding: 10px 14px;
-      border-radius: 999px;
-      color: var(--muted);
-      font-size: 14px;
-      transition: 0.25s ease;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .nav a::before {
-      content: "";
-      position: absolute;
-      inset: auto 18px 8px 18px;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(69,230,196,0.9), transparent);
-      transform: translateX(-130%);
-      transition: 0.35s ease;
-    }
-
-    .nav a:hover {
-      color: var(--text);
-      background: rgba(111, 169, 255, 0.08);
-    }
-
-    .nav a:hover::before {
-      transform: translateX(130%);
-    }
-
-    .nav-toggle {
-      display: none;
-      width: 48px;
-      height: 48px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,0.08);
-      background: rgba(255,255,255,0.03);
-      color: var(--text);
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      position: relative;
-      z-index: 2;
-    }
-
-    .nav-toggle span,
-    .nav-toggle::before,
-    .nav-toggle::after {
-      content: "";
-      position: absolute;
-      width: 18px;
-      height: 2px;
-      border-radius: 999px;
-      background: currentColor;
-      transition: 0.3s ease;
-    }
-
-    .nav-toggle span { transform: translateY(0); }
-    .nav-toggle::before { transform: translateY(-6px); }
-    .nav-toggle::after { transform: translateY(6px); }
-    .nav-toggle.active span { opacity: 0; }
-    .nav-toggle.active::before { transform: rotate(45deg); }
-    .nav-toggle.active::after { transform: rotate(-45deg); }
-
-    .hero {
-      position: relative;
-      padding: 92px 0 52px;
-      overflow: clip;
-    }
-
-    .hero::before {
-      content: "";
-      position: absolute;
-      left: 50%;
-      top: 0;
-      width: 1200px;
-      height: 1200px;
-      transform: translate(-50%, calc(-38% + var(--hero-shift) * -0.2)) rotate(var(--hero-spin));
-      background: radial-gradient(circle, rgba(69,230,196,0.10), transparent 54%);
-      filter: blur(24px);
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    .hero-grid {
-      display: grid;
-      grid-template-columns: 1.04fr 0.96fr;
-      gap: 28px;
-      align-items: stretch;
-    }
-
-    .hero-copy,
-    .hero-visual,
-    .hero-demo,
-    .section-card,
-    .architecture,
-    .timeline,
-    .ecosystem-grid > article,
-    .value-grid > article,
-    .footer-panel,
-    .quote,
-    .stat-bar,
-    .transition-strip,
-    .scene-note {
-      background: var(--panel);
-      border: 1px solid var(--line);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(20px);
-    }
-
-    .hero-copy,
-    .hero-visual,
-    .hero-demo,
-    .tilt-card {
-      transform-style: preserve-3d;
-      will-change: transform;
-    }
-
-    .hero-copy,
-    .hero-visual,
-    .hero-demo,
-    .section-card,
-    .architecture,
-    .timeline,
-    .footer-panel,
-    .quote {
-      position: relative;
-      overflow: hidden;
-      isolation: isolate;
-      border-radius: var(--radius);
-    }
-
-    .hero-copy::before,
-    .hero-visual::before,
-    .hero-demo::before,
-    .section-card::before,
-    .architecture::before,
-    .timeline::before,
-    .footer-panel::before,
-    .quote::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      border-radius: inherit;
-      padding: 1px;
-      background: linear-gradient(130deg, rgba(69,230,196,0.34), rgba(111,169,255,0.24), rgba(155,141,255,0.22), transparent 72%);
-      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-      -webkit-mask-composite: xor;
-              mask-composite: exclude;
-      opacity: 0.95;
-      pointer-events: none;
-    }
-
-    .hero-copy {
-      padding: 36px;
-      transform: translateY(calc(var(--hero-shift) * -0.06));
-    }
-
-    .hero-copy::after {
-      content: "";
-      position: absolute;
-      width: 360px;
-      height: 360px;
-      right: -120px;
-      top: -120px;
-      background: radial-gradient(circle, rgba(69,230,196,0.16), transparent 65%);
-      filter: blur(10px);
-      z-index: -1;
-      animation: haloRotate 10s linear infinite;
-    }
-
-    .eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 8px 14px;
-      border-radius: 999px;
-      font-size: 12px;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: #c9daff;
-      background: rgba(111, 169, 255, 0.08);
-      border: 1px solid rgba(111, 169, 255, 0.18);
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03);
-    }
-
-    .eyebrow-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--teal), var(--blue));
-      box-shadow: 0 0 0 6px rgba(69, 230, 196, 0.10), 0 0 20px rgba(69, 230, 196, 0.25);
-      animation: dotPulse 2.8s ease-in-out infinite;
-    }
-
-    h1, h2, h3, h4 {
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
-      font-weight: 800;
-    }
-
-    h1 {
-      margin: 20px 0 16px;
-      font-size: var(--fs-hero);
-      line-height: 0.94;
-      letter-spacing: -0.06em;
-      max-width: 10.8ch;
-      text-wrap: balance;
-    }
-
-    .lead {
-      font-size: clamp(1rem, 1.18vw, 1.12rem);
-      line-height: 1.82;
-      color: var(--muted);
-      max-width: 68ch;
-      margin: 0 0 22px;
-    }
-
-    .hero-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 14px;
-      margin-top: 28px;
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      padding: 14px 20px;
-      border-radius: 999px;
-      font-weight: 800;
-      transition: transform 0.25s ease, background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
-      border: 1px solid transparent;
-      position: relative;
-      overflow: hidden;
-      min-height: 50px;
-    }
-
-    .btn::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(110deg, transparent 0%, rgba(255,255,255,0.15) 35%, transparent 72%);
-      transform: translateX(-120%);
-      transition: 0.55s ease;
-    }
-
-    .btn:hover { transform: translateY(-2px); }
-    .btn:hover::before { transform: translateX(140%); }
-
-    .btn-primary {
-      background: linear-gradient(135deg, rgba(69,230,196,0.18), rgba(111,169,255,0.22));
-      border-color: rgba(111,169,255,0.24);
-      color: var(--text);
-      box-shadow: 0 12px 30px rgba(69,230,196,0.08);
-    }
-
-    .btn-secondary {
-      background: rgba(255,255,255,0.02);
-      border-color: rgba(255,255,255,0.10);
-      color: #d7e5ff;
-    }
-
-    .mini-stats {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0,1fr));
-      gap: 12px;
-      margin-top: 28px;
-    }
-
-    .mini-stats article {
-      padding: 18px 16px;
-      border-radius: 22px;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.07);
-      position: relative;
-      overflow: hidden;
-      transition: transform 0.28s ease, border-color 0.28s ease, box-shadow 0.28s ease;
-    }
-
-    .mini-stats article:hover {
-      transform: translateY(-4px);
-      border-color: rgba(111,169,255,0.2);
-      box-shadow: 0 18px 40px rgba(0,0,0,0.22);
-    }
-
-    .mini-stats article::after {
-      content: "";
-      position: absolute;
-      inset: auto -40px -60px auto;
-      width: 120px;
-      height: 120px;
-      background: radial-gradient(circle, rgba(111,169,255,0.18), transparent 64%);
-      pointer-events: none;
-    }
-
-    .mini-stats strong {
-      display: block;
-      font-size: clamp(1.7rem, 2.4vw, 2.1rem);
-      letter-spacing: -0.05em;
-      line-height: 1;
-    }
-
-    .mini-stats span {
-      display: block;
-      margin-top: 8px;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.55;
-    }
-
-    .hero-visual {
-      padding: 24px;
-      min-height: 640px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      transform: translateY(calc(var(--hero-shift) * -0.03));
-    }
-
-    .hero-visual::after {
-      content: "";
-      position: absolute;
-      inset: auto auto -100px -80px;
-      width: 300px;
-      height: 300px;
-      background: radial-gradient(circle, rgba(155,141,255,0.14), transparent 62%);
-      z-index: -1;
-      filter: blur(10px);
-    }
-
-    .visual-caption {
-      max-width: 52ch;
-      font-size: 14px;
-      line-height: 1.78;
-      color: var(--muted);
-      margin: 0;
-    }
-
-    .diagram {
-      position: relative;
-      height: 470px;
-      border-radius: 26px;
-      background:
-        radial-gradient(circle at 52% 12%, rgba(69,230,196,0.14), transparent 18%),
-        radial-gradient(circle at 90% 18%, rgba(155,141,255,0.12), transparent 18%),
-        linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.012));
-      border: 1px solid rgba(255,255,255,0.06);
-      overflow: hidden;
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03);
-    }
-
-    .diagram::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background:
-        linear-gradient(180deg, transparent, rgba(111,169,255,0.04), transparent),
-        repeating-linear-gradient(180deg, rgba(255,255,255,0.04) 0 1px, transparent 1px 18px);
-      mix-blend-mode: screen;
-      animation: scanMove 8s linear infinite;
-      opacity: 0.55;
-    }
-
-    .diagram::after {
-      content: "";
-      position: absolute;
-      inset: 10% 18% auto auto;
-      width: 180px;
-      height: 180px;
-      border-radius: 50%;
-      border: 1px solid rgba(111,169,255,0.12);
-      box-shadow: 0 0 0 18px rgba(111,169,255,0.04), 0 0 0 42px rgba(69,230,196,0.025);
-      animation: radarPulse 5.5s ease-in-out infinite;
-    }
-
-    .orbital-ring {
-      position: absolute;
-      inset: 84px auto auto 50%;
-      width: 300px;
-      height: 300px;
-      transform: translateX(-50%) rotate(var(--hero-spin));
-      border: 1px solid rgba(111,169,255,0.12);
-      border-radius: 50%;
-      box-shadow: 0 0 0 18px rgba(111,169,255,0.03), inset 0 0 20px rgba(255,255,255,0.02);
-      animation: spinSlow 18s linear infinite;
-    }
-
-    .orbital-ring::before,
-    .orbital-ring::after {
-      content: "";
-      position: absolute;
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: var(--teal);
-      top: -5px;
-      left: 50%;
-      transform: translateX(-50%);
-      box-shadow: 0 0 16px rgba(69,230,196,0.8);
-    }
-
-    .orbital-ring::after {
-      width: 8px;
-      height: 8px;
-      background: var(--violet);
-      top: 50%;
-      left: auto;
-      right: -4px;
-      transform: translateY(-50%);
-      box-shadow: 0 0 16px rgba(155,141,255,0.8);
-    }
-
-    .rack,
-    .power-sidecar,
-    .cooling-loop,
-    .facility-node,
-    .signal-line,
-    .pulse,
-    .data-label,
-    .power-core {
-      position: absolute;
-    }
-
-    .facility-node {
-      width: 160px;
-      height: 88px;
-      border-radius: 22px;
-      border: 1px solid rgba(111, 169, 255, 0.22);
-      background: rgba(11, 22, 39, 0.9);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      font-size: 14px;
-      line-height: 1.45;
-      color: #dce9ff;
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03), 0 20px 38px rgba(0,0,0,0.22);
-      transform: translateY(calc(var(--parallax-y) * -0.04));
-    }
-
-    .facility-node.top-left { top: 22px; left: 20px; }
-    .facility-node.top-right { top: 22px; right: 20px; }
-
-    .rack {
-      left: 50%;
-      transform: translateX(-50%) translateY(calc(var(--parallax-y) * -0.02));
-      top: 112px;
-      width: 250px;
-      height: 286px;
-      border-radius: 28px;
-      padding: 18px;
-      background: linear-gradient(180deg, rgba(16,31,54,0.97), rgba(10,20,36,0.96));
-      border: 1px solid rgba(111,169,255,0.24);
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03), 0 24px 60px rgba(0,0,0,0.35);
-      animation: rackBreath 5s ease-in-out infinite;
-    }
-
-    .rack::before {
-      content: "OCP AI Rack";
-      display: block;
-      font-size: 13px;
-      color: #c8d8f7;
-      margin-bottom: 12px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-
-    .rack::after {
-      content: "";
-      position: absolute;
-      inset: auto 18px 18px 18px;
-      height: 6px;
-      border-radius: 999px;
-      background: linear-gradient(90deg, rgba(69,230,196,0.18), rgba(111,169,255,0.65), rgba(69,230,196,0.18));
-      box-shadow: 0 0 18px rgba(111,169,255,0.35);
-      animation: rackEnergy 3.5s linear infinite;
-    }
-
-    .rack-stack {
-      display: grid;
-      gap: 10px;
-    }
-
-    .rack-unit {
-      height: 42px;
-      border-radius: 12px;
-      background: linear-gradient(90deg, rgba(69,230,196,0.08), rgba(111,169,255,0.10));
-      border: 1px solid rgba(111,169,255,0.18);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 14px;
-      font-size: 12px;
-      color: #dce9ff;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .rack-unit::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.08) 50%, transparent 100%);
-      transform: translateX(-110%);
-      animation: unitSweep 4.2s linear infinite;
-    }
-
-    .rack-unit:nth-child(2)::before { animation-delay: 0.7s; }
-    .rack-unit:nth-child(3)::before { animation-delay: 1.4s; }
-    .rack-unit:nth-child(4)::before { animation-delay: 2.1s; }
-    .rack-unit:nth-child(5)::before { animation-delay: 2.8s; }
-
-    .rack-unit small { color: #97b1d6; }
-
-    .power-sidecar {
-      top: 138px;
-      right: 42px;
-      width: 148px;
-      height: 224px;
-      border-radius: 24px;
-      padding: 18px 14px;
-      background: linear-gradient(180deg, rgba(26,22,47,0.96), rgba(13,17,34,0.94));
-      border: 1px solid rgba(155,141,255,0.22);
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03), 0 24px 46px rgba(0,0,0,0.28);
-      overflow: hidden;
-      transform: translateY(calc(var(--parallax-y) * 0.02));
-    }
-
-    .power-sidecar::before {
-      content: "HVDC Sidecar";
-      display: block;
-      margin-bottom: 10px;
-      font-size: 12px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: #ddd8ff;
-    }
-
-    .power-sidecar::after {
-      content: "";
-      position: absolute;
-      inset: auto auto -50px -30px;
-      width: 120px;
-      height: 120px;
-      background: radial-gradient(circle, rgba(155,141,255,0.18), transparent 62%);
-    }
-
-    .power-sidecar .cell {
-      height: 34px;
-      border-radius: 10px;
-      margin-bottom: 10px;
-      background: rgba(155,141,255,0.08);
-      border: 1px solid rgba(155,141,255,0.18);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #d7d2ff;
-      font-size: 11px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .power-sidecar .cell::before {
-      content: "";
-      position: absolute;
-      left: -30%;
-      top: 0;
-      width: 30%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.10), transparent);
-      animation: cellSweep 3.8s linear infinite;
-    }
-
-    .cooling-loop {
-      left: 44px;
-      bottom: 42px;
-      width: 196px;
-      height: 152px;
-      border-radius: 26px;
-      background: linear-gradient(180deg, rgba(8,35,42,0.96), rgba(8,21,27,0.95));
-      border: 1px solid rgba(69,230,196,0.22);
-      padding: 18px;
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03), 0 22px 42px rgba(0,0,0,0.28);
-      overflow: hidden;
-      transform: translateY(calc(var(--parallax-y) * 0.03));
-    }
-
-    .cooling-loop::before {
-      content: "CDU + Manifold";
-      display: block;
-      margin-bottom: 10px;
-      font-size: 12px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: #d6fff7;
-    }
-
-    .cooling-loop::after {
-      content: "";
-      position: absolute;
-      inset: auto -30px -36px auto;
-      width: 120px;
-      height: 120px;
-      background: radial-gradient(circle, rgba(69,230,196,0.20), transparent 64%);
-    }
-
-    .loop-bar {
-      height: 16px;
-      border-radius: 999px;
-      margin-bottom: 10px;
-      background: linear-gradient(90deg, rgba(69,230,196,0.30), rgba(69,230,196,0.08));
-      border: 1px solid rgba(69,230,196,0.18);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .loop-bar::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.16), transparent);
-      transform: translateX(-100%);
-      animation: liquidFlow 2.4s linear infinite;
-    }
-
-    .loop-bar:nth-child(2)::before { animation-delay: 0.5s; }
-    .loop-bar:nth-child(3)::before { animation-delay: 1s; }
-
-    .signal-line {
-      height: 2px;
-      background: linear-gradient(90deg, rgba(111,169,255,0.04), rgba(111,169,255,0.9), rgba(111,169,255,0.04));
-      transform-origin: left center;
-      box-shadow: 0 0 10px rgba(111,169,255,0.35);
-    }
-
-    .line-power-a { width: 120px; top: 198px; left: calc(50% + 124px); }
-    .line-facility-a { width: 150px; top: 64px; left: 148px; }
-    .line-facility-b { width: 150px; top: 64px; right: 148px; transform: rotate(180deg); }
-    .line-cooling-a { width: 160px; top: 320px; left: 78px; transform: rotate(-22deg); }
-
-    .pulse {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: var(--blue);
-      box-shadow: 0 0 16px rgba(111,169,255,0.8);
-      animation: pulseMove 3.4s ease-in-out infinite;
-    }
-
-    .pulse.power { top: 194px; left: calc(50% + 128px); animation-delay: 0.4s; }
-    .pulse.cooling { background: var(--teal); box-shadow: 0 0 16px rgba(69,230,196,0.7); top: 315px; left: 96px; animation-delay: 1.2s; }
-
-    .power-core {
-      right: 56px;
-      top: 102px;
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      background: radial-gradient(circle, #fff, #9b8dff 45%, rgba(155,141,255,0) 72%);
-      box-shadow: 0 0 20px rgba(155,141,255,0.8);
-      animation: powerCore 2.8s ease-in-out infinite;
-    }
-
-    .data-label {
-      padding: 8px 12px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
-      color: #dfeaff;
-      font-size: 11px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      backdrop-filter: blur(8px);
-      box-shadow: 0 12px 24px rgba(0,0,0,0.18);
-    }
-
-    .label-1 { left: 34px; top: 120px; }
-    .label-2 { right: 22px; top: 376px; }
-    .label-3 { left: 240px; bottom: 18px; }
-
-    .stat-bar {
-      margin-top: 16px;
-      border-radius: 20px;
-      padding: 14px 16px;
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0,1fr));
-      gap: 12px;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.06);
-      box-shadow: var(--shadow-soft);
-    }
-
-    .stat-bar article {
-      padding: 10px 10px 8px;
-      border-radius: 16px;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.05);
-    }
-
-    .stat-bar strong {
-      display: block;
-      font-size: clamp(1.2rem, 1.7vw, 1.45rem);
-      letter-spacing: -0.04em;
-      line-height: 1;
-    }
-
-    .stat-bar span {
-      display: block;
-      margin-top: 6px;
-      font-size: 12px;
-      color: var(--muted);
-      line-height: 1.4;
-    }
-
-    .hero-demo-wrap {
-      padding-top: 16px;
-    }
-
-    .hero-demo {
-      padding: 24px;
-      display: grid;
-      grid-template-columns: 0.94fr 1.06fr;
-      gap: 20px;
-      align-items: stretch;
-      transform: translateY(calc(var(--parallax-y) * 0.015));
-    }
-
-    .demo-copy {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 18px;
-      min-width: 0;
-    }
-
-    .demo-copy h2 {
-      margin: 0 0 10px;
-      font-size: clamp(1.8rem, 3vw, 2.9rem);
-      letter-spacing: -0.05em;
-      line-height: 0.98;
-    }
-
-    .demo-copy p {
-      margin: 0;
-      color: var(--muted);
-      line-height: 1.82;
-      font-size: var(--fs-body);
-    }
-
-    .scene-meta {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0,1fr));
-      gap: 12px;
-    }
-
-    .scene-note {
-      border-radius: 18px;
-      padding: 14px 16px;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.06);
-      box-shadow: var(--shadow-soft);
-    }
-
-    .scene-note strong {
-      display: block;
-      font-size: 13px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: #dce9ff;
-      margin-bottom: 6px;
-    }
-
-    .scene-note span {
-      display: block;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.55;
-    }
-
-    .demo-stage {
-      position: relative;
-      min-height: 560px;
-      border-radius: 28px;
-      overflow: hidden;
-      background:
-        radial-gradient(circle at 52% 8%, rgba(69,230,196,0.10), transparent 16%),
-        radial-gradient(circle at 80% 16%, rgba(155,141,255,0.12), transparent 20%),
-        linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
-      border: 1px solid rgba(255,255,255,0.06);
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03);
-      perspective: 1400px;
-      transform-style: preserve-3d;
-    }
-
-    .demo-stage::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0.035), transparent 24%),
-        repeating-linear-gradient(90deg, rgba(255,255,255,0.04) 0 1px, transparent 1px 28px),
-        repeating-linear-gradient(180deg, rgba(255,255,255,0.03) 0 1px, transparent 1px 28px);
-      opacity: 0.45;
-      mix-blend-mode: screen;
-      animation: sceneGrid 10s linear infinite;
-    }
-
-    .demo-stage::after {
-      content: "";
-      position: absolute;
-      inset: auto 10% 8% 10%;
-      height: 160px;
-      background: radial-gradient(ellipse at center, rgba(111,169,255,0.16), transparent 68%);
-      filter: blur(28px);
-      transform: translateZ(0);
-    }
-
-    .scene-camera {
-      position: absolute;
-      inset: 0;
-      transform-style: preserve-3d;
-      transform: rotateX(12deg) rotateY(-8deg) translateY(calc(var(--parallax-y) * 0.012));
-    }
-
-    .scene-core {
-      position: absolute;
-      left: 50%;
-      top: 53%;
-      width: 240px;
-      height: 320px;
-      transform-style: preserve-3d;
-      transform: translate3d(-50%, -50%, 40px) scale(1.02);
-    }
-
-    .rack-shell {
-      position: absolute;
-      inset: 0;
-      border-radius: 28px;
-      background: linear-gradient(180deg, rgba(17,31,57,0.96), rgba(9,18,34,0.96));
-      border: 1px solid rgba(111,169,255,0.26);
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03), 0 34px 90px rgba(0,0,0,0.34);
-      transform: translateZ(6px);
-    }
-
-    .rack-shell::before {
-      content: "3D OCP Rack";
-      position: absolute;
-      left: 18px;
-      top: 14px;
-      color: #dce7fb;
-      font-size: 12px;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-    }
-
-    .rack-shell::after {
-      content: "";
-      position: absolute;
-      inset: auto 18px 18px 18px;
-      height: 8px;
-      border-radius: 999px;
-      background: linear-gradient(90deg, rgba(69,230,196,0.12), rgba(111,169,255,0.6), rgba(69,230,196,0.12));
-      box-shadow: 0 0 24px rgba(111,169,255,0.32);
-      animation: rackEnergy 3.5s linear infinite;
-    }
-
-    .explode-layer {
-      position: absolute;
-      left: 20px;
-      right: 20px;
-      height: 38px;
-      border-radius: 14px;
-      background: linear-gradient(90deg, rgba(69,230,196,0.08), rgba(111,169,255,0.13));
-      border: 1px solid rgba(111,169,255,0.18);
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02), 0 14px 30px rgba(0,0,0,0.14);
-      transform-style: preserve-3d;
-      transition: transform 0.95s cubic-bezier(.22,1,.36,1), opacity 0.75s ease;
-      overflow: hidden;
-    }
-
-    .explode-layer::before {
-      content: attr(data-label);
-      position: absolute;
-      left: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 11px;
-      color: #dce9ff;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      z-index: 2;
-    }
-
-    .explode-layer::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.08) 50%, transparent 100%);
-      transform: translateX(-120%);
-      animation: unitSweep 4.2s linear infinite;
-    }
-
-    .explode-layer:nth-child(2) { top: 54px; }
-    .explode-layer:nth-child(3) { top: 100px; }
-    .explode-layer:nth-child(4) { top: 146px; }
-    .explode-layer:nth-child(5) { top: 192px; }
-    .explode-layer:nth-child(6) { top: 238px; }
-
-    .demo-stage[data-scene="0"] .explode-layer,
-    .demo-stage[data-scene="1"] .explode-layer,
-    .demo-stage[data-scene="2"] .explode-layer,
-    .demo-stage[data-scene="3"] .explode-layer,
-    .demo-stage[data-scene="4"] .explode-layer {
-      opacity: 0.96;
-    }
-
-    .demo-stage[data-scene="0"] .explode-layer:nth-child(2) { transform: translate3d(0, 0, 34px); }
-    .demo-stage[data-scene="0"] .explode-layer:nth-child(3) { transform: translate3d(0, 0, 24px); }
-    .demo-stage[data-scene="0"] .explode-layer:nth-child(4) { transform: translate3d(0, 0, 18px); }
-    .demo-stage[data-scene="0"] .explode-layer:nth-child(5) { transform: translate3d(0, 0, 12px); }
-    .demo-stage[data-scene="0"] .explode-layer:nth-child(6) { transform: translate3d(0, 0, 8px); }
-
-    .demo-stage[data-scene="1"] .explode-layer:nth-child(2) { transform: translate3d(-70px, -84px, 140px) rotateY(-12deg); }
-    .demo-stage[data-scene="1"] .explode-layer:nth-child(3) { transform: translate3d(68px, -30px, 100px) rotateY(12deg); }
-    .demo-stage[data-scene="1"] .explode-layer:nth-child(4) { transform: translate3d(-84px, 26px, 120px) rotateY(-10deg); }
-    .demo-stage[data-scene="1"] .explode-layer:nth-child(5) { transform: translate3d(82px, 74px, 110px) rotateY(10deg); }
-    .demo-stage[data-scene="1"] .explode-layer:nth-child(6) { transform: translate3d(0, 130px, 80px) rotateX(8deg); }
-
-    .demo-stage[data-scene="2"] .explode-layer:nth-child(2) { transform: translate3d(-30px, -40px, 70px); }
-    .demo-stage[data-scene="2"] .explode-layer:nth-child(3) { transform: translate3d(30px, -12px, 56px); }
-    .demo-stage[data-scene="2"] .explode-layer:nth-child(4) { transform: translate3d(-18px, 18px, 54px); }
-    .demo-stage[data-scene="2"] .explode-layer:nth-child(5) { transform: translate3d(22px, 52px, 60px); }
-    .demo-stage[data-scene="2"] .explode-layer:nth-child(6) { transform: translate3d(0, 84px, 66px); }
-
-    .demo-stage[data-scene="3"] .explode-layer:nth-child(2) { transform: translate3d(-22px, -48px, 84px) rotateY(-6deg); }
-    .demo-stage[data-scene="3"] .explode-layer:nth-child(3) { transform: translate3d(26px, -10px, 72px); }
-    .demo-stage[data-scene="3"] .explode-layer:nth-child(4) { transform: translate3d(-26px, 20px, 70px); }
-    .demo-stage[data-scene="3"] .explode-layer:nth-child(5) { transform: translate3d(24px, 58px, 72px); }
-    .demo-stage[data-scene="3"] .explode-layer:nth-child(6) { transform: translate3d(0, 98px, 76px); }
-
-    .demo-stage[data-scene="4"] .explode-layer:nth-child(2) { transform: translate3d(-42px, -60px, 120px); }
-    .demo-stage[data-scene="4"] .explode-layer:nth-child(3) { transform: translate3d(40px, -24px, 112px); }
-    .demo-stage[data-scene="4"] .explode-layer:nth-child(4) { transform: translate3d(-46px, 14px, 116px); }
-    .demo-stage[data-scene="4"] .explode-layer:nth-child(5) { transform: translate3d(42px, 56px, 114px); }
-    .demo-stage[data-scene="4"] .explode-layer:nth-child(6) { transform: translate3d(0, 104px, 108px); }
-
-    .scene-floor {
-      position: absolute;
-      left: 50%;
-      bottom: 72px;
-      width: 520px;
-      height: 220px;
-      transform: translateX(-50%) rotateX(78deg);
-      border-radius: 24px;
-      background:
-        radial-gradient(circle at center, rgba(111,169,255,0.18), transparent 58%),
-        repeating-linear-gradient(90deg, rgba(255,255,255,0.05) 0 1px, transparent 1px 24px),
-        repeating-linear-gradient(180deg, rgba(255,255,255,0.04) 0 1px, transparent 1px 24px),
-        linear-gradient(180deg, rgba(9, 19, 35, 0.85), rgba(4, 8, 16, 0.95));
-      border: 1px solid rgba(111,169,255,0.14);
-      box-shadow: 0 0 60px rgba(111,169,255,0.18);
-      opacity: 0.9;
-    }
-
-    .scene-orbit {
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      width: 520px;
-      height: 520px;
-      transform: translate(-50%, -50%) rotateZ(var(--hero-spin));
-      border-radius: 50%;
-      border: 1px solid rgba(111,169,255,0.08);
-      box-shadow: 0 0 0 24px rgba(111,169,255,0.02), 0 0 0 54px rgba(69,230,196,0.02);
-      animation: spinSlow 30s linear infinite reverse;
-    }
-
-    .scene-orbit::before,
-    .scene-orbit::after {
-      content: "";
-      position: absolute;
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      background: var(--blue);
-      box-shadow: 0 0 18px rgba(111,169,255,0.8);
-    }
-
-    .scene-orbit::before { top: 18px; left: 50%; transform: translateX(-50%); }
-    .scene-orbit::after { top: 50%; right: 18px; transform: translateY(-50%); background: var(--teal); box-shadow: 0 0 18px rgba(69,230,196,0.8); }
-
-    .power-path,
-    .cool-path,
-    .demo-node,
-    .flow-pulse,
-    .telemetry-beam,
-    .scene-label,
-    .scene-panel,
-    .scene-hud,
-    .step-indicators {
-      position: absolute;
-    }
-
-    .demo-node {
-      width: 124px;
-      min-height: 70px;
-      border-radius: 20px;
-      border: 1px solid rgba(255,255,255,0.08);
-      background: rgba(9, 19, 35, 0.88);
-      color: #e8f2ff;
-      font-size: 12px;
-      line-height: 1.5;
-      display: grid;
-      place-items: center;
-      text-align: center;
-      padding: 10px 12px;
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03), 0 18px 40px rgba(0,0,0,0.22);
-      transition: transform var(--transition-smooth), border-color var(--transition-smooth), box-shadow var(--transition-smooth), opacity var(--transition-smooth);
-    }
-
-    .demo-node strong {
-      display: block;
-      font-size: 11px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: #bcd0ea;
-      margin-bottom: 4px;
-    }
-
-    .node-grid { left: 38px; top: 44px; }
-    .node-sst { right: 42px; top: 44px; }
-    .node-sidecar { right: 34px; top: 228px; }
-    .node-cdu { left: 34px; bottom: 48px; }
-    .node-telemetry { right: 92px; bottom: 42px; }
-
-    .demo-stage[data-scene="0"] .node-grid,
-    .demo-stage[data-scene="1"] .node-grid,
-    .demo-stage[data-scene="2"] .node-grid,
-    .demo-stage[data-scene="3"] .node-grid,
-    .demo-stage[data-scene="4"] .node-grid,
-    .demo-stage[data-scene="0"] .node-sst,
-    .demo-stage[data-scene="1"] .node-sst,
-    .demo-stage[data-scene="2"] .node-sst,
-    .demo-stage[data-scene="3"] .node-sst,
-    .demo-stage[data-scene="4"] .node-sst,
-    .demo-stage[data-scene="0"] .node-sidecar,
-    .demo-stage[data-scene="1"] .node-sidecar,
-    .demo-stage[data-scene="2"] .node-sidecar,
-    .demo-stage[data-scene="3"] .node-sidecar,
-    .demo-stage[data-scene="4"] .node-sidecar,
-    .demo-stage[data-scene="0"] .node-cdu,
-    .demo-stage[data-scene="1"] .node-cdu,
-    .demo-stage[data-scene="2"] .node-cdu,
-    .demo-stage[data-scene="3"] .node-cdu,
-    .demo-stage[data-scene="4"] .node-cdu,
-    .demo-stage[data-scene="0"] .node-telemetry,
-    .demo-stage[data-scene="1"] .node-telemetry,
-    .demo-stage[data-scene="2"] .node-telemetry,
-    .demo-stage[data-scene="3"] .node-telemetry,
-    .demo-stage[data-scene="4"] .node-telemetry {
-      opacity: 0.92;
-    }
-
-    .demo-stage[data-scene="0"] .node-grid,
-    .demo-stage[data-scene="0"] .node-sst { border-color: rgba(111,169,255,0.18); }
-    .demo-stage[data-scene="1"] .node-sidecar { border-color: rgba(155,141,255,0.24); box-shadow: 0 0 0 1px rgba(255,255,255,0.03), 0 0 38px rgba(155,141,255,0.16); }
-    .demo-stage[data-scene="2"] .node-cdu { border-color: rgba(69,230,196,0.24); box-shadow: 0 0 0 1px rgba(255,255,255,0.03), 0 0 38px rgba(69,230,196,0.14); }
-    .demo-stage[data-scene="3"] .node-telemetry { border-color: rgba(111,169,255,0.24); box-shadow: 0 0 0 1px rgba(255,255,255,0.03), 0 0 38px rgba(111,169,255,0.16); }
-    .demo-stage[data-scene="4"] .demo-node { transform: translateZ(6px) scale(1.02); }
-
-    .power-path,
-    .cool-path,
-    .telemetry-beam {
-      height: 2px;
-      border-radius: 999px;
-      transform-origin: left center;
-      opacity: 0.3;
-      transition: opacity 0.45s ease, filter 0.45s ease;
-    }
-
-    .power-path {
-      background: linear-gradient(90deg, rgba(155,141,255,0.05), rgba(155,141,255,0.92), rgba(111,169,255,0.18));
-      box-shadow: 0 0 12px rgba(155,141,255,0.45);
-    }
-
-    .cool-path {
-      background: linear-gradient(90deg, rgba(69,230,196,0.05), rgba(69,230,196,0.92), rgba(69,230,196,0.16));
-      box-shadow: 0 0 12px rgba(69,230,196,0.4);
-    }
-
-    .telemetry-beam {
-      background: linear-gradient(90deg, rgba(111,169,255,0.03), rgba(111,169,255,0.8), rgba(69,230,196,0.12));
-      box-shadow: 0 0 10px rgba(111,169,255,0.34);
-    }
-
-    .p-grid-sst { width: 166px; top: 106px; left: 158px; transform: rotate(0deg); }
-    .p-sst-sidecar { width: 112px; top: 178px; left: 382px; transform: rotate(64deg); }
-    .p-sidecar-rack { width: 120px; top: 272px; left: 360px; transform: rotate(166deg); }
-
-    .c-cdu-rack { width: 138px; top: 370px; left: 164px; transform: rotate(-26deg); }
-    .c-rack-return { width: 126px; top: 408px; left: 218px; transform: rotate(26deg); }
-
-    .t-rack-telemetry { width: 164px; top: 386px; left: 314px; transform: rotate(0deg); }
-    .t-sidecar-telemetry { width: 92px; top: 314px; left: 430px; transform: rotate(84deg); }
-
-    .flow-pulse {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-
-    .flow-pulse.power {
-      background: var(--violet);
-      box-shadow: 0 0 16px rgba(155,141,255,0.8);
-      animation: powerDemoFlow 3.2s ease-in-out infinite;
-    }
-
-    .flow-pulse.cool {
-      background: var(--teal);
-      box-shadow: 0 0 16px rgba(69,230,196,0.8);
-      animation: coolDemoFlow 2.8s ease-in-out infinite;
-    }
-
-    .flow-pulse.telemetry {
-      background: var(--blue);
-      box-shadow: 0 0 16px rgba(111,169,255,0.8);
-      animation: telemetryFlow 3s ease-in-out infinite;
-    }
-
-    .scene-panel {
-      left: 22px;
-      right: 22px;
-      bottom: 18px;
-      display: grid;
-      grid-template-columns: 0.86fr 1.14fr;
-      gap: 16px;
-      z-index: 10;
-    }
-
-    .scene-hud,
-    .step-indicators {
-      border-radius: 20px;
-      padding: 14px 16px;
-      background: rgba(6, 13, 25, 0.8);
-      border: 1px solid rgba(255,255,255,0.08);
-      backdrop-filter: blur(14px);
-      box-shadow: var(--shadow-soft);
-    }
-
-    .scene-hud strong {
-      display: block;
-      margin-bottom: 6px;
-      font-size: 12px;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: #dce9ff;
-    }
-
-    .scene-hud h3 {
-      margin: 0;
-      font-size: clamp(1.1rem, 1.8vw, 1.45rem);
-      line-height: 1.1;
-      letter-spacing: -0.04em;
-    }
-
-    .scene-hud p {
-      margin: 8px 0 0;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.65;
-    }
-
-    .step-indicators {
-      display: grid;
-      grid-template-columns: repeat(5, minmax(0,1fr));
-      gap: 10px;
-    }
-
-    .step-chip {
-      min-height: 58px;
-      border-radius: 16px;
-      border: 1px solid rgba(255,255,255,0.06);
-      background: rgba(255,255,255,0.02);
-      padding: 10px 10px 8px;
-      color: var(--muted);
-      transition: all 0.35s ease;
-    }
-
-    .step-chip strong {
-      display: block;
-      font-size: 10px;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      margin-bottom: 6px;
-      color: #b9cde6;
-    }
-
-    .step-chip span {
-      display: block;
-      font-size: 12px;
-      line-height: 1.36;
-    }
-
-    .step-chip.active {
-      color: var(--text);
-      border-color: rgba(111,169,255,0.22);
-      background: linear-gradient(135deg, rgba(111,169,255,0.12), rgba(69,230,196,0.08));
-      box-shadow: 0 0 22px rgba(111,169,255,0.14);
-      transform: translateY(-4px);
-    }
-
-    .demo-stage[data-scene="0"] .step-chip:nth-child(1),
-    .demo-stage[data-scene="1"] .step-chip:nth-child(2),
-    .demo-stage[data-scene="2"] .step-chip:nth-child(3),
-    .demo-stage[data-scene="3"] .step-chip:nth-child(4),
-    .demo-stage[data-scene="4"] .step-chip:nth-child(5) {
-      color: var(--text);
-      border-color: rgba(111,169,255,0.22);
-      background: linear-gradient(135deg, rgba(111,169,255,0.12), rgba(69,230,196,0.08));
-      box-shadow: 0 0 22px rgba(111,169,255,0.14);
-      transform: translateY(-4px);
-    }
-
-    .scene-hud [data-scene-title],
-    .scene-hud [data-scene-copy] {
-      transition: opacity 0.25s ease, transform 0.25s ease;
-    }
-
-    .scene-hud.switching [data-scene-title],
-    .scene-hud.switching [data-scene-copy] {
-      opacity: 0;
-      transform: translateY(6px);
-    }
-
-    .demo-stage[data-scene="0"] .p-grid-sst,
-    .demo-stage[data-scene="0"] .flow-pulse.power,
-    .demo-stage[data-scene="0"] .node-grid,
-    .demo-stage[data-scene="0"] .node-sst,
-    .demo-stage[data-scene="1"] .p-sst-sidecar,
-    .demo-stage[data-scene="1"] .p-sidecar-rack,
-    .demo-stage[data-scene="1"] .flow-pulse.power,
-    .demo-stage[data-scene="1"] .node-sidecar,
-    .demo-stage[data-scene="2"] .c-cdu-rack,
-    .demo-stage[data-scene="2"] .c-rack-return,
-    .demo-stage[data-scene="2"] .flow-pulse.cool,
-    .demo-stage[data-scene="2"] .node-cdu,
-    .demo-stage[data-scene="3"] .t-rack-telemetry,
-    .demo-stage[data-scene="3"] .t-sidecar-telemetry,
-    .demo-stage[data-scene="3"] .flow-pulse.telemetry,
-    .demo-stage[data-scene="3"] .node-telemetry,
-    .demo-stage[data-scene="4"] .power-path,
-    .demo-stage[data-scene="4"] .cool-path,
-    .demo-stage[data-scene="4"] .telemetry-beam,
-    .demo-stage[data-scene="4"] .flow-pulse,
-    .demo-stage[data-scene="4"] .demo-node {
-      opacity: 1;
-    }
-
-    .demo-stage[data-scene="0"] .p-grid-sst,
-    .demo-stage[data-scene="0"] .flow-pulse.power,
-    .demo-stage[data-scene="1"] .p-sst-sidecar,
-    .demo-stage[data-scene="1"] .p-sidecar-rack,
-    .demo-stage[data-scene="1"] .flow-pulse.power,
-    .demo-stage[data-scene="2"] .c-cdu-rack,
-    .demo-stage[data-scene="2"] .c-rack-return,
-    .demo-stage[data-scene="2"] .flow-pulse.cool,
-    .demo-stage[data-scene="3"] .t-rack-telemetry,
-    .demo-stage[data-scene="3"] .t-sidecar-telemetry,
-    .demo-stage[data-scene="3"] .flow-pulse.telemetry {
-      filter: saturate(1.2);
-    }
-
-    .transition-strip {
-      border-radius: 999px;
-      padding: 10px 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.06);
-      box-shadow: var(--shadow-soft);
-      margin: 0 auto;
-      max-width: 860px;
-      transform: translateY(calc(var(--parallax-y) * -0.01));
-    }
-
-    .transition-strip span {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      color: #dce7fb;
-      font-size: 12px;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      white-space: nowrap;
-    }
-
-    .transition-strip i {
-      display: block;
-      width: 100%;
-      height: 1px;
-      background: linear-gradient(90deg, rgba(69,230,196,0.06), rgba(111,169,255,0.44), rgba(155,141,255,0.14));
-      position: relative;
-      overflow: hidden;
-    }
-
-    .transition-strip i::after {
-      content: "";
-      position: absolute;
-      inset: 0 auto 0 0;
-      width: 22%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.55), transparent);
-      animation: stripPulse 3.6s linear infinite;
-    }
-
-    .section {
-      padding: 34px 0;
-      position: relative;
-      overflow: clip;
-    }
-
-    .section::before,
-    .section::after {
-      content: "";
-      position: absolute;
-      left: 50%;
-      width: 1200px;
-      height: 320px;
-      transform: translateX(-50%);
-      pointer-events: none;
-      z-index: 0;
-      opacity: 0.8;
-    }
-
-    .section::before {
-      top: -120px;
-      background: radial-gradient(ellipse at center, rgba(111,169,255,0.06), transparent 62%);
-      filter: blur(20px);
-    }
-
-    .section::after {
-      bottom: -160px;
-      background: radial-gradient(ellipse at center, rgba(69,230,196,0.05), transparent 62%);
-      filter: blur(24px);
-    }
-
-    .section-header {
-      display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
-      gap: 24px;
-      align-items: end;
-      margin-bottom: 22px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .section-header h2 {
-      margin: 0;
-      font-size: var(--fs-h2);
-      letter-spacing: -0.05em;
-      line-height: 1.02;
-      text-wrap: balance;
-    }
-
-    .section-header p {
-      margin: 0;
-      color: var(--muted);
-      line-height: 1.84;
-      font-size: var(--fs-body);
-    }
-
-    .grid-3,
-    .grid-2,
-    .ecosystem-grid,
-    .value-grid {
-      display: grid;
-      gap: 18px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .grid-3 { grid-template-columns: repeat(3, minmax(0,1fr)); }
-    .grid-2 { grid-template-columns: repeat(2, minmax(0,1fr)); }
-    .ecosystem-grid { grid-template-columns: repeat(4, minmax(0,1fr)); }
-    .value-grid { grid-template-columns: repeat(3, minmax(0,1fr)); }
-
-    .section-card,
-    .ecosystem-grid > article,
-    .value-grid > article {
-      padding: 24px;
-      min-height: 100%;
-      transition: transform 0.32s ease, border-color 0.32s ease, box-shadow 0.32s ease, background 0.32s ease;
-      transform: translateY(calc(var(--card-shift, 0px) * 0.04));
-    }
-
-    .section-card:hover,
-    .ecosystem-grid > article:hover,
-    .value-grid > article:hover,
-    .quote:hover {
-      transform: translateY(-6px);
-      border-color: rgba(111,169,255,0.22);
-      box-shadow: 0 28px 70px rgba(0,0,0,0.28);
-      background: rgba(10, 21, 38, 0.8);
-    }
-
-    .section-card::after,
-    .ecosystem-grid > article::after,
-    .value-grid > article::after {
-      content: "";
-      position: absolute;
-      width: 120px;
-      height: 120px;
-      right: -30px;
-      bottom: -40px;
-      background: radial-gradient(circle, rgba(111,169,255,0.12), transparent 65%);
-      opacity: 0.8;
-      pointer-events: none;
-    }
-
-    .section-card h3,
-    .ecosystem-grid h3,
-    .value-grid h3 {
-      margin: 0 0 10px;
-      font-size: var(--fs-h3);
-      letter-spacing: -0.04em;
-      line-height: 1.1;
-    }
-
-    .section-card p,
-    .section-card li,
-    .ecosystem-grid p,
-    .value-grid p {
-      color: var(--muted);
-      line-height: 1.82;
-      font-size: 15px;
-      margin: 0;
-    }
-
-    .kicker {
-      display: inline-block;
-      padding: 7px 12px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.08);
-      background: rgba(255,255,255,0.03);
-      color: #d8e6ff;
-      font-size: 12px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      margin-bottom: 14px;
-    }
-
-    .metric {
-      margin-top: 18px;
-      display: grid;
-      gap: 10px;
-    }
-
-    .metric-row {
-      display: flex;
-      justify-content: space-between;
-      gap: 14px;
-      padding: 12px 0;
-      border-bottom: 1px dashed rgba(255,255,255,0.08);
-      color: #dce7fb;
-      font-size: 14px;
-      line-height: 1.5;
-    }
-
-    .metric-row span:last-child { color: #f4fbff; font-weight: 700; text-align: right; }
-
-    .architecture {
-      padding: 28px;
-      overflow: hidden;
-    }
-
-    .architecture::after {
-      content: "";
-      position: absolute;
-      inset: auto auto -80px -70px;
-      width: 240px;
-      height: 240px;
-      background: radial-gradient(circle, rgba(69,230,196,0.14), transparent 64%);
-      filter: blur(6px);
-      pointer-events: none;
-    }
-
-    .arch-tabs {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 18px;
-      position: relative;
-      z-index: 2;
-    }
-
-    .arch-tab {
-      appearance: none;
-      border: 1px solid rgba(255,255,255,0.08);
-      background: rgba(255,255,255,0.02);
-      color: var(--muted);
-      padding: 11px 14px;
-      border-radius: 999px;
-      cursor: pointer;
-      font-weight: 700;
-      transition: 0.25s ease;
-      min-height: 46px;
-    }
-
-    .arch-tab.active,
-    .arch-tab:hover {
-      color: var(--text);
-      border-color: rgba(111,169,255,0.22);
-      background: rgba(111,169,255,0.10);
-      box-shadow: 0 14px 30px rgba(111,169,255,0.08);
-    }
-
-    .arch-panel {
-      display: none;
-      grid-template-columns: 0.86fr 1.14fr;
-      gap: 20px;
-      align-items: stretch;
-    }
-
-    .arch-panel.active {
-      display: grid;
-      animation: panelFade 0.45s ease;
-    }
-
-    .arch-visual,
-    .arch-copy {
-      border-radius: 24px;
-      padding: 22px;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.07);
-      min-height: 100%;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .arch-visual::after,
-    .arch-copy::after {
-      content: "";
-      position: absolute;
-      width: 120px;
-      height: 120px;
-      right: -20px;
-      bottom: -24px;
-      background: radial-gradient(circle, rgba(111,169,255,0.11), transparent 66%);
-      pointer-events: none;
-    }
-
-    .arch-visual svg {
-      width: 100%;
-      height: auto;
-      display: block;
-    }
-
-    .arch-copy h3 {
-      margin: 0 0 12px;
-      font-size: var(--fs-h3);
-      letter-spacing: -0.03em;
-      line-height: 1.12;
-    }
-
-    .arch-copy p { color: var(--muted); line-height: 1.82; }
-
-    .arch-points {
-      display: grid;
-      gap: 10px;
-      margin-top: 16px;
-    }
-
-    .arch-points div {
-      padding: 14px 16px;
-      border-radius: 18px;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.06);
-      color: #dce7fb;
-      font-size: 14px;
-      line-height: 1.72;
-    }
-
-    .timeline {
-      padding: 26px;
-      overflow: hidden;
-    }
-
-    .timeline::after {
-      content: "";
-      position: absolute;
-      left: 40px;
-      right: 40px;
-      top: 58px;
-      height: 1px;
-      background: linear-gradient(90deg, rgba(69,230,196,0.08), rgba(111,169,255,0.34), rgba(155,141,255,0.18));
-      z-index: 0;
-    }
-
-    .timeline-track {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0,1fr));
-      gap: 18px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .timeline-item {
-      padding: 22px;
-      border-radius: 22px;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.07);
-      position: relative;
-      overflow: hidden;
-      transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
-    }
-
-    .timeline-item:hover {
-      transform: translateY(-6px);
-      border-color: rgba(111,169,255,0.22);
-      box-shadow: 0 18px 44px rgba(0,0,0,0.22);
-    }
-
-    .timeline-item::before {
-      content: "";
-      position: absolute;
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--teal), var(--blue));
-      top: 18px;
-      right: 18px;
-      box-shadow: 0 0 0 6px rgba(111,169,255,0.06);
-    }
-
-    .timeline-item strong {
-      display: inline-block;
-      font-size: 13px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: #d7e4ff;
-      margin-bottom: 12px;
-    }
-
-    .timeline-item h4 {
-      margin: 0 0 10px;
-      font-size: var(--fs-h3);
-      letter-spacing: -0.03em;
-      line-height: 1.12;
-    }
-
-    .timeline-item p { margin: 0; color: var(--muted); line-height: 1.82; }
-
-    .comparison-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 8px;
-      overflow: hidden;
-      border-radius: 20px;
-    }
-
-    .comparison-table th,
-    .comparison-table td {
-      padding: 16px 14px;
-      text-align: left;
-      border-bottom: 1px solid rgba(255,255,255,0.07);
-      vertical-align: top;
-      font-size: 14px;
-      line-height: 1.7;
-    }
-
-    .comparison-table th {
-      color: #dce7fb;
-      font-size: 13px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      background: rgba(255,255,255,0.03);
-      position: sticky;
-      top: 0;
-    }
-
-    .comparison-table td { color: var(--muted); }
-    .comparison-table td strong { color: var(--text); }
-
-    .highlight-band {
-      padding: 14px 16px;
-      border-radius: 18px;
-      margin-top: 16px;
-      background: linear-gradient(135deg, rgba(69,230,196,0.08), rgba(111,169,255,0.08));
-      border: 1px solid rgba(111,169,255,0.16);
-      color: #dce9ff;
-      line-height: 1.76;
-      font-size: 14px;
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
-    }
-
-    .quote {
-      padding: 28px;
-      background: linear-gradient(135deg, rgba(111,169,255,0.10), rgba(155,141,255,0.10));
-      border: 1px solid rgba(111,169,255,0.18);
-      box-shadow: var(--shadow);
-      transform: translateY(calc(var(--parallax-y) * -0.01));
-    }
-
-    .quote::after {
-      content: "";
-      position: absolute;
-      inset: auto auto -90px 60%;
-      width: 220px;
-      height: 220px;
-      background: radial-gradient(circle, rgba(69,230,196,0.15), transparent 65%);
-      pointer-events: none;
-    }
-
-    .quote p {
-      margin: 0;
-      font-size: clamp(24px, 3vw, 40px);
-      letter-spacing: -0.05em;
-      line-height: 1.16;
-      position: relative;
-      z-index: 1;
-      text-wrap: balance;
-    }
-
-    .quote span {
-      display: block;
-      margin-top: 14px;
-      color: #d0dfff;
-      font-size: 14px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      position: relative;
-      z-index: 1;
-    }
-
-    .footer {
-      padding: 44px 0 74px;
-      position: relative;
-    }
-
-    .footer-panel {
-      padding: 30px;
-      display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
-      gap: 24px;
-      align-items: end;
-    }
-
-    .footer-panel::after {
-      content: "";
-      position: absolute;
-      inset: auto -40px -80px auto;
-      width: 220px;
-      height: 220px;
-      background: radial-gradient(circle, rgba(111,169,255,0.14), transparent 65%);
-      pointer-events: none;
-    }
-
-    .footer-panel h2 {
-      margin: 0 0 12px;
-      font-size: clamp(30px, 4vw, 54px);
-      letter-spacing: -0.05em;
-      line-height: 1.02;
-      text-wrap: balance;
-    }
-
-    .footer-panel p {
-      margin: 0;
-      color: var(--muted);
-      line-height: 1.82;
-    }
-
-    .footer-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      justify-content: flex-end;
-      position: relative;
-      z-index: 1;
-    }
-
-    .fade-up {
-      opacity: 0;
-      transform: translateY(28px) scale(0.985);
-      transition: opacity 0.8s ease, transform 0.8s ease;
-    }
-
-    .fade-up.in-view {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-    }
-
-    .accent-teal { color: var(--teal); }
-    .accent-blue { color: var(--blue); }
-    .accent-violet { color: #c6bdff; }
-
-    .text-glow {
-      text-shadow: 0 0 18px rgba(111,169,255,0.14);
-    }
-
-    .mobile-only { display: none; }
-    .desktop-only { display: block; }
-
-    @keyframes gridFloat {
-      0% { transform: translate3d(0,0,0); }
-      100% { transform: translate3d(0, 44px, 0); }
-    }
-
-    @keyframes auroraDrift {
-      0% { transform: translate3d(0,0,0) scale(1); }
-      50% { transform: translate3d(1%, -1%, 0) scale(1.04); }
-      100% { transform: translate3d(-1%, 1%, 0) scale(1.02); }
-    }
-
-    @keyframes blobFloat {
-      0%,100% { transform: translate3d(0,0,0) scale(1); }
-      50% { transform: translate3d(3vw,-2vh,0) scale(1.08); }
-    }
-
-    @keyframes brandSweep {
-      0%, 100% { filter: brightness(1); transform: translateX(0); }
-      50% { filter: brightness(1.3); transform: translateX(2px); }
-    }
-
-    @keyframes dotPulse {
-      0%,100% { transform: scale(1); opacity: 0.9; }
-      50% { transform: scale(1.18); opacity: 1; }
-    }
-
-    @keyframes haloRotate {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-
-    @keyframes scanMove {
-      0% { transform: translateY(-12%); }
-      100% { transform: translateY(12%); }
-    }
-
-    @keyframes radarPulse {
-      0%, 100% { transform: scale(0.96); opacity: 0.5; }
-      50% { transform: scale(1.04); opacity: 0.9; }
-    }
-
-    @keyframes spinSlow {
-      from { transform: translateX(-50%) rotate(0deg); }
-      to { transform: translateX(-50%) rotate(360deg); }
-    }
-
-    @keyframes rackBreath {
-      0%,100% { box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03), 0 24px 60px rgba(0,0,0,0.35); }
-      50% { box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03), 0 28px 72px rgba(0,0,0,0.42), 0 0 40px rgba(111,169,255,0.08); }
-    }
-
-    @keyframes rackEnergy {
-      0% { filter: hue-rotate(0deg); opacity: 0.7; }
-      50% { filter: hue-rotate(35deg); opacity: 1; }
-      100% { filter: hue-rotate(0deg); opacity: 0.7; }
-    }
-
-    @keyframes unitSweep {
-      0% { transform: translateX(-110%); }
-      100% { transform: translateX(130%); }
-    }
-
-    @keyframes cellSweep {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(460%); }
-    }
-
-    @keyframes liquidFlow {
-      0% { transform: translateX(-100%); }
-      100% { transform: translateX(130%); }
-    }
-
-    @keyframes powerCore {
-      0%,100% { transform: scale(0.92); opacity: 0.8; }
-      50% { transform: scale(1.16); opacity: 1; }
-    }
-
-    @keyframes pulseMove {
-      0% { transform: translateX(0) scale(0.8); opacity: 0.3; }
-      45% { transform: translateX(86px) scale(1.15); opacity: 1; }
-      100% { transform: translateX(0) scale(0.8); opacity: 0.3; }
-    }
-
-    @keyframes particleFloat {
-      from { transform: translate3d(0, 0, 0) scale(0.8); opacity: 0; }
-      10% { opacity: 0.5; }
-      90% { opacity: 0.4; }
-      to { transform: translate3d(0, -120vh, 0) scale(1.2); opacity: 0; }
-    }
-
-    @keyframes panelFade {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes sceneGrid {
-      0% { transform: translateY(0); }
-      100% { transform: translateY(28px); }
-    }
-
-    @keyframes powerDemoFlow {
-      0% { transform: translate3d(100px, 102px, 0) scale(0.8); opacity: 0; }
-      12% { opacity: 1; }
-      42% { transform: translate3d(310px, 106px, 0) scale(1); opacity: 1; }
-      74% { transform: translate3d(422px, 240px, 0) scale(1); opacity: 1; }
-      100% { transform: translate3d(338px, 272px, 0) scale(0.85); opacity: 0; }
-    }
-
-    @keyframes coolDemoFlow {
-      0% { transform: translate3d(126px, 410px, 0) scale(0.8); opacity: 0; }
-      14% { opacity: 1; }
-      55% { transform: translate3d(244px, 368px, 0) scale(1); opacity: 1; }
-      100% { transform: translate3d(290px, 416px, 0) scale(0.85); opacity: 0; }
-    }
-
-    @keyframes telemetryFlow {
-      0% { transform: translate3d(316px, 386px, 0) scale(0.8); opacity: 0; }
-      15% { opacity: 1; }
-      100% { transform: translate3d(500px, 386px, 0) scale(0.85); opacity: 0; }
-    }
-
-    @keyframes stripPulse {
-      0% { transform: translateX(-120%); }
-      100% { transform: translateX(520%); }
-    }
-
-    @media (max-width: 1180px) {
-      .hero-grid,
-      .hero-demo,
-      .section-header,
-      .arch-panel,
-      .footer-panel {
-        grid-template-columns: 1fr;
-      }
-
-      .grid-3,
-      .ecosystem-grid,
-      .value-grid,
-      .timeline-track {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .footer-actions { justify-content: flex-start; }
-      .hero-visual { min-height: 600px; }
-      .stat-bar,
-      .scene-meta { grid-template-columns: repeat(2, minmax(0,1fr)); }
-      .scene-panel { grid-template-columns: 1fr; }
-    }
-
-    @media (max-width: 900px) {
-      :root {
-        --nav-height: 72px;
-        --fs-hero: clamp(2.5rem, 10vw, 4rem);
-        --fs-h2: clamp(2rem, 6vw, 3rem);
-      }
-
-      .container { width: min(calc(100% - 28px), var(--max)); }
-      .hero { padding-top: 64px; }
-      .hero-copy, .hero-visual, .hero-demo, .architecture, .timeline, .footer-panel { padding: 24px; }
-      .hero-visual { min-height: 580px; }
-      .section { padding: 28px 0; }
-      .timeline::after { display: none; }
-      .demo-stage { min-height: 660px; }
-      .scene-core { top: 44%; }
-      .scene-floor { width: 460px; height: 200px; }
-    }
-
-    @media (max-width: 760px) {
-      :root {
-        --grid-size: 34px;
-        --radius: 24px;
-        --radius-sm: 16px;
-        --fs-hero: clamp(2.25rem, 12vw, 3.25rem);
-        --fs-h2: clamp(1.85rem, 8vw, 2.45rem);
-        --fs-h3: clamp(1.2rem, 5.6vw, 1.45rem);
-      }
-
-      .desktop-only { display: none; }
-      .mobile-only { display: block; }
-
-      .topbar-inner { min-height: 72px; }
-      .nav-toggle { display: inline-flex; }
-      .nav-wrap { position: relative; }
-
-      .nav {
-        position: absolute;
-        top: calc(100% + 10px);
-        right: 0;
-        width: min(86vw, 320px);
-        padding: 10px;
-        border-radius: 20px;
-        background: rgba(6, 13, 24, 0.94);
-        border: 1px solid rgba(255,255,255,0.08);
-        box-shadow: 0 24px 70px rgba(0,0,0,0.35);
-        display: grid;
-        gap: 4px;
-        opacity: 0;
-        pointer-events: none;
-        transform: translateY(-10px) scale(0.98);
-        transition: 0.28s ease;
-      }
-
-      .nav.open {
-        opacity: 1;
-        pointer-events: auto;
-        transform: translateY(0) scale(1);
-      }
-
-      .nav a {
-        padding: 12px 14px;
-        border-radius: 14px;
-      }
-
-      .hero {
-        padding-top: 46px;
-        padding-bottom: 34px;
-      }
-
-      .hero-grid,
-      .grid-3,
-      .grid-2,
-      .ecosystem-grid,
-      .value-grid,
-      .timeline-track,
-      .mini-stats,
-      .stat-bar,
-      .scene-meta,
-      .step-indicators {
-        grid-template-columns: 1fr;
-      }
-
-      .hero-copy,
-      .hero-visual,
-      .hero-demo,
-      .architecture,
-      .timeline,
-      .footer-panel,
-      .section-card,
-      .ecosystem-grid > article,
-      .value-grid > article,
-      .quote {
-        border-radius: 24px;
-      }
-
-      .hero-copy,
-      .hero-visual,
-      .hero-demo,
-      .architecture,
-      .timeline,
-      .footer-panel {
-        padding: 20px;
-      }
-
-      .hero-copy { padding-top: 22px; }
-
-      h1 {
-        font-size: var(--fs-hero);
-        line-height: 0.98;
-        max-width: 100%;
-      }
-
-      .lead {
-        font-size: 15px;
-        line-height: 1.76;
-      }
-
-      .hero-actions { gap: 10px; }
-      .btn { width: 100%; justify-content: center; }
-
-      .visual-caption,
-      .section-header p,
-      .footer-panel p,
-      .arch-copy p,
-      .timeline-item p,
-      .section-card p,
-      .ecosystem-grid p,
-      .value-grid p,
-      .demo-copy p {
-        font-size: 14px;
-        line-height: 1.78;
-      }
-
-      .section-header {
-        grid-template-columns: 1fr;
-        gap: 12px;
-      }
-
-      .section-header h2,
-      .footer-panel h2 { font-size: var(--fs-h2); }
-
-      .transition-strip {
-        gap: 10px;
-        padding: 10px 12px;
-      }
-
-      .transition-strip span {
-        font-size: 10px;
-        letter-spacing: 0.1em;
-      }
-
-      .diagram { height: 560px; }
-      .orbital-ring { width: 230px; height: 230px; top: 120px; }
-
-      .facility-node.top-left,
-      .facility-node.top-right {
-        width: 124px;
-        height: 72px;
-        font-size: 11px;
-        line-height: 1.38;
-      }
-
-      .facility-node.top-left { left: 10px; top: 14px; }
-      .facility-node.top-right { right: 10px; top: 14px; }
-
-      .rack {
-        width: calc(100% - 132px);
-        max-width: 224px;
-        min-width: 180px;
-        left: 20px;
-        transform: none;
-        top: 116px;
-        height: 278px;
-        padding: 14px;
-      }
-
-      .rack::before { font-size: 11px; }
-      .rack-unit {
-        font-size: 10px;
-        padding: 0 10px;
-        height: 40px;
-      }
-
-      .rack-unit small { font-size: 9px; }
-
-      .power-sidecar {
-        right: 10px;
-        top: 132px;
-        width: 104px;
-        height: 220px;
-        padding: 14px 10px;
-      }
-
-      .power-sidecar::before,
-      .cooling-loop::before {
-        font-size: 10px;
-      }
-
-      .power-sidecar .cell {
-        height: 28px;
-        margin-bottom: 8px;
-        font-size: 9px;
-      }
-
-      .cooling-loop {
-        left: 10px;
-        right: 10px;
-        bottom: 18px;
-        width: auto;
-        height: 136px;
-        padding: 14px;
-      }
-
-      .loop-bar { height: 14px; }
-
-      .line-facility-a {
-        width: 82px;
-        top: 48px;
-        left: 118px;
-      }
-
-      .line-facility-b {
-        width: 84px;
-        top: 48px;
-        right: 118px;
-      }
-
-      .line-power-a {
-        width: 56px;
-        top: 198px;
-        left: auto;
-        right: 98px;
-      }
-
-      .line-cooling-a {
-        width: 94px;
-        top: 356px;
-        left: 82px;
-        transform: rotate(-18deg);
-      }
-
-      .pulse.power {
-        top: 194px;
-        left: auto;
-        right: 102px;
-      }
-
-      .pulse.cooling {
-        top: 350px;
-        left: 90px;
-      }
-
-      .data-label {
-        font-size: 9px;
-        padding: 7px 10px;
-      }
-
-      .label-1 { left: 12px; top: 96px; }
-      .label-2 { right: 10px; top: 364px; }
-      .label-3 { left: 52%; bottom: 160px; transform: translateX(-50%); }
-      .power-core { right: 24px; top: 96px; }
-
-      .hero-demo { padding: 18px; }
-      .demo-stage { min-height: 760px; }
-      .scene-camera { transform: rotateX(10deg) rotateY(-6deg); }
-      .scene-core {
-        width: 196px;
-        height: 286px;
-        top: 41%;
-      }
-
-      .rack-shell::before {
-        font-size: 10px;
-        left: 14px;
-      }
-
-      .explode-layer {
-        left: 16px;
-        right: 16px;
-        height: 34px;
-      }
-
-      .explode-layer:nth-child(2) { top: 50px; }
-      .explode-layer:nth-child(3) { top: 92px; }
-      .explode-layer:nth-child(4) { top: 134px; }
-      .explode-layer:nth-child(5) { top: 176px; }
-      .explode-layer:nth-child(6) { top: 218px; }
-
-      .demo-stage[data-scene="1"] .explode-layer:nth-child(2) { transform: translate3d(-52px, -72px, 110px) rotateY(-10deg); }
-      .demo-stage[data-scene="1"] .explode-layer:nth-child(3) { transform: translate3d(54px, -26px, 90px) rotateY(10deg); }
-      .demo-stage[data-scene="1"] .explode-layer:nth-child(4) { transform: translate3d(-58px, 18px, 100px) rotateY(-8deg); }
-      .demo-stage[data-scene="1"] .explode-layer:nth-child(5) { transform: translate3d(56px, 58px, 96px) rotateY(8deg); }
-      .demo-stage[data-scene="1"] .explode-layer:nth-child(6) { transform: translate3d(0, 96px, 76px); }
-
-      .scene-floor {
-        width: 360px;
-        height: 180px;
-        bottom: 136px;
-      }
-
-      .scene-orbit {
-        width: 380px;
-        height: 380px;
-      }
-
-      .demo-node {
-        width: 108px;
-        min-height: 62px;
-        font-size: 11px;
-        padding: 8px 10px;
-      }
-
-      .node-grid { left: 14px; top: 22px; }
-      .node-sst { right: 14px; top: 22px; }
-      .node-sidecar { right: 10px; top: 188px; }
-      .node-cdu { left: 10px; bottom: 184px; }
-      .node-telemetry { right: 50%; bottom: 96px; transform: translateX(50%); }
-
-      .p-grid-sst { width: 126px; top: 84px; left: 118px; }
-      .p-sst-sidecar { width: 86px; top: 150px; left: 310px; transform: rotate(64deg); }
-      .p-sidecar-rack { width: 78px; top: 236px; left: 284px; transform: rotate(160deg); }
-      .c-cdu-rack { width: 104px; top: 338px; left: 114px; transform: rotate(-24deg); }
-      .c-rack-return { width: 100px; top: 372px; left: 168px; transform: rotate(24deg); }
-      .t-rack-telemetry { width: 122px; top: 388px; left: 246px; transform: rotate(20deg); }
-      .t-sidecar-telemetry { width: 96px; top: 280px; left: 308px; transform: rotate(102deg); }
-
-      .scene-panel {
-        left: 12px;
-        right: 12px;
-        bottom: 12px;
-        gap: 10px;
-      }
-
-      .scene-hud,
-      .step-indicators,
-      .scene-note {
-        padding: 12px 12px;
-        border-radius: 16px;
-      }
-
-      .step-chip { min-height: auto; padding: 10px 12px; }
-
-      .comparison-table,
-      .comparison-table thead,
-      .comparison-table tbody,
-      .comparison-table th,
-      .comparison-table td,
-      .comparison-table tr {
-        display: block;
-      }
-
-      .comparison-table thead { display: none; }
-
-      .comparison-table tr {
-        border-bottom: 1px solid rgba(255,255,255,0.08);
-        padding: 10px 0;
-      }
-
-      .comparison-table td {
-        border: 0;
-        padding: 8px 0;
-      }
-
-      .comparison-table td::before {
-        content: attr(data-label);
-        display: block;
-        color: #dce7fb;
-        font-size: 11px;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        margin-bottom: 4px;
-      }
-
-      .quote p {
-        font-size: clamp(22px, 8vw, 32px);
-      }
-
-      .footer-actions { justify-content: stretch; }
-      .footer-actions .btn { width: 100%; }
-    }
-
-    @media (max-width: 420px) {
-      .container { width: min(calc(100% - 22px), var(--max)); }
-
-      .hero-copy,
-      .hero-visual,
-      .hero-demo,
-      .architecture,
-      .timeline,
-      .footer-panel,
-      .section-card,
-      .ecosystem-grid > article,
-      .value-grid > article,
-      .quote {
-        padding: 18px;
-      }
-
-      .diagram { height: 540px; }
-      .rack { width: calc(100% - 120px); }
-      .demo-stage { min-height: 780px; }
-      .scene-core { width: 182px; }
-      .scene-floor { width: 320px; }
-      .demo-node { width: 98px; }
-      .node-telemetry { bottom: 104px; }
-      .step-chip span { font-size: 11px; }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      html { scroll-behavior: auto; }
-      *, *::before, *::after {
-        animation: none !important;
-        transition: none !important;
-      }
-      .fade-up { opacity: 1; transform: none; }
-      .parallax-layer,
-      .hero-copy,
-      .hero-visual,
-      .hero-demo,
-      .section-card,
-      .quote,
-      .demo-node,
-      .explode-layer,
-      .scene-camera,
-      .facility-node,
-      .rack,
-      .power-sidecar,
-      .cooling-loop {
-        transform: none !important;
-      }
-    }
-  </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>OCP Cooling + HVDC — Next-Generation AI Data Centre Architecture | DCDeepTech</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,600&family=Crimson+Pro:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+  /* ─────────────────────────────────────────────
+     DESIGN TOKENS
+  ───────────────────────────────────────────── */
+  :root {
+    --bg:         #080c14;
+    --bg-2:       #0d1220;
+    --surface:    #111827;
+    --surface-2:  rgba(17,24,39,0.72);
+    --border:     rgba(148,163,184,0.10);
+    --border-hi:  rgba(148,163,184,0.22);
+    --text:       #e2e8f4;
+    --muted:      #8a99b5;
+    --muted-2:    #b8c4d8;
+    --teal:       #00d4a8;
+    --teal-dim:   rgba(0,212,168,0.15);
+    --blue:       #4f8ef7;
+    --blue-dim:   rgba(79,142,247,0.12);
+    --gold:       #e8c96a;
+    --gold-dim:   rgba(232,201,106,0.12);
+    --violet:     #a78bfa;
+    --shadow:     0 24px 80px rgba(0,0,0,0.6);
+    --r:          20px;
+    --r-sm:       12px;
+    --max:        1160px;
+    --ff-head:    'Playfair Display', Georgia, 'Times New Roman', serif;
+    --ff-body:    'Crimson Pro', Georgia, serif;
+    --ff-mono:    'JetBrains Mono', 'Courier New', monospace;
+    --transition: 0.55s cubic-bezier(0.22,1,0.36,1);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; font-size: 16px; }
+
+  body {
+    font-family: var(--ff-body);
+    font-size: 1.05rem;
+    line-height: 1.75;
+    color: var(--text);
+    background: var(--bg);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ─── CANVAS BACKGROUND ─── */
+  #bgCanvas {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    opacity: 0.55;
+    pointer-events: none;
+  }
+
+  .content-wrap { position: relative; z-index: 1; }
+
+  /* ─── CUSTOM CURSOR ─── */
+  .cursor-glow {
+    position: fixed;
+    width: 320px;
+    height: 320px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%,-50%);
+    background: radial-gradient(circle, rgba(0,212,168,0.06) 0%, transparent 70%);
+    transition: background 0.4s ease;
+    mix-blend-mode: screen;
+  }
+
+  /* ─────────────────────────────────────────────
+     JOURNAL HEADER / NAV
+  ───────────────────────────────────────────── */
+  .journal-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(8,12,20,0.85);
+    backdrop-filter: blur(24px) saturate(1.4);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .journal-header::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--teal), var(--blue), transparent);
+    opacity: 0.4;
+    animation: scanLine 4s ease-in-out infinite alternate;
+  }
+
+  @keyframes scanLine {
+    0%   { transform: scaleX(0.3); opacity: 0.2; }
+    100% { transform: scaleX(1);   opacity: 0.6; }
+  }
+
+  .header-inner {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    height: 68px;
+  }
+
+  .journal-brand {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    text-decoration: none;
+  }
+
+  .journal-brand .name {
+    font-family: var(--ff-head);
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: 0.01em;
+    line-height: 1;
+  }
+
+  .journal-brand .sub {
+    font-family: var(--ff-mono);
+    font-size: 0.62rem;
+    color: var(--teal);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  .site-nav {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+  }
+
+  .site-nav a {
+    font-family: var(--ff-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 7px 13px;
+    border-radius: 999px;
+    transition: 0.2s ease;
+    border: 1px solid transparent;
+  }
+
+  .site-nav a:hover {
+    color: var(--text);
+    border-color: var(--border-hi);
+    background: rgba(255,255,255,0.04);
+  }
+
+  /* ─────────────────────────────────────────────
+     ARTICLE MASTHEAD
+  ───────────────────────────────────────────── */
+  .masthead {
+    padding: 100px 24px 80px;
+    max-width: var(--max);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 60px;
+    align-items: start;
+  }
+
+  .article-meta {
+    font-family: var(--ff-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .article-meta::before {
+    content: '';
+    display: inline-block;
+    width: 28px;
+    height: 1px;
+    background: var(--teal);
+  }
+
+  h1.article-title {
+    font-family: var(--ff-head);
+    font-size: clamp(2.4rem, 4.5vw, 4rem);
+    font-weight: 700;
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    margin-bottom: 28px;
+    text-wrap: balance;
+  }
+
+  h1.article-title em {
+    font-style: italic;
+    color: var(--teal);
+  }
+
+  .article-subtitle {
+    font-size: 1.12rem;
+    color: var(--muted-2);
+    line-height: 1.75;
+    max-width: 60ch;
+    margin-bottom: 36px;
+    font-weight: 300;
+  }
+
+  .article-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    font-family: var(--ff-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 12px 22px;
+    border-radius: 999px;
+    transition: var(--transition);
+    border: 1px solid transparent;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+    transform: translateX(-120%);
+    transition: 0.5s ease;
+  }
+
+  .btn:hover::after { transform: translateX(120%); }
+
+  .btn-primary {
+    background: linear-gradient(135deg, rgba(0,212,168,0.18), rgba(79,142,247,0.18));
+    border-color: rgba(0,212,168,0.4);
+    color: var(--text);
+  }
+
+  .btn-primary:hover {
+    background: linear-gradient(135deg, rgba(0,212,168,0.28), rgba(79,142,247,0.28));
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(0,212,168,0.15);
+  }
+
+  .btn-ghost {
+    border-color: var(--border-hi);
+    color: var(--muted-2);
+  }
+
+  .btn-ghost:hover {
+    border-color: var(--border-hi);
+    color: var(--text);
+    background: rgba(255,255,255,0.04);
+    transform: translateY(-2px);
+  }
+
+  /* ─── STAT PANEL (masthead right) ─── */
+  .stat-panel {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 28px;
+    backdrop-filter: blur(20px);
+    box-shadow: var(--shadow);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stat-panel::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(140deg, rgba(0,212,168,0.3), rgba(79,142,247,0.2), transparent 60%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    -webkit-mask-composite: xor;
+    pointer-events: none;
+  }
+
+  .stat-panel-label {
+    font-family: var(--ff-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .stat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  .stat-cell {
+    padding: 14px;
+    background: rgba(255,255,255,0.025);
+    border: 1px solid var(--border);
+    border-radius: var(--r-sm);
+    transition: 0.3s ease;
+  }
+
+  .stat-cell:hover {
+    border-color: var(--border-hi);
+    background: rgba(255,255,255,0.05);
+  }
+
+  .stat-cell .val {
+    font-family: var(--ff-mono);
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1;
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  .stat-cell .val.teal { color: var(--teal); }
+  .stat-cell .val.blue { color: var(--blue); }
+  .stat-cell .val.gold { color: var(--gold); }
+
+  .stat-cell .lbl {
+    font-size: 0.78rem;
+    color: var(--muted);
+    line-height: 1.4;
+    display: block;
+  }
+
+  /* ─────────────────────────────────────────────
+     ABSTRACT BAND
+  ───────────────────────────────────────────── */
+  .abstract-band {
+    background: linear-gradient(135deg, rgba(0,212,168,0.06), rgba(79,142,247,0.06));
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 52px 24px;
+  }
+
+  .abstract-inner {
+    max-width: var(--max);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 52px;
+    align-items: start;
+  }
+
+  .abstract-aside {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    position: sticky;
+    top: 88px;
+  }
+
+  .aside-label {
+    font-family: var(--ff-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--teal);
+    writing-mode: vertical-lr;
+    transform: rotate(180deg);
+    align-self: flex-start;
+  }
+
+  .abstract-divider {
+    width: 1px;
+    height: 120px;
+    background: linear-gradient(to bottom, var(--teal), transparent);
+    align-self: center;
+  }
+
+  .abstract-body h2 {
+    font-family: var(--ff-head);
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 14px;
+    font-style: italic;
+  }
+
+  .abstract-body p {
+    font-size: 1.05rem;
+    line-height: 1.9;
+    color: var(--muted-2);
+    max-width: 72ch;
+  }
+
+  .abstract-body p + p { margin-top: 14px; }
+
+  .abstract-keywords {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 20px;
+  }
+
+  .keyword {
+    font-family: var(--ff-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    padding: 5px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--border-hi);
+    color: var(--muted-2);
+    text-transform: uppercase;
+    transition: 0.2s;
+  }
+
+  .keyword:hover {
+    border-color: var(--teal);
+    color: var(--teal);
+  }
+
+  /* ─────────────────────────────────────────────
+     SECTION COMMON
+  ───────────────────────────────────────────── */
+  .section {
+    padding: 80px 24px;
+    max-width: var(--max);
+    margin: 0 auto;
+  }
+
+  .section-header {
+    display: grid;
+    grid-template-columns: 48px 1fr;
+    gap: 24px;
+    align-items: start;
+    margin-bottom: 52px;
+  }
+
+  .section-num {
+    font-family: var(--ff-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    color: var(--teal);
+    padding-top: 8px;
+    border-top: 2px solid var(--teal);
+    line-height: 1;
+  }
+
+  .section-title-block h2 {
+    font-family: var(--ff-head);
+    font-size: clamp(1.8rem, 3vw, 2.6rem);
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+  }
+
+  .section-title-block p {
+    font-size: 1.02rem;
+    color: var(--muted);
+    line-height: 1.8;
+    max-width: 70ch;
+  }
+
+  /* ─── ARTICLE CARD ─── */
+  .a-card {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 32px;
+    backdrop-filter: blur(16px);
+    position: relative;
+    overflow: hidden;
+    transition: var(--transition);
+  }
+
+  .a-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(130deg, rgba(0,212,168,0.2), rgba(79,142,247,0.15), transparent 55%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    -webkit-mask-composite: xor;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .a-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+  .a-card:hover::before { opacity: 1; }
+
+  .a-card-label {
+    font-family: var(--ff-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .a-card-label::before {
+    content: '';
+    display: inline-block;
+    width: 16px;
+    height: 1px;
+    background: var(--teal);
+  }
+
+  .a-card h3 {
+    font-family: var(--ff-head);
+    font-size: 1.28rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 12px;
+    line-height: 1.25;
+  }
+
+  .a-card p {
+    font-size: 0.95rem;
+    color: var(--muted);
+    line-height: 1.8;
+  }
+
+  /* ─────────────────────────────────────────────
+     CHALLENGE SECTION  
+  ───────────────────────────────────────────── */
+  .challenge-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  /* ─── ANIMATED DENSITY BAR ─── */
+  .density-chart {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 28px;
+    margin-top: 20px;
+  }
+
+  .density-chart h4 {
+    font-family: var(--ff-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+
+  .density-row {
+    display: grid;
+    grid-template-columns: 140px 1fr 60px;
+    gap: 14px;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+
+  .density-row:last-child { margin-bottom: 0; }
+
+  .density-label {
+    font-family: var(--ff-mono);
+    font-size: 0.72rem;
+    color: var(--muted-2);
+    text-align: right;
+  }
+
+  .density-track {
+    height: 12px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 999px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  .density-fill {
+    height: 100%;
+    border-radius: 999px;
+    width: 0;
+    transition: width 1.4s cubic-bezier(0.22,1,0.36,1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .density-fill::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+    transform: translateX(-100%);
+    animation: shimmer 2.2s linear infinite;
+  }
+
+  @keyframes shimmer {
+    to { transform: translateX(100%); }
+  }
+
+  .density-fill.low    { background: linear-gradient(90deg, #4f8ef7, #7bb8ff); }
+  .density-fill.mid    { background: linear-gradient(90deg, #00d4a8, #4fd4b5); }
+  .density-fill.hi     { background: linear-gradient(90deg, #e8c96a, #f0a050); }
+  .density-fill.ultra  { background: linear-gradient(90deg, #f77462, #ff4d8c); }
+
+  .density-val {
+    font-family: var(--ff-mono);
+    font-size: 0.72rem;
+    color: var(--text);
+    text-align: right;
+  }
+
+  /* ─────────────────────────────────────────────
+     COOLING SECTION
+  ───────────────────────────────────────────── */
+  .cooling-layout {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 24px;
+  }
+
+  .cooling-diagram {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 28px;
+    min-height: 420px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .diagram-label {
+    font-family: var(--ff-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 16px;
+  }
+
+  /* Animated SVG cooling loop */
+  .svg-cooling { width: 100%; height: 260px; }
+
+  .cooling-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  .cooling-stat {
+    padding: 12px;
+    background: rgba(0,212,168,0.06);
+    border: 1px solid rgba(0,212,168,0.15);
+    border-radius: var(--r-sm);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .cooling-stat strong {
+    font-family: var(--ff-mono);
+    font-size: 1.1rem;
+    color: var(--teal);
+    font-weight: 400;
+  }
+
+  .cooling-stat span {
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  .cooling-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .step-item {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    padding: 16px;
+    background: rgba(255,255,255,0.025);
+    border: 1px solid var(--border);
+    border-radius: var(--r-sm);
+    transition: 0.3s ease;
+  }
+
+  .step-item:hover {
+    border-color: var(--border-hi);
+    background: rgba(255,255,255,0.04);
+  }
+
+  .step-num {
+    font-family: var(--ff-mono);
+    font-size: 0.7rem;
+    color: var(--teal);
+    width: 24px;
+    flex-shrink: 0;
+    padding-top: 2px;
+  }
+
+  .step-content h4 {
+    font-family: var(--ff-body);
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .step-content p {
+    font-size: 0.82rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* ─────────────────────────────────────────────
+     HVDC SECTION
+  ───────────────────────────────────────────── */
+  .hvdc-grid {
+    display: grid;
+    grid-template-columns: 360px 1fr;
+    gap: 24px;
+  }
+
+  .hvdc-card {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hvdc-card::after {
+    content: '';
+    position: absolute;
+    right: -60px;
+    bottom: -60px;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(79,142,247,0.12), transparent 65%);
+    pointer-events: none;
+  }
+
+  .voltage-display {
+    font-family: var(--ff-mono);
+    font-size: 3.6rem;
+    font-weight: 300;
+    color: var(--blue);
+    line-height: 1;
+    margin: 20px 0 8px;
+    letter-spacing: -0.04em;
+    text-shadow: 0 0 40px rgba(79,142,247,0.4);
+    animation: voltageGlow 3s ease-in-out infinite alternate;
+  }
+
+  @keyframes voltageGlow {
+    0%   { text-shadow: 0 0 30px rgba(79,142,247,0.3); }
+    100% { text-shadow: 0 0 60px rgba(79,142,247,0.6), 0 0 100px rgba(0,212,168,0.2); }
+  }
+
+  .voltage-unit {
+    font-family: var(--ff-mono);
+    font-size: 1rem;
+    color: var(--muted);
+  }
+
+  .hvdc-metrics {
+    display: grid;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  .hvdc-metric-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    background: rgba(79,142,247,0.06);
+    border: 1px solid rgba(79,142,247,0.12);
+    border-radius: var(--r-sm);
+  }
+
+  .hvdc-metric-row span:first-child {
+    font-size: 0.84rem;
+    color: var(--muted-2);
+  }
+
+  .hvdc-metric-row span:last-child {
+    font-family: var(--ff-mono);
+    font-size: 0.8rem;
+    color: var(--blue);
+  }
+
+  /* Animated power flow SVG */
+  .svg-hvdc { width: 100%; height: auto; }
+
+  /* ─────────────────────────────────────────────
+     ARCHITECTURE SECTION (Coupling Table)
+  ───────────────────────────────────────────── */
+  .coupling-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 8px;
+  }
+
+  .coupling-table thead th {
+    font-family: var(--ff-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-hi);
+    background: rgba(255,255,255,0.02);
+  }
+
+  .coupling-table thead th:first-child {
+    border-radius: var(--r-sm) 0 0 0;
+  }
+
+  .coupling-table thead th:last-child {
+    border-radius: 0 var(--r-sm) 0 0;
+  }
+
+  .coupling-table tbody tr {
+    transition: background 0.2s;
+    opacity: 0;
+    transform: translateX(-12px);
+    transition: opacity 0.5s ease, transform 0.5s ease, background 0.2s ease;
+  }
+
+  .coupling-table tbody tr.row-visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .coupling-table tbody tr:hover {
+    background: rgba(255,255,255,0.025);
+  }
+
+  .coupling-table td {
+    padding: 16px;
+    font-size: 0.9rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    line-height: 1.65;
+    color: var(--muted);
+  }
+
+  .coupling-table td:first-child {
+    color: var(--text);
+    font-weight: 600;
+    font-family: var(--ff-body);
+    white-space: nowrap;
+  }
+
+  .coupling-table td:last-child {
+    color: var(--teal);
+    font-size: 0.85rem;
+  }
+
+  .arch-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .arch-tab {
+    font-family: var(--ff-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 9px 18px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    cursor: pointer;
+    transition: 0.2s;
+    background: none;
+  }
+
+  .arch-tab.active,
+  .arch-tab:hover {
+    border-color: rgba(0,212,168,0.4);
+    color: var(--teal);
+    background: rgba(0,212,168,0.08);
+  }
+
+  .arch-panel { display: none; }
+  .arch-panel.active { display: block; animation: fadeIn 0.4s ease; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─────────────────────────────────────────────
+     DCDEEPTECH SECTION
+  ───────────────────────────────────────────── */
+  .platform-hero {
+    background: linear-gradient(135deg, rgba(0,212,168,0.08), rgba(79,142,247,0.08));
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 48px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .platform-hero::before {
+    content: 'DCDeepTech';
+    position: absolute;
+    right: -20px;
+    bottom: -40px;
+    font-family: var(--ff-head);
+    font-size: 9rem;
+    font-weight: 900;
+    color: rgba(255,255,255,0.025);
+    letter-spacing: -0.05em;
+    pointer-events: none;
+    white-space: nowrap;
+    line-height: 1;
+  }
+
+  .platform-hero h2 {
+    font-family: var(--ff-head);
+    font-size: clamp(1.6rem, 2.8vw, 2.4rem);
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.2;
+    margin-bottom: 16px;
+    position: relative;
+    z-index: 1;
+    max-width: 58ch;
+  }
+
+  .platform-hero p {
+    font-size: 1.02rem;
+    color: var(--muted-2);
+    line-height: 1.85;
+    max-width: 72ch;
+    position: relative;
+    z-index: 1;
+  }
+
+  .value-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .platform-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  /* ─────────────────────────────────────────────
+     ECOSYSTEM SECTION
+  ───────────────────────────────────────────── */
+  .ecosystem-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  /* ─── PULL QUOTE ─── */
+  .pull-quote {
+    background: linear-gradient(135deg, rgba(79,142,247,0.10), rgba(167,139,250,0.08));
+    border: 1px solid rgba(79,142,247,0.22);
+    border-left: 3px solid var(--blue);
+    border-radius: 0 var(--r) var(--r) 0;
+    padding: 40px 48px;
+    position: relative;
+    overflow: hidden;
+    margin-top: 24px;
+  }
+
+  .pull-quote::before {
+    content: '"';
+    position: absolute;
+    left: 20px;
+    top: -20px;
+    font-family: var(--ff-head);
+    font-size: 8rem;
+    color: rgba(79,142,247,0.12);
+    line-height: 1;
+    font-style: italic;
+    pointer-events: none;
+  }
+
+  .pull-quote p {
+    font-family: var(--ff-head);
+    font-size: clamp(1.3rem, 2.2vw, 1.9rem);
+    font-style: italic;
+    color: var(--text);
+    line-height: 1.5;
+    margin-bottom: 16px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .pull-quote cite {
+    font-family: var(--ff-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* ─────────────────────────────────────────────
+     FOOTER
+  ───────────────────────────────────────────── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 48px 24px;
+  }
+
+  .footer-inner {
+    max-width: var(--max);
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .footer-brand {
+    font-family: var(--ff-head);
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .footer-meta {
+    font-family: var(--ff-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    line-height: 1.8;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 24px;
+  }
+
+  .footer-links a {
+    font-family: var(--ff-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    transition: 0.2s;
+  }
+
+  .footer-links a:hover { color: var(--teal); }
+
+  /* ─────────────────────────────────────────────
+     SCROLL REVEAL  
+  ───────────────────────────────────────────── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.22,1,0.36,1);
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+  .reveal-delay-4 { transition-delay: 0.4s; }
+
+  /* ─────────────────────────────────────────────
+     DIVIDERS  
+  ───────────────────────────────────────────── */
+  .section-divider {
+    max-width: var(--max);
+    margin: 0 auto 0;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .section-divider::before,
+  .section-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .divider-tag {
+    font-family: var(--ff-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  /* ─────────────────────────────────────────────
+     PROGRESS READ INDICATOR
+  ───────────────────────────────────────────── */
+  #readProgress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    width: 0%;
+    background: linear-gradient(90deg, var(--teal), var(--blue));
+    z-index: 200;
+    transition: width 0.1s linear;
+    box-shadow: 0 0 12px rgba(0,212,168,0.6);
+  }
+
+  /* ─────────────────────────────────────────────
+     RESPONSIVE
+  ───────────────────────────────────────────── */
+  @media (max-width: 960px) {
+    .masthead,
+    .cooling-layout,
+    .hvdc-grid { grid-template-columns: 1fr; }
+
+    .masthead { gap: 40px; }
+
+    .abstract-inner { grid-template-columns: 80px 1fr; gap: 24px; }
+
+    .challenge-grid,
+    .value-grid,
+    .ecosystem-grid { grid-template-columns: 1fr 1fr; }
+
+    .platform-grid-2 { grid-template-columns: 1fr; }
+
+    .site-nav { display: none; }
+  }
+
+  @media (max-width: 600px) {
+    .challenge-grid,
+    .value-grid,
+    .ecosystem-grid { grid-template-columns: 1fr; }
+
+    .abstract-inner { grid-template-columns: 1fr; }
+    .abstract-aside { display: none; }
+
+    .section-header { grid-template-columns: 1fr; }
+    .section-num { display: none; }
+
+    .pull-quote { padding: 28px 24px; }
+
+    .footer-inner { flex-direction: column; text-align: center; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation: none !important;
+      transition: none !important;
+    }
+    .reveal, .reveal-delay-1, .reveal-delay-2, .reveal-delay-3 {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+  }
+</style>
 </head>
 <body>
-  <div class="noise" aria-hidden="true"></div>
-  <div class="aurora" aria-hidden="true">
-    <span></span>
-    <span></span>
-    <span></span>
+<!-- Reading progress bar -->
+<div id="readProgress"></div>
+<div class="cursor-glow" id="cursorGlow"></div>
+
+<!-- Canvas background -->
+<canvas id="bgCanvas"></canvas>
+
+<div class="content-wrap">
+
+<!-- ═══════════════════════════════════════
+     HEADER
+════════════════════════════════════════ -->
+<header class="journal-header">
+  <div class="header-inner">
+    <a href="#top" class="journal-brand">
+      <span class="name">OCP Cooling + HVDC</span>
+      <span class="sub">DCDeepTech · Research</span>
+    </a>
+    <nav class="site-nav">
+      <a href="#challenge">问题</a>
+      <a href="#cooling">液冷架构</a>
+      <a href="#hvdc">HVDC</a>
+      <a href="#architecture">架构耦合</a>
+      <a href="#dcdeeptech">平台</a>
+      <a href="#ecosystem">生态</a>
+    </nav>
   </div>
-  <div class="particles" id="particles" aria-hidden="true"></div>
-  <div class="scroll-glow" aria-hidden="true"></div>
+</header>
 
-  <header class="topbar">
-    <div class="container topbar-inner">
-      <a class="brand" href="#top">
-        <span class="brand-mark" aria-hidden="true"></span>
-        <span class="brand-text">
-          <span>OCP Cooling + HVDC</span>
-          <small>AI Infrastructure Narrative</small>
-        </span>
-      </a>
+<!-- ═══════════════════════════════════════
+     MASTHEAD
+════════════════════════════════════════ -->
+<section class="masthead" id="top">
+  <div class="masthead-copy reveal">
+    <div class="article-meta">Technical Analysis · 2024</div>
+    <h1 class="article-title">
+      下一代 AI 数据中心，<br/>
+      必须同时重构<em> Cooling</em> 与 <em>Power</em>
+    </h1>
+    <p class="article-subtitle">
+      当机柜功率密度从 10–25 kW 迈向 100 kW、250 kW 乃至更高，真正制约 AI 工厂的不再是
+      GPU 数量本身，而是能否高效送入电力、稳定移出热量，并以可认证、可交付、可全球化的方式实现系统级整合。
+    </p>
+    <div class="article-actions">
+      <a class="btn btn-primary" href="#challenge">开始阅读</a>
+      <a class="btn btn-ghost" href="#dcdeeptech">DCDeepTech 平台</a>
+    </div>
+  </div>
 
-      <div class="nav-wrap">
-        <button class="nav-toggle" id="navToggle" aria-label="打开导航" aria-expanded="false" aria-controls="siteNav">
-          <span></span>
-        </button>
-        <nav class="nav" id="siteNav">
-          <a href="#challenge">问题</a>
-          <a href="#cooling">Cooling</a>
-          <a href="#hvdc">HVDC</a>
-          <a href="#architecture">架构路线</a>
-          <a href="#dcdeeptech">DCDeepTech</a>
-          <a href="#ecosystem">生态</a>
-        </nav>
+  <div class="stat-panel reveal reveal-delay-2">
+    <div class="stat-panel-label">Key Metrics · AI Infrastructure</div>
+    <div class="stat-grid">
+      <div class="stat-cell">
+        <span class="val teal counter" data-target="100">0</span>
+        <span class="lbl">kW+ AI 机柜目标功率密度</span>
+      </div>
+      <div class="stat-cell">
+        <span class="val blue">CDU</span>
+        <span class="lbl">升级为系统级热管理中枢</span>
+      </div>
+      <div class="stat-cell">
+        <span class="val gold counter" data-target="800">0</span>
+        <span class="lbl">V HVDC 总线电压</span>
+      </div>
+      <div class="stat-cell">
+        <span class="val teal">PUE</span>
+        <span class="lbl">接近物理极限 1.0×</span>
+      </div>
+      <div class="stat-cell">
+        <span class="val blue counter" data-target="250">0</span>
+        <span class="lbl">kW 超高密度目标</span>
+      </div>
+      <div class="stat-cell">
+        <span class="val gold counter" data-target="5">0</span>
+        <span class="lbl">× 空间效率潜力</span>
       </div>
     </div>
-  </header>
+  </div>
+</section>
 
-  <main id="top">
-    <section class="hero parallax-layer" style="--parallax-speed:-0.04;">
-      <div class="container hero-grid">
-        <div class="hero-copy fade-up tilt-card" data-tilt>
-          <div class="eyebrow"><span class="eyebrow-dot"></span> AI Infrastructure Narrative Page</div>
-          <h1 class="text-glow">下一代 AI 数据中心，必须同时重构 <span class="accent-teal">Cooling</span> 与 <span class="accent-blue">Power</span></h1>
-          <p class="lead">
-            当机柜从 10–25kW 迈向 100kW、250kW 乃至更高，真正限制 AI 工厂的，不再只是 GPU 数量，
-            而是能不能把电高效送进去，把热稳定拿出来，并且让整套系统具备可认证、可交付、可扩展、可销售的全球化能力。
-          </p>
-          <div class="hero-actions">
-            <a class="btn btn-primary" href="#demo-scene">查看自动演示场景</a>
-            <a class="btn btn-secondary" href="#dcdeeptech">查看新加坡平台角色</a>
-          </div>
-          <div class="mini-stats">
-            <article>
-              <strong><span class="counter" data-target="100">0</span>kW+</strong>
-              <span>AI 机柜正在从传统功率密度跃迁到超高密度区间</span>
-            </article>
-            <article>
-              <strong>CDU</strong>
-              <span>从冷板液冷的配液节点，升级为系统级热管理中枢</span>
-            </article>
-            <article>
-              <strong><span class="counter" data-target="800">0</span>V</strong>
-              <span>从电力链路层面减少转换级数与寄生损耗</span>
-            </article>
-          </div>
-        </div>
-
-        <div class="hero-visual fade-up tilt-card" data-tilt style="transition-delay: 0.08s;">
-          <div>
-            <div class="kicker">从芯片 · 机柜 · 电力链路 · 走向整座 AI 工厂</div>
-            <div class="diagram" aria-label="OCP Cooling and HVDC architecture visualization">
-              <div class="orbital-ring" aria-hidden="true"></div>
-              <div class="facility-node top-left">Facility Water<br/>Cooling Interface</div>
-              <div class="facility-node top-right">MVAC / SST<br/>Power Entry</div>
-              <div class="signal-line line-facility-a"></div>
-              <div class="signal-line line-facility-b"></div>
-              <div class="signal-line line-power-a"></div>
-              <div class="signal-line line-cooling-a"></div>
-              <div class="pulse power"></div>
-              <div class="pulse cooling"></div>
-              <div class="power-core"></div>
-              <div class="data-label label-1">Liquid Loop</div>
-              <div class="data-label label-2">HVDC Feed</div>
-              <div class="data-label label-3">Rack Density</div>
-
-              <div class="rack">
-                <div class="rack-stack">
-                  <div class="rack-unit"><span>GPU / CPU Tray</span><small>Cold Plate</small></div>
-                  <div class="rack-unit"><span>NVLink / Fabric</span><small>Dense IO</small></div>
-                  <div class="rack-unit"><span>Compute Tray</span><small>Direct-to-Chip</small></div>
-                  <div class="rack-unit"><span>Memory / DIMM</span><small>Thermal Path</small></div>
-                  <div class="rack-unit"><span>Power Shelf</span><small>High Current</small></div>
-                </div>
-              </div>
-
-              <div class="power-sidecar">
-                <div class="cell">AC / DC Front End</div>
-                <div class="cell">BBU / CBU</div>
-                <div class="cell">800V Bus</div>
-                <div class="cell">Rack Feed</div>
-                <div class="cell">Protection</div>
-              </div>
-
-              <div class="cooling-loop">
-                <div class="loop-bar"></div>
-                <div class="loop-bar"></div>
-                <div class="loop-bar"></div>
-                <div class="highlight-band" style="margin-top: 8px; font-size: 12px; line-height: 1.58;">
-                  冷板、歧管、泵组、换热、流量控制、监测告警，共同决定热稳定边界。
-                </div>
-              </div>
-            </div>
-
-            <div class="stat-bar">
-              <article>
-                <strong><span class="counter" data-target="250">0</span>kW</strong>
-                <span>High-density rack target</span>
-              </article>
-              <article>
-                <strong><span class="counter" data-target="5">0</span>x</strong>
-                <span>Space efficiency potential</span>
-              </article>
-              <article>
-                <strong><span class="counter" data-target="10">0</span>x</strong>
-                <span>Token efficiency upside</span>
-              </article>
-              <article>
-                <strong>PUE 1.0x</strong>
-                <span>Closer to the physical floor</span>
-              </article>
-            </div>
-          </div>
-
-          <p class="visual-caption">
-            这不是“服务器加点水冷”或“把 UPS 换个方案”那么简单。真正的变化，是 OCP cooling 与 HVDC 正在一起重写
-            <strong>rack power density、PUE、可维护性、空间效率</strong> 与 <strong>全球市场进入逻辑</strong>。
-          </p>
-        </div>
+<!-- ABSTRACT -->
+<div class="abstract-band">
+  <div class="abstract-inner">
+    <div class="abstract-aside">
+      <div class="aside-label">Abstract</div>
+      <div class="abstract-divider"></div>
+    </div>
+    <div class="abstract-body reveal">
+      <h2>摘要</h2>
+      <p>
+        本文分析 OCP（Open Compute Project）液冷架构与 HVDC（高压直流）供电体系如何共同定义下一代 AI 数据中心。
+        随着 GPU 集群功率密度的持续跃迁，传统风冷与低压 AC 供电在空间效率、能效与扩展性上的固有局限已无法支撑超大规模 AI 工厂的部署需求。
+      </p>
+      <p>
+        OCP 冷板液冷、CDU（冷量分配单元）与 ±400V/800V HVDC 的协同部署，构成了当前技术路线中最具前景的系统性解决方案。
+        本文进一步探讨 DCDeepTech 作为新加坡跨境 AI 基础设施平台，在链接工程能力与全球市场进入路径方面的战略角色。
+      </p>
+      <div class="abstract-keywords">
+        <span class="keyword">OCP Cooling</span>
+        <span class="keyword">Liquid Cooling</span>
+        <span class="keyword">HVDC 800V</span>
+        <span class="keyword">CDU</span>
+        <span class="keyword">Cold Plate</span>
+        <span class="keyword">Rack Density</span>
+        <span class="keyword">PUE</span>
+        <span class="keyword">DCDeepTech</span>
+        <span class="keyword">Singapore</span>
       </div>
-    </section>
+    </div>
+  </div>
+</div>
 
-    <section class="hero-demo-wrap" id="demo-scene">
-      <div class="container">
-        <div class="transition-strip fade-up">
-          <span>Scroll-driven Parallax</span>
-          <i></i>
-          <span>3D Exploded Rack</span>
-          <i></i>
-          <span>Auto Power/Cooling Demo</span>
+<!-- ═══════════════════════════════════════
+     SECTION I: CHALLENGE
+════════════════════════════════════════ -->
+<div class="section-divider" style="margin-top:60px;">
+  <span class="divider-tag">Section I</span>
+</div>
+
+<section class="section" id="challenge">
+  <div class="section-header reveal">
+    <div class="section-num">§ I</div>
+    <div class="section-title-block">
+      <h2>问题陈述：功率密度跃迁与架构范式失效</h2>
+      <p>当 AI 训练与推理集群的机柜功率突破传统边界，整个数据中心架构体系必须系统性重建。</p>
+    </div>
+  </div>
+
+  <div class="challenge-grid">
+    <div class="a-card reveal reveal-delay-1">
+      <div class="a-card-label">Thermal Limit</div>
+      <h3>热管理边界失效</h3>
+      <p>传统风冷的散热上限约 25–30 kW/机柜。AI 加速器产生的局部热流密度已令机柜风冷设计从根本上失效。直接面向芯片的液冷是唯一工程可行路径。</p>
+    </div>
+    <div class="a-card reveal reveal-delay-2">
+      <div class="a-card-label">Power Delivery</div>
+      <h3>低压供电体系瓶颈</h3>
+      <p>传统 AC/低压 DC 供电在 100 kW 以上机柜中面临铜排过重、多级变换损耗叠加、UPS 空间占用大等系统性问题，成为提升功率密度的直接制约。</p>
+    </div>
+    <div class="a-card reveal reveal-delay-3">
+      <div class="a-card-label">Scale Challenge</div>
+      <h3>规模化交付能力壁垒</h3>
+      <p>技术可行不等于可交付。OEM 认证、全球供应链整合、超大规模客户准入条件，构成了传统数据中心厂商难以逾越的市场进入门槛。</p>
+    </div>
+  </div>
+
+  <!-- Density chart -->
+  <div class="density-chart reveal">
+    <h4>AI Data Centre · Rack Power Density Evolution</h4>
+    <div class="density-row">
+      <div class="density-label">Traditional Air</div>
+      <div class="density-track"><div class="density-fill low" data-width="12%"></div></div>
+      <div class="density-val">10–25 kW</div>
+    </div>
+    <div class="density-row">
+      <div class="density-label">Gen-1 Liquid</div>
+      <div class="density-track"><div class="density-fill mid" data-width="28%"></div></div>
+      <div class="density-val">50–80 kW</div>
+    </div>
+    <div class="density-row">
+      <div class="density-label">OCP Cold Plate</div>
+      <div class="density-track"><div class="density-fill hi" data-width="55%"></div></div>
+      <div class="density-val">100–150 kW</div>
+    </div>
+    <div class="density-row">
+      <div class="density-label">HVDC + OCP</div>
+      <div class="density-track"><div class="density-fill ultra" data-width="92%"></div></div>
+      <div class="density-val">250 kW+</div>
+    </div>
+  </div>
+</section>
+
+<!-- DIVIDER -->
+<div class="section-divider"><span class="divider-tag">Section II</span></div>
+
+<!-- ═══════════════════════════════════════
+     SECTION II: COOLING
+════════════════════════════════════════ -->
+<section class="section" id="cooling">
+  <div class="section-header reveal">
+    <div class="section-num">§ II</div>
+    <div class="section-title-block">
+      <h2>OCP 液冷架构：从冷板到系统级热管理</h2>
+      <p>Open Compute Project 液冷规范将散热从机柜配件升级为 AI 工厂的核心基础设施层。</p>
+    </div>
+  </div>
+
+  <div class="cooling-layout">
+    <div class="cooling-diagram reveal">
+      <div class="diagram-label">Liquid Cooling Loop · Animated Diagram</div>
+      <svg class="svg-cooling" viewBox="0 0 600 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="loopGrad1" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#00d4a8" stop-opacity="0.9"/>
+            <stop offset="100%" stop-color="#4f8ef7" stop-opacity="0.7"/>
+          </linearGradient>
+          <linearGradient id="loopGrad2" x1="100%" y1="0%" x2="0%" y2="0%">
+            <stop offset="0%" stop-color="#f77462" stop-opacity="0.8"/>
+            <stop offset="100%" stop-color="#e8c96a" stop-opacity="0.5"/>
+          </linearGradient>
+          <filter id="glow1">
+            <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+            <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <!-- Animated flow dash -->
+          <marker id="arrow1" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+            <circle cx="4" cy="4" r="2" fill="#00d4a8" opacity="0.8"/>
+          </marker>
+        </defs>
+        <!-- Facility Water -->
+        <rect x="20" y="90" width="90" height="60" rx="12" fill="rgba(0,212,168,0.08)" stroke="rgba(0,212,168,0.35)" stroke-width="1.5"/>
+        <text x="65" y="116" fill="#00d4a8" font-size="10" text-anchor="middle" font-family="'JetBrains Mono'">Facility</text>
+        <text x="65" y="130" fill="#00d4a8" font-size="10" text-anchor="middle" font-family="'JetBrains Mono'">Water</text>
+        <!-- CDU -->
+        <rect x="220" y="70" width="100" height="100" rx="16" fill="rgba(79,142,247,0.10)" stroke="rgba(79,142,247,0.4)" stroke-width="1.5"/>
+        <text x="270" y="117" fill="#7bb8ff" font-size="11" text-anchor="middle" font-family="'JetBrains Mono'" font-weight="500">CDU</text>
+        <text x="270" y="133" fill="#8a99b5" font-size="9" text-anchor="middle" font-family="'JetBrains Mono'">Coolant Dist.</text>
+        <!-- Rack / Cold Plate -->
+        <rect x="440" y="60" width="140" height="120" rx="14" fill="rgba(232,201,106,0.07)" stroke="rgba(232,201,106,0.3)" stroke-width="1.5"/>
+        <text x="510" y="105" fill="#e8c96a" font-size="11" text-anchor="middle" font-family="'JetBrains Mono'" font-weight="500">AI Rack</text>
+        <text x="510" y="120" fill="#8a99b5" font-size="9" text-anchor="middle" font-family="'JetBrains Mono'">GPU Cold Plate</text>
+        <text x="510" y="134" fill="#8a99b5" font-size="9" text-anchor="middle" font-family="'JetBrains Mono'">Direct-to-Chip</text>
+        <!-- Supply line (cool) -->
+        <path d="M 110 108 L 220 108" stroke="url(#loopGrad1)" stroke-width="3" stroke-linecap="round">
+          <animate attributeName="stroke-dasharray" values="0 200;200 0" dur="2s" repeatCount="indefinite"/>
+        </path>
+        <path d="M 320 105 L 440 105" stroke="url(#loopGrad1)" stroke-width="3" stroke-linecap="round">
+          <animate attributeName="stroke-dasharray" values="0 200;200 0" dur="2s" begin="0.4s" repeatCount="indefinite"/>
+        </path>
+        <!-- Return line (warm) -->
+        <path d="M 440 135 L 320 135" stroke="url(#loopGrad2)" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="6 4">
+          <animate attributeName="stroke-dashoffset" values="20;0" dur="1.2s" repeatCount="indefinite"/>
+        </path>
+        <path d="M 220 132 L 110 132" stroke="url(#loopGrad2)" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="6 4">
+          <animate attributeName="stroke-dashoffset" values="20;0" dur="1.2s" begin="0.2s" repeatCount="indefinite"/>
+        </path>
+        <!-- Labels -->
+        <text x="165" y="100" fill="#00d4a8" font-size="9" text-anchor="middle" font-family="'JetBrains Mono'" opacity="0.8">Supply ↓</text>
+        <text x="165" y="150" fill="#f77462" font-size="9" text-anchor="middle" font-family="'JetBrains Mono'" opacity="0.8">Return ↑</text>
+        <text x="380" y="100" fill="#00d4a8" font-size="9" text-anchor="middle" font-family="'JetBrains Mono'" opacity="0.8">Cool →</text>
+        <text x="380" y="150" fill="#f77462" font-size="9" text-anchor="middle" font-family="'JetBrains Mono'" opacity="0.8">Hot ←</text>
+        <!-- Glow dot on CDU -->
+        <circle cx="270" cy="70" r="5" fill="#4f8ef7" filter="url(#glow1)" opacity="0.8">
+          <animate attributeName="r" values="4;7;4" dur="2.5s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0.8;1;0.8" dur="2.5s" repeatCount="indefinite"/>
+        </circle>
+      </svg>
+      <div class="cooling-stats">
+        <div class="cooling-stat">
+          <strong>Cold Plate</strong>
+          <span>直接接触芯片热源，导热效率最优</span>
         </div>
-
-        <div class="hero-demo fade-up tilt-card" data-tilt style="transition-delay: 0.06s; margin-top: 16px;">
-          <div class="demo-copy">
-            <div>
-              <div class="kicker">Autoplay Demo Scene</div>
-              <h2>一段自动播放的 power / cooling demo，把“送电”和“带热”同时讲清楚</h2>
-              <p>
-                这个场景不是静态插图，而是一个自动切换的演示：从 Grid / SST 进电，到 Sidecar 条件化供电，再到 Rack 内部分层爆炸，随后展示 CDU 液路、回水与 telemetry 闭环优化。
-                这样用户滚动时，不只是看到内容，而是能“看见系统在工作”。
-              </p>
-            </div>
-
-            <div class="scene-meta">
-              <div class="scene-note">
-                <strong>Scene Logic</strong>
-                <span>Power ingress → conditioning → rack distribution → cooling loop → telemetry optimization</span>
-              </div>
-              <div class="scene-note">
-                <strong>Visual Goal</strong>
-                <span>比“示意图”更强，但依然保持工程感和高级感，不走廉价炫光路线。</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="demo-stage" id="demoStage" data-scene="0" aria-label="Autoplay power and cooling demo scene">
-            <div class="scene-camera">
-              <div class="scene-orbit"></div>
-              <div class="scene-floor"></div>
-
-              <div class="demo-node node-grid"><div><strong>Grid / MVAC</strong>Power Ingress</div></div>
-              <div class="demo-node node-sst"><div><strong>SST / Front End</strong>HVDC Conversion</div></div>
-              <div class="demo-node node-sidecar"><div><strong>Sidecar</strong>BBU · CBU · Protection</div></div>
-              <div class="demo-node node-cdu"><div><strong>CDU</strong>Liquid Exchange · Flow Control</div></div>
-              <div class="demo-node node-telemetry"><div><strong>Telemetry</strong>Thermal + Power Optimization</div></div>
-
-              <div class="power-path p-grid-sst"></div>
-              <div class="power-path p-sst-sidecar"></div>
-              <div class="power-path p-sidecar-rack"></div>
-              <div class="cool-path c-cdu-rack"></div>
-              <div class="cool-path c-rack-return"></div>
-              <div class="telemetry-beam t-rack-telemetry"></div>
-              <div class="telemetry-beam t-sidecar-telemetry"></div>
-
-              <div class="flow-pulse power"></div>
-              <div class="flow-pulse cool"></div>
-              <div class="flow-pulse telemetry"></div>
-
-              <div class="scene-core">
-                <div class="rack-shell"></div>
-                <div class="explode-layer" data-label="GPU / CPU Tray"></div>
-                <div class="explode-layer" data-label="NVLink / Fabric"></div>
-                <div class="explode-layer" data-label="Compute Tray"></div>
-                <div class="explode-layer" data-label="Memory / DIMM"></div>
-                <div class="explode-layer" data-label="Power Shelf"></div>
-              </div>
-            </div>
-
-            <div class="scene-panel">
-              <div class="scene-hud" id="sceneHud">
-                <strong>Current Scene</strong>
-                <h3 data-scene-title>Power ingress through MVAC and front-end conversion</h3>
-                <p data-scene-copy>先把外部电力送进系统，再通过 SST / front-end 组织成更适合高密度 AI 的电力形式。</p>
-              </div>
-              <div class="step-indicators">
-                <div class="step-chip"><strong>01</strong><span>Grid / MVAC</span></div>
-                <div class="step-chip"><strong>02</strong><span>HVDC Sidecar</span></div>
-                <div class="step-chip"><strong>03</strong><span>CDU Liquid Loop</span></div>
-                <div class="step-chip"><strong>04</strong><span>Telemetry</span></div>
-                <div class="step-chip"><strong>05</strong><span>Integrated AI Factory</span></div>
-              </div>
-            </div>
-          </div>
+        <div class="cooling-stat">
+          <strong>CDU</strong>
+          <span>换热、流控、循环稳定性核心节点</span>
         </div>
-      </div>
-    </section>
-
-    <section class="section" id="challenge">
-      <div class="container">
-        <div class="transition-strip fade-up" style="margin-bottom: 18px;">
-          <span>Thermal Limits</span>
-          <i></i>
-          <span>Power Limits</span>
-          <i></i>
-          <span>Architecture Shift</span>
+        <div class="cooling-stat">
+          <strong>Manifold</strong>
+          <span>多机柜并联液路配液与均流</span>
         </div>
-
-        <div class="section-header fade-up">
-          <h2>问题已经不是“能不能上 AI”，而是基础设施能不能扛住 AI</h2>
-          <p>
-            传统风冷与传统交流供电架构，原本服务的是较低功率密度的通算时代。今天的 AI 数据中心，面对的是更高热流密度、
-            更强脉冲负载、更密集的机柜布局，以及更严苛的部署效率和运营成本约束。
-          </p>
-        </div>
-
-        <div class="grid-3">
-          <article class="section-card fade-up parallax-layer" style="--parallax-speed:0.02;">
-            <div class="kicker">热力学边界</div>
-            <h3>空气的传热能力不够了</h3>
-            <p>
-              当 GPU、CPU、DIMM、power shelf 同时堆进高密度机柜，空气对流不再足以承担主要散热任务。
-              你需要让液体直接贴近发热器件，把热从硅片附近更快、更稳定地带走。
-            </p>
-            <div class="metric">
-              <div class="metric-row"><span>传统风冷更擅长</span><span>中低密度负载</span></div>
-              <div class="metric-row"><span>AI 时代更需要</span><span>Direct-to-Chip</span></div>
-              <div class="metric-row"><span>决定因素</span><span>结温、热阻、流量控制</span></div>
-            </div>
-          </article>
-
-          <article class="section-card fade-up parallax-layer" style="transition-delay: 0.06s; --parallax-speed:-0.015;">
-            <div class="kicker">电动力学边界</div>
-            <h3>多级 AC 转换链路开始变重</h3>
-            <p>
-              当单柜功率不断上升，传统 AC → UPS → PSU → 低压直流路径中的转换损耗、空间占用、铜排需求和寄生热都会同步上升。
-              电力链路越长，损失越多，散热压力也越大。
-            </p>
-            <div class="metric">
-              <div class="metric-row"><span>链路越长</span><span>损耗越大</span></div>
-              <div class="metric-row"><span>功率越高</span><span>铜与散热越吃紧</span></div>
-              <div class="metric-row"><span>工程目标</span><span>更少转换级数</span></div>
-            </div>
-          </article>
-
-          <article class="section-card fade-up parallax-layer" style="transition-delay: 0.12s; --parallax-speed:0.025;">
-            <div class="kicker">系统级结论</div>
-            <h3>Cooling 和 Power 必须一起设计</h3>
-            <p>
-              更高效率的供电能减少损耗热，更高效率的液冷能释放更高功率密度。两者不再是两个独立系统，
-              而是同一个 rack-scale architecture 的两面。
-            </p>
-            <div class="highlight-band">
-              到了 AI 工厂阶段，真正的竞争力，是把电送进去、把热拿出来、并且持续稳定运行的能力。
-            </div>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="cooling">
-      <div class="container">
-        <div class="transition-strip fade-up" style="margin-bottom: 18px;">
-          <span>Cold Plate</span>
-          <i></i>
-          <span>CDU</span>
-          <i></i>
-          <span>Rack-Level Cooling</span>
-        </div>
-
-        <div class="section-header fade-up">
-          <h2>OCP Cooling：不是“加水冷”，而是从服务器到机房的热管理重构</h2>
-          <p>
-            在 OCP / open architecture 语境下，cooling 不是单一零部件，而是围绕 cold plate、CDU、manifold、rack-level cooling、
-            direct-to-chip 所形成的完整系统设计语言。
-          </p>
-        </div>
-
-        <div class="grid-2">
-          <article class="section-card fade-up parallax-layer" style="--parallax-speed:0.018;">
-            <div class="kicker">Cold Plate + Direct-to-Chip</div>
-            <h3>把液体带到热源附近</h3>
-            <p>
-              冷板液冷的核心逻辑，是让冷却液直接面对最热的器件，而不是先把热交给空气再慢慢带走。
-              对高热密度 GPU、CPU、HBM、DIMM 以及 power shelf 来说，这种路径更短、更稳定，也更适合持续重载运行。
-            </p>
-            <div class="metric">
-              <div class="metric-row"><span>优先散热对象</span><span>GPU / CPU / DIMM / PSU</span></div>
-              <div class="metric-row"><span>关键目标</span><span>更低热阻</span></div>
-              <div class="metric-row"><span>工程意义</span><span>支撑更高 rack density</span></div>
-            </div>
-          </article>
-
-          <article class="section-card fade-up parallax-layer" style="transition-delay: 0.08s; --parallax-speed:-0.018;">
-            <div class="kicker">CDU + Manifold</div>
-            <h3>CDU 是液冷系统的循环中枢</h3>
-            <p>
-              CDU 不只是一个“冷却箱”。它承担冷却液分配、一次侧/二次侧换热、流量控制、压力管理、冗余设计、告警监测和运维接口等职责。
-              换句话说，CDU 是冷板系统能否工程化、规模化、可运维的关键节点。
-            </p>
-            <div class="metric">
-              <div class="metric-row"><span>系统角色</span><span>Distribution + Exchange + Control</span></div>
-              <div class="metric-row"><span>可靠性关键词</span><span>N+1 / 1+1 冗余</span></div>
-              <div class="metric-row"><span>运维关键词</span><span>Leak Detection / Monitoring</span></div>
-            </div>
-          </article>
-        </div>
-
-        <div class="grid-3" style="margin-top: 18px;">
-          <article class="section-card fade-up parallax-layer" style="--parallax-speed:0.02;">
-            <div class="kicker">Rack-Level Cooling</div>
-            <h3>热管理从单机升级到整柜</h3>
-            <p>
-              当一个机柜里放的不只是服务器，还有 fabric、power shelf、high-speed IO 和更复杂的机械结构时，
-              cooling 的单位自然从单台服务器上升到整个 rack。
-            </p>
-          </article>
-          <article class="section-card fade-up parallax-layer" style="transition-delay: 0.06s; --parallax-speed:-0.012;">
-            <div class="kicker">Approach Temperature</div>
-            <h3>不是只比冷不冷，而是比系统效率</h3>
-            <p>
-              更好的 CDU 与冷板系统，不只是追求“温度更低”，而是以更低能耗实现更稳定的结温边界，
-              让数据中心获得更高的自由冷却空间与更好的全系统能效。
-            </p>
-          </article>
-          <article class="section-card fade-up parallax-layer" style="transition-delay: 0.12s; --parallax-speed:0.024;">
-            <div class="kicker">Warm Water Future</div>
-            <h3>更高供水温度，意味着更低 PUE 压力</h3>
-            <p>
-              当系统开始支持更高温度液冷，意味着对机械制冷依赖更低，对自然冷却与余热回收更友好。
-              这会直接改变数据中心的能效经济学。
-            </p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="hvdc">
-      <div class="container">
-        <div class="transition-strip fade-up" style="margin-bottom: 18px;">
-          <span>UPS Limits</span>
-          <i></i>
-          <span>Sidecar</span>
-          <i></i>
-          <span>800V HVDC</span>
-        </div>
-
-        <div class="section-header fade-up">
-          <h2>HVDC：给 AI 机柜一条更直接的电力高速公路</h2>
-          <p>
-            这里讲的 HVDC，不是传统电网语境里的远距离输电，而是数据中心内部的新一代高压直流供配电架构。
-            它的意义，在于减少转换级数、降低损耗、释放空间，并让超高功率密度机柜更可实现。
-          </p>
-        </div>
-
-        <div class="grid-2">
-          <article class="section-card fade-up parallax-layer" style="--parallax-speed:0.018;">
-            <div class="kicker">Why HVDC</div>
-            <h3>当功率密度上去，多级转换就开始成为负担</h3>
-            <p>
-              传统 AC + UPS + 多级 PSU 路径，会在每一个转换节点产生损耗、热量、空间占用和复杂度。
-              对几十千瓦的时代还能承受，对 100kW、250kW 乃至更高的 AI 机柜，问题会被成倍放大。
-            </p>
-            <div class="highlight-band">
-              HVDC 的价值，不只是“效率更高”，而是把整个 power delivery 重新变成适合超高密度 AI 的体系。
-            </div>
-          </article>
-
-          <article class="section-card fade-up parallax-layer" style="transition-delay: 0.08s; --parallax-speed:-0.016;">
-            <div class="kicker">What Changes</div>
-            <h3>更少弯路，更少损耗，更少无效热</h3>
-            <p>
-              在新一代 HVDC 架构中，sidecar、BBU、CBU、rack bus、板级降压等环节会重新组合。
-              目标不是为了“看起来先进”，而是为了把更多电力真正留给计算，而不是浪费在基础设施内部。
-            </p>
-            <div class="metric">
-              <div class="metric-row"><span>设计方向</span><span>少级变换</span></div>
-              <div class="metric-row"><span>系统效果</span><span>更高端到端效率</span></div>
-              <div class="metric-row"><span>业务结果</span><span>更多有效算力输出</span></div>
-            </div>
-          </article>
-        </div>
-
-        <div class="timeline fade-up" style="margin-top: 18px;">
-          <div class="kicker">HVDC Evolution</div>
-          <div class="timeline-track">
-            <div class="timeline-item">
-              <strong>Phase 1</strong>
-              <h4>传统 AC 主导</h4>
-              <p>
-                以 UPS、PSU 和低压直流为主，适合较低功率密度时代，但在 AI 机柜持续升高后，效率和空间压力开始显现。
-              </p>
-            </div>
-            <div class="timeline-item">
-              <strong>Phase 2</strong>
-              <h4>Sidecar 过渡期</h4>
-              <p>
-                将部分高压变换与储能单元从计算机柜中抽离出来，通过 sidecar 形成更合理的机柜级供电组织方式。
-              </p>
-            </div>
-            <div class="timeline-item">
-              <strong>Phase 3</strong>
-              <h4>±400V / 800V HVDC</h4>
-              <p>
-                面向更高 rack power density 的终局路线。核心不只是高压，而是更适合大规模 AI 工厂的 power-and-thermal architecture。
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="architecture">
-      <div class="container">
-        <div class="transition-strip fade-up" style="margin-bottom: 18px;">
-          <span>AC Era</span>
-          <i></i>
-          <span>Sidecar Transition</span>
-          <i></i>
-          <span>Native HVDC Future</span>
-        </div>
-
-        <div class="section-header fade-up">
-          <h2>几条路线不是互相排斥，而是对应不同阶段与不同功率密度</h2>
-          <p>
-            市场不会在一天之内从传统 AC 架构跳到原生 800V HVDC。真正发生的，是从传统方案到过渡型 sidecar，再到更高压直流架构的渐进式重构。
-          </p>
-        </div>
-
-        <div class="architecture fade-up">
-          <div class="arch-tabs">
-            <button class="arch-tab active" data-tab="tab1">传统 AC + 低压直流</button>
-            <button class="arch-tab" data-tab="tab2">过渡型 Sidecar</button>
-            <button class="arch-tab" data-tab="tab3">±400V / 800V HVDC</button>
-          </div>
-
-          <div class="arch-panel active" id="tab1">
-            <div class="arch-visual">
-              <svg viewBox="0 0 640 340" role="img" aria-label="Traditional AC architecture diagram">
-                <defs>
-                  <linearGradient id="g1" x1="0" x2="1">
-                    <stop offset="0%" stop-color="#6fa9ff" stop-opacity="0.2"/>
-                    <stop offset="100%" stop-color="#6fa9ff" stop-opacity="0.6"/>
-                  </linearGradient>
-                </defs>
-                <rect x="20" y="120" width="110" height="80" rx="22" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.12)"/>
-                <rect x="165" y="120" width="110" height="80" rx="22" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.12)"/>
-                <rect x="310" y="120" width="110" height="80" rx="22" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.12)"/>
-                <rect x="455" y="120" width="160" height="80" rx="22" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.12)"/>
-                <text x="75" y="166" fill="#eaf2ff" font-size="16" text-anchor="middle">Grid AC</text>
-                <text x="220" y="166" fill="#eaf2ff" font-size="16" text-anchor="middle">UPS</text>
-                <text x="365" y="166" fill="#eaf2ff" font-size="16" text-anchor="middle">PSU</text>
-                <text x="535" y="156" fill="#eaf2ff" font-size="16" text-anchor="middle">Rack / Server</text>
-                <text x="535" y="176" fill="#9bb1cf" font-size="12" text-anchor="middle">Low-Voltage DC</text>
-                <line x1="130" y1="160" x2="165" y2="160" stroke="url(#g1)" stroke-width="8" stroke-linecap="round"/>
-                <line x1="275" y1="160" x2="310" y2="160" stroke="url(#g1)" stroke-width="8" stroke-linecap="round"/>
-                <line x1="420" y1="160" x2="455" y2="160" stroke="url(#g1)" stroke-width="8" stroke-linecap="round"/>
-                <text x="320" y="60" fill="#d7e4ff" font-size="24" text-anchor="middle">更多级数，更多损耗，更多空间占用</text>
-              </svg>
-            </div>
-            <div class="arch-copy">
-              <h3>传统 AC + PSU + 低压直流</h3>
-              <p>
-                这条路径在通算时代非常成熟，生态与维护体系都完整。但随着 AI 机柜功率提升，多级转换带来的损耗、热量与空间占用会快速累积。
-              </p>
-              <div class="arch-points">
-                <div><strong>适合阶段：</strong>较低到中等功率密度，已有 AC 体系为主的机房。</div>
-                <div><strong>优点：</strong>成熟、熟悉、短期部署阻力小。</div>
-                <div><strong>挑战：</strong>难以持续支撑更高的 rack power density 与更激进的空间效率目标。</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="arch-panel" id="tab2">
-            <div class="arch-visual">
-              <svg viewBox="0 0 640 340" role="img" aria-label="Sidecar architecture diagram">
-                <defs>
-                  <linearGradient id="g2" x1="0" x2="1">
-                    <stop offset="0%" stop-color="#9b8dff" stop-opacity="0.28"/>
-                    <stop offset="100%" stop-color="#6fa9ff" stop-opacity="0.62"/>
-                  </linearGradient>
-                </defs>
-                <rect x="36" y="90" width="120" height="160" rx="26" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.12)"/>
-                <rect x="196" y="58" width="150" height="224" rx="26" fill="rgba(155,141,255,0.08)" stroke="rgba(155,141,255,0.22)"/>
-                <rect x="390" y="90" width="214" height="160" rx="26" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.12)"/>
-                <text x="96" y="176" fill="#eaf2ff" font-size="16" text-anchor="middle">Grid / AC</text>
-                <text x="271" y="126" fill="#efeaff" font-size="16" text-anchor="middle">Sidecar</text>
-                <text x="271" y="150" fill="#c6bdff" font-size="12" text-anchor="middle">AC/DC + BBU + CBU</text>
-                <text x="497" y="166" fill="#eaf2ff" font-size="16" text-anchor="middle">AI Rack Cluster</text>
-                <line x1="156" y1="170" x2="196" y2="170" stroke="url(#g2)" stroke-width="8" stroke-linecap="round"/>
-                <line x1="346" y1="170" x2="390" y2="170" stroke="url(#g2)" stroke-width="8" stroke-linecap="round"/>
-                <text x="320" y="44" fill="#d7e4ff" font-size="22" text-anchor="middle">先把最占空间、最吃散热的电力模块移出计算机柜</text>
-              </svg>
-            </div>
-            <div class="arch-copy">
-              <h3>过渡型 Sidecar / 边柜供电</h3>
-              <p>
-                这是一个非常现实的中间阶段。它不要求所有系统一步到位进入原生 HVDC 终局，但已经开始把机柜电力结构重新组织，释放 rack 内部空间，并改善热与电的耦合关系。
-              </p>
-              <div class="arch-points">
-                <div><strong>适合阶段：</strong>高密度 AI 集群的过渡部署、改造与混合架构。</div>
-                <div><strong>优点：</strong>更好适配 sidecar、BBU、CBU、局部高压路线和机柜级运维。</div>
-                <div><strong>挑战：</strong>仍然需要在 AC 传统体系与新直流逻辑之间做系统协调。</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="arch-panel" id="tab3">
-            <div class="arch-visual">
-              <svg viewBox="0 0 640 340" role="img" aria-label="Native HVDC architecture diagram">
-                <defs>
-                  <linearGradient id="g3" x1="0" x2="1">
-                    <stop offset="0%" stop-color="#45e6c4" stop-opacity="0.35"/>
-                    <stop offset="100%" stop-color="#6fa9ff" stop-opacity="0.72"/>
-                  </linearGradient>
-                </defs>
-                <rect x="22" y="118" width="130" height="86" rx="22" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.12)"/>
-                <rect x="190" y="98" width="160" height="126" rx="24" fill="rgba(69,230,196,0.08)" stroke="rgba(69,230,196,0.22)"/>
-                <rect x="388" y="86" width="226" height="150" rx="26" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.12)"/>
-                <text x="87" y="168" fill="#eaf2ff" font-size="16" text-anchor="middle">MVAC</text>
-                <text x="270" y="148" fill="#eafbf8" font-size="16" text-anchor="middle">SST / Front-End</text>
-                <text x="270" y="170" fill="#b6fff1" font-size="12" text-anchor="middle">800V HVDC Bus</text>
-                <text x="501" y="152" fill="#eaf2ff" font-size="16" text-anchor="middle">Native HVDC AI Racks</text>
-                <text x="501" y="174" fill="#9bb1cf" font-size="12" text-anchor="middle">Board-Level DC/DC</text>
-                <line x1="152" y1="161" x2="190" y2="161" stroke="url(#g3)" stroke-width="8" stroke-linecap="round"/>
-                <line x1="350" y1="161" x2="388" y2="161" stroke="url(#g3)" stroke-width="8" stroke-linecap="round"/>
-                <text x="320" y="48" fill="#d7e4ff" font-size="22" text-anchor="middle">更少转换级数，更高效率，更适合超高功率密度终局</text>
-              </svg>
-            </div>
-            <div class="arch-copy">
-              <h3>±400V / 800V HVDC 路线</h3>
-              <p>
-                这是面向下一代 AI 工厂的核心方向。重点不是“电压更高”这件事本身，而是它让系统有机会摆脱低压重铜、高损耗、多级转换和机柜拥堵，进入真正面向超高密度 AI 的基础设施时代。
-              </p>
-              <div class="arch-points">
-                <div><strong>适合阶段：</strong>新建高密度 AI 工厂、超大规模机柜、未来架构卡位。</div>
-                <div><strong>优点：</strong>减少寄生功耗，释放空间，匹配更高 rack density 与更先进冷却架构。</div>
-                <div><strong>挑战：</strong>需要标准、保护、器件、认证、生态和运维体系一起成熟。</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="section-card fade-up" style="margin-top: 18px;">
-          <div class="kicker">Power + Thermal Coupling</div>
-          <h3>为什么 OCP Cooling 和 HVDC 会一起定义下一代 AI 基础设施</h3>
-          <table class="comparison-table">
-            <tbody>
-              <tr>
-                <td data-label="维度"><strong>功率密度</strong></td>
-                <td data-label="Cooling 影响">更高效带走热量</td>
-                <td data-label="HVDC 影响">更高效送入电力</td>
-                <td data-label="系统结果">支持更高 rack power density</td>
-              </tr>
-              <tr>
-                <td data-label="维度"><strong>能效</strong></td>
-                <td data-label="Cooling 影响">减少风机与制冷负担</td>
-                <td data-label="HVDC 影响">减少多级变换损耗</td>
-                <td data-label="系统结果">更低 PUE 与更高有效算力占比</td>
-              </tr>
-              <tr>
-                <td data-label="维度"><strong>空间</strong></td>
-                <td data-label="Cooling 影响">优化机柜与机房热管理</td>
-                <td data-label="HVDC 影响">释放电力模块占用空间</td>
-                <td data-label="系统结果">更多空间留给计算</td>
-              </tr>
-              <tr>
-                <td data-label="维度"><strong>可靠性</strong></td>
-                <td data-label="Cooling 影响">更稳定的结温与热边界</td>
-                <td data-label="HVDC 影响">更可控的电力组织方式</td>
-                <td data-label="系统结果">更适合持续高负载运行</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="dcdeeptech">
-      <div class="container">
-        <div class="transition-strip fade-up" style="margin-bottom: 18px;">
-          <span>Engineering</span>
-          <i></i>
-          <span>Certification</span>
-          <i></i>
-          <span>Market Entry</span>
-        </div>
-
-        <div class="section-header fade-up">
-          <h2>DCDeepTech：把工程能力翻译成全球 OEM、超级数据中心与 SI 听得懂的市场语言</h2>
-          <p>
-            在这个行业里，只有产品本身还不够。厂商还需要把自己的 OCP cooling、rack power、HVDC、液冷机柜、供配电一体化能力，
-            变成国际客户、渠道伙伴和生态体系能理解、能验证、能采购的能力表达。
-          </p>
-        </div>
-
-        <div class="value-grid">
-          <article class="fade-up parallax-layer" style="--parallax-speed:0.018;">
-            <div class="kicker">Singapore Platform</div>
-            <h3>新加坡，不只是地理节点</h3>
-            <p>
-              新加坡同时连接国际数据中心资本、区域客户、标准讨论、渠道伙伴与全球技术品牌。它既是展示窗口，也是全球厂商进入国际 AI 基础设施市场的可信平台。
-            </p>
-          </article>
-
-          <article class="fade-up parallax-layer" style="transition-delay: 0.06s; --parallax-speed:-0.014;">
-            <div class="kicker">OEM / Hyperscale / SI</div>
-            <h3>协助进入更高门槛生态</h3>
-            <p>
-              DCDeepTech 立足新加坡，帮助全球厂商对接英伟达 OEM 体系、超级数据中心客户和系统集成商 SI 渠道，让技术方案不只停留在工厂和实验室，而能进入真实国际项目路径。
-            </p>
-          </article>
-
-          <article class="fade-up parallax-layer" style="transition-delay: 0.12s; --parallax-speed:0.02;">
-            <div class="kicker">Certification + Narrative</div>
-            <h3>认证路径与数字营销同样重要</h3>
-            <p>
-              OCP 相关认证理解、生态沟通、技术叙事、官网表达、销售资料、数字营销与国际话语体系，本身就是全球化能力的一部分。看见，往往是成交的前提。
-            </p>
-          </article>
-        </div>
-
-        <div class="grid-2" style="margin-top: 18px;">
-          <article class="section-card fade-up parallax-layer" style="--parallax-speed:0.016;">
-            <div class="kicker">What DCDeepTech Helps With</div>
-            <h3>从技术理解，到市场进入</h3>
-            <p>
-              DCDeepTech 的价值，不是把自己写成唯一主角，而是作为一个理解 OCP cooling、HVDC、机柜供配电、液冷制造、系统集成交付与国际客户需求的
-              新加坡平台，帮助厂商把复杂工程语言变成更有说服力的市场进入语言。
-            </p>
-            <div class="arch-points" style="margin-top: 18px;">
-              <div>梳理厂商在 cold plate、CDU、rack cooling、power shelf、HVDC 等方面的能力表达</div>
-              <div>协助对接英伟达 OEM 体系、超级数据中心客户和 SI 渠道伙伴</div>
-              <div>支持 OCP 相关认证路径理解、产品定位、生态沟通与国际数字营销</div>
-            </div>
-          </article>
-
-          <article class="section-card fade-up parallax-layer" style="transition-delay: 0.08s; --parallax-speed:-0.014;">
-            <div class="kicker">Business Translation Layer</div>
-            <h3>工程能力，必须被“翻译”成可采购能力</h3>
-            <p>
-              顶级客户采购的从来不只是一个零部件，而是一种可以落地的系统能力：能不能进 OEM 生态、能不能满足 hyperscale 场景、能不能被 SI 带进项目、
-              能不能用国际客户听得懂的方式展示你的可靠性、效率、交付力与扩展性。
-            </p>
-            <div class="highlight-band">
-              所以，OCP 相关认证、技术叙事、官网呈现、数字营销与国际化销售材料，并不是“附属品”，而是全球 AI 基础设施市场的入口条件。
-            </div>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="ecosystem">
-      <div class="container">
-        <div class="transition-strip fade-up" style="margin-bottom: 18px;">
-          <span>Compute</span>
-          <i></i>
-          <span>Thermal</span>
-          <i></i>
-          <span>Power</span>
-          <i></i>
-          <span>Delivery</span>
-        </div>
-
-        <div class="section-header fade-up">
-          <h2>这是一场整套数据中心范式迁移，不是单一部件升级</h2>
-          <p>
-            OCP、服务器厂商、电源厂商、冷却厂商、云厂商、数据中心运营商、SI 与资本方正在同一时间推动这两条路线，原因很简单：AI 时代的数据中心，
-            已经进入 power architecture 与 thermal architecture 同时重写的阶段。
-          </p>
-        </div>
-
-        <div class="ecosystem-grid">
-          <article class="fade-up parallax-layer" style="--parallax-speed:0.018;">
-            <div class="kicker">Compute Vendors</div>
-            <h3>服务器与加速器厂商</h3>
-            <p>他们推动更高计算密度，也自然倒逼更先进的散热与供电组织方式。</p>
-          </article>
-          <article class="fade-up parallax-layer" style="transition-delay: 0.04s; --parallax-speed:-0.012;">
-            <div class="kicker">Power Ecosystem</div>
-            <h3>电源与器件厂商</h3>
-            <p>从 sidecar 到 board-level conversion，HVDC 让新一代器件与拓扑价值凸显。</p>
-          </article>
-          <article class="fade-up parallax-layer" style="transition-delay: 0.08s; --parallax-speed:0.016;">
-            <div class="kicker">Thermal Ecosystem</div>
-            <h3>冷却与热管理厂商</h3>
-            <p>CDU、cold plate、manifold、facility loop 从配件升级为系统核心。</p>
-          </article>
-          <article class="fade-up parallax-layer" style="transition-delay: 0.12s; --parallax-speed:-0.015;">
-            <div class="kicker">Delivery Ecosystem</div>
-            <h3>Hyperscale / Colocation / SI</h3>
-            <p>最终决定哪些技术可以被带进真实项目，哪些方案真正具备规模化交付资格。</p>
-          </article>
-        </div>
-
-        <div class="quote fade-up tilt-card" data-tilt style="margin-top: 20px;">
-          <p>
-            未来 AI 基础设施的核心，不是“更多机器”，而是更先进的 <span class="accent-teal">power-and-thermal architecture</span>，
-            以及把这种架构能力成功带入全球客户与生态体系的能力。
-          </p>
-          <span>OCP Cooling · HVDC · DCDeepTech Singapore</span>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <footer class="footer">
-    <div class="container">
-      <div class="transition-strip fade-up" style="margin-bottom: 18px;">
-        <span>Chip</span>
-        <i></i>
-        <span>Rack</span>
-        <i></i>
-        <span>Power</span>
-        <i></i>
-        <span>Market</span>
-      </div>
-
-      <div class="footer-panel fade-up">
-        <div>
-          <div class="eyebrow"><span class="eyebrow-dot"></span> Single HTML Landing Page</div>
-          <h2>从芯片散热，到机柜供电，再到全球生态进入路径</h2>
-          <p>
-            这不是一页普通公司官网，而是一页面向 AI 基础设施客户、OEM、hyperscale 与 SI 渠道的叙事型网页：
-            先讲清 OCP cooling 与 HVDC 的技术逻辑，再自然引出 DCDeepTech 在新加坡的平台角色与市场进入价值。
-          </p>
-        </div>
-        <div class="footer-actions">
-          <a class="btn btn-primary" href="#top">回到顶部</a>
-          <a class="btn btn-secondary" href="#dcdeeptech">查看平台定位</a>
+        <div class="cooling-stat">
+          <strong>Telemetry</strong>
+          <span>实时热状态感知与动态优化</span>
         </div>
       </div>
     </div>
-  </footer>
 
-  <script>
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const root = document.documentElement;
-    const body = document.body;
+    <div class="cooling-steps reveal reveal-delay-2">
+      <div class="step-item">
+        <div class="step-num">01</div>
+        <div class="step-content">
+          <h4>Cold Plate — 芯片级导热</h4>
+          <p>直接贴附 GPU / CPU 封装表面，通过微槽道结构将热量高效传导至循环冷却液，消除热界面材料叠加的额外热阻。</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">02</div>
+        <div class="step-content">
+          <h4>Manifold — 歧管与流量均衡</h4>
+          <p>机柜内多块冷板的并联液路分配，确保每路供液温度和流量一致性，避免局部热点积累。</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">03</div>
+        <div class="step-content">
+          <h4>CDU — 冷量分配单元</h4>
+          <p>负责一次侧（设施水）与二次侧（机柜循环液）间的换热隔离，集成泵组、流量控制、压力监测与异常告警。</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">04</div>
+        <div class="step-content">
+          <h4>Telemetry 闭环 — 动态热管理</h4>
+          <p>持续采集供回水温度、流量与压差数据，驱动 CDU 实时调节，将系统维持在最优热效率边界内运行。</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">05</div>
+        <div class="step-content">
+          <h4>OCP 认证生态</h4>
+          <p>遵循 OCP 液冷规范意味着组件互换性、全球供应商对接能力与超大规模客户采购准入资质。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) entry.target.classList.add('in-view');
-      });
-    }, { threshold: 0.14 });
+<!-- DIVIDER -->
+<div class="section-divider"><span class="divider-tag">Section III</span></div>
 
-    document.querySelectorAll('.fade-up').forEach((el) => observer.observe(el));
+<!-- ═══════════════════════════════════════
+     SECTION III: HVDC
+════════════════════════════════════════ -->
+<section class="section" id="hvdc">
+  <div class="section-header reveal">
+    <div class="section-num">§ III</div>
+    <div class="section-title-block">
+      <h2>HVDC 供电架构：800V 总线与 AI 工厂电力拓扑</h2>
+      <p>高压直流重新定义了数据中心的电力链路：更少转换级、更低损耗、更适合超高功率密度终局。</p>
+    </div>
+  </div>
 
-    const tabs = document.querySelectorAll('.arch-tab');
-    const panels = document.querySelectorAll('.arch-panel');
+  <div class="hvdc-grid">
+    <div class="hvdc-card reveal">
+      <div class="a-card-label">HVDC Bus Voltage</div>
+      <div class="voltage-display"><span class="counter" data-target="800">0</span><span class="voltage-unit">V</span></div>
+      <p style="font-size:0.88rem; color:var(--muted); margin-bottom:20px;">
+        ±400 V / 800 V HVDC 是面向超高密度 AI 机柜的核心电力总线方案，从根本上减少多级变换损耗。
+      </p>
+      <div class="hvdc-metrics">
+        <div class="hvdc-metric-row">
+          <span>电力转换级数</span>
+          <span>减少 2–3 级</span>
+        </div>
+        <div class="hvdc-metric-row">
+          <span>配电效率</span>
+          <span>提升 3–5%</span>
+        </div>
+        <div class="hvdc-metric-row">
+          <span>铜排截面积需求</span>
+          <span>大幅减少</span>
+        </div>
+        <div class="hvdc-metric-row">
+          <span>机柜空间释放</span>
+          <span>电力模块占用↓</span>
+        </div>
+        <div class="hvdc-metric-row">
+          <span>BBU 集成方式</span>
+          <span>Sidecar / 内置</span>
+        </div>
+      </div>
+    </div>
 
-    tabs.forEach((tab) => {
-      tab.addEventListener('click', () => {
-        tabs.forEach((t) => t.classList.remove('active'));
-        panels.forEach((p) => p.classList.remove('active'));
-        tab.classList.add('active');
-        document.getElementById(tab.dataset.tab).classList.add('active');
-      });
+    <div class="reveal reveal-delay-2" style="display:flex; flex-direction:column; gap:16px;">
+      <!-- SVG power topology -->
+      <div class="hvdc-card" style="flex:1;">
+        <div class="a-card-label">Power Flow Topology · Animated</div>
+        <svg class="svg-hvdc" viewBox="0 0 560 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="pg1" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#4f8ef7"/>
+              <stop offset="100%" stop-color="#00d4a8"/>
+            </linearGradient>
+          </defs>
+          <!-- MVAC -->
+          <rect x="10" y="70" width="80" height="60" rx="10" fill="rgba(255,255,255,0.03)" stroke="rgba(148,163,184,0.2)" stroke-width="1.5"/>
+          <text x="50" y="97" fill="#b8c4d8" font-size="10" text-anchor="middle" font-family="'JetBrains Mono'">MVAC</text>
+          <text x="50" y="112" fill="#8a99b5" font-size="9" text-anchor="middle" font-family="'JetBrains Mono'">Grid</text>
+          <!-- SST -->
+          <rect x="165" y="55" width="100" height="90" rx="12" fill="rgba(0,212,168,0.07)" stroke="rgba(0,212,168,0.3)" stroke-width="1.5"/>
+          <text x="215" y="97" fill="#00d4a8" font-size="11" text-anchor="middle" font-family="'JetBrains Mono'" font-weight="500">SST</text>
+          <text x="215" y="112" fill="#8a99b5" font-size="9" text-anchor="middle" font-family="'JetBrains Mono'">800V HVDC</text>
+          <!-- Sidecar -->
+          <rect x="350" y="20" width="90" height="70" rx="10" fill="rgba(167,139,250,0.07)" stroke="rgba(167,139,250,0.25)" stroke-width="1.5"/>
+          <text x="395" y="52" fill="#a78bfa" font-size="9.5" text-anchor="middle" font-family="'JetBrains Mono'">Sidecar</text>
+          <text x="395" y="66" fill="#8a99b5" font-size="8" text-anchor="middle" font-family="'JetBrains Mono'">BBU/CBU</text>
+          <!-- AI Rack -->
+          <rect x="450" y="55" width="100" height="90" rx="12" fill="rgba(232,201,106,0.07)" stroke="rgba(232,201,106,0.3)" stroke-width="1.5"/>
+          <text x="500" y="95" fill="#e8c96a" font-size="10" text-anchor="middle" font-family="'JetBrains Mono'">AI Rack</text>
+          <text x="500" y="110" fill="#8a99b5" font-size="9" text-anchor="middle" font-family="'JetBrains Mono'">Board DC/DC</text>
+          <!-- Power flow lines -->
+          <path d="M 90 100 L 165 100" stroke="url(#pg1)" stroke-width="4" stroke-linecap="round">
+            <animate attributeName="stroke-dasharray" values="0 120;120 0" dur="1.8s" repeatCount="indefinite"/>
+          </path>
+          <path d="M 265 100 L 350 55" stroke="url(#pg1)" stroke-width="3" stroke-linecap="round">
+            <animate attributeName="stroke-dasharray" values="0 120;120 0" dur="1.8s" begin="0.3s" repeatCount="indefinite"/>
+          </path>
+          <path d="M 265 100 L 450 100" stroke="url(#pg1)" stroke-width="4" stroke-linecap="round">
+            <animate attributeName="stroke-dasharray" values="0 220;220 0" dur="1.8s" begin="0.6s" repeatCount="indefinite"/>
+          </path>
+          <!-- Moving power dots -->
+          <circle r="4" fill="#00d4a8" filter="url(#glow1)">
+            <animateMotion dur="1.8s" repeatCount="indefinite" path="M 90 100 L 450 100"/>
+          </circle>
+        </svg>
+      </div>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+        <div class="a-card" style="padding:20px;">
+          <div class="a-card-label">240V LVAC 路线</div>
+          <h3 style="font-size:1rem;">渐进升级路径</h3>
+          <p style="font-size:0.82rem;">适合现有数据中心改造，兼容既有保护体系，前端做好准备即可局部引入 HVDC 机柜。</p>
+        </div>
+        <div class="a-card" style="padding:20px;">
+          <div class="a-card-label">800V HVDC 路线</div>
+          <h3 style="font-size:1rem;">面向终局设计</h3>
+          <p style="font-size:0.82rem;">新建高密度 AI 工厂的最优选择，真正释放 OCP 液冷与超高密度机柜的完整技术价值。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DIVIDER -->
+<div class="section-divider"><span class="divider-tag">Section IV</span></div>
+
+<!-- ═══════════════════════════════════════
+     SECTION IV: ARCHITECTURE COUPLING
+════════════════════════════════════════ -->
+<section class="section" id="architecture">
+  <div class="section-header reveal">
+    <div class="section-num">§ IV</div>
+    <div class="section-title-block">
+      <h2>系统耦合：OCP Cooling 与 HVDC 为何必须一起设计</h2>
+      <p>电力架构与热管理架构的协同优化，才能真正突破 AI 工厂的系统性天花板。</p>
+    </div>
+  </div>
+
+  <div class="arch-tabs reveal">
+    <button class="arch-tab active" data-tab="tab-coupling">耦合效应分析</button>
+    <button class="arch-tab" data-tab="tab-240v">240V LVAC 路线</button>
+    <button class="arch-tab" data-tab="tab-800v">800V HVDC 路线</button>
+  </div>
+
+  <div id="tab-coupling" class="arch-panel active reveal">
+    <div class="a-card">
+      <table class="coupling-table">
+        <thead>
+          <tr>
+            <th>系统维度</th>
+            <th>OCP Cooling 效益</th>
+            <th>HVDC 效益</th>
+            <th>耦合系统结果</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>功率密度</td>
+            <td>高效带走芯片热量，突破热管理上限</td>
+            <td>高效送入电力，减少多级损耗热</td>
+            <td>支持 250 kW+ rack power density</td>
+          </tr>
+          <tr>
+            <td>能效 / PUE</td>
+            <td>消除风机与压缩制冷附加能耗</td>
+            <td>减少 AC→DC→DC 多级变换损耗</td>
+            <td>PUE 趋近 1.0× 物理极限</td>
+          </tr>
+          <tr>
+            <td>空间效率</td>
+            <td>冷板液路替代机柜内大量散热风道</td>
+            <td>释放电力模块、铜排等空间占用</td>
+            <td>更多机柜空间用于计算单元</td>
+          </tr>
+          <tr>
+            <td>系统可靠性</td>
+            <td>结温稳定，延长 GPU 工作寿命</td>
+            <td>电力拓扑可控，减少转换故障点</td>
+            <td>适合持续满载 7×24 运行</td>
+          </tr>
+          <tr>
+            <td>TCO</td>
+            <td>降低 CRAC 与传统制冷运营成本</td>
+            <td>降低配电线损与变压器采购成本</td>
+            <td>大幅改善全生命周期成本结构</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div id="tab-240v" class="arch-panel">
+    <div class="a-card">
+      <h3 style="font-family:var(--ff-head); margin-bottom:16px;">240V LVAC 渐进路线</h3>
+      <p style="color:var(--muted-2); line-height:1.9; margin-bottom:16px;">适合现有数据中心存量改造场景。前端通过 SST/Front-End 做好准备，机柜内 Sidecar 承担 BBU、CBU 和保护功能，液冷系统可先于 HVDC 独立部署。</p>
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-top:16px;">
+        <div style="padding:14px; background:rgba(255,255,255,0.025); border:1px solid var(--border); border-radius:var(--r-sm);">
+          <div style="font-family:var(--ff-mono); font-size:0.65rem; color:var(--teal); margin-bottom:8px; letter-spacing:0.15em; text-transform:uppercase;">适合阶段</div>
+          <p style="font-size:0.84rem; color:var(--muted); line-height:1.65;">存量改造、过渡期部署、30–80 kW 密度区间</p>
+        </div>
+        <div style="padding:14px; background:rgba(255,255,255,0.025); border:1px solid var(--border); border-radius:var(--r-sm);">
+          <div style="font-family:var(--ff-mono); font-size:0.65rem; color:var(--blue); margin-bottom:8px; letter-spacing:0.15em; text-transform:uppercase;">主要优势</div>
+          <p style="font-size:0.84rem; color:var(--muted); line-height:1.65;">与现有保护体系兼容，改造成本低，可分阶段推进</p>
+        </div>
+        <div style="padding:14px; background:rgba(255,255,255,0.025); border:1px solid var(--border); border-radius:var(--r-sm);">
+          <div style="font-family:var(--ff-mono); font-size:0.65rem; color:var(--gold); margin-bottom:8px; letter-spacing:0.15em; text-transform:uppercase;">主要制约</div>
+          <p style="font-size:0.84rem; color:var(--muted); line-height:1.65;">多级变换损耗仍在，难以支撑 100 kW 以上超高密度</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="tab-800v" class="arch-panel">
+    <div class="a-card">
+      <h3 style="font-family:var(--ff-head); margin-bottom:16px;">±400V / 800V HVDC 终局路线</h3>
+      <p style="color:var(--muted-2); line-height:1.9; margin-bottom:16px;">面向新建高密度 AI 工厂的核心架构方向。从设施供电入口到机柜板级 DC/DC，实现最少转换级数与最高系统效率，是 OCP Cooling 真正释放全部潜力的配套前提。</p>
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-top:16px;">
+        <div style="padding:14px; background:rgba(0,212,168,0.06); border:1px solid rgba(0,212,168,0.15); border-radius:var(--r-sm);">
+          <div style="font-family:var(--ff-mono); font-size:0.65rem; color:var(--teal); margin-bottom:8px; letter-spacing:0.15em; text-transform:uppercase;">适合阶段</div>
+          <p style="font-size:0.84rem; color:var(--muted); line-height:1.65;">新建超高密度 AI 工厂、超大规模机柜、未来架构卡位</p>
+        </div>
+        <div style="padding:14px; background:rgba(0,212,168,0.06); border:1px solid rgba(0,212,168,0.15); border-radius:var(--r-sm);">
+          <div style="font-family:var(--ff-mono); font-size:0.65rem; color:var(--teal); margin-bottom:8px; letter-spacing:0.15em; text-transform:uppercase;">系统优势</div>
+          <p style="font-size:0.84rem; color:var(--muted); line-height:1.65;">减少寄生功耗，释放空间，匹配更高 rack density 与液冷架构</p>
+        </div>
+        <div style="padding:14px; background:rgba(0,212,168,0.06); border:1px solid rgba(0,212,168,0.15); border-radius:var(--r-sm);">
+          <div style="font-family:var(--ff-mono); font-size:0.65rem; color:var(--teal); margin-bottom:8px; letter-spacing:0.15em; text-transform:uppercase;">成熟要件</div>
+          <p style="font-size:0.84rem; color:var(--muted); line-height:1.65;">需要标准、保护、器件、认证、生态与运维体系共同成熟</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DIVIDER -->
+<div class="section-divider"><span class="divider-tag">Section V</span></div>
+
+<!-- ═══════════════════════════════════════
+     SECTION V: DCDEEPTECH
+════════════════════════════════════════ -->
+<section class="section" id="dcdeeptech">
+  <div class="section-header reveal">
+    <div class="section-num">§ V</div>
+    <div class="section-title-block">
+      <h2>DCDeepTech：工程能力向全球市场语言的转化</h2>
+      <p>在 AI 基础设施市场，技术领先是必要条件，但不是充分条件。</p>
+    </div>
+  </div>
+
+  <div class="platform-hero reveal">
+    <h2>从芯片散热、机柜供电，到全球 OEM、Hyperscale 与 SI 生态进入路径</h2>
+    <p>
+      DCDeepTech 立足新加坡，依托中新（重庆）互联互通 CCI 数据通道，以跨境 AI 算力与 API 平台为核心，
+      帮助全球技术厂商将 OCP cooling、HVDC、液冷机柜、供配电一体化等工程能力，
+      转化为国际客户、渠道伙伴与生态体系可理解、可验证、可采购的市场表达。
+    </p>
+  </div>
+
+  <div class="value-grid reveal">
+    <div class="a-card">
+      <div class="a-card-label">Singapore Platform</div>
+      <h3>新加坡：不只是地理节点</h3>
+      <p>同时连接国际数据中心资本、区域客户、标准讨论、渠道伙伴与全球技术品牌。既是展示窗口，也是全球厂商进入国际 AI 基础设施市场的可信准入平台。</p>
+    </div>
+    <div class="a-card reveal-delay-1">
+      <div class="a-card-label">OEM / Hyperscale / SI</div>
+      <h3>进入更高门槛生态</h3>
+      <p>协助对接英伟达 OEM 体系、超级数据中心客户和系统集成商 SI 渠道，让技术方案不只停留在工厂与实验室，而能进入真实国际项目路径。</p>
+    </div>
+    <div class="a-card reveal-delay-2">
+      <div class="a-card-label">Certification + Narrative</div>
+      <h3>认证路径与技术叙事</h3>
+      <p>OCP 相关认证理解、生态沟通、技术叙事、数字营销与国际话语体系，本身就是全球化能力的一部分。能被"看见"，往往是成交的前提。</p>
+    </div>
+  </div>
+
+  <div class="platform-grid-2 reveal">
+    <div class="a-card">
+      <div class="a-card-label">What DCDeepTech Helps With</div>
+      <h3>从技术理解到市场进入</h3>
+      <p style="margin-bottom:16px;">DCDeepTech 作为理解 OCP cooling、HVDC、机柜供配电、液冷制造、系统集成交付与国际客户需求的新加坡平台，帮助厂商将复杂工程语言变成更有说服力的市场进入语言。</p>
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <div style="padding:10px 14px; background:rgba(0,212,168,0.05); border:1px solid rgba(0,212,168,0.12); border-radius:var(--r-sm); font-size:0.85rem; color:var(--muted-2); line-height:1.6;">
+          梳理厂商在 cold plate、CDU、rack cooling、power shelf、HVDC 等方面的能力表达
+        </div>
+        <div style="padding:10px 14px; background:rgba(0,212,168,0.05); border:1px solid rgba(0,212,168,0.12); border-radius:var(--r-sm); font-size:0.85rem; color:var(--muted-2); line-height:1.6;">
+          协助对接英伟达 OEM 体系、超级数据中心客户和 SI 渠道伙伴
+        </div>
+        <div style="padding:10px 14px; background:rgba(0,212,168,0.05); border:1px solid rgba(0,212,168,0.12); border-radius:var(--r-sm); font-size:0.85rem; color:var(--muted-2); line-height:1.6;">
+          支持 OCP 相关认证路径理解、产品定位、生态沟通与国际数字营销
+        </div>
+      </div>
+    </div>
+    <div class="a-card reveal-delay-1">
+      <div class="a-card-label">Business Translation Layer</div>
+      <h3>工程能力必须被"翻译"成可采购能力</h3>
+      <p style="margin-bottom:16px;">顶级客户采购的从来不只是零部件，而是一种可以落地的系统能力：能否进入 OEM 生态、满足 hyperscale 场景、被 SI 带进项目、用国际客户听得懂的方式展示可靠性与交付力。</p>
+      <div style="padding:16px; background:linear-gradient(135deg,rgba(0,212,168,0.08),rgba(79,142,247,0.08)); border:1px solid rgba(79,142,247,0.18); border-radius:var(--r-sm); font-size:0.9rem; color:var(--muted-2); line-height:1.8;">
+        OCP 相关认证、技术叙事、官网呈现、数字营销与国际化销售材料，并不是附属品，而是全球 AI 基础设施市场的入口条件。
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DIVIDER -->
+<div class="section-divider"><span class="divider-tag">Section VI</span></div>
+
+<!-- ═══════════════════════════════════════
+     SECTION VI: ECOSYSTEM
+════════════════════════════════════════ -->
+<section class="section" id="ecosystem">
+  <div class="section-header reveal">
+    <div class="section-num">§ VI</div>
+    <div class="section-title-block">
+      <h2>范式迁移：这不是单一部件升级，而是整套数据中心重构</h2>
+      <p>OCP、服务器厂商、电源厂商、冷却厂商、云厂商与资本方正在同一时间推动这两条路线。</p>
+    </div>
+  </div>
+
+  <div class="ecosystem-grid">
+    <div class="a-card reveal">
+      <div class="a-card-label">Compute Vendors</div>
+      <h3>服务器与加速器厂商</h3>
+      <p>推动更高计算密度，自然倒逼更先进的散热与供电组织方式。GPU 功率密度增长是整个技术迁移的根本驱动力。</p>
+    </div>
+    <div class="a-card reveal reveal-delay-1">
+      <div class="a-card-label">Power Ecosystem</div>
+      <h3>电源与器件厂商</h3>
+      <p>从 Sidecar 到 board-level conversion，HVDC 让新一代宽禁带器件（GaN/SiC）与新型拓扑的价值得以完整体现。</p>
+    </div>
+    <div class="a-card reveal reveal-delay-2">
+      <div class="a-card-label">Thermal Ecosystem</div>
+      <h3>冷却与热管理厂商</h3>
+      <p>CDU、cold plate、manifold、facility loop 从数据中心配件升级为系统架构核心。液冷供应链正在建立全新的全球格局。</p>
+    </div>
+    <div class="a-card reveal reveal-delay-3">
+      <div class="a-card-label">Delivery Ecosystem</div>
+      <h3>Hyperscale / Colo / SI</h3>
+      <p>最终决定哪些技术可以被带进真实项目、哪些方案真正具备规模化交付资格，并形成可持续的市场份额。</p>
+    </div>
+  </div>
+
+  <div class="pull-quote reveal">
+    <p>
+      未来 AI 基础设施的核心，不是"更多机器"，而是更先进的
+      <span style="color:var(--teal);">power-and-thermal architecture</span>，
+      以及把这种架构能力成功带入全球客户与生态体系的能力。
+    </p>
+    <cite>OCP Cooling · HVDC · DCDeepTech Singapore</cite>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     FOOTER
+════════════════════════════════════════ -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">DCDeepTech</div>
+    <div class="footer-meta">
+      Singapore · Chongqing · CCI Data Channel<br/>
+      AI Computing &amp; API Platform · Research Paper
+    </div>
+    <div class="footer-links">
+      <a href="#top">回到顶部</a>
+      <a href="#dcdeeptech">平台定位</a>
+      <a href="#challenge">问题陈述</a>
+    </div>
+  </div>
+</footer>
+
+</div><!-- /content-wrap -->
+
+<script>
+/* ─────────────────────────────────────────────
+   CANVAS NEURAL NET BACKGROUND
+───────────────────────────────────────────── */
+(function() {
+  const canvas = document.getElementById('bgCanvas');
+  const ctx = canvas.getContext('2d');
+  const nodes = [];
+  const NODE_COUNT = 56;
+  const MAX_DIST = 160;
+
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+
+  window.addEventListener('resize', resize);
+  resize();
+
+  for (let i = 0; i < NODE_COUNT; i++) {
+    nodes.push({
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight,
+      vx: (Math.random() - 0.5) * 0.3,
+      vy: (Math.random() - 0.5) * 0.3,
+      r: Math.random() * 1.8 + 0.8,
+      color: ['#00d4a8', '#4f8ef7', '#a78bfa', '#e8c96a'][Math.floor(Math.random() * 4)]
+    });
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Draw edges
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const dx = nodes[i].x - nodes[j].x;
+        const dy = nodes[i].y - nodes[j].y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < MAX_DIST) {
+          const alpha = (1 - dist / MAX_DIST) * 0.18;
+          ctx.beginPath();
+          ctx.strokeStyle = `rgba(79,142,247,${alpha})`;
+          ctx.lineWidth = 0.7;
+          ctx.moveTo(nodes[i].x, nodes[i].y);
+          ctx.lineTo(nodes[j].x, nodes[j].y);
+          ctx.stroke();
+        }
+      }
+    }
+
+    // Draw nodes
+    nodes.forEach(n => {
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+      ctx.fillStyle = n.color;
+      ctx.globalAlpha = 0.55;
+      ctx.fill();
+      ctx.globalAlpha = 1;
     });
 
-    const navToggle = document.getElementById('navToggle');
-    const siteNav = document.getElementById('siteNav');
-
-    function closeMenu() {
-      navToggle.classList.remove('active');
-      navToggle.setAttribute('aria-expanded', 'false');
-      siteNav.classList.remove('open');
-    }
-
-    navToggle.addEventListener('click', () => {
-      const expanded = navToggle.classList.toggle('active');
-      navToggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
-      siteNav.classList.toggle('open');
+    // Update
+    nodes.forEach(n => {
+      n.x += n.vx;
+      n.y += n.vy;
+      if (n.x < 0 || n.x > canvas.width)  n.vx *= -1;
+      if (n.y < 0 || n.y > canvas.height) n.vy *= -1;
     });
 
-    siteNav.querySelectorAll('a').forEach((link) => {
-      link.addEventListener('click', () => {
-        if (window.innerWidth <= 760) closeMenu();
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ─────────────────────────────────────────────
+   CURSOR GLOW
+───────────────────────────────────────────── */
+const glow = document.getElementById('cursorGlow');
+let glowX = 0, glowY = 0;
+let targetX = 0, targetY = 0;
+
+document.addEventListener('mousemove', e => {
+  targetX = e.clientX;
+  targetY = e.clientY;
+});
+
+function animGlow() {
+  glowX += (targetX - glowX) * 0.08;
+  glowY += (targetY - glowY) * 0.08;
+  glow.style.left = glowX + 'px';
+  glow.style.top  = glowY + 'px';
+  requestAnimationFrame(animGlow);
+}
+animGlow();
+
+/* ─────────────────────────────────────────────
+   SCROLL REVEAL
+───────────────────────────────────────────── */
+const revealObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      revealObserver.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.12 });
+
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+/* ─────────────────────────────────────────────
+   COUNTER ANIMATION
+───────────────────────────────────────────── */
+function animCounter(el) {
+  const target = +el.dataset.target;
+  const dur = 1600;
+  const start = performance.now();
+  function frame(now) {
+    const p = Math.min((now - start) / dur, 1);
+    const ease = 1 - Math.pow(1 - p, 3);
+    el.textContent = Math.round(ease * target);
+    if (p < 1) requestAnimationFrame(frame);
+    else el.textContent = target;
+  }
+  requestAnimationFrame(frame);
+}
+
+const counterObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.querySelectorAll('.counter').forEach(animCounter);
+      counterObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.3 });
+
+document.querySelectorAll('.stat-panel, .hvdc-card').forEach(el => counterObs.observe(el));
+
+/* ─────────────────────────────────────────────
+   DENSITY BARS
+───────────────────────────────────────────── */
+const barObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.querySelectorAll('.density-fill').forEach(bar => {
+        bar.style.width = bar.dataset.width;
       });
+      barObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.3 });
+
+const densityChart = document.querySelector('.density-chart');
+if (densityChart) barObs.observe(densityChart);
+
+/* ─────────────────────────────────────────────
+   TABLE ROW STAGGER
+───────────────────────────────────────────── */
+const tableObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.querySelectorAll('tbody tr').forEach((row, i) => {
+        setTimeout(() => row.classList.add('row-visible'), i * 90);
+      });
+      tableObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.2 });
+
+document.querySelectorAll('.coupling-table').forEach(t => tableObs.observe(t));
+
+/* ─────────────────────────────────────────────
+   ARCH TABS
+───────────────────────────────────────────── */
+document.querySelectorAll('.arch-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.arch-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.arch-panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById(tab.dataset.tab).classList.add('active');
+    // Re-animate table rows
+    document.querySelectorAll('#' + tab.dataset.tab + ' tbody tr').forEach((row, i) => {
+      row.classList.remove('row-visible');
+      setTimeout(() => row.classList.add('row-visible'), i * 90);
     });
+  });
+});
 
-    window.addEventListener('resize', () => {
-      if (window.innerWidth > 760) closeMenu();
+/* ─────────────────────────────────────────────
+   READ PROGRESS BAR
+───────────────────────────────────────────── */
+const prog = document.getElementById('readProgress');
+window.addEventListener('scroll', () => {
+  const doc = document.documentElement;
+  const pct = doc.scrollTop / (doc.scrollHeight - doc.clientHeight) * 100;
+  prog.style.width = pct.toFixed(1) + '%';
+}, { passive: true });
+
+/* ─────────────────────────────────────────────
+   3D TILT CARDS
+───────────────────────────────────────────── */
+const prefersReduced = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+if (!prefersReduced) {
+  document.querySelectorAll('.a-card, .stat-panel, .hvdc-card, .cooling-diagram').forEach(card => {
+    card.addEventListener('mousemove', e => {
+      if (window.innerWidth < 900) return;
+      const r = card.getBoundingClientRect();
+      const px = (e.clientX - r.left) / r.width;
+      const py = (e.clientY - r.top) / r.height;
+      const ry = (px - 0.5) * 10;
+      const rx = (0.5 - py) * 10;
+      card.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-4px)`;
     });
-
-    document.addEventListener('click', (e) => {
-      if (window.innerWidth > 760) return;
-      if (!siteNav.contains(e.target) && !navToggle.contains(e.target)) closeMenu();
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = '';
     });
+  });
+}
 
-    const counters = document.querySelectorAll('.counter');
-    let countersStarted = false;
+/* ─────────────────────────────────────────────
+   TYPEWRITER on pull quote (on first view)
+───────────────────────────────────────────── */
+const pullQuote = document.querySelector('.pull-quote p');
+if (pullQuote) {
+  const originalHTML = pullQuote.innerHTML;
+  let revealed = false;
 
-    function animateCounter(el) {
-      const target = Number(el.dataset.target || 0);
-      const duration = prefersReduced ? 0 : 1200;
-      if (duration === 0) {
-        el.textContent = target;
-        return;
+  const pqObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting && !revealed) {
+        revealed = true;
+        pullQuote.innerHTML = '';
+        const text = originalHTML.replace(/<[^>]+>/g, c => c); // keep HTML tags
+        let i = 0;
+        const raw = originalHTML;
+        pullQuote.innerHTML = '';
+
+        // Simple character reveal with preserved HTML
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = raw;
+        const fullText = tempDiv.textContent;
+        let ci = 0;
+        const total = fullText.length;
+
+        function revealChar() {
+          if (ci >= total) { pullQuote.innerHTML = raw; return; }
+          ci += 3;
+          const fraction = Math.min(ci / total, 1);
+          pullQuote.style.opacity = fraction;
+          if (ci < total) requestAnimationFrame(revealChar);
+          else pullQuote.innerHTML = raw;
+        }
+        pullQuote.style.opacity = '0';
+        requestAnimationFrame(revealChar);
       }
-      const start = performance.now();
-      const from = 0;
-
-      function frame(now) {
-        const progress = Math.min((now - start) / duration, 1);
-        const eased = 1 - Math.pow(1 - progress, 3);
-        const value = Math.round(from + (target - from) * eased);
-        el.textContent = value;
-        if (progress < 1) requestAnimationFrame(frame);
-      }
-      requestAnimationFrame(frame);
-    }
-
-    function runCounters() {
-      if (countersStarted) return;
-      countersStarted = true;
-      counters.forEach(animateCounter);
-    }
-
-    const heroSection = document.querySelector('.hero');
-    const counterObserver = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) runCounters();
-      });
-    }, { threshold: 0.22 });
-
-    if (heroSection) counterObserver.observe(heroSection);
-
-    if (!prefersReduced) {
-      const tiltCards = document.querySelectorAll('[data-tilt]');
-      tiltCards.forEach((card) => {
-        const reset = () => {
-          card.style.transform = '';
-        };
-
-        card.addEventListener('pointermove', (e) => {
-          if (window.innerWidth <= 900) return;
-          const rect = card.getBoundingClientRect();
-          const px = (e.clientX - rect.left) / rect.width;
-          const py = (e.clientY - rect.top) / rect.height;
-          const ry = (px - 0.5) * 6;
-          const rx = (0.5 - py) * 6;
-          card.style.transform = `perspective(1300px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-2px)`;
-        });
-
-        card.addEventListener('pointerleave', reset);
-        card.addEventListener('pointerup', reset);
-      });
-    }
-
-    const particles = document.getElementById('particles');
-    if (particles && !prefersReduced) {
-      const count = window.innerWidth < 760 ? 18 : 34;
-      for (let i = 0; i < count; i++) {
-        const dot = document.createElement('span');
-        dot.className = 'particle';
-        const size = Math.random() * 2.4 + 1;
-        dot.style.width = `${size}px`;
-        dot.style.height = `${size}px`;
-        dot.style.left = `${Math.random() * 100}%`;
-        dot.style.top = `${Math.random() * 100}%`;
-        dot.style.animationDuration = `${14 + Math.random() * 20}s`;
-        dot.style.animationDelay = `${Math.random() * -24}s`;
-        dot.style.opacity = (0.18 + Math.random() * 0.45).toFixed(2);
-        particles.appendChild(dot);
-      }
-    }
-
-    let ticking = false;
-    function updateParallax() {
-      const scrollY = window.scrollY || window.pageYOffset;
-      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const progress = docHeight > 0 ? Math.min(scrollY / docHeight, 1) : 0;
-      root.style.setProperty('--parallax-y', `${scrollY}px`);
-      root.style.setProperty('--hero-shift', `${Math.min(scrollY, 800)}px`);
-      root.style.setProperty('--hero-spin', `${scrollY * 0.025}deg`);
-      root.style.setProperty('--scroll-progress', progress.toFixed(4));
-
-      document.querySelectorAll('.section-card, .timeline-item, .value-grid > article, .ecosystem-grid > article').forEach((el, index) => {
-        const rect = el.getBoundingClientRect();
-        const center = rect.top + rect.height / 2;
-        const viewportCenter = window.innerHeight / 2;
-        const delta = (center - viewportCenter) * 0.05;
-        el.style.setProperty('--card-shift', `${delta.toFixed(2)}px`);
-      });
-
-      ticking = false;
-    }
-
-    window.addEventListener('scroll', () => {
-      if (!ticking && !prefersReduced) {
-        window.requestAnimationFrame(updateParallax);
-        ticking = true;
-      }
-    }, { passive: true });
-
-    updateParallax();
-
-    const demoStage = document.getElementById('demoStage');
-    const sceneHud = document.getElementById('sceneHud');
-    const titleNode = sceneHud?.querySelector('[data-scene-title]');
-    const copyNode = sceneHud?.querySelector('[data-scene-copy]');
-
-    const scenes = [
-      {
-        title: 'Power ingress through MVAC and front-end conversion',
-        copy: '先把外部电力送进系统，再通过 SST / front-end 组织成更适合高密度 AI 的电力形式。'
-      },
-      {
-        title: 'Sidecar conditions power for dense rack delivery',
-        copy: 'Sidecar 把 BBU、CBU、保护和局部高压组织在一起，减少 rack 内部的挤占与复杂度。'
-      },
-      {
-        title: 'CDU and liquid loop pull heat away from the rack',
-        copy: 'CDU 负责换热、流量控制和循环稳定性，把 direct-to-chip 产生的热及时带离计算层。'
-      },
-      {
-        title: 'Telemetry closes the loop between power and thermal state',
-        copy: '真正先进的系统不是静态配置，而是持续感知电力与热状态，并动态优化运行边界。'
-      },
-      {
-        title: 'Integrated AI factory: power and cooling become one architecture',
-        copy: '当 power delivery 和 thermal management 被一起设计时，AI 工厂才真正具备持续扩展能力。'
-      }
-    ];
-
-    let currentScene = 0;
-    function setScene(index) {
-      if (!demoStage) return;
-      currentScene = index % scenes.length;
-      demoStage.dataset.scene = String(currentScene);
-      if (sceneHud && titleNode && copyNode) {
-        sceneHud.classList.add('switching');
-        setTimeout(() => {
-          titleNode.textContent = scenes[currentScene].title;
-          copyNode.textContent = scenes[currentScene].copy;
-          sceneHud.classList.remove('switching');
-        }, 160);
-      }
-    }
-
-    if (!prefersReduced && demoStage) {
-      setInterval(() => {
-        setScene((currentScene + 1) % scenes.length);
-      }, 3000);
-    }
-  </script>
+    });
+  }, { threshold: 0.5 });
+  pqObs.observe(document.querySelector('.pull-quote'));
+}
+</script>
 </body>
 </html>
