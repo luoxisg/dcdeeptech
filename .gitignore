@@ -1,0 +1,51 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+.next/
+dist/
+build/
+.turbo/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Environment — never commit real values
+.env
+.env.local
+.env.production
+.env.staging
+# .env.example IS committed (documents required variables with fake values)
+
+# Runtime data created by services
+platform-sg/services/gateway/data/
+platform-sg/services/gateway/audit_logs/
+platform-sg/services/gateway/*.db
+platform-sg/services/compliance/*.db
+platform-sg/services/compliance/data/
+
+# Editor
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Misc
+*.log
+coverage/
+.nyc_output/

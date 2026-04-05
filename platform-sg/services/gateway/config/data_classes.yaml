@@ -1,0 +1,58 @@
+# DCDeepTech Data Classification Levels
+# Used by the PII detector to assign a sensitivity tier to each request.
+# These map directly to the classes produced by security/pii/detector.py.
+
+data_classes:
+
+  PUBLIC:
+    rank: 0
+    description: >
+      No personal or business-sensitive data detected.
+      Safe for cross-border transfer without restriction.
+    examples:
+      - "Explain quantum computing"
+      - "Write a Python function to sort a list"
+      - "Translate 'hello' to French"
+    transfer_policy: unrestricted
+
+  LOW_RISK:
+    rank: 1
+    description: >
+      Low-sensitivity identifiers that are not directly personal
+      (e.g., IP addresses, generic numeric patterns).
+      Cross-border transfer is permitted without redaction.
+    examples:
+      - "Our server at 192.168.1.1 is down"
+      - "Order number 123456789"
+    transfer_policy: permitted_without_redaction
+
+  PERSONAL:
+    rank: 2
+    description: >
+      Contains identifiable personal data: names, email addresses,
+      phone numbers, physical addresses. Cross-border transfer
+      requires PII redaction before leaving the SG control plane.
+    examples:
+      - "Email john.doe@example.com about the invoice"
+      - "Call +65 9123 4567 for support"
+      - "Block 123 Jurong East Street 13"
+    transfer_policy: permitted_after_redaction
+    destination_after_redaction: sg
+    note: >
+      Even after redaction, PERSONAL data stays in the SG region
+      and is NOT forwarded to the CQ inference plane.
+
+  HIGH_RISK:
+    rank: 3
+    description: >
+      Highly regulated data: national IDs, passports, credit cards,
+      health records. Cross-border transfer is DENIED regardless of
+      redaction status. Request is blocked at the policy engine.
+    examples:
+      - "NRIC S1234567A"
+      - "Passport E12345678"
+      - "Card 4111 1111 1111 1111"
+    transfer_policy: denied
+    note: >
+      Callers should not submit HIGH_RISK data to inference endpoints.
+      Consider a purpose-built secure enclave workflow instead.

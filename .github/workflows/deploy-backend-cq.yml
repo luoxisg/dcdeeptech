@@ -1,0 +1,25 @@
+name: Deploy — backend-cq
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "backend-cq/**"
+
+jobs:
+  deploy-inference-api:
+    name: Deploy cq-inference-api
+    runs-on: ubuntu-latest
+    environment: production-cq
+    steps:
+      - uses: actions/checkout@v4
+
+      # PLACEHOLDER — implement when CQ infrastructure is provisioned
+      # Steps will include:
+      # 1. Run tests (pytest backend-cq/services/inference-api/tests/)
+      # 2. Build Docker image
+      # 3. Push to CQ-local registry
+      # 4. Deploy to CQ k8s cluster or docker swarm
+
+      - name: Placeholder
+        run: echo "CQ deployment pipeline not yet configured. See backend-cq/README.md."

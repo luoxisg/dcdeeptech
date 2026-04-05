@@ -1,0 +1,15 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "cq-node-agent"
+version = "0.1.0"
+description = "Chongqing GPU node health agent — PLACEHOLDER"
+requires-python = ">=3.11"
+dependencies = [
+    # pynvml>=11.5
+    # prometheus-client>=0.20
+    # fastapi>=0.111
+    # uvicorn[standard]>=0.30
+]

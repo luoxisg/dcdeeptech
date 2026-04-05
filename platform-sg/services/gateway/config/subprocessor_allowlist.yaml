@@ -1,0 +1,46 @@
+# Approved downstream service subprocessors
+# Any backend not listed here should be blocked by the dispatcher.
+# This file represents the current technical allowlist;
+# legal/DPA approval must be obtained separately for each entry.
+
+subprocessors:
+
+  - id: sg-litellm
+    name: "LiteLLM Gateway (Singapore)"
+    region: sg
+    type: gateway
+    endpoint_env: SG_LITELLM_URL
+    default_url: "http://localhost:4000"
+    approved: true
+    dpa_reference: "SG-DPA-2024-001"
+    notes: >
+      SG control plane. Handles PERSONAL data after redaction.
+      Runs in DCDeepTech-controlled Singapore VPC.
+
+  - id: cq-vllm
+    name: "vLLM Inference Node (Chongqing)"
+    region: cq
+    type: inference
+    endpoint_env: CQ_VLLM_URL
+    default_url: "http://192.168.x.x:8000"
+    approved: true
+    dpa_reference: "CN-DPA-2024-001"
+    constraints:
+      - no_raw_prompt_persistence
+      - ttl_72h
+      - no_training_reuse
+      - no_public_internet_access
+    notes: >
+      CQ inference plane. Receives only PUBLIC and LOW_RISK data.
+      Must be accessible only from SG gateway via private network / VPN.
+      GPU inference only — no persistent storage of prompts or outputs.
+
+  - id: openai-via-sg
+    name: "OpenAI API (via SG proxy)"
+    region: sg
+    type: external_provider
+    endpoint_env: OPENAI_FALLBACK_URL
+    approved: false
+    notes: >
+      Pending legal review and DPA addendum with OpenAI.
+      Do NOT enable until approved. Set approved: true after sign-off.

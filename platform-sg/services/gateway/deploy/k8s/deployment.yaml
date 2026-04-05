@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sg-gateway
+  namespace: platform-sg
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: sg-gateway
+  template:
+    metadata:
+      labels:
+        app: sg-gateway
+    spec:
+      containers:
+        - name: sg-gateway
+          image: dcdeeptech/sg-gateway:latest
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - secretRef:
+                name: sg-gateway-secrets
+          volumeMounts:
+            - name: data
+              mountPath: /app/data
+            - name: audit
+              mountPath: /app/audit_logs
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: sg-gateway-data
+        - name: audit
+          persistentVolumeClaim:
+            claimName: sg-gateway-audit

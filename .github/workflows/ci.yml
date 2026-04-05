@@ -1,0 +1,86 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  # ── JavaScript / TypeScript ──────────────────────────────────────────────────
+  js:
+    name: JS — build, lint, typecheck (affected only)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2  # needed for Turborepo --filter=[HEAD^1]
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build affected packages
+        run: pnpm turbo run build --filter=[HEAD^1]
+
+      - name: Lint affected packages
+        run: pnpm turbo run lint --filter=[HEAD^1]
+
+      - name: Type-check affected packages
+        run: pnpm turbo run typecheck --filter=[HEAD^1]
+
+  # ── Python — sg-gateway ──────────────────────────────────────────────────────
+  python-gateway:
+    name: Python — sg-gateway tests
+    runs-on: ubuntu-latest
+    if: >
+      contains(toJSON(github.event.commits.*.modified), 'platform-sg/services/gateway') ||
+      github.event_name == 'push'
+    defaults:
+      run:
+        working-directory: platform-sg/services/gateway
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt pytest pytest-asyncio
+
+      - name: Run tests
+        run: python -m pytest tests/ -v
+
+  # ── Python — sg-compliance ───────────────────────────────────────────────────
+  python-compliance:
+    name: Python — sg-compliance tests
+    runs-on: ubuntu-latest
+    if: >
+      contains(toJSON(github.event.commits.*.modified), 'platform-sg/services/compliance') ||
+      github.event_name == 'push'
+    defaults:
+      run:
+        working-directory: platform-sg/services/compliance
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install fastapi uvicorn pydantic python-dotenv pytest pytest-asyncio
+
+      - name: Run tests
+        run: python -m pytest tests/ -v

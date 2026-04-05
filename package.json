@@ -1,0 +1,21 @@
+{
+  "name": "dcdeeptech-monorepo",
+  "private": true,
+  "version": "0.1.0",
+  "description": "DCDeepTech AI Infrastructure — monorepo (front / platform-sg / backend-cq / shared)",
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev --parallel",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "clean": "turbo run clean && rm -rf node_modules"
+  },
+  "devDependencies": {
+    "turbo": "^2.3.3"
+  },
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=9"
+  },
+  "packageManager": "pnpm@9.15.0"
+}

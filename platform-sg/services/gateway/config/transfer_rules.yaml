@@ -1,0 +1,46 @@
+# Cross-border inference routing rules
+#
+# Evaluated by gateway/policy/engine.py in top-down order.
+# First matching rule wins.
+#
+# Fields:
+#   data_class         — matches PiiDetectionResult.data_class
+#   allow              — whether to proceed (false = 403 returned to caller)
+#   destination        — "sg" (Singapore) | "cq" (Chongqing)
+#   route              — label used in audit logs and X-Route-Name header
+#   requires_redaction — hint (redaction is applied by proxy before this check)
+#   deny_reason        — message returned to client on deny
+
+rules:
+
+  - data_class: PUBLIC
+    allow: true
+    destination: cq
+    route: cq-default
+    requires_redaction: false
+    note: "Public data — route to CQ for lowest latency inference"
+
+  - data_class: LOW_RISK
+    allow: true
+    destination: cq
+    route: cq-default
+    requires_redaction: false
+    note: "Low-risk data — CQ inference permitted"
+
+  - data_class: PERSONAL
+    allow: true
+    destination: sg
+    route: sg-redacted
+    requires_redaction: true
+    note: >
+      Personal data is redacted before reaching this rule.
+      Routes to SG LiteLLM only — never sent to CQ.
+
+  - data_class: HIGH_RISK
+    allow: false
+    destination: blocked
+    route: denied
+    deny_reason: >
+      HIGH_RISK data (national ID, passport, credit card, health record)
+      is not permitted for cross-border AI inference. Please review
+      your data handling policy before proceeding.

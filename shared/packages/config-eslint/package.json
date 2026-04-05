@@ -1,0 +1,11 @@
+{
+  "name": "@shared/config-eslint",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Shared ESLint configs for all JS/TS packages in the monorepo",
+  "exports": {
+    "./base": "./base.js",
+    "./next": "./next.js",
+    "./react": "./react.js"
+  }
+}

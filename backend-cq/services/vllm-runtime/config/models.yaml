@@ -1,0 +1,16 @@
+# backend-cq vLLM runtime model registry
+# PLACEHOLDER — fill in when CQ runtime is provisioned
+
+models:
+  # Example entry — replace with actual model IDs and VRAM budgets
+  # - id: "deepseek-r1-8b"
+  #   path: "/models/deepseek-r1-8b"
+  #   vram_gb: 16
+  #   quantization: "awq"
+  #   max_model_len: 8192
+  #   tensor_parallel_size: 1
+
+defaults:
+  dtype: "auto"
+  gpu_memory_utilization: 0.90
+  max_num_seqs: 256

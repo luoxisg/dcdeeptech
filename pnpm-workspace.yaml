@@ -1,0 +1,10 @@
+packages:
+  # Customer-facing and commercial surfaces
+  - "front/apps/*"
+
+  # Singapore control plane — apps and packages
+  - "platform-sg/apps/*"
+  - "platform-sg/packages/*"
+
+  # Shared cross-layer packages (types, UI kit, config presets)
+  - "shared/packages/*"

@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p /c/Users/Administrator/Downloads/platform-sg/apps/admin-console)",
+      "Bash(mv src:*)",
+      "Bash(mkdir -p /c/Users/Administrator/Downloads/platform-sg/services/gateway)",
+      "Bash(mkdir -p /c/Users/Administrator/Downloads/platform-sg/services/gateway/auth /c/Users/Administrator/Downloads/platform-sg/services/gateway/policy /c/Users/Administrator/Downloads/platform-sg/services/gateway/routing)",
+      "Bash(mv app:*)",
+      "Bash(cp -r gateway/auth/. /c/Users/Administrator/Downloads/platform-sg/services/gateway/auth/)",
+      "Bash(cp -r gateway/policy/. /c/Users/Administrator/Downloads/platform-sg/services/gateway/policy/)",
+      "Bash(mv /c/Users/Administrator/Downloads/platform-sg/services/gateway/inference/adapters/. /c/Users/Administrator/Downloads/platform-sg/services/gateway/adapters/)",
+      "Bash(cp -r /c/Users/Administrator/Downloads/platform-sg/services/gateway/inference/adapters/. /c/Users/Administrator/Downloads/platform-sg/services/gateway/adapters/)",
+      "Bash(/c/Users/Administrator/Downloads/README.md:*)",
+      "Bash(ls /c/Users/Administrator/Downloads/*.json /c/Users/Administrator/Downloads/*.yaml /c/Users/Administrator/Downloads/Makefile /c/Users/Administrator/Downloads/.gitignore /c/Users/Administrator/Downloads/README.md)"
+    ]
+  }
+}

@@ -1,0 +1,12 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "cq-vllm-runtime"
+version = "0.1.0"
+description = "Chongqing vLLM runtime service — PLACEHOLDER"
+requires-python = ">=3.11"
+dependencies = [
+    # vllm>=0.6.0  # uncomment when CQ runtime is provisioned
+]

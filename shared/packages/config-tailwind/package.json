@@ -1,0 +1,10 @@
+{
+  "name": "@shared/config-tailwind",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Shared Tailwind CSS design tokens (brand colors, typography, spacing) for customer-facing surfaces. Not used by admin-console.",
+  "main": "./preset.ts",
+  "devDependencies": {
+    "tailwindcss": "^4"
+  }
+}

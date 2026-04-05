@@ -1,0 +1,15 @@
+{
+  "name": "@shared/types",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Cross-boundary TypeScript interfaces for sg-gateway public API shapes. Consumed by front/apps/portal and @platform-sg/sg-api-client. No business logic.",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "build": "tsc --noEmit",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5"
+  }
+}

@@ -1,0 +1,54 @@
+# DCDeepTech API Key issuance and management policy
+
+api_key:
+
+  format:
+    prefix: "sk-dcdt"
+    pattern: "sk-dcdt-{32 url-safe base64 random bytes}"
+    id_pattern: "kdcdt_{8 url-safe base64 random bytes}"
+    example_prefix: "sk-dcdt-AbCdEf..."   # first 16 chars shown, rest masked
+
+  storage:
+    store_plaintext: false
+    store: ["key_id", "key_prefix", "key_hash", "key_salt", "tenant_id",
+            "scopes", "status", "description", "created_at", "expires_at", "last_used_at"]
+    hash_algorithm: pbkdf2_sha256
+    hash_iterations: 260000   # OWASP 2024 minimum for PBKDF2-SHA256
+    salt_bytes: 32
+
+  visibility:
+    full_key_shown: "creation response only"
+    subsequent_reads: "prefix only (first 16 chars + ...)"
+    log_fields: ["key_id", "key_prefix"]    # never log full key
+
+  scopes:
+    default:
+      - chat:completions
+    available:
+      - chat:completions
+      - embeddings
+      - admin:keys
+      - admin:tenants
+      - internal:routing
+    admin_required:
+      - admin:keys
+      - admin:tenants
+      - internal:routing
+
+  expiry:
+    default: null              # No expiry unless explicitly set
+    max_days: 365              # Hard ceiling for any issued key
+    rotation_recommended_days: 90
+
+  admin_key_policy:
+    network_restriction: internal_only   # Enforced via ADMIN_ALLOWED_CIDRS
+    max_per_tenant: 3
+    require_mfa: false         # Set to true in production with MFA provider
+
+  lifecycle:
+    states: [active, disabled, revoked, expired]
+    transitions:
+      active:    [disabled, revoked]
+      disabled:  [active, revoked]   # Re-enable is possible (future feature)
+      revoked:   []                  # Terminal state
+      expired:   [revoked]           # Auto-transitioned on auth attempt

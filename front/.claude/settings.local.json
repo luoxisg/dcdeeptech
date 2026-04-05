@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx create-next-app@latest marketing --typescript --tailwind --eslint --app --no-src-dir --import-alias \"@/*\" --no-git)",
+      "Bash(npx create-next-app@latest portal --typescript --tailwind --eslint --app --no-src-dir --import-alias \"@/*\" --no-git)",
+      "Bash(npm install:*)",
+      "Bash(grep -r middleware C:/Users/Administrator/Downloads/front/marketing/node_modules/next/dist/docs/ --include=*.md -l)",
+      "Bash(npm run:*)"
+    ]
+  }
+}

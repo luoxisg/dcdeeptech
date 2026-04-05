@@ -1,0 +1,35 @@
+version: "3.9"
+
+# Chongqing execution plane — PLACEHOLDER
+# Run the full CQ plane locally when services are implemented.
+
+services:
+  inference-api:
+    build:
+      context: ../services/inference-api
+      dockerfile: Dockerfile
+    ports:
+      - "8090:8090"
+    environment:
+      - CQ_VLLM_URL=http://vllm-runtime:8000
+    depends_on:
+      - vllm-runtime
+    restart: unless-stopped
+
+  vllm-runtime:
+    # PLACEHOLDER — replace with actual vLLM image
+    image: vllm/vllm-openai:latest
+    ports:
+      - "8000:8000"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+    volumes:
+      - ../services/vllm-runtime/config:/config:ro
+      - model-cache:/models
+    restart: unless-stopped
+
+volumes:
+  model-cache:

@@ -1,0 +1,79 @@
+name: Deploy — platform-sg
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "platform-sg/**"
+
+jobs:
+  deploy-gateway:
+    name: Deploy sg-gateway
+    runs-on: ubuntu-latest
+    environment: production-sg
+    if: contains(toJSON(github.event.commits.*.modified), 'platform-sg/services/gateway')
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run gateway tests before deploy
+        working-directory: platform-sg/services/gateway
+        run: |
+          pip install -r requirements.txt pytest pytest-asyncio
+          python -m pytest tests/ -v
+
+      - name: Build Docker image
+        working-directory: platform-sg/services/gateway
+        run: |
+          docker build -t dcdeeptech/sg-gateway:${{ github.sha }} .
+          docker tag dcdeeptech/sg-gateway:${{ github.sha }} dcdeeptech/sg-gateway:latest
+
+      # TODO: push to registry and deploy to SG infrastructure
+      # - name: Push to registry
+      # - name: Deploy to SG k8s cluster
+
+  deploy-compliance:
+    name: Deploy sg-compliance
+    runs-on: ubuntu-latest
+    environment: production-sg
+    if: contains(toJSON(github.event.commits.*.modified), 'platform-sg/services/compliance')
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run compliance tests before deploy
+        working-directory: platform-sg/services/compliance
+        run: |
+          pip install fastapi uvicorn pydantic python-dotenv pytest pytest-asyncio
+          python -m pytest tests/ -v
+
+      - name: Build Docker image
+        working-directory: platform-sg/services/compliance
+        run: docker build -t dcdeeptech/sg-compliance:${{ github.sha }} .
+
+      # TODO: push to registry and deploy
+
+  deploy-admin-console:
+    name: Deploy admin-console (internal origin only)
+    runs-on: ubuntu-latest
+    environment: production-sg
+    if: contains(toJSON(github.event.commits.*.modified), 'platform-sg/apps/admin-console')
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
+
+      - name: Install and build
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm turbo run build --filter="@platform-sg/app-admin-console"
+        env:
+          VITE_GATEWAY_URL: ${{ secrets.SG_GATEWAY_INTERNAL_URL }}
+
+      # TODO: deploy dist/ to internal nginx — NOT to a public CDN
+      # This app must be served from an internal origin behind network controls.

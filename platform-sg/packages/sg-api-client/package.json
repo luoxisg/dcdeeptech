@@ -1,0 +1,16 @@
+{
+  "name": "@platform-sg/sg-api-client",
+  "version": "0.1.0",
+  "private": true,
+  "description": "OpenAPI-generated typed client for the sg-gateway public API. The ONLY sanctioned import path from front/ into platform-sg.",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "generate": "openapi-typescript http://localhost:8080/openapi.json -o src/generated.d.ts",
+    "build": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "openapi-typescript": "^7.4.0",
+    "typescript": "^5"
+  }
+}

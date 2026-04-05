@@ -1,0 +1,49 @@
+version: "3.9"
+
+# Runs the full Singapore control plane locally.
+# Usage: docker compose -f platform-sg/deploy/docker-compose.yml up
+
+services:
+  gateway:
+    build:
+      context: ../services/gateway
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    env_file:
+      - ../services/gateway/.env.local
+    volumes:
+      - gateway-data:/app/data
+      - gateway-audit:/app/audit_logs
+    restart: unless-stopped
+
+  compliance:
+    build:
+      context: ../services/compliance
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    env_file:
+      - ../services/compliance/.env.local
+    volumes:
+      - compliance-data:/app/data
+    depends_on:
+      - gateway
+    restart: unless-stopped
+
+  admin-console:
+    image: nginx:alpine
+    ports:
+      - "5173:80"
+    volumes:
+      - ../apps/admin-console/dist:/usr/share/nginx/html:ro
+    depends_on:
+      - gateway
+    restart: unless-stopped
+    profiles:
+      - full  # only start with: docker compose --profile full up
+
+volumes:
+  gateway-data:
+  gateway-audit:
+  compliance-data:
