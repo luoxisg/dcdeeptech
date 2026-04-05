@@ -1,0 +1,918 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Edge AI Solutions | Digital Briefing Center</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', 'Noto Sans SC', sans-serif;
+            background-color: #F8FAFC; /* Warm neutral / light grey */
+            color: #1E293B; /* Slate 800 */
+        }
+        
+        /* Custom Utilities */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        }
+
+        .section-transition {
+            transition: all 0.5s ease-in-out;
+        }
+
+        .active-tab {
+            border-bottom: 2px solid #0F172A;
+            color: #0F172A;
+            font-weight: 600;
+        }
+
+        .inactive-tab {
+            border-bottom: 2px solid transparent;
+            color: #64748B;
+        }
+        
+        .inactive-tab:hover {
+            color: #334155;
+        }
+
+        /* Chart Container Strict Styling */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-slate-200 selection:text-slate-900">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 glass-panel border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex-shrink-0 flex items-center gap-2">
+                    <span class="text-2xl font-bold text-slate-800 tracking-tight">AxiomDeta <span class="text-amber-600">Singapore</span></span>
+                </div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="#positioning" class="text-sm font-medium text-slate-600 hover:text-slate-900" data-i18n="nav_pos">Positioning & Value</a>
+                    <a href="#solutions" class="text-sm font-medium text-slate-600 hover:text-slate-900" data-i18n="nav_sol">Industry Solutions</a>
+                    <a href="#trust" class="text-sm font-medium text-slate-600 hover:text-slate-900" data-i18n="nav_trust">Trust & Compliance</a>
+                    <a href="#developers" class="text-sm font-medium text-slate-600 hover:text-slate-900" data-i18n="nav_dev">Developers</a>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button id="lang-toggle" onclick="toggleLanguage()" class="text-sm font-medium text-slate-600 hover:text-slate-900 border border-slate-200 px-3 py-1 rounded hover:bg-slate-50 transition">
+                        EN / 中
+                    </button>
+                    <button onclick="scrollToSection('contact')" class="bg-slate-900 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-slate-800 transition-colors" data-i18n="nav_contact">
+                        Contact Us
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="hero" class="pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto min-h-[60vh] flex flex-col justify-center">
+        <div class="text-center max-w-4xl mx-auto space-y-8">
+            <div class="inline-flex items-center px-3 py-1 rounded-full bg-amber-50 text-amber-700 text-xs font-medium border border-amber-100 mb-4">
+                Global Edge AI Solutions
+            </div>
+            <h1 class="text-4xl md:text-6xl font-bold text-slate-900 tracking-tight leading-tight" data-i18n="hero_title">
+                Bridging the Gap Between <span class="text-slate-500">Cutting-Edge AI</span> and <br>
+                <span class="underline decoration-amber-500 decoration-4 underline-offset-4">Harsh Industrial Frontiers</span>
+            </h1>
+            <p class="text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed" data-i18n="hero_desc">
+                We don't just provide hardware. We deliver "semi-finished" solutions comprising industrial-grade computing platforms and pre-configured AI algorithms, empowering partners to accelerate intelligent deployment.
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4 pt-4">
+                <button onclick="scrollToSection('solutions')" class="px-8 py-3 bg-slate-900 text-white rounded-lg font-semibold hover:bg-slate-800 transition shadow-lg shadow-slate-200" data-i18n="hero_btn_explore">
+                    Explore Solutions
+                </button>
+                <button onclick="scrollToSection('developers')" class="px-8 py-3 bg-white text-slate-700 border border-slate-300 rounded-lg font-semibold hover:bg-slate-50 transition" data-i18n="hero_btn_docs">
+                    View Tech Docs
+                </button>
+            </div>
+            
+            <!-- Dynamic Role Statement -->
+            <div class="mt-12 p-6 glass-panel rounded-xl max-w-3xl mx-auto">
+                <p class="text-sm text-slate-500 uppercase tracking-wider font-bold mb-4" data-i18n="role_title">Our Core Role</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
+                    <div class="p-4 rounded-lg bg-slate-50 hover:bg-white border border-transparent hover:border-slate-200 transition duration-300">
+                        <div class="text-2xl mb-2">🛡️</div>
+                        <h3 class="font-bold text-slate-900" data-i18n="role_1_title">Beyond Hardware</h3>
+                        <p class="text-sm text-slate-600 mt-2" data-i18n="role_1_desc">Phoenix terminals & Hardware Watchdog ensure autonomous recovery and reliable connectivity in harsh environments.</p>
+                    </div>
+                    <div class="p-4 rounded-lg bg-slate-50 hover:bg-white border border-transparent hover:border-slate-200 transition duration-300">
+                        <div class="text-2xl mb-2">🧠</div>
+                        <h3 class="font-bold text-slate-900" data-i18n="role_2_title">Beyond Software</h3>
+                        <p class="text-sm text-slate-600 mt-2" data-i18n="role_2_desc">Providing a solid physical carrier for algorithms, solving field stability issues that pure software companies can't control.</p>
+                    </div>
+                    <div class="p-4 rounded-lg bg-slate-50 hover:bg-white border border-transparent hover:border-slate-200 transition duration-300">
+                        <div class="text-2xl mb-2">🇸🇬</div>
+                        <h3 class="font-bold text-slate-900" data-i18n="role_3_title">Singapore Origin</h3>
+                        <p class="text-sm text-slate-600 mt-2" data-i18n="role_3_desc">International legal protection, transparent business environment, and efficient global logistics network.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Positioning & Technology (Radar Chart) -->
+    <section id="positioning" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h2 class="text-3xl font-bold text-slate-900 mb-6" data-i18n="pos_title">The "Computing Sweet Spot"</h2>
+                    <p class="text-slate-600 mb-6 text-lg leading-relaxed" data-i18n="pos_desc_1">
+                        Industrial applications require a perfect balance of performance, power consumption, cost, and stability. Our EAI-BOX2000 is built on RK3588 with a built-in 6 TOPS NPU, designed specifically for static visual analysis.
+                    </p>
+                    <p class="text-slate-600 mb-8 leading-relaxed" data-i18n="pos_desc_2">
+                        Compared to the overpowered and costly high-end GPUs, or the fragility of consumer-grade boards, we provide the exact balance needed for the industrial field.
+                    </p>
+                    
+                    <!-- Dynamic Interactive Legend -->
+                    <div class="space-y-3">
+                        <div class="flex items-center p-3 rounded-lg bg-slate-50 border border-slate-100 cursor-pointer hover:bg-slate-100 transition" onclick="toggleDataset(0)">
+                            <div class="w-4 h-4 rounded-full bg-slate-800 mr-3"></div>
+                            <div>
+                                <span class="block font-bold text-slate-900" data-i18n="legend_our_sol">Our Solution (EAI-BOX2000)</span>
+                                <span class="text-xs text-slate-500" data-i18n="legend_our_desc">Balanced, Reliable, Industrial Interfaces</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center p-3 rounded-lg bg-white border border-slate-100 cursor-pointer hover:bg-slate-50 transition opacity-60 hover:opacity-100" onclick="toggleDataset(1)">
+                            <div class="w-4 h-4 rounded-full bg-red-400 mr-3"></div>
+                            <div>
+                                <span class="block font-bold text-slate-900" data-i18n="legend_gpu">High-End GPU Solutions</span>
+                                <span class="text-xs text-slate-500" data-i18n="legend_gpu_desc">Overpowered, High Power, Expensive</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center p-3 rounded-lg bg-white border border-slate-100 cursor-pointer hover:bg-slate-50 transition opacity-60 hover:opacity-100" onclick="toggleDataset(2)">
+                            <div class="w-4 h-4 rounded-full bg-gray-300 mr-3"></div>
+                            <div>
+                                <span class="block font-bold text-slate-900" data-i18n="legend_consumer">Consumer Dev Boards</span>
+                                <span class="text-xs text-slate-500" data-i18n="legend_consumer_desc">Low Cost, Low Stability, Non-Industrial</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200">
+                    <h3 class="text-center text-sm font-semibold text-slate-500 mb-4 tracking-widest" data-i18n="radar_title">Comprehensive Analysis</h3>
+                    <div class="chart-container">
+                        <canvas id="positioningChart"></canvas>
+                    </div>
+                    <p class="text-center text-xs text-slate-400 mt-4" data-i18n="radar_hint">Click list items to toggle comparison</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Solutions Hub (Tabs) -->
+    <section id="solutions" class="py-20 bg-slate-50 border-y border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-3xl font-bold text-slate-900 mb-4" data-i18n="sol_title">Scenario-Driven Industry Solutions</h2>
+                <p class="text-slate-600" data-i18n="sol_desc">Whether it's compliance challenges in Singapore or upgrade needs in Southeast Asian manufacturing, we provide verified, field-ready solutions.</p>
+            </div>
+
+            <!-- Tab Navigation -->
+            <div class="flex justify-center mb-8 border-b border-slate-300">
+                <button onclick="switchTab('construction')" id="tab-construction" class="active-tab px-6 py-3 text-lg transition-all focus:outline-none" data-i18n="tab_const">
+                    🏗️ Construction Safety (SG)
+                </button>
+                <button onclick="switchTab('manufacturing')" id="tab-manufacturing" class="inactive-tab px-6 py-3 text-lg transition-all focus:outline-none" data-i18n="tab_mfg">
+                    🏭 Manufacturing (SEA)
+                </button>
+            </div>
+
+            <!-- Tab Content: Construction -->
+            <div id="content-construction" class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start opacity-100 transition-opacity duration-300">
+                <div class="space-y-6">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                        <h3 class="text-xl font-bold text-slate-800 mb-2" data-i18n="const_pain_title">Pain Point: MOM Mandatory Compliance</h3>
+                        <p class="text-slate-600 mb-4" data-i18n="const_pain_desc">
+                            The Singapore Ministry of Manpower (MOM) mandates Video Surveillance Systems (VSS) for all high-value sites from June 2024. Traditional CCTV is only for post-event evidence, unable to prevent costly Stop Work Orders.
+                        </p>
+                        <div class="flex gap-2">
+                            <span class="px-2 py-1 bg-red-50 text-red-600 text-xs rounded" data-i18n="tag_compliance">High Compliance Pressure</span>
+                            <span class="px-2 py-1 bg-red-50 text-red-600 text-xs rounded" data-i18n="tag_passive">Passive Response</span>
+                        </div>
+                    </div>
+                    <div class="bg-emerald-50 p-6 rounded-xl border border-emerald-100">
+                        <h3 class="text-xl font-bold text-emerald-900 mb-2" data-i18n="const_val_title">Our Value: Active Defense</h3>
+                        <ul class="space-y-3">
+                            <li class="flex items-start">
+                                <span class="text-emerald-600 mr-2">✓</span>
+                                <span class="text-emerald-800 text-sm" data-i18n="const_val_1"><strong>Fully Compliant:</strong> Meets mandatory 1080p resolution and 30-day storage requirements.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-emerald-600 mr-2">✓</span>
+                                <span class="text-emerald-800 text-sm" data-i18n="const_val_2"><strong>Real-time AI Warning:</strong> Identifies missing PPE and intrusion in seconds, eliminating risks before they happen.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-emerald-600 mr-2">✓</span>
+                                <span class="text-emerald-800 text-sm" data-i18n="const_val_3"><strong>Industrial Adaptation:</strong> Ruggedized design for dusty, hot, and humid construction sites.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- Interactive Metric for Construction -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 h-full flex flex-col">
+                    <h3 class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-6" data-i18n="const_chart_title">Compliance & Risk Management Simulation</h3>
+                    <div class="chart-container">
+                        <canvas id="constructionChart"></canvas>
+                    </div>
+                    <p class="text-center text-xs text-slate-400 mt-4" data-i18n="const_chart_hint">Simulated Data: Incident Reduction via Active Warning</p>
+                </div>
+            </div>
+
+            <!-- Tab Content: Manufacturing (Hidden by default) -->
+            <div id="content-manufacturing" class="hidden grid-cols-1 md:grid-cols-2 gap-8 items-start opacity-0 transition-opacity duration-300">
+                <div class="space-y-6">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                        <h3 class="text-xl font-bold text-slate-800 mb-2" data-i18n="mfg_pain_title">Pain Point: Data Silos & QC</h3>
+                        <p class="text-slate-600 mb-4" data-i18n="mfg_pain_desc">
+                            Under the "China+1" supply chain shift, factories in Vietnam and Thailand face dual challenges: legacy equipment that cannot be networked and low efficiency in manual quality inspection.
+                        </p>
+                        <div class="flex gap-2">
+                            <span class="px-2 py-1 bg-amber-50 text-amber-600 text-xs rounded" data-i18n="tag_legacy">Legacy Equipment</span>
+                            <span class="px-2 py-1 bg-amber-50 text-amber-600 text-xs rounded" data-i18n="tag_yield">Yield Bottleneck</span>
+                        </div>
+                    </div>
+                    <div class="bg-blue-50 p-6 rounded-xl border border-blue-100">
+                        <h3 class="text-xl font-bold text-blue-900 mb-2" data-i18n="mfg_val_title">Our Value: Connection & Intelligence</h3>
+                        <ul class="space-y-3">
+                            <li class="flex items-start">
+                                <span class="text-blue-600 mr-2">✓</span>
+                                <span class="text-blue-800 text-sm" data-i18n="mfg_val_1"><strong>AOI Core Engine:</strong> 6 TOPS power provides cost-effective compute for Automated Optical Inspection, boosting yield.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-blue-600 mr-2">✓</span>
+                                <span class="text-blue-800 text-sm" data-i18n="mfg_val_2"><strong>Breaking Silos:</strong> Native CAN Bus & RS485 seamlessly connect Siemens, Mitsubishi, and other legacy PLCs.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-blue-600 mr-2">✓</span>
+                                <span class="text-blue-800 text-sm" data-i18n="mfg_val_3"><strong>Predictive Maintenance:</strong> Real-time vibration & temperature collection prevents unplanned downtime.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- Interactive Metric for Manufacturing -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 h-full flex flex-col">
+                    <h3 class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-6" data-i18n="mfg_chart_title">AOI Efficiency Improvement</h3>
+                    <div class="chart-container">
+                        <canvas id="manufacturingChart"></canvas>
+                    </div>
+                    <p class="text-center text-xs text-slate-400 mt-4" data-i18n="mfg_chart_hint">Simulated Data: Manual Inspection vs AI Assisted Efficiency</p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- NEW SECTION: Regional Market Strategy -->
+    <section id="regional-strategy" class="py-20 bg-white border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="mb-12 text-center md:text-left">
+                <h2 class="text-3xl font-bold text-slate-900 mb-4" data-i18n="reg_title">Regional Strategic Roadmap</h2>
+                <p class="text-slate-600 max-w-2xl" data-i18n="reg_desc">
+                    Customized market entry strategies for key growth regions, respecting local industrial drivers and regulatory landscapes.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Vietnam Strategy -->
+                <div class="group relative bg-slate-50 rounded-2xl p-8 transition-all hover:bg-slate-900 hover:shadow-xl">
+                    <div class="absolute top-0 right-0 p-6 opacity-10 text-6xl font-bold text-slate-300 group-hover:text-slate-700 transition-colors">VN</div>
+                    <div class="text-4xl mb-6">🇻🇳</div>
+                    <h3 class="text-xl font-bold text-slate-900 group-hover:text-white mb-2" data-i18n="reg_vn_title">Vietnam: Electronics Hub</h3>
+                    <p class="text-slate-600 group-hover:text-slate-300 text-sm mb-6 leading-relaxed" data-i18n="reg_vn_desc">
+                        Targeting the "Global Electronics Manufacturing Center". Focusing on AOI solutions for semiconductor assembly and smartphone production lines.
+                    </p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-2 py-1 bg-white border border-slate-200 rounded text-xs text-slate-600 font-medium group-hover:bg-slate-700 group-hover:border-slate-600 group-hover:text-slate-200" data-i18n="tag_electronics">Electronics</span>
+                        <span class="px-2 py-1 bg-white border border-slate-200 rounded text-xs text-slate-600 font-medium group-hover:bg-slate-700 group-hover:border-slate-600 group-hover:text-slate-200" data-i18n="tag_aoi">High-Precision AOI</span>
+                    </div>
+                </div>
+
+                <!-- Thailand Strategy -->
+                <div class="group relative bg-slate-50 rounded-2xl p-8 transition-all hover:bg-slate-900 hover:shadow-xl">
+                    <div class="absolute top-0 right-0 p-6 opacity-10 text-6xl font-bold text-slate-300 group-hover:text-slate-700 transition-colors">TH</div>
+                    <div class="text-4xl mb-6">🇹🇭</div>
+                    <h3 class="text-xl font-bold text-slate-900 group-hover:text-white mb-2" data-i18n="reg_th_title">Thailand: Automotive Core</h3>
+                    <p class="text-slate-600 group-hover:text-slate-300 text-sm mb-6 leading-relaxed" data-i18n="reg_th_desc">
+                        Serving the "Detroit of Asia". Retrofitting legacy PLCs with CAN/RS485 interfaces to enable predictive maintenance for automotive supply chains.
+                    </p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-2 py-1 bg-white border border-slate-200 rounded text-xs text-slate-600 font-medium group-hover:bg-slate-700 group-hover:border-slate-600 group-hover:text-slate-200" data-i18n="tag_auto">Automotive</span>
+                        <span class="px-2 py-1 bg-white border border-slate-200 rounded text-xs text-slate-600 font-medium group-hover:bg-slate-700 group-hover:border-slate-600 group-hover:text-slate-200" data-i18n="tag_retrofit">Legacy Retrofit</span>
+                    </div>
+                </div>
+
+                <!-- Europe Strategy -->
+                <div class="group relative bg-slate-50 rounded-2xl p-8 transition-all hover:bg-slate-900 hover:shadow-xl">
+                    <div class="absolute top-0 right-0 p-6 opacity-10 text-6xl font-bold text-slate-300 group-hover:text-slate-700 transition-colors">EU</div>
+                    <div class="text-4xl mb-6">🇪🇺</div>
+                    <h3 class="text-xl font-bold text-slate-900 group-hover:text-white mb-2" data-i18n="reg_eu_title">Europe: Compliance First</h3>
+                    <p class="text-slate-600 group-hover:text-slate-300 text-sm mb-6 leading-relaxed" data-i18n="reg_eu_desc">
+                        A prudent focus on commercial sectors (Retail, Smart Building) while avoiding critical infrastructure. Strict adherence to GDPR and the EU AI Act.
+                    </p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-2 py-1 bg-white border border-slate-200 rounded text-xs text-slate-600 font-medium group-hover:bg-slate-700 group-hover:border-slate-600 group-hover:text-slate-200" data-i18n="tag_retail">Smart Retail</span>
+                        <span class="px-2 py-1 bg-white border border-slate-200 rounded text-xs text-slate-600 font-medium group-hover:bg-slate-700 group-hover:border-slate-600 group-hover:text-slate-200" data-i18n="tag_gdpr">GDPR Ready</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trust & Global Integration Flow -->
+    <section id="trust" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="mb-12">
+                <h2 class="text-3xl font-bold text-slate-900 mb-4" data-i18n="trust_title">Trust & Compliance: Singapore Integration</h2>
+                <p class="text-slate-600 max-w-2xl" data-i18n="trust_desc">
+                    This is not simple re-export trade. We perform core value addition at our Singapore HQ, ensuring every device meets international business standards and strict compliance requirements.
+                </p>
+            </div>
+
+            <!-- CSS Process Flow Visualization -->
+            <div class="relative">
+                <!-- Connecting Line -->
+                <div class="hidden md:block absolute top-1/2 left-0 w-full h-1 bg-slate-100 -z-10 transform -translate-y-1/2"></div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <!-- Step 1 -->
+                    <div class="bg-white p-6 rounded-lg border border-slate-200 shadow-lg relative group hover:-translate-y-1 transition-transform duration-300">
+                        <div class="absolute -top-3 left-6 bg-slate-800 text-white text-xs px-2 py-1 rounded">Step 01</div>
+                        <h4 class="font-bold text-lg mb-2" data-i18n="step_1_title">Components Arrive</h4>
+                        <p class="text-sm text-slate-500" data-i18n="step_1_desc">Industrial hardware baseboards and compute modules arrive at Singapore hub.</p>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="bg-amber-50 p-6 rounded-lg border border-amber-200 shadow-lg relative group hover:-translate-y-1 transition-transform duration-300">
+                        <div class="absolute -top-3 left-6 bg-amber-600 text-white text-xs px-2 py-1 rounded" data-i18n="step_2_badge">Value Core</div>
+                        <h4 class="font-bold text-lg text-amber-900 mb-2" data-i18n="step_2_title">Software Integration</h4>
+                        <p class="text-sm text-amber-800" data-i18n="step_2_desc">Firmware burning, security module loading, and application-specific algorithms pre-installed in Singapore.</p>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="bg-white p-6 rounded-lg border border-slate-200 shadow-lg relative group hover:-translate-y-1 transition-transform duration-300">
+                        <div class="absolute -top-3 left-6 bg-slate-800 text-white text-xs px-2 py-1 rounded">Step 03</div>
+                        <h4 class="font-bold text-lg mb-2" data-i18n="step_3_title">Quality & Compliance QA</h4>
+                        <p class="text-sm text-slate-500" data-i18n="step_3_desc">Singapore expert teams perform final stress testing and compliance verification.</p>
+                    </div>
+
+                    <!-- Step 4 -->
+                    <div class="bg-white p-6 rounded-lg border border-slate-200 shadow-lg relative group hover:-translate-y-1 transition-transform duration-300">
+                        <div class="absolute -top-3 left-6 bg-slate-800 text-white text-xs px-2 py-1 rounded">Step 04</div>
+                        <h4 class="font-bold text-lg mb-2" data-i18n="step_4_title">Global Delivery</h4>
+                        <p class="text-sm text-slate-500" data-i18n="step_4_desc">Utilizing Singapore's efficient logistics network and Free Trade Agreements for global dispatch.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Europe Specific Card -->
+            <div class="mt-12 bg-slate-900 rounded-xl p-8 text-white flex flex-col md:flex-row items-center justify-between gap-8">
+                <div class="max-w-2xl">
+                    <h3 class="text-xl font-bold mb-2 flex items-center gap-2" data-i18n="gdpr_title">
+                        <span>🇪🇺</span> Privacy Commitment for Europe (GDPR Ready)
+                    </h3>
+                    <p class="text-slate-300 text-sm leading-relaxed mb-4" data-i18n="gdpr_desc">
+                        We adhere to "Privacy by Design." Leveraging powerful edge computing, all sensitive video data is anonymized and analyzed locally, transmitting only structured metadata. Strictly complies with the EU AI Act, avoiding legal risks.
+                    </p>
+                    <div class="flex gap-4 text-xs font-mono text-slate-400">
+                        <span class="border border-slate-700 px-2 py-1 rounded">No Cloud Upload Needed</span>
+                        <span class="border border-slate-700 px-2 py-1 rounded">Local Processing</span>
+                    </div>
+                </div>
+                <div class="flex-shrink-0 text-center">
+                    <div class="text-4xl font-bold text-amber-500 mb-1">100%</div>
+                    <div class="text-xs text-slate-400" data-i18n="gdpr_stat">Local Data Processing</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Developers / GitHub / Partners -->
+    <section id="developers" class="py-20 bg-slate-50 border-t border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                
+                <!-- Left: Developer Terminal Concept -->
+                <div>
+                    <h2 class="text-3xl font-bold text-slate-900 mb-6" data-i18n="dev_title">Radical Transparency</h2>
+                    <p class="text-slate-600 mb-6" data-i18n="dev_desc">
+                        We don't offer black boxes. Visit our GitHub to get full SDKs, drivers, and API documentation. We promise no vendor lock-in; you have ultimate control.
+                    </p>
+                    
+                    <!-- Mock Terminal -->
+                    <div class="bg-slate-900 rounded-lg shadow-2xl overflow-hidden font-mono text-sm leading-relaxed">
+                        <div class="bg-slate-800 px-4 py-2 flex gap-2 items-center">
+                            <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                            <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                            <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                            <span class="ml-2 text-xs text-slate-400">bash — developer@axiomdeta-box</span>
+                        </div>
+                        <div class="p-6 text-slate-300">
+                            <p class="mb-2"><span class="text-green-400">$</span> git clone https://github.com/axiomdeta/sdk-rk3588.git</p>
+                            <p class="mb-2 text-slate-500">Cloning into 'sdk-rk3588'...</p>
+                            <p class="mb-2"><span class="text-green-400">$</span> cd examples/yolov8_inference</p>
+                            <p class="mb-2"><span class="text-green-400">$</span> python3 run_demo.py --npu_acceleration=true</p>
+                            <p class="mb-2 text-amber-400">[INFO] NPU Initialized. Model Loaded (0.4s)</p>
+                            <p class="mb-2 text-amber-400">[INFO] Processing Stream: 30 FPS @ 1080p</p>
+                            <p class="animate-pulse">_</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 flex gap-4">
+                         <a href="/docs/model_zoo_guide.pdf" target="_blank" class="bg-white px-4 py-2 rounded border border-slate-200 text-sm font-semibold text-slate-700 hover:bg-slate-50 hover:border-amber-300 transition flex items-center" data-i18n="badge_model_zoo">
+                            📦 Out-of-box Model Zoo
+                         </a>
+                         <a href="/docs/api_reference.pdf" target="_blank" class="bg-white px-4 py-2 rounded border border-slate-200 text-sm font-semibold text-slate-700 hover:bg-slate-50 hover:border-amber-300 transition flex items-center" data-i18n="badge_api">
+                            📄 Complete API Docs
+                         </a>
+                    </div>
+                </div>
+
+                <!-- Right: Partner Models -->
+                <div>
+                    <h2 class="text-3xl font-bold text-slate-900 mb-6" data-i18n="partner_title">Partner Programs</h2>
+                    <p class="text-slate-600 mb-8" data-i18n="partner_desc">
+                        Whether you are an Independent Software Vendor (ISV) or System Integrator (SI), we offer tailored partnership models.
+                    </p>
+                    
+                    <div class="space-y-4">
+                        <!-- ISV Card -->
+                        <div class="p-6 bg-white rounded-xl border border-slate-200 hover:border-amber-300 hover:shadow-md transition cursor-default">
+                            <h3 class="font-bold text-lg text-slate-800 mb-2" data-i18n="isv_title">For ISVs (Software Vendors)</h3>
+                            <p class="text-sm text-slate-600 mb-3" data-i18n="isv_subtitle">Hardware as a Service Foundation.</p>
+                            <ul class="text-sm text-slate-500 space-y-2">
+                                <li class="flex items-center" data-i18n="isv_pt_1">🔹 Deploy your algorithms on verified industrial hardware.</li>
+                                <li class="flex items-center" data-i18n="isv_pt_2">🔹 Achieve "1+1>2" software-hardware integrated delivery.</li>
+                            </ul>
+                        </div>
+
+                        <!-- SI Card -->
+                        <div class="p-6 bg-white rounded-xl border border-slate-200 hover:border-blue-300 hover:shadow-md transition cursor-default">
+                            <h3 class="font-bold text-lg text-slate-800 mb-2" data-i18n="si_title">For SIs (System Integrators)</h3>
+                            <p class="text-sm text-slate-600 mb-3" data-i18n="si_subtitle">Value-Added Reselling & Solution Creation.</p>
+                            <ul class="text-sm text-slate-500 space-y-2">
+                                <li class="flex items-center" data-i18n="si_pt_1">🔹 Deep customization using open SDKs.</li>
+                                <li class="flex items-center" data-i18n="si_pt_2">🔹 Deliver high-margin tailored solutions to clients.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer / Contact -->
+    <section id="contact" class="bg-slate-900 text-slate-300 py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+                <div>
+                    <h3 class="text-white text-lg font-bold mb-4">AxiomDeta Singapore</h3>
+                    <p class="text-sm leading-relaxed mb-4" data-i18n="footer_desc">
+                        Edge AI Solution Provider focused on industrial grade computing.<br>
+                        Integrating global resources in Singapore to serve the industrial future.
+                    </p>
+                    <p class="text-xs text-slate-500">
+                        &copy; 2026 AxiomDeta Singapore. All rights reserved.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4" data-i18n="footer_loc_title">Global Footprint</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li class="flex items-start">
+                            <span class="mr-2">🇸🇬</span> 
+                            <span data-i18n="footer_loc_sg"><strong>Global HQ (Singapore):</strong><br>Strategy, Compliance & Core Tech</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="mr-2">🇵🇭</span> 
+                            <span data-i18n="footer_loc_ph"><strong>Digital Engagement Center (Philippines):</strong><br>24/7 Market Response & Support</span>
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4" data-i18n="footer_contact_title">Contact Us</h4>
+                    <p class="text-sm mb-4" data-i18n="footer_contact_msg">Ready to accelerate your intelligent deployment?</p>
+                    <button class="w-full bg-amber-600 text-white py-2 rounded font-medium hover:bg-amber-700 transition" data-i18n="footer_btn">
+                        Start Partnership Inquiry
+                    </button>
+                    <div class="mt-6 flex space-x-4">
+                        <a href="#" class="text-slate-400 hover:text-white transition">GitHub</a>
+                        <a href="#" class="text-slate-400 hover:text-white transition">LinkedIn</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // State Management
+        let currentLang = 'en';
+
+        // Translation Dictionary
+        const translations = {
+            // Nav
+            nav_pos: { en: "Positioning & Value", zh: "定位与价值" },
+            nav_sol: { en: "Industry Solutions", zh: "行业方案" },
+            nav_trust: { en: "Trust & Compliance", zh: "信任与合规" },
+            nav_dev: { en: "Developers", zh: "开发者" },
+            nav_contact: { en: "Contact Us", zh: "联系我们" },
+            
+            // Hero
+            hero_title: { 
+                en: 'Bridging the Gap Between <span class="text-slate-500">Cutting-Edge AI</span> and <br> <span class="underline decoration-amber-500 decoration-4 underline-offset-4">Harsh Industrial Frontiers</span>',
+                zh: '弥合 <span class="text-slate-500">尖端 AI 技术</span> 与 <br> <span class="underline decoration-amber-500 decoration-4 underline-offset-4">严苛工业现场</span> 的鸿沟'
+            },
+            hero_desc: {
+                en: 'We don\'t just provide hardware. We deliver "semi-finished" solutions comprising industrial-grade computing platforms and pre-configured AI algorithms, empowering partners to accelerate intelligent deployment.',
+                zh: '我们不只提供硬件。我们交付由工业级计算平台与预置 AI 算法组成的“半成品”解决方案，赋能合作伙伴加速智能化落地。'
+            },
+            hero_btn_explore: { en: "Explore Solutions", zh: "探索行业方案" },
+            hero_btn_docs: { en: "View Tech Docs", zh: "查看技术文档" },
+            role_title: { en: "Our Core Role", zh: "我们的核心角色" },
+            role_1_title: { en: "Beyond Hardware", zh: "超越纯硬件" },
+            role_1_desc: { en: "Phoenix terminals & Hardware Watchdog ensure autonomous recovery and reliable connectivity in harsh environments.", zh: "内置看门狗与凤凰端子，确保系统在恶劣环境下自主恢复与连接可靠。" },
+            role_2_title: { en: "Beyond Software", zh: "超越纯软件" },
+            role_2_desc: { en: "Providing a solid physical carrier for algorithms, solving field stability issues that pure software companies can't control.", zh: "为算法提供坚实的物理载体，解决纯软件公司无法掌控的现场稳定性难题。" },
+            role_3_title: { en: "Singapore Origin", zh: "源自新加坡" },
+            role_3_desc: { en: "International legal protection, transparent business environment, and efficient global logistics network.", zh: "国际通行的法律保障、透明的商业环境及覆盖全球的高效物流网络。" },
+
+            // Positioning
+            pos_title: { en: 'The "Computing Sweet Spot"', zh: '定位精准的“算力甜点”' },
+            pos_desc_1: { 
+                en: "All early EdgeBox models are dedicated to Computer Vision applications. Industrial applications require a perfect balance of performance, power consumption, cost, and stability. Our EAI-BOX2000 is built on RK3588 with a built-in 6 TOPS NPU, designed specifically for static visual analysis.", 
+                zh: "所有早期的 EdgeBox 型号均专为计算机视觉应用而设计。在工业应用中，不仅需要算力，更需要功耗、成本与稳定性的完美平衡。我们的 EAI-BOX2000 基于 RK3588 构建，内置 6 TOPS NPU，专为静态视觉分析打造。" 
+            },
+            pos_desc_2: { en: "Compared to the overpowered and costly high-end GPUs, or the fragility of consumer-grade boards, we provide the exact balance needed for the industrial field.", zh: "相比于高端 GPU 的算力过剩与高昂成本，或消费级开发板的脆弱性，我们提供了工业现场最需要的平衡点。" },
+            legend_our_sol: { en: "Our Solution (EAI-BOX2000)", zh: "我们的解决方案 (EAI-BOX2000)" },
+            legend_our_desc: { en: "Balanced, Reliable, Industrial Interfaces", zh: "平衡、可靠、工业级接口" },
+            legend_gpu: { en: "High-End GPU Solutions", zh: "高端 GPU 方案" },
+            legend_gpu_desc: { en: "Overpowered, High Power, Expensive", zh: "算力过剩、高功耗、昂贵" },
+            legend_consumer: { en: "Consumer Dev Boards", zh: "消费级开发板" },
+            legend_consumer_desc: { en: "Low Cost, Low Stability, Non-Industrial", zh: "低成本、低稳定性、非工业设计" },
+            radar_title: { en: "Comprehensive Analysis", zh: "综合能力对比分析" },
+            radar_hint: { en: "Click list items to toggle comparison", zh: "点击左侧列表可隐藏/显示对比项" },
+
+            // Solutions
+            sol_title: { en: "Scenario-Driven Industry Solutions", zh: "深入场景的行业解决方案" },
+            sol_desc: { en: "Whether it's compliance challenges in Singapore or upgrade needs in Southeast Asian manufacturing, we provide verified, field-ready solutions.", zh: "无论是新加坡的合规性挑战，还是东南亚制造业的升级需求，我们都提供经过验证的实战方案。" },
+            tab_const: { en: "🏗️ Construction Safety (SG)", zh: "🏗️ 建筑安全合规 (新加坡)" },
+            tab_mfg: { en: "🏭 Manufacturing (SEA)", zh: "🏭 制造业自动化 (东南亚)" },
+            
+            // Construction Tab
+            const_pain_title: { en: "Pain Point: MOM Mandatory Compliance", zh: "痛点：MOM 强制合规" },
+            const_pain_desc: { en: "The Singapore Ministry of Manpower (MOM) mandates Video Surveillance Systems (VSS) for all high-value sites from June 2024. Traditional CCTV is only for post-event evidence, unable to prevent costly Stop Work Orders.", zh: "新加坡人力部 (MOM) 自 2024 年 6 月起强制要求所有高价值工地安装视频监控系统 (VSS)。传统 CCTV 仅能事后取证，无法避免高昂的停工令 (Stop Work Order)。" },
+            tag_compliance: { en: "High Compliance Pressure", zh: "合规压力大" },
+            tag_passive: { en: "Passive Response", zh: "事后被动响应" },
+            const_val_title: { en: "Our Value: Active Defense", zh: "我们的价值：主动防御" },
+            const_val_1: { en: "<strong>Fully Compliant:</strong> Meets mandatory 1080p resolution and 30-day storage requirements.", zh: "<strong>完全合规：</strong>满足 1080p 分辨率与 30 天存储的硬性指标。" },
+            const_val_2: { en: "<strong>Real-time AI Warning:</strong> Identifies missing PPE and intrusion in seconds, eliminating risks before they happen.", zh: "<strong>实时 AI 预警：</strong>秒级识别 PPE 缺失及危险区域闯入，将风险消灭在发生前。" },
+            const_val_3: { en: "<strong>Industrial Adaptation:</strong> Ruggedized design for dusty, hot, and humid construction sites.", zh: "<strong>工业适应性：</strong>针对多尘、湿热工地环境的硬件加固设计。" },
+            const_chart_title: { en: "Compliance & Risk Management Simulation", zh: "合规与风险管理数据模拟" },
+            const_chart_hint: { en: "Simulated Data: Incident Reduction via Active Warning", zh: "模拟数据：主动预警系统对事故率的降低效果" },
+
+            // Manufacturing Tab
+            mfg_pain_title: { en: "Pain Point: Data Silos & QC", zh: "痛点：数据孤岛与品控" },
+            mfg_pain_desc: { en: 'Under the "China+1" supply chain shift, factories in Vietnam and Thailand face dual challenges: legacy equipment that cannot be networked and low efficiency in manual quality inspection.', zh: "在“中国+1”的供应链转移背景下，越南与泰国的工厂面临老旧设备无法联网、人工质检效率低下的双重挑战。" },
+            tag_legacy: { en: "Legacy Equipment", zh: "设备老旧" },
+            tag_yield: { en: "Yield Bottleneck", zh: "良品率瓶颈" },
+            mfg_val_title: { en: "Our Value: Connection & Intelligence", zh: "我们的价值：连接与智能" },
+            mfg_val_1: { en: "<strong>AOI Core Engine:</strong> 6 TOPS power provides cost-effective compute for Automated Optical Inspection, boosting yield.", zh: "<strong>AOI 核心引擎：</strong>6 TOPS 算力为自动化光学检测提供高性价比算力，显著提升良品率。" },
+            mfg_val_2: { en: "<strong>Breaking Silos:</strong> Native CAN Bus & RS485 seamlessly connect Siemens, Mitsubishi, and other legacy PLCs.", zh: "<strong>打破孤岛：</strong>原生 CAN 总线与 RS485 接口，无缝连接西门子、三菱等传统 PLC。" },
+            mfg_val_3: { en: "<strong>Predictive Maintenance:</strong> Real-time vibration & temperature collection prevents unplanned downtime.", zh: "<strong>预测性维护：</strong>实时采集震动与温度数据，预防非计划停机。" },
+            mfg_chart_title: { en: "AOI Efficiency Improvement", zh: "AOI 效率提升对比" },
+            mfg_chart_hint: { en: "Simulated Data: Manual Inspection vs AI Assisted Efficiency", zh: "模拟数据：人工质检 vs AI 辅助检测效率" },
+
+            // NEW: Regional Strategy
+            reg_title: { en: "Regional Strategic Roadmap", zh: "区域战略路线图" },
+            reg_desc: { en: "Customized market entry strategies for key growth regions, respecting local industrial drivers and regulatory landscapes.", zh: "针对关键增长区域的差异化市场进入策略，充分尊重当地产业驱动力与法规环境。" },
+            
+            reg_vn_title: { en: "Vietnam: Electronics Hub", zh: "越南：电子制造中心" },
+            reg_vn_desc: { en: 'Targeting the "Global Electronics Manufacturing Center". Focusing on AOI solutions for semiconductor assembly and smartphone production lines.', zh: '瞄准“全球电子制造中心”。专注于为半导体封装和智能手机生产线提供高精度 AOI 解决方案。' },
+            tag_electronics: { en: "Electronics", zh: "电子制造" },
+            tag_aoi: { en: "High-Precision AOI", zh: "高精度 AOI" },
+
+            reg_th_title: { en: "Thailand: Automotive Core", zh: "泰国：汽车工业核心" },
+            reg_th_desc: { en: 'Serving the "Detroit of Asia". Retrofitting legacy PLCs with CAN/RS485 interfaces to enable predictive maintenance for automotive supply chains.', zh: '服务“亚洲底特律”。通过 CAN/RS485 接口改造老旧 PLC，赋能汽车供应链的预测性维护。' },
+            tag_auto: { en: "Automotive", zh: "汽车工业" },
+            tag_retrofit: { en: "Legacy Retrofit", zh: "设备改造" },
+
+            reg_eu_title: { en: "Europe: Compliance First", zh: "欧洲：合规优先" },
+            reg_eu_desc: { en: "A prudent focus on commercial sectors (Retail, Smart Building) while avoiding critical infrastructure. Strict adherence to GDPR and the EU AI Act.", zh: "审慎聚焦商业领域（零售、智慧楼宇），主动避开关键基础设施。严格遵守 GDPR 和欧盟 AI 法案。" },
+            tag_retail: { en: "Smart Retail", zh: "智慧零售" },
+            tag_gdpr: { en: "GDPR Ready", zh: "GDPR 合规" },
+
+            // Trust
+            trust_title: { en: "Trust & Compliance: Singapore Integration", zh: "信任与合规：新加坡整合" },
+            trust_desc: { en: "This is not simple re-export trade. We perform core value addition at our Singapore HQ, ensuring every device meets international business standards and strict compliance requirements.", zh: "这不是简单的转口贸易。我们在新加坡总部进行核心价值增值，确保每一台设备都符合国际商业标准与严苛的合规要求。" },
+            step_1_title: { en: "Components Arrive", zh: "核心组件抵达" },
+            step_1_desc: { en: "Industrial hardware baseboards and compute modules arrive at Singapore hub.", zh: "工业级硬件底板与计算模块运抵新加坡中心。" },
+            step_2_badge: { en: "Value Core", zh: "增值核心" },
+            step_2_title: { en: "Software Integration", zh: "软件集成与烧录" },
+            step_2_desc: { en: "Firmware burning, security module loading, and application-specific algorithms pre-installed in Singapore.", zh: "在新加坡完成固件烧录、安全模块加载及特定应用算法预置。" },
+            step_3_title: { en: "Quality & Compliance QA", zh: "质量与合规 QA" },
+            step_3_desc: { en: "Singapore expert teams perform final stress testing and compliance verification.", zh: "新加坡专家团队执行最终压力测试与合规性验证。" },
+            step_4_title: { en: "Global Delivery", zh: "全球交付" },
+            step_4_desc: { en: "Utilizing Singapore's efficient logistics network and Free Trade Agreements for global dispatch.", zh: "利用新加坡的高效物流网络与自贸协定优势，发往全球客户。" },
+            gdpr_title: { en: '<span>🇪🇺</span> Privacy Commitment for Europe (GDPR Ready)', zh: '<span>🇪🇺</span> 面向欧洲的隐私承诺 (GDPR Ready)' },
+            gdpr_desc: { en: 'We adhere to "Privacy by Design." Leveraging powerful edge computing, all sensitive video data is anonymized and analyzed locally, transmitting only structured metadata. Strictly complies with the EU AI Act, avoiding legal risks.', zh: '我们坚守“隐私设计 (Privacy by Design)”原则。利用边缘侧的强大算力，所有敏感视频数据在本地完成脱敏与分析，仅传输结构化元数据。严格遵守欧盟《AI 法案》，规避法律风险。' },
+            gdpr_stat: { en: "Local Data Processing", zh: "本地数据处理" },
+
+            // Developers
+            dev_title: { en: "Radical Transparency", zh: "激进的透明度" },
+            dev_desc: { en: "We don't offer black boxes. Visit our GitHub to get full SDKs, drivers, and API documentation. We promise no vendor lock-in; you have ultimate control.", zh: "我们不提供黑盒。访问我们的 GitHub，获取完整的 SDK、驱动与 API 文档。我们承诺无供应商锁定，您拥有最终控制权。" },
+            badge_model_zoo: { en: "📦 Out-of-box Model Zoo", zh: "📦 开箱即用模型库" },
+            badge_api: { en: "📄 Complete API Docs", zh: "📄 完整 API 文档" },
+            partner_title: { en: "Partner Programs", zh: "合作伙伴计划" },
+            partner_desc: { en: "Whether you are an Independent Software Vendor (ISV) or System Integrator (SI), we offer tailored partnership models.", zh: "无论您是软件开发商 (ISV) 还是系统集成商 (SI)，我们都提供量身定制的合作模式。" },
+            isv_title: { en: "For ISVs (Software Vendors)", zh: "For ISVs (独立软件开发商)" },
+            isv_subtitle: { en: "Hardware as a Service Foundation.", zh: "硬件即服务基石。" },
+            isv_pt_1: { en: "🔹 Deploy your algorithms on verified industrial hardware.", zh: "🔹 将您的算法搭载于经过验证的工业硬件。" },
+            isv_pt_2: { en: '🔹 Achieve "1+1>2" software-hardware integrated delivery.', zh: '🔹 实现“1+1>2”的软硬一体化交付。' },
+            si_title: { en: "For SIs (System Integrators)", zh: "For SIs (系统集成商)" },
+            si_subtitle: { en: "Value-Added Reselling & Solution Creation.", zh: "增值分销与方案再创。" },
+            si_pt_1: { en: "🔹 Deep customization using open SDKs.", zh: "🔹 利用开放 SDK 进行深度定制。" },
+            si_pt_2: { en: "🔹 Deliver high-margin tailored solutions to clients.", zh: "🔹 为客户提供高利润的定制化方案。" },
+
+            // Footer
+            footer_desc: { en: "Edge AI Solution Provider focused on industrial grade computing.<br>Integrating global resources in Singapore to serve the industrial future.", zh: "专注于工业级边缘计算的 AI 解决方案提供商。<br>我们在新加坡整合全球资源，服务工业未来。" },
+            footer_loc_title: { en: "Global Footprint", zh: "全球布局" },
+            footer_loc_sg: { en: "<strong>Global HQ (Singapore):</strong><br>Strategy, Compliance & Core Tech", zh: "<strong>全球总部 (新加坡)：</strong><br>战略决策、合规与核心技术" },
+            footer_loc_ph: { en: "<strong>Digital Engagement Center (Philippines):</strong><br>24/7 Market Response & Support", zh: "<strong>数字互动中心 (菲律宾)：</strong><br>24/7 市场响应与全球支持" },
+            footer_contact_title: { en: "Contact Us", zh: "联系我们" },
+            footer_contact_msg: { en: "Ready to accelerate your intelligent deployment?", zh: "准备好加速您的智能化落地了吗？" },
+            footer_btn: { en: "Start Partnership Inquiry", zh: "发起合作咨询" }
+        };
+
+        // Smooth Scrolling
+        function scrollToSection(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Language Switcher Logic
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'zh' : 'en';
+            
+            // Update Text
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[key]) {
+                    el.innerHTML = translations[key][currentLang];
+                }
+            });
+
+            // Update Page Title
+            document.title = currentLang === 'en' ? 'Global Edge AI Solutions | Digital Briefing' : '全球边缘 AI 解决方案 | 数字简报中心';
+
+            // Update Charts
+            updateCharts(currentLang);
+        }
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            toggleLanguage(); // Trigger update, though toggle logic flips it, so we rely on currentLang logic inside if refactored, but simple toggle is fine for user action. 
+            // Correct logic for explicit set:
+            currentLang = lang === 'en' ? 'zh' : 'en'; // Flip it first because toggle flips it back
+            toggleLanguage();
+        }
+
+        // --- Chart.js Configurations & Data ---
+
+        const chartTranslations = {
+            radar: {
+                labels: { en: ['AI Performance', 'Cost Efficiency (TCO)', 'Reliability', 'Interfaces', 'Ease of Dev'], zh: ['AI 算力性能', '成本效益 (TCO)', '工业级可靠性', '接口丰富度', '开发便捷性'] },
+                datasets: [
+                    { en: 'Our Solution (EAI-BOX)', zh: '我们的方案 (EAI-BOX)' },
+                    { en: 'High-End GPU Solutions', zh: '高端 GPU 方案' },
+                    { en: 'Consumer Dev Boards', zh: '消费级开发板' }
+                ]
+            },
+            const: {
+                labels: { en: ['Week 1', 'Week 2', 'Week 3', 'Week 4'], zh: ['第1周', '第2周', '第3周', '第4周'] },
+                title: { en: 'Weekly High-Risk Incidents Trend', zh: '高风险行为发生次数 (周度趋势)' },
+                datasets: [
+                    { en: 'Traditional CCTV (Passive)', zh: '传统 CCTV (被动记录)' },
+                    { en: 'AI Active Warning (Preventive)', zh: 'AI 主动预警 (事故预防)' }
+                ]
+            },
+            mfg: {
+                labels: { en: ['09:00', '11:00', '13:00', '15:00', '17:00'], zh: ['09:00', '11:00', '13:00', '15:00', '17:00'] },
+                datasets: [
+                    { en: 'Manual Inspection (Parts/Hr)', zh: '人工检测效率 (件/小时)' },
+                    { en: 'AI Assisted (Parts/Hr)', zh: 'AI 辅助检测效率 (件/小时)' }
+                ]
+            }
+        };
+
+        // 1. Radar Chart
+        const ctxRadar = document.getElementById('positioningChart').getContext('2d');
+        const positioningChart = new Chart(ctxRadar, {
+            type: 'radar',
+            data: {
+                labels: chartTranslations.radar.labels.en,
+                datasets: [
+                    {
+                        label: chartTranslations.radar.datasets[0].en,
+                        data: [80, 90, 95, 95, 85],
+                        fill: true,
+                        backgroundColor: 'rgba(15, 23, 42, 0.2)',
+                        borderColor: 'rgb(15, 23, 42)',
+                        pointBackgroundColor: 'rgb(15, 23, 42)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgb(15, 23, 42)'
+                    },
+                    {
+                        label: chartTranslations.radar.datasets[1].en,
+                        data: [95, 40, 70, 60, 60],
+                        fill: true,
+                        backgroundColor: 'rgba(248, 113, 113, 0.2)',
+                        borderColor: 'rgb(248, 113, 113)',
+                        pointBackgroundColor: 'rgb(248, 113, 113)',
+                        hidden: false
+                    },
+                    {
+                        label: chartTranslations.radar.datasets[2].en,
+                        data: [50, 85, 30, 40, 70],
+                        fill: true,
+                        backgroundColor: 'rgba(203, 213, 225, 0.2)',
+                        borderColor: 'rgb(203, 213, 225)',
+                        pointBackgroundColor: 'rgb(203, 213, 225)',
+                        hidden: false
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                elements: { line: { borderWidth: 2 } },
+                scales: {
+                    r: {
+                        angleLines: { color: '#E2E8F0' },
+                        grid: { color: '#E2E8F0' },
+                        pointLabels: {
+                            font: { size: 12, family: "'Inter', sans-serif" },
+                            color: '#475569'
+                        },
+                        suggestedMin: 0,
+                        suggestedMax: 100,
+                        ticks: { display: false }
+                    }
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                        titleFont: { family: "'Inter', sans-serif" },
+                        bodyFont: { family: "'Inter', sans-serif" }
+                    }
+                }
+            }
+        });
+
+        // 2. Construction Chart
+        const ctxConst = document.getElementById('constructionChart').getContext('2d');
+        const constructionChart = new Chart(ctxConst, {
+            type: 'bar',
+            data: {
+                labels: chartTranslations.const.labels.en,
+                datasets: [
+                    {
+                        label: chartTranslations.const.datasets[0].en,
+                        data: [12, 10, 13, 11],
+                        backgroundColor: '#CBD5E1',
+                    },
+                    {
+                        label: chartTranslations.const.datasets[1].en,
+                        data: [12, 5, 2, 1],
+                        backgroundColor: '#10B981',
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: { display: true, text: chartTranslations.const.title.en },
+                    legend: { position: 'bottom' }
+                },
+                scales: { y: { beginAtZero: true } }
+            }
+        });
+
+        // 3. Manufacturing Chart
+        const ctxMfg = document.getElementById('manufacturingChart').getContext('2d');
+        const manufacturingChart = new Chart(ctxMfg, {
+            type: 'line',
+            data: {
+                labels: chartTranslations.mfg.labels.en,
+                datasets: [
+                    {
+                        label: chartTranslations.mfg.datasets[0].en,
+                        data: [200, 180, 150, 170, 140],
+                        borderColor: '#94A3B8',
+                        tension: 0.4
+                    },
+                    {
+                        label: chartTranslations.mfg.datasets[1].en,
+                        data: [500, 505, 498, 502, 500],
+                        borderColor: '#3B82F6',
+                        borderWidth: 3,
+                        tension: 0.4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'bottom' } },
+                scales: { y: { beginAtZero: true } }
+            }
+        });
+
+        function toggleDataset(index) {
+            const meta = positioningChart.getDatasetMeta(index);
+            meta.hidden = meta.hidden === null ? !positioningChart.data.datasets[index].hidden : null;
+            positioningChart.update();
+        }
+
+        function updateCharts(lang) {
+            // Update Radar
+            positioningChart.data.labels = chartTranslations.radar.labels[lang];
+            positioningChart.data.datasets[0].label = chartTranslations.radar.datasets[0][lang];
+            positioningChart.data.datasets[1].label = chartTranslations.radar.datasets[1][lang];
+            positioningChart.data.datasets[2].label = chartTranslations.radar.datasets[2][lang];
+            positioningChart.update();
+
+            // Update Construction
+            constructionChart.data.labels = chartTranslations.const.labels[lang];
+            constructionChart.data.datasets[0].label = chartTranslations.const.datasets[0][lang];
+            constructionChart.data.datasets[1].label = chartTranslations.const.datasets[1][lang];
+            constructionChart.options.plugins.title.text = chartTranslations.const.title[lang];
+            constructionChart.update();
+
+            // Update Mfg
+            manufacturingChart.data.labels = chartTranslations.mfg.labels[lang];
+            manufacturingChart.data.datasets[0].label = chartTranslations.mfg.datasets[0][lang];
+            manufacturingChart.data.datasets[1].label = chartTranslations.mfg.datasets[1][lang];
+            manufacturingChart.update();
+        }
+
+        // Tab Logic
+        function switchTab(tabName) {
+            const tabs = ['construction', 'manufacturing'];
+            
+            tabs.forEach(t => {
+                const content = document.getElementById(`content-${t}`);
+                const btn = document.getElementById(`tab-${t}`);
+                
+                if (t === tabName) {
+                    content.classList.remove('hidden');
+                    setTimeout(() => {
+                        content.classList.remove('opacity-0');
+                        content.classList.add('opacity-100');
+                    }, 10);
+                    btn.classList.remove('inactive-tab');
+                    btn.classList.add('active-tab');
+                } else {
+                    content.classList.remove('opacity-100');
+                    content.classList.add('opacity-0');
+                    setTimeout(() => {
+                        content.classList.add('hidden');
+                    }, 300);
+                    btn.classList.remove('active-tab');
+                    btn.classList.add('inactive-tab');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

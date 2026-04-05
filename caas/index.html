@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dcdeeptech | C-robot CaaS Business Plan</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js for visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
+        .hero-bg {
+            background: linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.9)), url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+        .section-title {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 2rem;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -10px;
+            width: 60px;
+            height: 4px;
+            background-color: #3b82f6;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        /* Language toggling classes */
+        .lang-zh { display: none; }
+        .lang-en { display: block; } /* Default state */
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 bg-white/90 backdrop-blur-md shadow-sm border-b border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <div class="flex-shrink-0 flex items-center gap-2">
+                    <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-xl">D</div>
+                    <span class="font-bold text-2xl tracking-tight text-slate-800">dcdeeptech</span>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#summary" class="text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium">
+                        <span class="lang-en">Summary</span><span class="lang-zh">执行摘要</span>
+                    </a>
+                    <a href="#market" class="text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium">
+                        <span class="lang-en">Market</span><span class="lang-zh">市场背景</span>
+                    </a>
+                    <a href="#product" class="text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium">
+                        <span class="lang-en">Product</span><span class="lang-zh">C-robot</span>
+                    </a>
+                    <a href="#ecosystem" class="text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-md px-3 py-2 text-sm font-bold border border-blue-200">
+                        <span class="lang-en">Ecosystem</span><span class="lang-zh">生态架构</span>
+                    </a>
+                    <a href="#financials" class="text-emerald-600 bg-emerald-50 hover:bg-emerald-100 rounded-md px-3 py-2 text-sm font-bold border border-emerald-200">
+                        <span class="lang-en">Financials</span><span class="lang-zh">财务数据</span>
+                    </a>
+                    <a href="#roadmap" class="text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium">
+                        <span class="lang-en">Roadmap</span><span class="lang-zh">落地策略</span>
+                    </a>
+                    
+                    <!-- Language Toggle Button -->
+                    <button onclick="toggleLanguage()" class="ml-4 px-4 py-2 bg-gray-800 text-white rounded-full text-xs font-bold hover:bg-gray-700 transition flex items-center gap-2">
+                        <i class="fas fa-globe"></i> <span id="lang-btn-text">中 / En</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero-bg h-screen flex items-center justify-center text-white relative">
+        <div class="max-w-5xl mx-auto px-4 text-center z-10">
+            <div class="inline-block bg-blue-600/30 border border-blue-400/30 rounded-full px-4 py-1 mb-6 backdrop-blur-sm">
+                <span class="text-blue-200 font-semibold text-sm">
+                    <span class="lang-en">Shenzhen Gov Recommended Strategic Project</span>
+                    <span class="lang-zh">深圳市政府推荐战略项目</span>
+                </span>
+            </div>
+            <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight mb-6 leading-tight">
+                <span class="lang-en">Clean-as-a-Service (CaaS)<br>Business Plan for JTC Ecosystem</span>
+                <span class="lang-zh">针对新加坡裕廊集团(JTC)生态的<br><span class="text-blue-400">清洁即服务 (CaaS)</span> 商业方案</span>
+            </h1>
+            <p class="text-xl text-gray-300 mb-10 max-w-3xl mx-auto font-light">
+                <span class="lang-en">Integrating Shenzhen supply chain advantages with L4 outdoor autonomous driving to build a win-win loop for FM providers, Capital firms, and Tech integrators.</span>
+                <span class="lang-zh">整合深圳供应链成本优势与L4级室外自动驾驶技术，构建FM服务商、资本租赁公司与技术集成商的多方共赢闭环。</span>
+            </p>
+            <div class="flex justify-center gap-4">
+                <a href="#financials" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-lg font-bold transition shadow-lg hover:shadow-blue-500/30">
+                    <span class="lang-en">View Financials</span><span class="lang-zh">查看财务分析</span>
+                </a>
+                <a href="#ecosystem" class="bg-white/10 hover:bg-white/20 text-white border border-white/30 px-8 py-4 rounded-lg font-bold transition backdrop-blur-md">
+                    <span class="lang-en">Explore Ecosystem</span><span class="lang-zh">了解生态架构</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Executive Summary -->
+    <section id="summary" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold text-gray-900 section-title">
+                <span class="lang-en">Executive Summary</span><span class="lang-zh">执行摘要</span>
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <div class="prose prose-lg text-gray-600">
+                    <p class="mb-4">
+                        <span class="lang-en">Commissioned by <strong>dcdeeptech</strong>, this report outlines the deployment strategy for "C-robot" in Singapore. As a Shenzhen Government recommended product, C-robot has secured strategic support within the JTC ecosystem.</span>
+                        <span class="lang-zh">本深度研究报告由新加坡 <strong>dcdeeptech</strong> 公司委托，旨在全面评估并规划“C-robot无人清洁机器人”在新加坡市场的落地策略。作为深圳市政府重点推荐产品，C-robot已获得与新加坡裕廊集团(JTC)的战略支持。</span>
+                    </p>
+                    <p class="mb-4">
+                        <strong class="text-blue-600"><span class="lang-en">Core Opportunity:</span><span class="lang-zh">核心机遇：</span></strong>
+                        <span class="lang-en">Singapore faces a dual squeeze from labor costs (PWM driving >10% CAGR) and digital transformation. JTC's "Outcome-Based Contracts" (OBC) provide the institutional guarantee for automation.</span>
+                        <span class="lang-zh">新加坡清洁行业面临劳动力成本（PWM政策导致CAGR > 10%）激增与数字化转型的双重压力。JTC推行的“以结果为导向的合同”(OBC)为自动化提供了制度保障。</span>
+                    </p>
+                    <p>
+                        <strong class="text-emerald-600"><span class="lang-en">Business Value:</span><span class="lang-zh">商业价值：</span></strong>
+                        <span class="lang-en">Leveraging Shenzhen supply chain to fill the "Outdoor/Semi-outdoor" gap. MBA-level models validate that CaaS can save FM providers <strong>35%-45%</strong> in OPEX and deliver <strong>12%-15%</strong> IRR to Capital firms.</span>
+                        <span class="lang-zh">C-robot凭借深圳供应链优势填补“室外/半室外”市场空白。MBA级模型验证显示，CaaS模式可帮助FM服务商节约 <strong>35%-45%</strong> 运营成本，并为资本方提供 <strong>12%-15%</strong> 的IRR。</span>
+                    </p>
+                </div>
+                <div class="bg-gray-100 p-8 rounded-2xl shadow-inner">
+                    <h3 class="font-bold text-xl mb-4 text-gray-800">
+                        <span class="lang-en">Strategic Context: SCI Dual Empowerment</span><span class="lang-zh">战略背景：SCI双边赋能</span>
+                    </h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-blue-500 mt-1 mr-3"></i>
+                            <div>
+                                <span class="font-semibold block"><span class="lang-en">Policy Trust</span><span class="lang-zh">政策互信</span></span>
+                                <span class="text-sm text-gray-600">
+                                    <span class="lang-en">Shenzhen Gov recommendation enables mutual recognition of standards and data compliance fast-track.</span>
+                                    <span class="lang-zh">深圳市政府推荐，技术标准互认与数据合规快车道。</span>
+                                </span>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-blue-500 mt-1 mr-3"></i>
+                            <div>
+                                <span class="font-semibold block"><span class="lang-en">Complementary Strengths</span><span class="lang-zh">优势互补</span></span>
+                                <span class="text-sm text-gray-600">
+                                    <span class="lang-en">Shenzhen's Hardware/AI + Singapore's High-Value Standardized Scenarios (JTC).</span>
+                                    <span class="lang-zh">深圳的硬件供应链/AI算法 + 新加坡的高价值规范化场景(JTC)。</span>
+                                </span>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-blue-500 mt-1 mr-3"></i>
+                            <div>
+                                <span class="font-semibold block"><span class="lang-en">Solving JTC Pain Points</span><span class="lang-zh">JTC痛点解决</span></span>
+                                <span class="text-sm text-gray-600">
+                                    <span class="lang-en">Integration into ODP (Open Digital Platform), filling the gap in outdoor automation.</span>
+                                    <span class="lang-zh">集成至ODP开放数字平台，填补室外自动化空白。</span>
+                                </span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Market Analysis -->
+    <section id="market" class="py-20 bg-slate-50">
+        <div class="max-w-7xl mx-auto px-4">
+            <h2 class="text-3xl font-bold text-gray-900 section-title">
+                <span class="lang-en">Market Deep Dive</span><span class="lang-zh">市场深度剖析</span>
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
+                <!-- Card 1 -->
+                <div class="bg-white p-8 rounded-xl shadow-md border-t-4 border-red-500 hover:-translate-y-2 transition duration-300">
+                    <div class="text-red-500 text-4xl mb-4"><i class="fas fa-chart-line"></i></div>
+                    <h3 class="text-xl font-bold mb-3">
+                        <span class="lang-en">Cost Shock (PWM)</span><span class="lang-zh">成本冲击 (PWM)</span>
+                    </h3>
+                    <p class="text-gray-600 text-sm mb-4">
+                        <span class="lang-en">Progressive Wage Model leads to surging labor costs.</span>
+                        <span class="lang-zh">渐进式薪金模式导致人工成本剧增。</span>
+                    </p>
+                    <div class="bg-red-50 p-3 rounded text-sm">
+                        <p class="font-semibold"><span class="lang-en">2026 Forecast (Outdoor Cleaner):</span><span class="lang-zh">2026年室外清洁工预测:</span></p>
+                        <p class="text-red-700 font-bold text-lg">SGD 3,200 - 3,500 / <span class="lang-en">mo</span><span class="lang-zh">月</span></p>
+                        <p class="text-xs text-gray-500 mt-1">
+                            <span class="lang-en">Fully Loaded Cost (incl. CPF/Levy)</span><span class="lang-zh">完全负担成本 (含CPF/税)</span>
+                        </p>
+                    </div>
+                </div>
+                <!-- Card 2 -->
+                <div class="bg-white p-8 rounded-xl shadow-md border-t-4 border-orange-500 hover:-translate-y-2 transition duration-300">
+                    <div class="text-orange-500 text-4xl mb-4"><i class="fas fa-user-slash"></i></div>
+                    <h3 class="text-xl font-bold mb-3">
+                        <span class="lang-en">Labor Crunch</span><span class="lang-zh">劳动力紧缩</span>
+                    </h3>
+                    <p class="text-gray-600 text-sm mb-4">
+                        <span class="lang-en">Foreign worker quota cuts. DRC reduced to 35%.</span>
+                        <span class="lang-zh">外籍劳工配额(Quota)与客工比率顶限(DRC)削减至35%。</span>
+                    </p>
+                    <ul class="text-sm text-gray-600 list-disc list-inside">
+                        <li><span class="lang-en">1 Foreigner needs 2 Local workers</span><span class="lang-zh">雇佣1名外籍需2名本地员工</span></li>
+                        <li><span class="lang-en">Locals shun cleaning jobs</span><span class="lang-zh">本地年轻人意愿低</span></li>
+                        <li><span class="lang-en">"Robots replacing Headcount" is the only way</span><span class="lang-zh">"机器换人"是唯一出路</span></li>
+                    </ul>
+                </div>
+                <!-- Card 3 -->
+                <div class="bg-white p-8 rounded-xl shadow-md border-t-4 border-green-500 hover:-translate-y-2 transition duration-300">
+                    <div class="text-green-500 text-4xl mb-4"><i class="fas fa-file-contract"></i></div>
+                    <h3 class="text-xl font-bold mb-3">
+                        <span class="lang-en">OBC Contract Shift</span><span class="lang-zh">OBC 合同变革</span>
+                    </h3>
+                    <p class="text-gray-600 text-sm mb-4">
+                        <span class="lang-en">From "Headcount-based" to "Outcome-based".</span>
+                        <span class="lang-zh">从"人头合同"转向"以结果为导向"。</span>
+                    </p>
+                    <div class="bg-green-50 p-3 rounded text-sm">
+                        <p class="font-semibold text-green-800"><span class="lang-en">Business Logic Shift:</span><span class="lang-zh">商业逻辑剧变:</span></p>
+                        <p class="text-gray-600">
+                            <span class="lang-en">Saved manpower becomes FM's <span class="font-bold text-green-700">Net Profit</span>.</span>
+                            <span class="lang-zh">节省的人力直接转化为FM公司的<span class="font-bold text-green-700">净利润</span>，而非甲方的节约。</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Product & Competition -->
+    <section id="product" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4">
+            <h2 class="text-3xl font-bold text-gray-900 section-title">
+                <span class="lang-en">Product Positioning & Competition</span><span class="lang-zh">C-robot 产品定位与竞品对标</span>
+            </h2>
+            <p class="mb-8 text-gray-600 max-w-3xl">
+                <span class="lang-en">C-robot is defined as an L4 Outdoor/Semi-outdoor General Cleaning Robot tailored for the JTC ecosystem, benchmarked against Jtibot and CowaRobot.</span>
+                <span class="lang-zh">针对JTC生态，C-robot被定义为一款集成了深圳先进自动驾驶技术的L4级室外/半室外通用型清洁机器人。对标Jtibot或CowaRobot。</span>
+            </p>
+            
+            <div class="overflow-x-auto shadow-lg rounded-lg border border-gray-200">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-800 text-white">
+                            <th class="p-4 border-b border-gray-600"><span class="lang-en">Core Metrics</span><span class="lang-zh">核心指标</span></th>
+                            <th class="p-4 border-b border-gray-600 bg-blue-700">C-robot <span class="lang-en">(Shenzhen Rec.)</span><span class="lang-zh">(深圳推荐)</span></th>
+                            <th class="p-4 border-b border-gray-600">Gaussian Scrub 50</th>
+                            <th class="p-4 border-b border-gray-600">Lionsbot R3</th>
+                            <th class="p-4 border-b border-gray-600">Softbank Whiz</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-sm">
+                        <tr class="table-row">
+                            <td class="p-4 font-semibold"><span class="lang-en">Primary Scenario</span><span class="lang-zh">主要应用场景</span></td>
+                            <td class="p-4 font-bold text-blue-700 bg-blue-50">
+                                <span class="lang-en">Outdoor / Campus / Linkways</span>
+                                <span class="lang-zh">室外道路 / 园区 / 连廊</span>
+                            </td>
+                            <td class="p-4"><span class="lang-en">Indoor / Malls</span><span class="lang-zh">室内商场 / 写字楼</span></td>
+                            <td class="p-4"><span class="lang-en">Indoor / Semi-outdoor</span><span class="lang-zh">室内 / 半室外</span></td>
+                            <td class="p-4"><span class="lang-en">Indoor Carpet / Hard Floor</span><span class="lang-zh">室内地毯 / 硬地</span></td>
+                        </tr>
+                        <tr class="table-row">
+                            <td class="p-4 font-semibold"><span class="lang-en">Navigation Tech</span><span class="lang-zh">导航技术</span></td>
+                            <td class="p-4">
+                                <span class="lang-en">Multi-LIDAR + Vision + RTK (Automotive Grade)</span>
+                                <span class="lang-zh">多线LIDAR + 视觉 + RTK (车规级)</span>
+                            </td>
+                            <td class="p-4">2D/3D LIDAR + Vision</td>
+                            <td class="p-4">LiDAR + Sonar</td>
+                            <td class="p-4">Vision + 2D LIDAR</td>
+                        </tr>
+                        <tr class="table-row">
+                            <td class="p-4 font-semibold"><span class="lang-en">Efficiency</span><span class="lang-zh">清洁效率</span></td>
+                            <td class="p-4">2,500 - 5,000+ m²/h</td>
+                            <td class="p-4">~1,500 m²/h</td>
+                            <td class="p-4">~1,200 - 1,800 m²/h</td>
+                            <td class="p-4">~500 - 600 m²/h</td>
+                        </tr>
+                        <tr class="table-row">
+                            <td class="p-4 font-semibold"><span class="lang-en">Differentiator</span><span class="lang-zh">核心差异点</span></td>
+                            <td class="p-4 text-blue-700 font-semibold">
+                                <span class="lang-en">AI Trash Recognition (Leaves vs Bottles)</span>
+                                <span class="lang-zh">AI垃圾识别与分类 (落叶/瓶罐)</span>
+                            </td>
+                            <td class="p-4"><span class="lang-en">Elevator Integration</span><span class="lang-zh">电梯联动</span></td>
+                            <td class="p-4"><span class="lang-en">Human Interaction</span><span class="lang-zh">强人机交互</span></td>
+                            <td class="p-4"><span class="lang-en">Low Price</span><span class="lang-zh">价格低廉</span></td>
+                        </tr>
+                        <tr class="table-row">
+                            <td class="p-4 font-semibold"><span class="lang-en">CAPEX</span><span class="lang-zh">购置成本 (CAPEX)</span></td>
+                            <td class="p-4 text-emerald-600 font-bold">SGD 45k - 55k <span class="lang-en">(Est.)</span><span class="lang-zh">(预估)</span></td>
+                            <td class="p-4">SGD 65k - 80k</td>
+                            <td class="p-4">SGD 70k+</td>
+                            <td class="p-4">SGD 25k - 30k</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="mt-4 text-sm text-gray-500 text-right">
+                <span class="lang-en">* Supply Chain Advantage: 30-40% lower hardware cost compared to EU/Local brands.</span>
+                <span class="lang-zh">* 供应链优势：依托珠三角供应链，硬件成本比欧美或本土品牌低30%-40%。</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Ecosystem (Organizational Structure) -->
+    <section id="ecosystem" class="py-20 bg-slate-900 text-white relative overflow-hidden">
+        <!-- Background decoration -->
+        <div class="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-blue-900/20 to-transparent"></div>
+        
+        <div class="max-w-7xl mx-auto px-4 relative z-10">
+            <h2 class="text-3xl font-bold text-white section-title border-b-blue-500 mb-12">
+                <span class="lang-en">CaaS Ecosystem Structure</span><span class="lang-zh">CaaS 生态架构 (组织架构)</span>
+            </h2>
+            <p class="mb-10 text-gray-300 max-w-4xl">
+                <span class="lang-en">To overcome high upfront costs, <span class="text-blue-400 font-bold">dcdeeptech</span> orchestrates a win-win ecosystem.</span>
+                <span class="lang-zh">为克服高昂的初始购置成本，<span class="text-blue-400 font-bold">dcdeeptech</span> 主导构建多方共赢生态。</span>
+            </p>
+
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                
+                <!-- 1. Tech Integrator -->
+                <div class="bg-blue-800/40 backdrop-blur border border-blue-500/30 p-6 rounded-2xl relative">
+                    <div class="absolute -top-5 left-6 bg-blue-600 text-white px-4 py-1 rounded-full text-sm font-bold shadow-lg">
+                        <span class="lang-en">Core Architect</span><span class="lang-zh">核心架构师</span>
+                    </div>
+                    <div class="text-4xl text-blue-400 mb-4"><i class="fas fa-network-wired"></i></div>
+                    <h3 class="text-xl font-bold mb-2">dcdeeptech</h3>
+                    <p class="text-blue-200 text-sm mb-4 font-semibold">
+                        <span class="lang-en">Tech Integrator & Service Provider</span>
+                        <span class="lang-zh">技术集成与服务商</span>
+                    </p>
+                    <ul class="text-sm text-gray-300 space-y-2 list-disc list-inside">
+                        <li><span class="lang-en">Import & Localization</span><span class="lang-zh">进口认证 & 本地化适配</span></li>
+                        <li><span class="lang-en">7x24h NOC</span><span class="lang-zh">7x24小时运维中心 (NOC)</span></li>
+                        <li><span class="lang-en">ODP Middleware Dev</span><span class="lang-zh">ODP数据中间件开发</span></li>
+                        <li><span class="lang-en">Data Compliance</span><span class="lang-zh">数据合规与安全</span></li>
+                    </ul>
+                    <div class="mt-4 pt-4 border-t border-blue-500/20 text-xs text-blue-300">
+                        <i class="fas fa-arrow-right mr-1"></i> <span class="lang-en">Earns SaaS Fees & Mgmt Fees</span><span class="lang-zh">收取SaaS订阅费 & 资管费</span>
+                    </div>
+                </div>
+
+                <!-- 2. Capital -->
+                <div class="bg-gray-800/40 backdrop-blur border border-gray-600/30 p-6 rounded-2xl">
+                    <div class="text-4xl text-emerald-400 mb-4"><i class="fas fa-coins"></i></div>
+                    <h3 class="text-xl font-bold mb-2">
+                        <span class="lang-en">Capital Partner</span><span class="lang-zh">资本持有方</span>
+                    </h3>
+                    <p class="text-gray-400 text-sm mb-4">Capital Companies (Lessor)</p>
+                    <p class="text-xs text-gray-500 mb-2">Ref: ORIX, Ethoz, GB Helios</p>
+                    <ul class="text-sm text-gray-300 space-y-2 list-disc list-inside">
+                        <li><span class="lang-en">SPV holds assets</span><span class="lang-zh">SPV持有机器人资产</span></li>
+                        <li><span class="lang-en">Provides Bulk Funding</span><span class="lang-zh">提供批量采购资金</span></li>
+                        <li><span class="lang-en">Stable Cash Flow</span><span class="lang-zh">对抗通胀，获取稳定现金流</span></li>
+                    </ul>
+                    <div class="mt-4 pt-4 border-t border-gray-600/20 text-xs text-emerald-300">
+                        <i class="fas fa-arrow-right mr-1"></i> <span class="lang-en">Collects Rent (Finance Lease)</span><span class="lang-zh">收取租金 (Finance Lease)</span>
+                    </div>
+                </div>
+
+                <!-- 3. FM Companies -->
+                <div class="bg-gray-800/40 backdrop-blur border border-gray-600/30 p-6 rounded-2xl">
+                    <div class="text-4xl text-orange-400 mb-4"><i class="fas fa-people-carry"></i></div>
+                    <h3 class="text-xl font-bold mb-2">
+                        <span class="lang-en">FM Provider</span><span class="lang-zh">设施管理方</span>
+                    </h3>
+                    <p class="text-gray-400 text-sm mb-4">FM Contractors (Lessee)</p>
+                    <p class="text-xs text-gray-500 mb-2">Ref: CBM, WIS, ISS</p>
+                    <ul class="text-sm text-gray-300 space-y-2 list-disc list-inside">
+                        <li><span class="lang-en">End User of Equipment</span><span class="lang-zh">设备实际使用者</span></li>
+                        <li><span class="lang-en">Daily Operations</span><span class="lang-zh">负责简单日常操作</span></li>
+                        <li><span class="lang-en">Converts CAPEX to OPEX</span><span class="lang-zh">将CAPEX转化为OPEX</span></li>
+                    </ul>
+                    <div class="mt-4 pt-4 border-t border-gray-600/20 text-xs text-orange-300">
+                        <i class="fas fa-arrow-right mr-1"></i> <span class="lang-en">Pays Rent, Gains Profit</span><span class="lang-zh">支付月租金，获得降本利润</span>
+                    </div>
+                </div>
+
+                <!-- 4. End Client -->
+                <div class="bg-gray-800/40 backdrop-blur border border-gray-600/30 p-6 rounded-2xl">
+                    <div class="text-4xl text-purple-400 mb-4"><i class="fas fa-building"></i></div>
+                    <h3 class="text-xl font-bold mb-2">
+                        <span class="lang-en">End Client</span><span class="lang-zh">最终客户</span>
+                    </h3>
+                    <p class="text-gray-400 text-sm mb-4">JTC Corporation</p>
+                    <ul class="text-sm text-gray-300 space-y-2 list-disc list-inside">
+                        <li><span class="lang-en">Scenario Provider</span><span class="lang-zh">场景提供方</span></li>
+                        <li><span class="lang-en">Regulator</span><span class="lang-zh">监管方</span></li>
+                        <li><span class="lang-en">Gets Digital/Quantifiable Service</span><span class="lang-zh">获得数字化、可量化服务</span></li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <!-- Transaction Structure Flow -->
+            <div class="mt-12 bg-white/5 p-6 rounded-xl border border-white/10">
+                <h4 class="font-bold text-lg mb-4 text-center">
+                    <span class="lang-en">Transaction & Service Flow</span><span class="lang-zh">交易资金与服务流向</span>
+                </h4>
+                <div class="flex flex-col md:flex-row justify-center items-center gap-4 text-sm">
+                    <div class="bg-gray-700 px-4 py-2 rounded">JTC</div>
+                    <div class="text-gray-400">--- <span class="lang-en">Service Fee</span><span class="lang-zh">服务费</span> ---></div>
+                    <div class="bg-orange-700 px-4 py-2 rounded"><span class="lang-en">FM Co.</span><span class="lang-zh">FM公司</span></div>
+                    <div class="text-gray-400">--- <span class="lang-en">Rent</span><span class="lang-zh">租金</span> ---></div>
+                    <div class="bg-emerald-700 px-4 py-2 rounded"><span class="lang-en">SPV (Capital)</span><span class="lang-zh">SPV (资本方)</span></div>
+                    <div class="text-gray-400">--- <span class="lang-en">Maint/Fee</span><span class="lang-zh">维保费/分成</span> ---></div>
+                    <div class="bg-blue-700 px-4 py-2 rounded">dcdeeptech</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Financial Analysis (Crucial Section) -->
+    <section id="financials" class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4">
+            <h2 class="text-3xl font-bold text-gray-900 section-title mb-2">
+                <span class="lang-en">MBA-Level Financial Analysis</span><span class="lang-zh">MBA级财务分析</span>
+            </h2>
+            <p class="mb-10 text-gray-600">
+                <span class="lang-en">Detailed projection based on a 48-month leasing cycle.</span>
+                <span class="lang-zh">基于48个月租赁周期的详细测算模型。</span>
+            </p>
+
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-12">
+                
+                <!-- 1. FM Company View -->
+                <div class="bg-white p-8 rounded-2xl shadow-xl border border-gray-200">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-2xl font-bold text-gray-800">
+                            <span class="lang-en">1. FM Company P&L</span><span class="lang-zh">1. FM公司损益分析</span>
+                        </h3>
+                        <span class="bg-red-100 text-red-800 text-xs font-bold px-3 py-1 rounded-full">
+                            <span class="lang-en">Problem Solver</span><span class="lang-zh">痛点解决</span>
+                        </span>
+                    </div>
+                    <p class="text-sm text-gray-500 mb-4">
+                        <span class="lang-en">Comparison: Manual (1.5 Workers) vs CaaS (1 Robot)</span>
+                        <span class="lang-zh">对比：纯人工模式(1.5名工人) vs CaaS模式(1台机器人)</span>
+                    </p>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead>
+                                <tr class="bg-gray-100">
+                                    <th class="p-3 text-left"><span class="lang-en">Cost Item (SGD)</span><span class="lang-zh">成本项目 (SGD)</span></th>
+                                    <th class="p-3 text-right"><span class="lang-en">Manual (1.5 FTE)</span><span class="lang-zh">人工模式 (1.5 FTE)</span></th>
+                                    <th class="p-3 text-right text-blue-700 bg-blue-50"><span class="lang-en">CaaS Mode</span><span class="lang-zh">CaaS模式</span></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b border-gray-100">
+                                    <td class="p-3 font-medium"><span class="lang-en">Year 1 Total</span><span class="lang-zh">Year 1 总成本</span></td>
+                                    <td class="p-3 text-right">$57,800</td>
+                                    <td class="p-3 text-right bg-blue-50">$22,800</td>
+                                </tr>
+                                <tr class="border-b border-gray-100 text-gray-500 text-xs italic">
+                                    <td class="p-3" colspan="3">
+                                        <span class="lang-en">Note: Labor +10% annually (PWM); CaaS rent fixed.</span>
+                                        <span class="lang-zh">注：人工受PWM影响每年+10%；CaaS租金锁定。</span>
+                                    </td>
+                                </tr>
+                                <tr class="border-b border-gray-100">
+                                    <td class="p-3 font-medium"><span class="lang-en">Year 2 Total</span><span class="lang-zh">Year 2 总成本</span></td>
+                                    <td class="p-3 text-right">$63,360</td>
+                                    <td class="p-3 text-right bg-blue-50">$21,600</td>
+                                </tr>
+                                <tr class="border-b border-gray-100">
+                                    <td class="p-3 font-medium"><span class="lang-en">Year 3 Total</span><span class="lang-zh">Year 3 总成本</span></td>
+                                    <td class="p-3 text-right">$69,696</td>
+                                    <td class="p-3 text-right bg-blue-50">$21,600</td>
+                                </tr>
+                                <tr class="border-b border-gray-100">
+                                    <td class="p-3 font-medium"><span class="lang-en">Year 4 Total</span><span class="lang-zh">Year 4 总成本</span></td>
+                                    <td class="p-3 text-right">$76,665</td>
+                                    <td class="p-3 text-right bg-blue-50">$21,600</td>
+                                </tr>
+                                <tr class="bg-gray-800 text-white font-bold">
+                                    <td class="p-4 text-lg"><span class="lang-en">4-Year TCO</span><span class="lang-zh">四年总拥有成本 (TCO)</span></td>
+                                    <td class="p-4 text-right text-red-300">$267,521</td>
+                                    <td class="p-4 text-right text-emerald-400 bg-gray-700">$91,200</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="mt-6 bg-emerald-50 border border-emerald-200 p-4 rounded-lg flex items-center justify-between">
+                        <div>
+                            <span class="block text-emerald-800 font-bold text-lg">
+                                <span class="lang-en">Net Savings: SGD 176,321</span><span class="lang-zh">累计净节省: SGD 176,321</span>
+                            </span>
+                            <span class="text-xs text-emerald-600">
+                                <span class="lang-en">Cost Locking Effect, hedging policy risks</span><span class="lang-zh">成本锁定效应，规避政策风险</span>
+                            </span>
+                        </div>
+                        <div class="text-3xl font-extrabold text-emerald-600">65.9%</div>
+                    </div>
+                </div>
+
+                <!-- 2. Capital Company View -->
+                <div class="bg-white p-8 rounded-2xl shadow-xl border border-gray-200 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-2xl font-bold text-gray-800">
+                                <span class="lang-en">2. Capital Co. ROI</span><span class="lang-zh">2. 资本公司投资回报</span>
+                            </h3>
+                            <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full">
+                                <span class="lang-en">High Yield Asset</span><span class="lang-zh">高收益资产</span>
+                            </span>
+                        </div>
+                        <p class="text-sm text-gray-500 mb-4">
+                            <span class="lang-en">Unit Economics per Robot</span><span class="lang-zh">单台机器人租赁项目 (Unit Economics)</span>
+                        </p>
+
+                        <div class="grid grid-cols-2 gap-4 mb-6">
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <p class="text-xs text-gray-500"><span class="lang-en">Initial Investment (Year 0)</span><span class="lang-zh">初始投资 (Year 0)</span></p>
+                                <p class="text-xl font-bold text-gray-800">($40,000)</p>
+                                <p class="text-xs text-gray-400 mt-1"><span class="lang-en">Wholesale Price</span><span class="lang-zh">批发折扣价</span></p>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <p class="text-xs text-gray-500"><span class="lang-en">4-Year Net OI</span><span class="lang-zh">四年总 NOI</span></p>
+                                <p class="text-xl font-bold text-blue-600">$69,600</p>
+                                <p class="text-xs text-gray-400 mt-1"><span class="lang-en">After maintenance fees</span><span class="lang-zh">扣除维保费后</span></p>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <p class="text-xs text-gray-500"><span class="lang-en">Residual Value (Year 4)</span><span class="lang-zh">期末残值 (Year 4)</span></p>
+                                <p class="text-xl font-bold text-gray-800">$4,000</p>
+                                <p class="text-xs text-gray-400 mt-1">10% of Cost</p>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <p class="text-xs text-gray-500"><span class="lang-en">Total Cash Inflow</span><span class="lang-zh">总现金流入</span></p>
+                                <p class="text-xl font-bold text-emerald-600">$73,600</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-800 text-white p-6 rounded-xl">
+                            <div class="flex justify-between items-end mb-2">
+                                <span><span class="lang-en">Net Profit</span><span class="lang-zh">净利润</span></span>
+                                <span class="text-2xl font-bold">$33,600</span>
+                            </div>
+                            <div class="w-full bg-gray-600 h-1 mb-4 rounded-full">
+                                <div class="bg-emerald-400 h-1 rounded-full" style="width: 84%"></div>
+                            </div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span>ROI</span>
+                                <span class="font-bold text-emerald-300">84%</span>
+                            </div>
+                            <div class="flex justify-between text-lg">
+                                <span>IRR</span>
+                                <span class="font-bold text-emerald-400">~26%</span>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-2 text-right">
+                                <span class="lang-en">Far exceeds WACC (5.5%)</span><span class="lang-zh">远高于5.5%的资金成本(WACC)</span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 border-t pt-4">
+                        <h4 class="font-bold text-sm mb-2"><span class="lang-en">Sensitivity Analysis</span><span class="lang-zh">敏感性分析</span></h4>
+                        <ul class="text-xs text-gray-600 space-y-1">
+                            <li>
+                                <span class="lang-en">• Vacancy Risk: If idle for 4 months, IRR drops to ~22% (Still excellent).</span>
+                                <span class="lang-zh">• 空置风险：若闲置4个月，IRR降至约22% (仍优异)。</span>
+                            </li>
+                            <li>
+                                <span class="lang-en">• Price Floor: If rent drops to $1,200/mo, IRR drops to 5% (Breakeven).</span>
+                                <span class="lang-zh">• 价格底线：租金若降至$1,200/月，IRR降至5% (盈亏平衡点)。</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Operations & Roadmap -->
+    <section id="roadmap" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4">
+            <h2 class="text-3xl font-bold text-gray-900 section-title mb-10">
+                <span class="lang-en">Operations & Roadmap</span><span class="lang-zh">运营落地与推进路线</span>
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                <!-- Operations -->
+                <div>
+                    <h3 class="text-xl font-bold mb-6 flex items-center"><i class="fas fa-tools text-blue-600 mr-3"></i> 
+                        <span class="lang-en">Localized Operations</span><span class="lang-zh">本地化运维体系</span>
+                    </h3>
+                    <div class="space-y-6">
+                        <div class="flex">
+                            <div class="flex-shrink-0 mt-1">
+                                <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold">1</div>
+                            </div>
+                            <div class="ml-4">
+                                <h4 class="font-bold text-gray-800"><span class="lang-en">Infrastructure</span><span class="lang-zh">基础设施建设</span></h4>
+                                <p class="text-sm text-gray-600 mt-1">
+                                    <span class="lang-en">Leverage dcdeeptech's "Green Compute" to deploy edge-computing smart chargers in JTC. Processes data locally for privacy.</span>
+                                    <span class="lang-zh">利用dcdeeptech"绿色计算"背景，在JTC园区部署集成边缘计算的智能充电站。处理本地数据，保障隐私。</span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="flex">
+                            <div class="flex-shrink-0 mt-1">
+                                <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold">2</div>
+                            </div>
+                            <div class="ml-4">
+                                <h4 class="font-bold text-gray-800"><span class="lang-en">Spare Parts Supply Chain</span><span class="lang-zh">备件供应链</span></h4>
+                                <p class="text-sm text-gray-600 mt-1">
+                                    <span class="lang-en">Establish spare parts hub in SG/JB. Ensure 24h replacement for critical parts to meet JTC SLA.</span>
+                                    <span class="lang-zh">在新加坡(或柔佛新山)建立备件中心，确保关键零部件24小时内更换，满足JTC严格的SLA。</span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="flex">
+                            <div class="flex-shrink-0 mt-1">
+                                <div class="w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center font-bold">!</div>
+                            </div>
+                            <div class="ml-4">
+                                <h4 class="font-bold text-gray-800"><span class="lang-en">Data Compliance (Cybersecurity)</span><span class="lang-zh">数据合规 (Cybersecurity)</span></h4>
+                                <p class="text-sm text-gray-600 mt-1">
+                                    <span class="lang-en">Local data residency, edge-based face blurring. Apply for CSA Certification (CLS Level 2+).</span>
+                                    <span class="lang-zh">数据本地驻留、边缘端人脸模糊处理。申请新加坡网络安全局(CSA)认证 (CLS Level 2+)。</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Roadmap -->
+                <div>
+                    <h3 class="text-xl font-bold mb-6 flex items-center"><i class="fas fa-map-marked-alt text-blue-600 mr-3"></i> 
+                        <span class="lang-en">Phased Rollout</span><span class="lang-zh">分阶段推进</span>
+                    </h3>
+                    <div class="border-l-4 border-blue-200 ml-3 space-y-8 pl-8 relative">
+                        <!-- Phase 1 -->
+                        <div class="relative">
+                            <div class="absolute -left-12 top-0 w-8 h-8 bg-blue-600 rounded-full border-4 border-white"></div>
+                            <h4 class="font-bold text-lg text-blue-800"><span class="lang-en">Phase 1: Lighthouse Project (Month 1-6)</span><span class="lang-zh">阶段一: 灯塔项目 (Month 1-6)</span></h4>
+                            <p class="text-sm text-gray-600 mt-1"><span class="lang-en">Loc: JTC Summit or CleanTech One.</span><span class="lang-zh">地点：JTC Summit 或 CleanTech One。</span></p>
+                            <p class="text-sm text-gray-600"><span class="lang-en">Action: Deploy 3-5 units for POC. Validate outdoor efficiency & AI.</span><span class="lang-zh">行动：部署3-5台进行POC，验证室外清洁效率和AI识别。</span></p>
+                        </div>
+                        <!-- Phase 2 -->
+                        <div class="relative">
+                            <div class="absolute -left-12 top-0 w-8 h-8 bg-white border-4 border-blue-400 rounded-full"></div>
+                            <h4 class="font-bold text-lg text-gray-800"><span class="lang-en">Phase 2: Capital Pool (Month 7-12)</span><span class="lang-zh">阶段二: 资本池构建 (Month 7-12)</span></h4>
+                            <p class="text-sm text-gray-600 mt-1"><span class="lang-en">Action: Sign SGD 2M lease facility with Ethoz/ORIX based on POC.</span><span class="lang-zh">行动：凭POC数据与Ethoz/ORIX签署SGD200万融资租赁授信。</span></p>
+                            <p class="text-sm text-gray-600"><span class="lang-en">Goal: Establish fleet of 50 robots.</span><span class="lang-zh">目标：建立50台机器人的租赁池。</span></p>
+                        </div>
+                        <!-- Phase 3 -->
+                        <div class="relative">
+                            <div class="absolute -left-12 top-0 w-8 h-8 bg-white border-4 border-gray-300 rounded-full"></div>
+                            <h4 class="font-bold text-lg text-gray-800"><span class="lang-en">Phase 3: Full Scale (Year 2+)</span><span class="lang-zh">阶段三: 全面推广 (Year 2+)</span></h4>
+                            <p class="text-sm text-gray-600 mt-1"><span class="lang-en">Action: Integrate with JTC ODP.</span><span class="lang-zh">行动：接入JTC ODP平台，实现电梯联动。</span></p>
+                            <p class="text-sm text-gray-600"><span class="lang-en">Goal: Sell "Data-as-a-Service" (DaaS), not just cleaning.</span><span class="lang-zh">目标：不仅卖清洁，更卖“移动巡检数据服务” (DaaS)。</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Risks -->
+    <section class="py-12 bg-red-50">
+        <div class="max-w-7xl mx-auto px-4">
+            <h2 class="text-2xl font-bold text-red-900 mb-6">
+                <span class="lang-en">Risk Assessment</span><span class="lang-zh">风险评估与缓解</span>
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white p-5 rounded-lg shadow-sm">
+                    <h4 class="font-bold text-red-700"><span class="lang-en">Technical (Heavy Rain)</span><span class="lang-zh">技术风险 (暴雨)</span></h4>
+                    <p class="text-sm text-gray-600 mt-2">
+                        <span class="lang-en">Mitigation: Develop "Rain Mode" algorithm; IP65 waterproofing.</span>
+                        <span class="lang-zh">缓解：开发“雨天模式”算法，硬件IP65级防水加强。</span>
+                    </p>
+                </div>
+                <div class="bg-white p-5 rounded-lg shadow-sm">
+                    <h4 class="font-bold text-red-700"><span class="lang-en">Financial (FM Default)</span><span class="lang-zh">财务风险 (FM违约)</span></h4>
+                    <p class="text-sm text-gray-600 mt-2">
+                        <span class="lang-en">Mitigation: "Remote Kill Switch" clause; GIRO auto-deduction.</span>
+                        <span class="lang-zh">缓解：合同加入“远程锁死(Kill Switch)”条款，使用GIRO自动扣款。</span>
+                    </p>
+                </div>
+                <div class="bg-white p-5 rounded-lg shadow-sm">
+                    <h4 class="font-bold text-red-700"><span class="lang-en">Market (Price War)</span><span class="lang-zh">市场风险 (价格战)</span></h4>
+                    <p class="text-sm text-gray-600 mt-2">
+                        <span class="lang-en">Mitigation: Avoid indoor red ocean. Stick to outdoor. Emphasize CaaS full-service.</span>
+                        <span class="lang-zh">缓解：避开室内红海，死磕室外场景。强调CaaS全包服务体验。</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center mb-8">
+                <div>
+                    <h2 class="text-2xl font-bold mb-2">dcdeeptech</h2>
+                    <p class="text-gray-400">
+                        <span class="lang-en">A flagship project for Singapore-Shenzhen Smart City Initiative (SCI).</span>
+                        <span class="lang-zh">新加坡与深圳智慧城市合作(SCI)典范项目。</span>
+                    </p>
+                </div>
+                <div class="md:text-right">
+                    <p class="font-bold text-lg mb-2"><span class="lang-en">Strategy</span><span class="lang-zh">战略建议</span></p>
+                    <p class="text-blue-400">
+                        <span class="lang-en">Fast (Lighthouse) · Accurate (Outdoor) · Stable (Capital)</span>
+                        <span class="lang-zh">快 (灯塔项目) · 准 (室外定位) · 稳 (资本合作)</span>
+                    </p>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 pt-8 flex flex-col md:flex-row justify-between text-sm text-gray-500">
+                <p>&copy; 2026 dcdeeptech. All rights reserved.</p>
+                <p><span class="lang-en">Based on: Shenzhen Gov Recommended C-robot Business Research Report</span><span class="lang-zh">Based on: 深圳市政府推荐C-robot无人清洁机器人商业调研报告</span></p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Language Toggle Logic
+        function toggleLanguage() {
+            const body = document.body;
+            const enElements = document.querySelectorAll('.lang-en');
+            const zhElements = document.querySelectorAll('.lang-zh');
+            const btnText = document.getElementById('lang-btn-text');
+
+            // Check current state by checking if first EN element is visible
+            // Note: We use computed style or class check. 
+            // Simple logic: if styles say EN is block, we switch to ZH.
+            
+            // We can track state via a class on body or just toggling
+            // Let's check style of the first EN element
+            const isEnVisible = getComputedStyle(enElements[0]).display !== 'none';
+
+            if (isEnVisible) {
+                // Switch to Chinese
+                const styleSheet = document.createElement("style");
+                styleSheet.innerText = ".lang-en { display: none !important; } .lang-zh { display: inline !important; } .lang-zh.block { display: block !important;}";
+                styleSheet.id = "lang-toggle-style";
+                document.head.appendChild(styleSheet);
+                btnText.innerText = "En / 中";
+            } else {
+                // Switch to English (Remove the override style)
+                const existingStyle = document.getElementById("lang-toggle-style");
+                if (existingStyle) {
+                    existingStyle.remove();
+                }
+                btnText.innerText = "中 / En";
+            }
+        }
+    </script>
+</body>
+</html>

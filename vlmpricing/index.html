@@ -1,0 +1,470 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DCDEEPTECH SaaS Partner Portal</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts: Inter & Noto Sans SC -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+SC:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', 'Noto Sans SC', sans-serif; }
+        .hidden { display: none !important; }
+        /* Custom scrollbar for tables */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-50 text-slate-800 transition-colors duration-300">
+
+    <!-- Header -->
+    <header class="bg-slate-900 text-white shadow-md border-b-4 border-indigo-500">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <h1 class="text-3xl font-extrabold tracking-tight flex items-center gap-2">
+                        <i data-lucide="cloud-lightning" class="text-indigo-400 h-8 w-8"></i>
+                        DCDEEPTECH <span class="text-slate-400 font-light" data-i18n="portalTitle">| SaaS Partner Portal</span>
+                    </h1>
+                    <p class="text-slate-400 mt-1 text-sm flex items-center gap-4">
+                        <span class="flex items-center gap-1"><i data-lucide="building-2" class="w-4 h-4"></i> IP HoldCo UEN: 202550938N</span>
+                        <span class="flex items-center gap-1"><i data-lucide="map-pin" class="w-4 h-4"></i> Ayer Rajah Crescent, Singapore</span>
+                    </p>
+                </div>
+                <div class="flex items-center gap-4">
+                    <!-- Language Toggle -->
+                    <button onclick="toggleLanguage()" class="bg-slate-800 hover:bg-slate-700 transition-colors px-3 py-1.5 rounded-lg border border-slate-600 flex items-center gap-2 text-sm font-semibold">
+                        <i data-lucide="globe" class="w-4 h-4 text-indigo-400"></i>
+                        <span id="lang-indicator">EN / 中文</span>
+                    </button>
+                    <!-- Trust Badge -->
+                    <div class="bg-slate-800 p-2.5 rounded-lg border border-slate-700 flex items-center gap-3">
+                        <i data-lucide="trending-up" class="text-indigo-400 w-6 h-6"></i>
+                        <div class="text-sm">
+                            <div class="font-semibold text-slate-200" data-i18n="arrFocus">ARR & Usage-Based Model</div>
+                            <div class="text-slate-400 text-xs" data-i18n="capitalEff">Scalable SaaS Architecture</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- GST Warning Alert -->
+        <div class="mb-8 bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-lg shadow-sm flex items-start gap-3">
+            <i data-lucide="alert-circle" class="text-amber-600 w-6 h-6 flex-shrink-0 mt-0.5"></i>
+            <div>
+                <h3 class="font-bold text-amber-800" data-i18n="noticeTitle">Important Pricing Notice (Singapore Compliance)</h3>
+                <p class="text-amber-700 text-sm mt-1" data-i18n="noticeDesc">
+                    All prices listed are <strong>Annual Recurring Revenue (ARR)</strong> quoted in <strong>Singapore Dollars (SGD)</strong>, strictly <strong>exclusive of the prevailing 9% GST</strong>.
+                </p>
+            </div>
+        </div>
+
+        <!-- Introduction / Hero Section -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 md:p-8 mb-8 relative overflow-hidden">
+            <div class="absolute top-0 right-0 p-12 opacity-5 pointer-events-none">
+                <i data-lucide="bar-chart-3" class="w-64 h-64"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-slate-900 mb-4" data-i18n="heroTitle">Enterprise SaaS & AIaaS Quotation Matrix</h2>
+            <p class="text-slate-600 leading-relaxed max-w-4xl" data-i18n="heroDesc">
+                This enterprise pricing architecture is structured for authorized <strong>Tier-1 System Integrators</strong>. Transitioning from legacy perpetual models to a highly scalable <strong>SaaS Subscription + Usage-Based Pricing</strong> model. Authorized partners retain a <strong>25% margin</strong> on annual subscriptions, driving exceptional recurring value via consumption-based upsells.
+            </p>
+        </div>
+
+        <!-- Tabs and Search -->
+        <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+            <div class="flex space-x-1 bg-slate-200/50 p-1 rounded-lg">
+                <button id="tab-software" onclick="switchTab('software')" class="px-6 py-2.5 rounded-md text-sm font-semibold transition-all bg-white text-slate-900 shadow-sm ring-1 ring-slate-200 flex items-center gap-2">
+                    <i data-lucide="cloud" class="w-4 h-4"></i> <span data-i18n="tabSoftware">Annual SaaS Subscriptions</span>
+                </button>
+                <button id="tab-services" onclick="switchTab('services')" class="px-6 py-2.5 rounded-md text-sm font-semibold transition-all text-slate-600 hover:text-slate-900 flex items-center gap-2">
+                    <i data-lucide="users" class="w-4 h-4"></i> <span data-i18n="tabServices">Professional Services</span>
+                </button>
+            </div>
+
+            <!-- Search Bar -->
+            <div id="search-container" class="relative w-full md:w-72">
+                <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4"></i>
+                <input 
+                    type="text" 
+                    id="searchInput"
+                    placeholder="Search SaaS modules..." 
+                    class="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all text-sm"
+                />
+            </div>
+        </div>
+
+        <!-- Software Table Section -->
+        <div id="section-software" class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden transition-opacity duration-300">
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-slate-200">
+                    <thead class="bg-slate-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-32" data-i18n="thSku">SKU Code</th>
+                            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider" data-i18n="thDesc">SaaS Platform Description</th>
+                            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-indigo-600 uppercase tracking-wider bg-indigo-50/50" data-i18n="thBounds">Usage-Based Upsell Model</th>
+                            <th scope="col" class="px-6 py-4 text-right text-xs font-bold text-slate-500 uppercase tracking-wider">
+                                <span data-i18n="thListPrice">Base Annual SaaS Price</span><br/><span class="text-[10px] font-normal text-slate-400" data-i18n="perAnnum">(Per Annum)</span>
+                            </th>
+                            <th scope="col" class="px-6 py-4 text-right text-xs font-bold text-slate-900 uppercase tracking-wider bg-slate-100/80">
+                                <span data-i18n="thPartnerPrice">Partner ARR</span><br/><span class="text-[10px] font-normal text-slate-500" data-i18n="thPartnerDisc25">(25% Discount)</span>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="software-tbody" class="bg-white divide-y divide-slate-200">
+                        <!-- Dynamic Content via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Services Table Section -->
+        <div id="section-services" class="hidden bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden transition-opacity duration-300">
+            <div class="px-6 py-5 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
+                <div>
+                    <h3 class="text-lg font-bold text-slate-900" data-i18n="svsTitle">Implementation Services (Revenue Isolated)</h3>
+                    <p class="text-sm text-slate-500 mt-1" data-i18n="svsDesc">Professional services are physically isolated from ARR metrics. Blended rates utilize local SG architects + offshore execution.</p>
+                </div>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-slate-200">
+                    <thead class="bg-slate-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider" data-i18n="thSvsModule">Service Module</th>
+                            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider" data-i18n="thSvsScope">Scope of Work (SOW)</th>
+                            <th scope="col" class="px-6 py-4 text-right text-xs font-bold text-slate-500 uppercase tracking-wider">
+                                <span data-i18n="thSvsListRate">SG List Rate</span><br/><span class="text-[10px] font-normal text-slate-400" data-i18n="thPerManDay">(Per Man-Day)</span>
+                            </th>
+                            <th scope="col" class="px-6 py-4 text-right text-xs font-bold text-slate-900 uppercase tracking-wider bg-slate-100/80">
+                                <span data-i18n="thSvsPartnerRate">Partner Rate</span><br/><span class="text-[10px] font-normal text-slate-500" data-i18n="thPartnerDisc15">(15% Discount)</span>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="services-tbody" class="bg-white divide-y divide-slate-200">
+                        <!-- Dynamic Content via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Commercial Strategy Cards -->
+        <div class="mt-12">
+            <h2 class="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+                <i data-lucide="layers" class="w-6 h-6 text-indigo-600"></i> <span data-i18n="tcTitle">Commercial Terms & Strategy</span>
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- SaaS Payment -->
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mb-4">
+                        <i data-lucide="refresh-cw" class="w-5 h-5 text-blue-600"></i>
+                    </div>
+                    <h3 class="font-bold text-slate-900 mb-2" data-i18n="tcPayTitle">Pre-billed SaaS Subscription</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed" data-i18n="tcPayDesc">
+                        To optimize working capital, subscriptions are 100% pre-billed annually upon license provisioning, superseding the legacy 45-day post-acceptance delays.
+                    </p>
+                </div>
+
+                <!-- Usage Model / SI perspective -->
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center mb-4">
+                        <i data-lucide="trending-up" class="w-5 h-5 text-emerald-600"></i>
+                    </div>
+                    <h3 class="font-bold text-slate-900 mb-2" data-i18n="tcAmcTitle">Subscription & Usage: Unlocking Recurring Margins</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed" data-i18n="tcAmcDesc">
+                        Replacing low-margin legacy AMC. SIs can seamlessly bundle our base annual subscriptions and usage-based tiers (API Tokens, storage overages) into long-term Managed Services contracts, capturing compounding margins as end-user AI adoption scales.
+                    </p>
+                </div>
+
+                <!-- Tax & ESG -->
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center mb-4">
+                        <i data-lucide="leaf" class="w-5 h-5 text-purple-600"></i>
+                    </div>
+                    <h3 class="font-bold text-slate-900 mb-2" data-i18n="tcHwTitle">IP Tax Incentives & ESG</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed" data-i18n="tcHwDesc">
+                        Structured as a SG IP HoldCo to leverage local tax incentives. High-density AI deployments mandate our Liquid-Cooled Architecture to meet GovTech's stringent green ESG metrics.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-10 border-t border-slate-800 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-sm flex flex-col md:flex-row justify-between items-center gap-4">
+            <div>
+                <p class="font-semibold text-slate-200">© 2026 DCDEEPTECH PTE. LTD. (UEN: 202550938N)</p>
+                <p class="mt-1"><span data-i18n="footerLoc">Ayer Rajah Crescent, Singapore</span> | <span data-i18n="footerTag">AI Infrastructure HoldCo</span></p>
+            </div>
+            <div class="text-right">
+                <p data-i18n="footerConfTitle">Confidential Enterprise Pricing</p>
+                <p class="mt-1" data-i18n="footerConfDesc">Generated exclusively for authorized System Integrators evaluation.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- App Logic -->
+    <script>
+        // --- TRANSLATION DATA ---
+        const translations = {
+            en: {
+                portalTitle: "| SaaS Partner Portal",
+                arrFocus: "ARR & Usage-Based Model",
+                capitalEff: "Scalable SaaS Architecture",
+                noticeTitle: "Important Pricing Notice (Singapore Compliance)",
+                noticeDesc: "All prices listed are <strong>Annual Recurring Revenue (ARR)</strong> quoted in <strong>Singapore Dollars (SGD)</strong>, strictly <strong>exclusive of the prevailing 9% GST</strong>.",
+                heroTitle: "Enterprise SaaS & AIaaS Quotation Matrix",
+                heroDesc: "This enterprise pricing architecture is structured for authorized <strong>Tier-1 System Integrators</strong>. Transitioning from legacy perpetual models to a highly scalable <strong>SaaS Subscription + Usage-Based Pricing</strong> model. Authorized partners retain a <strong>25% margin</strong> on annual subscriptions, driving exceptional recurring value via consumption-based upsells.",
+                tabSoftware: "Annual SaaS Subscriptions",
+                tabServices: "Professional Services",
+                searchPlaceholder: "Search SaaS modules...",
+                thSku: "SKU Code",
+                thDesc: "SaaS Platform Description",
+                thBounds: "Usage-Based Upsell Model",
+                thListPrice: "Base Annual SaaS Price",
+                perAnnum: "(Per Annum)",
+                thPartnerPrice: "Partner ARR",
+                thPartnerDisc25: "(25% Discount)",
+                svsTitle: "Implementation Services (Revenue Isolated)",
+                svsDesc: "Professional services are physically isolated from ARR metrics. Blended rates utilize local SG architects + offshore execution.",
+                thSvsModule: "Service Module",
+                thSvsScope: "Scope of Work (SOW)",
+                thSvsListRate: "SG List Rate",
+                thPerManDay: "(Per Man-Day)",
+                thSvsPartnerRate: "Partner Rate",
+                thPartnerDisc15: "(15% Discount)",
+                tcTitle: "Commercial Terms & Strategy",
+                tcPayTitle: "Pre-billed SaaS Subscription",
+                tcPayDesc: "To optimize working capital, subscriptions are 100% pre-billed annually upon license provisioning, superseding the legacy 45-day post-acceptance delays.",
+                tcAmcTitle: "Subscription & Usage: Unlocking Recurring Margins",
+                tcAmcDesc: "Replacing low-margin legacy AMC. SIs can seamlessly bundle our base annual subscriptions and usage-based tiers (API Tokens, storage overages) into long-term Managed Services contracts, capturing compounding margins as end-user AI adoption scales.",
+                tcHwTitle: "IP Tax Incentives & ESG",
+                tcHwDesc: "Structured as a SG IP HoldCo to leverage local tax incentives. High-density AI deployments mandate our Liquid-Cooled Architecture to meet GovTech's stringent green ESG metrics.",
+                footerLoc: "Ayer Rajah Crescent, Singapore",
+                footerTag: "AI Infrastructure HoldCo",
+                footerConfTitle: "Confidential Enterprise Pricing",
+                footerConfDesc: "Generated exclusively for authorized System Integrators evaluation.",
+                noProductsFound: "No SaaS modules found matching"
+            },
+            zh: {
+                portalTitle: "| 合作伙伴 SaaS 报价门户",
+                arrFocus: "ARR 与用量计费模型",
+                capitalEff: "高可扩展 SaaS 架构",
+                noticeTitle: "重要报价合规提示（新加坡税法）",
+                noticeDesc: "本列表所有价格均为 <strong>年度经常性收入 (ARR)</strong>，以 <strong>新加坡元 (SGD)</strong> 计价，且严格 <strong>未含现行 9% 消费税 (GST)</strong>。",
+                heroTitle: "企业级 SaaS 与 AIaaS 年度订阅报价矩阵",
+                heroDesc: "此企业级定价架构专为 <strong>授权一级系统集成商</strong> 打造。从传统的买断制全面转型为高可扩展的 <strong>SaaS 订阅 + 用量计费 (Usage-Based)</strong> 混合模型。合作伙伴在年度订阅上享有 <strong>25% 渠道利润</strong>，并通过后端的用量超额实现持续的利润增长。",
+                tabSoftware: "SaaS 年度订阅许可",
+                tabServices: "专业实施服务",
+                searchPlaceholder: "搜索 SaaS 模块...",
+                thSku: "产品代码 (SKU)",
+                thDesc: "SaaS 平台模块描述",
+                thBounds: "增量用量 / 并发扩容计价模型",
+                thListPrice: "基础年度订阅价",
+                perAnnum: "(SGD / 每年)",
+                thPartnerPrice: "合作伙伴年度结算价",
+                thPartnerDisc25: "(包含 25% 渠道折扣)",
+                svsTitle: "专业实施服务 (系统独立报价)",
+                svsDesc: "为确保核心 SaaS 订阅模式清晰，一次性人工实施服务与订阅费物理隔离。费率采用本地与离岸混合交付架构。",
+                thSvsModule: "专业服务模块",
+                thSvsScope: "业务交付范围 (SOW)",
+                thSvsListRate: "新加坡服务目录价",
+                thPerManDay: "(单人天 / SGD)",
+                thSvsPartnerRate: "合作伙伴结算费率",
+                thPartnerDisc15: "(包含 15% 渠道折扣)",
+                tcTitle: "核心商业条款与运营策略",
+                tcPayTitle: "预收年度订阅费 (优化流动性)",
+                tcPayDesc: "为优化项目运营资金，在系统账号开通、License发放的当月，即全额开具第一年订阅费 Invoice，取代传统的 45 天验收后账期。",
+                tcAmcTitle: "订阅与用量双擎：赋能集成商长尾利润",
+                tcAmcDesc: "取代传统低毛利的 20% 维保模式。系统集成商可将全额年度订阅与弹性用量阶梯（如 API 调用、存储扩容）无缝打包至其年度托管服务 (Managed Services) 中，随着终端客户算力消耗的增长，持续捕获高额的经常性利润。",
+                tcHwTitle: "IP 税收优惠与 ESG 绿色算力",
+                tcHwDesc: "以新加坡本地 IP 实体架构充分享受税收激励政策。针对大模型部署，主打液冷数据中心架构，直击 GovTech 绿色采购核心环保诉求。",
+                footerLoc: "新加坡 Ayer Rajah Crescent 科技创新走廊",
+                footerTag: "AI 基础设施企业",
+                footerConfTitle: "机密级企业商业报价",
+                footerConfDesc: "本文件仅供授权系统集成商评估与内部立项使用。"
+            }
+        };
+
+        // --- NEW SAAS DATA DEFINITIONS (Based on Usage Model, retained exact prices) ---
+        const softwareProducts = [
+            { id: 'DCD-DS-V2', name: { en: 'Enterprise Data Synchronization Platform', zh: '企业级异构数据同步平台' }, limits: { en: 'Base 60 tasks. Overage: $1,000/10 tasks/mo.', zh: '包含60个基础并发任务。超额按 $1,000/10并发/月 计费。' }, listPrice: 48000, partnerPrice: 36000, nodeBased: false },
+            { id: 'DCD-SP-V3', name: { en: 'Big Data Storage and Compute Node', zh: '大数据分布式存储与计算节点' }, limits: { en: 'Base 20TB storage. Overage: $500/TB/yr.', zh: '基础包含 20TB 存储管理。海量扩展按 $500/TB/年 计费。' }, listPrice: 12000, partnerPrice: 9000, nodeBased: true },
+            { id: 'DCD-DG-V1', name: { en: 'Data Governance and Quality Platform', zh: '全链路数据治理与质量平台' }, limits: { en: 'Base 200 tasks. Overage: $1,500/20 tasks/mo.', zh: '包含200个治理并发任务。超额按 $1,500/20并发/月 计费。' }, listPrice: 85000, partnerPrice: 63750, nodeBased: false },
+            { id: 'DCD-EX-V1', name: { en: 'Enterprise Data Exchange Platform', zh: '政企级共享交换平台' }, limits: { en: 'Usage-based traffic. Overage: $0.05/GB.', zh: '按数据交换流量计费，超出基础额度后按 $0.05 / GB 计费。' }, listPrice: 75000, partnerPrice: 56250, nodeBased: false },
+            { id: 'DCD-BIA-V2', name: { en: 'AI-Augmented BI (with Smart Inquiry)', zh: 'AI 增强型智能 BI (Smart Inquiry)' }, limits: { en: 'Base 100 Named Users. Add-on: $5,000/50 users/yr.', zh: '包含 100 个命名用户。扩容包 $5,000/50用户/年。' }, listPrice: 36000, partnerPrice: 27000, nodeBased: false },
+            { id: 'DCD-AI-V2', name: { en: 'Low-Code AI Model Development Platform', zh: '低代码人工智能行业模型开发平台' }, limits: { en: 'Base orchestration. Deep learning billed per GPU Hour.', zh: '包含基础算力调度。深度学习训练按 GPU 小时额外结算。' }, listPrice: 90000, partnerPrice: 67500, nodeBased: false },
+            { id: 'DCD-KG-V1', name: { en: 'Enterprise Knowledge Graph Platform', zh: '企业级语义网络知识图谱平台' }, limits: { en: 'Base 100M nodes/edges. Stepped pricing for overage.', zh: '包含 1亿 个图谱节点与边。超额节点按千万级阶梯计费。' }, listPrice: 95000, partnerPrice: 71250, nodeBased: false },
+            { id: 'DCD-AGT-V1', name: { en: 'LLM Agent Orchestration Platform', zh: '大语言模型 (LLM) 智能体工作流编排' }, limits: { en: 'Platform framework only. RAG inference billed by Token/GPU.', zh: '订阅费仅含平台框架。RAG及推理调用按 Token 消耗量计费。' }, listPrice: 55000, partnerPrice: 41250, nodeBased: false },
+            { id: 'DCD-VA-V1', name: { en: 'Cognitive AI Video Analytics Platform', zh: '认知 AI 视频分析平台' }, limits: { en: 'Base 50 cameras. Add-on: $1,200/stream/yr.', zh: '基础包含 50 路摄像头并发分析。增量按 $1,200 / 路 / 年 计费。' }, listPrice: 78000, partnerPrice: 58500, nodeBased: false },
+        ];
+
+        const professionalServices = [
+            { name: { en: 'On-site Product Implementation', zh: '混合云环境现场实施' }, desc: { en: 'Hybrid cloud setup, HA cluster deployment validation.', zh: '混合云环境现场实施、高可用架构（HA）部署验证。' }, listPrice: 2000, partnerPrice: 1700 },
+            { name: { en: 'Data Integration & Pipeline Dev', zh: '异构数据源集成与汇集流开发' }, desc: { en: 'Kafka streaming extraction, incremental probe development.', zh: '异构数据源汇集开发，Kafka流式数据抽取、增量探测开发。' }, listPrice: 2000, partnerPrice: 1700 },
+            { name: { en: 'Data Warehouse & Semantic Modeling', zh: '数仓建模与语义模型设计' }, desc: { en: 'Multi-dimensional data models, E-R modeling, performance tuning.', zh: '主题域分析，多维数据模型与E-R模型设计，性能调优。' }, listPrice: 2000, partnerPrice: 1700 },
+            { name: { en: 'AI / LLM Custom Model Engineering', zh: 'AI / LLM 核心算法定制工程' }, desc: { en: 'Private Fine-tuning of open-source foundational models (e.g., DeepSeek-R1) and prompt engineering.', zh: '基于开源基座模型（如DeepSeek-R1）的私有化微调（Fine-tuning）及提示词工程。' }, listPrice: 2500, partnerPrice: 2125 },
+        ];
+
+        // --- GLOBAL STATE ---
+        let currentLang = 'en';
+
+        // --- FORMAT CURRENCY HELPER ---
+        const formatCurrency = (amount, isNodeBased) => {
+            const formatted = new Intl.NumberFormat('en-SG', {
+                style: 'currency',
+                currency: 'SGD',
+                minimumFractionDigits: 0,
+            }).format(amount);
+            
+            if (isNodeBased) {
+                return currentLang === 'en' ? `${formatted} / node` : `${formatted} / 节点`;
+            }
+            return formatted;
+        };
+
+        // --- DOM ELEMENTS ---
+        const softwareTbody = document.getElementById('software-tbody');
+        const servicesTbody = document.getElementById('services-tbody');
+        const searchInput = document.getElementById('searchInput');
+
+        // --- LANGUAGE TOGGLE LOGIC ---
+        window.toggleLanguage = () => {
+            currentLang = currentLang === 'en' ? 'zh' : 'en';
+            
+            // Update static text elements
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[currentLang][key]) {
+                    el.innerHTML = translations[currentLang][key];
+                }
+            });
+
+            // Update placeholder
+            searchInput.placeholder = translations[currentLang].searchPlaceholder;
+
+            // Re-render dynamic tables
+            renderSoftware(searchInput.value);
+            renderServices();
+        };
+
+        // --- RENDER SOFTWARE TABLE ---
+        const renderSoftware = (searchTerm = '') => {
+            const term = searchTerm.toLowerCase();
+            const filtered = softwareProducts.filter(p => 
+                p.name[currentLang].toLowerCase().includes(term) || 
+                p.id.toLowerCase().includes(term)
+            );
+
+            if (filtered.length === 0) {
+                softwareTbody.innerHTML = `<tr><td colspan="5" class="px-6 py-12 text-center text-slate-500">${translations[currentLang].noProductsFound} "${searchTerm}"</td></tr>`;
+                return;
+            }
+
+            softwareTbody.innerHTML = filtered.map(product => `
+                <tr class="hover:bg-indigo-50/30 transition-colors">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">${product.id}</td>
+                    <td class="px-6 py-4">
+                        <div class="text-sm font-bold text-slate-900">${product.name[currentLang]}</div>
+                        <div class="text-xs text-indigo-500 mt-1 flex items-center gap-1 font-medium">
+                            <i data-lucide="refresh-cw" class="w-3 h-3"></i> SaaS ARR
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-indigo-800 bg-indigo-50/20">
+                        <span class="block text-xs font-semibold leading-relaxed">
+                            ${product.limits[currentLang]}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500 text-right">
+                        ${formatCurrency(product.listPrice, product.nodeBased)} <span class="text-xs text-slate-400">/ yr</span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-slate-900 text-right bg-slate-50">
+                        ${formatCurrency(product.partnerPrice, product.nodeBased)} <span class="text-xs text-slate-500">/ yr</span>
+                    </td>
+                </tr>
+            `).join('');
+            
+            // Re-initialize icons inside dynamic HTML
+            lucide.createIcons();
+        };
+
+        // --- RENDER SERVICES TABLE ---
+        const renderServices = () => {
+            servicesTbody.innerHTML = professionalServices.map(service => {
+                // Highlight the premium AI model engineering service
+                const isPremium = service.listPrice >= 2500;
+                const rowClass = isPremium ? "bg-amber-50/30 hover:bg-amber-50 transition-colors" : "hover:bg-slate-50 transition-colors";
+                const nameClass = isPremium ? "text-amber-700 flex items-center gap-2" : "text-slate-900";
+                const iconHtml = isPremium ? `<i data-lucide="cpu" class="w-4 h-4 text-amber-500"></i>` : '';
+
+                return `
+                <tr class="${rowClass}">
+                    <td class="px-6 py-4 text-sm font-bold ${nameClass}">
+                        ${iconHtml} ${service.name[currentLang]}
+                    </td>
+                    <td class="px-6 py-4 text-sm text-slate-600 leading-relaxed">${service.desc[currentLang]}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500 text-right">
+                        ${formatCurrency(service.listPrice, false)}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-slate-900 text-right bg-slate-50">
+                        ${formatCurrency(service.partnerPrice, false)}
+                    </td>
+                </tr>
+            `}).join('');
+            
+            lucide.createIcons();
+        };
+
+        // --- TAB SWITCHING LOGIC ---
+        window.switchTab = (tabId) => {
+            const btnSoftware = document.getElementById('tab-software');
+            const btnServices = document.getElementById('tab-services');
+            const secSoftware = document.getElementById('section-software');
+            const secServices = document.getElementById('section-services');
+            const searchContainer = document.getElementById('search-container');
+
+            // Reset styles
+            btnSoftware.className = "px-6 py-2.5 rounded-md text-sm font-semibold transition-all text-slate-600 hover:text-slate-900 flex items-center gap-2";
+            btnServices.className = "px-6 py-2.5 rounded-md text-sm font-semibold transition-all text-slate-600 hover:text-slate-900 flex items-center gap-2";
+            
+            secSoftware.classList.add('hidden');
+            secServices.classList.add('hidden');
+            searchContainer.classList.add('hidden');
+
+            if (tabId === 'software') {
+                btnSoftware.className = "px-6 py-2.5 rounded-md text-sm font-semibold transition-all bg-white text-slate-900 shadow-sm ring-1 ring-slate-200 flex items-center gap-2";
+                secSoftware.classList.remove('hidden');
+                searchContainer.classList.remove('hidden');
+                searchInput.value = ''; // Clear search
+                renderSoftware();
+            } else {
+                btnServices.className = "px-6 py-2.5 rounded-md text-sm font-semibold transition-all bg-white text-slate-900 shadow-sm ring-1 ring-slate-200 flex items-center gap-2";
+                secServices.classList.remove('hidden');
+            }
+        };
+
+        // --- SEARCH LOGIC EVENT LISTENER ---
+        searchInput.addEventListener('input', (e) => {
+            renderSoftware(e.target.value);
+        });
+
+        // --- INITIALIZE APP ---
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            // Initial render
+            renderSoftware();
+            renderServices();
+        });
+
+    </script>
+</body>
+</html>

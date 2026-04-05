@@ -1,0 +1,709 @@
+ <!-- 
+    Title: COFCO Overseas DTC Supply Chain Guide (Pro Edition v6)
+    Updates:
+    - PDF PATH FIX: All PDF links now point to '/docs/' directory.
+    - EN Link: docs/food_report_en.pdf
+    - ZH Link: docs/food_report.pdf
+    - Interaction: Opens in new tab (View mode)
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>COFCO DTC Supply Chain | Supply Chain Framework</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js for Data Viz -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- GSAP for High-End Animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#8B0000', // Deep Red (COFCO brand identity)
+                        accent: '#0D9488',  // Teal (Safety/Professional)
+                        'accent-light': '#CCFBF1',
+                    },
+                    fontFamily: {
+                        sans: ['"Inter"', '"Noto Sans SC"', 'sans-serif'],
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden; /* Prevent horizontal scroll on mobile */
+        }
+
+        /* Mobile Nav: Hide scrollbar but allow functionality */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 300px;
+        }
+        @media (min-width: 768px) {
+            .chart-container { height: 380px; }
+        }
+
+        .custom-checkbox input:checked + div {
+            background-color: #0D9488;
+            border-color: #0D9488;
+        }
+        .custom-checkbox input:checked + div svg { display: block; }
+
+        /* Logo Logic */
+        .logo-fallback { display: none; }
+        img.error + .logo-fallback { display: flex; }
+        img.error { display: none; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans selection:bg-red-100 selection:text-red-900">
+
+    <!-- Header -->
+    <header class="fixed w-full top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200 transition-all duration-300" id="main-header">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="resetIntro()">
+                    <img src="image/DCDTlogo.jpg" alt="DCDT Logo" class="h-10 w-auto object-contain" onerror="this.classList.add('error')">
+                    <div class="logo-fallback w-10 h-10 bg-gradient-to-br from-red-700 to-slate-800 rounded-lg items-center justify-center text-white font-bold text-lg shadow-lg">C</div>
+                    <span class="text-xl font-bold tracking-tight text-slate-800 hidden md:block">DCDT <span class="text-red-700">Supply Chain</span></span>
+                </div>
+
+                <!-- Language Toggle -->
+                <button id="lang-btn" onclick="toggleLanguage()" class="group flex items-center space-x-2 bg-slate-100 hover:bg-slate-200 px-4 py-2 rounded-full transition-all duration-300 active:scale-95">
+                    <span class="text-sm font-semibold text-slate-600 group-hover:text-slate-900">EN / 中文</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="h-16"></div>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-10">
+        
+        <!-- Hero Section -->
+        <div class="text-center mb-12 max-w-4xl mx-auto opacity-0" id="hero-section">
+            <div class="inline-block bg-red-50 text-red-800 text-xs font-bold px-3 py-1 rounded-full mb-4 border border-red-100">CASE STUDY: COFCO DTC</div>
+            <h1 class="text-3xl md:text-5xl font-extrabold text-slate-900 mb-6 tracking-tight leading-tight" data-key="hero_title">
+                COFCO Overseas DTC Supply Chain Framework
+            </h1>
+            <p class="text-base md:text-lg text-slate-500 leading-relaxed mb-8 max-w-2xl mx-auto" data-key="hero_desc">
+                Based on the 'Local Partner + SG Hub' model. A deep dive into Luncheon Meat (Little Black Pig) fulfillment standards from GACC clearance to Last Mile delivery.
+            </p>
+
+            <!-- 2. Smart Link: Opens in New Tab (target="_blank") pointing to /docs/ -->
+            <div class="flex justify-center">
+                <a id="download-link" href="docs/food_report_en.pdf" target="_blank" class="group relative inline-flex items-center gap-3 bg-red-700 hover:bg-red-800 text-white px-8 py-4 rounded-full font-bold shadow-xl shadow-red-200 transition-all duration-300 transform hover:-translate-y-1 hover:scale-105">
+                    <span class="absolute inset-0 rounded-full border border-white/20"></span>
+                    <!-- Icon -->
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                    <span data-key="download_btn">View Deep Dive Report (PDF)</span>
+                    <div class="absolute inset-0 rounded-full ring-4 ring-red-500/30 animate-pulse-slow"></div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Sticky Navigation (Mobile: Horizontal Scroll) -->
+        <div class="sticky top-16 z-40 bg-slate-50/95 backdrop-blur-sm py-2 mb-8 -mx-4 px-4 md:mx-0 md:px-0 border-b border-slate-200 md:border-none md:bg-transparent transition-all" id="nav-wrapper">
+            <nav class="flex md:grid md:grid-cols-4 gap-3 overflow-x-auto no-scrollbar pb-2 md:pb-0 snap-x" id="process-nav">
+                <!-- Nav items injected via JS -->
+            </nav>
+        </div>
+
+        <!-- Main Dashboard Area -->
+        <div id="dashboard-content" class="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8 opacity-0">
+            
+            <!-- Left Column: Insight & Viz (8 cols) -->
+            <div class="lg:col-span-8 space-y-6 md:space-y-8">
+                
+                <!-- Info Card -->
+                <div class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-slate-100 relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-red-50 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110 duration-700"></div>
+                    
+                    <div class="relative z-10">
+                        <div class="flex items-center mb-4">
+                            <span id="section-icon" class="text-4xl mr-4 filter drop-shadow-sm">🚢</span>
+                            <h2 id="section-title" class="text-2xl md:text-3xl font-bold text-slate-800">Title</h2>
+                        </div>
+                        <p id="section-desc" class="text-slate-600 leading-relaxed text-base md:text-lg">Description</p>
+                    </div>
+
+                    <!-- Metrics -->
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mt-8" id="metrics-container">
+                        <!-- Metrics Injected Here -->
+                    </div>
+                </div>
+
+                <!-- Visualization Card -->
+                <div class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-slate-100">
+                    <div class="flex justify-between items-end mb-6">
+                        <div>
+                            <h3 id="chart-title" class="text-lg font-bold text-slate-800">Chart Title</h3>
+                            <p class="text-xs text-slate-400 mt-1 uppercase tracking-wider" data-key="chart_subtitle">REPORT DATA VIZ</p>
+                        </div>
+                    </div>
+                    <div class="chart-container bg-slate-50 rounded-xl p-2 md:p-4 border border-slate-100">
+                        <canvas id="mainChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Action & Tools (4 cols) -->
+            <div class="lg:col-span-4 space-y-6 md:space-y-8">
+                
+                <!-- Checklist Panel -->
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 flex flex-col h-[500px] md:h-auto">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-bold text-slate-800 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                            <span data-key="checklist_title">Critical SOP Checklist</span>
+                        </h3>
+                        <span id="progress-badge" class="bg-slate-100 text-slate-600 text-xs font-bold px-2 py-1 rounded-md">0%</span>
+                    </div>
+                    
+                    <div class="flex-grow overflow-y-auto pr-2 custom-scroll" id="checklist-scroll">
+                        <ul id="checklist-container" class="space-y-3">
+                            <!-- Items injected -->
+                        </ul>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div class="mt-4 pt-4 border-t border-slate-100">
+                        <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                            <div id="progress-bar" class="bg-red-600 h-1.5 rounded-full transition-all duration-1000 ease-out" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interactive Tool -->
+                <div class="bg-gradient-to-br from-red-50 to-white rounded-2xl p-6 border border-red-100 shadow-sm relative overflow-hidden">
+                    <div class="absolute top-0 right-0 -mt-2 -mr-2 w-16 h-16 bg-red-100 rounded-full opacity-50 blur-xl"></div>
+                    
+                    <h3 id="tool-title" class="font-bold text-red-900 mb-4 relative z-10">Tool</h3>
+                    <div id="tool-content" class="relative z-10">
+                        <!-- Tool inputs -->
+                    </div>
+                    
+                    <div id="tool-result" class="mt-4 p-4 bg-white/80 backdrop-blur rounded-lg border border-red-100 text-center hidden transform transition-all duration-300">
+                        <span class="text-xs text-slate-500 uppercase tracking-wide block mb-1" data-key="est_result">Estimate Result</span>
+                        <span class="text-xl font-black text-red-700 tracking-tight" id="tool-result-value">-</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <footer class="mt-12 py-8 bg-white border-t border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-slate-400 text-sm">© 2026 DCDT Global | Based on COFCO Supply Chain Report</p>
+        </div>
+    </footer>
+
+    <script>
+        // --- 1. CONFIGURATION & DATA (Enriched with PDF Content) ---
+
+        const I18N = {
+            zh: {
+                hero_title: "中粮食品海外DTC供应链执行框架",
+                hero_desc: "基于“本地合作商+新加坡中枢”模式，深度解析午餐肉罐头(小黑猪系列)从GACC清关到最后一公里履约的全流程标准。",
+                download_btn: "在线查阅深度研究报告 (PDF)",
+                download_link: "docs/food_report.pdf", // Link for Chinese -> /docs/
+                checklist_title: "核心SOP清单",
+                chart_subtitle: "风险评估数据",
+                est_result: "系统预估",
+                calc_btn: "开始计算",
+                check_btn: "合规查询",
+                nav: ["1. 资质与清关", "2. 合规与质检", "3. 仓储管理", "4. 履约配送"]
+            },
+            en: {
+                hero_title: "COFCO Overseas DTC Supply Chain Framework",
+                hero_desc: "Based on 'Local Partner + SG Hub' model. Deep dive into Luncheon Meat (Little Black Pig) fulfillment from GACC clearance to Last Mile.",
+                download_btn: "View Deep Dive Report (PDF)",
+                download_link: "docs/food_report_en.pdf", // Link for English -> /docs/
+                checklist_title: "Critical SOP Checklist",
+                chart_subtitle: "Risk Assessment",
+                est_result: "System Estimate",
+                calc_btn: "Calculate",
+                check_btn: "Check Compliance",
+                nav: ["1. Customs & Entry", "2. Compliance & QC", "3. Warehousing", "4. Fulfillment"]
+            }
+        };
+
+        const STEPS_DATA = {
+            customs: {
+                icon: "🛃",
+                zh: {
+                    title: "主体资质与清关 (TradeNet)",
+                    desc: "报告核心：本地合作商需持有SFA“肉类鱼类进口执照”。重点在于将中国GACC卫生证书与新加坡SFA产品代码精准匹配，以防止滞港。",
+                    metrics: [
+                        { label: "清关模式", value: "B2B一般贸易" },
+                        { label: "关键文件", value: "GACC卫生证" },
+                        { label: "风险点", value: "HS编码匹配" }
+                    ],
+                    chartTitle: "B2C直邮 vs 本地化履约(本模式) 清关风险对比",
+                    checklist: [
+                        "获取GACC出口卫生证书 (Health Certificate)",
+                        "确认本地合作方 SFA 执照 (Active)",
+                        "SFA产品代码与HS编码匹配 (Code Matching)",
+                        "提交进口许可证 (Import Permit)",
+                        "准备原产地证 (Certificate of Origin)"
+                    ],
+                    toolTitle: "滞港费(Demurrage)风险估算",
+                    toolType: "customs"
+                },
+                en: {
+                    title: "Entity Qualification & Customs",
+                    desc: "Report Insight: Local partners must hold SFA 'Meat & Fish License'. Critical success factor is matching GACC Health Certs with SFA Product Codes to prevent demurrage fees.",
+                    metrics: [
+                        { label: "Mode", value: "B2B General Trade" },
+                        { label: "Key Doc", value: "GACC Health Cert" },
+                        { label: "Risk", value: "HS Code Match" }
+                    ],
+                    chartTitle: "Risk Profile: B2C Direct Mail vs Localized Fulfillment",
+                    checklist: [
+                        "Obtain GACC Health Certificate",
+                        "Verify Partner's SFA License",
+                        "Match SFA Product Code & HS Code",
+                        "Submit Import Permit",
+                        "Prepare Certificate of Origin"
+                    ],
+                    toolTitle: "Demurrage Risk Estimator",
+                    toolType: "customs"
+                },
+                chartType: 'bar',
+                chartData: {
+                    labels: ['Clearance Certainty', 'Time Stability', 'Compliance Risk', 'Return Difficulty'],
+                    datasets: [{
+                        label: 'Localized (Recommended)',
+                        data: [95, 90, 10, 20],
+                        backgroundColor: '#0D9488',
+                    }, {
+                        label: 'B2C Direct Mail',
+                        data: [40, 30, 80, 90], // High risk
+                        backgroundColor: '#cbd5e1',
+                    }]
+                }
+            },
+            qc: {
+                icon: "🔬",
+                zh: {
+                    title: "合规包 (Compliance Pack) 构建",
+                    desc: "报告强调将合规资产化。针对“小黑猪”系列 >90% 肉含量及 121℃ 高温杀菌工艺，需建立标准化的技术文档。注意亚硝酸钠符合SFA限量。",
+                    metrics: [
+                        { label: "肉含量宣称", value: "> 90%" },
+                        { label: "杀菌工艺", value: "121℃" },
+                        { label: "核心资产", value: "合规包" }
+                    ],
+                    chartTitle: "SFA 常见不合规原因 (记分系统)",
+                    checklist: [
+                        "ISO9001/HACCP 工厂认证文件",
+                        "肉含量检测报告 (>90% 支撑数据)",
+                        "亚硝酸钠/防腐剂限量检测",
+                        "产品规格书 (3年保质期依据)",
+                        "标签合规 (含进口商信息)"
+                    ],
+                    toolTitle: "添加剂限量速查 (亚硝酸钠)",
+                    toolType: "additive"
+                },
+                en: {
+                    title: "Building the 'Compliance Pack'",
+                    desc: "Assetizing compliance. For 'Little Black Pig' (>90% meat content, 121℃ sterilization), standardized technical docs are mandatory. Ensure Sodium Nitrite levels meet SFA limits.",
+                    metrics: [
+                        { label: "Meat Content", value: "> 90%" },
+                        { label: "Sterilization", value: "121℃" },
+                        { label: "Asset", value: "Compliance Pack" }
+                    ],
+                    chartTitle: "Common SFA Non-Compliance Reasons",
+                    checklist: [
+                        "ISO9001/HACCP Certs",
+                        "Meat Content Report (>90%)",
+                        "Nitrite/Preservative Limits",
+                        "Product Spec Sheet (3-Year Shelf Life)",
+                        "Label Compliance (Importer Info)"
+                    ],
+                    toolTitle: "Additive Limit Check",
+                    toolType: "additive"
+                },
+                chartType: 'doughnut',
+                chartData: {
+                    labels: ['Missing Label Info', 'Excess Additives', 'Microbial Issues', 'Doc Mismatch'],
+                    datasets: [{
+                        data: [35, 25, 20, 20],
+                        backgroundColor: ['#f87171', '#ef4444', '#b91c1c', '#991b1b'],
+                        borderWidth: 0
+                    }]
+                }
+            },
+            storage: {
+                icon: "🏭",
+                zh: {
+                    title: "食品级仓储标准",
+                    desc: "午餐肉虽为常温品，但必须存放于SFA批准的食品仓库。严格执行 FEFO (先到期先出) 管理，确保“离地离墙”防止受潮锈蚀。",
+                    metrics: [
+                        { label: "出库原则", value: "FEFO" },
+                        { label: "物理标准", value: "离地30cm" },
+                        { label: "追溯能力", value: "双向追溯" }
+                    ],
+                    chartTitle: "库存价值随时间变化 (FEFO管理)",
+                    checklist: [
+                        "验证仓库 SFA 食品存储执照",
+                        "虫害控制计划 (Pest Control)",
+                        "执行 FEFO (非仅FIFO)",
+                        "离地离墙存储 (防潮/防锈)",
+                        "批次双向追溯测试"
+                    ],
+                    toolTitle: "仓储面积估算 (托盘)",
+                    toolType: "storage"
+                },
+                en: {
+                    title: "Food-Grade Warehousing",
+                    desc: "Even ambient Luncheon Meat needs SFA-licensed warehouses (e.g., Jurong/Woodlands). Enforce FEFO (First-Expired-First-Out) and 'Off-ground' rules to prevent rust.",
+                    metrics: [
+                        { label: "Principle", value: "FEFO" },
+                        { label: "Standard", value: "30cm Off-Ground" },
+                        { label: "Traceability", value: "Bi-directional" }
+                    ],
+                    chartTitle: "Inventory Value over Time (FEFO)",
+                    checklist: [
+                        "Verify SFA Warehouse License",
+                        "Pest Control Program",
+                        "Enforce FEFO (not just FIFO)",
+                        "Off-Ground Storage (Anti-Rust)",
+                        "Batch Traceability Test"
+                    ],
+                    toolTitle: "Storage Area Estimator",
+                    toolType: "storage"
+                },
+                chartType: 'line',
+                chartData: {
+                    labels: ['M1', 'M6', 'M12', 'M18', 'M24', 'M30'],
+                    datasets: [
+                        { label: 'Freshness Value', data: [100, 95, 85, 70, 50, 20], borderColor: '#0D9488', tension: 0.4 },
+                        { label: 'Rust Risk (If on ground)', data: [0, 5, 15, 30, 60, 90], borderColor: '#ef4444', tension: 0.4, borderDash: [5, 5] }
+                    ]
+                }
+            },
+            logistics: {
+                icon: "🚚",
+                zh: {
+                    title: "最后一公里履约体验",
+                    desc: "直接影响品牌声誉。针对高端“小黑猪”产品，必须投入防撞包装(气泡柱)，防止瘪罐导致的客诉。选用一级物流商(如Ninja Van)。",
+                    metrics: [
+                        { label: "配送时效", value: "1-3 天" },
+                        { label: "关键防护", value: "防瘪罐包装" },
+                        { label: "物流商", value: "Tier 1 (Ninja Van)" }
+                    ],
+                    chartTitle: "客户体验归因分析",
+                    checklist: [
+                        "签约一级物流商 (Ninja Van等)",
+                        "配置防撞气泡柱包装",
+                        "配置短信/邮件实时追踪",
+                        "制定破损/瘪罐赔付SLA",
+                        "无法投递处理协议"
+                    ],
+                    toolTitle: "防撞包装成本效益分析",
+                    toolType: "logistics"
+                },
+                en: {
+                    title: "Last Mile Fulfillment",
+                    desc: "Critical for brand rep. 'Little Black Pig' requires anti-dent packaging (bubble columns) to avoid complaints. Use Tier 1 couriers (e.g., Ninja Van) with tracking.",
+                    metrics: [
+                        { label: "Time", value: "1-3 Days" },
+                        { label: "Protection", value: "Anti-Dent Pack" },
+                        { label: "Courier", value: "Tier 1 (Ninja Van)" }
+                    ],
+                    chartTitle: "Customer Experience Attribution",
+                    checklist: [
+                        "Sign Tier 1 Courier (e.g., Ninja Van)",
+                        "Use Bubble Column Packaging",
+                        "Setup SMS/Email Tracking",
+                        "Define Dent/Damage SLA",
+                        "Failed Delivery Protocol"
+                    ],
+                    toolTitle: "Packaging Cost-Benefit",
+                    toolType: "logistics"
+                },
+                chartType: 'radar',
+                chartData: {
+                    labels: ['Speed', 'Intact Rate (Anti-Dent)', 'Transparency', 'Service', 'Return ease'],
+                    datasets: [{
+                        label: 'Localized Hub (Proposed)',
+                        data: [95, 90, 95, 85, 90],
+                        borderColor: '#0D9488',
+                        backgroundColor: 'rgba(13, 148, 136, 0.2)'
+                    }, {
+                        label: 'Cross-border Mail',
+                        data: [40, 50, 30, 20, 10], // High risk of dents & delay
+                        borderColor: '#94a3b8',
+                        backgroundColor: 'rgba(148, 163, 184, 0.2)'
+                    }]
+                }
+            }
+        };
+
+        // --- 2. STATE & INIT ---
+        
+        let currentLang = 'en'; // Changed default to English
+        let currentStepId = 'customs';
+        let chartInstance = null;
+        let checkedStates = {}; 
+
+        document.addEventListener('DOMContentLoaded', () => {
+            gsap.to("#hero-section", { opacity: 1, y: 0, duration: 1, ease: "power3.out" });
+            gsap.to("#dashboard-content", { opacity: 1, duration: 1, delay: 0.3 });
+            initApp();
+        });
+
+        function initApp() {
+            renderNav();
+            loadStep(currentStepId);
+            updateStaticText();
+        }
+
+        // --- 3. CORE LOGIC ---
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'zh' ? 'en' : 'zh';
+            gsap.to("body", { opacity: 0.5, duration: 0.2, yoyo: true, repeat: 1, onRepeat: () => {
+                initApp();
+            }});
+        }
+
+        function updateStaticText() {
+            // Update simple text elements
+            document.querySelectorAll('[data-key]').forEach(el => {
+                const key = el.getAttribute('data-key');
+                if (I18N[currentLang][key]) {
+                    el.textContent = I18N[currentLang][key];
+                }
+            });
+
+            // Update Link dynamically
+            const dlLink = document.getElementById('download-link');
+            if (dlLink && I18N[currentLang].download_link) {
+                dlLink.setAttribute('href', I18N[currentLang].download_link);
+            }
+        }
+
+        function renderNav() {
+            const navContainer = document.getElementById('process-nav');
+            navContainer.innerHTML = '';
+            
+            const stepKeys = Object.keys(STEPS_DATA);
+            const navLabels = I18N[currentLang].nav;
+
+            stepKeys.forEach((key, index) => {
+                const isActive = key === currentStepId;
+                const btn = document.createElement('div');
+                // Added min-width and touch targets for mobile
+                btn.className = `
+                    flex-shrink-0 min-w-[140px] md:min-w-0 snap-center
+                    cursor-pointer rounded-xl p-3 md:p-4 transition-all duration-300 relative overflow-hidden group
+                    ${isActive ? 'bg-white shadow-md ring-2 ring-red-600 scale-100' : 'bg-slate-100/50 hover:bg-white hover:shadow-sm scale-95 opacity-80'}
+                `;
+                btn.innerHTML = `
+                    <div class="flex flex-col items-center justify-center relative z-10">
+                        <span class="text-2xl md:text-3xl mb-2 filter drop-shadow-sm transition-transform group-hover:scale-110 duration-300">${STEPS_DATA[key].icon}</span>
+                        <span class="text-sm md:text-base font-bold ${isActive ? 'text-red-800' : 'text-slate-500'}">${navLabels[index]}</span>
+                    </div>
+                    ${isActive ? '<div class="absolute bottom-0 left-0 w-full h-1 bg-red-600"></div>' : ''}
+                `;
+                btn.onclick = () => switchStep(key);
+                navContainer.appendChild(btn);
+            });
+        }
+
+        function switchStep(newStepId) {
+            if (currentStepId === newStepId) return;
+            gsap.to("#dashboard-content", { 
+                opacity: 0, y: 10, duration: 0.2, 
+                onComplete: () => {
+                    currentStepId = newStepId;
+                    renderNav();
+                    loadStep(newStepId);
+                    gsap.fromTo("#dashboard-content", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" });
+                }
+            });
+        }
+
+        function loadStep(stepId) {
+            const data = STEPS_DATA[stepId];
+            const content = data[currentLang];
+
+            document.getElementById('section-icon').textContent = data.icon;
+            document.getElementById('section-title').textContent = content.title;
+            document.getElementById('section-desc').textContent = content.desc;
+            document.getElementById('chart-title').textContent = content.chartTitle;
+
+            const metricsContainer = document.getElementById('metrics-container');
+            metricsContainer.innerHTML = '';
+            content.metrics.forEach((m) => {
+                const div = document.createElement('div');
+                div.className = 'metric-card bg-slate-50 p-3 rounded-lg border border-slate-100 text-center';
+                div.innerHTML = `
+                    <div class="text-xs text-slate-400 uppercase tracking-wide mb-1">${m.label}</div>
+                    <div class="text-lg md:text-xl font-bold text-slate-800 metric-value">${m.value}</div>
+                `;
+                metricsContainer.appendChild(div);
+            });
+            
+            gsap.from(".metric-card", { y: 20, opacity: 0, duration: 0.4, stagger: 0.1, ease: "back.out(1.7)" });
+            renderChecklist(stepId, content.checklist);
+            renderTool(content.toolType, content.toolTitle);
+            renderChart(data.chartType, data.chartData);
+        }
+
+        function renderChecklist(stepId, items) {
+            const container = document.getElementById('checklist-container');
+            container.innerHTML = '';
+            if (!checkedStates[stepId]) checkedStates[stepId] = new Array(items.length).fill(false);
+
+            items.forEach((item, idx) => {
+                const isChecked = checkedStates[stepId][idx];
+                const li = document.createElement('li');
+                li.className = 'flex items-start group p-2 hover:bg-slate-50 rounded-lg transition-colors';
+                li.innerHTML = `
+                    <label class="custom-checkbox flex items-center cursor-pointer w-full">
+                        <input type="checkbox" class="hidden" onchange="toggleCheck('${stepId}', ${idx}, this)" ${isChecked ? 'checked' : ''}>
+                        <div class="w-5 h-5 border-2 border-slate-300 rounded-md flex items-center justify-center transition-colors mr-3 flex-shrink-0 bg-white">
+                            <svg class="w-3 h-3 text-white hidden pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                        </div>
+                        <span class="text-sm text-slate-600 transition-all ${isChecked ? 'line-through text-slate-400' : 'group-hover:text-slate-800'}">${item}</span>
+                    </label>
+                `;
+                container.appendChild(li);
+            });
+            updateProgress(stepId);
+            gsap.from("#checklist-container li", { x: -20, opacity: 0, duration: 0.3, stagger: 0.05 });
+        }
+
+        function toggleCheck(stepId, idx, checkbox) {
+            checkedStates[stepId][idx] = checkbox.checked;
+            const span = checkbox.parentNode.querySelector('span');
+            if (checkbox.checked) {
+                span.classList.add('line-through', 'text-slate-400');
+                gsap.to(checkbox.nextElementSibling, { scale: 1.2, duration: 0.1, yoyo: true, repeat: 1 });
+            } else {
+                span.classList.remove('line-through', 'text-slate-400');
+            }
+            updateProgress(stepId);
+        }
+
+        function updateProgress(stepId) {
+            const total = checkedStates[stepId].length;
+            const checked = checkedStates[stepId].filter(Boolean).length;
+            const pct = Math.round((checked / total) * 100);
+            document.getElementById('progress-bar').style.width = `${pct}%`;
+            document.getElementById('progress-badge').textContent = `${pct}%`;
+            if (pct === 100) gsap.to("#progress-badge", { backgroundColor: "#0D9488", color: "#fff", duration: 0.3 });
+        }
+
+        function renderTool(type, title) {
+            const toolTitle = document.getElementById('tool-title');
+            const toolContent = document.getElementById('tool-content');
+            const resultBox = document.getElementById('tool-result');
+            toolTitle.textContent = title;
+            resultBox.classList.add('hidden');
+            const btnText = I18N[currentLang].calc_btn;
+
+            let html = '';
+            if (type === 'customs') {
+                html = `
+                    <div class="space-y-3">
+                        <label class="text-xs text-slate-500">Value (SGD)</label>
+                        <input type="number" id="t-input" class="w-full p-2 text-sm bg-white/50 border border-red-200 rounded outline-none" placeholder="10000">
+                        <button onclick="runTool('${type}')" class="w-full bg-red-700 text-white font-bold py-2 rounded shadow hover:bg-red-800 transition">${btnText}</button>
+                    </div>
+                `;
+            } else if (type === 'logistics') {
+                html = `
+                    <div class="space-y-3">
+                        <label class="text-xs text-slate-500">Packaging Type</label>
+                        <select id="pack-select" class="w-full p-2 text-sm bg-white/50 border border-red-200 rounded outline-none">
+                            <option value="normal">Standard Carton (Normal)</option>
+                            <option value="bubble">Bubble Column (Anti-Dent)</option>
+                        </select>
+                        <button onclick="runTool('${type}')" class="w-full bg-red-700 text-white font-bold py-2 rounded shadow hover:bg-red-800 transition">Analyze Damage Rate</button>
+                    </div>
+                `;
+            } else {
+                 html = `
+                    <div class="space-y-3">
+                        <input type="text" id="t-input" class="w-full p-2 text-sm bg-white/50 border border-red-200 rounded outline-none" placeholder="Enter query...">
+                        <button onclick="runTool('generic')" class="w-full bg-red-700 text-white font-bold py-2 rounded shadow hover:bg-red-800 transition">Check</button>
+                    </div>
+                `;
+            }
+            toolContent.innerHTML = html;
+        }
+
+        function runTool(type) {
+            const resBox = document.getElementById('tool-result');
+            const resVal = document.getElementById('tool-result-value');
+            let result = "";
+
+            if (type === 'customs') {
+                const val = parseFloat(document.getElementById('t-input').value) || 0;
+                // Demurrage logic: if delay, cost high
+                result = `Risk Est: $${(val * 0.005 + 100).toFixed(0)} / day (Demurrage)`;
+            } else if (type === 'logistics') {
+                const pack = document.getElementById('pack-select').value;
+                if(pack === 'bubble') {
+                    result = "Damage Rate: < 0.5% (Recommended)";
+                    resVal.className = "text-xl font-black text-green-600 tracking-tight";
+                } else {
+                    result = "Damage Rate: 3% - 5% (High Risk)";
+                    resVal.className = "text-xl font-black text-red-600 tracking-tight";
+                }
+            } else {
+                result = "Compliant (Pass)";
+            }
+
+            resVal.textContent = result;
+            resBox.classList.remove('hidden');
+            gsap.fromTo(resBox, { scale: 0.8, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.4, ease: "back.out(1.7)" });
+        }
+
+        function renderChart(type, data) {
+            const ctx = document.getElementById('mainChart').getContext('2d');
+            if (chartInstance) chartInstance.destroy();
+            chartInstance = new Chart(ctx, {
+                type: type,
+                data: data,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom' } },
+                    scales: (type === 'radar' || type === 'doughnut') ? {} : { y: { beginAtZero: true } }
+                }
+            });
+        }
+
+        function resetIntro() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+
+    </script>
+</body>
+</html>

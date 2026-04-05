@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPU液冷冷板制造全工艺教学手册 - 生产主指南</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;700&display=swap');
+        body { font-family: 'Noto+Sans+SC', sans-serif; scroll-behavior: smooth; }
+        .hero-gradient { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); }
+        .process-card:hover { transform: translateY(-5px); transition: all 0.3s; }
+        .sticky-nav { backdrop-filter: blur(10px); background: rgba(15, 23, 42, 0.8); }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900">
+
+    <!-- 导航栏 -->
+    <nav class="sticky-nav fixed w-full z-50 text-white p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="text-xl font-bold tracking-tighter"><i class="fas fa-microchip text-blue-400 mr-2"></i>GPU COLDPLATE MASTER</div>
+            <div class="hidden md:flex space-x-8 text-sm uppercase">
+                <a href="#market" class="hover:text-blue-400">市场机遇</a>
+                <a href="#process" class="hover:text-blue-400">工艺流程</a>
+                <a href="#equipment" class="hover:text-blue-400">设备清单</a>
+                <a href="#quality" class="hover:text-blue-400">质控标准</a>
+                <a href="#roi" class="hover:text-blue-400">投资价值</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 英雄区 -->
+    <header class="hero-gradient text-white pt-32 pb-20 px-6">
+        <div class="container mx-auto text-center">
+            <h1 class="text-4xl md:text-6xl font-bold mb-6">GPU冷板制造全工艺指南</h1>
+            <p class="text-xl text-gray-300 max-w-3xl mx-auto mb-10">
+                面向2026年AI算力浪潮：从高纯铜选材到真空钎焊、氦质谱检漏，掌握进入NVIDIA与OCP供应链的核心制造密码。
+            </p>
+            <div class="flex justify-center space-x-4">
+                <a href="#process" class="bg-blue-600 hover:bg-blue-700 px-8 py-3 rounded-full font-bold">开始学习工艺</a>
+                <a href="#quality" class="border border-gray-400 hover:bg-white hover:text-gray-900 px-8 py-3 rounded-full font-bold transition">查看技术规格</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 市场背景 -->
+    <section id="market" class="py-20 container mx-auto px-6">
+        <div class="flex flex-wrap items-center">
+            <div class="w-full md:w-1/2 mb-10 md:mb-0">
+                <h2 class="text-3xl font-bold mb-6 border-l-4 border-blue-600 pl-4">算力革命下的液冷红利</h2>
+                <p class="text-gray-600 mb-4 leading-relaxed">
+                    随着单颗GPU（如Blackwell系列）功耗突破1000W-2700W，传统风冷已达物理极限。液冷冷板（Cold Plate）已成为数据中心**强制性标配**。
+                </p>
+                <ul class="space-y-3">
+                    <li><i class="fas fa-check-circle text-green-500 mr-2"></i> <strong>市场潜力：</strong> 预计2027年AI服务器液冷渗透率达80%。</li>
+                    <li><i class="fas fa-check-circle text-green-500 mr-2"></i> <strong>技术壁垒：</strong> 微通道（MLCP）技术正逐步取代传统粗流道设计。</li>
+                    <li><i class="fas fa-check-circle text-green-500 mr-2"></i> <strong>PUE政策：</strong> 国家严控PUE<1.25，冷板技术是实现该目标的唯一途径。</li>
+                </ul>
+            </div>
+            <div class="w-full md:w-1/2 flex justify-center">
+                <div class="bg-blue-100 p-8 rounded-2xl">
+                    <div class="text-5xl font-bold text-blue-600 mb-2">56.9%</div>
+                    <div class="text-gray-700 font-semibold">年复合增长率 (2025-2031)</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 工艺流程图 -->
+    <section id="process" class="py-20 bg-gray-100">
+        <div class="container mx-auto px-6 text-center mb-16">
+            <h2 class="text-3xl font-bold">全流程生产工艺蓝图</h2>
+            <p class="text-gray-500 mt-2">从原材料到交付的5大核心环节</p>
+        </div>
+        <div class="container mx-auto px-6 grid grid-cols-1 md:grid-cols-5 gap-6">
+            <!-- 步骤1 -->
+            <div class="process-card bg-white p-6 rounded-xl shadow-md">
+                <div class="text-blue-600 text-3xl mb-4 font-bold">01</div>
+                <h3 class="font-bold mb-2">材料选择</h3>
+                <p class="text-xs text-gray-500">选用C1100高纯铜或3003铝合金。要求导热系数 >385W/mK。</p>
+            </div>
+            <!-- 步骤2 -->
+            <div class="process-card bg-white p-6 rounded-xl shadow-md">
+                <div class="text-blue-600 text-3xl mb-4 font-bold">02</div>
+                <h3 class="font-bold mb-2">微通道加工</h3>
+                <p class="text-xs text-gray-500">CNC加工或Skiving铲片。鳍片间距 ≤0.2mm，增加换热面积。</p>
+            </div>
+            <!-- 步骤3 -->
+            <div class="process-card bg-white p-6 rounded-xl shadow-md border-t-4 border-blue-500">
+                <div class="text-blue-600 text-3xl mb-4 font-bold">03</div>
+                <h3 class="font-bold mb-2">真空钎焊</h3>
+                <p class="text-xs text-gray-500">10⁻⁴Pa真空环境焊接。无氧化、强度高、流道干净，核心工艺。</p>
+            </div>
+            <!-- 步骤4 -->
+            <div class="process-card bg-white p-6 rounded-xl shadow-md">
+                <div class="text-blue-600 text-3xl mb-4 font-bold">04</div>
+                <h3 class="font-bold mb-2">表面处理</h3>
+                <p class="text-xs text-gray-500">化学钝化或防腐涂层。解决液冷系统中的化学兼容性问题。</p>
+            </div>
+            <!-- 步骤5 -->
+            <div class="process-card bg-white p-6 rounded-xl shadow-md border-t-4 border-red-500">
+                <div class="text-blue-600 text-3xl mb-4 font-bold">05</div>
+                <h3 class="font-bold mb-2">综合测试</h3>
+                <p class="text-xs text-gray-500">氦检漏 + 10bar水压测试 + 热阻测试。确保24/7零泄漏风险。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 关键知识点 / 设备 -->
+    <section id="equipment" class="py-20 container mx-auto px-6">
+        <h2 class="text-3xl font-bold mb-12 text-center">核心生产设备与关键指标</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+            <div class="bg-slate-800 text-white p-8 rounded-2xl">
+                <h3 class="text-xl font-bold mb-6 text-blue-400"><i class="fas fa-tools mr-2"></i> 必选设备清单</h3>
+                <table class="w-full text-left text-sm">
+                    <tr class="border-b border-gray-700"><td class="py-3">真空钎焊炉 (Vacuum Brazing)</td><td class="text-right">实现无氟焊接，杜绝腐蚀隐患</td></tr>
+                    <tr class="border-b border-gray-700"><td class="py-3">高精密CNC/铲片机</td><td class="text-right">加工0.1mm级超薄鳍片</td></tr>
+                    <tr class="border-b border-gray-700"><td class="py-3">氦质谱检漏仪</td><td class="text-right">检测率需达10⁻¹⁰ Pa·m³/s</td></tr>
+                    <tr class="border-b border-gray-700"><td class="py-3">工业超声波清洗线</td><td class="text-right">去除微通道残留加工屑</td></tr>
+                    <tr><td class="py-3">X-Ray / 工业CT扫描</td><td class="text-right">内检流道堵塞及焊接气孔率</td></tr>
+                </table>
+            </div>
+            <div>
+                <h3 class="text-xl font-bold mb-6"><i class="fas fa-brain mr-2"></i> 企业主必知：三大核心指标</h3>
+                <div class="space-y-6">
+                    <div class="flex items-start">
+                        <div class="bg-blue-600 p-2 rounded mr-4 mt-1 text-white"><i class="fas fa-thermometer-half"></i></div>
+                        <div>
+                            <h4 class="font-bold">热阻值 (Thermal Resistance)</h4>
+                            <p class="text-sm text-gray-500">需控制在 0.02 - 0.03°C/W。决定了冷板是否能压住H100/B200的热量。</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <div class="bg-blue-600 p-2 rounded mr-4 mt-1 text-white"><i class="fas fa-water"></i></div>
+                        <div>
+                            <h4 class="font-bold">流阻与压降 (Pressure Drop)</h4>
+                            <p class="text-sm text-gray-500">流阻需控制在 20kPa 以下。过高会导致泵房能耗激增，不符合PUE标准。</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <div class="bg-blue-600 p-2 rounded mr-4 mt-1 text-white"><i class="fas fa-shield-alt"></i></div>
+                        <div>
+                            <h4 class="font-bold">平面度 (Flatness)</h4>
+                            <p class="text-sm text-gray-500">接触面平面度需 ≤ 0.1mm。否则与GPU核心接触不良，产生局部热点风险。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 质控与标准 -->
+    <section id="quality" class="py-20 bg-blue-50">
+        <div class="container mx-auto px-6">
+            <div class="max-w-4xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden flex flex-wrap">
+                <div class="w-full md:w-1/3 bg-blue-600 text-white p-10 flex flex-col justify-center">
+                    <h3 class="text-2xl font-bold mb-4">准入认证标准</h3>
+                    <p class="text-sm opacity-80 leading-relaxed">进入一线Tier-1供应商名单的必须认证。</p>
+                </div>
+                <div class="w-full md:w-2/3 p-10">
+                    <div class="grid grid-cols-2 gap-6">
+                        <div class="text-center p-4 border border-gray-100 rounded-xl">
+                            <i class="fas fa-certificate text-yellow-500 text-2xl mb-2"></i>
+                            <div class="font-bold">ISO 9001</div>
+                            <div class="text-xs text-gray-400">质量管理基础</div>
+                        </div>
+                        <div class="text-center p-4 border border-gray-100 rounded-xl">
+                            <i class="fas fa-network-wired text-blue-500 text-2xl mb-2"></i>
+                            <div class="font-bold">OCP标准</div>
+                            <div class="text-xs text-gray-400">开放计算项目接口规范</div>
+                        </div>
+                        <div class="text-center p-4 border border-gray-100 rounded-xl">
+                            <i class="fas fa-leaf text-green-500 text-2xl mb-2"></i>
+                            <div class="font-bold">GR-487-CORE</div>
+                            <div class="text-xs text-gray-400">电信/算力设备可靠性</div>
+                        </div>
+                        <div class="text-center p-4 border border-gray-100 rounded-xl">
+                            <i class="fas fa-microchip text-purple-500 text-2xl mb-2"></i>
+                            <div class="font-bold">NVIDIA RVL</div>
+                            <div class="text-xs text-gray-400">英伟达推荐供应商名单</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ROI 投资建议 -->
+    <section id="roi" class="py-20 container mx-auto px-6 text-center">
+        <h2 class="text-3xl font-bold mb-6">企业主投资决策路径</h2>
+        <p class="text-gray-600 max-w-2xl mx-auto mb-12">
+            冷板制造是一项重资产投入，其核心回报源于算力基建的长期稳定性需求。
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="p-8 border rounded-2xl">
+                <h4 class="font-bold text-xl mb-4 text-blue-600">成本分析</h4>
+                <p class="text-gray-500 text-sm">主要投入：真空炉 (300万+)、CNC组、检测线。模具成本较高，建议采用模块化设计降低库存。</p>
+            </div>
+            <div class="p-8 border rounded-2xl bg-blue-600 text-white">
+                <h4 class="font-bold text-xl mb-4">回报周期</h4>
+                <p class="text-blue-100 text-sm">良率若能维持在98%以上，基于当前AI服务器出货量，预计静态投资回收期为 2.5 - 4 年。</p>
+            </div>
+            <div class="p-8 border rounded-2xl text-red-600 border-red-200">
+                <h4 class="font-bold text-xl mb-4">关键风险</h4>
+                <p class="text-gray-500 text-sm">1. 液体兼容性导致的电化学腐蚀风险；2. 未来“两相流”技术迭代对单相冷板的冲击。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="bg-gray-900 text-gray-400 py-12 px-6">
+        <div class="container mx-auto text-center">
+            <p class="mb-4">GPU液冷冷板制造教育网站 - 算力基建指南 (2025版)</p>
+            <div class="flex justify-center space-x-6">
+                <a href="#" class="hover:text-white"><i class="fab fa-weixin"></i></a>
+                <a href="#" class="hover:text-white"><i class="fab fa-linkedin"></i></a>
+                <a href="#" class="hover:text-white"><i class="fas fa-envelope"></i></a>
+            </div>
+            <p class="mt-8 text-xs text-gray-600 italic">本内容基于行业公开数据及技术文档整理，仅供参考。</p>
+        </div>
+    </footer>
+
+</body>
+</html>

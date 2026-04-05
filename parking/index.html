@@ -1,0 +1,651 @@
+ 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Smart Mobility & Urban Infrastructure Analysis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Use Phosphor Icons for clean, academic look -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Noto+Serif+SC:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap');
+        
+        :root {
+            --primary: #0f172a; /* Slate 900 */
+            --accent: #0d9488; /* Teal 600 */
+            --bg-canvas: #f8fafc;
+            --safe-area-bottom: env(safe-area-inset-bottom);
+        }
+
+        body {
+            font-family: 'Inter', 'Noto Serif SC', serif;
+            background-color: var(--bg-canvas);
+            color: #334155;
+            -webkit-font-smoothing: antialiased;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* PhD Style Typography */
+        h1, h2, h3 {
+            font-family: 'Inter', 'Noto Serif SC', serif;
+            letter-spacing: -0.02em;
+        }
+        
+        .mono-text { font-family: 'JetBrains Mono', monospace; }
+
+        /* Mobile Animations */
+        .page-transition {
+            animation: slideUpFade 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        @keyframes slideUpFade {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .tap-scale:active { transform: scale(0.96); transition: transform 0.1s; }
+
+        /* Components */
+        .academic-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.05);
+            border-radius: 12px;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 280px;
+            width: 100%;
+        }
+
+        /* Mobile Slider Styling - Thicker for Thumb */
+        input[type=range] {
+            -webkit-appearance: none; 
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 24px;
+            width: 24px;
+            border-radius: 50%;
+            background: var(--accent);
+            margin-top: -10px;
+            box-shadow: 0 2px 6px rgba(13, 148, 136, 0.4);
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            height: 4px;
+            background: #cbd5e1;
+            border-radius: 2px;
+        }
+
+        /* Bottom Nav Safe Area */
+        .bottom-nav-safe {
+            padding-bottom: calc(60px + var(--safe-area-bottom));
+        }
+        .nav-bar {
+            padding-bottom: var(--safe-area-bottom);
+        }
+
+        /* Hide scrollbar for horizontal scrolling */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="flex flex-col h-screen overflow-hidden bg-slate-50 text-slate-800">
+
+    <!-- Top Bar (Mobile Optimized) -->
+    <header class="h-14 bg-white/90 backdrop-blur-md border-b border-slate-200 flex justify-between items-center px-4 fixed top-0 w-full z-30">
+        <div class="flex items-center space-x-2">
+            <div class="w-2 h-6 bg-teal-600 rounded-sm"></div>
+            <span class="font-bold text-sm text-slate-900 tracking-tight" data-i18n="appTitleShort">Strategic Analysis</span>
+        </div>
+        <button id="lang-toggle" class="tap-scale flex items-center space-x-1 px-3 py-1.5 bg-slate-100 rounded-full text-xs font-semibold text-slate-700 border border-slate-200">
+            <i class="ph ph-translate text-base"></i>
+            <span id="lang-label">CN</span>
+        </button>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 overflow-y-auto mt-14 bottom-nav-safe scroll-smooth" id="main-content">
+        
+        <!-- SECTION 1: DASHBOARD -->
+        <div id="dashboard" class="content-section px-4 py-6 space-y-6 page-transition">
+            <header>
+                <div class="text-[10px] font-bold text-teal-600 uppercase tracking-widest mb-1">Executive Brief</div>
+                <h2 class="text-2xl font-bold text-slate-900 leading-tight" data-i18n="execTitle">Strategic Abstract</h2>
+                <p class="text-slate-600 text-sm mt-3 leading-relaxed" data-i18n="execSummary">
+                    Feasibility study on 'End-to-End Turnkey' parking management for Johor. Leveraging local compute capital & BOO models to address fiscal leakage.
+                </p>
+            </header>
+
+            <!-- Horizontal Scroll Cards for Mobile -->
+            <div class="flex overflow-x-auto space-x-4 pb-4 -mx-4 px-4 no-scrollbar snap-x snap-mandatory">
+                <!-- KPI 1 -->
+                <div class="academic-card p-5 min-w-[85vw] md:min-w-[300px] snap-center border-l-4 border-teal-600">
+                    <div class="flex justify-between items-start">
+                        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest" data-i18n="kpi1Title">BENCHMARKS</div>
+                        <i class="ph ph-globe text-teal-600 text-xl"></i>
+                    </div>
+                    <div class="mt-2 text-xl font-serif font-bold text-slate-800">Monash & Sutton</div>
+                    <div class="mt-2 text-xs text-slate-500 leading-relaxed" data-i18n="kpi1Desc">
+                        OECD cases (30+ yrs) validate fiscal stability of outsourcing.
+                    </div>
+                </div>
+                <!-- KPI 2 -->
+                <div class="academic-card p-5 min-w-[85vw] md:min-w-[300px] snap-center border-l-4 border-indigo-600">
+                    <div class="flex justify-between items-start">
+                        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest" data-i18n="kpi2Title">TECH ARBITRAGE</div>
+                        <i class="ph ph-cpu text-indigo-600 text-xl"></i>
+                    </div>
+                    <div class="mt-2 text-xl font-serif font-bold text-slate-800">Edge AI + CapEx</div>
+                    <div class="mt-2 text-xs text-slate-500 leading-relaxed" data-i18n="kpi2Desc">
+                        Asymmetric advantage via local compute & capital leverage.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart -->
+            <div class="academic-card p-5">
+                <h3 class="text-sm font-bold text-slate-800 mb-4" data-i18n="chartTrendTitle">Macro Trend</h3>
+                <div class="chart-wrapper">
+                    <canvas id="macroTrendChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Contact Card (Mobile Optimized) -->
+            <div class="academic-card p-4 bg-slate-800 text-white mt-4 relative overflow-hidden">
+                <div class="relative z-10 flex items-center justify-between">
+                    <div>
+                        <div class="text-[10px] text-slate-400 uppercase tracking-wide mb-1" data-i18n="contactHeader">PRINCIPAL ANALYST</div>
+                        <div class="font-bold text-lg">Ivan</div>
+                        <a href="mailto:ivan@dcdeeptech.com" class="text-xs text-teal-400 font-mono mt-1 block">ivan@dcdeeptech.com</a>
+                    </div>
+                    <div class="w-10 h-10 rounded-full bg-teal-600 flex items-center justify-center">
+                        <i class="ph ph-envelope-simple text-xl"></i>
+                    </div>
+                </div>
+                <!-- Decoration -->
+                <div class="absolute -bottom-6 -right-6 w-24 h-24 bg-white/5 rounded-full"></div>
+            </div>
+        </div>
+
+        <!-- SECTION 2: BENCHMARKS -->
+        <div id="benchmarks" class="content-section hidden px-4 py-6 space-y-6 page-transition">
+            <header>
+                <h2 class="text-2xl font-bold text-slate-900" data-i18n="benchTitle">Global Benchmarks</h2>
+                <p class="text-slate-600 text-sm mt-2" data-i18n="benchSub">Deconstructing paradigms from Aus, UK & NZ.</p>
+            </header>
+
+            <div id="benchmark-list" class="space-y-4">
+                <!-- Populated via JS -->
+            </div>
+        </div>
+
+        <!-- SECTION 3: JOHOR STUDY -->
+        <div id="johor-study" class="content-section hidden px-4 py-6 space-y-6 page-transition">
+            <header>
+                <h2 class="text-2xl font-bold text-slate-900" data-i18n="johorTitle">Johor Feasibility</h2>
+                <p class="text-slate-600 text-sm mt-2" data-i18n="johorSub">Structural inefficiencies vs. digital intervention.</p>
+            </header>
+
+            <!-- Interactive Accordion Style Cards -->
+            <div class="space-y-4">
+                <div class="academic-card p-5 border-l-4 border-rose-500">
+                    <h3 class="text-base font-bold text-slate-800 flex items-center mb-3">
+                        <i class="ph ph-warning-circle text-rose-500 mr-2 text-lg"></i>
+                        <span data-i18n="probTitle">Inefficiencies</span>
+                    </h3>
+                    <div class="space-y-4">
+                        <div>
+                            <div class="text-xs font-bold text-slate-900 uppercase mb-1" data-i18n="prob1Head">Informal Rent-Seeking</div>
+                            <p class="text-xs text-slate-600 leading-relaxed" data-i18n="prob1Text">'Jaga Kereta' causes direct revenue leakage and market failure.</p>
+                        </div>
+                        <div class="w-full h-px bg-slate-100"></div>
+                        <div>
+                            <div class="text-xs font-bold text-slate-900 uppercase mb-1" data-i18n="prob2Head">Enforcement Arbitrage</div>
+                            <p class="text-xs text-slate-600 leading-relaxed" data-i18n="prob2Text">Foreign vehicles enjoy 'immunity' without data protocols.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="academic-card p-5 border-l-4 border-teal-500">
+                    <h3 class="text-base font-bold text-slate-800 flex items-center mb-3">
+                        <i class="ph ph-lightbulb text-teal-500 mr-2 text-lg"></i>
+                        <span data-i18n="solTitle">Intervention</span>
+                    </h3>
+                    <div class="space-y-4">
+                        <div>
+                            <div class="text-xs font-bold text-slate-900 uppercase mb-1" data-i18n="sol1Head">Sovereign Edge Compute</div>
+                            <p class="text-xs text-slate-600 leading-relaxed" data-i18n="sol1Text">Inference at Edge bypasses data sovereignty & latency issues.</p>
+                        </div>
+                        <div class="w-full h-px bg-slate-100"></div>
+                        <div>
+                            <div class="text-xs font-bold text-slate-900 uppercase mb-1" data-i18n="sol2Head">BOO Structure</div>
+                            <p class="text-xs text-slate-600 leading-relaxed" data-i18n="sol2Text">Internalizing CapEx to improve municipal balance sheet.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="academic-card p-5">
+                    <h3 class="text-sm font-bold text-slate-800 mb-4 text-center" data-i18n="radarTitle">Capability Model</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="capabilityRadar"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 4: FINANCIAL MODEL -->
+        <div id="financial-model" class="content-section hidden px-4 py-6 space-y-6 page-transition">
+            <header>
+                <h2 class="text-2xl font-bold text-slate-900" data-i18n="finTitle">Sensitivity Model</h2>
+                <p class="text-slate-600 text-sm mt-2" data-i18n="finSub">Assessing marginal contribution of Tech Efficacy.</p>
+            </header>
+
+            <!-- Interactive Sliders -->
+            <div class="academic-card p-5 bg-white space-y-6">
+                <!-- Slider 1 -->
+                <div>
+                    <div class="flex justify-between mb-2">
+                        <label class="text-xs font-bold text-slate-700 uppercase">Total Spots</label>
+                        <span id="val-spots" class="text-xs font-mono font-bold text-teal-600 bg-teal-50 px-2 rounded">15,000</span>
+                    </div>
+                    <input type="range" id="sim-spots" min="1000" max="50000" step="1000" value="15000" class="w-full">
+                </div>
+                <!-- Slider 2 -->
+                <div>
+                    <div class="flex justify-between mb-2">
+                        <label class="text-xs font-bold text-slate-700 uppercase">Hourly Rate (MYR)</label>
+                        <span id="val-rate" class="text-xs font-mono font-bold text-teal-600 bg-teal-50 px-2 rounded">1.20</span>
+                    </div>
+                    <input type="range" id="sim-rate" min="0.5" max="5.0" step="0.1" value="1.2" class="w-full">
+                </div>
+                <!-- Slider 3 -->
+                <div>
+                    <div class="flex justify-between mb-2">
+                        <label class="text-xs font-bold text-slate-700 uppercase">Tech Delta (ΔE)</label>
+                        <span id="val-ai" class="text-xs font-mono font-bold text-teal-600 bg-teal-50 px-2 rounded">+40%</span>
+                    </div>
+                    <input type="range" id="sim-ai" min="0" max="150" step="10" value="40" class="w-full">
+                </div>
+            </div>
+
+            <!-- Result -->
+            <div class="academic-card p-5 text-center">
+                 <div class="text-[10px] text-slate-400 uppercase tracking-widest mb-1">Incremental Value (Delta)</div>
+                 <div id="revenue-delta" class="text-3xl font-serif font-bold text-teal-600">+ 0.0M</div>
+                 <div class="chart-wrapper mt-4 h-48">
+                    <canvas id="simChart"></canvas>
+                 </div>
+            </div>
+        </div>
+
+        <!-- SECTION 5: MATRIX -->
+        <div id="matrix" class="content-section hidden px-4 py-6 space-y-6 page-transition">
+            <header>
+                <h2 class="text-2xl font-bold text-slate-900" data-i18n="mapTitle">Implementation</h2>
+                <p class="text-slate-600 text-sm mt-2" data-i18n="mapSub">Deployment roadmap.</p>
+            </header>
+
+            <div class="relative border-l-2 border-slate-200 ml-4 space-y-8 py-2">
+                <!-- Phase 1 -->
+                <div class="ml-6 relative">
+                    <div class="absolute -left-[31px] top-1 w-3 h-3 rounded-full bg-white border-2 border-slate-400"></div>
+                    <h3 class="text-sm font-bold text-slate-800" data-i18n="ph1Title">Phase 1: Alliance (Q1-Q2)</h3>
+                    <div class="academic-card p-4 mt-2 bg-white">
+                        <p class="text-xs text-slate-600" data-i18n="ph1Desc">Sign MOU with potential partners.</p>
+                    </div>
+                </div>
+                <!-- Phase 2 -->
+                <div class="ml-6 relative">
+                    <div class="absolute -left-[31px] top-1 w-3 h-3 rounded-full bg-white border-2 border-teal-500"></div>
+                    <h3 class="text-sm font-bold text-teal-700" data-i18n="ph2Title">Phase 2: PoC (Q3)</h3>
+                    <div class="academic-card p-4 mt-2 bg-teal-50 border-teal-100">
+                        <p class="text-xs text-slate-600" data-i18n="ph2Desc">Johor CBD Pilot. Edge LPR tuning.</p>
+                    </div>
+                </div>
+                <!-- Phase 3 -->
+                <div class="ml-6 relative">
+                    <div class="absolute -left-[31px] top-1 w-3 h-3 rounded-full bg-white border-2 border-slate-400"></div>
+                    <h3 class="text-sm font-bold text-slate-800" data-i18n="ph3Title">Phase 3: Scale (Y2+)</h3>
+                    <div class="academic-card p-4 mt-2 bg-white">
+                        <p class="text-xs text-slate-600" data-i18n="ph3Desc">State-wide delivery. Asset Securitization.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bottom Navigation (The Thumb Zone) -->
+    <nav class="nav-bar fixed bottom-0 w-full bg-white border-t border-slate-200 flex justify-around items-center px-2 py-2 z-40 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+        <button class="nav-item active tap-scale flex flex-col items-center justify-center w-16 h-14 space-y-1 text-slate-400 transition-colors" data-target="dashboard">
+            <i class="ph ph-house text-2xl mb-0.5"></i>
+            <span class="text-[9px] font-medium">Summary</span>
+        </button>
+        <button class="nav-item tap-scale flex flex-col items-center justify-center w-16 h-14 space-y-1 text-slate-400 transition-colors" data-target="benchmarks">
+            <i class="ph ph-globe text-2xl mb-0.5"></i>
+            <span class="text-[9px] font-medium">Global</span>
+        </button>
+        <button class="nav-item tap-scale flex flex-col items-center justify-center w-16 h-14 space-y-1 text-slate-400 transition-colors" data-target="johor-study">
+            <i class="ph ph-map-pin text-2xl mb-0.5"></i>
+            <span class="text-[9px] font-medium">Johor</span>
+        </button>
+        <button class="nav-item tap-scale flex flex-col items-center justify-center w-16 h-14 space-y-1 text-slate-400 transition-colors" data-target="financial-model">
+            <i class="ph ph-chart-line-up text-2xl mb-0.5"></i>
+            <span class="text-[9px] font-medium">Model</span>
+        </button>
+        <button class="nav-item tap-scale flex flex-col items-center justify-center w-16 h-14 space-y-1 text-slate-400 transition-colors" data-target="matrix">
+            <i class="ph ph-steps text-2xl mb-0.5"></i>
+            <span class="text-[9px] font-medium">Roadmap</span>
+        </button>
+    </nav>
+
+    <!-- Logic Layer -->
+    <script>
+        // --- PHD LEVEL DICTIONARY ---
+        const i18n = {
+            zh: {
+                appTitleShort: "城市基建分析",
+                contactHeader: "首席分析师 (PRINCIPAL)",
+                execTitle: "执行战略摘要",
+                execSummary: "本报告分析“端到端交钥匙”停车管理模式在柔佛市场的可行性。利用本地算力与BOO模式，解决财政流失。",
+                kpi1Title: "全球基准",
+                kpi1Desc: "OECD市场长期特许经营案例验证了外包的财政稳定性。",
+                kpi2Title: "技术套利",
+                kpi2Desc: "利用本地算力低延迟与资本杠杆构建非对称优势。",
+                chartTrendTitle: "宏观趋势：技术融合度",
+                benchTitle: "全球市场对标",
+                benchSub: "解构澳新与英国特许经营协议范式。",
+                johorTitle: "柔佛技术经济研究",
+                johorSub: "结构性低效与数字化干预分析。",
+                probTitle: "结构性失灵",
+                prob1Head: "非正规寻租",
+                prob1Text: "非法看车人导致市政收入直接流失。",
+                prob2Head: "跨境执法套利",
+                prob2Text: "缺乏数据协议导致跨境车辆享有违停豁免。",
+                solTitle: "技术干预",
+                sol1Head: "主权边缘计算",
+                sol1Text: "边缘推理规避数据主权与延迟风险。",
+                sol2Head: "BOO 资本结构",
+                sol2Text: "内部化CapEx，优化市政资产负债表。",
+                radarTitle: "能力多维评估",
+                finTitle: "财务敏感性模型",
+                finSub: "评估技术效能的边际贡献。",
+                mapTitle: "实施矩阵",
+                mapSub: "分阶段部署路线图。",
+                ph1Title: "Phase 1: 联盟 (Q1-Q2)",
+                ph1Desc: "与潜在合作伙伴签署MOU",
+                ph2Title: "Phase 2: 验证 (Q3)",
+                ph2Desc: "柔佛CBD试点，边缘LPR校准。",
+                ph3Title: "Phase 3: 交付 (Year 2+)",
+                ph3Desc: "全州部署，探索资产证券化。",
+                labels: {
+                    radar: ['成熟度', '资本', '协同', '主权', '合规', '低延迟'],
+                    simManual: '基准',
+                    simAI: '技术增强'
+                }
+            },
+            en: {
+                appTitleShort: "Strategic Analysis",
+                contactHeader: "PRINCIPAL ANALYST",
+                execTitle: "Strategic Abstract",
+                execSummary: "Feasibility study on 'Turnkey' parking for Johor. Leveraging local compute & BOO models to address leakage.",
+                kpi1Title: "GLOBAL BENCHMARKS",
+                kpi1Desc: "OECD cases validate fiscal stability of outsourcing.",
+                kpi2Title: "TECH ARBITRAGE",
+                kpi2Desc: "Asymmetric advantage via local compute & capital leverage.",
+                chartTrendTitle: "Macro Trend: Tech Integration",
+                benchTitle: "Global Benchmarks",
+                benchSub: "Deconstructing paradigms from Aus, UK & NZ.",
+                johorTitle: "Johor Feasibility",
+                johorSub: "Structural inefficiencies vs. digital intervention.",
+                probTitle: "Inefficiencies",
+                prob1Head: "Informal Rent-Seeking",
+                prob1Text: "'Jaga Kereta' causes direct revenue leakage.",
+                prob2Head: "Enforcement Arbitrage",
+                prob2Text: "Foreign vehicles enjoy 'immunity' without data protocols.",
+                solTitle: "Intervention",
+                sol1Head: "Sovereign Edge Compute",
+                sol1Text: "Inference at Edge bypasses data sovereignty issues.",
+                sol2Head: "BOO Structure",
+                sol2Text: "Internalizing CapEx to improve municipal balance sheet.",
+                radarTitle: "Capability Model",
+                finTitle: "Sensitivity Model",
+                finSub: "Assessing marginal contribution of Tech Efficacy.",
+                mapTitle: "Implementation",
+                mapSub: "Deployment roadmap.",
+                ph1Title: "Phase 1: Alliance (Q1-Q2)",
+                ph1Desc: "Sign MOU with potential partners.",
+                ph2Title: "Phase 2: PoC (Q3)",
+                ph2Desc: "Johor CBD Pilot. Edge LPR tuning.",
+                ph3Title: "Phase 3: Scale (Y2+)",
+                ph3Desc: "State-wide delivery. Asset Securitization.",
+                labels: {
+                    radar: ['Maturity', 'Capital', 'Synergy', 'Sovereignty', 'Compliance', 'Latency'],
+                    simManual: 'Baseline',
+                    simAI: 'Tech-Enabled'
+                }
+            }
+        };
+
+        // --- DATA STORE ---
+        const benchmarkData = [
+            {
+                id: 'aus',
+                name: { zh: 'Australia (Monash)', en: 'Australia (Monash)' },
+                details: {
+                    zh: '自1995年起采用外包。Tenix Solutions (现Duncan) 提供SLA驱动的合规管理，确立了“基础设施即服务”先例。',
+                    en: 'Outsourced since 1995. Tenix Solutions (Duncan) provides SLA-driven compliance, setting the "Infrastructure as a Service" precedent.'
+                }
+            },
+            {
+                id: 'uk',
+                name: { zh: 'UK (Saba/Sutton)', en: 'UK (Saba/Sutton)' },
+                details: {
+                    zh: '2026年Sutton合同展示了高技术权重。关键在于数字化平台与市政ERP系统的无缝集成。',
+                    en: 'The 2026 Sutton contract shows high tech weighting. Key lies in seamless integration of digital platforms with municipal ERPs.'
+                }
+            }
+        ];
+
+        let currentLang = 'en';
+        let charts = {};
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initApp();
+        });
+
+        function initApp() {
+            setupNavigation();
+            setupLangToggle();
+            initCharts();
+            renderBenchmarks();
+            initSim();
+            updateLanguageUI();
+        }
+
+        // --- MOBILE NAVIGATION LOGIC ---
+        function setupNavigation() {
+            const navs = document.querySelectorAll('.nav-item');
+            const sections = document.querySelectorAll('.content-section');
+
+            navs.forEach(nav => {
+                nav.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    // Update Icons Color
+                    navs.forEach(n => {
+                        n.classList.remove('text-teal-600', 'active');
+                        n.classList.add('text-slate-400');
+                    });
+                    nav.classList.remove('text-slate-400');
+                    nav.classList.add('text-teal-600', 'active');
+                    
+                    const target = nav.dataset.target;
+                    
+                    // Switch Section
+                    sections.forEach(s => {
+                        s.classList.add('hidden');
+                        s.classList.remove('page-transition');
+                    });
+                    
+                    const el = document.getElementById(target);
+                    el.classList.remove('hidden');
+                    // Re-trigger animation
+                    void el.offsetWidth; 
+                    el.classList.add('page-transition');
+
+                    // Scroll to top
+                    document.getElementById('main-content').scrollTop = 0;
+                });
+            });
+
+            // Set initial active state style
+            const activeNav = document.querySelector('.nav-item.active');
+            if(activeNav) {
+                activeNav.classList.remove('text-slate-400');
+                activeNav.classList.add('text-teal-600');
+            }
+        }
+
+        function setupLangToggle() {
+            const btn = document.getElementById('lang-toggle');
+            btn.addEventListener('click', () => {
+                currentLang = currentLang === 'zh' ? 'en' : 'zh';
+                document.getElementById('lang-label').innerText = currentLang === 'zh' ? 'EN' : 'CN';
+                updateLanguageUI();
+            });
+        }
+
+        function updateLanguageUI() {
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.dataset.i18n;
+                if(i18n[currentLang][key]) el.innerText = i18n[currentLang][key];
+            });
+            updateCharts();
+            renderBenchmarks();
+            updateSim();
+        }
+
+        function initCharts() {
+            // Trend
+            const ctx1 = document.getElementById('macroTrendChart').getContext('2d');
+            charts.trend = new Chart(ctx1, {
+                type: 'line',
+                data: {
+                    labels: ['95', '05', '15', '25', '30'],
+                    datasets: [
+                        { label: 'Outsourcing', data: [20, 45, 70, 85, 92], borderColor: '#0f172a', backgroundColor: 'rgba(15, 23, 42, 0.05)', fill: true, tension: 0.4, pointRadius: 0 },
+                        { label: 'Tech', data: [5, 20, 45, 80, 95], borderColor: '#0d9488', borderDash: [5,5], tension: 0.4, pointRadius: 0 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { display: false }, x: { grid: { display: false } } }
+                }
+            });
+
+            // Radar
+            const ctx2 = document.getElementById('capabilityRadar').getContext('2d');
+            charts.radar = new Chart(ctx2, {
+                type: 'radar',
+                data: {
+                    labels: [],
+                    datasets: [
+                        { label: 'Trad', data: [90, 60, 40, 50, 60, 40], borderColor: '#94a3b8', borderWidth: 1, backgroundColor: 'rgba(148, 163, 184, 0.1)' },
+                        { label: 'Us', data: [50, 90, 95, 95, 90, 90], borderColor: '#0d9488', borderWidth: 2, backgroundColor: 'rgba(13, 148, 136, 0.2)' }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { r: { ticks: { display: false }, pointLabels: { font: { size: 10 } } } }
+                }
+            });
+
+            // Sim
+            const ctx3 = document.getElementById('simChart').getContext('2d');
+            charts.sim = new Chart(ctx3, {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        data: [0, 0],
+                        backgroundColor: ['#cbd5e1', '#0d9488'],
+                        borderRadius: 4,
+                        barThickness: 40
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { display: false }, x: { grid: { display: false } } }
+                }
+            });
+        }
+
+        function updateCharts() {
+            const l = i18n[currentLang].labels;
+            charts.radar.data.labels = l.radar;
+            charts.radar.update();
+            charts.sim.data.labels = [l.simManual, l.simAI];
+            charts.sim.update();
+        }
+
+        function renderBenchmarks() {
+            const list = document.getElementById('benchmark-list');
+            list.innerHTML = '';
+            benchmarkData.forEach(item => {
+                const el = document.createElement('div');
+                el.className = 'academic-card p-5 bg-white';
+                el.innerHTML = `
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="font-bold text-slate-800">${item.name[currentLang]}</h3>
+                        <i class="ph ph-arrow-right text-slate-300"></i>
+                    </div>
+                    <p class="text-xs text-slate-600 leading-relaxed">${item.details[currentLang]}</p>
+                `;
+                list.appendChild(el);
+            });
+        }
+
+        function initSim() {
+            ['sim-spots', 'sim-rate', 'sim-ai'].forEach(id => {
+                document.getElementById(id).addEventListener('input', updateSim);
+            });
+        }
+
+        function updateSim() {
+            const spots = parseInt(document.getElementById('sim-spots').value);
+            const rate = parseFloat(document.getElementById('sim-rate').value);
+            const efficiency = parseInt(document.getElementById('sim-ai').value);
+
+            document.getElementById('val-spots').innerText = (spots/1000).toFixed(0) + 'k';
+            document.getElementById('val-rate').innerText = rate.toFixed(2);
+            document.getElementById('val-ai').innerText = `+${efficiency}%`;
+
+            const opHours = 300 * 8;
+            const occ = 0.65;
+            const baseCap = 0.35;
+            
+            const pot = spots * opHours * occ * rate;
+            const manual = pot * baseCap;
+            const ai = pot * Math.min(0.98, baseCap * (1 + efficiency/100));
+            const delta = ai - manual;
+
+            document.getElementById('revenue-delta').innerText = `+ ${(delta/1000000).toFixed(1)}M`;
+
+            charts.sim.data.datasets[0].data = [manual, ai];
+            charts.sim.update();
+        }
+
+    </script>
+</body>
+</html>

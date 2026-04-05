@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CDU 工艺博士级指南及华南供应链全景</title>
+    <style>
+        :root {
+            --primary-color: #003366;
+            --secondary-color: #00a8e8;
+            --accent-color: #f4f7f6;
+            --text-color: #333;
+            --light-gray: #e0e0e0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            scroll-behavior: smooth;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            letter-spacing: 1px;
+        }
+
+        header p {
+            font-weight: 300;
+            opacity: 0.9;
+            font-size: 1.2rem;
+        }
+
+        nav {
+            background: #fff;
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            z-index: 1000;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--primary-color);
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: var(--secondary-color);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        section {
+            margin-bottom: 4rem;
+            padding-top: 2rem;
+        }
+
+        h2 {
+            border-left: 5px solid var(--secondary-color);
+            padding-left: 1rem;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .card {
+            background: var(--accent-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--light-gray);
+        }
+
+        .card h3 {
+            margin-top: 0;
+            color: var(--secondary-color);
+        }
+
+        .badge {
+            display: inline-block;
+            background: var(--primary-color);
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        table th, table td {
+            border: 1px solid var(--light-gray);
+            padding: 12px;
+            text-align: left;
+        }
+
+        table th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .footer {
+            background: #222;
+            color: #ccc;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 4rem;
+        }
+
+        .highlight {
+            color: var(--secondary-color);
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            header h1 { font-size: 1.8rem; }
+            nav { gap: 1rem; font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>CDU 工艺博士级指南及华南供应链</h1>
+    <p>液冷核心技术 · 流体力学建模 · 华南精密制造集群</p>
+</header>
+
+<nav>
+    <a href="#tech-guide">工艺技术</a>
+    <a href="#supply-chain">供应链分布</a>
+    <a href="#regional">区域优势</a>
+    <a href="#expert-advice">专家建议</a>
+</nav>
+
+<div class="container">
+
+    <!-- 第一部分：技术指南 -->
+    <section id="tech-guide">
+        <h2>一、CDU 核心工艺（博士级深度）</h2>
+        <p>冷量分配单元 (CDU) 不仅仅是水泵和换热器的集合，它是高密度算力中心热管理的核心逻辑中心。</p>
+        
+        <div class="card-grid">
+            <div class="card">
+                <span class="badge">流体力学</span>
+                <h3>动态压差补偿 (DP Control)</h3>
+                <p>利用变频驱动 (VFD) 泵组与模糊 PID 算法，实时监测二次侧支路阻力，确保在 IT 负载波动时，每个冷板 (Cold Plate) 的流量偏差控制在 ±5% 以内。</p>
+            </div>
+            <div class="card">
+                <span class="badge">材料科学</span>
+                <h3>电化学腐蚀防治</h3>
+                <p>研究二次侧冷媒（如水二醇）对不同金属（不锈钢/铜）的电化序影响。重点关注 BPHE 换热器在长期运行下的晶间腐蚀与密封件的溶胀率。</p>
+            </div>
+            <div class="card">
+                <span class="badge">热力学</span>
+                <h3>气液平衡与补偿</h3>
+                <p>精密计算膨胀罐容积，利用气垫平衡技术抑制泵入口空化效应，确保系统在 -20℃ 至 60℃ 环境下的容积补偿能力。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 第二部分：供应链 -->
+    <section id="supply-chain">
+        <h2>二、华南地区核心供应链名录</h2>
+        <p>华南（粤港澳大湾区）拥有全球最完整的液冷产业链条，涵盖了从底层泵阀到整机集成的全部环节。</p>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>类别</th>
+                    <th>代表性供应商（华南区）</th>
+                    <th>技术要点</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>整机集成</strong></td>
+                    <td>维谛技术 (Vertiv)、英维克、华为数字能源</td>
+                    <td>系统级可靠性、控制逻辑算法、大规模量产</td>
+                </tr>
+                <tr>
+                    <td><strong>核心泵组</strong></td>
+                    <td>南方泵业 (Foshan)、格兰富 (驻深办)</td>
+                    <td>屏蔽泵技术、低震动、高 MTBF</td>
+                </tr>
+                <tr>
+                    <td><strong>换热器</strong></td>
+                    <td>申菱环境、麦克维尔 (Huizhou)</td>
+                    <td>高换热系数板换、耐腐蚀工艺</td>
+                </tr>
+                <tr>
+                    <td><strong>电控系统</strong></td>
+                    <td>汇川技术 (Inovance)、万福电子</td>
+                    <td>车规级 PLC、变频控制、传感器集成</td>
+                </tr>
+                <tr>
+                    <td><strong>流体配件</strong></td>
+                    <td>史陶比尔、派克汉尼汾 (GZ Office)</td>
+                    <td>无滴漏快换接头、高压软管</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- 第三部分：区域分布 -->
+    <section id="regional">
+        <h2>三、华南产业集群空间分布</h2>
+        <div class="card-grid">
+            <div class="card">
+                <h3 style="color:var(--primary-color)">深圳：研发与算法中心</h3>
+                <p>以南山、龙坂片区为核心，聚集了大量的电控逻辑研发、系统软件编写及全球化供应链总部。</p>
+            </div>
+            <div class="card">
+                <h3 style="color:var(--primary-color)">东莞/佛山：精密制造基座</h3>
+                <p>东莞松山湖与佛山顺德提供了强大的钣金加工、管路焊接以及热泵/压缩机的大规模生产能力。</p>
+            </div>
+            <div class="card">
+                <h3 style="color:var(--primary-color)">广州：检测与流体研究</h3>
+                <p>依托黄埔及番禺，拥有众多流体机械国家重点实验室及 TUV/SGS 等第三方国际认证机构。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 第四部分：专家选型建议 -->
+    <section id="expert-advice">
+        <h2>四、博士级专家选型建议</h2>
+        <div style="background: white; border: 1px solid var(--primary-color); padding: 2rem; border-radius: 8px;">
+            <ul>
+                <li><span class="highlight">冗余架构：</span> 必须采用 <span class="highlight">N+1</span> 泵冗余，且支持控制器在线热替换。</li>
+                <li><span class="highlight">水质标准：</span> 二次侧电导率应维持在 <span class="highlight">&lt;100μS/cm</span>，必须集成在线去离子装置。</li>
+                <li><span class="highlight">数字孪生：</span> 建议在 CDU 部署时，利用华南供应链的传感优势，建立实时的数字孪生模型进行能效预测。</li>
+                <li><span class="highlight">合规性：</span> 针对出口市场，需在深圳本地完成 UL62368-1 与 CE-LVD 相关安全认证测试。</li>
+            </ul>
+        </div>
+    </section>
+
+</div>
+
+<div class="footer">
+    <p>&copy; 2023 CDU 技术研究组 · 华南液冷生态链 · 博士级工程指南</p>
+    <p style="font-size: 0.8rem;">本页面为单 HTML 架构演示，仅供学术研究与工程参考使用。</p>
+</div>
+
+<script>
+    // 简单的导航栏高亮交互
+    window.addEventListener('scroll', () => {
+        let current = '';
+        const sections = document.querySelectorAll('section');
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop;
+            if (pageYOffset >= sectionTop - 100) {
+                current = section.getAttribute('id');
+            }
+        });
+
+        document.querySelectorAll('nav a').forEach(a => {
+            a.style.color = a.getAttribute('href').includes(current) ? '#00a8e8' : '#003366';
+        });
+    });
+</script>
+
+</body>
+</html>

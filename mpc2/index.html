@@ -1,0 +1,443 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MPC vs PID — Supply Water Temp Optimization (PUE under Safety Constraints)</title>
+
+    <!-- Tailwind (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- React 18 UMD -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+
+    <!-- Recharts UMD -->
+    <script src="https://unpkg.com/recharts/umd/Recharts.min.js"></script>
+
+    <!-- Babel (for JSX in a single file) -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+      /* Zinc/Slate-ish industrial */
+      :root {
+        --bg0: #0b1220;      /* deep slate */
+        --bg1: #0f172a;      /* slate-900 */
+        --card: #0b1324;
+        --line: rgba(148,163,184,.18);
+        --text: rgba(226,232,240,.92);
+        --muted: rgba(148,163,184,.85);
+        --accent: rgba(56,189,248,.95); /* sky */
+        --warn: rgba(248,113,113,.95);  /* red */
+        --ok: rgba(52,211,153,.92);     /* emerald */
+      }
+      html, body { height: 100%; background: var(--bg0); color: var(--text); }
+      .card {
+        background: linear-gradient(180deg, rgba(15,23,42,.92), rgba(2,6,23,.82));
+        border: 1px solid var(--line);
+        box-shadow: 0 0 0 1px rgba(2,6,23,.2) inset, 0 12px 40px rgba(0,0,0,.25);
+      }
+      .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+      .gridline {
+        background-image:
+          linear-gradient(to right, rgba(148,163,184,.08) 1px, transparent 1px),
+          linear-gradient(to bottom, rgba(148,163,184,.08) 1px, transparent 1px);
+        background-size: 28px 28px;
+      }
+    </style>
+  </head>
+
+  <body class="h-full">
+    <div id="root" class="h-full"></div>
+
+    <script type="text/babel">
+      const {
+        ResponsiveContainer,
+        ComposedChart,
+        Line,
+        XAxis,
+        YAxis,
+        CartesianGrid,
+        Tooltip,
+        Legend,
+        ReferenceLine,
+        Area
+      } = Recharts;
+
+      // ---------- Utility ----------
+      const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+      const round = (v, d=1) => Number(v.toFixed(d));
+
+      // "Chiller load" proxy: higher supply temp -> lower lift -> lower load.
+      // Savings is computed relative to PID baseline 18C.
+      function chillerSavingsPct(supplyTempC, baseline=18) {
+        // A simple, monotonic proxy: each +1C yields diminishing gains.
+        // Map delta 0..8C -> ~0..35% (typical story value), saturate beyond.
+        const delta = clamp(supplyTempC - baseline, 0, 10);
+        const pct = 1 - Math.exp(-0.22 * delta); // 0..~0.89
+        return clamp(pct * 39, 0, 40); // cap ~40%
+      }
+
+      // PUE proxy: inversely correlated with supply temperature (via chiller load),
+      // but still bounded and sensitive to compute load.
+      function pueFromSupplyTemp({ supplyTempC, itLoadKW, ambientC }) {
+        // Base site overhead + chiller component (dominant) + minor ambient penalty.
+        // Chiller component decreases as supply temp rises.
+        const overhead = 0.06; // pumps, fans, misc
+        const ambientPenalty = clamp((ambientC - 28) * 0.002, 0, 0.06);
+
+        // Chiller term: monotonic decreasing with supplyTempC
+        const chill = 0.34 * Math.exp(-0.12 * (supplyTempC - 18)); // ~0.34 at 18C; ~0.20 at 24C; ~0.16 at 26C
+
+        // IT load affects relative overhead slightly (lighter load -> worse PUE)
+        const loadFactor = clamp(1.00 + (180 - itLoadKW) * 0.0007, 0.98, 1.08);
+
+        const pue = 1.00 + (overhead + ambientPenalty + chill) * loadFactor;
+        return clamp(pue, 1.05, 1.55);
+      }
+
+      // ---------- Digital Twin "Rack Physics" ----------
+      // Represent a rack as 10 vertical zones (bottom->top).
+      // PID: stratified (hotter near top) and more variance.
+      // MPC: more uniform due to better setpoint placement + stable thermal margin.
+      function synthRackZones({ mode, supplyTempC, itLoadKW, ambientC, chipMaxC }) {
+        const zones = 10;
+
+        // baseline air/liquid coupling proxy (higher supply temp slightly increases mean)
+        const mean = chipMaxC - 4.0;
+
+        // stratification magnitude grows with load and with more conservative cooling logic (PID)
+        const stratBase = (mode === "PID") ? 7.5 : 2.5;
+        const stratLoad = (itLoadKW - 140) * ((mode === "PID") ? 0.03 : 0.015);
+        const strat = clamp(stratBase + stratLoad, (mode === "PID") ? 5 : 1.8, (mode === "PID") ? 12 : 5);
+
+        // noise (PID larger)
+        const noiseAmp = (mode === "PID") ? 1.2 : 0.45;
+
+        const arr = [];
+        for (let i = 0; i < zones; i++) {
+          const z = i / (zones - 1); // 0 bottom -> 1 top
+          const stratOffset = (z - 0.35) * strat; // top hotter
+          const noise = (Math.random() - 0.5) * 2 * noiseAmp;
+          const temp = clamp(mean + stratOffset + noise, 25, 90);
+          arr.push(temp);
+        }
+
+        // Make MPC look "uniform": softly pull zones toward mean
+        if (mode === "MPC") {
+          const m = arr.reduce((a,b)=>a+b,0)/arr.length;
+          for (let i=0;i<arr.length;i++){
+            arr[i] = 0.65*arr[i] + 0.35*m;
+          }
+        }
+        return arr;
+      }
+
+      function tempToColor(tC, limit=65) {
+        // Map 20..75 to cool->hot (no gradients requirement; but we need visible.)
+        // We'll use HSL from cyan/green to orange/red.
+        const t = clamp((tC - 20) / (75 - 20), 0, 1);
+        const hue = 190 - 170 * t; // 190(cyan) -> 20(orange)
+        const sat = 78;
+        const light = 48 - 8 * t;
+        return `hsl(${hue} ${sat}% ${light}%)`;
+      }
+
+      // ---------- App ----------
+      function App() {
+        const LIMIT = 65.0;
+        const BASELINE_SUPPLY = 18.0;
+
+        const [mode, setMode] = React.useState("PID"); // "PID" | "MPC"
+        const [isRunning, setIsRunning] = React.useState(true);
+
+        // Process state
+        const [t, setT] = React.useState(0);
+        const [ambientC, setAmbientC] = React.useState(30.5);
+        const [itLoadKW, setItLoadKW] = React.useState(165); // IT load proxy
+        const [chipMaxC, setChipMaxC] = React.useState(61.5);
+
+        const [supplyTempC, setSupplyTempC] = React.useState(BASELINE_SUPPLY);
+        const [pidGhostSupplyC, setPidGhostSupplyC] = React.useState(BASELINE_SUPPLY);
+
+        const [pue, setPue] = React.useState(1.45);
+
+        const [history, setHistory] = React.useState([]);
+        const [logs, setLogs] = React.useState([]);
+
+        const [rackZones, setRackZones] = React.useState(Array.from({length:10}, ()=>50));
+
+        // "MPC intent" parameters
+        const [targetMarginC, setTargetMarginC] = React.useState(8.0); // desired thermal headroom
+        const [maxSupplyC, setMaxSupplyC] = React.useState(26.0);
+        const [minSupplyC, setMinSupplyC] = React.useState(18.0);
+
+        // PID "chip target" is conservative: tries to keep chip well below limit by fixed supply.
+        // Here we model PID as NOT optimizing supply setpoint (keeps 18C).
+        // MPC: actively increases supply temperature when thermal margin exists.
+
+        function pushLog(msg, level="info") {
+          const ts = new Date().toLocaleTimeString();
+          setLogs(prev => {
+            const next = [{ ts, msg, level }, ...prev];
+            return next.slice(0, 18);
+          });
+        }
+
+        function reset() {
+          setT(0);
+          setAmbientC(30.5);
+          setItLoadKW(165);
+          setChipMaxC(61.5);
+          setSupplyTempC(BASELINE_SUPPLY);
+          setPidGhostSupplyC(BASELINE_SUPPLY);
+          setPue(1.45);
+          setHistory([]);
+          setLogs([]);
+          setRackZones(Array.from({length:10}, ()=>50));
+          pushLog("Reset: Digital Twin initialized. Baseline PID setpoint = 18.0°C.", "ok");
+        }
+
+        // Step simulation each tick
+        React.useEffect(() => {
+          if (!isRunning) return;
+          const id = setInterval(() => {
+            setT(prevT => prevT + 1);
+          }, 900);
+          return () => clearInterval(id);
+        }, [isRunning]);
+
+        // Process evolution driven by time tick
+        React.useEffect(() => {
+          if (!isRunning) return;
+
+          // Workload/ambient drift (slow)
+          setAmbientC(prev => clamp(prev + (Math.random() - 0.5) * 0.18, 28.0, 34.0));
+
+          // IT load oscillation (affects heat generation)
+          setItLoadKW(prev => {
+            const wave = Math.sin((t + 12) / 6) * 9.0;
+            const random = (Math.random() - 0.5) * 5.5;
+            return clamp(prev * 0.86 + (165 + wave + random) * 0.14, 135, 190);
+          });
+
+          // Ghost PID supply is always 18 for comparison
+          setPidGhostSupplyC(BASELINE_SUPPLY);
+
+          // ----- Control law -----
+          let nextSupply = supplyTempC;
+
+          if (mode === "PID") {
+            nextSupply = BASELINE_SUPPLY;
+          } else {
+            // MPC: maximize supply temp (reduce chiller load) subject to safety constraint.
+            // We use a simple 1-step lookahead (digital twin model) to choose supply temp.
+            // Objective J = wE*Energy(supply) + wS*Slack(violation)
+            const wE = 1.0;
+            const wS = 28.0; // heavy penalty for constraint violation
+
+            const candidates = [];
+            for (let s = minSupplyC; s <= maxSupplyC + 0.001; s += 0.5) candidates.push(Number(s.toFixed(1)));
+
+            // Predict next chip max based on current load and candidate supply
+            // Model: chip rises with IT load and ambient, decreases with colder supply.
+            const predictChip = (s) => {
+              const heat = (itLoadKW - 140) * 0.095;      // load contribution
+              const amb  = (ambientC - 28) * 0.65;        // ambient contribution
+              const cool = (22 - s) * 0.95;               // cooling (higher supply => less cooling)
+              // Add inertia: chip doesn't jump instantly
+              const predicted = chipMaxC * 0.78 + (52.5 + heat + amb + cool) * 0.22;
+              return predicted;
+            };
+
+            let best = { s: minSupplyC, J: Infinity, pred: predictChip(minSupplyC), margin: (LIMIT - predictChip(minSupplyC)) };
+            for (const s of candidates) {
+              const pred = predictChip(s);
+              const margin = LIMIT - pred;
+
+              // Energy proxy decreases as supply temp rises
+              const energy = Math.exp(-0.12 * (s - 18)); // relative (1.0 @18C)
+
+              // Safety slack: penalize if margin < 0 or if margin below desired targetMarginC
+              const violation = Math.max(0, -margin); // hard violation
+              const soft = Math.max(0, targetMarginC - margin); // keep buffer
+              const slack = (violation * 3.5) + soft;
+
+              const J = wE * energy + wS * (slack * slack);
+
+              if (J < best.J) best = { s, J, pred, margin };
+            }
+
+            // Smooth actuation (avoid jerks)
+            nextSupply = clamp(supplyTempC * 0.55 + best.s * 0.45, minSupplyC, maxSupplyC);
+
+            // Log meaningful decisions occasionally
+            if (t % 3 === 0) {
+              const marginNow = LIMIT - chipMaxC;
+              const marginPred = best.margin;
+              const action = (best.s > BASELINE_SUPPLY + 0.2) ? "Raising" : "Holding/Lowering";
+              pushLog(
+                `Thermal margin detected (${round(marginNow,1)}°C). Objective: minimize Energy Cost (J) under LIMIT ${LIMIT}°C. Action: ${action} Supply Temp → ${round(best.s,1)}°C (pred margin ${round(marginPred,1)}°C).`,
+                (marginNow < 2.5) ? "warn" : "info"
+              );
+            }
+          }
+
+          // ----- Plant update: chip temperature dynamics -----
+          // Chip max responds to load/ambient and supply temperature.
+          const heatGen = (itLoadKW - 140) * 0.105;
+          const ambEff  = (ambientC - 28) * 0.72;
+          const cooling = (22 - nextSupply) * 1.05;
+
+          // PID typically gives more fluctuation (less predictive action)
+          const disturbance = (mode === "PID")
+            ? (Math.random() - 0.5) * 1.9
+            : (Math.random() - 0.5) * 0.9;
+
+          const nextChip = clamp(
+            chipMaxC * 0.80 + (53.0 + heatGen + ambEff + cooling + disturbance) * 0.20,
+            35,
+            85
+          );
+
+          setSupplyTempC(nextSupply);
+          setChipMaxC(nextChip);
+
+          // ----- PUE update -----
+          const nextPue = pueFromSupplyTemp({ supplyTempC: nextSupply, itLoadKW, ambientC });
+          setPue(nextPue);
+
+          // ----- Rack twin visualization update -----
+          setRackZones(synthRackZones({
+            mode,
+            supplyTempC: nextSupply,
+            itLoadKW,
+            ambientC,
+            chipMaxC: nextChip
+          }));
+
+          // ----- History -----
+          setHistory(prev => {
+            const point = {
+              t,
+              chip: round(nextChip, 2),
+              supply: round(nextSupply, 2),
+              pidGhost: round(BASELINE_SUPPLY, 2),
+              pue: round(nextPue, 3),
+              margin: round(LIMIT - nextChip, 2),
+              it: round(itLoadKW, 1),
+              amb: round(ambientC, 1)
+            };
+            const next = [...prev, point];
+            return next.slice(-80);
+          });
+
+          // Safety warning (constraint awareness)
+          if (nextChip > LIMIT - 1.0 && t % 2 === 0) {
+            pushLog(
+              `Safety constraint approaching: ChipTemp=${round(nextChip,1)}°C near LIMIT ${LIMIT}°C. Controller must preserve margin.`,
+              "warn"
+            );
+          }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        }, [t]);
+
+        const savings = chillerSavingsPct(supplyTempC, BASELINE_SUPPLY);
+        const margin = LIMIT - chipMaxC;
+
+        const kpiChipState =
+          chipMaxC >= LIMIT ? "VIOLATION" : (chipMaxC >= LIMIT - 2 ? "NEAR-LIMIT" : "SAFE");
+
+        const modeBadge = mode === "MPC"
+          ? "bg-emerald-500/15 text-emerald-200 border-emerald-400/25"
+          : "bg-sky-500/15 text-sky-200 border-sky-400/25";
+
+        return (
+          <div className="h-full w-full gridline">
+            <div className="h-screen w-full p-4 md:p-5">
+              <div className="h-full grid grid-cols-1 lg:grid-cols-12 gap-4">
+
+                {/* Left Panel */}
+                <div className="lg:col-span-3 card rounded-2xl p-4 flex flex-col gap-4 min-h-0">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <div className="text-xs text-slate-300/80 mono">ICS Digital Twin Control Console</div>
+                      <div className="text-lg font-semibold tracking-tight">MPC vs PID — “Closer to the Edge”</div>
+                      <div className="text-xs text-slate-300/75 mt-1">
+                        Proving: <span className="text-slate-100">higher Supply Water Temp</span> ⇒ <span className="text-slate-100">lower PUE</span> under chip safety limit.
+                      </div>
+                    </div>
+                    <div className={"text-xs px-2 py-1 rounded-lg border mono " + modeBadge}>
+                      {mode}
+                    </div>
+                  </div>
+
+                  {/* Controls */}
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      className={"rounded-xl px-3 py-2 text-sm border mono " + (mode==="PID" ? "bg-slate-700/40 border-slate-400/20" : "bg-slate-900/30 border-slate-400/10 hover:bg-slate-800/30")}
+                      onClick={() => { setMode("PID"); pushLog("Switched to PID Mode: Supply Temp fixed at 18°C (conservative).", "info"); }}
+                    >
+                      PID Mode
+                    </button>
+                    <button
+                      className={"rounded-xl px-3 py-2 text-sm border mono " + (mode==="MPC" ? "bg-emerald-700/25 border-emerald-400/20" : "bg-slate-900/30 border-slate-400/10 hover:bg-slate-800/30")}
+                      onClick={() => { setMode("MPC"); pushLog("Switched to MPC Mode: Supply Temp optimized to minimize PUE under LIMIT.", "ok"); }}
+                    >
+                      MPC Mode
+                    </button>
+
+                    <button
+                      className="col-span-1 rounded-xl px-3 py-2 text-sm border border-slate-400/10 bg-slate-900/30 hover:bg-slate-800/30 mono"
+                      onClick={() => setIsRunning(v => !v)}
+                    >
+                      {isRunning ? "Pause" : "Run"}
+                    </button>
+                    <button
+                      className="col-span-1 rounded-xl px-3 py-2 text-sm border border-slate-400/10 bg-slate-900/30 hover:bg-slate-800/30 mono"
+                      onClick={reset}
+                    >
+                      Reset
+                    </button>
+                  </div>
+
+                  {/* KPIs */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="rounded-2xl border border-slate-400/10 bg-slate-900/25 p-3">
+                      <div className="text-xs text-slate-300/80 mono">Chip Temp (Max)</div>
+                      <div className="mt-1 flex items-baseline gap-2">
+                        <div className="text-2xl font-semibold mono">{round(chipMaxC,1)}°C</div>
+                        <div className={"text-xs mono px-2 py-0.5 rounded border " + (
+                          kpiChipState==="SAFE" ? "border-emerald-400/20 text-emerald-200 bg-emerald-500/10" :
+                          kpiChipState==="NEAR-LIMIT" ? "border-amber-400/20 text-amber-200 bg-amber-500/10" :
+                          "border-red-400/25 text-red-200 bg-red-500/10"
+                        )}>
+                          {kpiChipState}
+                        </div>
+                      </div>
+                      <div className="text-xs text-slate-300/70 mt-1 mono">
+                        LIMIT: <span className="text-red-200">{LIMIT}°C</span> · Margin: <span className={margin>6 ? "text-emerald-200" : margin>2 ? "text-amber-200" : "text-red-200"}>{round(margin,1)}°C</span>
+                      </div>
+                    </div>
+
+                    <div className="rounded-2xl border border-slate-400/10 bg-slate-900/25 p-3">
+                      <div className="text-xs text-slate-300/80 mono">PUE (Proxy)</div>
+                      <div className="mt-1 text-2xl font-semibold mono">{round(pue,3)}</div>
+                      <div className="text-xs text-slate-300/70 mt-1 mono">
+                        IT Load: <span className="text-slate-100">{round(itLoadKW,1)} kW</span> · Amb: <span className="text-slate-100">{round(ambientC,1)}°C</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Parameter Optimization (Prof. Zhou feedback focus) */}
+                  <div className="rounded-2xl border border-slate-400/10 bg-slate-900/25 p-3">
+                    <div className="flex items-center justify-between">
+                      <div className="text-sm font-semibold">Parameter Optimization</div>
+                      <div className="text-xs text-slate-300/75 mono">Setpoint Optimization</div>
+                    </div>
+
+                    <div className="mt-3 grid grid-cols-2 gap-3">
+                      <div className="rounded-xl border border-slate-400/10 bg-slate-950/25 p-3">
+                        <div className="text-xs text-slate-300/80 mono">Baseline Setpoint</div>
+                        <div className="mt-1 text-xl font-semibold mono">{BASELINE_SUPPLY.toFixed(1)}°C</div>
+                        <div className="text-xs text-slate-300/70 mt-1 mono">

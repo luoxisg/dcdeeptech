@@ -1,0 +1,57 @@
+# docker-compose.yml
+# 本地开发环境 Docker Compose 配置
+# 启动命令：docker-compose up --build
+#
+# 包含服务：
+#   - sg-edge-client:   新加坡边缘节点模拟（单次推理演示）
+#   - cq-aidc-gateway:  重庆 AIDC 推理网关
+#   - redis:            生产环境计费数据存储（可选）
+
+version: "3.9"
+
+services:
+
+  # ─── 重庆 AIDC 推理网关 ─────────────────────────────────────────
+  cq-aidc-gateway:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.cloud
+    container_name: cq-aidc-gateway
+    ports:
+      - "8443:8443"
+    environment:
+      - LOG_LEVEL=INFO
+      - SM2_PRIVATE_KEY_PATH=/opt/security/keys/aidc_private.pem
+    volumes:
+      - ./certs/dev:/opt/security/certs:ro
+      - ./keys/dev:/opt/security/keys:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8443/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - sg-cq-network
+
+  # ─── 新加坡边缘端演示客户端 ──────────────────────────────────────
+  sg-edge-demo:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.edge
+    container_name: sg-edge-demo
+    depends_on:
+      cq-aidc-gateway:
+        condition: service_healthy
+    environment:
+      - AIDC_API_URL=http://cq-aidc-gateway:8443
+      - SG_CQ_BEARER_TOKEN=dev-demo-token-001
+      - EPSILON=1.0
+    volumes:
+      - ./sample_images:/data/images:ro
+    networks:
+      - sg-cq-network
+    command: ["python", "-m", "sg_edge.demo", "--image", "/data/images/sample.jpg"]
+
+networks:
+  sg-cq-network:
+    driver: bridge

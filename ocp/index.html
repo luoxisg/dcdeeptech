@@ -1,0 +1,1142 @@
+ <!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dcdeeptech | OCP Global Platform — Vendor Pricing & Ecosystem</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&family=DM+Mono:wght@400;500&family=Noto+Sans+SC:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['DM Sans', 'Noto Sans SC', 'sans-serif'],
+                        mono: ['DM Mono', 'monospace'],
+                    },
+                    colors: {
+                        brand: { 50:'#eff6ff',100:'#dbeafe',300:'#93c5fd',400:'#60a5fa',500:'#3b82f6',600:'#2563eb',700:'#1d4ed8',900:'#1e3a8a',950:'#0f172a' },
+                        ocp: { green:'#10b981', teal:'#14b8a6' },
+                        gold: { 400:'#fbbf24', 500:'#f59e0b', 600:'#d97706' },
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        html { scroll-behavior: smooth; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+
+        /* Language toggle */
+        html[lang="zh"] .lang-en { display: none !important; }
+        html[lang="en"] .lang-zh { display: none !important; }
+
+        .glass-card {
+            background: rgba(255,255,255,0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .glass-card-light {
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.9);
+        }
+
+        /* Animated gradient border for featured card */
+        @keyframes borderRotate {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .featured-glow {
+            position: relative;
+            z-index: 0;
+        }
+        .featured-glow::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 1.75rem;
+            background: linear-gradient(135deg, #3b82f6, #10b981, #f59e0b, #3b82f6);
+            background-size: 300% 300%;
+            animation: borderRotate 4s ease infinite;
+            z-index: -1;
+        }
+
+        /* Fade-in on scroll */
+        .reveal {
+            opacity: 0;
+            transform: translateY(28px);
+            transition: opacity 0.65s cubic-bezier(.4,0,.2,1), transform 0.65s cubic-bezier(.4,0,.2,1);
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: none;
+        }
+        .reveal-delay-1 { transition-delay: 0.1s; }
+        .reveal-delay-2 { transition-delay: 0.2s; }
+        .reveal-delay-3 { transition-delay: 0.3s; }
+        .reveal-delay-4 { transition-delay: 0.4s; }
+
+        /* Ticker / marquee */
+        @keyframes marquee {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+        }
+        .marquee-track { animation: marquee 28s linear infinite; }
+
+        /* Pricing card hover */
+        .plan-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .plan-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 24px 60px -12px rgba(59,130,246,0.25);
+        }
+
+        /* Toggle switch */
+        .toggle-pill {
+            transition: background 0.3s ease;
+        }
+
+        /* Checklist item animation */
+        .check-item {
+            opacity: 0;
+            transform: translateX(-8px);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+        .plan-card:hover .check-item {
+            opacity: 1;
+            transform: none;
+        }
+        .plan-card:hover .check-item:nth-child(1) { transition-delay: 0.05s; }
+        .plan-card:hover .check-item:nth-child(2) { transition-delay: 0.10s; }
+        .plan-card:hover .check-item:nth-child(3) { transition-delay: 0.15s; }
+        .plan-card:hover .check-item:nth-child(4) { transition-delay: 0.20s; }
+        .plan-card:hover .check-item:nth-child(5) { transition-delay: 0.25s; }
+        .plan-card:hover .check-item:nth-child(6) { transition-delay: 0.30s; }
+
+        /* Default show checklist */
+        .check-item { opacity: 1; transform: none; }
+
+        /* Fee badge pulse */
+        @keyframes pulse-ring {
+            0% { box-shadow: 0 0 0 0 rgba(251,191,36,0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(251,191,36,0); }
+            100% { box-shadow: 0 0 0 0 rgba(251,191,36,0); }
+        }
+        .fee-badge { animation: pulse-ring 2.5s ease-out infinite; }
+
+        /* Gradient text */
+        .grad-blue { background: linear-gradient(135deg, #60a5fa, #34d399); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .grad-gold { background: linear-gradient(135deg, #fbbf24, #f97316); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .grad-green { background: linear-gradient(135deg, #34d399, #60a5fa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+        /* VAS card */
+        .vas-card {
+            border-left: 3px solid transparent;
+            transition: border-color 0.3s ease, background 0.3s ease;
+        }
+        .vas-card:hover { border-left-color: #3b82f6; background: rgba(59,130,246,0.05); }
+    </style>
+</head>
+<body class="font-sans bg-brand-950 text-slate-300 antialiased">
+
+<!-- ═══════════════════════════════════════════
+     NAVBAR
+═══════════════════════════════════════════ -->
+<nav class="fixed w-full z-50 transition-all duration-300 backdrop-blur-md bg-brand-950/90 border-b border-white/5" id="navbar">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-20">
+            <div class="flex-shrink-0 flex items-center cursor-pointer" onclick="window.scrollTo(0,0)">
+                <img src="https://raw.githubusercontent.com/luoxisg/dcdeeptech/main/image/DCdeeptech_logo-removebg-preview.png" alt="dcdeeptech Logo" class="h-11 w-auto object-contain brightness-0 invert drop-shadow-sm">
+            </div>
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="#certifications" class="text-sm font-semibold text-slate-400 hover:text-white transition-colors"><span class="lang-zh">认证服务</span><span class="lang-en">Certifications</span></a>
+                <a href="#products" class="text-sm font-semibold text-slate-400 hover:text-white transition-colors"><span class="lang-zh">硬件生态</span><span class="lang-en">Ecosystem</span></a>
+                <a href="#pricing" class="text-sm font-semibold text-slate-400 hover:text-white transition-colors"><span class="lang-zh">供应商定价</span><span class="lang-en">Vendor Pricing</span></a>
+                <a href="#partnership" class="text-sm font-semibold text-slate-400 hover:text-white transition-colors"><span class="lang-zh">合作模式</span><span class="lang-en">Partnership</span></a>
+                <a href="#gtm" class="text-sm font-semibold text-slate-400 hover:text-white transition-colors"><span class="lang-zh">商业模式</span><span class="lang-en">Commercial Model</span></a>
+            </div>
+            <div class="flex items-center gap-3">
+                <button onclick="toggleLanguage()" class="flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 hover:border-brand-500 hover:text-brand-400 bg-white/5 transition-all text-sm font-semibold text-slate-300">
+                    <i class="ph ph-translate text-base"></i>
+                    <span id="lang-btn-text">English</span>
+                </button>
+                <a href="#contact" class="hidden lg:inline-flex bg-brand-600 hover:bg-brand-500 text-white px-5 py-2.5 rounded-full text-sm font-semibold transition-colors shadow-lg shadow-brand-500/20">
+                    <span class="lang-zh">联系架构师</span>
+                    <span class="lang-en">Contact Architect</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════
+     HERO
+═══════════════════════════════════════════ -->
+<section class="relative pt-36 pb-24 lg:pt-44 lg:pb-32 overflow-hidden">
+    <div class="absolute inset-0 z-0">
+        <div class="absolute top-0 right-0 w-[50rem] h-[50rem] bg-brand-600/15 rounded-full blur-[120px] transform translate-x-1/4 -translate-y-1/4"></div>
+        <div class="absolute bottom-0 left-0 w-[40rem] h-[40rem] bg-ocp-green/8 rounded-full blur-[100px] transform -translate-x-1/3 translate-y-1/3"></div>
+        <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utb3BhY2l0eT0iMC4wMyIgZmlsbD0ibm9uZSI+PHBhdGggZD0iTTAgNjBoNjBNNjAgMEgwbTAgMGw2MCA2ME0wIDYwbDYwLTYwIi8+PC9nPjwvc3ZnPg==')] opacity-100"></div>
+    </div>
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-brand-300 text-xs font-bold mb-8 tracking-widest uppercase">
+            <i class="ph-fill ph-globe-hemisphere-west text-ocp-green"></i>
+            <span class="lang-zh">OCP Global Platform — 跨境出海 · 专业 RFQ 平台</span>
+            <span class="lang-en">OCP Global Platform — Cross-Border GTM & RFQ Marketplace</span>
+        </div>
+        <h1 class="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white tracking-tight mb-8 leading-[1.05]">
+            <span class="lang-zh">新加坡核心枢纽<br><span class="grad-blue">连接中国供应链</span><br>与全球超大规模客户</span>
+            <span class="lang-en">Singapore at the Core.<br><span class="grad-blue">Chinese Supply Chain</span><br>Meets Global Hyperscalers.</span>
+        </h1>
+        <p class="max-w-2xl mx-auto text-slate-400 text-lg mb-12 leading-relaxed">
+            <span class="lang-zh">dcdeeptech OCP Global Platform 是专为 AI 基础设施供应商打造的跨境进入市场（GTM）与 RFQ 投标平台。以新加坡为战略桥头堡，直连东南亚、中东与欧洲的超大规模数据中心采购网络。</span>
+            <span class="lang-en">The dcdeeptech OCP Global Platform is purpose-built for AI infrastructure vendors: a cross-border go-to-market and RFQ platform anchored in Singapore, with direct pipeline access to hyperscale procurement networks across SEA, MENA, and Europe.</span>
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <a href="#pricing" class="px-8 py-4 rounded-full bg-brand-600 hover:bg-brand-500 text-white font-bold shadow-lg shadow-brand-500/25 transition-all flex items-center gap-2 text-base">
+                <span class="lang-zh">查看供应商方案</span>
+                <span class="lang-en">View Vendor Plans</span>
+                <i class="ph-bold ph-arrow-down"></i>
+            </a>
+            <a href="#contact" class="px-8 py-4 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-white font-semibold transition-all text-base">
+                <span class="lang-zh">预约架构师会议</span>
+                <span class="lang-en">Schedule Architecture Call</span>
+            </a>
+        </div>
+
+        <!-- Stats bar -->
+        <div class="mt-20 grid grid-cols-2 md:grid-cols-4 gap-px bg-white/5 rounded-2xl overflow-hidden border border-white/5">
+            <div class="bg-brand-950 px-6 py-6 text-center">
+                <div class="text-3xl font-extrabold text-white mb-1">47+</div>
+                <div class="text-xs text-slate-500 uppercase tracking-wider"><span class="lang-zh">已入驻供应商</span><span class="lang-en">Active Vendors</span></div>
+            </div>
+            <div class="bg-brand-950 px-6 py-6 text-center">
+                <div class="text-3xl font-extrabold grad-blue mb-1">S$280M</div>
+                <div class="text-xs text-slate-500 uppercase tracking-wider"><span class="lang-zh">平台项目管道规模</span><span class="lang-en">Pipeline Deal Value</span></div>
+            </div>
+            <div class="bg-brand-950 px-6 py-6 text-center">
+                <div class="text-3xl font-extrabold text-white mb-1">18</div>
+                <div class="text-xs text-slate-500 uppercase tracking-wider"><span class="lang-zh">目标采购市场</span><span class="lang-en">Procurement Markets</span></div>
+            </div>
+            <div class="bg-brand-950 px-6 py-6 text-center">
+                <div class="text-3xl font-extrabold grad-green mb-1">72hr</div>
+                <div class="text-xs text-slate-500 uppercase tracking-wider"><span class="lang-zh">RFQ 响应承诺</span><span class="lang-en">RFQ Response SLA</span></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     MARQUEE TICKER
+═══════════════════════════════════════════ -->
+<div class="overflow-hidden border-y border-white/5 bg-white/3 py-4">
+    <div class="flex marquee-track whitespace-nowrap gap-12 text-xs font-mono text-slate-500 tracking-widest uppercase">
+        <span>OCP Accepted™ Certification</span><span class="text-brand-600">◆</span>
+        <span>48V Rack Power</span><span class="text-brand-600">◆</span>
+        <span>Liquid Cooling Readiness</span><span class="text-brand-600">◆</span>
+        <span>Singapore GTM Hub</span><span class="text-brand-600">◆</span>
+        <span>RFQ Pipeline Access</span><span class="text-brand-600">◆</span>
+        <span>AI Infrastructure Marketplace</span><span class="text-brand-600">◆</span>
+        <span>Cross-Border Deal Flow</span><span class="text-brand-600">◆</span>
+        <span>Open Compute Project</span><span class="text-brand-600">◆</span>
+        <span>OCP Accepted™ Certification</span><span class="text-brand-600">◆</span>
+        <span>48V Rack Power</span><span class="text-brand-600">◆</span>
+        <span>Liquid Cooling Readiness</span><span class="text-brand-600">◆</span>
+        <span>Singapore GTM Hub</span><span class="text-brand-600">◆</span>
+        <span>RFQ Pipeline Access</span><span class="text-brand-600">◆</span>
+        <span>AI Infrastructure Marketplace</span><span class="text-brand-600">◆</span>
+        <span>Cross-Border Deal Flow</span><span class="text-brand-600">◆</span>
+        <span>Open Compute Project</span><span class="text-brand-600">◆</span>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     CERTIFICATIONS (preserved from original)
+═══════════════════════════════════════════ -->
+<section id="certifications" class="py-24 bg-brand-950">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-3xl mx-auto mb-16 reveal">
+            <div class="text-brand-400 font-bold tracking-widest uppercase text-xs mb-3"><span class="lang-zh">核心合规模块</span><span class="lang-en">Core Compliance Modules</span></div>
+            <h2 class="text-3xl md:text-4xl font-extrabold text-white mb-5">
+                <span class="lang-zh">四大 OCP 官方认证体系</span>
+                <span class="lang-en">The 4 Official OCP Certification Pillars</span>
+            </h2>
+            <p class="text-slate-400"><span class="lang-zh">依托 dcdeeptech 深厚工程底蕴，提供从 AI 加速器、48V液冷机架到开源固件的一站式合规导航服务。</span><span class="lang-en">End-to-end compliance navigation from AI accelerators and 48V liquid-cooled racks to open-source firmware.</span></p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div class="reveal reveal-delay-1 glass-card p-7 rounded-2xl hover:border-ocp-green/50 transition-all group">
+                <div class="w-11 h-11 rounded-xl bg-ocp-green/10 flex items-center justify-center text-ocp-green text-2xl mb-5 group-hover:scale-110 transition-transform"><i class="ph-fill ph-seal-check"></i></div>
+                <h4 class="font-bold text-lg text-white mb-2">OCP Accepted™</h4>
+                <p class="text-sm text-slate-400 leading-relaxed"><span class="lang-zh">最高级别开放性。产品完全符合 OCP 规范并完整开源设计文件。全球采购优先认可。</span><span class="lang-en">Highest openness tier. Full OCP spec compliance with open-sourced Design Packages. Priority in global procurement bids.</span></p>
+            </div>
+            <div class="reveal reveal-delay-2 glass-card p-7 rounded-2xl hover:border-brand-500/50 transition-all group">
+                <div class="w-11 h-11 rounded-xl bg-brand-500/10 flex items-center justify-center text-brand-400 text-2xl mb-5 group-hover:scale-110 transition-transform"><i class="ph-fill ph-lightbulb"></i></div>
+                <h4 class="font-bold text-lg text-white mb-2">OCP Inspired™</h4>
+                <p class="text-sm text-slate-400 leading-relaxed"><span class="lang-zh">合规且保护知识产权。严格符合 OCP 规范，无需开源专有设计图纸，保留 IP 主权。</span><span class="lang-en">IP-protected compliance path. Fully meets OCP specs while retaining proprietary design blueprints under your IP.</span></p>
+            </div>
+            <div class="reveal reveal-delay-3 glass-card p-7 rounded-2xl hover:border-red-500/50 transition-all group">
+                <div class="w-11 h-11 rounded-xl bg-red-500/10 flex items-center justify-center text-red-400 text-2xl mb-5 group-hover:scale-110 transition-transform"><i class="ph-fill ph-shield-check"></i></div>
+                <h4 class="font-bold text-lg text-white mb-2">OCP S.A.F.E.</h4>
+                <p class="text-sm text-slate-400 leading-relaxed"><span class="lang-zh">供应链安全评估框架，针对设备固件架构确保供应链完整性，防御恶意固件注入。</span><span class="lang-en">Supply chain security framework targeting device firmware integrity against malicious injection attacks.</span></p>
+            </div>
+            <div class="reveal reveal-delay-4 glass-card p-7 rounded-2xl hover:border-purple-500/50 transition-all group">
+                <div class="w-11 h-11 rounded-xl bg-purple-500/10 flex items-center justify-center text-purple-400 text-2xl mb-5 group-hover:scale-110 transition-transform"><i class="ph-fill ph-buildings"></i></div>
+                <h4 class="font-bold text-lg text-white mb-2">OCP Ready™</h4>
+                <p class="text-sm text-slate-400 leading-relaxed"><span class="lang-zh">设施级认证，证明机房承重、电力密度与空间布局可承载 OCP 极高密度液冷机架。</span><span class="lang-en">Facility certification proving floor load, power density, and layout can support ultra-high-density OCP liquid-cooled racks.</span></p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     HARDWARE ECOSYSTEM (condensed)
+═══════════════════════════════════════════ -->
+<section id="products" class="py-24 bg-slate-900/60 border-y border-white/5 relative overflow-hidden">
+    <div class="absolute top-0 right-0 w-64 h-64 bg-brand-500 rounded-full blur-[100px] opacity-10 pointer-events-none"></div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="text-center max-w-3xl mx-auto mb-16 reveal">
+            <div class="text-brand-400 font-bold tracking-widest uppercase text-xs mb-3"><span class="lang-zh">深度研究与产品分类</span><span class="lang-en">Deep Research & Product Taxonomy</span></div>
+            <h2 class="text-3xl md:text-4xl font-extrabold text-white mb-5"><span class="lang-zh">OCP 全场景硬件生态矩阵</span><span class="lang-en">Full-Scenario OCP Hardware Ecosystem</span></h2>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div class="reveal reveal-delay-1 glass-card p-7 rounded-2xl hover:border-blue-500/40 transition-all group">
+                <div class="flex items-center gap-4 mb-5 pb-5 border-b border-white/5">
+                    <div class="w-11 h-11 bg-blue-500/10 text-blue-400 rounded-xl flex items-center justify-center text-xl group-hover:scale-110 transition-transform"><i class="ph-fill ph-cpu"></i></div>
+                    <h4 class="text-base font-bold text-white"><span class="lang-zh">核心计算与服务器</span><span class="lang-en">Compute & Server</span></h4>
+                </div>
+                <ul class="space-y-3 text-sm text-slate-400">
+                    <li><strong class="text-slate-200"><span class="lang-zh">开放加速器基础设施 (OAI)</span><span class="lang-en">Open Accelerator Infrastructure</span></strong> — <span class="lang-zh">标准化 GPU/TPU 模块接口与通用基板，单模块支持高达 400W。</span><span class="lang-en">Standardized OAM + UBB, up to 400W per module.</span></li>
+                    <li><strong class="text-slate-200"><span class="lang-zh">开放小芯片经济</span><span class="lang-en">Open Chiplet Economy</span></strong> — <span class="lang-zh">D2D 物理接口，推动异构硅芯片 SiP 集成。</span><span class="lang-en">D2D physical interfaces enabling heterogeneous SiP.</span></li>
+                    <li><strong class="text-slate-200">OCP NIC 3.0</strong> — <span class="lang-zh">前置热插拔夹层设计，支持 400 Gb/s 吞吐与 LAN Bypass。</span><span class="lang-en">Hot-pluggable mezzanine, 400 Gb/s, LAN Bypass.</span></li>
+                </ul>
+            </div>
+            <div class="reveal reveal-delay-2 glass-card p-7 rounded-2xl hover:border-emerald-500/40 transition-all group">
+                <div class="flex items-center gap-4 mb-5 pb-5 border-b border-white/5">
+                    <div class="w-11 h-11 bg-emerald-500/10 text-emerald-400 rounded-xl flex items-center justify-center text-xl group-hover:scale-110 transition-transform"><i class="ph-fill ph-share-network"></i></div>
+                    <h4 class="text-base font-bold text-white"><span class="lang-zh">网络解耦与横向扩展</span><span class="lang-en">Disaggregated Networking</span></h4>
+                </div>
+                <ul class="space-y-3 text-sm text-slate-400">
+                    <li><strong class="text-slate-200"><span class="lang-zh">裸金属交换机与 ONIE</span><span class="lang-en">Bare-metal Switches & ONIE</span></strong> — <span class="lang-zh">SAI 接口统一跨 ASIC 编程，支持 SONiC。</span><span class="lang-en">SAI-unified cross-ASIC programming with SONiC.</span></li>
+                    <li><strong class="text-slate-200">ESUN 1.0</strong> — <span class="lang-zh">4 字节专用头部，AI 训练集群无损以太网结构。</span><span class="lang-en">4-byte header, lossless Ethernet for AI training clusters.</span></li>
+                    <li><strong class="text-slate-200"><span class="lang-zh">光学互联</span><span class="lang-en">Optical Interconnect</span></strong> — <span class="lang-zh">CPO/LPO 共封装光学方案，降低 AI 结构功耗。</span><span class="lang-en">CPO/LPO co-packaged optics for reduced AI fabric power.</span></li>
+                </ul>
+            </div>
+            <div class="reveal reveal-delay-3 glass-card p-7 rounded-2xl hover:border-orange-500/40 transition-all group">
+                <div class="flex items-center gap-4 mb-5 pb-5 border-b border-white/5">
+                    <div class="w-11 h-11 bg-orange-500/10 text-orange-400 rounded-xl flex items-center justify-center text-xl group-hover:scale-110 transition-transform"><i class="ph-fill ph-thermometer-hot"></i></div>
+                    <h4 class="text-base font-bold text-white"><span class="lang-zh">48V 与液冷热管理</span><span class="lang-en">48V Power & Liquid Cooling</span></h4>
+                </div>
+                <ul class="space-y-3 text-sm text-slate-400">
+                    <li><strong class="text-slate-200"><span class="lang-zh">48V 机架级供电</span><span class="lang-en">48V Rack Power (ORv3)</span></strong> — <span class="lang-zh">减少铜损，支持机架 TDP 突破 100kW。</span><span class="lang-en">Reduced copper loss, rack TDP exceeding 100 kW.</span></li>
+                    <li><strong class="text-slate-200"><span class="lang-zh">直接液冷 (DLC/CDU)</span><span class="lang-en">Direct Liquid Cooling (DLC)</span></strong> — <span class="lang-zh">单相/两相浸没与冷板方案全覆盖。</span><span class="lang-en">Full coverage: single/two-phase immersion + cold plate.</span></li>
+                    <li><strong class="text-slate-200"><span class="lang-zh">开放机架规范 (ORv3)</span><span class="lang-en">Open Rack v3 (ORv3)</span></strong> — <span class="lang-zh">高密度 AI 机架标准物理规格与线缆管理。</span><span class="lang-en">Standard physical spec & cable management for AI racks.</span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     VENDOR PRICING SECTION — NEW
+═══════════════════════════════════════════ -->
+<section id="pricing" class="py-28 bg-brand-950 relative overflow-hidden">
+    <!-- Background decoration -->
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60rem] h-[60rem] bg-brand-700/5 rounded-full blur-[140px] pointer-events-none"></div>
+    <div class="absolute top-0 left-1/4 w-64 h-64 bg-ocp-green/5 rounded-full blur-[80px] pointer-events-none"></div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+
+        <!-- Section header -->
+        <div class="text-center max-w-3xl mx-auto mb-6 reveal">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-600/10 border border-brand-600/20 text-brand-400 text-xs font-bold tracking-widest uppercase mb-5">
+                <i class="ph-fill ph-storefront"></i>
+                <span class="lang-zh">OCP Global Platform — 供应商定价</span>
+                <span class="lang-en">OCP Global Platform — Vendor Pricing</span>
+            </div>
+            <h2 class="text-3xl md:text-5xl font-extrabold text-white mb-5 leading-tight">
+                <span class="lang-zh">选择适合您的<br><span class="grad-blue">出海合作层级</span></span>
+                <span class="lang-en">Choose Your<br><span class="grad-blue">Go-to-Market Tier</span></span>
+            </h2>
+            <p class="text-slate-400 text-base leading-relaxed">
+                <span class="lang-zh">dcdeeptech OCP Global Platform 为 AI 基础设施供应商提供从品牌曝光到战略联合入市的全层级合作方案。价格均以新加坡元（SGD）年度结算。</span>
+                <span class="lang-en">From brand visibility to strategic joint go-to-market — structured for AI infrastructure vendors at every stage of international expansion. Annual pricing in SGD.</span>
+            </p>
+        </div>
+
+        <!-- Billing toggle -->
+        <div class="flex items-center justify-center gap-4 mb-14 reveal">
+            <span class="text-sm font-semibold text-slate-400"><span class="lang-zh">年费制</span><span class="lang-en">Annual</span></span>
+            <div class="relative w-12 h-6 bg-brand-600 rounded-full cursor-pointer flex items-center px-1">
+                <div class="w-4 h-4 bg-white rounded-full shadow-md translate-x-6"></div>
+            </div>
+            <span class="text-sm font-semibold text-slate-300"><span class="lang-zh">年付优惠（节省约 15%）</span><span class="lang-en">Annual Billing (Save ~15%)</span></span>
+        </div>
+
+        <!-- Pricing cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5 items-start">
+
+            <!-- FREE LISTING -->
+            <div class="plan-card reveal reveal-delay-1 glass-card rounded-2xl p-7 flex flex-col h-full">
+                <div class="mb-6">
+                    <div class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3"><span class="lang-zh">入门</span><span class="lang-en">Starter</span></div>
+                    <h3 class="text-xl font-extrabold text-white mb-1"><span class="lang-zh">免费入驻</span><span class="lang-en">Free Listing</span></h3>
+                    <p class="text-xs text-slate-500 mb-5"><span class="lang-zh">试探市场的第一步</span><span class="lang-en">Your first step into the platform</span></p>
+                    <div class="flex items-end gap-1 mb-1">
+                        <span class="text-4xl font-extrabold text-white">SGD 0</span>
+                    </div>
+                    <div class="text-xs text-slate-600 font-mono"><span class="lang-zh">永久免费 · 无信用卡要求</span><span class="lang-en">Forever free · No card required</span></div>
+                </div>
+                <div class="border-t border-white/5 pt-6 mb-7 flex-1">
+                    <ul class="space-y-3 text-sm text-slate-400">
+                        <li class="check-item flex gap-3"><i class="ph-fill ph-check-circle text-slate-600 shrink-0 mt-0.5 text-base"></i><span><span class="lang-zh">品牌页面（1 页）+ 产品目录（最多 3 项 SKU）</span><span class="lang-en">1 brand profile page + up to 3 product SKUs</span></span></li>
+                        <li class="check-item flex gap-3"><i class="ph-fill ph-check-circle text-slate-600 shrink-0 mt-0.5 text-base"></i><span><span class="lang-zh">OCP 生态搜索曝光（无优先权重）</span><span class="lang-en">OCP ecosystem search exposure (no priority ranking)</span></span></li>
+                        <li class="check-item flex gap-3"><i class="ph-fill ph-check-circle text-slate-600 shrink-0 mt-0.5 text-base"></i><span><span class="lang-zh">季度市场报告订阅（只读）</span><span class="lang-en">Quarterly market report subscription (read-only)</span></span></li>
+                        <li class="check-item flex gap-3"><i class="ph-fill ph-x-circle text-slate-700 shrink-0 mt-0.5 text-base"></i><span class="text-slate-600"><span class="lang-zh">无 RFQ 投标权限</span><span class="lang-en">No RFQ bid access</span></span></li>
+                        <li class="check-item flex gap-3"><i class="ph-fill ph-x-circle text-slate-700 shrink-0 mt-0.5 text-base"></i><span class="text-slate-600"><span class="lang-zh">无联合营销资源</span><span class="lang-en">No joint marketing resources</span></span></li>
+                    </ul>
+                </div>
+                <a href="#contact" class="block text-center py-3 px-5 rounded-xl border border-white/10 text-slate-300 hover:border-brand-500 hover:text-brand-400 font-semibold text-sm transition-all">
+                    <span class="lang-zh">免费入驻</span><span class="lang-en">Get Listed Free</span>
+                </a>
+            </div>
+
+            <!-- VERIFIED VENDOR -->
+            <div class="plan-card reveal reveal-delay-2 glass-card rounded-2xl p-7 flex flex-col h-full border border-brand-700/30">
+                <div class="mb-6">
+                    <div class="text-xs font-bold text-brand-400 uppercase tracking-widest mb-3"><span class="lang-zh">增长</span><span class="lang-en">Growth</span></div>
+                    <h3 class="text-xl font-extrabold text-white mb-1"><span class="lang-zh">认证供应商</span><span class="lang-en">Verified Vendor</span></h3>
+                    <p class="text-xs text-slate-500 mb-5"><span class="lang-zh">建立跨境信任凭证</span><span class="lang-en">Establish cross-border credibility</span></p>
+                    <div class="flex items-end gap-1 mb-1">
+                        <span class="text-sm text-slate-500 mb-1.5">SGD</span>
+                        <span class="text-4xl font-extrabold text-white">12,800</span>
+                    </div>
+                    <div class="text-xs text-slate-600 font-mono"><span class="lang-zh">/ 年 · 含 OCP 技术背书审核</span><span class="lang-en">/ year · incl. OCP technical vetting</span></div>
+                </div>
+                <div class="border-t border-white/5 pt-6 mb-7 flex-1">
+                    <div class="text-xs text-slate-500 uppercase tracking-wider mb-3 font-semibold"><span class="lang-zh">包含免费版全部功能，以及：</span><span class="lang-en">Everything in Free, plus:</span></div>
+                    <ul class="space-y-3 text-sm text-slate-400">
+                        <li class="check-item flex gap-3"><i class="ph-fill ph-check-circle text-brand-500 shrink-0 mt-0.5 text-base"></i><span><span class="lang-zh">经认证供应商徽章 + 技术资质验证报告</span><span class="lang-en">Verified Vendor badge + technical credentials report</span></span></li>
+                        <li class="check-item flex gap-3"><i class="ph-fill ph-check-circle text-brand-500 shrink-0 mt-0.5 text-base"></i><span><span class="lang-zh">无限量 SKU 上架（含技术规格表 PDF）</span><span class="lang-en">Unlimited SKU listings with technical datasheet uploads</span></span></li>
+                        <li class="check-item flex gap-3"><i class="ph-fill ph-check-circle text-brand-500 shrink-0 mt-0.5 text-base"></i><span><span class="lang-zh">RFQ 通知订阅（一般公开标项）</span><span class="lang-en">RFQ alert subscription — open public RFQs</span></span></li>
+                        <li class="check-item flex gap-3"><i class="ph-fill ph-check-circle text-brand-500 shrink-0 mt-0.5 text-base"></i><span><span class="lang-zh">平台采购商导流（月度匹配报告）</span><span class="lang-en">Buyer lead referrals via monthly matching digest</span></span></li>
+                        <li class="check-item flex gap-3"><i class="ph-fill ph-check-circle text-brand-500 shrink-0 mt-0.5 text-base"></i><span><span class="lang-zh">新加坡合规与监管辅导（2 小时 / 季度）</span><span class="lang-en">SG compliance & regulatory advisory (2 hrs/quarter)</span></span></li>
+                    </ul>
+                </div>
+                <a href="#contact" class="block text-center py-3 px-5 rounded-xl bg-brand-700/30 border border-brand-600/40 text-brand-300 hover:bg-brand-600 hover:text-white font-semibold text-sm transition-all">
+                    <span class="lang-zh">申请认证资格</span><span class="lang-en">Apply for Verification</span>
+                </a>
+            </div>
+
+            <!-- FEATURED VENDOR — HIGHLIGHTED -->
+            <div class="plan-card featured-glow reveal reveal-delay-3 flex flex-col h-full">
+                <div class="bg-brand-950 rounded-[1.6rem] p-7 flex flex-col h-full">
+                    <div class="mb-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="text-xs font-bold text-gold-400 uppercase tracking-widest"><span class="lang-zh">最受欢迎</span><span class="lang-en">Most Popular</span></div>
+                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gold-500/10 border border-gold-500/20 text-gold-400 text-xs font-bold">
+                                <i class="ph-fill ph-star"></i>
+                                <span class="lang-zh">推荐</span><span class="lang-en">Recommended</span>
+                            </span>
+                        </div>
+                        <h3 class="text-xl font-extrabold text-white mb-1"><span class="lang-zh">精选供应商</span><span class="lang-en">Featured Vendor</span></h3>
+                        <p class="text-xs text-slate-500 mb-5"><span class="lang-zh">优先展示 · 专属 RFQ 管道</span><span class="lang-en">Priority placement · exclusive RFQ pipeline</span></p>
+                        <div class="flex items-end gap-1 mb-1">
+                            <span class="text-sm text-slate-500 mb-1.5">SGD</span>
+                            <span class="text-4xl font-extrabold text-white">38,000</span>
+                        </div>
+                        <div class="text-xs text-slate-600 font-mono"><span class="lang-zh">/ 年 · 含联合营销基金</span><span class="lang-en">/ year · incl. co-marketing budget</span></div>
+                    </div>
+                    <div class="border-t border-white/5 pt-6 mb-7 flex-1">
+                        <div class="text-xs text-slate-500 uppercase tracking-wider mb-3 font-semibold"><span class="lang-zh">包含认证版全部功能，以及：</span><span class="lang-en">Everything in Verified, plus:</span></div>
+                        <ul class="space-y-3 text-sm text-slate-400">
+                            <li class="check-item flex gap-3"><i class="ph-fill ph-check-circle text-gold-400 shrink-0 mt-0.5 text-base"></i><span><span class="lang-zh">首页精选位（轮播顶部展示位）</span><span class="lang-en">Homepage featured placement (top carousel slot)</span></span></li>
+                            <li class="check-item flex gap-3"><i class="ph-fill ph-check-circle text-gold-400 shrink-0 mt-0.5 text-base"></i><span><span class="lang-zh">专属私密 RFQ 管道（含资格预审报告）</span><span class="lang-en">Exclusive private RFQ pipeline with pre-qualification dossiers</span></span></li>
+                            <li class="check-item flex gap-3"><i class="ph-fill ph-check-circle text-gold-400 shrink-0 mt-0.5 text-base"></i><span><span class="lang-zh">SGD 8,000 联合营销基金（论坛 · 发布会 · 媒体）</span><span class="lang-en">SGD 8,000 co-marketing fund (forums, press, launch events)</span></span></li>
+                            <li class="check-item flex gap-3"><i class="ph-fill ph-check-circle text-gold-400 shrink-0 mt-0.5 text-base"></i><span><span class="lang-zh">dcdeeptech 技术博客专属品牌报道（双语）</span><span class="lang-en">Dedicated dcdeeptech technical editorial (bilingual)</span></span></li>
+                            <li class="check-item flex gap-3"><i class="ph-fill ph-check-circle text-gold-400 shrink-0 mt-0.5 text-base"></i><span><span class="lang-zh">项目评估优先接入（含 PoC 支持）</span><span class="lang-en">Priority project access with PoC deployment support</span></span></li>
+                            <li class="check-item flex gap-3"><i class="ph-fill ph-check-circle text-gold-400 shrink-0 mt-0.5 text-base"></i><span><span class="lang-zh">季度业务复盘 + 市场洞察专报</span><span class="lang-en">Quarterly business review + market intelligence briefing</span></span></li>
+                        </ul>
+                    </div>
+                    <a href="#contact" class="block text-center py-3.5 px-5 rounded-xl bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-500 hover:to-brand-400 text-white font-bold text-sm transition-all shadow-lg shadow-brand-500/20">
+                        <span class="lang-zh">申请精选席位</span><span class="lang-en">Apply for Featured Slot</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- STRATEGIC PARTNER -->
+            <div class="plan-card reveal reveal-delay-4 rounded-2xl p-7 flex flex-col h-full border border-ocp-green/20 bg-ocp-green/3">
+                <div class="mb-6">
+                    <div class="text-xs font-bold text-ocp-green uppercase tracking-widest mb-3"><span class="lang-zh">战略级</span><span class="lang-en">Strategic</span></div>
+                    <h3 class="text-xl font-extrabold text-white mb-1"><span class="lang-zh">战略合作伙伴</span><span class="lang-en">Strategic Partner</span></h3>
+                    <p class="text-xs text-slate-500 mb-5"><span class="lang-zh">深度共同出海 · 投资者级别背书</span><span class="lang-en">Deep joint GTM · investor-grade endorsement</span></p>
+                    <div class="flex items-end gap-1 mb-1">
+                        <span class="text-xl font-bold text-slate-400 mb-0.5"><span class="lang-zh">定制起价</span><span class="lang-en">From</span> SGD</span>
+                    </div>
+                    <div class="text-3xl font-extrabold grad-green mb-1">98,000 <span class="text-lg">+</span></div>
+                    <div class="text-xs text-slate-600 font-mono"><span class="lang-zh">/ 年 · 按业务规模协议定制</span><span class="lang-en">/ year · custom-scoped by deal volume</span></div>
+                </div>
+                <div class="border-t border-ocp-green/10 pt-6 mb-7 flex-1">
+                    <div class="text-xs text-slate-500 uppercase tracking-wider mb-3 font-semibold"><span class="lang-zh">包含精选版全部功能，以及：</span><span class="lang-en">Everything in Featured, plus:</span></div>
+                    <ul class="space-y-3 text-sm text-slate-400">
+                        <li class="check-item flex gap-3"><i class="ph-fill ph-check-circle text-ocp-green shrink-0 mt-0.5 text-base"></i><span><span class="lang-zh">联名品牌合作协议（官方合作备忘录）</span><span class="lang-en">Co-branded partnership agreement (official MOU)</span></span></li>
+                        <li class="check-item flex gap-3"><i class="ph-fill ph-check-circle text-ocp-green shrink-0 mt-0.5 text-base"></i><span><span class="lang-zh">专属交易管道：超大型数据中心 / 主权 AI 项目</span><span class="lang-en">Exclusive deal pipeline: hyperscale DC + sovereign AI projects</span></span></li>
+                        <li class="check-item flex gap-3"><i class="ph-fill ph-check-circle text-ocp-green shrink-0 mt-0.5 text-base"></i><span><span class="lang-zh">SGD 25,000 联合营销基金（可用于展会 · OCP 峰会）</span><span class="lang-en">SGD 25,000 co-marketing budget (OCP Summit, trade shows)</span></span></li>
+                        <li class="check-item flex gap-3"><i class="ph-fill ph-check-circle text-ocp-green shrink-0 mt-0.5 text-base"></i><span><span class="lang-zh">联合出席新加坡及全球旗舰客户大会</span><span class="lang-en">Joint representation at Singapore & global flagship client events</span></span></li>
+                        <li class="check-item flex gap-3"><i class="ph-fill ph-check-circle text-ocp-green shrink-0 mt-0.5 text-base"></i><span><span class="lang-zh">专属客户成功经理（驻新加坡）</span><span class="lang-en">Dedicated Customer Success Manager (Singapore-based)</span></span></li>
+                        <li class="check-item flex gap-3"><i class="ph-fill ph-check-circle text-ocp-green shrink-0 mt-0.5 text-base"></i><span><span class="lang-zh">ESG 合规报告与投资者 Due Diligence 支持文件</span><span class="lang-en">ESG compliance reporting + investor due diligence support pack</span></span></li>
+                    </ul>
+                </div>
+                <a href="#contact" class="block text-center py-3 px-5 rounded-xl border border-ocp-green/30 text-ocp-green hover:bg-ocp-green hover:text-brand-950 font-bold text-sm transition-all">
+                    <span class="lang-zh">洽谈战略合作</span><span class="lang-en">Discuss Partnership</span>
+                </a>
+            </div>
+
+        </div>
+
+        <!-- Plan comparison footnote -->
+        <p class="text-center text-xs text-slate-600 mt-6 reveal font-mono">
+            <span class="lang-zh">* 以上价格均为年度净价（SGD），不含 GST。成功费另计（见下文）。所有方案均须经 dcdeeptech 资质审核后方可生效。</span>
+            <span class="lang-en">* All prices in SGD annually, exclusive of GST. Success fees apply separately (see below). All plans subject to dcdeeptech qualification review.</span>
+        </p>
+
+        <!-- ─── SUCCESS FEES ─── -->
+        <div class="mt-24 reveal">
+            <div class="text-center max-w-2xl mx-auto mb-12">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold-500/10 border border-gold-500/20 text-gold-400 text-xs font-bold tracking-widest uppercase mb-5">
+                    <i class="ph-fill ph-currency-circle-dollar"></i>
+                    <span class="lang-zh">成功分润机制</span><span class="lang-en">Success Fee Structure</span>
+                </div>
+                <h3 class="text-2xl md:text-3xl font-extrabold text-white mb-4">
+                    <span class="lang-zh">仅在成交时分享收益</span>
+                    <span class="lang-en">We Only Win When You Win</span>
+                </h3>
+                <p class="text-slate-400 text-sm">
+                    <span class="lang-zh">平台产生的合格交易，我们按成交合同金额收取成功费。这是我们与供应商深度利益绑定的承诺。</span>
+                    <span class="lang-en">A success fee applies on qualified, platform-generated deals closed through the dcdeeptech OCP Global Platform pipeline — our skin in the game.</span>
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                <!-- 3% -->
+                <div class="glass-card rounded-2xl p-7 text-center reveal reveal-delay-1 border border-white/5 hover:border-brand-600/30 transition-all">
+                    <div class="fee-badge inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-brand-600/10 border border-brand-600/20 text-brand-400 text-3xl font-extrabold mb-5 font-mono mx-auto">3%</div>
+                    <h4 class="text-base font-bold text-white mb-2"><span class="lang-zh">标准交易</span><span class="lang-en">Standard Deals</span></h4>
+                    <p class="text-xs text-slate-500 leading-relaxed"><span class="lang-zh">适用于通过平台 RFQ 管道促成的公开标项，单笔合同额 &lt; SGD 500K。</span><span class="lang-en">Applies to open RFQ pipeline deals under SGD 500K per contract.</span></p>
+                </div>
+                <!-- 4% -->
+                <div class="glass-card rounded-2xl p-7 text-center reveal reveal-delay-2 border border-gold-500/20 hover:border-gold-400/40 transition-all">
+                    <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gold-500/10 border border-gold-500/20 text-gold-400 text-3xl font-extrabold mb-5 font-mono mx-auto">4%</div>
+                    <h4 class="text-base font-bold text-white mb-2"><span class="lang-zh">优先管道交易</span><span class="lang-en">Priority Pipeline Deals</span></h4>
+                    <p class="text-xs text-slate-500 leading-relaxed"><span class="lang-zh">适用于 Featured / Strategic 层级专属 RFQ 管道，或经 dcdeeptech 直接撮合的私密交易。</span><span class="lang-en">Applies to Featured/Strategic exclusive RFQ pipeline or directly brokered private deals.</span></p>
+                </div>
+                <!-- 5% -->
+                <div class="glass-card rounded-2xl p-7 text-center reveal reveal-delay-3 border border-ocp-green/20 hover:border-ocp-green/40 transition-all">
+                    <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-ocp-green/10 border border-ocp-green/20 text-ocp-green text-3xl font-extrabold mb-5 font-mono mx-auto">5%</div>
+                    <h4 class="text-base font-bold text-white mb-2"><span class="lang-zh">超大型及主权项目</span><span class="lang-en">Hyperscale & Sovereign AI</span></h4>
+                    <p class="text-xs text-slate-500 leading-relaxed"><span class="lang-zh">适用于主权 AI 数据中心、国家级采购或单笔合同额 ≥ SGD 2M 的超大规模项目。</span><span class="lang-en">Applies to sovereign AI data centers, national procurement, or contracts ≥ SGD 2M.</span></p>
+                </div>
+            </div>
+
+            <div class="mt-6 p-5 rounded-2xl border border-white/5 bg-white/2 text-xs text-slate-600 font-mono text-center reveal">
+                <span class="lang-zh">⚠ 成功费以净合同额计算，不含税费与物流。仅限平台可归因交易（经 dcdeeptech 认定）。付款条款：交割后 30 天内。</span>
+                <span class="lang-en">⚠ Success fees calculated on net contract value, excl. tax and freight. Platform-attributable deals only (dcdeeptech determination final). Payment terms: 30 days post-close.</span>
+            </div>
+        </div>
+
+        <!-- ─── VALUE-ADDED SERVICES ─── -->
+        <div class="mt-28 reveal">
+            <div class="text-center max-w-2xl mx-auto mb-14">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 text-xs font-bold tracking-widest uppercase mb-5">
+                    <i class="ph-fill ph-wrench"></i>
+                    <span class="lang-zh">专业增值服务</span><span class="lang-en">Value-Added Services</span>
+                </div>
+                <h3 class="text-2xl md:text-3xl font-extrabold text-white mb-4">
+                    <span class="lang-zh">加速从认证到成交的工程桥梁</span>
+                    <span class="lang-en">Engineering the Bridge from Certified to Deployed</span>
+                </h3>
+                <p class="text-slate-400 text-sm">
+                    <span class="lang-zh">以下服务可单独采购，亦可作为战略合作协议的组成部分。所有报价均以 SGD 计，按项目实际工程量协议定制。</span>
+                    <span class="lang-en">Available à la carte or as part of a Strategic Partner agreement. All fees in SGD, scoped by project engineering complexity.</span>
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                <!-- VAS 1: OCP Readiness Review -->
+                <div class="vas-card reveal reveal-delay-1 glass-card rounded-2xl p-7 flex gap-5">
+                    <div class="shrink-0 w-12 h-12 rounded-xl bg-brand-600/10 border border-brand-600/20 flex items-center justify-center text-brand-400 text-xl">
+                        <i class="ph-fill ph-clipboard-text"></i>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-start justify-between gap-3 mb-2">
+                            <h4 class="font-bold text-white text-base"><span class="lang-zh">OCP 合规就绪审查</span><span class="lang-en">OCP Readiness Review</span></h4>
+                            <div class="shrink-0 text-right">
+                                <div class="text-xs text-slate-600 font-mono"><span class="lang-zh">起价</span><span class="lang-en">From</span></div>
+                                <div class="font-extrabold text-brand-400 text-sm font-mono">SGD 8,500</div>
+                            </div>
+                        </div>
+                        <p class="text-sm text-slate-400 leading-relaxed mb-3">
+                            <span class="lang-zh">针对您的产品线进行全面 OCP 规范差距分析（Gap Analysis）。输出书面报告，明确需调整的设计项、工程路线图及预计认证周期，为投资决策提供工程级依据。</span>
+                            <span class="lang-en">Comprehensive OCP specification gap analysis for your product line. Deliverable: a written engineering report with design delta, remediation roadmap, and estimated certification timeline — investment-grade technical due diligence.</span>
+                        </p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-2.5 py-1 rounded-lg bg-brand-600/10 text-brand-400 text-xs font-mono"><span class="lang-zh">2–3 周交付</span><span class="lang-en">2–3 wk delivery</span></span>
+                            <span class="px-2.5 py-1 rounded-lg bg-white/5 text-slate-500 text-xs font-mono"><span class="lang-zh">含专家评审会</span><span class="lang-en">Incl. expert debrief</span></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VAS 2: 48V / Liquid Cooling Technical Review -->
+                <div class="vas-card reveal reveal-delay-2 glass-card rounded-2xl p-7 flex gap-5">
+                    <div class="shrink-0 w-12 h-12 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center text-orange-400 text-xl">
+                        <i class="ph-fill ph-thermometer-hot"></i>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-start justify-between gap-3 mb-2">
+                            <h4 class="font-bold text-white text-base"><span class="lang-zh">48V / 液冷技术深度评审</span><span class="lang-en">48V / Liquid Cooling Technical Review</span></h4>
+                            <div class="shrink-0 text-right">
+                                <div class="text-xs text-slate-600 font-mono"><span class="lang-zh">起价</span><span class="lang-en">From</span></div>
+                                <div class="font-extrabold text-orange-400 text-sm font-mono">SGD 15,000</div>
+                            </div>
+                        </div>
+                        <p class="text-sm text-slate-400 leading-relaxed mb-3">
+                            <span class="lang-zh">深度评估您的 48V 供电架构或液冷（直接液冷 DLC / 浸没式）产品是否满足 OCP ORv3 规范与超大规模运营商部署要求，并提供工程改进建议报告。</span>
+                            <span class="lang-en">Deep-dive review of your 48V power architecture or liquid cooling (DLC/immersion) system against OCP ORv3 specifications and hyperscaler deployment requirements. Output: engineering improvement brief.</span>
+                        </p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-2.5 py-1 rounded-lg bg-orange-500/10 text-orange-400 text-xs font-mono"><span class="lang-zh">热仿真分析</span><span class="lang-en">Thermal simulation</span></span>
+                            <span class="px-2.5 py-1 rounded-lg bg-white/5 text-slate-500 text-xs font-mono"><span class="lang-zh">电气安规复核</span><span class="lang-en">Electrical safety audit</span></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VAS 3: Singapore Deployment Package -->
+                <div class="vas-card reveal reveal-delay-3 glass-card rounded-2xl p-7 flex gap-5">
+                    <div class="shrink-0 w-12 h-12 rounded-xl bg-ocp-green/10 border border-ocp-green/20 flex items-center justify-center text-ocp-green text-xl">
+                        <i class="ph-fill ph-buildings"></i>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-start justify-between gap-3 mb-2">
+                            <h4 class="font-bold text-white text-base"><span class="lang-zh">新加坡落地部署包</span><span class="lang-en">Singapore Deployment Package</span></h4>
+                            <div class="shrink-0 text-right">
+                                <div class="text-xs text-slate-600 font-mono"><span class="lang-zh">起价</span><span class="lang-en">From</span></div>
+                                <div class="font-extrabold text-ocp-green text-sm font-mono">SGD 28,000</div>
+                            </div>
+                        </div>
+                        <p class="text-sm text-slate-400 leading-relaxed mb-3">
+                            <span class="lang-zh">端到端协助中国供应商在新加坡完成商业落地：涵盖 IMDA 合规注册、本地实体架构建议、进口许可证代办、与本地 Colo 运营商对接，以及新加坡 OCP 体验中心设备入驻安排。</span>
+                            <span class="lang-en">End-to-end facilitation for Chinese vendors entering Singapore: IMDA compliance registration, local entity structuring advisory, import permit handling, Colo operator introductions, and OCP Experience Center equipment placement.</span>
+                        </p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-2.5 py-1 rounded-lg bg-ocp-green/10 text-ocp-green text-xs font-mono">IMDA</span>
+                            <span class="px-2.5 py-1 rounded-lg bg-white/5 text-slate-500 text-xs font-mono"><span class="lang-zh">Colo 对接</span><span class="lang-en">Colo intro</span></span>
+                            <span class="px-2.5 py-1 rounded-lg bg-white/5 text-slate-500 text-xs font-mono">PoC Lab</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VAS 4: Joint GTM Package -->
+                <div class="vas-card reveal reveal-delay-4 glass-card rounded-2xl p-7 flex gap-5 border border-purple-500/15">
+                    <div class="shrink-0 w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 text-xl">
+                        <i class="ph-fill ph-rocket-launch"></i>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-start justify-between gap-3 mb-2">
+                            <h4 class="font-bold text-white text-base"><span class="lang-zh">联合进入市场方案</span><span class="lang-en">Joint Go-to-Market Package</span></h4>
+                            <div class="shrink-0 text-right">
+                                <div class="text-xs text-slate-600 font-mono"><span class="lang-zh">起价</span><span class="lang-en">From</span></div>
+                                <div class="font-extrabold text-purple-400 text-sm font-mono">SGD 45,000</div>
+                            </div>
+                        </div>
+                        <p class="text-sm text-slate-400 leading-relaxed mb-3">
+                            <span class="lang-zh">以 dcdeeptech 为联合品牌背书方，制定 6 个月结构化出海计划：包含产品故事打磨（含双语技术白皮书）、OCP 峰会联合演讲、区域渠道伙伴引荐，以及与 3 家以上超大规模客户的引荐型 POC 机会。</span>
+                            <span class="lang-en">6-month structured GTM roadmap co-branded with dcdeeptech: product narrative refinement (bilingual technical whitepaper), joint OCP Summit speaking slot, regional channel partner introductions, and 3+ warm referral POC opportunities with hyperscale buyers.</span>
+                        </p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-2.5 py-1 rounded-lg bg-purple-500/10 text-purple-400 text-xs font-mono"><span class="lang-zh">6 个月计划</span><span class="lang-en">6-month plan</span></span>
+                            <span class="px-2.5 py-1 rounded-lg bg-white/5 text-slate-500 text-xs font-mono">OCP Summit</span>
+                            <span class="px-2.5 py-1 rounded-lg bg-white/5 text-slate-500 text-xs font-mono"><span class="lang-zh">白皮书</span><span class="lang-en">Whitepaper</span></span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     COMMERCIAL MODEL TABLE (preserved from original)
+═══════════════════════════════════════════ -->
+<section id="gtm" class="py-24 bg-slate-900/40 border-t border-white/5">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-3xl mx-auto mb-16 reveal">
+            <div class="text-brand-400 font-bold tracking-widest uppercase text-xs mb-3"><span class="lang-zh">认证商业模式</span><span class="lang-en">Certification Commercial Model</span></div>
+            <h2 class="text-3xl md:text-4xl font-extrabold text-white mb-5">
+                <span class="lang-zh">认证服务报价估算</span>
+                <span class="lang-en">Certification Service Pricing</span>
+            </h2>
+            <p class="text-slate-400 text-sm">
+                <span class="lang-zh">采用 基础咨询费 + 认证代理费 + 销售分润 的结构，以下为基准预估（USD）</span>
+                <span class="lang-en">Base consulting + agency fees + profit sharing structure. Baseline estimates in USD.</span>
+            </p>
+        </div>
+        <div class="reveal bg-white/3 rounded-3xl border border-white/5 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse min-w-[760px]">
+                    <thead>
+                        <tr class="border-b border-white/5 text-xs uppercase tracking-widest text-slate-500">
+                            <th class="p-6 font-bold w-1/4"><span class="lang-zh">认证服务与范围</span><span class="lang-en">Service & Scope</span></th>
+                            <th class="p-6 font-bold w-1/4"><span class="lang-zh">适用对象</span><span class="lang-en">Target</span></th>
+                            <th class="p-6 font-bold w-1/4 text-brand-400"><span class="lang-zh">基础报价 (USD)</span><span class="lang-en">Est. Base (USD)</span></th>
+                            <th class="p-6 font-bold w-1/4"><span class="lang-zh">核心交付</span><span class="lang-en">Deliverables</span></th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-white/5 text-slate-400 text-sm">
+                        <tr class="hover:bg-white/3 transition-colors">
+                            <td class="p-6">
+                                <div class="font-bold text-white mb-1">OCP Accepted / Inspired™</div>
+                                <div class="text-xs text-slate-600"><span class="lang-zh">硬件合规导航与代理申请</span><span class="lang-en">Hardware compliance & agency</span></div>
+                            </td>
+                            <td class="p-6"><span class="px-2.5 py-1 rounded-md bg-brand-600/10 text-brand-400 text-xs font-bold border border-brand-600/20"><span class="lang-zh">计算/网络/存储/机架 OEM</span><span class="lang-en">Compute/Net/Storage OEMs</span></span></td>
+                            <td class="p-6"><div class="font-extrabold text-brand-400 text-lg">$25,000 – $60,000</div><div class="text-xs text-slate-600 mt-1"><span class="lang-zh">按 SKU（不含审计费）</span><span class="lang-en">Per SKU (excl. audit)</span></div></td>
+                            <td class="p-6 text-xs leading-relaxed"><span class="lang-zh">规范差距分析、设计文件准备、OCP 社区答辩辅导与挂牌。</span><span class="lang-en">Gap analysis, Design Package prep, community review coaching, official badge.</span></td>
+                        </tr>
+                        <tr class="hover:bg-white/3 transition-colors">
+                            <td class="p-6">
+                                <div class="font-bold text-purple-300 mb-1">OCP Ready™</div>
+                                <div class="text-xs text-slate-600"><span class="lang-zh">数据中心设施工程咨询</span><span class="lang-en">Facility engineering consulting</span></div>
+                            </td>
+                            <td class="p-6"><span class="px-2.5 py-1 rounded-md bg-purple-500/10 text-purple-400 text-xs font-bold border border-purple-500/20"><span class="lang-zh">托管机房 / 园区运营商</span><span class="lang-en">DC / Colo Operators</span></span></td>
+                            <td class="p-6"><div class="font-extrabold text-purple-400 text-lg">$40,000 – $90,000</div><div class="text-xs text-slate-600 mt-1"><span class="lang-zh">按单体机房 / 项目区</span><span class="lang-en">Per Facility/Zone</span></div></td>
+                            <td class="p-6 text-xs leading-relaxed"><span class="lang-zh">楼面承重/电力/液冷热评估报告、合规升级方案及官方设施清单。</span><span class="lang-en">Structural/power/thermal assessment, compliance retrofit design, official listing.</span></td>
+                        </tr>
+                        <tr class="hover:bg-white/3 transition-colors">
+                            <td class="p-6">
+                                <div class="font-bold text-white mb-1"><span class="lang-zh">AI 集成解决方案 GTM</span><span class="lang-en">AI Integrated Solutions GTM</span></div>
+                            </td>
+                            <td class="p-6"><span class="px-2.5 py-1 rounded-md bg-white/5 text-slate-400 text-xs font-bold border border-white/10"><span class="lang-zh">全生态合作伙伴</span><span class="lang-en">All Certified Partners</span></span></td>
+                            <td class="p-6"><div class="font-extrabold text-ocp-green text-lg"><span class="lang-zh">集成底费 + 分润</span><span class="lang-en">Setup + Margin Share</span></div><div class="text-xs text-slate-600 mt-1">10% – 20% <span class="lang-zh">提成</span><span class="lang-en">profit share</span></div></td>
+                            <td class="p-6 text-xs leading-relaxed"><span class="lang-zh">软硬一体化打磨、Marketplace 上架、全球渠道推介及体验中心 PoC 落地。</span><span class="lang-en">HW/SW integration, Marketplace listing, global channel introductions, PoC deployment.</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     PARTNERSHIP MODEL (from ABC agreement)
+═══════════════════════════════════════════ -->
+<section id="partnership" class="py-28 bg-brand-950 relative overflow-hidden border-t border-white/5">
+    <div class="absolute inset-0 pointer-events-none">
+        <div class="absolute bottom-0 right-1/4 w-[40rem] h-[40rem] bg-brand-700/6 rounded-full blur-[120px]"></div>
+        <div class="absolute top-0 left-0 w-64 h-64 bg-ocp-green/5 rounded-full blur-[80px]"></div>
+    </div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+
+        <!-- Header -->
+        <div class="text-center max-w-3xl mx-auto mb-20 reveal">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-ocp-green/10 border border-ocp-green/20 text-ocp-green text-xs font-bold tracking-widest uppercase mb-5">
+                <i class="ph-fill ph-handshake"></i>
+                <span class="lang-zh">通用战略合作模式</span>
+                <span class="lang-en">Strategic Partnership Framework</span>
+            </div>
+            <h2 class="text-3xl md:text-5xl font-extrabold text-white mb-5 leading-tight">
+                <span class="lang-zh">制造方 × DCDeepTech<br><span class="grad-green">共同出海的结构化路径</span></span>
+                <span class="lang-en">Manufacturer × DCDeepTech<br><span class="grad-green">A Structured Path to Global Markets</span></span>
+            </h2>
+            <p class="text-slate-400 text-base leading-relaxed">
+                <span class="lang-zh">适用于具备液冷、热管理、AI 服务器或配套硬件制造能力，希望进入国际市场的中国制造商。DCDeepTech 以新加坡为锚点，提供国际化定位、客户开发、OCP 叙事与项目转化的全周期合作框架。</span>
+                <span class="lang-en">Designed for Chinese manufacturers in liquid cooling, thermal management, AI server, or adjacent hardware — seeking structured international go-to-market access. DCDeepTech anchors from Singapore, covering international positioning, customer development, OCP narrative, and deal conversion across three partnership phases.</span>
+            </p>
+        </div>
+
+        <!-- Role split: Manufacturer vs DCDeepTech -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-20 reveal">
+            <!-- Manufacturer side -->
+            <div class="glass-card rounded-3xl p-8 border border-white/5">
+                <div class="flex items-center gap-3 mb-6 pb-5 border-b border-white/5">
+                    <div class="w-11 h-11 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center text-orange-400 text-xl">
+                        <i class="ph-fill ph-factory"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs text-slate-500 uppercase tracking-wider font-bold mb-0.5"><span class="lang-zh">制造合作方</span><span class="lang-en">Manufacturing Partner</span></div>
+                        <div class="font-extrabold text-white text-lg"><span class="lang-zh">您的核心贡献</span><span class="lang-en">Your Core Contributions</span></div>
+                    </div>
+                </div>
+                <ul class="space-y-4">
+                    <li class="flex gap-3 text-sm text-slate-400">
+                        <i class="ph-fill ph-check-circle text-orange-400 shrink-0 mt-0.5 text-base"></i>
+                        <span><span class="lang-zh">液冷 / 热管理产品研发、样机准备、量产与交付</span><span class="lang-en">Liquid cooling / thermal product R&D, prototyping, mass production and delivery</span></span>
+                    </li>
+                    <li class="flex gap-3 text-sm text-slate-400">
+                        <i class="ph-fill ph-check-circle text-orange-400 shrink-0 mt-0.5 text-base"></i>
+                        <span><span class="lang-zh">中国境内供应链组织、成本管控、质量控制与履约</span><span class="lang-en">China-side supply chain, cost management, QC and project fulfillment</span></span>
+                    </li>
+                    <li class="flex gap-3 text-sm text-slate-400">
+                        <i class="ph-fill ph-check-circle text-orange-400 shrink-0 mt-0.5 text-base"></i>
+                        <span><span class="lang-zh">提供技术底稿、测试数据、工厂能力说明等国际化材料输入</span><span class="lang-en">Technical specs, test data, factory capability statements for internationalization</span></span>
+                    </li>
+                    <li class="flex gap-3 text-sm text-slate-400">
+                        <i class="ph-fill ph-check-circle text-orange-400 shrink-0 mt-0.5 text-base"></i>
+                        <span><span class="lang-zh">配合海外客户技术交流、PoC 部署与 RFQ/RFP 响应</span><span class="lang-en">Support overseas technical exchanges, PoC deployments and RFQ/RFP responses</span></span>
+                    </li>
+                </ul>
+            </div>
+            <!-- DCDeepTech side -->
+            <div class="glass-card rounded-3xl p-8 border border-brand-600/20">
+                <div class="flex items-center gap-3 mb-6 pb-5 border-b border-white/5">
+                    <div class="w-11 h-11 rounded-xl bg-brand-600/10 border border-brand-600/20 flex items-center justify-center text-brand-400 text-xl">
+                        <i class="ph-fill ph-globe-hemisphere-west"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs text-slate-500 uppercase tracking-wider font-bold mb-0.5">DCDeepTech</div>
+                        <div class="font-extrabold text-white text-lg"><span class="lang-zh">我们的核心贡献</span><span class="lang-en">What We Deliver</span></div>
+                    </div>
+                </div>
+                <ul class="space-y-4">
+                    <li class="flex gap-3 text-sm text-slate-400">
+                        <i class="ph-fill ph-check-circle text-brand-400 shrink-0 mt-0.5 text-base"></i>
+                        <span><span class="lang-zh">国际化定位、双语商务表达与 OCP 叙事体系搭建</span><span class="lang-en">International positioning, bilingual business narrative and OCP storytelling</span></span>
+                    </li>
+                    <li class="flex gap-3 text-sm text-slate-400">
+                        <i class="ph-fill ph-check-circle text-brand-400 shrink-0 mt-0.5 text-base"></i>
+                        <span><span class="lang-zh">持续性 OCP 活动追踪、技术路线与客户需求月度情报</span><span class="lang-en">Ongoing OCP event tracking, tech roadmap and buyer intent monthly intelligence</span></span>
+                    </li>
+                    <li class="flex gap-3 text-sm text-slate-400">
+                        <i class="ph-fill ph-check-circle text-brand-400 shrink-0 mt-0.5 text-base"></i>
+                        <span><span class="lang-zh">海外客户开发：超大规模数据中心、NVIDIA OEM 生态、SI / 工程总包</span><span class="lang-en">Overseas customer development: hyperscalers, NVIDIA OEM ecosystem, SI / EPC</span></span>
+                    </li>
+                    <li class="flex gap-3 text-sm text-slate-400">
+                        <i class="ph-fill ph-check-circle text-brand-400 shrink-0 mt-0.5 text-base"></i>
+                        <span><span class="lang-zh">数字营销、线索分层管理与前端商务推进至项目立项</span><span class="lang-en">Digital marketing, lead tiering and front-end business development through to project initiation</span></span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 3-Phase Timeline -->
+        <div class="mb-20">
+            <div class="text-center mb-12 reveal">
+                <div class="text-xs font-bold text-brand-400 uppercase tracking-widest mb-3"><span class="lang-zh">分阶段推进机制</span><span class="lang-en">Phased Execution Model</span></div>
+                <h3 class="text-2xl md:text-3xl font-extrabold text-white"><span class="lang-zh">三阶段联合出海路线图</span><span class="lang-en">Three-Phase Joint GTM Roadmap</span></h3>
+            </div>
+            <!-- Phase cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+
+                <!-- Phase 1 -->
+                <div class="reveal reveal-delay-1 glass-card rounded-2xl p-7 border border-white/5 hover:border-brand-600/30 transition-all">
+                    <div class="flex items-center justify-between mb-5">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-xl bg-brand-600/15 border border-brand-600/20 flex items-center justify-center text-brand-400 font-extrabold font-mono text-sm">01</div>
+                            <div class="text-xs text-slate-500 uppercase tracking-wider font-bold"><span class="lang-zh">0 — 6 个月</span><span class="lang-en">0 — 6 Months</span></div>
+                        </div>
+                        <span class="px-2.5 py-1 rounded-lg bg-brand-600/10 text-brand-400 text-xs font-bold"><span class="lang-zh">市场验证期</span><span class="lang-en">Market Validation</span></span>
+                    </div>
+                    <h4 class="font-bold text-white text-base mb-3"><span class="lang-zh">建立国际化表达，跑通首批客户</span><span class="lang-en">Establish international narrative, close first buyer touchpoints</span></h4>
+                    <p class="text-sm text-slate-500 leading-relaxed mb-5"><span class="lang-zh">完成国际定位与 OCP 叙事体系；形成首批目标客户池；建立月度情报机制；跑通线索→交流→材料闭环。</span><span class="lang-en">Complete international positioning and OCP narrative; form initial target buyer list; establish monthly intelligence cadence; validate lead → meeting → materials loop.</span></p>
+                    <div class="border-t border-white/5 pt-5">
+                        <div class="text-xs text-slate-600 font-semibold uppercase tracking-wider mb-3"><span class="lang-zh">建议服务组合</span><span class="lang-en">Recommended Service Mix</span></div>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-2 py-1 rounded-md bg-white/5 text-slate-400 text-xs font-mono"><span class="lang-zh">战略定位模块</span><span class="lang-en">Strategy Module</span></span>
+                            <span class="px-2 py-1 rounded-md bg-white/5 text-slate-400 text-xs font-mono"><span class="lang-zh">月度情报</span><span class="lang-en">Monthly Intel</span></span>
+                            <span class="px-2 py-1 rounded-md bg-white/5 text-slate-400 text-xs font-mono"><span class="lang-zh">数字营销</span><span class="lang-en">Digital Mktg</span></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Phase 2 -->
+                <div class="reveal reveal-delay-2 glass-card rounded-2xl p-7 border border-gold-500/15 hover:border-gold-400/30 transition-all">
+                    <div class="flex items-center justify-between mb-5">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-xl bg-gold-500/10 border border-gold-500/20 flex items-center justify-center text-gold-400 font-extrabold font-mono text-sm">02</div>
+                            <div class="text-xs text-slate-500 uppercase tracking-wider font-bold"><span class="lang-zh">6 — 18 个月</span><span class="lang-en">6 — 18 Months</span></div>
+                        </div>
+                        <span class="px-2.5 py-1 rounded-lg bg-gold-500/10 text-gold-400 text-xs font-bold"><span class="lang-zh">转化放大期</span><span class="lang-en">Deal Conversion</span></span>
+                    </div>
+                    <h4 class="font-bold text-white text-base mb-3"><span class="lang-zh">推进 RFQ / PoC，形成项目分成</span><span class="lang-en">Drive RFQ / PoC pipeline, activate revenue sharing</span></h4>
+                    <p class="text-sm text-slate-500 leading-relaxed mb-5"><span class="lang-zh">深耕重点账户；推进 OEM / SI 项目 RFQ 与 PoC；建立项目归因机制；视情况启动新加坡海外销售实体。</span><span class="lang-en">Deepen key accounts; advance OEM/SI RFQ and PoC; formalize project attribution; optionally launch Singapore sales entity.</span></p>
+                    <div class="border-t border-white/5 pt-5">
+                        <div class="text-xs text-slate-600 font-semibold uppercase tracking-wider mb-3"><span class="lang-zh">建议服务组合</span><span class="lang-en">Recommended Service Mix</span></div>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-2 py-1 rounded-md bg-white/5 text-slate-400 text-xs font-mono"><span class="lang-zh">客户开发</span><span class="lang-en">Customer Dev</span></span>
+                            <span class="px-2 py-1 rounded-md bg-white/5 text-slate-400 text-xs font-mono"><span class="lang-zh">月度情报</span><span class="lang-en">Monthly Intel</span></span>
+                            <span class="px-2 py-1 rounded-md bg-white/5 text-slate-400 text-xs font-mono"><span class="lang-zh">项目分成</span><span class="lang-en">Deal Share</span></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Phase 3 -->
+                <div class="reveal reveal-delay-3 glass-card rounded-2xl p-7 border border-ocp-green/15 hover:border-ocp-green/30 transition-all">
+                    <div class="flex items-center justify-between mb-5">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-xl bg-ocp-green/10 border border-ocp-green/20 flex items-center justify-center text-ocp-green font-extrabold font-mono text-sm">03</div>
+                            <div class="text-xs text-slate-500 uppercase tracking-wider font-bold"><span class="lang-zh">18 个月后</span><span class="lang-en">18+ Months</span></div>
+                        </div>
+                        <span class="px-2.5 py-1 rounded-lg bg-ocp-green/10 text-ocp-green text-xs font-bold"><span class="lang-zh">平台沉淀期</span><span class="lang-en">Platform Scale</span></span>
+                    </div>
+                    <h4 class="font-bold text-white text-base mb-3"><span class="lang-zh">建立海外持续增长机制与长期绑定</span><span class="lang-en">Build sustained overseas growth engine and long-term alignment</span></h4>
+                    <p class="text-sm text-slate-500 leading-relaxed mb-5"><span class="lang-zh">全面激活海外销售组织；引入长期激励机制（期权 / 购股权 / 里程碑增持）；推动主权 AI 及超大型标杆项目。</span><span class="lang-en">Activate full overseas sales organization; introduce long-term incentives (options / warrants / milestone top-up); pursue sovereign AI and hyperscale anchor deals.</span></p>
+                    <div class="border-t border-white/5 pt-5">
+                        <div class="text-xs text-slate-600 font-semibold uppercase tracking-wider mb-3"><span class="lang-zh">建议服务组合</span><span class="lang-en">Recommended Service Mix</span></div>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-2 py-1 rounded-md bg-white/5 text-slate-400 text-xs font-mono"><span class="lang-zh">海外销售组织</span><span class="lang-en">Sales Org</span></span>
+                            <span class="px-2 py-1 rounded-md bg-white/5 text-slate-400 text-xs font-mono"><span class="lang-zh">长期激励</span><span class="lang-en">LT Incentives</span></span>
+                            <span class="px-2 py-1 rounded-md bg-white/5 text-slate-400 text-xs font-mono"><span class="lang-zh">资本合作</span><span class="lang-en">Capital Collab</span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Service Modules -->
+        <div class="mb-20">
+            <div class="text-center mb-12 reveal">
+                <div class="text-xs font-bold text-brand-400 uppercase tracking-widest mb-3"><span class="lang-zh">服务模块</span><span class="lang-en">Service Modules</span></div>
+                <h3 class="text-2xl md:text-3xl font-extrabold text-white"><span class="lang-zh">五大模块，按需组合启动</span><span class="lang-en">Five Modular Services, Activated on Demand</span></h3>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+
+                <div class="reveal reveal-delay-1 vas-card glass-card rounded-xl p-6 flex gap-4">
+                    <div class="shrink-0 w-10 h-10 rounded-lg bg-brand-600/10 border border-brand-600/20 flex items-center justify-center text-brand-400 font-extrabold font-mono text-xs">A</div>
+                    <div>
+                        <div class="font-bold text-white text-sm mb-1"><span class="lang-zh">战略与国际化模块</span><span class="lang-en">Strategy & Internationalisation</span></div>
+                        <p class="text-xs text-slate-500 leading-relaxed"><span class="lang-zh">国际定位、OCP 叙事、双语商务材料、China+1 市场进入路径设计。适用阶段一/二。</span><span class="lang-en">International positioning, OCP narrative, bilingual materials, China+1 market entry design. Phase 1/2.</span></p>
+                    </div>
+                </div>
+
+                <div class="reveal reveal-delay-2 vas-card glass-card rounded-xl p-6 flex gap-4">
+                    <div class="shrink-0 w-10 h-10 rounded-lg bg-ocp-green/10 border border-ocp-green/20 flex items-center justify-center text-ocp-green font-extrabold font-mono text-xs">B</div>
+                    <div>
+                        <div class="font-bold text-white text-sm mb-1"><span class="lang-zh">月度预研情报模块</span><span class="lang-en">Monthly Market Intelligence</span></div>
+                        <p class="text-xs text-slate-500 leading-relaxed"><span class="lang-zh">OCP 活动追踪、液冷技术路线、客户需求信号、竞品动态，每月一份报告 + 管理层解读。全阶段适用。</span><span class="lang-en">OCP event tracking, liquid cooling roadmap, buyer intent signals, competitive radar. Monthly report + exec briefing. All phases.</span></p>
+                    </div>
+                </div>
+
+                <div class="reveal reveal-delay-3 vas-card glass-card rounded-xl p-6 flex gap-4">
+                    <div class="shrink-0 w-10 h-10 rounded-lg bg-gold-500/10 border border-gold-500/20 flex items-center justify-center text-gold-400 font-extrabold font-mono text-xs">C</div>
+                    <div>
+                        <div class="font-bold text-white text-sm mb-1"><span class="lang-zh">客户与项目开发模块</span><span class="lang-en">Customer & Deal Development</span></div>
+                        <p class="text-xs text-slate-500 leading-relaxed"><span class="lang-zh">客户池拓展、客户会议、线索跟进、RFQ / PoC 支持，覆盖超大规模、NVIDIA OEM 及 SI 三大客户群。</span><span class="lang-en">Buyer pool expansion, meetings, lead follow-up, RFQ/PoC support across hyperscale, NVIDIA OEM, and SI segments.</span></p>
+                    </div>
+                </div>
+
+                <div class="reveal reveal-delay-1 vas-card glass-card rounded-xl p-6 flex gap-4">
+                    <div class="shrink-0 w-10 h-10 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 font-extrabold font-mono text-xs">D</div>
+                    <div>
+                        <div class="font-bold text-white text-sm mb-1"><span class="lang-zh">数字营销模块</span><span class="lang-en">Digital Marketing</span></div>
+                        <p class="text-xs text-slate-500 leading-relaxed"><span class="lang-zh">官网 / 社媒 / 邮件 / 内容营销 / 活动包装 / 线索管理，月度执行与线索统计。适用阶段一/二。</span><span class="lang-en">Website, social, email, content, event packaging and lead management. Monthly execution and lead reporting. Phase 1/2.</span></p>
+                    </div>
+                </div>
+
+                <div class="reveal reveal-delay-2 vas-card glass-card rounded-xl p-6 flex gap-4 md:col-span-2 lg:col-span-1">
+                    <div class="shrink-0 w-10 h-10 rounded-lg bg-orange-500/10 border border-orange-500/20 flex items-center justify-center text-orange-400 font-extrabold font-mono text-xs">E</div>
+                    <div>
+                        <div class="font-bold text-white text-sm mb-1"><span class="lang-zh">海外销售组织模块</span><span class="lang-en">Overseas Sales Organisation</span></div>
+                        <p class="text-xs text-slate-500 leading-relaxed"><span class="lang-zh">新加坡实体销售窗口、区域客户经理、代理体系、重点账户经营，含组织建议、岗位设计与 KPI 框架。适用阶段二/三。</span><span class="lang-en">Singapore sales entity, regional account managers, agent network, key account management. Incl. org design and KPI framework. Phase 2/3.</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Revenue Mechanism -->
+        <div class="mb-20 reveal">
+            <div class="text-center mb-12">
+                <div class="text-xs font-bold text-brand-400 uppercase tracking-widest mb-3"><span class="lang-zh">收益组合机制</span><span class="lang-en">Revenue Mechanism</span></div>
+                <h3 class="text-2xl md:text-3xl font-extrabold text-white"><span class="lang-zh">灵活分层的收益组合，而非一刀切</span><span class="lang-en">Flexible, Stage-Matched Revenue Structures</span></h3>
+                <p class="text-slate-500 text-sm mt-3 max-w-2xl mx-auto"><span class="lang-zh">收益组合根据合作阶段、客户类型与项目复杂度协议定制，不强制统一收费。各口径须在具体项目立项前以补充协议明确。</span><span class="lang-en">Revenue structures are tailored per phase, customer type, and deal complexity — never one-size-fits-all. All metrics and scope confirmed in writing before project initiation.</span></p>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+                <div class="glass-card rounded-xl p-4 text-center border border-white/5 hover:border-brand-600/30 transition-all">
+                    <i class="ph-fill ph-money text-brand-400 text-2xl mb-3"></i>
+                    <div class="text-xs font-bold text-white mb-1"><span class="lang-zh">启动合作费</span><span class="lang-en">Engagement Fee</span></div>
+                    <div class="text-xs text-slate-600"><span class="lang-zh">战略合作启动，一次性</span><span class="lang-en">One-time onboarding</span></div>
+                </div>
+                <div class="glass-card rounded-xl p-4 text-center border border-white/5 hover:border-brand-600/30 transition-all">
+                    <i class="ph-fill ph-calendar-check text-ocp-green text-2xl mb-3"></i>
+                    <div class="text-xs font-bold text-white mb-1"><span class="lang-zh">月度协同服务费</span><span class="lang-en">Monthly Retainer</span></div>
+                    <div class="text-xs text-slate-600"><span class="lang-zh">持续情报 + 执行</span><span class="lang-en">Ongoing intel + execution</span></div>
+                </div>
+                <div class="glass-card rounded-xl p-4 text-center border border-white/5 hover:border-brand-600/30 transition-all">
+                    <i class="ph-fill ph-user-plus text-gold-400 text-2xl mb-3"></i>
+                    <div class="text-xs font-bold text-white mb-1"><span class="lang-zh">客户导入费</span><span class="lang-en">Lead Introduction Fee</span></div>
+                    <div class="text-xs text-slate-600"><span class="lang-zh">有效线索触达</span><span class="lang-en">Per qualified introduction</span></div>
+                </div>
+                <div class="glass-card rounded-xl p-4 text-center border border-white/5 hover:border-brand-600/30 transition-all">
+                    <i class="ph-fill ph-chart-pie text-purple-400 text-2xl mb-3"></i>
+                    <div class="text-xs font-bold text-white mb-1"><span class="lang-zh">项目 / 毛利分成</span><span class="lang-en">Deal / Margin Share</span></div>
+                    <div class="text-xs text-slate-600"><span class="lang-zh">3%–5% 平台归因</span><span class="lang-en">3–5% on platform deals</span></div>
+                </div>
+                <div class="glass-card rounded-xl p-4 text-center border border-white/5 hover:border-brand-600/30 transition-all">
+                    <i class="ph-fill ph-trophy text-orange-400 text-2xl mb-3"></i>
+                    <div class="text-xs font-bold text-white mb-1"><span class="lang-zh">里程碑奖金</span><span class="lang-en">Milestone Bonus</span></div>
+                    <div class="text-xs text-slate-600"><span class="lang-zh">标杆客户 / 阶段目标</span><span class="lang-en">Anchor client / phase KPI</span></div>
+                </div>
+                <div class="glass-card rounded-xl p-4 text-center border border-white/5 hover:border-ocp-green/30 transition-all">
+                    <i class="ph-fill ph-trend-up text-ocp-green text-2xl mb-3"></i>
+                    <div class="text-xs font-bold text-white mb-1"><span class="lang-zh">长期权益激励</span><span class="lang-en">Long-Term Equity</span></div>
+                    <div class="text-xs text-slate-600"><span class="lang-zh">期权 / 购股权（阶段三）</span><span class="lang-en">Options / warrants (Phase 3)</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Target buyer pools -->
+        <div class="reveal">
+            <div class="text-center mb-12">
+                <div class="text-xs font-bold text-brand-400 uppercase tracking-widest mb-3"><span class="lang-zh">目标客户群</span><span class="lang-en">Target Buyer Segments</span></div>
+                <h3 class="text-2xl md:text-3xl font-extrabold text-white"><span class="lang-zh">三大核心客户池</span><span class="lang-en">Three Core Buyer Pools</span></h3>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                <div class="glass-card rounded-2xl p-7 border border-white/5 hover:border-brand-600/20 transition-all reveal reveal-delay-1">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-xl bg-brand-600/10 border border-brand-600/20 flex items-center justify-center text-brand-400 text-lg"><i class="ph-fill ph-cpu"></i></div>
+                        <div class="text-xs text-slate-500 font-bold uppercase tracking-wider"><span class="lang-zh">客户池一</span><span class="lang-en">Buyer Pool A</span></div>
+                    </div>
+                    <h4 class="font-bold text-white text-base mb-2"><span class="lang-zh">NVIDIA 系 OEM 生态</span><span class="lang-en">NVIDIA OEM Ecosystem</span></h4>
+                    <p class="text-sm text-slate-500 leading-relaxed"><span class="lang-zh">冷却与配套厂商、整机 OEM、服务器代工体系及 China+1 布局的海外机会。强调规模化交付能力与国际采购语境。</span><span class="lang-en">Cooling vendors, system OEMs, server ODMs, and China+1 overseas opportunities. Emphasis on scale delivery and international procurement alignment.</span></p>
+                </div>
+                <div class="glass-card rounded-2xl p-7 border border-white/5 hover:border-gold-400/20 transition-all reveal reveal-delay-2">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-xl bg-gold-500/10 border border-gold-500/20 flex items-center justify-center text-gold-400 text-lg"><i class="ph-fill ph-cloud-lightning"></i></div>
+                        <div class="text-xs text-slate-500 font-bold uppercase tracking-wider"><span class="lang-zh">客户池二</span><span class="lang-en">Buyer Pool B</span></div>
+                    </div>
+                    <h4 class="font-bold text-white text-base mb-2"><span class="lang-zh">超大规模智算客户</span><span class="lang-en">Hyperscale AI Compute</span></h4>
+                    <p class="text-sm text-slate-500 leading-relaxed"><span class="lang-zh">Meta、Google 等大型超算/AI 基础设施运营商。进入难度高，但一旦建立合作，将形成最高级别的国际品牌背书。</span><span class="lang-en">Large-scale AI infrastructure operators. High entry barrier, but once established, delivers the highest tier of international brand validation.</span></p>
+                </div>
+                <div class="glass-card rounded-2xl p-7 border border-white/5 hover:border-ocp-green/20 transition-all reveal reveal-delay-3">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-xl bg-ocp-green/10 border border-ocp-green/20 flex items-center justify-center text-ocp-green text-lg"><i class="ph-fill ph-buildings"></i></div>
+                        <div class="text-xs text-slate-500 font-bold uppercase tracking-wider"><span class="lang-zh">客户池三</span><span class="lang-en">Buyer Pool C</span></div>
+                    </div>
+                    <h4 class="font-bold text-white text-base mb-2"><span class="lang-zh">国际 SI / 自建项目方</span><span class="lang-en">International SI & Self-Build</span></h4>
+                    <p class="text-sm text-slate-500 leading-relaxed"><span class="lang-zh">国际第三方机房、自建项目方、系统集成商及区域工程总包。项目相对碎片化，但更适合形成快速现金流转化。</span><span class="lang-en">International colocation operators, self-build project owners, SIs and regional EPCs. More fragmented but faster to initial revenue conversion.</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- CTA banner -->
+        <div class="mt-16 reveal">
+            <div class="relative rounded-3xl overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-r from-brand-900 to-brand-950 border border-brand-700/30 rounded-3xl"></div>
+                <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utb3BhY2l0eT0iMC4wMyIgZmlsbD0ibm9uZSI+PHBhdGggZD0iTTAgNjBoNjBNNjAgMEgwbTAgMGw2MCA2ME0wIDYwbDYwLTYwIi8+PC9nPjwvc3ZnPg==')] opacity-100 rounded-3xl"></div>
+                <div class="relative z-10 px-10 py-12 md:flex items-center justify-between gap-8">
+                    <div>
+                        <div class="text-xs text-brand-400 font-bold uppercase tracking-widest mb-2"><span class="lang-zh">合作咨询</span><span class="lang-en">Partnership Inquiry</span></div>
+                        <h4 class="text-2xl md:text-3xl font-extrabold text-white mb-2"><span class="lang-zh">有制造能力，缺出海路径？</span><span class="lang-en">Great product. Missing the global route?</span></h4>
+                        <p class="text-slate-400 text-sm"><span class="lang-zh">与 dcdeeptech 架构师预约一次 30 分钟的免费初始评估，明确您的合作阶段、服务组合与第一步行动计划。</span><span class="lang-en">Book a free 30-minute initial assessment with a dcdeeptech architect. Clarify your partnership phase, service mix, and first-step action plan.</span></p>
+                    </div>
+                    <div class="mt-6 md:mt-0 shrink-0">
+                        <a href="#contact" class="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-bold text-sm transition-all shadow-lg shadow-brand-500/20">
+                            <span class="lang-zh">预约初始评估</span><span class="lang-en">Book Free Assessment</span>
+                            <i class="ph-bold ph-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     FOOTER / CTA
+═══════════════════════════════════════════ -->
+<footer id="contact" class="bg-brand-950 text-slate-400 py-24 border-t border-white/5">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/5 text-slate-500 text-xs font-bold tracking-widest uppercase mb-8">
+            <i class="ph-fill ph-map-pin text-ocp-green"></i>
+            <span class="lang-zh">总部：新加坡</span><span class="lang-en">Headquartered in Singapore</span>
+        </div>
+        <h2 class="text-3xl md:text-5xl font-extrabold text-white mb-6 leading-tight">
+            <span class="lang-zh">跨越物理界限<br><span class="grad-blue">重塑 AI 供应链</span></span>
+            <span class="lang-en">Break Physical Borders.<br><span class="grad-blue">Reshape the AI Supply Chain.</span></span>
+        </h2>
+        <p class="mb-12 text-slate-400 text-base max-w-2xl mx-auto leading-relaxed">
+            <span class="lang-zh">联系 dcdeeptech 资深架构师，安排免费产品线初始工程评估（Gap Analysis Workshop）及供应商入驻咨询。</span>
+            <span class="lang-en">Contact a dcdeeptech senior architect to schedule a complimentary Gap Analysis Workshop and vendor onboarding consultation.</span>
+        </p>
+
+        <div class="bg-white/3 rounded-3xl p-8 border border-white/5 max-w-md mx-auto text-left backdrop-blur-sm">
+            <div class="font-bold text-white text-lg mb-6 pb-5 border-b border-white/5 flex items-center gap-3">
+                <i class="ph-fill ph-paper-plane-right text-brand-400"></i>
+                <span class="lang-zh">业务洽谈窗口</span>
+                <span class="lang-en">Business Inquiry</span>
+            </div>
+            <div class="space-y-5">
+                <div class="flex items-center gap-4 group">
+                    <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-brand-400 group-hover:bg-brand-600 group-hover:text-white transition-colors">
+                        <i class="ph-fill ph-user"></i>
+                    </div>
+                    <div>
+                        <div class="text-white font-semibold">Suzy</div>
+                        <div class="text-sm text-slate-500"><span class="lang-zh">生态系统总监，dcdeeptech</span><span class="lang-en">Partner Ecosystem Director, dcdeeptech</span></div>
+                    </div>
+                </div>
+                <a href="mailto:info@dcdeeptech.com" class="flex items-center gap-4 group">
+                    <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-brand-400 group-hover:bg-brand-600 group-hover:text-white transition-colors">
+                        <i class="ph-fill ph-envelope"></i>
+                    </div>
+                    <span class="text-slate-400 group-hover:text-white transition-colors font-mono text-sm">info@dcdeeptech.com</span>
+                </a>
+                <a href="#" class="flex items-center gap-4 group">
+                    <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-brand-400 group-hover:bg-brand-600 group-hover:text-white transition-colors">
+                        <i class="ph-fill ph-calendar-blank"></i>
+                    </div>
+                    <span class="text-slate-400 group-hover:text-white transition-colors text-sm font-semibold"><span class="lang-zh">预约 30 分钟 Gap Analysis 会议 →</span><span class="lang-en">Book a 30-min Gap Analysis call →</span></span>
+                </a>
+            </div>
+        </div>
+
+        <div class="mt-16 text-xs text-slate-700 flex items-center justify-center gap-2 font-mono">
+            <i class="ph-fill ph-copyright"></i>
+            <span class="lang-zh">2026 dcdeeptech Singapore Pte. Ltd. 赋能开放计算生态，驱动中国产业链全球出海。</span>
+            <span class="lang-en">2026 dcdeeptech Singapore Pte. Ltd. Empowering Open Compute. Accelerating Chinese supply chain globalisation.</span>
+        </div>
+    </div>
+</footer>
+
+<!-- ═══════════════════════════════════════════
+     SCRIPTS
+═══════════════════════════════════════════ -->
+<script>
+    // Language toggle
+    function toggleLanguage() {
+        const html = document.documentElement;
+        const isZh = html.getAttribute('lang') === 'zh';
+        html.setAttribute('lang', isZh ? 'en' : 'zh');
+        document.getElementById('lang-btn-text').innerText = isZh ? '中文' : 'English';
+    }
+
+    // Navbar scroll shadow
+    window.addEventListener('scroll', () => {
+        const nav = document.getElementById('navbar');
+        if (window.scrollY > 20) {
+            nav.classList.add('shadow-2xl', 'shadow-black/40');
+        } else {
+            nav.classList.remove('shadow-2xl', 'shadow-black/40');
+        }
+    });
+
+    // Scroll reveal
+    const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+</script>
+</body>
+</html>

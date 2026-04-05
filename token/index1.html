@@ -1,0 +1,1408 @@
+ <!DOCTYPE html>
+<html lang="zh-CN" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DCDeepTech | 新加坡AI边缘智算平台</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans SC', 'sans-serif'],
+                    },
+                    colors: {
+                        deep: '#0f172a', // slate-900
+                        primary: '#3b82f6', // blue-500
+                        accent: '#06b6d4', // cyan-500
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-text {
+            background: linear-gradient(90deg, #3b82f6 0%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .tech-border {
+            border: 1px solid rgba(6, 182, 212, 0.2);
+            box-shadow: 0 0 15px rgba(6, 182, 212, 0.05);
+            transition: all 0.3s ease;
+        }
+        .tech-border:hover {
+            border-color: rgba(6, 182, 212, 0.6);
+            box-shadow: 0 0 25px rgba(6, 182, 212, 0.2);
+            transform: translateY(-5px);
+        }
+        .hero-bg {
+            background-image: radial-gradient(circle at 50% 0%, rgba(15, 23, 42, 0) 0%, rgba(15, 23, 42, 1) 80%), 
+                              url('https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&q=80&w=2000');
+            background-size: cover;
+            background-position: center;
+        }
+        
+        /* Language Toggle Styles */
+        body.en-mode [data-lang="zh"] { display: none !important; }
+        body:not(.en-mode) [data-lang="en"] { display: none !important; }
+
+        /* Custom Scrollbar for dashboard mock */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        /* Console Menu Active States (NEW) */
+        .console-menu-item.active { background-color: #eff6ff; color: #2563eb; font-weight: 500; }
+        .console-menu-item.active .active-bar { opacity: 1; }
+        .console-menu-item.active i { color: #2563eb; }
+        .console-menu-item:not(.active) { color: #475569; }
+        .console-menu-item:not(.active):hover { background-color: #f1f5f9; }
+        .console-menu-item:not(.active) .active-bar { opacity: 0; }
+        .console-menu-item:not(.active) i { color: #94a3b8; }
+        
+        /* Mobile Console Menu Optimization */
+        @media (max-width: 767px) {
+            .console-menu-item { border: 1px solid #e2e8f0; background-color: white; padding: 0.5rem 1rem; border-radius: 9999px; font-size: 0.875rem;}
+            .console-menu-item.active { border-color: #bfdbfe; }
+            .console-menu-item .active-bar { display: none !important; }
+        }
+    </style>
+</head>
+<body class="bg-deep text-slate-300 font-sans antialiased selection:bg-accent selection:text-white">
+
+    <!-- Top Promotion Banner -->
+    <div class="bg-gradient-to-r from-blue-600 to-cyan-600 text-white text-center py-2 text-sm font-medium px-4">
+        <span class="mr-2 px-2 py-0.5 bg-white text-blue-600 rounded text-xs font-bold" data-lang="zh">限时福利</span>
+        <span class="mr-2 px-2 py-0.5 bg-white text-blue-600 rounded text-xs font-bold" data-lang="en">Limited Offer</span>
+        
+        <span data-lang="zh">新用户预约即享 <strong class="text-yellow-300">S$50-100</strong> 算力体验金，限量前500名！</span>
+        <span data-lang="en">New users get <strong class="text-yellow-300">S$50-100</strong> compute credits, limited to first 500!</span>
+        
+        <a href="#demo" class="ml-2 underline hover:text-yellow-200">
+            <span data-lang="zh">立即领取</span><span data-lang="en">Claim Now</span> <i class="fa-solid fa-arrow-right text-xs"></i>
+        </a>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="absolute w-full z-50 transition-all duration-300 backdrop-blur-md bg-deep/80 border-b border-slate-800" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex-shrink-0 flex items-center cursor-pointer" onclick="window.scrollTo(0,0)">
+                    <i class="fa-solid fa-microchip text-accent text-2xl mr-2"></i>
+                    <span class="text-white font-bold text-xl tracking-wide">DCDeep<span class="text-accent">Tech</span></span>
+                </div>
+                <div class="hidden md:flex space-x-8 items-center">
+                    <a href="#services" class="text-slate-300 hover:text-accent transition"><span data-lang="zh">核心服务</span><span data-lang="en">Services</span></a>
+                    <a href="#console-preview" class="text-slate-300 hover:text-accent transition"><span data-lang="zh">控制台预览</span><span data-lang="en">Console</span></a>
+                    <a href="#advantages" class="text-slate-300 hover:text-accent transition"><span data-lang="zh">平台优势</span><span data-lang="en">Advantages</span></a>
+                    <a href="#pricing" class="text-slate-300 hover:text-accent transition"><span data-lang="zh">算力定价</span><span data-lang="en">Pricing</span></a>
+                    
+                    <!-- Language Switcher -->
+                    <button onclick="toggleLanguage()" class="text-slate-300 hover:text-white flex items-center transition ml-4 border border-slate-700 px-3 py-1 rounded-full text-sm">
+                        <i class="fa-solid fa-globe mr-2"></i>
+                        <!-- 中文模式下：高亮 中，变暗 EN -->
+                        <span data-lang="zh" class="font-bold text-white">中</span>
+                        <span data-lang="zh" class="text-slate-500 mx-1">/</span>
+                        <span data-lang="zh" class="text-slate-500 text-xs">EN</span>
+                        
+                        <!-- 英文模式下：变暗 中，高亮 EN -->
+                        <span data-lang="en" class="text-slate-500 text-xs">中</span>
+                        <span data-lang="en" class="text-slate-500 mx-1">/</span>
+                        <span data-lang="en" class="font-bold text-white">EN</span>
+                    </button>
+
+                    <button onclick="openModal()" class="bg-primary hover:bg-blue-600 text-white px-5 py-2 rounded-md font-medium transition shadow-[0_0_15px_rgba(59,130,246,0.5)]">
+                        <span data-lang="zh">登录 / 预约</span><span data-lang="en">Login / Book</span>
+                    </button>
+                </div>
+                <!-- Mobile menu button -->
+                <div class="md:hidden flex items-center space-x-4">
+                    <button onclick="toggleLanguage()" class="text-slate-300 hover:text-white focus:outline-none flex items-center text-sm border border-slate-700 px-2 py-0.5 rounded-full">
+                        <i class="fa-solid fa-globe mr-1"></i>
+                        <span data-lang="zh" class="font-bold text-white">中</span>
+                        <span data-lang="zh" class="text-slate-500 mx-1">/</span>
+                        <span data-lang="zh" class="text-slate-500 text-[10px]">EN</span>
+                        
+                        <span data-lang="en" class="text-slate-500 text-[10px]">中</span>
+                        <span data-lang="en" class="text-slate-500 mx-1">/</span>
+                        <span data-lang="en" class="font-bold text-white">EN</span>
+                    </button>
+                    <button onclick="toggleMobileMenu()" class="text-slate-300 hover:text-white focus:outline-none ml-2">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Dropdown Menu (NEW) -->
+        <div id="mobileMenu" class="hidden absolute top-16 left-0 w-full bg-slate-900/95 backdrop-blur-md border-b border-slate-800 shadow-xl flex flex-col px-6 py-6 space-y-4">
+            <a href="#services" onclick="toggleMobileMenu()" class="text-slate-300 hover:text-white text-lg"><span data-lang="zh">核心服务</span><span data-lang="en">Services</span></a>
+            <a href="#console-preview" onclick="toggleMobileMenu()" class="text-slate-300 hover:text-white text-lg"><span data-lang="zh">控制台预览</span><span data-lang="en">Console</span></a>
+            <a href="#advantages" onclick="toggleMobileMenu()" class="text-slate-300 hover:text-white text-lg"><span data-lang="zh">平台优势</span><span data-lang="en">Advantages</span></a>
+            <a href="#pricing" onclick="toggleMobileMenu()" class="text-slate-300 hover:text-white text-lg"><span data-lang="zh">算力定价</span><span data-lang="en">Pricing</span></a>
+            <button onclick="openModal(); toggleMobileMenu()" class="mt-4 bg-primary hover:bg-blue-600 text-white px-5 py-3 rounded-md font-medium transition text-center w-full">
+                <span data-lang="zh">登录 / 预约</span><span data-lang="en">Login / Book</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden hero-bg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center max-w-4xl mx-auto">
+                <div class="inline-block mb-4 px-4 py-1.5 rounded-full border border-accent/30 bg-accent/10 text-accent text-sm font-semibold backdrop-blur-sm">
+                    <i class="fa-solid fa-location-dot mr-1"></i> 
+                    <span data-lang="zh">立足新加坡，辐射东南亚 (SEA)</span>
+                    <span data-lang="en">Based in Singapore, Serving SEA</span>
+                </div>
+                <h1 class="text-4xl md:text-6xl font-bold text-white leading-tight mb-6">
+                    <span data-lang="zh">汇聚全球绿色算力，<br /><span class="gradient-text">构建亚太边缘智算枢纽</span></span>
+                    <span data-lang="en">Converging Global Compute,<br /><span class="gradient-text">Building APAC's Edge AI Hub</span></span>
+                </h1>
+                <p class="text-lg md:text-xl text-slate-400 mb-10 leading-relaxed">
+                    <span data-lang="zh">液冷边缘节点集成 · 具身智能落地 · RWA物理资产代币化。<br />通过高速专用数据通道，实现推理成本仅为原生 OpenAI 的 <strong class="text-white">1/5 - 1/20</strong>，同时支持 DeepSeek、Llama 3 等国际顶尖大模型动态无缝切换。</span>
+                    <span data-lang="en">Liquid-cooled edge nodes · Embodied AI · RWA tokenization.<br />Via high-speed dedicated data channels, achieving inference costs at <strong class="text-white">1/5 - 1/20</strong> of OpenAI, supporting seamless switching for DeepSeek, Llama 3, etc.</span>
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-6">
+                    <button onclick="openModal()" class="px-8 py-4 bg-gradient-to-r from-primary to-accent text-white rounded-lg font-bold text-lg hover:shadow-[0_0_25px_rgba(6,182,212,0.6)] transition-all transform hover:-translate-y-1">
+                        <i class="fa-solid fa-rocket mr-2"></i> <span data-lang="zh">立即预约演示</span><span data-lang="en">Book a Demo</span>
+                    </button>
+                    <a href="#console-preview" class="px-8 py-4 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white rounded-lg font-bold text-lg transition-all">
+                        <span data-lang="zh">查看控制台功能</span><span data-lang="en">View Console Features</span>
+                    </a>
+                </div>
+                <p class="mt-6 text-sm text-slate-500">
+                    <i class="fa-solid fa-shield-check text-green-500 mr-1"></i> 
+                    <span data-lang="zh">符合新加坡 PDPA / MAS 隐私及合规框架</span>
+                    <span data-lang="en">Compliant with Singapore PDPA / MAS Frameworks</span>
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="py-12 bg-slate-900 border-y border-slate-800 relative z-20 -mt-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+                <div>
+                    <div class="text-4xl font-bold text-white mb-2">50-70<span class="text-xl text-accent">ms</span></div>
+                    <div class="text-slate-400 text-sm">
+                        <span data-lang="zh">中新通道极低时延</span>
+                        <span data-lang="en">Ultra-low Latency Channel</span>
+                    </div>
+                </div>
+                <div>
+                    <div class="text-4xl font-bold text-white mb-2">80<span class="text-xl text-accent">%+</span></div>
+                    <div class="text-slate-400 text-sm">
+                        <span data-lang="zh">对比海外大厂推理成本降幅</span>
+                        <span data-lang="en">Inference Cost Reduction</span>
+                    </div>
+                </div>
+                <div>
+                    <div class="text-4xl font-bold text-white mb-2">< 1.15</div>
+                    <div class="text-slate-400 text-sm">
+                        <span data-lang="zh">液冷节点极致 PUE</span>
+                        <span data-lang="en">Extreme PUE Liquid Cooling</span>
+                    </div>
+                </div>
+                <div>
+                    <div class="text-4xl font-bold text-white mb-2">60<span class="text-xl text-accent">+</span></div>
+                    <div class="text-slate-400 text-sm">
+                        <span data-lang="zh">辐射东南亚核心城市</span>
+                        <span data-lang="en">SEA Core Cities Coverage</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Core Services -->
+    <section id="services" class="py-24 bg-deep">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
+                    <span data-lang="zh">一站式 AI 基础设施服务</span>
+                    <span data-lang="en">All-in-One AI Infrastructure Services</span>
+                </h2>
+                <div class="w-20 h-1 bg-accent mx-auto rounded"></div>
+                <p class="mt-6 text-slate-400 max-w-2xl mx-auto">
+                    <span data-lang="zh">从底层裸金属到顶层模型 API，打造“算力+数据+合规”的完整出海闭环。</span>
+                    <span data-lang="en">From bare metal to model APIs, creating a complete "Compute + Data + Compliance" loop for global expansion.</span>
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Service 1 -->
+                <div class="bg-slate-800/50 p-8 rounded-2xl tech-border backdrop-blur-sm relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl -mr-10 -mt-10 transition-all group-hover:bg-primary/30"></div>
+                    <div class="w-14 h-14 bg-blue-900/50 rounded-xl flex items-center justify-center mb-6 text-primary border border-blue-500/30">
+                        <i class="fa-solid fa-network-wired text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">
+                        <span data-lang="zh">TaaS 边缘推理服务</span>
+                        <span data-lang="en">TaaS Edge Inference Service</span>
+                    </h3>
+                    <p class="text-slate-400 mb-6 text-sm leading-relaxed">
+                        <span data-lang="zh">基于高速数据通道，以 50-70ms 的超低时延调用亚太区高性价比大模型 API。内置 MCP 动态路由，支持 DeepSeek、Llama 等多模型按需无缝切换。端到端响应时间 &lt;100ms。</span>
+                        <span data-lang="en">Call cost-effective APAC LLM APIs with ultra-low 50-70ms latency via high-speed channels. Built-in MCP dynamic routing supports seamless switching between models like DeepSeek and Llama. End-to-end response &lt;100ms.</span>
+                    </p>
+                    <ul class="text-sm text-slate-300 space-y-2 mb-8">
+                        <li><i class="fa-solid fa-check text-accent mr-2"></i> <span data-lang="zh">动态 LLM 切换与高可用</span><span data-lang="en">Dynamic LLM Switching & High Availability</span></li>
+                        <li><i class="fa-solid fa-check text-accent mr-2"></i> <span data-lang="zh">实时 Agent 与智慧城市决策</span><span data-lang="en">Real-time Agents & Smart City Decisions</span></li>
+                        <li><i class="fa-solid fa-check text-accent mr-2"></i> <span data-lang="zh">兼容 OpenAI 标准 API 接口</span><span data-lang="en">OpenAI Compatible API Standard</span></li>
+                    </ul>
+                    <button onclick="openModal()" class="text-accent font-medium hover:text-white transition group-hover:underline">
+                        <span data-lang="zh">一键部署模型 &rarr;</span><span data-lang="en">Deploy Model &rarr;</span>
+                    </button>
+                </div>
+
+                <!-- Service 2 -->
+                <div class="bg-slate-800/50 p-8 rounded-2xl tech-border backdrop-blur-sm relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-green-500/10 rounded-full blur-3xl -mr-10 -mt-10 transition-all group-hover:bg-green-500/30"></div>
+                    <div class="absolute top-4 right-4 bg-green-500/20 text-green-400 text-xs px-2 py-1 rounded font-bold border border-green-500/30">
+                        <span data-lang="zh">创新业务</span><span data-lang="en">Innovation</span>
+                    </div>
+                    <div class="w-14 h-14 bg-cyan-900/50 rounded-xl flex items-center justify-center mb-6 text-accent border border-cyan-500/30">
+                        <i class="fa-solid fa-robot text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">
+                        <span data-lang="zh">具身智能 + RWA 代币化</span>
+                        <span data-lang="en">Embodied AI + RWA Tokenization</span>
+                    </h3>
+                    <p class="text-slate-400 mb-6 text-sm leading-relaxed">
+                        <span data-lang="zh">深度整合君逸数码管廊与机器人数据。经加密通道安全传输至新加坡液冷节点，利用 VLM 大规模视觉模型处理后，实现绿色物理资产（ESG）的上链代币化。</span>
+                        <span data-lang="en">Deep integration with Junyi Digital utility tunnels and robot data. Securely transmitted to Singapore liquid-cooled nodes, processed via large vision models (VLM), enabling tokenization of green physical assets (ESG) on-chain.</span>
+                    </p>
+                    <ul class="text-sm text-slate-300 space-y-2 mb-8">
+                        <li><i class="fa-solid fa-check text-accent mr-2"></i> <span data-lang="zh">地下管廊监测与数字孪生</span><span data-lang="en">Utility Tunnel Monitoring & Digital Twin</span></li>
+                        <li><i class="fa-solid fa-check text-accent mr-2"></i> <span data-lang="zh">Tokenized 基础设施债券发行</span><span data-lang="en">Tokenized Infrastructure Bonds</span></li>
+                        <li><i class="fa-solid fa-check text-accent mr-2"></i> <span data-lang="zh">物理资产确权与价值流转</span><span data-lang="en">Physical Asset Rights & Value Flow</span></li>
+                    </ul>
+                    <button onclick="openModal()" class="text-accent font-medium hover:text-white transition group-hover:underline">
+                        <span data-lang="zh">申请 RWA 试点项目 &rarr;</span><span data-lang="en">Apply for RWA Pilot &rarr;</span>
+                    </button>
+                </div>
+
+                <!-- Service 3 -->
+                <div class="bg-slate-800/50 p-8 rounded-2xl tech-border backdrop-blur-sm relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-full blur-3xl -mr-10 -mt-10 transition-all group-hover:bg-purple-500/30"></div>
+                    <div class="w-14 h-14 bg-purple-900/50 rounded-xl flex items-center justify-center mb-6 text-purple-400 border border-purple-500/30">
+                        <i class="fa-solid fa-server text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">
+                        <span data-lang="zh">高性价比边缘算力</span>
+                        <span data-lang="en">Cost-Effective Edge Compute</span>
+                    </h3>
+                    <p class="text-slate-400 mb-6 text-sm leading-relaxed">
+                        <span data-lang="zh">提供基于新加坡本地液冷节点的 GPU 容器实例与弹性 Serverless 服务。秒级伸缩，零闲置成本，完美应对企业高并发 Token 请求与大规模训练任务。</span>
+                        <span data-lang="en">Providing GPU container instances and elastic Serverless services based on local liquid-cooled nodes in Singapore. Second-level scaling with zero idle costs, perfect for high-concurrency requests and large-scale training.</span>
+                    </p>
+                    <ul class="text-sm text-slate-300 space-y-2 mb-8">
+                        <li><i class="fa-solid fa-check text-accent mr-2"></i> <span data-lang="zh">开箱即用的 GPU 容器</span><span data-lang="en">Out-of-the-box GPU Containers</span></li>
+                        <li><i class="fa-solid fa-check text-accent mr-2"></i> <span data-lang="zh">40-100kW/rack 高密度液冷集群</span><span data-lang="en">40-100kW/rack High-Density Liquid Cooling</span></li>
+                        <li><i class="fa-solid fa-check text-accent mr-2"></i> <span data-lang="zh">弹性扩容，按需极简计费</span><span data-lang="en">Elastic Scaling, Pay-as-you-go</span></li>
+                    </ul>
+                    <a href="#pricing" class="text-accent font-medium hover:text-white transition group-hover:underline">
+                        <span data-lang="zh">查看算力报价 &rarr;</span><span data-lang="en">View Pricing &rarr;</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Console Dashboard Preview Section (UPDATED) -->
+    <section id="console-preview" class="py-24 bg-slate-900 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
+                    <span data-lang="zh">全功能自研管理控制台</span>
+                    <span data-lang="en">Full-Featured Management Console</span>
+                </h2>
+                <div class="w-20 h-1 bg-accent mx-auto rounded"></div>
+                <p class="mt-6 text-slate-400 max-w-2xl mx-auto">
+                    <span data-lang="zh">高度完善的后台支撑能力，全面覆盖模型、算力、存储的管理与财务流转。即插即用，满足您一站式的 AI 资产调配需求。</span>
+                    <span data-lang="en">Highly refined backend support capabilities covering models, compute, storage, and financial flow. Plug and play to fulfill your all-in-one AI asset orchestration needs.</span>
+                </p>
+            </div>
+
+            <!-- Fake Browser Window UI -->
+            <div class="rounded-xl border border-slate-700 bg-slate-800 shadow-2xl overflow-hidden flex flex-col max-w-5xl mx-auto">
+                <!-- Mac-style Top Bar -->
+                <div class="h-10 bg-[#1e293b] border-b border-slate-700 flex items-center px-4 relative justify-center md:justify-between">
+                    <div class="hidden md:flex space-x-2 absolute left-4">
+                        <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                    </div>
+                    <div class="bg-slate-900 rounded-md px-4 py-1 flex items-center text-xs text-slate-400 font-mono shadow-inner border border-slate-700">
+                        <i class="fa-solid fa-lock mr-2 text-[10px]"></i> console.dcdeeptech.ai
+                    </div>
+                </div>
+                
+                <!-- App Interface -->
+                <div class="flex flex-col md:flex-row h-auto md:h-[550px] bg-slate-50 relative overflow-hidden">
+                    
+                    <!-- Dashboard Sidebar (Horizontal on Mobile, Vertical on Desktop) -->
+                    <div id="consoleSidebar" class="w-full md:w-64 bg-white border-b md:border-b-0 md:border-r border-slate-200 flex flex-col shrink-0 z-20 shadow-sm md:shadow-none">
+                        <div class="hidden md:flex p-5 border-b border-slate-100 items-center justify-between text-slate-800">
+                            <div class="flex items-center">
+                                <i class="fa-solid fa-microchip text-primary text-xl mr-2"></i>
+                                <span class="font-bold text-lg">DCDeepTech</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Sidebar Scroll Area -->
+                        <div class="flex flex-row md:flex-col overflow-x-auto md:overflow-y-auto px-3 py-3 md:py-4 text-slate-600 custom-scrollbar select-none gap-2 md:gap-0">
+                            
+                            <!-- Category 1: Models -->
+                            <div class="md:px-3 md:mb-1 shrink-0">
+                                <div onclick="switchConsoleTab('tab-models', this)" class="console-menu-item active md:rounded-lg px-3 py-2.5 flex items-center cursor-pointer relative overflow-hidden transition">
+                                    <div class="active-bar absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full transition-opacity"></div>
+                                    <i class="fa-solid fa-cube w-4 md:w-5 text-center mr-2 transition-colors"></i>
+                                    <span data-lang="zh">模型广场</span><span data-lang="en">Model Hub</span>
+                                </div>
+                            </div>
+                            <div class="md:px-3 md:mb-1 shrink-0">
+                                <div onclick="switchConsoleTab('tab-model-usage', this)" class="console-menu-item md:rounded-lg px-3 py-2.5 flex items-center cursor-pointer relative overflow-hidden transition">
+                                    <div class="active-bar absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full transition-opacity"></div>
+                                    <i class="fa-solid fa-chart-line w-4 md:w-5 text-center mr-2 transition-colors"></i>
+                                    <span data-lang="zh">模型用量</span><span data-lang="en">Usage</span>
+                                </div>
+                            </div>
+                            <div class="md:px-3 md:mb-1 shrink-0">
+                                <div onclick="switchConsoleTab('tab-model-billing', this)" class="console-menu-item md:rounded-lg px-3 py-2.5 flex items-center cursor-pointer relative overflow-hidden transition">
+                                    <div class="active-bar absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full transition-opacity"></div>
+                                    <i class="fa-solid fa-file-invoice-dollar w-4 md:w-5 text-center mr-2 transition-colors"></i>
+                                    <span data-lang="zh">模型费用</span><span data-lang="en">Billing</span>
+                                </div>
+                            </div>
+
+                            <!-- Category 2: Compute -->
+                            <div class="hidden md:flex mt-4 mb-2 px-6 text-[11px] text-slate-400 font-bold justify-between items-center">
+                                <span><span data-lang="zh">算力市场</span><span data-lang="en">Compute Market</span></span>
+                                <i class="fa-solid fa-chevron-down text-slate-300"></i>
+                            </div>
+                            <div class="md:px-3 md:mb-1 shrink-0">
+                                <div onclick="switchConsoleTab('tab-compute', this)" class="console-menu-item md:rounded-lg px-3 py-2.5 flex items-center cursor-pointer relative overflow-hidden transition md:pl-9">
+                                    <div class="active-bar absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full transition-opacity"></div>
+                                    <i class="fa-solid fa-box w-4 md:w-5 text-center mr-2 transition-colors"></i>
+                                    <span data-lang="zh">容器实例</span><span data-lang="en">Containers</span>
+                                </div>
+                            </div>
+                            <div class="md:px-3 md:mb-1 shrink-0">
+                                <div onclick="switchConsoleTab('tab-elastic-instances', this)" class="console-menu-item md:rounded-lg px-3 py-2.5 flex items-center cursor-pointer relative overflow-hidden transition md:pl-9">
+                                    <div class="active-bar absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full transition-opacity"></div>
+                                    <i class="fa-solid fa-bolt w-4 md:w-5 text-center mr-2 transition-colors"></i>
+                                    <span data-lang="zh">弹性实例</span><span data-lang="en">Elastic Config</span>
+                                </div>
+                            </div>
+
+                            <!-- Category 3: Storage & Env -->
+                            <div class="hidden md:flex mt-4 mb-2 px-6 text-[11px] text-slate-400 font-bold justify-between items-center">
+                                <span><span data-lang="zh">云存储管理</span><span data-lang="en">Cloud Storage</span></span>
+                                <i class="fa-solid fa-chevron-down text-slate-300"></i>
+                            </div>
+                            <div class="md:px-3 md:mb-1 shrink-0">
+                                <div onclick="switchConsoleTab('tab-cloud-storage', this)" class="console-menu-item md:rounded-lg px-3 py-2.5 flex items-center cursor-pointer relative overflow-hidden transition">
+                                    <div class="active-bar absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full transition-opacity"></div>
+                                    <i class="fa-solid fa-database w-4 md:w-5 text-center mr-2 transition-colors"></i>
+                                    <span data-lang="zh">云存储</span><span data-lang="en">Storage</span>
+                                </div>
+                            </div>
+                            <div class="md:px-3 md:mb-1 shrink-0">
+                                <div onclick="switchConsoleTab('tab-generic', this)" class="console-menu-item md:rounded-lg px-3 py-2.5 flex items-center cursor-pointer relative overflow-hidden transition">
+                                    <div class="active-bar absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full transition-opacity"></div>
+                                    <i class="fa-solid fa-wallet w-4 md:w-5 text-center mr-2 transition-colors"></i>
+                                    <span data-lang="zh">容器费用</span><span data-lang="en">Container Costs</span>
+                                </div>
+                            </div>
+                            <div class="md:px-3 md:mb-1 shrink-0">
+                                <div onclick="switchConsoleTab('tab-image-templates', this)" class="console-menu-item md:rounded-lg px-3 py-2.5 flex items-center cursor-pointer relative overflow-hidden transition">
+                                    <div class="active-bar absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full transition-opacity"></div>
+                                    <i class="fa-solid fa-clone w-4 md:w-5 text-center mr-2 transition-colors"></i>
+                                    <span data-lang="zh">镜像模板</span><span data-lang="en">Images</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Promotional Banner -->
+                        <div class="hidden md:block p-4 border-t border-slate-100 bg-orange-50 cursor-pointer hover:bg-orange-100 transition mt-auto">
+                            <p class="text-[#e85d04] font-bold text-sm text-center leading-relaxed">
+                                <span data-lang="zh">平台最新优惠福利说明<br>点我查看!!!</span>
+                                <span data-lang="en">Latest platform offers & benefits<br>Click to view!!!</span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Main Content Area Preview -->
+                    <div class="flex-1 bg-slate-50 p-4 md:p-10 overflow-y-auto relative w-full custom-scrollbar min-h-[400px]">
+                        <!-- Soft decorative background -->
+                        <div class="absolute -top-40 -right-40 w-96 h-96 bg-primary opacity-5 rounded-full blur-3xl pointer-events-none"></div>
+                        
+                        <!-- TAB 1: Models (Default) -->
+                        <div id="tab-models" class="console-tab-content">
+                            <div class="flex justify-between items-center mb-8 relative z-10">
+                                <h3 class="text-2xl font-bold text-slate-800">
+                                    <span data-lang="zh">模型广场</span><span data-lang="en">Model Hub</span>
+                                </h3>
+                                <button class="bg-primary text-white px-4 py-2 rounded-lg text-sm shadow hover:bg-blue-600 transition">
+                                    <i class="fa-solid fa-plus mr-1"></i> 
+                                    <span data-lang="zh">新建 API Key</span><span data-lang="en">New API Key</span>
+                                </button>
+                            </div>
+
+                            <!-- Model Cards Grid -->
+                            <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 relative z-10">
+                                <!-- Card 1: DeepSeek -->
+                                <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm hover:shadow-md transition">
+                                    <div class="flex justify-between items-start mb-4">
+                                        <div class="flex items-center">
+                                            <div class="w-12 h-12 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xl mr-4 border border-blue-100">DS</div>
+                                            <div>
+                                                <h4 class="font-bold text-slate-800 text-lg">DeepSeek-V3</h4>
+                                                <p class="text-xs text-slate-500">671B Params · MoE Architecture</p>
+                                            </div>
+                                        </div>
+                                        <span class="px-2.5 py-1 bg-green-50 text-green-600 text-[10px] font-bold uppercase rounded border border-green-200">Active</span>
+                                    </div>
+                                    <div class="bg-slate-50 rounded-lg p-3 text-sm text-slate-600 mb-4 font-mono text-xs border border-slate-100 break-all">
+                                        Base URL: https://api.dcdeeptech.ai/v1<br>
+                                        Model ID: deepseek-chat
+                                    </div>
+                                    <div class="flex justify-between items-center border-t border-slate-100 pt-4">
+                                        <span class="text-xs font-medium text-slate-500">S$ 0.01 / 10K Tokens</span>
+                                        <button class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                            <span data-lang="zh">查看文档 &rarr;</span><span data-lang="en">View Docs &rarr;</span>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Card 2: Llama 3 -->
+                                <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm hover:shadow-md transition">
+                                    <div class="flex justify-between items-start mb-4">
+                                        <div class="flex items-center">
+                                            <div class="w-12 h-12 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-xl mr-4 border border-indigo-100">L3</div>
+                                            <div>
+                                                <h4 class="font-bold text-slate-800 text-lg">Llama-3-70B</h4>
+                                                <p class="text-xs text-slate-500">Meta · 8K Context</p>
+                                            </div>
+                                        </div>
+                                        <span class="px-2.5 py-1 bg-green-50 text-green-600 text-[10px] font-bold uppercase rounded border border-green-200">Active</span>
+                                    </div>
+                                    <div class="bg-slate-50 rounded-lg p-3 text-sm text-slate-600 mb-4 font-mono text-xs border border-slate-100 break-all">
+                                        Base URL: https://api.dcdeeptech.ai/v1<br>
+                                        Model ID: llama-3-70b-instruct
+                                    </div>
+                                    <div class="flex justify-between items-center border-t border-slate-100 pt-4">
+                                        <span class="text-xs font-medium text-slate-500">S$ 0.05 / 10K Tokens</span>
+                                        <button class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                            <span data-lang="zh">查看文档 &rarr;</span><span data-lang="en">View Docs &rarr;</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TAB 2: Compute Instances -->
+                        <div id="tab-compute" class="console-tab-content hidden relative z-10">
+                            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+                                <h3 class="text-2xl font-bold text-slate-800">
+                                    <span data-lang="zh">容器实例管理</span><span data-lang="en">Container Instances</span>
+                                </h3>
+                                <button class="bg-primary text-white px-4 py-2 rounded-lg text-sm shadow hover:bg-blue-600 transition shrink-0">
+                                    <i class="fa-solid fa-server mr-1"></i> 
+                                    <span data-lang="zh">创建实例</span><span data-lang="en">Create Instance</span>
+                                </button>
+                            </div>
+                            
+                            <div class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-left border-collapse min-w-[600px]">
+                                        <thead>
+                                            <tr class="bg-slate-50 text-slate-500 text-xs uppercase">
+                                                <th class="p-4 font-semibold"><span data-lang="zh">实例名称</span><span data-lang="en">Instance Name</span></th>
+                                                <th class="p-4 font-semibold"><span data-lang="zh">配置</span><span data-lang="en">Config</span></th>
+                                                <th class="p-4 font-semibold"><span data-lang="zh">状态</span><span data-lang="en">Status</span></th>
+                                                <th class="p-4 font-semibold"><span data-lang="zh">运行时间</span><span data-lang="en">Uptime</span></th>
+                                                <th class="p-4 font-semibold text-right"><span data-lang="zh">操作</span><span data-lang="en">Actions</span></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="text-sm divide-y divide-slate-100 text-slate-700">
+                                            <tr class="hover:bg-slate-50 transition">
+                                                <td class="p-4 font-medium text-slate-900">dcd-node-sg-01</td>
+                                                <td class="p-4">1x RTX 4090 · 24GB VRAM</td>
+                                                <td class="p-4"><span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full"><i class="fa-solid fa-circle text-[8px] mr-1"></i> Running</span></td>
+                                                <td class="p-4">12d 4h</td>
+                                                <td class="p-4 text-right">
+                                                    <button class="text-slate-400 hover:text-blue-600 mr-2"><i class="fa-solid fa-terminal"></i></button>
+                                                    <button class="text-slate-400 hover:text-red-600"><i class="fa-solid fa-stop"></i></button>
+                                                </td>
+                                            </tr>
+                                            <tr class="hover:bg-slate-50 transition">
+                                                <td class="p-4 font-medium text-slate-900">dcd-train-cq-05</td>
+                                                <td class="p-4">8x H800 · 80GB VRAM</td>
+                                                <td class="p-4"><span class="px-2 py-1 bg-slate-100 text-slate-500 text-xs rounded-full"><i class="fa-solid fa-circle text-[8px] mr-1"></i> Stopped</span></td>
+                                                <td class="p-4">-</td>
+                                                <td class="p-4 text-right">
+                                                    <button class="text-slate-400 hover:text-green-600 mr-2"><i class="fa-solid fa-play"></i></button>
+                                                    <button class="text-slate-400 hover:text-red-600"><i class="fa-solid fa-trash"></i></button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TAB: Model Usage (NEW) -->
+                        <div id="tab-model-usage" class="console-tab-content hidden relative z-10">
+                            <h3 class="text-2xl font-bold text-slate-800 mb-6">
+                                <span data-lang="zh">模型用量统计</span><span data-lang="en">Usage Statistics</span>
+                            </h3>
+                            
+                            <!-- Key Metrics -->
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                                    <p class="text-sm text-slate-500 mb-1"><span data-lang="zh">本月总 Token 消耗</span><span data-lang="en">Total Tokens (MTD)</span></p>
+                                    <h4 class="text-2xl font-bold text-slate-800">12.5 <span class="text-sm font-normal text-slate-500">Million</span></h4>
+                                </div>
+                                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                                    <p class="text-sm text-slate-500 mb-1"><span data-lang="zh">API 调用次数</span><span data-lang="en">API Calls</span></p>
+                                    <h4 class="text-2xl font-bold text-slate-800">45,231</h4>
+                                </div>
+                                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                                    <p class="text-sm text-slate-500 mb-1"><span data-lang="zh">平均响应时延 (SG节点)</span><span data-lang="en">Avg Latency (SG Node)</span></p>
+                                    <h4 class="text-2xl font-bold text-green-600">62 <span class="text-sm font-normal text-slate-500">ms</span></h4>
+                                </div>
+                            </div>
+
+                            <!-- Mock Chart Area -->
+                            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                                <div class="flex justify-between items-center mb-6">
+                                    <h4 class="font-bold text-slate-700"><span data-lang="zh">近 7 天调用趋势</span><span data-lang="en">7-Day Invocation Trend</span></h4>
+                                    <select class="text-sm border-slate-200 rounded text-slate-500 outline-none">
+                                        <option>DeepSeek-V3</option>
+                                        <option>Llama-3-70B</option>
+                                    </select>
+                                </div>
+                                <!-- CSS Bar Chart -->
+                                <div class="flex items-end justify-between h-40 gap-2 md:gap-4 mt-4 border-b border-slate-100 pb-2">
+                                    <div class="w-full bg-blue-100 rounded-t-sm hover:bg-blue-300 transition-all relative group" style="height: 30%;">
+                                        <span class="absolute -top-6 left-1/2 transform -translate-x-1/2 text-xs text-slate-400 opacity-0 group-hover:opacity-100">0.8M</span>
+                                    </div>
+                                    <div class="w-full bg-blue-500 rounded-t-sm hover:bg-blue-600 transition-all relative group" style="height: 65%;">
+                                        <span class="absolute -top-6 left-1/2 transform -translate-x-1/2 text-xs text-slate-400 opacity-0 group-hover:opacity-100">1.5M</span>
+                                    </div>
+                                    <div class="w-full bg-blue-400 rounded-t-sm hover:bg-blue-500 transition-all relative group" style="height: 45%;">
+                                        <span class="absolute -top-6 left-1/2 transform -translate-x-1/2 text-xs text-slate-400 opacity-0 group-hover:opacity-100">1.1M</span>
+                                    </div>
+                                    <div class="w-full bg-blue-500 rounded-t-sm hover:bg-blue-600 transition-all relative group" style="height: 80%;">
+                                        <span class="absolute -top-6 left-1/2 transform -translate-x-1/2 text-xs text-slate-400 opacity-0 group-hover:opacity-100">2.1M</span>
+                                    </div>
+                                    <div class="w-full bg-blue-300 rounded-t-sm hover:bg-blue-400 transition-all relative group" style="height: 40%;">
+                                        <span class="absolute -top-6 left-1/2 transform -translate-x-1/2 text-xs text-slate-400 opacity-0 group-hover:opacity-100">1.0M</span>
+                                    </div>
+                                    <div class="w-full bg-blue-600 rounded-t-sm hover:bg-blue-700 transition-all relative group shadow-[0_0_10px_rgba(37,99,235,0.3)]" style="height: 100%;">
+                                        <span class="absolute -top-6 left-1/2 transform -translate-x-1/2 text-xs font-bold text-blue-600 opacity-0 group-hover:opacity-100">3.2M</span>
+                                    </div>
+                                    <div class="w-full bg-blue-400 rounded-t-sm hover:bg-blue-500 transition-all relative group" style="height: 55%;">
+                                        <span class="absolute -top-6 left-1/2 transform -translate-x-1/2 text-xs text-slate-400 opacity-0 group-hover:opacity-100">1.3M</span>
+                                    </div>
+                                </div>
+                                <div class="flex justify-between text-xs text-slate-400 mt-2 px-2">
+                                    <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TAB: Model Billing (NEW) -->
+                        <div id="tab-model-billing" class="console-tab-content hidden relative z-10">
+                            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                                <h3 class="text-2xl font-bold text-slate-800">
+                                    <span data-lang="zh">模型费用单</span><span data-lang="en">Model Billing</span>
+                                </h3>
+                                <div class="bg-indigo-50 text-indigo-700 px-4 py-2 rounded-lg font-bold border border-indigo-100">
+                                    <span data-lang="zh">本月待出账：</span><span data-lang="en">Est. Total: </span> S$ 125.40
+                                </div>
+                            </div>
+
+                            <div class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-left border-collapse min-w-[600px]">
+                                        <thead>
+                                            <tr class="bg-slate-50 text-slate-500 text-xs uppercase">
+                                                <th class="p-4 font-semibold"><span data-lang="zh">日期</span><span data-lang="en">Date</span></th>
+                                                <th class="p-4 font-semibold"><span data-lang="zh">调用模型</span><span data-lang="en">Model Invoked</span></th>
+                                                <th class="p-4 font-semibold"><span data-lang="zh">Token 总计</span><span data-lang="en">Total Tokens</span></th>
+                                                <th class="p-4 font-semibold"><span data-lang="zh">计费单价</span><span data-lang="en">Unit Price</span></th>
+                                                <th class="p-4 font-semibold text-right"><span data-lang="zh">产生金额</span><span data-lang="en">Amount</span></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="text-sm divide-y divide-slate-100 text-slate-700">
+                                            <tr class="hover:bg-slate-50 transition">
+                                                <td class="p-4 text-slate-500">2026-03-09</td>
+                                                <td class="p-4 font-medium text-blue-600">DeepSeek-V3</td>
+                                                <td class="p-4 font-mono text-xs">3,205,144</td>
+                                                <td class="p-4 text-slate-500">S$ 0.01 / 10K</td>
+                                                <td class="p-4 text-right font-bold text-slate-800">S$ 3.20</td>
+                                            </tr>
+                                            <tr class="hover:bg-slate-50 transition">
+                                                <td class="p-4 text-slate-500">2026-03-09</td>
+                                                <td class="p-4 font-medium text-indigo-600">Llama-3-70B</td>
+                                                <td class="p-4 font-mono text-xs">850,000</td>
+                                                <td class="p-4 text-slate-500">S$ 0.05 / 10K</td>
+                                                <td class="p-4 text-right font-bold text-slate-800">S$ 4.25</td>
+                                            </tr>
+                                            <tr class="hover:bg-slate-50 transition">
+                                                <td class="p-4 text-slate-500">2026-03-08</td>
+                                                <td class="p-4 font-medium text-blue-600">DeepSeek-V3</td>
+                                                <td class="p-4 font-mono text-xs">1,102,300</td>
+                                                <td class="p-4 text-slate-500">S$ 0.01 / 10K</td>
+                                                <td class="p-4 text-right font-bold text-slate-800">S$ 1.10</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="p-4 border-t border-slate-100 text-center">
+                                    <button class="text-sm text-blue-600 hover:text-blue-800"><span data-lang="zh">导出账单明细 (CSV)</span><span data-lang="en">Export Details (CSV)</span></button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TAB: Elastic Instances (NEW) -->
+                        <div id="tab-elastic-instances" class="console-tab-content hidden relative z-10">
+                            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+                                <h3 class="text-2xl font-bold text-slate-800">
+                                    <span data-lang="zh">Serverless 弹性推理实例</span><span data-lang="en">Serverless Elastic Inference</span>
+                                </h3>
+                                <button class="bg-accent text-white px-4 py-2 rounded-lg text-sm shadow hover:bg-cyan-600 transition shrink-0">
+                                    <i class="fa-solid fa-cloud-arrow-up mr-1"></i> 
+                                    <span data-lang="zh">部署弹性服务</span><span data-lang="en">Deploy Service</span>
+                                </button>
+                            </div>
+                            
+                            <div class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-left border-collapse min-w-[700px]">
+                                        <thead>
+                                            <tr class="bg-slate-50 text-slate-500 text-xs uppercase">
+                                                <th class="p-4 font-semibold"><span data-lang="zh">服务网关</span><span data-lang="en">Gateway/Service</span></th>
+                                                <th class="p-4 font-semibold"><span data-lang="zh">框架引擎</span><span data-lang="en">Engine</span></th>
+                                                <th class="p-4 font-semibold"><span data-lang="zh">伸缩策略 (Min-Max)</span><span data-lang="en">Scale Policy</span></th>
+                                                <th class="p-4 font-semibold"><span data-lang="zh">当前副本数</span><span data-lang="en">Active Replicas</span></th>
+                                                <th class="p-4 font-semibold text-right"><span data-lang="zh">监控</span><span data-lang="en">Monitor</span></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="text-sm divide-y divide-slate-100 text-slate-700">
+                                            <tr class="hover:bg-slate-50 transition">
+                                                <td class="p-4">
+                                                    <div class="font-bold text-slate-800">prod-vlm-worker</div>
+                                                    <div class="text-[10px] text-slate-400 font-mono mt-0.5">https://vlm.sg.dcdeeptech.ai</div>
+                                                </td>
+                                                <td class="p-4"><span class="px-2 py-1 bg-purple-50 text-purple-600 text-xs rounded border border-purple-100 font-bold">vLLM 0.3.0</span></td>
+                                                <td class="p-4 font-mono text-xs">0 &rarr; 10</td>
+                                                <td class="p-4">
+                                                    <div class="flex items-center">
+                                                        <span class="text-green-600 font-bold mr-2">2</span>
+                                                        <div class="w-16 h-1.5 bg-slate-200 rounded-full overflow-hidden"><div class="bg-green-500 h-full w-[20%]"></div></div>
+                                                    </div>
+                                                </td>
+                                                <td class="p-4 text-right">
+                                                    <button class="text-slate-400 hover:text-blue-600"><i class="fa-solid fa-chart-area"></i></button>
+                                                </td>
+                                            </tr>
+                                            <tr class="hover:bg-slate-50 transition">
+                                                <td class="p-4">
+                                                    <div class="font-bold text-slate-800">dev-rwa-extract</div>
+                                                    <div class="text-[10px] text-slate-400 font-mono mt-0.5">https://rwa.sg.dcdeeptech.ai</div>
+                                                </td>
+                                                <td class="p-4"><span class="px-2 py-1 bg-blue-50 text-blue-600 text-xs rounded border border-blue-100 font-bold">TensorRT-LLM</span></td>
+                                                <td class="p-4 font-mono text-xs">0 &rarr; 5</td>
+                                                <td class="p-4">
+                                                    <div class="flex items-center">
+                                                        <span class="text-slate-400 font-bold mr-2">0</span>
+                                                        <div class="w-16 h-1.5 bg-slate-200 rounded-full overflow-hidden"></div>
+                                                    </div>
+                                                </td>
+                                                <td class="p-4 text-right">
+                                                    <button class="text-slate-400 hover:text-blue-600"><i class="fa-solid fa-chart-area"></i></button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TAB: Cloud Storage (NEW) -->
+                        <div id="tab-cloud-storage" class="console-tab-content hidden relative z-10">
+                            <div class="flex justify-between items-center mb-8 relative z-10">
+                                <div>
+                                    <h3 class="text-2xl font-bold text-slate-800">
+                                        <span data-lang="zh">对象云存储 (S3 兼容)</span><span data-lang="en">Cloud Object Storage</span>
+                                    </h3>
+                                    <p class="text-sm text-slate-500 mt-1"><span data-lang="zh">已用容量: 1.24 TB / 5 TB</span><span data-lang="en">Used: 1.24 TB / 5 TB</span></p>
+                                </div>
+                                <button class="bg-white border border-slate-300 text-slate-700 px-4 py-2 rounded-lg text-sm shadow-sm hover:bg-slate-50 transition">
+                                    <i class="fa-solid fa-folder-plus mr-1"></i> 
+                                    <span data-lang="zh">新建 Bucket</span><span data-lang="en">New Bucket</span>
+                                </button>
+                            </div>
+
+                            <div class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                                <table class="w-full text-left border-collapse min-w-[600px]">
+                                    <thead>
+                                        <tr class="bg-slate-50 text-slate-500 text-xs uppercase border-b border-slate-100">
+                                            <th class="p-4 font-semibold"><span data-lang="zh">存储桶名称 (Bucket)</span><span data-lang="en">Bucket Name</span></th>
+                                            <th class="p-4 font-semibold"><span data-lang="zh">区域节点</span><span data-lang="en">Region</span></th>
+                                            <th class="p-4 font-semibold"><span data-lang="zh">权限</span><span data-lang="en">Access</span></th>
+                                            <th class="p-4 font-semibold"><span data-lang="zh">容量使用</span><span data-lang="en">Size</span></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="text-sm divide-y divide-slate-100 text-slate-700">
+                                        <tr class="hover:bg-slate-50 transition cursor-pointer">
+                                            <td class="p-4 flex items-center">
+                                                <i class="fa-solid fa-database text-yellow-500 mr-3 text-lg"></i>
+                                                <span class="font-bold text-blue-600">dcdeep-rwa-dataset</span>
+                                            </td>
+                                            <td class="p-4 font-mono text-xs">ap-southeast-1 (SG)</td>
+                                            <td class="p-4"><span class="px-2 py-1 bg-red-50 text-red-600 text-[10px] font-bold uppercase rounded border border-red-100">Private</span></td>
+                                            <td class="p-4">1.02 TB</td>
+                                        </tr>
+                                        <tr class="hover:bg-slate-50 transition cursor-pointer">
+                                            <td class="p-4 flex items-center">
+                                                <i class="fa-solid fa-database text-yellow-500 mr-3 text-lg"></i>
+                                                <span class="font-bold text-blue-600">model-checkpoints</span>
+                                            </td>
+                                            <td class="p-4 font-mono text-xs">ap-southeast-1 (SG)</td>
+                                            <td class="p-4"><span class="px-2 py-1 bg-red-50 text-red-600 text-[10px] font-bold uppercase rounded border border-red-100">Private</span></td>
+                                            <td class="p-4">220 GB</td>
+                                        </tr>
+                                        <tr class="hover:bg-slate-50 transition cursor-pointer">
+                                            <td class="p-4 flex items-center">
+                                                <i class="fa-solid fa-globe text-blue-400 mr-3 text-lg"></i>
+                                                <span class="font-bold text-blue-600">public-assets-cdn</span>
+                                            </td>
+                                            <td class="p-4 font-mono text-xs">ap-southeast-1 (SG)</td>
+                                            <td class="p-4"><span class="px-2 py-1 bg-green-50 text-green-600 text-[10px] font-bold uppercase rounded border border-green-100">Public Read</span></td>
+                                            <td class="p-4">4.5 GB</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- TAB: Image Templates (NEW) -->
+                        <div id="tab-image-templates" class="console-tab-content hidden relative z-10">
+                            <h3 class="text-2xl font-bold text-slate-800 mb-6">
+                                <span data-lang="zh">系统镜像与环境模板</span><span data-lang="en">Image Templates</span>
+                            </h3>
+
+                            <!-- Filters -->
+                            <div class="flex space-x-2 mb-6 overflow-x-auto pb-2 custom-scrollbar">
+                                <button class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-bold whitespace-nowrap border border-blue-200">全部 (All)</button>
+                                <button class="px-3 py-1 bg-white hover:bg-slate-100 text-slate-600 rounded-full text-xs font-medium whitespace-nowrap border border-slate-200">深度学习框架 (DL Frameworks)</button>
+                                <button class="px-3 py-1 bg-white hover:bg-slate-100 text-slate-600 rounded-full text-xs font-medium whitespace-nowrap border border-slate-200">大模型推理 (LLM Inference)</button>
+                                <button class="px-3 py-1 bg-white hover:bg-slate-100 text-slate-600 rounded-full text-xs font-medium whitespace-nowrap border border-slate-200">自定义 (Custom)</button>
+                            </div>
+
+                            <!-- Image Grid -->
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                <!-- Image 1 -->
+                                <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm hover:border-blue-400 transition group">
+                                    <div class="flex items-start justify-between">
+                                        <div class="flex items-center">
+                                            <i class="fa-brands fa-docker text-3xl text-blue-500 mr-3"></i>
+                                            <div>
+                                                <h4 class="font-bold text-slate-800">PyTorch 2.1.0 基础环境</h4>
+                                                <p class="text-[10px] text-slate-400 font-mono mt-1">Ubuntu 22.04 · CUDA 12.1 · Python 3.10</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p class="text-xs text-slate-500 mt-3 line-clamp-2">预装完整版 PyTorch 2.1 及常用数据科学包，已针对 NVIDIA H800/A100 显卡完成底层驱动级优化。</p>
+                                    <div class="mt-4 flex justify-end">
+                                        <button class="text-sm text-blue-600 font-medium group-hover:text-white group-hover:bg-blue-600 px-3 py-1.5 rounded transition"><span data-lang="zh">以此部署实例</span><span data-lang="en">Deploy Instance</span></button>
+                                    </div>
+                                </div>
+                                
+                                <!-- Image 2 -->
+                                <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm hover:border-blue-400 transition group">
+                                    <div class="flex items-start justify-between">
+                                        <div class="flex items-center">
+                                            <i class="fa-brands fa-docker text-3xl text-blue-500 mr-3"></i>
+                                            <div>
+                                                <h4 class="font-bold text-slate-800">vLLM 0.3.0 高性能推理</h4>
+                                                <p class="text-[10px] text-slate-400 font-mono mt-1">Ubuntu 22.04 · vLLM · Ray Cluster</p>
+                                            </div>
+                                        </div>
+                                        <span class="px-2 py-0.5 bg-yellow-100 text-yellow-700 text-[10px] font-bold rounded">HOT</span>
+                                    </div>
+                                    <p class="text-xs text-slate-500 mt-3 line-clamp-2">专为 Llama-3, Qwen 等大语言模型优化的分布式推理镜像，内置 PagedAttention 与连续批处理支持。</p>
+                                    <div class="mt-4 flex justify-end">
+                                        <button class="text-sm text-blue-600 font-medium group-hover:text-white group-hover:bg-blue-600 px-3 py-1.5 rounded transition"><span data-lang="zh">以此部署实例</span><span data-lang="en">Deploy Instance</span></button>
+                                    </div>
+                                </div>
+
+                                <!-- Image 3 -->
+                                <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm hover:border-blue-400 transition group">
+                                    <div class="flex items-start justify-between">
+                                        <div class="flex items-center">
+                                            <i class="fa-brands fa-docker text-3xl text-blue-500 mr-3"></i>
+                                            <div>
+                                                <h4 class="font-bold text-slate-800">TensorRT-LLM 官方底座</h4>
+                                                <p class="text-[10px] text-slate-400 font-mono mt-1">NVIDIA Base · TensorRT 9.x</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p class="text-xs text-slate-500 mt-3 line-clamp-2">NVIDIA 官方提供的大模型推理加速引擎，实现最大化吞吐量与极低延迟，适用于生产环境。</p>
+                                    <div class="mt-4 flex justify-end">
+                                        <button class="text-sm text-blue-600 font-medium group-hover:text-white group-hover:bg-blue-600 px-3 py-1.5 rounded transition"><span data-lang="zh">以此部署实例</span><span data-lang="en">Deploy Instance</span></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TAB 3: Generic Placeholder for others -->
+                        <div id="tab-generic" class="console-tab-content hidden relative z-10 h-full flex flex-col items-center justify-center text-slate-400">
+                            <i class="fa-solid fa-screwdriver-wrench text-6xl mb-4 opacity-20"></i>
+                            <h4 class="text-xl font-medium text-slate-600 mb-2">
+                                <span data-lang="zh">模块开发中 / 按需展示</span><span data-lang="en">Module preview only</span>
+                            </h4>
+                            <p class="text-sm max-w-sm text-center">
+                                <span data-lang="zh">该功能模块在完整版控制台中可用。欢迎预约演示以获取全套产品体验。</span>
+                                <span data-lang="en">This module is available in the full console. Book a demo to get the complete product experience.</span>
+                            </p>
+                            <button onclick="openModal()" class="mt-6 border border-slate-300 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded shadow-sm transition">
+                                <span data-lang="zh">预约演示</span><span data-lang="en">Book Demo</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Advantages / Why Us -->
+    <section id="advantages" class="py-20 bg-deep border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col lg:flex-row items-center gap-16">
+                <div class="lg:w-1/2">
+                    <div class="relative rounded-2xl overflow-hidden border border-slate-700 shadow-2xl">
+                        <!-- Placeholder for Architecture/Channel Image -->
+                        <div class="aspect-video bg-slate-800 flex items-center justify-center relative">
+                            <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=1000')] bg-cover opacity-20"></div>
+                            <div class="text-center z-10">
+                                <i class="fa-solid fa-bolt text-5xl text-accent mb-4 drop-shadow-[0_0_10px_rgba(6,182,212,0.8)]"></i>
+                                <h3 class="text-2xl font-bold text-white">
+                                    <span data-lang="zh">中新高速数据通道</span>
+                                    <span data-lang="en">Sino-Singapore High-Speed Channel</span>
+                                </h3>
+                                <p class="text-slate-400 mt-2">
+                                    <span data-lang="zh">突破跨洋网络瓶颈</span>
+                                    <span data-lang="en">Breaking transoceanic network bottlenecks</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="lg:w-1/2">
+                    <h2 class="text-3xl font-bold text-white mb-6">
+                        <span data-lang="zh">为何选择 DCDeepTech？</span>
+                        <span data-lang="en">Why Choose DCDeepTech?</span>
+                    </h2>
+                    <div class="space-y-6">
+                        <div class="flex">
+                            <div class="flex-shrink-0 mt-1">
+                                <div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary">
+                                    <i class="fa-solid fa-wallet"></i>
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <h4 class="text-xl font-bold text-white">
+                                    <span data-lang="zh">碾压级的成本优势</span>
+                                    <span data-lang="en">Overwhelming Cost Advantage</span>
+                                </h4>
+                                <p class="text-slate-400 mt-1">
+                                    <span data-lang="zh">依托亚太绿电算力网络，结合新加坡边缘节点高效分发，整体推理成本比传统海外大模型云服务直降 80% 以上。</span>
+                                    <span data-lang="en">Relying on APAC's green compute networks and Singapore's edge distribution, reducing overall inference costs by over 80% compared to traditional global cloud services.</span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="flex">
+                            <div class="flex-shrink-0 mt-1">
+                                <div class="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center text-accent">
+                                    <i class="fa-solid fa-lock"></i>
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <h4 class="text-xl font-bold text-white">
+                                    <span data-lang="zh">中立、安全与合规</span>
+                                    <span data-lang="en">Neutral, Secure & Compliant</span>
+                                </h4>
+                                <p class="text-slate-400 mt-1">
+                                    <span data-lang="zh">物理节点落地新加坡，完美契合出海企业地缘风险规避需求。满足新加坡 PDPA 与数据本地化零信任安全标准。</span>
+                                    <span data-lang="en">Physical nodes in Singapore perfectly match the geopolitical risk avoidance needs of global enterprises. Fully compliant with Singapore PDPA and local zero-trust security standards.</span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="flex">
+                            <div class="flex-shrink-0 mt-1">
+                                <div class="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center text-green-500">
+                                    <i class="fa-solid fa-leaf"></i>
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <h4 class="text-xl font-bold text-white">
+                                    <span data-lang="zh">君逸 MCP + 液冷生态闭环</span>
+                                    <span data-lang="en">Junyi MCP + Liquid Cooling Ecosystem</span>
+                                </h4>
+                                <p class="text-slate-400 mt-1">
+                                    <span data-lang="zh">独家提供“前端数据采集采集 + 动态模型路由 + 绿色低碳算力”的完整 AI 和资产代币化交钥匙方案。</span>
+                                    <span data-lang="en">Exclusively providing a complete turnkey solution of "front-end data collection + dynamic model routing + green compute" for AI and asset tokenization.</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="py-24 bg-slate-900 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
+                    <span data-lang="zh">透明定价，按需极致扩容</span>
+                    <span data-lang="en">Transparent Pricing, Ultimate Elasticity</span>
+                </h2>
+                <div class="w-20 h-1 bg-primary mx-auto rounded"></div>
+                <p class="mt-6 text-slate-400 max-w-2xl mx-auto">
+                    <span data-lang="zh">打破显卡暴利黑盒，我们将算力转化为普惠基础设施。</span>
+                    <span data-lang="en">Breaking the GPU profit black box, we transform compute into inclusive infrastructure.</span>
+                </p>
+            </div>
+
+            <div class="max-w-4xl mx-auto bg-slate-800/80 rounded-2xl border border-slate-700 overflow-hidden backdrop-blur-md">
+                <div class="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-slate-700">
+                    <!-- Pricing Plan 1 -->
+                    <div class="p-8 text-center hover:bg-slate-700/50 transition">
+                        <div class="text-slate-400 font-medium mb-2">
+                            <span data-lang="zh">等效 RTX 4090 容器</span>
+                            <span data-lang="en">Equivalent RTX 4090 Container</span>
+                        </div>
+                        <div class="text-4xl font-bold text-white mb-1">
+                            <span class="text-lg">S$</span>0.45<span class="text-sm font-normal text-slate-400"> 
+                                <span data-lang="zh">/卡·小时起</span><span data-lang="en">/card·hr</span>
+                            </span>
+                        </div>
+                        <p class="text-xs text-accent mb-6">
+                            <span data-lang="zh">适合：推理/微调/渲染</span>
+                            <span data-lang="en">Ideal for: Inference / Fine-tuning / Render</span>
+                        </p>
+                        <button class="w-full py-2 border border-slate-600 rounded text-slate-300 hover:bg-slate-600 transition">
+                            <span data-lang="zh">一键创建实例</span><span data-lang="en">Create Instance</span>
+                        </button>
+                    </div>
+                    <!-- Pricing Plan 2 -->
+                    <div class="p-8 text-center bg-gradient-to-b from-blue-900/40 to-transparent relative">
+                        <div class="absolute top-0 left-1/2 transform -translate-x-1/2 bg-primary text-white text-xs px-3 py-1 rounded-b font-bold">
+                            <span data-lang="zh">最受欢迎</span><span data-lang="en">Most Popular</span>
+                        </div>
+                        <div class="text-slate-400 font-medium mb-2 mt-2">
+                            <span data-lang="zh">API 动态调用 (TaaS)</span>
+                            <span data-lang="en">API Dynamic Call (TaaS)</span>
+                        </div>
+                        <div class="text-4xl font-bold text-white mb-1">
+                            <span class="text-lg">S$</span>0.01<span class="text-sm font-normal text-slate-400"> 
+                                <span data-lang="zh">/万 Tokens起</span><span data-lang="en">/10K Tokens</span>
+                            </span>
+                        </div>
+                        <p class="text-xs text-accent mb-6">
+                            <span data-lang="zh">DeepSeek-V3 / Llama-3 接入</span>
+                            <span data-lang="en">DeepSeek-V3 / Llama-3 Access</span>
+                        </p>
+                        <button class="w-full py-2 bg-primary hover:bg-blue-600 rounded text-white font-medium shadow-[0_0_10px_rgba(59,130,246,0.4)] transition">
+                            <span data-lang="zh">获取 API Key</span><span data-lang="en">Get API Key</span>
+                        </button>
+                    </div>
+                    <!-- Pricing Plan 3 -->
+                    <div class="p-8 text-center hover:bg-slate-700/50 transition">
+                        <div class="text-slate-400 font-medium mb-2">
+                            <span data-lang="zh">液冷裸金属集群</span>
+                            <span data-lang="en">Liquid Bare Metal Cluster</span>
+                        </div>
+                        <div class="text-2xl font-bold text-white mb-1 mt-3">
+                            <span data-lang="zh">定制化报价</span><span data-lang="en">Custom Quote</span>
+                        </div>
+                        <p class="text-xs text-slate-400 mb-6 mt-3">
+                            <span data-lang="zh">适合：超大规模训练/物理落地</span>
+                            <span data-lang="en">Ideal for: Large-scale training</span>
+                        </p>
+                        <button onclick="openModal()" class="w-full py-2 border border-slate-600 rounded text-slate-300 hover:bg-slate-600 transition">
+                            <span data-lang="zh">联系销售团队</span><span data-lang="en">Contact Sales</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-8 text-slate-500 text-sm">
+                <span data-lang="zh">* 以上为预估参考价，新注册用户即可获赠最高 <strong class="text-slate-300">S$100</strong> 额度进行平台全量功能测试。<br>所有计费支持按秒级 Serverless 扩缩容，杜绝闲置浪费。</span>
+                <span data-lang="en">* Prices are estimates. New users can get up to <strong class="text-slate-300">S$100</strong> in credits for full platform testing.<br>All billing supports second-level Serverless scaling to eliminate idle waste.</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Global Resources Section -->
+    <section id="global" class="py-20 bg-deep border-y border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl font-bold text-white mb-12">
+                <span data-lang="zh">整合亚太生态，赋能全球业务</span>
+                <span data-lang="en">Integrating APAC Ecosystem, Empowering Global Business</span>
+            </h2>
+            
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-8">
+                <div class="flex flex-col items-center">
+                    <div class="w-16 h-16 rounded-full bg-slate-800 flex items-center justify-center border border-slate-700 mb-4 text-2xl text-slate-300">
+                        🇨🇳
+                    </div>
+                    <div class="font-bold text-white">
+                        <span data-lang="zh">中国重庆</span><span data-lang="en">Chongqing, China</span>
+                    </div>
+                    <div class="text-xs text-slate-400 mt-1">
+                        <span data-lang="zh">西部算力绿电中心</span><span data-lang="en">Western Green Compute Center</span>
+                    </div>
+                </div>
+                <div class="hidden md:flex flex-col items-center justify-center">
+                    <div class="w-full h-0.5 bg-gradient-to-r from-slate-700 via-accent to-slate-700 relative">
+                        <i class="fa-solid fa-angles-right absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-accent"></i>
+                    </div>
+                    <div class="text-xs text-accent mt-2 font-mono">50ms Channel</div>
+                </div>
+                <div class="flex flex-col items-center relative">
+                    <div class="absolute -top-3 -right-3">
+                        <span class="flex h-4 w-4">
+                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
+                          <span class="relative inline-flex rounded-full h-4 w-4 bg-accent"></span>
+                        </span>
+                    </div>
+                    <div class="w-20 h-20 rounded-full bg-primary/20 flex items-center justify-center border border-primary/50 mb-4 text-4xl shadow-[0_0_20px_rgba(59,130,246,0.3)]">
+                        🇸🇬
+                    </div>
+                    <div class="font-bold text-white text-lg">
+                        <span data-lang="zh">新加坡边缘节点</span><span data-lang="en">Singapore Edge Node</span>
+                    </div>
+                    <div class="text-xs text-slate-400 mt-1">
+                        <span data-lang="zh">控制面 / VLM / RWA处理</span><span data-lang="en">Control Plane / VLM / RWA Processing</span>
+                    </div>
+                </div>
+                <div class="hidden md:flex flex-col items-center justify-center">
+                    <div class="w-full h-0.5 bg-gradient-to-r from-slate-700 via-primary to-slate-700 relative">
+                         <i class="fa-solid fa-satellite-dish absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-primary"></i>
+                    </div>
+                    <div class="text-xs text-primary mt-2">
+                        <span data-lang="zh">API 路由分发</span><span data-lang="en">API Routing Distribution</span>
+                    </div>
+                </div>
+                <div class="flex flex-col items-center">
+                    <div class="w-16 h-16 rounded-full bg-slate-800 flex items-center justify-center border border-slate-700 mb-4 text-2xl text-slate-300">
+                        🌏
+                    </div>
+                    <div class="font-bold text-white">
+                        <span data-lang="zh">全球/东南亚市场</span><span data-lang="en">Global / SEA Market</span>
+                    </div>
+                    <div class="text-xs text-slate-400 mt-1">
+                        <span data-lang="zh">企业客户 / Web3生态</span><span data-lang="en">Enterprise Clients / Web3 Ecosystem</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bottom CTA -->
+    <section class="py-24 relative overflow-hidden bg-slate-900">
+        <div class="absolute inset-0 bg-gradient-to-b from-transparent to-primary/10"></div>
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+            <h2 class="text-3xl md:text-5xl font-bold text-white mb-6">
+                <span data-lang="zh">准备好开启高效 AI 之旅了吗？</span>
+                <span data-lang="en">Ready to Start Your Efficient AI Journey?</span>
+            </h2>
+            <p class="text-xl text-slate-400 mb-10">
+                <span data-lang="zh">现在加入，即可免费获得体验额度。快速验证业务落地可行性。</span>
+                <span data-lang="en">Join now to get free credits. Quickly validate your business feasibility.</span>
+            </p>
+            <button onclick="openModal()" class="px-10 py-5 bg-white text-deep rounded-full font-bold text-xl hover:bg-slate-200 transition-colors shadow-xl transform hover:scale-105">
+                <span data-lang="zh">立即注册获取 S$100 体验金</span>
+                <span data-lang="en">Register Now for S$100 Credits</span>
+            </button>
+            <div class="mt-8 flex justify-center space-x-6 text-sm text-slate-400">
+                <span><i class="fa-solid fa-headset mr-1"></i> <span data-lang="zh">7x24 技术支持</span><span data-lang="en">24/7 Tech Support</span></span>
+                <span><i class="fa-solid fa-book mr-1"></i> <span data-lang="zh">完善的文档体系</span><span data-lang="en">Comprehensive Docs</span></span>
+                <span><i class="fa-solid fa-handshake mr-1"></i> <span data-lang="zh">专属大客户企微</span><span data-lang="en">Dedicated AM</span></span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-950 pt-16 pb-8 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+                <div class="col-span-2 md:col-span-1">
+                    <div class="flex items-center mb-4">
+                        <i class="fa-solid fa-microchip text-accent text-xl mr-2"></i>
+                        <span class="text-white font-bold text-lg">DCDeepTech</span>
+                    </div>
+                    <p class="text-sm text-slate-500 mb-4">
+                        <span data-lang="zh">立足新加坡的 AI 边缘智算平台。致力于连接亚太算力生态与全球应用场景，打造极具性价比的国际化 TaaS 与 RWA 基础设施。</span>
+                        <span data-lang="en">Singapore-based AI edge compute platform. Connecting APAC's compute ecosystem with global scenarios, building highly cost-effective, international TaaS & RWA infrastructure.</span>
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-slate-500 hover:text-white transition"><i class="fa-brands fa-linkedin text-xl"></i></a>
+                        <a href="#" class="text-slate-500 hover:text-white transition"><i class="fa-brands fa-x-twitter text-xl"></i></a>
+                        <a href="#" class="text-slate-500 hover:text-white transition"><i class="fa-brands fa-weixin text-xl"></i></a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="text-white font-bold mb-4">
+                        <span data-lang="zh">产品与服务</span><span data-lang="en">Products & Services</span>
+                    </h4>
+                    <ul class="space-y-2 text-sm text-slate-400">
+                        <li><a href="#" class="hover:text-accent transition"><span data-lang="zh">模型推理 API (TaaS)</span><span data-lang="en">Model Inference API (TaaS)</span></a></li>
+                        <li><a href="#" class="hover:text-accent transition"><span data-lang="zh">GPU 容器实例</span><span data-lang="en">GPU Container Instances</span></a></li>
+                        <li><a href="#" class="hover:text-accent transition"><span data-lang="zh">液冷节点租赁</span><span data-lang="en">Liquid-Cooled Node Rental</span></a></li>
+                        <li><a href="#" class="hover:text-accent transition"><span data-lang="zh">RWA 资产代币化方案</span><span data-lang="en">RWA Tokenization Solutions</span></a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-white font-bold mb-4">
+                        <span data-lang="zh">开发者资源</span><span data-lang="en">Developer Resources</span>
+                    </h4>
+                    <ul class="space-y-2 text-sm text-slate-400">
+                        <li><a href="#" class="hover:text-accent transition"><span data-lang="zh">控制台</span><span data-lang="en">Console</span></a></li>
+                        <li><a href="#" class="hover:text-accent transition"><span data-lang="zh">API 接口文档</span><span data-lang="en">API Documentation</span></a></li>
+                        <li><a href="#" class="hover:text-accent transition"><span data-lang="zh">部署指南与 Demo</span><span data-lang="en">Deployment Guide & Demo</span></a></li>
+                        <li><a href="#" class="hover:text-accent transition"><span data-lang="zh">通道时延测速</span><span data-lang="en">Channel Latency Test</span></a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-white font-bold mb-4">
+                        <span data-lang="zh">联系我们</span><span data-lang="en">Contact Us</span>
+                    </h4>
+                    <ul class="space-y-2 text-sm text-slate-400">
+                        <li><i class="fa-solid fa-envelope mr-2 text-slate-500"></i> contact@dcdeeptech.ai</li>
+                        <li><i class="fa-solid fa-building mr-2 text-slate-500"></i> Ayer Rajah Crescent, Singapore</li>
+                        <li class="mt-4">
+                            <button onclick="openModal()" class="w-full py-2 border border-slate-700 rounded hover:bg-slate-800 transition text-center">
+                                <span data-lang="zh">提交咨询工单</span><span data-lang="en">Submit Support Ticket</span>
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="pt-8 border-t border-slate-800 text-sm text-slate-500 flex flex-col md:flex-row justify-between items-center">
+                <p>
+                    &copy; 2026 DCDeepTech Pte. Ltd. 
+                    <span data-lang="zh">保留所有权利。</span><span data-lang="en">All rights reserved.</span>
+                </p>
+                <div class="space-x-4 mt-4 md:mt-0">
+                    <a href="#" class="hover:text-white transition"><span data-lang="zh">服务条款</span><span data-lang="en">Terms of Service</span></a>
+                    <a href="#" class="hover:text-white transition"><span data-lang="zh">隐私政策 (PDPA)</span><span data-lang="en">Privacy Policy (PDPA)</span></a>
+                    <a href="#" class="hover:text-white transition"><span data-lang="zh">数据合规声明</span><span data-lang="en">Data Compliance</span></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Booking Modal (Hidden by default) -->
+    <div id="bookingModal" class="fixed inset-0 z-[100] flex items-center justify-center hidden">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeModal()"></div>
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl p-8 max-w-md w-full mx-4 relative z-10 shadow-2xl transform scale-95 transition-transform" id="modalContent">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            <h3 class="text-2xl font-bold text-white mb-2">
+                <span data-lang="zh">预约演示 / 领取体验金</span>
+                <span data-lang="en">Book Demo / Claim Credits</span>
+            </h3>
+            <p class="text-slate-400 text-sm mb-6">
+                <span data-lang="zh">请填写您的联系方式，我们的架构师将在 24 小时内与您联系，并为您开通测试权限。</span>
+                <span data-lang="en">Please fill out your contact details. Our architects will contact you within 24 hours to grant test access.</span>
+            </p>
+            
+            <form class="space-y-4" onsubmit="submitForm(event)">
+                <div>
+                    <label class="block text-sm text-slate-300 mb-1">
+                        <span data-lang="zh">企业/机构名称</span><span data-lang="en">Company/Organization Name</span>
+                    </label>
+                    <input type="text" required class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent">
+                </div>
+                <div>
+                    <label class="block text-sm text-slate-300 mb-1">
+                        <span data-lang="zh">工作邮箱</span><span data-lang="en">Work Email</span>
+                    </label>
+                    <input type="email" required class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent">
+                </div>
+                <div>
+                    <label class="block text-sm text-slate-300 mb-1">
+                        <span data-lang="zh">感兴趣的业务场景</span><span data-lang="en">Interested Business Scenario</span>
+                    </label>
+                    <select class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent">
+                        <option data-lang="zh">TaaS 模型 API 调用</option>
+                        <option data-lang="en">TaaS Model API Calling</option>
+                        
+                        <option data-lang="zh">高算力 GPU 容器部署</option>
+                        <option data-lang="en">High-Compute GPU Containers</option>
+                        
+                        <option data-lang="zh">具身智能与 RWA 代币化</option>
+                        <option data-lang="en">Embodied AI & RWA Tokenization</option>
+                        
+                        <option data-lang="zh">其他生态合作</option>
+                        <option data-lang="en">Other Ecosystem Partnerships</option>
+                    </select>
+                </div>
+                <button type="submit" class="w-full py-3 bg-primary hover:bg-blue-600 text-white rounded-lg font-bold transition mt-4" id="submitBtn">
+                    <span data-lang="zh">提交申请</span>
+                    <span data-lang="en">Submit Application</span>
+                </button>
+            </form>
+            <div id="successMsg" class="hidden mt-4 text-center text-green-400 bg-green-400/10 py-2 rounded">
+                <i class="fa-solid fa-circle-check mr-1"></i> 
+                <span data-lang="zh">提交成功！我们将尽快联系您。</span>
+                <span data-lang="en">Submitted successfully! We will contact you soon.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts (UPDATED) -->
+    <script>
+        // Change Navbar background on scroll
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 20) {
+                nav.classList.add('shadow-lg');
+            } else {
+                nav.classList.remove('shadow-lg');
+            }
+        });
+
+        // Mobile Main Menu Logic
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Console Tab Switching Logic
+        function switchConsoleTab(tabId, element) {
+            // Remove active class from all items
+            document.querySelectorAll('.console-menu-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            // Add active class to clicked item
+            element.classList.add('active');
+
+            // Hide all contents
+            document.querySelectorAll('.console-tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+
+            // Show target content (fallback to generic if id doesn't exist)
+            const targetContent = document.getElementById(tabId);
+            if (targetContent) {
+                targetContent.classList.remove('hidden');
+            } else {
+                document.getElementById('tab-generic').classList.remove('hidden');
+            }
+        }
+
+        // Language Toggle Logic
+        function toggleLanguage() {
+            const body = document.body;
+            const html = document.documentElement;
+            
+            if (body.classList.contains('en-mode')) {
+                body.classList.remove('en-mode');
+                html.lang = 'zh-CN';
+                localStorage.setItem('lang', 'zh');
+                document.title = 'DCDeepTech | 新加坡AI边缘智算平台';
+            } else {
+                body.classList.add('en-mode');
+                html.lang = 'en';
+                localStorage.setItem('lang', 'en');
+                document.title = 'DCDeepTech | Singapore AI Edge Compute Platform';
+            }
+        }
+
+        // Initialize language from localStorage
+        if (localStorage.getItem('lang') === 'en') {
+            document.body.classList.add('en-mode');
+            document.documentElement.lang = 'en';
+            document.title = 'DCDeepTech | Singapore AI Edge Compute Platform';
+        }
+
+        // Modal Logic
+        const modal = document.getElementById('bookingModal');
+        const modalContent = document.getElementById('modalContent');
+        
+        function openModal() {
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modalContent.classList.remove('scale-95');
+                modalContent.classList.add('scale-100');
+            }, 10);
+            document.body.style.overflow = 'hidden'; // Prevent scrolling
+        }
+
+        function closeModal() {
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 200);
+            document.body.style.overflow = 'auto'; // Restore scrolling
+            // reset form state
+            document.getElementById('successMsg').classList.add('hidden');
+            document.querySelector('form').style.display = 'block';
+        }
+
+        function submitForm(e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalHTML = btn.innerHTML; // Save original span elements
+            const isEn = document.body.classList.contains('en-mode');
+            
+            // Set loading state text
+            btn.innerHTML = isEn 
+                ? '<i class="fa-solid fa-spinner fa-spin"></i> Submitting...' 
+                : '<i class="fa-solid fa-spinner fa-spin"></i> 提交中...';
+            btn.disabled = true;
+            
+            // Simulate API call
+            setTimeout(() => {
+                e.target.style.display = 'none';
+                document.getElementById('successMsg').classList.remove('hidden');
+                btn.innerHTML = originalHTML; // Restore spans for next time
+                btn.disabled = false;
+                e.target.reset();
+                setTimeout(closeModal, 2500); // Auto close after success
+            }, 1000);
+        }
+    </script>
+</body>
+</html>

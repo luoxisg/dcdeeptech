@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CDU + 冷板液冷系统 · 博士级工艺指南 · 华南产业链 · AVC/CoolerMaster OEM方案</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700;900&family=JetBrains+Mono:wght@300;400;500;600&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:      #0a0d14;
+  --s1:      #0e1220;
+  --s2:      #131729;
+  --s3:      #1a1f33;
+  --border:  #1e2540;
+  --border2: #2a3050;
+  --c1:      #00c8ff;   /* cyan  */
+  --c2:      #ff4d6d;   /* red   */
+  --c3:      #00e5a0;   /* green */
+  --c4:      #ffaa00;   /* amber */
+  --c5:      #a855f7;   /* violet */
+  --c6:      #f97316;   /* orange */
+  --text:    #e8edf8;
+  --muted:   #7e8aaa;
+  --dim:     #454f6b;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans SC',sans-serif;font-weight:300;line-height:1.9;overflow-x:hidden;}
+
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:var(--s1);}
+::-webkit-scrollbar-thumb{background:var(--c1);border-radius:2px;}
+
+/* ══ NAV ══ */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  height:54px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 48px;
+  background:rgba(10,13,20,0.9);
+  backdrop-filter:blur(24px);
+  border-bottom:1px solid var(--border);
+}
+.nav-brand{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.18em;color:var(--c1);}
+.nav-links{display:flex;gap:20px;list-style:none;}
+.nav-links a{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;color:var(--muted);text-decoration:none;transition:color .2s;}
+.nav-links a:hover,.nav-links a.active{color:var(--c1);}
+.nav-menu-btn{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px;}
+.nav-menu-btn span{display:block;width:22px;height:2px;background:var(--muted);border-radius:1px;transition:all .3s;}
+.nav-drawer{display:none;position:fixed;top:54px;left:0;right:0;background:rgba(10,13,20,0.97);backdrop-filter:blur(24px);border-bottom:1px solid var(--border);z-index:199;padding:12px 0;transform:translateY(-8px);opacity:0;transition:all .25s ease;pointer-events:none;}
+.nav-drawer.open{transform:none;opacity:1;pointer-events:all;}
+.nav-drawer a{display:block;padding:11px 24px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--muted);text-decoration:none;border-bottom:1px solid var(--border);transition:color .2s,background .2s;}
+.nav-drawer a:hover{color:var(--c1);background:var(--s1);}
+
+/* ══ HERO ══ */
+#hero{
+  min-height:100vh;display:flex;align-items:center;
+  padding:100px 80px 80px;
+  position:relative;overflow:hidden;
+  background:var(--bg);
+}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(0,200,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,200,255,.04) 1px,transparent 1px);background-size:48px 48px;}
+.hero-orbs{position:absolute;inset:0;pointer-events:none;}
+.orb{position:absolute;border-radius:50%;filter:blur(120px);opacity:.15;}
+.orb1{width:500px;height:500px;background:var(--c1);top:-100px;right:-100px;}
+.orb2{width:400px;height:400px;background:var(--c5);bottom:-80px;left:80px;}
+.orb3{width:300px;height:300px;background:var(--c2);top:35%;right:20%;}
+.hero-scan{position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,200,255,.015) 2px,rgba(0,200,255,.015) 4px);pointer-events:none;}
+
+.hero-inner{position:relative;max-width:1100px;width:100%;}
+.hero-tag{display:inline-flex;align-items:center;gap:10px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.2em;color:var(--c1);border:1px solid rgba(0,200,255,.3);background:rgba(0,200,255,.06);padding:5px 16px;margin-bottom:32px;animation:fu .7s ease both;}
+.hero-tag::before{content:'▶';font-size:8px;}
+.hero h1{font-family:'Noto Serif SC',serif;font-size:clamp(28px,5vw,68px);font-weight:700;line-height:1.1;color:var(--text);margin-bottom:16px;animation:fu .7s .1s ease both;}
+.hero h1 .hl{background:linear-gradient(135deg,var(--c1),var(--c5));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero h1 .hl2{background:linear-gradient(135deg,var(--c3),var(--c4));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero-sub{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--c3);margin-bottom:16px;animation:fu .7s .15s ease both;}
+.hero-desc{max-width:680px;font-size:14px;color:var(--muted);margin-bottom:48px;line-height:2;animation:fu .7s .2s ease both;}
+
+.hero-kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--border);border:1px solid var(--border);animation:fu .7s .3s ease both;}
+.kpi{background:var(--s1);padding:20px 16px;transition:background .3s;}
+.kpi:hover{background:var(--s2);}
+.kpi-val{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:600;color:var(--c1);display:block;line-height:1;margin-bottom:8px;}
+.kpi-val.g{color:var(--c3);}
+.kpi-val.a{color:var(--c4);}
+.kpi-val.v{color:var(--c5);}
+.kpi-val.r{color:var(--c2);}
+.kpi-label{font-size:10px;color:var(--dim);letter-spacing:.04em;line-height:1.5;}
+
+@keyframes fu{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+
+/* ══ SECTIONS ══ */
+.div-line{height:1px;background:linear-gradient(90deg,transparent,var(--border2),transparent);margin:0;}
+.sec{padding:80px 80px;max-width:1440px;margin:0 auto;}
+.sec-alt{background:var(--s1);}
+.sec-header{display:flex;align-items:center;gap:14px;margin-bottom:48px;flex-wrap:wrap;}
+.sec-idx{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.18em;color:var(--c1);white-space:nowrap;}
+.sec-title{font-family:'Noto Serif SC',serif;font-size:22px;font-weight:600;color:var(--text);}
+.sec-rule{flex:1;height:1px;background:linear-gradient(90deg,var(--border2),transparent);min-width:20px;}
+
+/* ══ CARDS ══ */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;}
+.card-grid-3{grid-template-columns:repeat(3,1fr);}
+.card-grid-2{grid-template-columns:repeat(2,1fr);}
+
+.phys-card{background:var(--s2);border:1px solid var(--border2);padding:26px;position:relative;overflow:hidden;transition:border-color .3s,transform .2s;}
+.phys-card:hover{border-color:var(--c1);transform:translateY(-2px);}
+.phys-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.phys-card.c1::before{background:var(--c1);}
+.phys-card.c2::before{background:var(--c2);}
+.phys-card.c3::before{background:var(--c3);}
+.phys-card.c4::before{background:var(--c4);}
+.phys-card.c5::before{background:var(--c5);}
+.phys-card.c6::before{background:var(--c6);}
+.phys-num{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;color:var(--dim);margin-bottom:10px;display:block;}
+.phys-title{font-family:'Noto Serif SC',serif;font-size:14px;font-weight:600;margin-bottom:10px;color:var(--text);}
+.phys-body{font-size:12.5px;color:var(--muted);line-height:1.9;}
+.phys-body strong{color:var(--text);font-weight:500;}
+
+.formula-box{background:var(--s3);border:1px solid var(--border2);border-left:3px solid var(--c1);padding:12px 16px;margin:12px 0;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--c1);letter-spacing:.04em;}
+.formula-sub{font-size:10px;color:var(--muted);margin-top:5px;}
+.highlight-box{background:rgba(0,200,255,.06);border:1px solid rgba(0,200,255,.2);padding:14px 18px;margin-top:12px;font-size:12.5px;color:rgba(0,200,255,.9);line-height:1.8;}
+.warn-box{background:rgba(255,77,109,.06);border:1px solid rgba(255,77,109,.25);padding:14px 18px;margin-top:12px;font-size:12.5px;color:#ff8fa0;line-height:1.8;}
+.ok-box{background:rgba(0,229,160,.06);border:1px solid rgba(0,229,160,.25);padding:14px 18px;margin-top:12px;font-size:12.5px;color:var(--c3);line-height:1.8;}
+
+/* ══ TIMELINE ══ */
+.timeline{position:relative;padding-left:48px;}
+.timeline::before{content:'';position:absolute;left:14px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--c1),var(--c5),var(--c2),var(--c3));}
+.t-step{position:relative;margin-bottom:36px;opacity:0;transform:translateX(-16px);transition:all .5s ease;}
+.t-step.on{opacity:1;transform:none;}
+.t-dot{position:absolute;left:-42px;top:4px;width:14px;height:14px;border-radius:50%;border:2px solid var(--c1);background:var(--bg);}
+.t-dot.g{border-color:var(--c3);}
+.t-dot.r{border-color:var(--c2);}
+.t-dot.a{border-color:var(--c4);}
+.t-dot.v{border-color:var(--c5);}
+.t-tag{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;padding:2px 8px;border-radius:2px;margin-bottom:8px;}
+.t-tag.b{background:rgba(0,200,255,.15);color:var(--c1);}
+.t-tag.g{background:rgba(0,229,160,.15);color:var(--c3);}
+.t-tag.r{background:rgba(255,77,109,.15);color:var(--c2);}
+.t-tag.a{background:rgba(255,170,0,.15);color:var(--c4);}
+.t-tag.v{background:rgba(168,85,247,.15);color:var(--c5);}
+.t-title{font-family:'Noto Serif SC',serif;font-size:14px;font-weight:600;margin-bottom:8px;color:var(--text);}
+.t-body{font-size:12.5px;color:var(--muted);line-height:1.9;}
+
+/* ══ TABLE ══ */
+.table-wrap{overflow-x:auto;border:1px solid var(--border2);border-radius:4px;}
+.data-table{width:100%;border-collapse:collapse;font-size:12.5px;}
+.data-table th{background:var(--s3);color:var(--c1);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;padding:12px 14px;border-bottom:1px solid var(--border2);text-align:left;white-space:nowrap;}
+.data-table td{padding:11px 14px;border-bottom:1px solid var(--border);color:var(--muted);line-height:1.7;vertical-align:top;}
+.data-table td strong{color:var(--text);font-weight:500;}
+.data-table tr:last-child td{border-bottom:none;}
+.data-table tr:hover td{background:rgba(0,200,255,.03);}
+
+/* ══ SUPPLY CHAIN CARDS ══ */
+.sc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:32px;}
+.sc-card{background:var(--s2);border:1px solid var(--border2);padding:22px;transition:border-color .3s;}
+.sc-card:hover{border-color:var(--c1);}
+.sc-logo{font-family:'Noto Serif SC',serif;font-size:13.5px;font-weight:600;color:var(--text);margin-bottom:4px;}
+.sc-sub{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.1em;color:var(--c1);margin-bottom:10px;}
+.sc-body{font-size:12px;color:var(--muted);line-height:1.8;margin-bottom:12px;}
+.sc-tags{display:flex;flex-wrap:wrap;gap:6px;}
+.sc-tag{font-family:'JetBrains Mono',monospace;font-size:9.5px;padding:2px 8px;border-radius:2px;background:var(--s3);color:var(--dim);}
+.sc-tag.b{background:rgba(0,200,255,.12);color:var(--c1);}
+.sc-tag.g{background:rgba(0,229,160,.12);color:var(--c3);}
+.sc-tag.a{background:rgba(255,170,0,.12);color:var(--c4);}
+.sc-tag.v{background:rgba(168,85,247,.12);color:var(--c5);}
+.sc-tag.r{background:rgba(255,77,109,.12);color:var(--c2);}
+.sc-tag.o{background:rgba(249,115,22,.12);color:var(--c6);}
+
+/* ══ OEM SCHEME ══ */
+.oem-split{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:32px;}
+.oem-panel{background:var(--s2);border:1px solid var(--border2);padding:28px;position:relative;overflow:hidden;}
+.oem-panel::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,200,255,.04),transparent);pointer-events:none;}
+.oem-brand{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:600;letter-spacing:.08em;margin-bottom:4px;}
+.oem-brand.avc{color:var(--c1);}
+.oem-brand.cm{color:var(--c3);}
+.oem-tagline{font-size:11px;color:var(--muted);margin-bottom:20px;letter-spacing:.04em;}
+.oem-row{display:flex;justify-content:space-between;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--border);}
+.oem-row:last-child{border-bottom:none;}
+.oem-key{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:.08em;min-width:120px;}
+.oem-val{font-size:12.5px;color:var(--text);text-align:right;flex:1;}
+
+/* ══ FLOW DIAGRAM ══ */
+.flow-wrap{overflow-x:auto;padding:8px 0;}
+.flow{display:flex;align-items:center;gap:0;flex-wrap:nowrap;padding:0 4px;}
+.flow-node{background:var(--s2);border:1px solid var(--border2);padding:12px 16px;text-align:center;min-width:100px;flex-shrink:0;}
+.flow-node .f-num{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--dim);letter-spacing:.1em;margin-bottom:4px;}
+.flow-node .f-title{font-size:11px;color:var(--text);font-weight:500;}
+.flow-arrow{color:var(--c1);font-size:18px;flex-shrink:0;padding:0 6px;}
+.flow-node.hi{border-color:var(--c1);background:rgba(0,200,255,.08);}
+.flow-node.hi2{border-color:var(--c3);background:rgba(0,229,160,.06);}
+
+/* ══ COST BARS ══ */
+.cost-layout{display:grid;grid-template-columns:1fr 1fr;gap:32px;}
+.cost-item{margin-bottom:14px;}
+.cost-label{display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;}
+.cost-label span:first-child{color:var(--muted);}
+.cost-pct{font-family:'JetBrains Mono',monospace;color:var(--c1);font-size:11px;}
+.cost-track{height:3px;background:var(--border2);border-radius:2px;}
+.cost-fill{height:3px;background:linear-gradient(90deg,var(--c1),var(--c5));border-radius:2px;width:0;transition:width 1.2s cubic-bezier(.4,0,.2,1);}
+
+/* ══ REGION MAP CARDS ══ */
+.region-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.region-card{background:var(--s2);border:1px solid var(--border2);padding:22px;border-top:2px solid var(--c1);}
+.region-name{font-family:'Noto Serif SC',serif;font-size:14px;font-weight:600;color:var(--text);margin-bottom:6px;}
+.region-tag{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.12em;color:var(--c1);margin-bottom:12px;display:block;}
+.region-body{font-size:12px;color:var(--muted);line-height:1.9;}
+
+/* ══ SPEC TABLE ══ */
+.spec-2col{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+
+/* ══ BADGE ══ */
+.badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.12em;padding:2px 8px;border-radius:2px;margin-right:6px;margin-bottom:4px;}
+.badge.b{background:rgba(0,200,255,.15);color:var(--c1);}
+.badge.g{background:rgba(0,229,160,.15);color:var(--c3);}
+.badge.a{background:rgba(255,170,0,.15);color:var(--c4);}
+.badge.v{background:rgba(168,85,247,.15);color:var(--c5);}
+.badge.r{background:rgba(255,77,109,.15);color:var(--c2);}
+.badge.o{background:rgba(249,115,22,.15);color:var(--c6);}
+
+/* ══ FOOTER ══ */
+footer{background:var(--s1);border-top:1px solid var(--border);padding:48px 80px;text-align:center;}
+.footer-logo{font-family:'Noto Serif SC',serif;font-size:14px;font-weight:600;color:var(--text);margin-bottom:12px;}
+.footer-sub{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:.06em;line-height:2.2;}
+
+/* ══ RESPONSIVE ══ */
+@media(max-width:900px){
+  nav{padding:0 20px;}
+  .nav-links{display:none;}
+  .nav-menu-btn{display:flex;}
+  .nav-drawer{display:block;}
+  #hero{padding:80px 24px 60px;}
+  .sec{padding:56px 24px;}
+  .hero-kpis{grid-template-columns:repeat(2,1fr);}
+  .card-grid-3,.card-grid-2,.oem-split,.cost-layout,.region-grid,.spec-2col{grid-template-columns:1fr;}
+  .physics-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ NAV ══ -->
+<nav>
+  <div class="nav-brand">CDU + COLDPLATE // DOCTORAL GUIDE</div>
+  <ul class="nav-links">
+    <li><a href="#hero">概览</a></li>
+    <li><a href="#cdu-tech">CDU工艺</a></li>
+    <li><a href="#coldplate">冷板技术</a></li>
+    <li><a href="#integration">系统集成</a></li>
+    <li><a href="#supply">华南供应链</a></li>
+    <li><a href="#oem">AVC/CM OEM</a></li>
+    <li><a href="#cost">成本</a></li>
+  </ul>
+  <button class="nav-menu-btn" id="menuBtn" aria-label="菜单" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="nav-drawer" id="navDrawer">
+  <a class="drawer-link" href="#hero">01 // 概览总览</a>
+  <a class="drawer-link" href="#cdu-tech">02 // CDU核心工艺</a>
+  <a class="drawer-link" href="#coldplate">03 // 冷板制造技术</a>
+  <a class="drawer-link" href="#integration">04 // CDU+冷板系统集成</a>
+  <a class="drawer-link" href="#supply">05 // 华南产业链</a>
+  <a class="drawer-link" href="#oem">06 // AVC/CoolerMaster OEM</a>
+  <a class="drawer-link" href="#cost">07 // 成本与盈利模型</a>
+</div>
+
+<!-- ══ HERO ══ -->
+<section id="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-orbs">
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+    <div class="orb orb3"></div>
+  </div>
+  <div class="hero-scan"></div>
+  <div class="hero-inner">
+    <div class="hero-tag">CDU + COLD PLATE · DOCTORAL ENGINEERING REFERENCE · 2025</div>
+    <div class="hero-sub">冷量分配单元 × 微通道液冷冷板 × 华南产业集群 × AVC / CoolerMaster OEM</div>
+    <h1><span class="hl">CDU 液冷分配</span>与<br><span class="hl2">冷板热管理</span><br>全系统博士级指南</h1>
+    <p class="hero-desc">覆盖 CDU 流体力学控制、冷板微通道拓扑、钎焊/FSW 制造工艺、华南精密供应链全景，以及面向 <strong style="color:var(--text)">AVC</strong> 与 <strong style="color:var(--text)">Cooler Master</strong> 客户的 OEM 量产对接方案。适用于 AI 算力中心（H100/B200/GB200 机架）、高密度 HPC 及电动汽车热管理平台。</p>
+    <div class="hero-kpis">
+      <div class="kpi"><span class="kpi-val" id="k1">400</span><div class="kpi-label">kW<br>单机架 TDP 散热上限</div></div>
+      <div class="kpi"><span class="kpi-val g">&lt;0.05</span><div class="kpi-label">°C·m²/W<br>冷板接触热阻</div></div>
+      <div class="kpi"><span class="kpi-val a">±3%</span><div class="kpi-label">CDU 二次侧<br>流量均衡精度</div></div>
+      <div class="kpi"><span class="kpi-val v">99.9%</span><div class="kpi-label">系统可用率<br>N+1 冗余架构</div></div>
+      <div class="kpi"><span class="kpi-val r">PUE<br>1.03</span><div class="kpi-label">液冷系统<br>能效比目标</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="div-line"></div>
+
+<!-- ══ 01 CDU 核心工艺 ══ -->
+<div class="sec" id="cdu-tech">
+  <div class="sec-header">
+    <span class="sec-idx">01 // CDU PROCESS</span>
+    <h2 class="sec-title">CDU 冷量分配单元 — 博士级工艺深度解析</h2>
+    <div class="sec-rule"></div>
+  </div>
+
+  <p style="color:var(--muted);font-size:13.5px;margin-bottom:32px;max-width:860px;">CDU 是液冷系统的"神经中枢"，其设计不止于泵与换热器的堆叠，更涉及流体力学控制论、材料电化学、气液热力学平衡等跨学科研究领域。以下为工程博士级核心知识点。</p>
+
+  <div class="card-grid card-grid-3" style="margin-bottom:40px;">
+    <div class="phys-card c1">
+      <span class="phys-num">// 01.A · FLUID MECHANICS</span>
+      <div class="phys-title">动态压差补偿控制（DP Control）</div>
+      <div class="phys-body">
+        采用变频驱动（VFD）泵组 + 模糊 PID 算法，实时监测二次侧各支路阻力变化。当 GPU 负载突变时，CDU 响应时间需在 <strong>200ms</strong> 内完成流量重分配。
+        <div class="formula-box">Q = ΔP / R_hyd = (P_pump - ΔP_sys) / Σ(8μL/πr⁴)<div class="formula-sub">Q: 支路流量 | ΔP: 差压 | R_hyd: 液阻 | μ: 动力粘度 | r: 等效管径</div></div>
+        每路冷板流量偏差须控制在 <strong>±3~5%</strong> 以内，以保证多卡温度均一性。
+      </div>
+    </div>
+    <div class="phys-card c5">
+      <span class="phys-num">// 01.B · ELECTROCHEMISTRY</span>
+      <div class="phys-title">电化学腐蚀防治</div>
+      <div class="phys-body">
+        二次侧冷媒（乙二醇水溶液）对 <strong>不锈钢/铜/铝</strong> 存在不同的电化序差异，驱动点蚀与晶间腐蚀。关键控制参数：
+        <div class="formula-box">pH: 7.0 ~ 9.0 | 导电率: &lt;100 μS/cm | DO: &lt;0.1 mg/L</div>
+        板式换热器（BPHE）密封件需选用耐乙二醇的 <strong>EPDM</strong>，定期评估溶胀率（溶胀率 &lt;5%）。
+        <div class="highlight-box">✔ 在 CDU 内集成在线去离子（DI）回路，抑制离子积累，防止CPU冷板铜镍层针孔腐蚀。</div>
+      </div>
+    </div>
+    <div class="phys-card c3">
+      <span class="phys-num">// 01.C · THERMODYNAMICS</span>
+      <div class="phys-title">气液平衡与膨胀补偿</div>
+      <div class="phys-body">
+        液冷系统在 -20℃ 至 60℃ 工况下，体积变化率约 <strong>1.5~2.8%</strong>。膨胀罐容积须精确设计：
+        <div class="formula-box">V_exp = V_sys × (e_v / (1 - P₀/P_max))<div class="formula-sub">e_v: 体膨胀系数 | P₀: 初始气压 | P_max: 系统最高压</div></div>
+        气垫型膨胀罐须预充 0.5~0.8 bar 氮气，防止泵入口 <strong>NPSH 空化</strong>（汽蚀）。
+        <div class="warn-box">⚠ 空化会产生瞬时气泡，导致管路振动噪音与叶轮腐蚀侵蚀。</div>
+      </div>
+    </div>
+    <div class="phys-card c4">
+      <span class="phys-num">// 01.D · HEAT TRANSFER</span>
+      <div class="phys-title">板换设计与 LMTD 分析</div>
+      <div class="phys-body">
+        CDU 一次侧（楼宇冷冻水）与二次侧（IT 冷水）通过 BPHE 换热，对数平均温差 LMTD 是核心设计参数：
+        <div class="formula-box">Q = U × A × LMTD = U × A × (ΔT₁ - ΔT₂) / ln(ΔT₁/ΔT₂)</div>
+        典型参数：二次侧进水 <strong>25~40°C</strong>、出水 <strong>45~55°C</strong>；一次侧进水 15~20°C。U 值目标 ≥5000 W/(m²·K)。
+      </div>
+    </div>
+    <div class="phys-card c2">
+      <span class="phys-num">// 01.E · REDUNDANCY</span>
+      <div class="phys-title">N+1 泵冗余与控制切换</div>
+      <div class="phys-body">
+        生产级 CDU 必须具备：
+        <br>• <strong>双泵 N+1 并联</strong>，切换时间 &lt;100ms
+        <br>• 泵控 PLC 支持在线热替换（Hot-Swap）
+        <br>• 电源 <strong>双路冗余输入</strong>（UPS +市电）
+        <br>• 传感器冗余：双路压力 + 双路流量
+        <div class="ok-box">✔ 推荐屏蔽式磁力泵，无动密封泄漏风险，MTBF &gt;60,000 小时。</div>
+      </div>
+    </div>
+    <div class="phys-card c6">
+      <span class="phys-num">// 01.F · CONTROLS & DIGITAL TWIN</span>
+      <div class="phys-title">数字孪生与能效预测</div>
+      <div class="phys-body">
+        在 CDU 上部署 <strong>≥20 路</strong>传感器（温度/压力/流量/电导率/溶解氧），构建实时数字孪生模型：
+        <br>• GPU 热功耗预测误差 &lt;±2%
+        <br>• 自适应 VFD 转速优化，节电 15~25%
+        <br>• 预测性维护：轴承振动分析提前 30 天预警
+        <div class="highlight-box">建议采用 MQTT 协议接入 DCIM 平台，打通机房整体能效优化闭环。</div>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="font-family:'Noto Serif SC',serif;font-size:16px;color:var(--text);margin-bottom:20px;">CDU 二次侧水质管理规范（博士级标准）</h3>
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead>
+        <tr><th>参数</th><th>目标值</th><th>报警阈值</th><th>失效风险</th><th>控制手段</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>电导率</strong></td><td>&lt;50 μS/cm</td><td>&gt;100 μS/cm</td><td>离子腐蚀、冷板铜层溶蚀</td><td>在线 DI 树脂罐+电导率仪</td></tr>
+        <tr><td><strong>pH 值</strong></td><td>7.5 ~ 9.0</td><td>&lt;6.5 或 &gt;10</td><td>铝/铜异金属腐蚀加速</td><td>在线注碱/酸模块</td></tr>
+        <tr><td><strong>溶解氧 (DO)</strong></td><td>&lt;0.1 mg/L</td><td>&gt;0.5 mg/L</td><td>不锈钢点蚀，BPHE 腐蚀孔</td><td>氮气保压+脱气膜组件</td></tr>
+        <tr><td><strong>颗粒物</strong></td><td>&lt;50 μm</td><td>&gt;100 μm</td><td>冷板微通道堵塞</td><td>5μm 精密过滤器+磁棒捕捉</td></tr>
+        <tr><td><strong>乙二醇浓度</strong></td><td>25~35%</td><td>&lt;15% 或 &gt;50%</td><td>结冰风险或粘度过高</td><td>折射仪季度检测</td></tr>
+        <tr><td><strong>微生物 (Legionella)</strong></td><td>未检出</td><td>任何检出</td><td>冷板生物膜堵塞，安全风险</td><td>银离子抑菌剂+定期杀菌冲洗</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="div-line"></div>
+
+<!-- ══ 02 冷板技术 ══ -->
+<div class="sec sec-alt" id="coldplate">
+  <div class="sec-header">
+    <span class="sec-idx">02 // COLD PLATE TECHNOLOGY</span>
+    <h2 class="sec-title">液冷冷板 — 微通道拓扑、材料选型与制造工艺</h2>
+    <div class="sec-rule"></div>
+  </div>
+
+  <div class="card-grid card-grid-2" style="margin-bottom:40px;">
+    <div>
+      <h3 style="font-family:'Noto Serif SC',serif;font-size:16px;color:var(--text);margin-bottom:20px;">微通道热力学模型</h3>
+      <div class="phys-card c1" style="margin-bottom:16px;">
+        <span class="phys-num">// NUSSELT NUMBER · 层流</span>
+        <div class="phys-title">微通道强制对流传热（Dh &lt;1mm）</div>
+        <div class="phys-body">
+          <div class="formula-box">Nu = h·Dh/λ = 0.023·Re⁰·⁸·Pr⁰·⁴  (Dittus-Boelter, Re&gt;10000)
+<span class="formula-sub">Dh=(4A/P): 水力直径 | λ: 导热系数 | Pr: 普朗特数</span></div>
+          微通道当量直径 <strong>0.2~1.0 mm</strong> 时属过渡/层流区，需用 <strong>Shah & London</strong> 关联式修正。Re &gt; 10,000 可触发湍流，传热系数可达 <strong>15,000~50,000 W/(m²·K)</strong>。
+        </div>
+      </div>
+      <div class="phys-card c4">
+        <span class="phys-num">// PRESSURE DROP · Darcy-Weisbach</span>
+        <div class="phys-title">压降设计优化</div>
+        <div class="phys-body">
+          <div class="formula-box">ΔP = f·(L/Dh)·(ρv²/2) + K_local·(ρv²/2)</div>
+          GPU 冷板压降目标 <strong>&lt;15 kPa</strong>（单板）。增加通道数可降流速但降 h，存在最优点：Dh=0.5~0.8mm、通道间距=0.3~0.6mm 常为黄金比例。
+          <div class="highlight-box">✔ 拓扑优化（SIMP法）或仿生叶脉结构可在不增加压降的前提下提升 Nu 15~30%。</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <h3 style="font-family:'Noto Serif SC',serif;font-size:16px;color:var(--text);margin-bottom:20px;">冷板材料选型矩阵</h3>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr><th>材料</th><th>导热率(W/m·K)</th><th>密度</th><th>成本</th><th>适用场景</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>无氧铜 C10100</strong></td><td>391</td><td>重</td><td>高</td><td>CPU/GPU高热流密度，&gt;500W/cm²</td></tr>
+            <tr><td><strong>铝 6061-T6</strong></td><td>167</td><td>轻</td><td>低</td><td>大功率服务器，成本敏感</td></tr>
+            <tr><td><strong>铝 1100</strong></td><td>222</td><td>轻</td><td>低</td><td>汽车电池冷却板</td></tr>
+            <tr><td><strong>铜铝复合</strong></td><td>200~350</td><td>中</td><td>中</td><td>重量/热导折中方案</td></tr>
+            <tr><td><strong>CVD Diamond复合</strong></td><td>800~2000</td><td>中</td><td>极高</td><td>激光/功率半导体极端工况</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="phys-card c3" style="margin-top:16px;">
+        <span class="phys-num">// SURFACE TREATMENT</span>
+        <div class="phys-title">铜冷板表面处理体系</div>
+        <div class="phys-body">
+          <strong>化学镀镍磷（Electroless Ni-P）：</strong>厚度 5~10μm，硬度 HV 500~700，抗腐蚀性优异，为 AI 冷板主流处理方案。
+          <br><strong>无铅 ENIG 金：</strong>接触面接触电阻最低，用于 TIM 界面。
+          <div class="warn-box">⚠ 铜铝直接接触须防止电偶腐蚀，必须加绝缘隔离层或 Ni 缓冲层。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="font-family:'Noto Serif SC',serif;font-size:16px;color:var(--text);margin-bottom:24px;">冷板核心制造工艺对比（博士级工艺路线图）</h3>
+  <div class="card-grid card-grid-3">
+    <div class="phys-card c1">
+      <span class="phys-num">// PROCESS A · CNC + 真空钎焊</span>
+      <div class="phys-title">CNC 铣削 + 高温真空钎焊</div>
+      <div class="phys-body">
+        <span class="badge b">主流工艺</span><span class="badge a">铜冷板首选</span>
+        <br>CNC 五轴铣削微通道（表面粗糙度 Ra ≤0.8μm），银铜钎料（BAg-7，熔点 780°C）在 <strong>真空炉</strong>（10⁻⁴ Pa）中 820°C 钎焊。
+        <br><br>优势：密封可靠性高，适合复杂流道；劣势：能耗高、批次小、节拍慢（4~8h/批）。
+        <div class="ok-box">✔ 适合 AVC/CoolerMaster CPU/GPU 冷板小批量高精度需求</div>
+      </div>
+    </div>
+    <div class="phys-card c3">
+      <span class="phys-num">// PROCESS B · FSW 搅拌摩擦焊</span>
+      <div class="phys-title">搅拌摩擦焊 (FSW)</div>
+      <div class="phys-body">
+        <span class="badge g">铝板首选</span><span class="badge b">AI 大规模量产</span>
+        <br>固态焊接，焊接温度约 <strong>400~550°C</strong>（铝），远低于熔点。焊缝组织细密，无气孔，接头强度达母材 <strong>85~100%</strong>。
+        <br><br>优势：节拍快（≤30s/米）、自动化程度高、良率 &gt;99%；劣势：不适合壁厚 &lt;1.5mm 的薄板。
+        <div class="formula-box">焊接速度: 300~1500 mm/min | 转速: 800~3000 rpm | 轴向力: 5~15 kN</div>
+      </div>
+    </div>
+    <div class="phys-card c4">
+      <span class="phys-num">// PROCESS C · 扩散焊 / 液相扩散焊</span>
+      <div class="phys-title">扩散焊（TLP）/ 瞬时液相焊</div>
+      <div class="phys-body">
+        <span class="badge v">高端应用</span><span class="badge a">铜铝异种金属</span>
+        <br>在 <strong>高温高压</strong>（铜：800°C / 10~30 MPa）下通过原子扩散实现冶金连接，无钎料，无成分突变，热阻极低。
+        <br><br>适用于 5G 基站、EV 电池高可靠冷板。成本约为钎焊的 <strong>2~3倍</strong>，产能受限于热压机台数。
+        <div class="highlight-box">✔ 接头热阻可达 0.01 cm²·K/W，为钎焊接头的 1/5。</div>
+      </div>
+    </div>
+    <div class="phys-card c5">
+      <span class="phys-num">// PROCESS D · 机加+环氧密封</span>
+      <div class="phys-title">机械加工 + 螺栓锁紧 + 密封圈</div>
+      <div class="phys-body">
+        <span class="badge r">低成本快速样品</span>
+        <br>CNC 铣削上下盖板，O-Ring（EPDM/Viton）密封，螺栓压紧。
+        <br><br>优势：无焊接设备，交期最短（3~5天 NPI）；劣势：高压泄漏风险，长期可靠性受密封件老化影响，不建议量产。
+        <div class="warn-box">⚠ 仅适合 PoC 样品验证，严禁用于数据中心生产环境。</div>
+      </div>
+    </div>
+    <div class="phys-card c2">
+      <span class="phys-num">// PROCESS E · 微铸造 / 3D打印</span>
+      <div class="phys-title">金属 3D 打印（SLM/DMLS）</div>
+      <div class="phys-body">
+        <span class="badge v">拓扑优化/科研</span>
+        <br>激光粉末床熔融（L-PBF）可实现任意复杂内流道，无传统加工限制。材料：316L 不锈钢、铜（GRCop-84）、铝 AlSi10Mg。
+        <br><br>分辨率约 <strong>80~120μm</strong>，表面粗糙度 Ra 10~30μm（需后处理）。成本是 CNC 的 5~20倍，适合极端拓扑研究。
+      </div>
+    </div>
+    <div class="phys-card c6">
+      <span class="phys-num">// PROCESS F · 电铸成形</span>
+      <div class="phys-title">电化学沉积（电铸）</div>
+      <div class="phys-body">
+        <span class="badge o">超精密微通道</span>
+        <br>通过芯模电铸铜/镍，可实现 <strong>50~200μm</strong> 级超细微通道，Ra &lt;0.1μm。热通量可超越传统机加 <strong>3~5倍</strong>。
+        <br><br>适用场景：激光二极管冷却、高功率功放模块。量产节拍受限于电镀速率，成本极高。
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="div-line"></div>
+
+<!-- ══ 03 系统集成 ══ -->
+<div class="sec" id="integration">
+  <div class="sec-header">
+    <span class="sec-idx">03 // SYSTEM INTEGRATION</span>
+    <h2 class="sec-title">CDU + 冷板液冷系统 — 全链路集成设计</h2>
+    <div class="sec-rule"></div>
+  </div>
+
+  <h3 style="font-family:'Noto Serif SC',serif;font-size:15px;color:var(--text);margin-bottom:16px;">系统拓扑：DLC（Direct Liquid Cooling）全链路</h3>
+  <div class="flow-wrap" style="margin-bottom:40px;">
+    <div class="flow">
+      <div class="flow-node"><div class="f-num">01</div><div class="f-title">楼宇冷冻水<br>一次侧</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node hi"><div class="f-num">02</div><div class="f-title">CDU<br>板式换热器</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node hi"><div class="f-num">03</div><div class="f-title">CDU<br>泵组+控制</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node"><div class="f-num">04</div><div class="f-title">机架级<br>歧管分配</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node hi2"><div class="f-num">05</div><div class="f-title">GPU/CPU<br>冷板</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node hi2"><div class="f-num">06</div><div class="f-title">HBM/VRM<br>小冷板</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node"><div class="f-num">07</div><div class="f-title">回水汇总<br>管路</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node"><div class="f-num">08</div><div class="f-title">膨胀罐<br>脱气罐</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node hi"><div class="f-num">返回</div><div class="f-title">CDU<br>入口</div></div>
+    </div>
+  </div>
+
+  <div class="card-grid card-grid-2" style="margin-bottom:40px;">
+    <div>
+      <h3 style="font-family:'Noto Serif SC',serif;font-size:15px;color:var(--text);margin-bottom:16px;">GB200 NVL72 机架液冷参数规格</h3>
+      <div class="phys-card c1">
+        <span class="phys-num">// NVIDIA GB200 NVL72 · THERMAL SPEC</span>
+        <div class="phys-body">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px;">
+            <div><span style="color:var(--dim)">机架总 TDP</span><br><strong style="color:var(--c1);font-family:'JetBrains Mono',monospace;">~120 kW</strong></div>
+            <div><span style="color:var(--dim)">冷板路数</span><br><strong style="color:var(--text);font-family:'JetBrains Mono',monospace;">72 GPU + 36 GraceARM</strong></div>
+            <div><span style="color:var(--dim)">冷水进水温度</span><br><strong style="color:var(--c3);font-family:'JetBrains Mono',monospace;">18 ~ 40°C</strong></div>
+            <div><span style="color:var(--dim)">冷水出水温度</span><br><strong style="color:var(--c4);font-family:'JetBrains Mono',monospace;">&lt; 55°C</strong></div>
+            <div><span style="color:var(--dim)">冷板工作压力</span><br><strong style="color:var(--text);font-family:'JetBrains Mono',monospace;">1.0 ~ 1.5 bar (表压)</strong></div>
+            <div><span style="color:var(--dim)">快插接头规格</span><br><strong style="color:var(--c5);font-family:'JetBrains Mono',monospace;">OCP Gen2 / Stäubli</strong></div>
+            <div><span style="color:var(--dim)">液体流量（整架）</span><br><strong style="color:var(--c1);font-family:'JetBrains Mono',monospace;">~60 L/min</strong></div>
+            <div><span style="color:var(--dim)">压降（冷板侧）</span><br><strong style="color:var(--text);font-family:'JetBrains Mono',monospace;">&lt; 15 kPa/板</strong></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <h3 style="font-family:'Noto Serif SC',serif;font-size:15px;color:var(--text);margin-bottom:16px;">TIM 接口层热阻分析</h3>
+      <div class="timeline">
+        <div class="t-step on">
+          <div class="t-dot"></div>
+          <span class="t-tag b">LAYER 1</span>
+          <div class="t-title">芯片 Die ↔ IHS 键合层</div>
+          <div class="t-body">英特尔/AMD 采用液态金属（InGaSnBi），热阻 <strong>0.002~0.005 °C·cm²/W</strong>；NVIDIA GPU 使用钎料焊接（低熔点 Sn-In 合金），热阻 <strong>0.003~0.008</strong>。</div>
+        </div>
+        <div class="t-step on">
+          <div class="t-dot a"></div>
+          <span class="t-tag a">LAYER 2</span>
+          <div class="t-title">IHS 顶面 ↔ 冷板底面（TIM2）</div>
+          <div class="t-body">导热垫（Phase Change TIM）：热导率 <strong>12~25 W/(m·K)</strong>，推荐 Henkel Bergquist GP2000 或 Laird T-flex 系列。厚度控制 50~150μm，总热阻目标 <strong>&lt;0.02 °C·cm²/W</strong>。</div>
+        </div>
+        <div class="t-step on">
+          <div class="t-dot g"></div>
+          <span class="t-tag g">LAYER 3</span>
+          <div class="t-title">冷板底板 ↔ 微通道壁面</div>
+          <div class="t-body">金属导热，铜冷板导热热阻可忽略（&lt;0.001）。主要热阻来源在微通道对流 <strong>Rcv = 1/(h·A_fin)</strong>。Fin 效率 η 须 &gt;85%。</div>
+        </div>
+        <div class="t-step on">
+          <div class="t-dot r"></div>
+          <span class="t-tag r">TOTAL</span>
+          <div class="t-title">系统总结热阻（Die→冷水）</div>
+          <div class="t-body">优化设计目标：<strong style="color:var(--c3)">R_total &lt; 0.05 °C·cm²/W</strong>（高端液冷冷板）。对应 400W GPU Die，结点温度 Tj ≈ Tin + 400W × 0.05/A_die。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="font-family:'Noto Serif SC',serif;font-size:15px;color:var(--text);margin-bottom:16px;">机架级液冷管路集成设计要点</h3>
+  <div class="card-grid card-grid-3">
+    <div class="phys-card c1">
+      <span class="phys-num">// MANIFOLD DESIGN</span>
+      <div class="phys-title">歧管均流设计</div>
+      <div class="phys-body">
+        采用 <strong>对称/渐缩型歧管</strong>，利用 CFD（Fluent/OpenFOAM）验证各支路流量均匀性（CV &lt;5%）。歧管材质：挤压铝（氧化处理）或不锈钢 316L，内径≥16mm 以降低系统压降。
+        <div class="highlight-box">✔ OCP 标准采用 ⌀12 进出水管+Stäubli RBE 快插，支持带压插拔（Hot-Swap）。</div>
+      </div>
+    </div>
+    <div class="phys-card c5">
+      <span class="phys-num">// QUICK CONNECT</span>
+      <div class="phys-title">无滴漏快插接头</div>
+      <div class="phys-body">
+        <strong>Stäubli SPH/RPB</strong> 系列：插拔力 &lt;30N，密封压力 &gt;10 bar，泄漏率 &lt;0.001 mL/min，寿命 &gt;1000 次插拔。
+        <br><strong>Colder PLC</strong>：成本较低，单向阀设计，带压 0.5 bar 可插拔，适合大批量 OEM。
+        <div class="warn-box">⚠ 严禁混用不同品牌公母接头，密封面尺寸偏差将导致泄漏。</div>
+      </div>
+    </div>
+    <div class="phys-card c3">
+      <span class="phys-num">// LEAK DETECTION</span>
+      <div class="phys-title">泄漏检测与封堵</div>
+      <div class="phys-body">
+        <strong>在线：</strong>机架底部铺设离子感应泄漏绳（200mm间距），响应时间 &lt;5s，精确定位至 50cm。
+        <br><strong>出厂：</strong>整机氦气检漏（He Mass Spectrometer），泄漏率标准 &lt;1×10⁻⁶ Pa·m³/s。
+        <div class="ok-box">✔ 建议在 CDU 回水管路加装 0.1mL 精度流量差分计，远程监控泄漏趋势。</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="div-line"></div>
+
+<!-- ══ 04 华南供应链 ══ -->
+<div class="sec sec-alt" id="supply">
+  <div class="sec-header">
+    <span class="sec-idx">04 // SOUTH CHINA SUPPLY CHAIN</span>
+    <h2 class="sec-title">华南产业链全景图 — CDU + 冷板制造生态</h2>
+    <div class="sec-rule"></div>
+  </div>
+
+  <div class="region-grid" style="margin-bottom:40px;">
+    <div class="region-card">
+      <div class="region-name">深圳</div>
+      <span class="region-tag">研发 · 控制系统 · 全球供应链总部</span>
+      <div class="region-body">南山/龙华聚集 Vertiv（维谛）、英维克、华为数字能源等 CDU 整机厂；汇川技术主导 PLC/VFD 研发；史陶比尔深圳工厂负责快插接头本地供货；格兰富亚太技术中心提供泵组选型支持。</div>
+    </div>
+    <div class="region-card" style="border-top-color:var(--c3);">
+      <div class="region-name">东莞</div>
+      <span class="region-tag" style="color:var(--c3);">FSW加工 · 钣金 · 精密制造</span>
+      <div class="region-body">松山湖高新区集聚多家 FSW 设备与冷板加工专精特新企业，万宇科技提供 FSW 整线解决方案；大量台企（顺达科技系）和本土龙头在松山湖提供自动化 CNC 流水线，支撑 AI 冷板百万级量产。</div>
+    </div>
+    <div class="region-card" style="border-top-color:var(--c4);">
+      <div class="region-name">佛山/顺德</div>
+      <span class="region-tag" style="color:var(--c4);">泵组 · 热交换器 · 铝型材</span>
+      <div class="region-body">南方泵业（南泵）顺德工厂为华南最大屏蔽泵/离心泵生产基地；申菱环境专注高效板换设计制造；顺德铝型材集群（忠旺等）提供歧管挤压铝料，与当地 CNC 厂形成"原材→加工→组装"一体化闭环。</div>
+    </div>
+    <div class="region-card" style="border-top-color:var(--c5);">
+      <div class="region-name">广州/黄埔</div>
+      <span class="region-tag" style="color:var(--c5);">检测 · 流体研究院 · 认证</span>
+      <div class="region-body">广州流体机械研究所（工程物理研究院分支）提供流体仿真与性能验证；TÜV Rheinland 华南总部、SGS 广州实验室提供 UL/CE/IEC 认证服务；中科院广州能源所提供相变材料与导热材料联合研发。</div>
+    </div>
+    <div class="region-card" style="border-top-color:var(--c2);">
+      <div class="region-name">惠州</div>
+      <span class="region-tag" style="color:var(--c2);">电控 · 储能 · 涂层</span>
+      <div class="region-body">麦克维尔（Daikin 旗下）惠州工厂生产 BPHE 与整机 CDU；东江高科特种铝材提供高强铝合金管路；本地大量 EMS 工厂（比亚迪电子子公司）承接整机 CDU/冷板 PCBA 电控组装。</div>
+    </div>
+    <div class="region-card" style="border-top-color:var(--c6);">
+      <div class="region-name">珠海/中山</div>
+      <span class="region-tag" style="color:var(--c6);">密封件 · 连接器 · 软管</span>
+      <div class="region-body">珠海 Parker（派克汉尼汾）华南仓提供流体接头与高压胶管快速供货；中山多家 O-Ring/密封件企业提供 EPDM/Viton 密封圈 OEM 定制；当地橡胶化工集群支撑乙二醇兼容管路材料配套。</div>
+    </div>
+  </div>
+
+  <h3 style="font-family:'Noto Serif SC',serif;font-size:16px;color:var(--text);margin-bottom:20px;">CDU 整机集成厂商（华南主要玩家）</h3>
+  <div class="sc-grid">
+    <div class="sc-card">
+      <div class="sc-logo">维谛技术 Vertiv</div>
+      <div class="sc-sub">深圳 · CDU 整机 · 全球顶级品牌</div>
+      <p class="sc-body">全球数据中心液冷领导厂商，深圳为其亚太研发与制造中心。旗下 Liebert CW 系列 CDU 支持双回路 N+1，覆盖 100kW～1MW 机房规模，已为多家云厂商提供 GB200 机架液冷解决方案。</p>
+      <div class="sc-tags"><span class="sc-tag b">CDU整机</span><span class="sc-tag g">N+1冗余</span><span class="sc-tag a">DCIM集成</span><span class="sc-tag">UL/CE认证</span></div>
+    </div>
+    <div class="sc-card">
+      <div class="sc-logo">英维克 Invt-Shenling</div>
+      <div class="sc-sub">深圳 · CDU + 冷板 · A股上市</div>
+      <p class="sc-body">深圳本土数据中心热管理龙头，专利 CN120179040A 涉及液冷冷板微通道拓扑优化，同时生产 CDU 整机与冷板，形成系统级垂直整合。客户涵盖互联网大厂与运营商。</p>
+      <div class="sc-tags"><span class="sc-tag b">垂直整合</span><span class="sc-tag g">冷板+CDU</span><span class="sc-tag v">微通道专利</span><span class="sc-tag">上市公司</span></div>
+    </div>
+    <div class="sc-card">
+      <div class="sc-logo">华为数字能源</div>
+      <div class="sc-sub">深圳 · 液冷模块 · AI算力配套</div>
+      <p class="sc-body">面向自建 AI 数据中心供应全套液冷方案，包括 CDU、机架级歧管、冷板，并与华为 Atlas/MetaERP 算力服务器深度绑定。技术积累深厚，但采购渠道较封闭，对外 OEM 接受度有限。</p>
+      <div class="sc-tags"><span class="sc-tag b">AI算力配套</span><span class="sc-tag a">自研BPHE</span><span class="sc-tag g">数字孪生</span><span class="sc-tag">闭环生态</span></div>
+    </div>
+    <div class="sc-card">
+      <div class="sc-logo">高澜股份</div>
+      <div class="sc-sub">广州 · 工业液冷 → AI CDU 转型</div>
+      <p class="sc-body">起家于新能源汽车电机热管理（液冷模块），已成功切入 AI 算力中心 CDU 赛道，2024 年报显示液冷 CDU 营收同比增长 230%。具备铝冷板+铜冷板双线生产能力，歧管自制，供货效率高。</p>
+      <div class="sc-tags"><span class="sc-tag g">EV转AI</span><span class="sc-tag b">铝铜双线</span><span class="sc-tag a">歧管自制</span><span class="sc-tag">上市公司</span></div>
+    </div>
+  </div>
+
+  <h3 style="font-family:'Noto Serif SC',serif;font-size:16px;color:var(--text);margin-bottom:20px;margin-top:40px;">冷板精密制造厂商（东莞/深圳核心集群）</h3>
+  <div class="sc-grid">
+    <div class="sc-card">
+      <div class="sc-logo">万宇科技</div>
+      <div class="sc-sub">东莞 · FSW生产线核心赋能者</div>
+      <p class="sc-body">冷板 FSW 生产线核心装备供应商，支持 3D 曲面、微通道高精度固态焊接，铝-铜异种金属兼容焊接，为 AI 液冷制造商提供交钥匙产线解决方案。</p>
+      <div class="sc-tags"><span class="sc-tag g">FSW整线</span><span class="sc-tag b">3D曲面</span><span class="sc-tag v">异种金属</span><span class="sc-tag">交钥匙</span></div>
+    </div>
+    <div class="sc-card">
+      <div class="sc-logo">协成散热 / 鸿富锦精密 (FoxConn)</div>
+      <div class="sc-sub">深圳/东莞 · 大规模CNC冷板量产</div>
+      <p class="sc-body">富士康旗下精密散热事业群，CNC 五轴铣削+真空钎焊一体化产线，日产能超 10,000 片铜/铝冷板。服务对象为 NVIDIA、AMD 等一线 GPU 厂商指定供应链。</p>
+      <div class="sc-tags"><span class="sc-tag b">超大规模量产</span><span class="sc-tag a">CNC+钎焊</span><span class="sc-tag g">Tier-1认证</span><span class="sc-tag">NVIDIA供链</span></div>
+    </div>
+    <div class="sc-card">
+      <div class="sc-logo">超众科技</div>
+      <div class="sc-sub">深圳 · 铜铝冷板 · AI服务器配套</div>
+      <p class="sc-body">专注服务器散热模组，产品线覆盖 CPU/GPU 液冷冷板、HBM 小冷板、歧管分配块，已通过多家 ODM 认证，是 AVC/Cooler Master 类型客户 OEM 合作的典型对象。</p>
+      <div class="sc-tags"><span class="sc-tag b">CPU/GPU冷板</span><span class="sc-tag g">HBM小冷板</span><span class="sc-tag v">ODM/OEM</span><span class="sc-tag">AI服务器</span></div>
+    </div>
+    <div class="sc-card">
+      <div class="sc-logo">南方泵业集团</div>
+      <div class="sc-sub">佛山 · 屏蔽泵 · CDU泵组核心</div>
+      <p class="sc-body">华南最大工业泵制造商之一，屏蔽磁力泵系列专为数据中心液冷设计，无动密封泄漏点，MTBF &gt;80,000h。提供 DN25~DN100 全规格，支持 CDU OEM 集成采购。</p>
+      <div class="sc-tags"><span class="sc-tag b">屏蔽磁力泵</span><span class="sc-tag g">低振动低噪</span><span class="sc-tag a">VFD兼容</span><span class="sc-tag">高MTBF</span></div>
+    </div>
+  </div>
+
+  <h3 style="font-family:'Noto Serif SC',serif;font-size:16px;color:var(--text);margin-bottom:16px;margin-top:40px;">原材料与关键配套供应链</h3>
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead>
+        <tr><th>类别</th><th>主要供应商（华南/全国）</th><th>关键技术参数</th><th>风险控制策略</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>无氧铜（C10100/TU2）</strong></td><td>铜陵有色、江西铜业、金龙铜业</td><td>含铜≥99.95%，电导率≥57 MS/m，材质证书</td><td>双供应商，备 2~4 周原料库存，IQC 全检</td></tr>
+        <tr><td><strong>铝合金（6061-T6 / 1100）</strong></td><td>忠旺铝业、东轻铝业、广东凤铝</td><td>合金牌号确认，T6 热处理状态，厚度公差±0.05mm</td><td>认证供应商，来料 IQC 全检</td></tr>
+        <tr><td><strong>CNC 刀具（TiAlN/DLC 涂层）</strong></td><td>HITACHI 日立、Walter、肯纳金属</td><td>涂层类型，刀径精度，寿命一致性</td><td>刀具寿命 SOP 管理，防断刀零差错</td></tr>
+        <tr><td><strong>钎焊材料（BAg-7 银铜/铜磷）</strong></td><td>贺利氏、Johnson Matthey、信越</td><td>银含量，熔点范围，毛细流动性</td><td>认证批次管理，严禁用错钎料</td></tr>
+        <tr><td><strong>密封圈 O-Ring（EPDM/Viton）</strong></td><td>Parker、NOK、深圳 Precision 橡胶</td><td>冷却液兼容性，Shore A 硬度，尺寸公差</td><td>乙二醇浸泡测试验证，批次抽检</td></tr>
+        <tr><td><strong>快插接头（OCP Gen2 标准）</strong></td><td>Stäubli、Colder、Walther Präzision</td><td>规格兼容，泄漏率，插拔寿命 &gt;1000 次</td><td>认证接头，严禁私自更换品牌混用</td></tr>
+        <tr><td><strong>导热界面材料 TIM2</strong></td><td>贺利氏、Laird Thermal、Henkel</td><td>导热率（W/m·K），工作温度范围，压缩率</td><td>热阻测试验证，批次一致性管控</td></tr>
+        <tr><td><strong>变频器 VFD / PLC</strong></td><td>汇川技术（深圳）、台达（东莞）</td><td>IP65 防护，MODBUS/PROFINET，响应时间</td><td>固件版本锁定，Tier-2 备机</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="div-line"></div>
+
+<!-- ══ 05 AVC + CoolerMaster OEM ══ -->
+<div class="sec" id="oem">
+  <div class="sec-header">
+    <span class="sec-idx">05 // OEM SCHEME</span>
+    <h2 class="sec-title">AVC + Cooler Master 客户 OEM 对接方案</h2>
+    <div class="sec-rule"></div>
+  </div>
+
+  <p style="color:var(--muted);font-size:13.5px;margin-bottom:32px;max-width:860px;">AVC（亚普华越，Asia Vital Components）与 Cooler Master（酷冷至尊）均为全球顶级散热方案 ODM/OEM 厂商。两者均依托华南/台湾供应链，现已深度介入液冷冷板与 CDU 系统配套赛道，是 AI 数据中心散热硬件的重要卡位玩家。</p>
+
+  <div class="oem-split" style="margin-bottom:32px;">
+    <div class="oem-panel">
+      <div class="oem-brand avc">AVC · 亚普华越</div>
+      <div class="oem-tagline">Asia Vital Components Co., Ltd. · 台湾上市 · 深圳/东莞制造基地</div>
+      <div class="oem-row"><span class="oem-key">公司属性</span><span class="oem-val">台湾上市散热 ODM 龙头，深圳/东莞拥有超百万平方米制造厂区</span></div>
+      <div class="oem-row"><span class="oem-key">核心产品线</span><span class="oem-val">CPU 铜铝热管模组、GPU 散热器、液冷冷排 AIO、数据中心液冷冷板</span></div>
+      <div class="oem-row"><span class="oem-key">液冷冷板能力</span><span class="oem-val">铜微通道冷板（CNC+真空钎焊），支持 ⌀14 / OCP 快插，GPU 热流密度 &gt;600 W</span></div>
+      <div class="oem-row"><span class="oem-key">认证体系</span><span class="oem-val">UL, CE, IATF 16949, ISO 9001, NVIDIA 认证供应商</span></div>
+      <div class="oem-row"><span class="oem-key">OEM MOQ</span><span class="oem-val">冷板：1,000 片/月起（量产）；样品 NPI 5~10 片</span></div>
+      <div class="oem-row"><span class="oem-key">NPI 周期</span><span class="oem-val">首样 4~6 周（标准规格）；定制微通道 8~12 周</span></div>
+      <div class="oem-row"><span class="oem-key">联系渠道</span><span class="oem-val">深圳龙华总部业务部；深圳/北京均设有 FAE 驻场支持</span></div>
+      <div class="oem-row"><span class="oem-key">优势特点</span><span class="oem-val">Tier-1 品牌背书，台湾研发 + 深圳量产双轨，响应速度快</span></div>
+    </div>
+    <div class="oem-panel">
+      <div class="oem-brand cm">Cooler Master · 酷冷至尊</div>
+      <div class="oem-tagline">CoolerMaster Co., Ltd. · 台湾上市 · 东莞/广州制造</div>
+      <div class="oem-row"><span class="oem-key">公司属性</span><span class="oem-val">全球消费级+企业级散热品牌，已进军服务器液冷市场</span></div>
+      <div class="oem-row"><span class="oem-key">核心产品线</span><span class="oem-val">消费级 AIO 液冷、高端 DIY 散热、企业级 Server 1U/2U 液冷模组</span></div>
+      <div class="oem-row"><span class="oem-key">液冷冷板能力</span><span class="oem-val">铜/铝 FSW 冷板，微通道 fin 密度高，支持 GB200 NVL72 机架级 CDU 配套</span></div>
+      <div class="oem-row"><span class="oem-key">认证体系</span><span class="oem-val">UL, CE, RoHS, REACH；针对企业客户可定制 IEC 60950 / UL 62368-1</span></div>
+      <div class="oem-row"><span class="oem-key">OEM MOQ</span><span class="oem-val">消费级：500 套/月起；企业液冷模组：300 套/月起</span></div>
+      <div class="oem-row"><span class="oem-key">NPI 周期</span><span class="oem-val">首样 6~8 周（含热测 EVT）；量产 MP 爬坡 2~3 个月</span></div>
+      <div class="oem-row"><span class="oem-key">联系渠道</span><span class="oem-val">东莞制造厂 + 台北品牌总部；中国区 OEM 销售在深圳</span></div>
+      <div class="oem-row"><span class="oem-key">优势特点</span><span class="oem-val">品牌溢价高，DTC 渠道成熟，服务器与消费级双线并进</span></div>
+    </div>
+  </div>
+
+  <h3 style="font-family:'Noto Serif SC',serif;font-size:16px;color:var(--text);margin-bottom:20px;">OEM 合作流程 — 从需求到量产</h3>
+  <div class="timeline">
+    <div class="t-step">
+      <div class="t-dot"></div>
+      <span class="t-tag b">PHASE 1 · 2~4 WEEKS</span>
+      <div class="t-title">需求对接与规格书锁定（TDS/SRS）</div>
+      <div class="t-body">提供：GPU/CPU 热设计功耗（TDP W）、Die 尺寸、安装孔位图（STEP 3D 文件）、冷水进出水温、最大允许压降、接口规格（OCP/自定义）、MTBF 要求。AVC/CM 反馈初步可行性分析及报价。</div>
+    </div>
+    <div class="t-step">
+      <div class="t-dot a"></div>
+      <span class="t-tag a">PHASE 2 · 3~5 WEEKS</span>
+      <div class="t-title">仿真验证（CFD + FEA）</div>
+      <div class="t-body">OEM 方使用 ANSYS Fluent 或 FloTHERM 进行冷板流道热仿真，确认：最大 Tj、热阻 R_total、压降 ΔP、流量 Q。结构 FEA 验证高压（3 bar）下冷板变形量 &lt;20μm（TIM 压缩控制）。</div>
+    </div>
+    <div class="t-step">
+      <div class="t-dot g"></div>
+      <span class="t-tag g">PHASE 3 · EVT · 4~6 WEEKS</span>
+      <div class="t-title">工程验证样品（EVT）制作与测试</div>
+      <div class="t-body">首批 5~10 片样品，进行：热阻测试（热阻仪+Microfocus X-Ray 检查钎焊空洞）、氦气泄漏测试（&lt;1×10⁻⁶ Pa·m³/s）、水压测试（1.5×MAWP, 30min 保压）、热冲击（-40~85°C 200 cycles）。</div>
+    </div>
+    <div class="t-step">
+      <div class="t-dot v"></div>
+      <span class="t-tag v">PHASE 4 · DVT · 3~4 WEEKS</span>
+      <div class="t-title">设计验证（DVT）与可靠性测试</div>
+      <div class="t-body">30 片 DVT 批次，覆盖：HALT 高加速寿命（振动+温度复合）、HAST 高压蒸汽老化、插拔寿命（1000 次快插接头）、长时运行（7×24h 满载热浸泡）。AVC/CM 出具测试报告，锁定制程工艺。</div>
+    </div>
+    <div class="t-step">
+      <div class="t-dot r"></div>
+      <span class="t-tag r">PHASE 5 · MP · 量产爬坡</span>
+      <div class="t-title">量产（MP）上线与 PPAP 文件包</div>
+      <div class="t-body">提交完整 PPAP Level 3 文件包（控制计划/PFMEA/MSA/Cpk 分析），产线良率目标 &gt;99.5%，建立 SPC 管控 CNC 关键尺寸（通道深度 Cpk &gt;1.67），ATE 在线测试全检（气密+热阻+外观 AI 视觉）。</div>
+    </div>
+  </div>
+
+  <h3 style="font-family:'Noto Serif SC',serif;font-size:16px;color:var(--text);margin-bottom:20px;margin-top:40px;">AVC vs Cooler Master OEM 方案对比矩阵</h3>
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead>
+        <tr><th>维度</th><th>AVC 亚普华越</th><th>Cooler Master 酷冷至尊</th><th>选择建议</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>目标市场</strong></td><td>企业服务器、AI 数据中心、ODM 白牌</td><td>消费级高端、企业服务器液冷双线</td><td>AI 机房首选 AVC；兼顾品牌溢价选 CM</td></tr>
+        <tr><td><strong>冷板工艺</strong></td><td>CNC+真空钎焊为主，FSW 扩产中</td><td>FSW+CNC 并行，微通道密度高</td><td>FSW 量产成本优势更显著</td></tr>
+        <tr><td><strong>设计能力</strong></td><td>台湾 R&D 中心，CFD 自建团队</td><td>台北 iCFD 团队，消费级热设计强</td><td>企业液冷定制选 AVC；消费级优化选 CM</td></tr>
+        <tr><td><strong>MOQ 灵活性</strong></td><td>1,000 片/月（可谈）</td><td>300 套/月（企业级）</td><td>小批量客户 CM 更灵活</td></tr>
+        <tr><td><strong>认证体系</strong></td><td>NVIDIA 认证，数据中心品质</td><td>消费级 CE/UL 完善，企业级在推进</td><td>数据中心合规用 AVC；零售渠道用 CM</td></tr>
+        <tr><td><strong>快插接头</strong></td><td>Stäubli + Colder 双供应</td><td>自研快插 + Colder OEM</td><td>Stäubli 互换性更好</td></tr>
+        <tr><td><strong>价格定位</strong></td><td>中高端（ODM 定制）</td><td>高端（品牌溢价）</td><td>成本敏感选 AVC；品牌渠道选 CM</td></tr>
+        <tr><td><strong>华南制造基地</strong></td><td>深圳龙华 + 东莞松山湖</td><td>东莞 + 广州</td><td>两者物流均在 24h 到达深圳市区</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 style="font-family:'Noto Serif SC',serif;font-size:16px;color:var(--text);margin-bottom:20px;margin-top:40px;">OEM 产品定义推荐规格（AI 机架冷板，面向 GB200 / H100 / B200）</h3>
+  <div class="card-grid card-grid-3">
+    <div class="phys-card c1">
+      <span class="phys-num">// GPU COLD PLATE · HIGH-END</span>
+      <div class="phys-title">GPU 冷板（铜，微通道，H100/B200 级）</div>
+      <div class="phys-body">
+        <strong>材质：</strong>C10100 无氧铜，化学镀镍磷 8μm<br>
+        <strong>尺寸：</strong>~ 138mm × 105mm（H100 IHS 覆盖）<br>
+        <strong>通道：</strong>Dh=0.6mm，通道数 120+，间距 0.4mm<br>
+        <strong>热阻：</strong>&lt;0.04 °C·m²/W（含 TIM2）<br>
+        <strong>压降：</strong>&lt;12 kPa @ 1.5 L/min<br>
+        <strong>工艺：</strong>CNC 铣削 + 真空钎焊（BAg-7）<br>
+        <strong>接头：</strong>Stäubli RPB 08 × 2<br>
+        <strong>测试：</strong>3 bar 水压 + 氦检 + X-Ray
+      </div>
+    </div>
+    <div class="phys-card c3">
+      <span class="phys-num">// GPU COLD PLATE · COST-OPT</span>
+      <div class="phys-title">GPU 冷板（铝，FSW，服务器降本版）</div>
+      <div class="phys-body">
+        <strong>材质：</strong>6061-T6 铝合金，阳极氧化 + 硬质封孔<br>
+        <strong>尺寸：</strong>客户定制（STEP 文件交付）<br>
+        <strong>通道：</strong>挤压铝多孔型材 + FSW 封盖<br>
+        <strong>热阻：</strong>&lt;0.08 °C·m²/W（含 TIM2）<br>
+        <strong>压降：</strong>&lt;10 kPa @ 2.0 L/min<br>
+        <strong>工艺：</strong>铝挤压 + FSW（满速 800 mm/min）<br>
+        <strong>接头：</strong>OCP Gen2 标准或 Colder FFC<br>
+        <strong>成本目标：</strong>铜冷板的 40~55%
+      </div>
+    </div>
+    <div class="phys-card c4">
+      <span class="phys-num">// HBM / VRM COLD PLATE</span>
+      <div class="phys-title">HBM / VRM 小冷板（GB200 配套）</div>
+      <div class="phys-body">
+        <strong>材质：</strong>铜 C10100，无电解镍金<br>
+        <strong>尺寸：</strong>HBM: ~30mm×20mm；VRM: ~60mm×40mm<br>
+        <strong>结构：</strong>针翅阵列（Pin-Fin Array），Dh=0.8mm<br>
+        <strong>热阻：</strong>&lt;0.15 °C·m²/W<br>
+        <strong>工艺：</strong>CNC 铣削 + 真空钎焊 / 扩散焊<br>
+        <strong>安装：</strong>弹簧加压 + 导热垫（Laird T-flex 620）<br>
+        <strong>要点：</strong>需与 HBM TIM 界面兼容，防接触损伤
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="div-line"></div>
+
+<!-- ══ 06 成本结构 ══ -->
+<div class="sec sec-alt" id="cost">
+  <div class="sec-header">
+    <span class="sec-idx">06 // ECONOMICS</span>
+    <h2 class="sec-title">成本结构、降本路径与产业竞争力构建</h2>
+    <div class="sec-rule"></div>
+  </div>
+
+  <div class="cost-layout">
+    <div>
+      <h3 style="font-family:'Noto Serif SC',serif;font-size:15px;color:var(--text);margin-top:0;margin-bottom:20px;">铜冷板典型 BOM 成本构成</h3>
+      <div class="cost-item"><div class="cost-label"><span>铜原材料（铜板+铜管）</span><span class="cost-pct">35 ~ 45%</span></div><div class="cost-track"><div class="cost-fill" style="width:0" data-w="40%"></div></div></div>
+      <div class="cost-item"><div class="cost-label"><span>CNC 加工人工 + 刀具耗材</span><span class="cost-pct">20 ~ 28%</span></div><div class="cost-track"><div class="cost-fill" style="width:0" data-w="24%"></div></div></div>
+      <div class="cost-item"><div class="cost-label"><span>钎焊/FSW 焊接工序</span><span class="cost-pct">10 ~ 15%</span></div><div class="cost-track"><div class="cost-fill" style="width:0" data-w="12%"></div></div></div>
+      <div class="cost-item"><div class="cost-label"><span>表面处理（化学镀镍磷）</span><span class="cost-pct">5 ~ 10%</span></div><div class="cost-track"><div class="cost-fill" style="width:0" data-w="7%"></div></div></div>
+      <div class="cost-item"><div class="cost-label"><span>接头 + 密封件配套</span><span class="cost-pct">5 ~ 8%</span></div><div class="cost-track"><div class="cost-fill" style="width:0" data-w="6%"></div></div></div>
+      <div class="cost-item"><div class="cost-label"><span>检测质量成本（X-Ray/氦检/CMM）</span><span class="cost-pct">3 ~ 8%</span></div><div class="cost-track"><div class="cost-fill" style="width:0" data-w="5%"></div></div></div>
+      <div class="cost-item"><div class="cost-label"><span>制造费用分摊（设备折旧+能耗）</span><span class="cost-pct">5 ~ 10%</span></div><div class="cost-track"><div class="cost-fill" style="width:0" data-w="7%"></div></div></div>
+
+      <h3 style="font-family:'Noto Serif SC',serif;font-size:15px;color:var(--text);margin-top:32px;margin-bottom:20px;">CDU 整机 BOM 成本构成</h3>
+      <div class="cost-item"><div class="cost-label"><span>板式换热器（BPHE × 2）</span><span class="cost-pct">20 ~ 28%</span></div><div class="cost-track"><div class="cost-fill" style="width:0" data-w="24%"></div></div></div>
+      <div class="cost-item"><div class="cost-label"><span>泵组（屏蔽泵 N+1 × 2）</span><span class="cost-pct">18 ~ 25%</span></div><div class="cost-track"><div class="cost-fill" style="width:0" data-w="21%"></div></div></div>
+      <div class="cost-item"><div class="cost-label"><span>电控柜（VFD+PLC+传感器）</span><span class="cost-pct">15 ~ 22%</span></div><div class="cost-track"><div class="cost-fill" style="width:0" data-w="18%"></div></div></div>
+      <div class="cost-item"><div class="cost-label"><span>管路+阀门+快插接头</span><span class="cost-pct">10 ~ 15%</span></div><div class="cost-track"><div class="cost-fill" style="width:0" data-w="12%"></div></div></div>
+      <div class="cost-item"><div class="cost-label"><span>机柜+钣金结构</span><span class="cost-pct">8 ~ 12%</span></div><div class="cost-track"><div class="cost-fill" style="width:0" data-w="10%"></div></div></div>
+      <div class="cost-item"><div class="cost-label"><span>软件+认证+测试</span><span class="cost-pct">5 ~ 10%</span></div><div class="cost-track"><div class="cost-fill" style="width:0" data-w="7%"></div></div></div>
+    </div>
+
+    <div>
+      <h3 style="font-family:'Noto Serif SC',serif;font-size:15px;color:var(--text);margin-top:0;margin-bottom:20px;">降本路径与盈利模型</h3>
+      <div class="phys-card c3" style="margin-bottom:16px;">
+        <span class="phys-num">// 规模化降本</span>
+        <div class="phys-body">铜材吨级采购比零散采购低 <strong>10~15%</strong>；CNC 刀具批量采购+再磨利用节省 <strong>30%</strong> 刀具成本；真空炉满载率 50%→90% 单件分摊降低 <strong>40%</strong>；FSW 固定设备投入仅为真空炉的 <strong>1/10</strong>，电耗低 70%。</div>
+      </div>
+      <div class="phys-card c4" style="margin-bottom:16px;">
+        <span class="phys-num">// 自动化投资回报</span>
+        <div class="phys-body">
+          • 自动点涂 TIM 机（替代人工涂抹）：人工成本降低 60%，均匀性 CV &lt;3%<br>
+          • 全自动气密测试流水线：节拍 &lt;45s/片，替代 3 名操作工<br>
+          • AI 视觉缺陷识别：外观不良漏检率从 5% → &lt;0.1%<br>
+          • 良率每提升 1%，在万片/月规模下，直接节省约 50~80 万元/年原材料损耗
+        </div>
+      </div>
+      <div class="phys-card c1" style="margin-bottom:16px;">
+        <span class="phys-num">// 毛利率分析</span>
+        <div class="phys-body">
+          <strong>冷板产品：</strong><br>
+          量产成熟品（6061 铝）：毛利率 <strong style="color:var(--c3)">20 ~ 30%</strong><br>
+          GPU 铜冷板（H100/B200）：毛利率 <strong style="color:var(--c4)">30 ~ 45%</strong><br>
+          定制高端/首样 NPI：毛利率极低甚至亏损<br><br>
+          <strong>CDU 整机：</strong><br>
+          量产中低端：毛利率 <strong style="color:var(--c3)">18 ~ 28%</strong><br>
+          高端定制（含数字孪生软件）：毛利率 <strong style="color:var(--c4)">35 ~ 50%</strong><br>
+        </div>
+      </div>
+      <div class="phys-card c2">
+        <span class="phys-num">// 建厂投资估算</span>
+        <div class="phys-body">
+          <strong>冷板生产线（中等规模）：</strong><br>
+          CNC 五轴加工中心 × 6~10 台：<strong>2000~4000 万元</strong><br>
+          真空钎焊炉 × 2~3 台：<strong>500~1500 万元</strong><br>
+          FSW 工作站 × 2 台：<strong>300~800 万元</strong><br>
+          CMM 三坐标 × 1 台：<strong>80~200 万元</strong><br>
+          X-Ray 检测台 × 1：<strong>100~300 万元</strong><br>
+          氦检台 × 2：<strong>60~150 万元</strong><br>
+          <strong>总计参考：2000~6000 万元</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">CDU + 冷板液冷系统 · 博士级工艺指南 · 华南产业链 · AVC/CoolerMaster OEM 方案</div>
+  <div class="footer-sub" style="margin-top:16px;line-height:2.4;">
+    技术参考：Dittus-Boelter / Shah-London 传热关联 · ASME BPE 板换标准 · OCP 液冷规范 v2.0 · NVIDIA GB200 ThermalSpec<br>
+    华南数据来源：高澜2024年报 · 英维克专利CN120179040A · 东莞专精特新产业名录 · 深圳液冷产业白皮书2024<br>
+    <span style="color:var(--c1)">CDU PROCESS</span> · <span style="color:var(--c3)">COLD PLATE TECH</span> · <span style="color:var(--c4)">SYSTEM INTEGRATION</span> · <span style="color:var(--c5)">SUPPLY CHAIN</span> · <span style="color:var(--c2)">AVC/CM OEM</span> · <span style="color:var(--c6)">ECONOMICS</span><br>
+    LIQUID COOLING // DOCTORAL ENGINEERING GUIDE 2025 // GREATER BAY AREA ECOSYSTEM
+  </div>
+</footer>
+
+<script>
+// ── Hamburger
+const menuBtn = document.getElementById('menuBtn');
+const navDrawer = document.getElementById('navDrawer');
+let drawerOpen = false;
+function closeDrawer(){drawerOpen=false;navDrawer.classList.remove('open');menuBtn.setAttribute('aria-expanded','false');}
+menuBtn.addEventListener('click',()=>{drawerOpen=!drawerOpen;navDrawer.classList.toggle('open',drawerOpen);menuBtn.setAttribute('aria-expanded',drawerOpen);});
+document.querySelectorAll('.drawer-link').forEach(a=>{a.addEventListener('click',()=>setTimeout(closeDrawer,80));});
+document.addEventListener('click',e=>{if(drawerOpen&&!navDrawer.contains(e.target)&&!menuBtn.contains(e.target))closeDrawer();});
+
+// ── Timeline scroll
+const steps = document.querySelectorAll('.t-step');
+const io = new IntersectionObserver(entries=>{
+  entries.forEach((e,i)=>{if(e.isIntersecting){setTimeout(()=>e.target.classList.add('on'),i*80);io.unobserve(e.target);}});
+},{threshold:.1});
+steps.forEach(s=>io.observe(s));
+
+// ── Cost bars
+const bars = document.querySelectorAll('.cost-fill');
+const bio = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.style.width=e.target.dataset.w;bio.unobserve(e.target);}});
+},{threshold:.4});
+bars.forEach(b=>bio.observe(b));
+
+// ── Nav active
+const navAs = document.querySelectorAll('.nav-links a');
+window.addEventListener('scroll',()=>{
+  let cur='';
+  document.querySelectorAll('[id]').forEach(el=>{if(window.scrollY>=el.offsetTop-80)cur=el.id;});
+  navAs.forEach(a=>{a.classList.toggle('active',a.getAttribute('href')==='#'+cur);});
+},{passive:true});
+
+// ── KPI counter
+const k1 = document.getElementById('k1');
+if(k1){
+  const target=400,suffix='';
+  k1.textContent='0';
+  const kio = new IntersectionObserver(([e])=>{
+    if(!e.isIntersecting)return;
+    let start;
+    const step=ts=>{if(!start)start=ts;const p=Math.min((ts-start)/1200,1);const v=1-Math.pow(1-p,3);k1.textContent=Math.floor(v*target)+suffix;if(p<1)requestAnimationFrame(step);else k1.textContent=target+'';};
+    requestAnimationFrame(step);kio.disconnect();
+  },{threshold:1});
+  kio.observe(k1);
+}
+</script>
+</body>
+</html>
+

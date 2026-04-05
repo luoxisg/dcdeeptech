@@ -1,0 +1,852 @@
+ <!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DCDeepTech | Global Digital Showroom Strategy</title>
+    
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;700&family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- React & Tailwind -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { 
+            corePlugins: { preflight: false },
+            theme: { extend: { screens: { 'xs': '475px' } } }
+        }
+    </script>
+    
+    <style>
+        :root {
+            --primary-color: #0a2540;
+            --accent-color: #00d4ff;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: 'Inter', 'Noto Sans SC', sans-serif;
+            color: var(--text-color);
+            overflow-x: hidden;
+            background-color: #f8f9fa;
+        }
+
+        /* Language Toggle Logic */
+        body.lang-mode-en .lang-zh { display: none !important; }
+        body.lang-mode-en .lang-en { display: inline-block !important; }
+        body:not(.lang-mode-en) .lang-en { display: none !important; }
+        body:not(.lang-mode-en) .lang-zh { display: inline-block !important; }
+
+        /* Navigation */
+        .navbar {
+            background-color: rgba(10, 37, 64, 0.98);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding-top: 12px;
+            padding-bottom: 12px;
+        }
+        .navbar-brand { font-weight: 700; color: white !important; font-size: 1.3rem; }
+        .nav-link { color: rgba(255,255,255,0.8) !important; cursor: pointer; font-size: 0.95rem; }
+        .nav-link:hover { color: var(--accent-color) !important; }
+
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, #0a2540 0%, #001529 100%);
+            color: white;
+            padding: 140px 0 80px; 
+            position: relative;
+        }
+        .hero-title { 
+            font-size: 3.5rem; 
+            font-weight: 700; 
+            margin-bottom: 1.5rem; 
+            line-height: 1.2;
+        }
+        @media (max-width: 768px) {
+            .hero-title { font-size: 2.2rem; }
+            .hero-section { padding: 120px 0 60px; }
+        }
+
+        .btn-cta {
+            background-color: #25D366; /* WhatsApp Green */
+            color: white; font-weight: 700; padding: 14px 30px; border-radius: 50px; border: none; transition: transform 0.2s;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+            text-decoration: none;
+        }
+        .btn-cta:hover { transform: translateY(-3px); background-color: #128C7E; color: white; }
+
+        /* Cards */
+        .triangle-card, .shift-card, .pricing-card {
+            border: none; border-radius: 20px; 
+            box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+            height: 100%; 
+            background: white;
+            transition: transform 0.3s;
+            overflow: hidden;
+        }
+        .card-header-custom { padding: 25px; text-align: center; color: white; }
+        .section-padding { padding: 80px 0; }
+        @media (max-width: 768px) { .section-padding { padding: 60px 0; } }
+
+        .shift-card { border-left: 6px solid var(--primary-color); }
+        .pricing-card.featured { border: 2px solid var(--primary-color); background-color: #ffffff; transform: scale(1.05); z-index: 1; }
+        @media (max-width: 991px) { .pricing-card.featured { transform: scale(1); border-width: 1px; border-color: var(--primary-color); } }
+
+        footer { background-color: var(--primary-color); color: white; padding: 60px 0 40px; }
+
+        #react-dashboard-root, #react-map-root {
+            font-family: 'JetBrains Mono', ui-sans-serif, system-ui, sans-serif;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="nav-link text-white-50 me-3 d-none d-md-block" href="https://dcdeeptech.com" style="font-size: 0.85rem;">
+                <i class="fas fa-arrow-left me-1"></i> dcdeeptech.com
+            </a>
+            <a class="navbar-brand" href="#"><i class="fas fa-cube me-2"></i>DCDeepTech</a>
+            
+            <div class="d-flex order-lg-last align-items-center ms-3">
+                <button onclick="toggleLanguage()" class="btn btn-outline-light btn-sm rounded-pill px-3" id="langBtn">
+                    <i class="fas fa-globe me-1"></i><span id="langBtnText">EN</span>
+                </button>
+            </div>
+
+            <button class="navbar-toggler navbar-dark border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse justify-content-end mt-3 mt-lg-0" id="navbarNav">
+                <ul class="navbar-nav align-items-center text-center">
+                    <li class="nav-item d-md-none mb-2">
+                        <a class="nav-link text-white-50" href="https://dcdeeptech.com"><i class="fas fa-arrow-left me-1"></i> Back to dcdeeptech.com</a>
+                    </li>
+                    <li class="nav-item w-100 w-lg-auto"><a class="nav-link py-2" href="#golden-triangle"><span class="lang-zh">核心架构</span><span class="lang-en">Architecture</span></a></li>
+                    <li class="nav-item w-100 w-lg-auto"><a class="nav-link py-2" href="#global-flow"><span class="lang-zh">三地联动</span><span class="lang-en">Global Flows</span></a></li>
+                    <li class="nav-item w-100 w-lg-auto"><a class="nav-link py-2" href="#mpo-ops"><span class="lang-zh">运营</span><span class="lang-en">Ops</span></a></li>
+                    <li class="nav-item w-100 w-lg-auto"><a class="nav-link py-2" href="#pricing"><span class="lang-zh">报价</span><span class="lang-en">Pricing</span></a></li>
+                    <li class="nav-item mt-3 mt-lg-0 ms-lg-3">
+                        <a class="btn btn-sm btn-outline-light rounded-pill px-4 py-2" href="mailto:info@dcdeeptech.com">
+                            <i class="fas fa-envelope me-2"></i>
+                            <span class="lang-zh">联系我们</span><span class="lang-en">Contact Us</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="hero-section d-flex align-items-center">
+        <div class="container text-center z-1 position-relative">
+            <h1 class="hero-title">
+                <span class="lang-zh">永不打烊的全球旗舰店</span>
+                <span class="lang-en">The 24/7 Global Flagship Store</span>
+                <br>
+                <span style="color: var(--accent-color); font-size: 0.8em;">
+                    <span class="lang-zh">全时段沉浸式数字展厅</span>
+                    <span class="lang-en">Immersive Digital Showroom</span>
+                </span>
+            </h1>
+            <p class="lead text-white-50 mb-5 mx-auto px-3" style="max-width: 800px;">
+                <span class="lang-zh">
+                    解决跨境网络黑洞、高昂夜班人力与展示细节缺失。<br class="d-none d-md-block">
+                    深圳硬件 + 新加坡通道 + 菲律宾服务 = 全球销售引擎。
+                </span>
+                <span class="lang-en">
+                    Solving cross-border latency and high operational costs.<br class="d-none d-md-block">
+                    Shenzhen HW + Singapore Hub + Philippines Ops = Global Engine.
+                </span>
+            </p>
+            <a href="https://wa.me/6583785068" target="_blank" class="btn btn-cta shadow-lg">
+                <i class="fab fa-whatsapp me-2"></i> 
+                <span class="lang-zh">获取方案报价</span>
+                <span class="lang-en">Chat on WhatsApp</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- Module 2: Golden Triangle -->
+    <section id="golden-triangle" class="section-padding bg-light">
+        <div class="container">
+            <h2 class="section-title">
+                <span class="lang-zh">核心架构：地缘套利“黄金三角”</span>
+                <span class="lang-en">The "Golden Triangle" Architecture</span>
+            </h2>
+            <p class="section-subtitle px-3">
+                <span class="lang-zh">整合三地优势，消除物理距离摩擦。</span>
+                <span class="lang-en">Leveraging geo-arbitrage to eliminate physical friction.</span>
+            </p>
+            <div class="row g-4 px-2">
+                <div class="col-lg-4">
+                    <div class="triangle-card">
+                        <div class="card-header-custom bg-primary">
+                            <div class="fs-1 mb-2 text-info"><i class="fas fa-industry"></i></div>
+                            <h4><span class="lang-zh">深圳 · 物理核心</span><span class="lang-en">Shenzhen · Core</span></h4>
+                        </div>
+                        <div class="p-4">
+                            <p class="card-text text-secondary">
+                                <span class="lang-zh">产品库与研发总部。提供工业光学 PTZ 展厅，展示精密硬件细节。</span>
+                                <span class="lang-en">Product HQ & R&D. Equipped with Industrial PTZ optics for precision demos.</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="triangle-card">
+                        <div class="card-header-custom" style="background-color: #00509d;">
+                            <div class="fs-1 mb-2 text-info"><i class="fas fa-network-wired"></i></div>
+                            <h4><span class="lang-zh">新加坡 · 数字枢纽</span><span class="lang-en">Singapore · Hub</span></h4>
+                        </div>
+                        <div class="p-4">
+                            <p class="card-text text-secondary">
+                                <span class="lang-zh">合规数据路由与低延迟中转。利用 IEPL 专线弥合网络差距。</span>
+                                <span class="lang-en">Data Compliance & Routing. Bridging the firewall gap with low-latency IEPL.</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="triangle-card">
+                        <div class="card-header-custom" style="background-color: #0077b6;">
+                            <div class="fs-1 mb-2 text-info"><i class="fas fa-headset"></i></div>
+                            <h4><span class="lang-zh">菲律宾 · 运营引擎</span><span class="lang-en">Philippines · Ops</span></h4>
+                        </div>
+                        <div class="p-4">
+                            <p class="card-text text-secondary">
+                                <span class="lang-zh">24/7 MPO 外包中心。英语原生团队实现“跟随太阳”服务。</span>
+                                <span class="lang-en">24/7 MPO Center. Native English talent enabling "Follow-the-Sun" service.</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Global Flows Animation -->
+    <section id="global-flow" class="py-5" style="background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);">
+        <div class="container">
+            <div class="row mb-4 text-center text-white">
+                <div class="col-12 px-3">
+                    <h2 class="fw-bold">
+                        <span class="lang-zh">全球全链路动态闭环</span>
+                        <span class="lang-en">Global Closed-Loop Dynamics</span>
+                    </h2>
+                    <p class="text-white-50 small">
+                        <span class="lang-zh">信息流、物流、资金流的可视化协同</span>
+                        <span class="lang-en">Synergy of Info, Logistics, and Financial Flows</span>
+                    </p>
+                </div>
+            </div>
+            <div id="react-map-root" class="px-0 px-md-3"></div>
+            <div class="row mt-4 text-white-50 text-center small gy-3">
+                <div class="col-4">
+                    <i class="fas fa-network-wired text-info mb-1"></i><br>
+                    <span class="d-block lh-1 text-xs"><span class="lang-zh">信息流</span><span class="lang-en">Data</span></span>
+                </div>
+                <div class="col-4">
+                    <i class="fas fa-shipping-fast text-warning mb-1"></i><br>
+                    <span class="d-block lh-1 text-xs"><span class="lang-zh">物流</span><span class="lang-en">Logistics</span></span>
+                </div>
+                <div class="col-4">
+                    <i class="fas fa-coins text-warning mb-1" style="color: #fbbf24 !important;"></i><br>
+                    <span class="d-block lh-1 text-xs"><span class="lang-zh">资金流</span><span class="lang-en">Money</span></span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Module 5: AI Dashboard (NEW LAYOUT) -->
+    <section id="ai" class="section-padding" style="background-color: #020617;">
+        <div class="container">
+            <div class="row mb-4 text-center">
+                <div class="col-12 px-3">
+                    <h2 class="text-white fw-bold h3">
+                        <span class="lang-zh">DeepInsight MPO 引擎</span>
+                        <span class="lang-en">DeepInsight MPO Engine</span>
+                    </h2>
+                    <p class="text-white-50 small">
+                        <span class="lang-zh">基于 AI 的客户成功驾驶舱</span>
+                        <span class="lang-en">AI-assisted customer success cockpit.</span>
+                    </p>
+                </div>
+            </div>
+            <!-- React App Mount Point -->
+            <div id="react-dashboard-root" class="px-0 px-md-2"></div>
+        </div>
+    </section>
+
+    <!-- MODULE: MPO Operations -->
+    <section id="mpo-ops" class="section-padding bg-white">
+        <div class="container">
+            <h2 class="section-title">
+                <span class="lang-zh">全球 24/7 运营</span>
+                <span class="lang-en">Global 24/7 Ops</span>
+            </h2>
+            <div class="card bg-light border-0 mb-5 mx-2 mx-lg-0 shadow-sm">
+                <div class="card-body p-4">
+                    <h5 class="card-title mb-4 text-center text-primary fw-bold">
+                        <i class="fas fa-clock me-2"></i>
+                        <span class="lang-zh">三班制“日不落”体系</span>
+                        <span class="lang-en">3-Shift "Follow-the-Sun"</span>
+                    </h5>
+                    <div class="row g-4">
+                        <div class="col-md-4">
+                            <div class="shift-card p-4 h-100">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <h5 class="fw-bold mb-0 text-dark"><span class="lang-zh">亚太班</span><span class="lang-en">APAC</span></h5>
+                                    <span class="badge bg-info text-dark">06:00-15:00</span>
+                                </div>
+                                <p class="small text-muted mb-0"><span class="lang-zh">服务澳新市场 / 美国日终数据</span><span class="lang-en">Support AU/NZ / US EOD Data</span></p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="shift-card p-4 h-100" style="border-left-color: #00509d;">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <h5 class="fw-bold mb-0 text-primary"><span class="lang-zh">欧非班</span><span class="lang-en">EMEA</span></h5>
+                                    <span class="badge bg-primary">14:00-23:00</span>
+                                </div>
+                                <p class="small text-muted mb-0"><span class="lang-zh">伦敦柏林黄金时间 / 社交互动</span><span class="lang-en">London Prime Time / Social Engagement</span></p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="shift-card p-4 h-100" style="border-left-color: #0a2540;">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <h5 class="fw-bold mb-0 text-dark"><span class="lang-zh">美洲班</span><span class="lang-en">AMER</span></h5>
+                                    <span class="badge bg-dark">22:00-07:00</span>
+                                </div>
+                                <p class="small text-muted mb-0"><span class="lang-zh">纽约加州核心时间 / 直播电商</span><span class="lang-en">NY/CA Core Hours / Live Streaming</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Module 4: Experience -->
+    <section id="experience" class="section-padding bg-dark text-white">
+        <div class="container">
+            <h2 class="section-title text-white">
+                <span class="lang-zh">数字孪生体验</span>
+                <span class="lang-en">Digital Twin Experience</span>
+            </h2>
+            <div class="row text-center mt-5 gy-5">
+                <div class="col-6 col-md-3">
+                    <div class="fs-1 text-info mb-3"><i class="fas fa-video"></i></div>
+                    <h6 class="mb-1"><span class="lang-zh">多流架构</span><span class="lang-en">Multi-Stream</span></h6>
+                    <small class="text-white-50 d-block"><span class="lang-zh">全景+微距+人像</span><span class="lang-en">3 Camera Views</span></small>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="fs-1 text-info mb-3"><i class="fas fa-hand-pointer"></i></div>
+                    <h6 class="mb-1"><span class="lang-zh">自主视角</span><span class="lang-en">User Choice</span></h6>
+                    <small class="text-white-50 d-block"><span class="lang-zh">自由 Pin 画面</span><span class="lang-en">Pin any view</span></small>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="fs-1 text-info mb-3"><i class="fas fa-gamepad"></i></div>
+                    <h6 class="mb-1"><span class="lang-zh">远程云台</span><span class="lang-en">Remote Control</span></h6>
+                    <small class="text-white-50 d-block"><span class="lang-zh">控制物理摄像头</span><span class="lang-en">Control PTZ Cams</span></small>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="fs-1 text-info mb-3"><i class="fas fa-magic"></i></div>
+                    <h6 class="mb-1"><span class="lang-zh">实时包装</span><span class="lang-en">Broadcast FX</span></h6>
+                    <small class="text-white-50 d-block"><span class="lang-zh">ZoomISO 增强</span><span class="lang-en">Professional Overlay</span></small>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Module 7: Pricing -->
+    <section id="pricing" class="section-padding bg-light">
+        <div class="container">
+            <h2 class="section-title">
+                <span class="lang-zh">方案报价</span>
+                <span class="lang-en">Pricing</span>
+            </h2>
+            <div class="row justify-content-center mt-4 px-2">
+                <div class="col-lg-4">
+                    <div class="pricing-card p-4">
+                        <h5 class="fw-bold"><span class="lang-zh">标准级方案</span><span class="lang-en">Standard Plan</span></h5>
+                        <h2 class="my-3 text-primary">$14,000 <small class="fs-6 text-muted"><span class="lang-zh">起</span><span class="lang-en">up</span></small></h2>
+                        <p class="text-muted small mb-0">
+                            <span class="lang-zh">全国产硬件 / 1080p 双流</span>
+                            <span class="lang-en">Domestic Hardware / 1080p Dual Stream</span>
+                        </p>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="pricing-card featured p-4 shadow">
+                        <div class="badge bg-primary mb-2"><span class="lang-zh">推荐</span><span class="lang-en">Best Value</span></div>
+                        <h5 class="fw-bold"><span class="lang-zh">旗舰级方案</span><span class="lang-en">Flagship Plan</span></h5>
+                        <h2 class="my-3 text-primary">$21,000 <small class="fs-6 text-muted"><span class="lang-zh">起</span><span class="lang-en">up</span></small></h2>
+                        <p class="text-muted small mb-0">
+                            <span class="lang-zh">Sony FR7 / 4K 多流 / 完整AI</span>
+                            <span class="lang-en">Sony FR7 / 4K Multi-Stream / Full AI</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact CTA Section (UPDATED to Email) -->
+    <section id="contact-cta" class="py-5 bg-primary text-white text-center">
+        <div class="container">
+            <h2 class="mb-3">Ready to scale globally?</h2>
+            <p class="lead mb-4 text-white-50">
+                <span class="lang-zh">立即联系我们的专家团队，获取定制方案。</span>
+                <span class="lang-en">Contact our expert team today for a custom proposal.</span>
+            </p>
+            <a href="mailto:info@dcdeeptech.com" class="btn btn-lg btn-light rounded-pill fw-bold px-5 text-primary shadow">
+                <i class="fas fa-envelope me-2"></i> info@dcdeeptech.com
+            </a>
+        </div>
+    </section>
+
+    <footer class="text-center small text-white-50">
+        <div class="container">
+            <p class="mb-1">&copy; 2024 DCDeepTech Solutions.</p>
+            <p class="mb-0">Shenzhen • Singapore • Manila • Malaysia</p>
+        </div>
+    </footer>
+
+    <!-- Language Switching Logic -->
+    <script>
+        function toggleLanguage() {
+            const body = document.body;
+            const btnText = document.getElementById('langBtnText');
+            body.classList.toggle('lang-mode-en');
+            const isEn = body.classList.contains('lang-mode-en');
+            btnText.textContent = isEn ? 'ZH' : 'EN';
+            const event = new CustomEvent('langChange', { detail: { lang: isEn ? 'en' : 'zh' } });
+            window.dispatchEvent(event);
+        }
+    </script>
+
+    <!-- REACT COMPONENTS -->
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        const Icon = ({ name, className }) => {
+            const icons = {
+                Activity: "fas fa-chart-line", Eye: "fas fa-eye",
+                Video: "fas fa-video", TrendingUp: "fas fa-arrow-up",
+                AlertCircle: "fas fa-exclamation-circle", Brain: "fas fa-brain",
+                Users: "fas fa-users", Target: "fas fa-bullseye",
+                MessageSquare: "fas fa-comment-alt",
+                Server: "fas fa-server", Shipping: "fas fa-shipping-fast",
+                Coins: "fas fa-coins", Globe: "fas fa-globe-americas",
+                Database: "fas fa-database", Wave: "fas fa-wave-square",
+                Phone: "fas fa-phone-alt", MapMarker: "fas fa-map-marker-alt"
+            };
+            return <i className={`${icons[name] || 'fas fa-question'} ${className}`}></i>;
+        };
+
+        // --- MOBILE-OPTIMIZED GLOBAL MAP ---
+        const GlobalMap = () => {
+            const [lang, setLang] = useState('zh');
+            const [activeFlow, setActiveFlow] = useState('all');
+            const [isMobile, setIsMobile] = useState(false);
+
+            useEffect(() => {
+                const handleResize = () => setIsMobile(window.innerWidth < 768);
+                const handleLangChange = (e) => setLang(e.detail.lang);
+                window.addEventListener('resize', handleResize);
+                window.addEventListener('langChange', handleLangChange);
+                handleResize(); 
+                return () => {
+                    window.removeEventListener('resize', handleResize);
+                    window.removeEventListener('langChange', handleLangChange);
+                };
+            }, []);
+
+            const txt = {
+                zh: { sz: "深圳", sg: "新加坡", ph: "菲律宾", us: "美洲", eu: "欧洲", my: "马来西亚", info: "信息流", log: "物流", fin: "资金" },
+                en: { sz: "SZ", sg: "SG", ph: "PH", us: "AMER", eu: "EMEA", my: "MY", info: "Data", log: "Logistics", fin: "Finance" }
+            };
+            const t = txt[lang];
+            
+            const desktopPos = { 
+                us: { x: 100, y: 150 }, 
+                eu: { x: 400, y: 80 }, 
+                sz: { x: 600, y: 180 }, 
+                ph: { x: 650, y: 250 }, 
+                sg: { x: 550, y: 280 },
+                my: { x: 490, y: 290 } 
+            };
+            const mobilePos = { 
+                sz: { x: 100, y: 80 }, 
+                ph: { x: 300, y: 80 }, 
+                sg: { x: 200, y: 250 }, 
+                eu: { x: 100, y: 420 }, 
+                us: { x: 300, y: 420 },
+                my: { x: 200, y: 330 }
+            };
+            const pos = isMobile ? mobilePos : desktopPos;
+            const viewBox = isMobile ? "0 0 400 500" : "0 0 800 400";
+            const r = isMobile ? 6 : 3; const strokeW = isMobile ? 3 : 2; const iconSize = isMobile ? "w-10 h-10 text-sm" : "w-6 h-6 text-xs"; 
+            const isActive = (type) => activeFlow === 'all' || activeFlow === type;
+
+            return (
+                <div className="bg-slate-900/50 rounded-3xl border border-slate-700 p-3 md:p-8 shadow-2xl">
+                    <div className="flex flex-wrap gap-2 justify-center mb-4">
+                        <button onClick={() => setActiveFlow('info')} className={`px-3 py-2 rounded-lg text-xs font-bold border transition flex items-center ${activeFlow === 'info' ? 'bg-cyan-500/20 border-cyan-500 text-cyan-400' : 'border-slate-700 text-slate-400'}`}><div className="w-2 h-2 rounded-full bg-cyan-400 mr-2"></div>{t.info}</button>
+                        <button onClick={() => setActiveFlow('logistics')} className={`px-3 py-2 rounded-lg text-xs font-bold border transition flex items-center ${activeFlow === 'logistics' ? 'bg-orange-500/20 border-orange-500 text-orange-400' : 'border-slate-700 text-slate-400'}`}><div className="w-2 h-2 rounded-full bg-orange-400 mr-2"></div>{t.log}</button>
+                        <button onClick={() => setActiveFlow('finance')} className={`px-3 py-2 rounded-lg text-xs font-bold border transition flex items-center ${activeFlow === 'finance' ? 'bg-yellow-500/20 border-yellow-500 text-yellow-400' : 'border-slate-700 text-slate-400'}`}><div className="w-2 h-2 rounded-full bg-yellow-400 mr-2"></div>{t.fin}</button>
+                    </div>
+                    <div className={`relative w-full ${isMobile ? 'h-[500px]' : 'aspect-[2/1]'} bg-slate-950 rounded-xl overflow-hidden border border-slate-800`}>
+                        <div className="absolute inset-0 opacity-20" style={{backgroundImage: 'radial-gradient(#334155 1px, transparent 1px)', backgroundSize: '20px 20px'}}></div>
+                        <svg viewBox={viewBox} className="w-full h-full absolute inset-0 pointer-events-none">
+                            {isActive('info') && <>
+                                <path d={`M${pos.us.x},${pos.us.y} Q${isMobile ? 200 : (pos.us.x+pos.ph.x)/2},${isMobile ? 250 : pos.ph.y+50} ${pos.ph.x},${pos.ph.y}`} fill="none" stroke="#083344" strokeWidth={strokeW} />
+                                <circle r={r} fill="#22d3ee"><animateMotion dur="2s" repeatCount="indefinite" path={`M${pos.us.x},${pos.us.y} Q${isMobile ? 200 : (pos.us.x+pos.ph.x)/2},${isMobile ? 250 : pos.ph.y+50} ${pos.ph.x},${pos.ph.y}`} /></circle>
+                                <path d={`M${pos.eu.x},${pos.eu.y} Q${isMobile ? 150 : (pos.eu.x+pos.ph.x)/2},${isMobile ? 200 : pos.ph.y-50} ${pos.ph.x},${pos.ph.y}`} fill="none" stroke="#083344" strokeWidth={strokeW} />
+                                <circle r={r} fill="#22d3ee"><animateMotion dur="2.5s" repeatCount="indefinite" path={`M${pos.eu.x},${pos.eu.y} Q${isMobile ? 150 : (pos.eu.x+pos.ph.x)/2},${isMobile ? 200 : pos.ph.y-50} ${pos.ph.x},${pos.ph.y}`} /></circle>
+                                <path d={`M${pos.ph.x},${pos.ph.y} L${pos.sz.x},${pos.sz.y}`} fill="none" stroke="#083344" strokeWidth={strokeW} />
+                                <circle r={r} fill="#22d3ee"><animateMotion dur="1.5s" repeatCount="indefinite" path={`M${pos.ph.x},${pos.ph.y} L${pos.sz.x},${pos.sz.y}`} /></circle>
+                                <path d={`M${pos.sg.x},${pos.sg.y} L${pos.my.x},${pos.my.y}`} fill="none" stroke="#083344" strokeWidth={strokeW} strokeDasharray="2,2" />
+                            </>}
+                            {isActive('logistics') && <>
+                                <path d={`M${pos.sz.x},${pos.sz.y} ${isMobile ? 'Q400,250' : `Q${(pos.sz.x+pos.us.x)/2},${pos.sz.y-100}`} ${pos.us.x},${pos.us.y}`} fill="none" stroke="#7c2d12" strokeWidth={strokeW} />
+                                <circle r={r} fill="#fb923c"><animateMotion dur="3s" repeatCount="indefinite" path={`M${pos.sz.x},${pos.sz.y} ${isMobile ? 'Q400,250' : `Q${(pos.sz.x+pos.us.x)/2},${pos.sz.y-100}`} ${pos.us.x},${pos.us.y}`} /></circle>
+                                <path d={`M${pos.sz.x},${pos.sz.y} ${isMobile ? 'Q400,250' : `Q${(pos.sz.x+pos.eu.x)/2},${pos.sz.y-50}`} ${pos.eu.x},${pos.eu.y}`} fill="none" stroke="#7c2d12" strokeWidth={strokeW} />
+                                <circle r={r} fill="#fb923c"><animateMotion dur="2.8s" repeatCount="indefinite" path={`M${pos.sz.x},${pos.sz.y} ${isMobile ? 'Q400,250' : `Q${(pos.sz.x+pos.eu.x)/2},${pos.sz.y-50}`} ${pos.eu.x},${pos.eu.y}`} /></circle>
+                            </>}
+                            {isActive('finance') && <><path d={`M${pos.us.x},${pos.us.y} L${pos.sg.x},${pos.sg.y}`} fill="none" stroke="#713f12" strokeWidth={strokeW} strokeDasharray="4,4" /><circle r={r} fill="#fbbf24"><animateMotion dur="2.5s" repeatCount="indefinite" path={`M${pos.us.x},${pos.us.y} L${pos.sg.x},${pos.sg.y}`} /></circle></>}
+                        </svg>
+                        {Object.entries(pos).map(([key, p]) => (
+                            <div key={key} className="absolute transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center z-10" style={{ left: isMobile ? `${p.x}px` : `${p.x/8}%`, top: isMobile ? `${p.y}px` : `${p.y/4}%` }}>
+                                <div className={`${iconSize} rounded-full shadow-lg flex items-center justify-center border-2 border-opacity-50 ${
+                                    key === 'sz' ? 'bg-orange-500 border-orange-300' : 
+                                    key === 'ph' ? 'bg-cyan-500 border-cyan-300 animate-pulse' : 
+                                    key === 'sg' ? 'bg-blue-600 border-blue-400' : 
+                                    key === 'my' ? 'bg-slate-600 border-slate-400' :
+                                    'bg-white border-white'}`}
+                                >
+                                    <i className={`${
+                                        key==='sz'?'fas fa-industry text-white':
+                                        key==='ph'?'fas fa-headset text-white':
+                                        key==='sg'?'fas fa-star text-white':
+                                        key==='my'?'fas fa-database text-white':
+                                        'fas fa-globe-americas text-slate-800'} `}></i>
+                                </div>
+                                <div className="mt-1 px-2 py-0.5 bg-black/70 backdrop-blur rounded text-[10px] text-white font-bold whitespace-nowrap border border-white/10">{t[key]}</div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        };
+
+        // --- DYNAMIC AI CHART COMPONENT ---
+        const LiveGraph = ({ color = "#22d3ee" }) => {
+            const [data, setData] = useState(Array.from({ length: 30 }, () => 40 + Math.random() * 30));
+            useEffect(() => {
+                const interval = setInterval(() => {
+                    setData(prev => {
+                        const newVal = 30 + Math.random() * 50;
+                        const newArr = [...prev.slice(1), newVal];
+                        return newArr;
+                    });
+                }, 200);
+                return () => clearInterval(interval);
+            }, []);
+            const width = 150; const height = 50;
+            const points = data.map((val, i) => {
+                const x = (i / (data.length - 1)) * width;
+                const y = height - (val / 100) * height;
+                return `${x},${y}`;
+            }).join(' ');
+            return (
+                <div className="w-full h-full relative overflow-hidden rounded-lg">
+                    <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-full absolute inset-0" preserveAspectRatio="none">
+                        <defs>
+                            <linearGradient id={`grad-${color}`} x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stopColor={color} stopOpacity="0.3" />
+                                <stop offset="100%" stopColor={color} stopOpacity="0" />
+                            </linearGradient>
+                        </defs>
+                        <path d={`M0,${height} ${points} L${width},${height} Z`} fill={`url(#grad-${color})`} />
+                        <path d={`M${points.replace(' ', ' L')}`} fill="none" stroke={color} strokeWidth="2" vectorEffect="non-scaling-stroke" />
+                    </svg>
+                </div>
+            );
+        };
+
+        // --- UPDATED DASHBOARD (With Full Translation Support) ---
+        const AiDashboard = () => {
+            const [lang, setLang] = useState('zh');
+            
+            useEffect(() => {
+                const handleLangChange = (e) => setLang(e.detail.lang);
+                window.addEventListener('langChange', handleLangChange);
+                return () => window.removeEventListener('langChange', handleLangChange);
+            }, []);
+
+            const txt = {
+                zh: {
+                    title: "DeepInsight 引擎 · MPO 呼叫监控",
+                    subtitle: "AI 辅助客户成功驾驶舱",
+                    status: "实时监控 · LIVE",
+                    queue: "队列：英语 SaaS 一线支持",
+                    agent: "座席：Grace · 班次 2 / 马尼拉",
+                    encrypted: "加密通话",
+                    noise: "噪声抑制 ON",
+                    screen: "客户屏幕共享 · SMT 产线监控画面",
+                    connected: "连线 00:12:43",
+                    instruction: "双击任意区域添加「观察点」<br/>Shift + 滚轮 调整焦距",
+                    quality: "语音质量 · 极佳",
+                    controls: ["静音", "截图", "标注"],
+                    profileTitle: "客户画像 & 实时洞察",
+                    sync: "已同步 CRM",
+                    role: "Alex Chen · 工艺工程经理",
+                    company: "Flextronics · SMT 工厂 · SG",
+                    tags: ["行业：电子制造 EMS", "年合同：$320K"],
+                    sentiment: "当前情绪",
+                    sentimentVal: "偏正向",
+                    conf: "置信度",
+                    focus: "关注点",
+                    focusVal: "良率 & 停机",
+                    risk: "风险：SLA 投诉",
+                    hint: "提示",
+                    hintText: "客户多次提到 'tolerance'。建议引导到「AI 质检报表」试用。",
+                    transcript: "实时转写 · English",
+                    vad: "语音检测 ON",
+                    focusCurve: "专注度曲线 · Focus",
+                    sentimentCurve: "情感分析 · Sentiment",
+                    deal: "成交概率 · Deal",
+                    playbook: "剧本: 续约",
+                    adherence: "当前剧本匹配度 83%"
+                },
+                en: {
+                    title: "DeepInsight Engine · MPO Monitor",
+                    subtitle: "AI-assisted Customer Success Cockpit",
+                    status: "Live Monitor",
+                    queue: "Queue: SaaS Tier 1 Support",
+                    agent: "Agent: Grace · Shift 2 / Manila",
+                    encrypted: "Encrypted",
+                    noise: "Noise Cancel ON",
+                    screen: "Client Screen · SMT Line Feed",
+                    connected: "Connected 00:12:43",
+                    instruction: "Double click to add 'Watch Point'<br/>Shift + Scroll to zoom",
+                    quality: "Voice Quality · Excellent",
+                    controls: ["Mute", "Snap", "Mark"],
+                    profileTitle: "Client Profile & Insights",
+                    sync: "CRM Synced",
+                    role: "Alex Chen · PE Manager",
+                    company: "Flextronics · SMT · SG",
+                    tags: ["Industry: EMS", "ACV: $320K"],
+                    sentiment: "Sentiment",
+                    sentimentVal: "Positive",
+                    conf: "Confidence",
+                    focus: "Key Focus",
+                    focusVal: "Yield & Downtime",
+                    risk: "Risk: SLA Breach",
+                    hint: "AI Hint",
+                    hintText: "Client mentioned 'tolerance'. Suggest offering 'AI Quality Report' trial.",
+                    transcript: "Live Transcript · English",
+                    vad: "VAD Active",
+                    focusCurve: "Attention Curve",
+                    sentimentCurve: "Sentiment Trend",
+                    deal: "Deal Probability",
+                    playbook: "Playbook: Renewal",
+                    adherence: "Script Adherence 83%"
+                }
+            };
+            const t = txt[lang];
+
+            return (
+                <div className="bg-slate-950 p-4 rounded-3xl border border-slate-800 shadow-2xl mx-auto max-w-7xl text-start font-sans">
+                    
+                    {/* Top Bar */}
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
+                        <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center font-bold text-slate-900 shadow-[0_0_15px_rgba(34,197,94,0.4)]">D</div>
+                            <div>
+                                <div className="font-semibold text-slate-200 text-sm tracking-wide">{t.title}</div>
+                                <div className="text-xs text-slate-500">{t.subtitle}</div>
+                            </div>
+                        </div>
+                        <div className="flex flex-wrap items-center gap-2 text-xs text-slate-400">
+                            <div className="flex items-center gap-2 text-green-400 font-bold px-3 py-1 bg-slate-900 rounded-full border border-slate-700">
+                                <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> {t.status}
+                            </div>
+                            <span className="px-3 py-1 bg-slate-900 rounded-full border border-slate-700">Session ID · 84F-92A-LIVE</span>
+                            <span className="px-3 py-1 bg-slate-900 rounded-full border border-slate-700 hidden sm:inline-block">{t.queue}</span>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                        
+                        {/* LEFT COLUMN: PRIMARY CARD (Video + Insight) */}
+                        <div className="lg:col-span-2 bg-[radial-gradient(circle_at_top,#0f172a,#020617_100%)] rounded-2xl border border-slate-800 shadow-xl overflow-hidden flex flex-col">
+                            <div className="p-4 flex-1 flex flex-col gap-3">
+                                {/* Header Tags */}
+                                <div className="flex justify-between items-center text-[10px] md:text-xs text-slate-400">
+                                    <div className="flex items-center gap-2">
+                                        <span className="px-2 py-0.5 rounded-full border border-orange-500/50 bg-orange-500/10 text-orange-300 font-bold">REC ●</span>
+                                        <span className="px-2 py-0.5 rounded-full border border-cyan-500/50 bg-cyan-500/10 text-cyan-300">CAM-01 · PTZ</span>
+                                        <span className="hidden sm:inline">{t.agent}</span>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <span className="px-2 py-0.5 rounded-full border border-slate-700 bg-slate-900">{t.encrypted}</span>
+                                        <span className="px-2 py-0.5 rounded-full border border-slate-700 bg-slate-900">{t.noise}</span>
+                                    </div>
+                                </div>
+
+                                {/* Main Call Content Area */}
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 flex-1 min-h-[300px]">
+                                    
+                                    {/* Video Panel */}
+                                    <div className="md:col-span-2 relative rounded-xl border border-slate-700 bg-black overflow-hidden flex flex-col group">
+                                        <div className="absolute inset-0 opacity-30 pointer-events-none" style={{backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(148,163,184,0.15) 1px, transparent 0)', backgroundSize: '24px 24px'}}></div>
+                                        
+                                        {/* Status Overlay */}
+                                        <div className="absolute top-0 left-0 right-0 p-3 flex justify-between text-[10px] text-slate-400 z-10 bg-gradient-to-b from-black/80 to-transparent">
+                                            <span>{t.screen}</span>
+                                            <span className="font-mono text-green-400">{t.connected}</span>
+                                        </div>
+
+                                        {/* Simulated Video Content */}
+                                        <div className="flex-1 flex items-center justify-center relative">
+                                            <div className="text-center opacity-60">
+                                                <div className="w-20 h-20 border-2 border-dashed border-slate-600 rounded-full flex items-center justify-center mx-auto mb-2 animate-[spin_10s_linear_infinite]">
+                                                    <Icon name="Video" className="text-2xl text-slate-500" />
+                                                </div>
+                                                <div className="px-4 py-2 bg-slate-900/80 backdrop-blur rounded-full border border-slate-700 text-[10px] text-slate-400" dangerouslySetInnerHTML={{__html: t.instruction}}></div>
+                                            </div>
+                                        </div>
+
+                                        {/* Bottom Control Bar */}
+                                        <div className="p-2 bg-slate-900/90 border-t border-slate-800 flex justify-between items-center text-[10px] text-slate-400">
+                                            <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-slate-800 border border-slate-700">
+                                                <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span> {t.quality}
+                                            </div>
+                                            <div className="flex gap-2">
+                                                <span className="cursor-pointer hover:text-white">{t.controls[0]}</span> · 
+                                                <span className="cursor-pointer hover:text-white">{t.controls[1]}</span> · 
+                                                <span className="cursor-pointer hover:text-white">{t.controls[2]}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Insight Sidebar */}
+                                    <aside className="bg-slate-900/50 rounded-xl border border-slate-800 p-3 flex flex-col gap-3">
+                                        <div className="flex justify-between items-center pb-2 border-b border-slate-800">
+                                            <span className="text-xs font-bold text-slate-200">{t.profileTitle}</span>
+                                            <span className="text-[9px] text-slate-500 border border-slate-700 px-1 rounded">{t.sync}</span>
+                                        </div>
+
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-8 h-8 rounded-full bg-gradient-to-b from-sky-400 to-slate-900 flex items-center justify-center text-xs font-bold text-white border border-sky-500/30">A</div>
+                                            <div>
+                                                <div className="text-xs font-bold text-white">Alex Chen</div>
+                                                <div className="text-[10px] text-slate-400">{t.company}</div>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex flex-wrap gap-1">
+                                            {t.tags.map((tag, i) => <span key={i} className="text-[9px] px-2 py-0.5 bg-slate-800 border border-slate-700 rounded text-slate-400">{tag}</span>)}
+                                        </div>
+
+                                        <div className="grid grid-cols-1 gap-2 mt-1">
+                                            <div className="bg-slate-900 border border-slate-800 rounded p-2">
+                                                <div className="text-[9px] text-slate-500">{t.sentiment}</div>
+                                                <div className="text-xs font-bold text-slate-200">{t.sentimentVal}</div>
+                                                <div className="text-[9px] text-green-400 mt-1 border border-green-900/50 bg-green-900/20 px-1 rounded inline-block">{t.conf} 76%</div>
+                                            </div>
+                                            <div className="bg-slate-900 border border-slate-800 rounded p-2">
+                                                <div className="text-[9px] text-slate-500">{t.focus}</div>
+                                                <div className="text-xs font-bold text-slate-200">{t.focusVal}</div>
+                                                <div className="text-[9px] text-orange-400 mt-1 border border-orange-900/50 bg-orange-900/20 px-1 rounded inline-block">{t.risk}</div>
+                                            </div>
+                                        </div>
+
+                                        <div className="mt-auto pt-2 border-t border-dashed border-slate-700 text-[9px] text-slate-400 leading-relaxed">
+                                            <strong className="text-slate-300">{t.hint}：</strong>{t.hintText}
+                                        </div>
+                                    </aside>
+                                </div>
+
+                                {/* Transcript Bar */}
+                                <div className="bg-slate-900 rounded-xl border border-slate-800 p-3 flex justify-between items-center text-xs">
+                                    <div>
+                                        <div className="text-[9px] text-slate-500 mb-1 uppercase tracking-wider">{t.transcript}</div>
+                                        <div className="text-slate-200 italic font-serif opacity-90">
+                                            “Can you zoom in on the PCB soldering joint? I need to check the tolerance.”
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-col items-end gap-1">
+                                        <span className="text-[9px] px-2 py-0.5 border border-slate-700 rounded-full text-slate-400">{t.vad}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* RIGHT COLUMN: METRICS */}
+                        <div className="flex flex-col gap-3">
+                            {/* Focus Card */}
+                            <div className="bg-slate-900/50 rounded-2xl border border-slate-800 p-3 shadow-lg">
+                                <div className="flex justify-between items-center mb-2">
+                                    <span className="text-[10px] font-bold text-slate-400 uppercase">{t.focusCurve}</span>
+                                    <span className="text-[10px] text-cyan-400 font-mono">High</span>
+                                </div>
+                                <div className="h-12 w-full">
+                                    <LiveGraph color="#22d3ee" />
+                                </div>
+                            </div>
+
+                            {/* Sentiment Card */}
+                            <div className="bg-slate-900/50 rounded-2xl border border-slate-800 p-3 shadow-lg">
+                                <div className="flex justify-between items-center mb-2">
+                                    <span className="text-[10px] font-bold text-slate-400 uppercase">{t.sentimentCurve}</span>
+                                    <span className="text-[10px] text-orange-400 font-mono">Positive</span>
+                                </div>
+                                <div className="h-12 w-full">
+                                    <LiveGraph color="#fb923c" />
+                                </div>
+                            </div>
+
+                            {/* Deal Card */}
+                            <div className="bg-slate-900/50 rounded-2xl border border-slate-800 p-3 shadow-lg flex-1 flex flex-col justify-center">
+                                <div className="flex justify-between items-center mb-2">
+                                    <span className="text-[10px] font-bold text-slate-400 uppercase">{t.deal}</span>
+                                    <span className="text-[9px] text-slate-500">{t.playbook}</span>
+                                </div>
+                                <div className="flex items-baseline justify-between mb-2">
+                                    <div className="text-3xl font-bold text-white">78.4%</div>
+                                    <div className="text-xs text-green-400">↑ +6.2%</div>
+                                </div>
+                                <div className="h-12 w-full mt-auto">
+                                    <LiveGraph color="#4ade80" />
+                                </div>
+                                <div className="text-[9px] text-center text-slate-500 mt-2">{t.adherence}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const dashboardRoot = ReactDOM.createRoot(document.getElementById('react-dashboard-root'));
+        dashboardRoot.render(<AiDashboard />);
+        
+        const mapRoot = ReactDOM.createRoot(document.getElementById('react-map-root'));
+        mapRoot.render(<GlobalMap />);
+    </script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
