@@ -1,49 +1,53 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DCDEEPTECH Partner Pricing Portal</title>
+    <title>DCDEEPTECH SaaS Partner Portal</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Google Fonts: Inter & Noto Sans SC -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+SC:wght@300;400;500;700;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', 'Noto Sans SC', sans-serif; }
-        /* Hide elements by default for JS toggling */
         .hidden { display: none !important; }
+        /* Custom scrollbar for tables */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     </style>
 </head>
 <body class="min-h-screen bg-slate-50 text-slate-800 transition-colors duration-300">
 
     <!-- Header -->
-    <header class="bg-slate-900 text-white shadow-md border-b-4 border-cyan-500">
+    <header class="bg-slate-900 text-white shadow-md border-b-4 border-indigo-500">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                     <h1 class="text-3xl font-extrabold tracking-tight flex items-center gap-2">
-                        <i data-lucide="database" class="text-cyan-400 h-8 w-8"></i>
-                        DCDEEPTECH <span class="text-slate-400 font-light" data-i18n="portalTitle">| Partner Portal</span>
+                        <i data-lucide="cloud-lightning" class="text-indigo-400 h-8 w-8"></i>
+                        DCDEEPTECH <span class="text-slate-400 font-light" data-i18n="portalTitle">| SaaS Partner Portal</span>
                     </h1>
                     <p class="text-slate-400 mt-1 text-sm flex items-center gap-4">
-                        <span class="flex items-center gap-1"><i data-lucide="building-2" class="w-4 h-4"></i> UEN: 202550938N</span>
+                        <span class="flex items-center gap-1"><i data-lucide="building-2" class="w-4 h-4"></i> IP HoldCo UEN: 202550938N</span>
                         <span class="flex items-center gap-1"><i data-lucide="map-pin" class="w-4 h-4"></i> Ayer Rajah Crescent, Singapore</span>
                     </p>
                 </div>
                 <div class="flex items-center gap-4">
                     <!-- Language Toggle -->
                     <button onclick="toggleLanguage()" class="bg-slate-800 hover:bg-slate-700 transition-colors px-3 py-1.5 rounded-lg border border-slate-600 flex items-center gap-2 text-sm font-semibold">
-                        <i data-lucide="globe" class="w-4 h-4 text-cyan-400"></i>
+                        <i data-lucide="globe" class="w-4 h-4 text-indigo-400"></i>
                         <span id="lang-indicator">EN / 中文</span>
                     </button>
                     <!-- Trust Badge -->
                     <div class="bg-slate-800 p-2.5 rounded-lg border border-slate-700 flex items-center gap-3">
-                        <i data-lucide="shield-check" class="text-cyan-400 w-6 h-6"></i>
+                        <i data-lucide="trending-up" class="text-indigo-400 w-6 h-6"></i>
                         <div class="text-sm">
-                            <div class="font-semibold text-slate-200" data-i18n="trustMark">Cyber Trust Mark Ready</div>
-                            <div class="text-slate-400 text-xs" data-i18n="govTech">Compliant with GovTech & CSA Standards</div>
+                            <div class="font-semibold text-slate-200" data-i18n="arrFocus">ARR & Usage-Based Model</div>
+                            <div class="text-slate-400 text-xs" data-i18n="capitalEff">Scalable SaaS Architecture</div>
                         </div>
                     </div>
                 </div>
@@ -58,18 +62,19 @@
             <div>
                 <h3 class="font-bold text-amber-800" data-i18n="noticeTitle">Important Pricing Notice (Singapore Compliance)</h3>
                 <p class="text-amber-700 text-sm mt-1" data-i18n="noticeDesc">
-                    All prices listed in this schedule are quoted in <strong>Singapore Dollars (SGD)</strong> and are strictly <strong>exclusive of the prevailing 9% Goods and Services Tax (GST)</strong>. System Integrators (SIs) must account for GST during final quotation to government or enterprise end-users.
+                    All prices listed are <strong>Annual Recurring Revenue (ARR)</strong> quoted in <strong>Singapore Dollars (SGD)</strong>, strictly <strong>exclusive of the prevailing 9% GST</strong>.
                 </p>
             </div>
         </div>
 
         <!-- Introduction / Hero Section -->
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 md:p-8 mb-8">
-            <h2 class="text-2xl font-bold text-slate-900 mb-4" data-i18n="heroTitle">Enterprise AI & Big Data Software Quotation Matrix</h2>
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 md:p-8 mb-8 relative overflow-hidden">
+            <div class="absolute top-0 right-0 p-12 opacity-5 pointer-events-none">
+                <i data-lucide="bar-chart-3" class="w-64 h-64"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-slate-900 mb-4" data-i18n="heroTitle">Enterprise SaaS & AIaaS Quotation Matrix</h2>
             <p class="text-slate-600 leading-relaxed max-w-4xl" data-i18n="heroDesc">
-                This proprietary pricing schedule is exclusively prepared for <strong>ST Engineering</strong> and authorized Tier-1 System Integrators. 
-                The pricing architecture reflects deep localization, enterprise-grade SLA capabilities, and ESG compliance (including liquid-cooled architecture support). 
-                Authorized partners enjoy a standard <strong>25% margin tier discount</strong> on software licenses and a <strong>15% margin</strong> on professional services.
+                This enterprise pricing architecture is structured for authorized <strong>Tier-1 System Integrators</strong>. Transitioning from legacy perpetual models to a highly scalable <strong>SaaS Subscription + Usage-Based Pricing</strong> model. Authorized partners retain a <strong>25% margin</strong> on annual subscriptions, driving exceptional recurring value via consumption-based upsells.
             </p>
         </div>
 
@@ -77,21 +82,21 @@
         <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
             <div class="flex space-x-1 bg-slate-200/50 p-1 rounded-lg">
                 <button id="tab-software" onclick="switchTab('software')" class="px-6 py-2.5 rounded-md text-sm font-semibold transition-all bg-white text-slate-900 shadow-sm ring-1 ring-slate-200 flex items-center gap-2">
-                    <i data-lucide="cpu" class="w-4 h-4"></i> <span data-i18n="tabSoftware">Software Licenses</span>
+                    <i data-lucide="cloud" class="w-4 h-4"></i> <span data-i18n="tabSoftware">Annual SaaS Subscriptions</span>
                 </button>
                 <button id="tab-services" onclick="switchTab('services')" class="px-6 py-2.5 rounded-md text-sm font-semibold transition-all text-slate-600 hover:text-slate-900 flex items-center gap-2">
-                    <i data-lucide="briefcase" class="w-4 h-4"></i> <span data-i18n="tabServices">Professional Services</span>
+                    <i data-lucide="users" class="w-4 h-4"></i> <span data-i18n="tabServices">Professional Services</span>
                 </button>
             </div>
 
-            <!-- Search Bar Container -->
+            <!-- Search Bar -->
             <div id="search-container" class="relative w-full md:w-72">
                 <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4"></i>
                 <input 
                     type="text" 
                     id="searchInput"
-                    placeholder="Search products..." 
-                    class="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 outline-none transition-all text-sm"
+                    placeholder="Search SaaS modules..." 
+                    class="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all text-sm"
                 />
             </div>
         </div>
@@ -103,13 +108,13 @@
                     <thead class="bg-slate-50">
                         <tr>
                             <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-32" data-i18n="thSku">SKU Code</th>
-                            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider" data-i18n="thDesc">Platform Description</th>
-                            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider" data-i18n="thBounds">Technical Boundaries</th>
+                            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider" data-i18n="thDesc">SaaS Platform Description</th>
+                            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-indigo-600 uppercase tracking-wider bg-indigo-50/50" data-i18n="thBounds">Usage-Based Upsell Model</th>
                             <th scope="col" class="px-6 py-4 text-right text-xs font-bold text-slate-500 uppercase tracking-wider">
-                                <span data-i18n="thListPrice">SG List Price</span><br/><span class="text-[10px] font-normal text-slate-400">(MSRP)</span>
+                                <span data-i18n="thListPrice">Base Annual SaaS Price</span><br/><span class="text-[10px] font-normal text-slate-400" data-i18n="perAnnum">(Per Annum)</span>
                             </th>
-                            <th scope="col" class="px-6 py-4 text-right text-xs font-bold text-cyan-700 uppercase tracking-wider bg-cyan-50/50">
-                                <span data-i18n="thPartnerPrice">Partner Price</span><br/><span class="text-[10px] font-normal text-cyan-600" data-i18n="thPartnerDisc25">(25% Discount)</span>
+                            <th scope="col" class="px-6 py-4 text-right text-xs font-bold text-slate-900 uppercase tracking-wider bg-slate-100/80">
+                                <span data-i18n="thPartnerPrice">Partner ARR</span><br/><span class="text-[10px] font-normal text-slate-500" data-i18n="thPartnerDisc25">(25% Discount)</span>
                             </th>
                         </tr>
                     </thead>
@@ -124,8 +129,8 @@
         <div id="section-services" class="hidden bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden transition-opacity duration-300">
             <div class="px-6 py-5 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
                 <div>
-                    <h3 class="text-lg font-bold text-slate-900" data-i18n="svsTitle">Blended Delivery Architecture Rates</h3>
-                    <p class="text-sm text-slate-500 mt-1" data-i18n="svsDesc">Rates reflect local Singapore senior architect deployment combined with offshore execution capabilities.</p>
+                    <h3 class="text-lg font-bold text-slate-900" data-i18n="svsTitle">Implementation Services (Revenue Isolated)</h3>
+                    <p class="text-sm text-slate-500 mt-1" data-i18n="svsDesc">Professional services are physically isolated from ARR metrics. Blended rates utilize local SG architects + offshore execution.</p>
                 </div>
             </div>
             <div class="overflow-x-auto">
@@ -137,8 +142,8 @@
                             <th scope="col" class="px-6 py-4 text-right text-xs font-bold text-slate-500 uppercase tracking-wider">
                                 <span data-i18n="thSvsListRate">SG List Rate</span><br/><span class="text-[10px] font-normal text-slate-400" data-i18n="thPerManDay">(Per Man-Day)</span>
                             </th>
-                            <th scope="col" class="px-6 py-4 text-right text-xs font-bold text-cyan-700 uppercase tracking-wider bg-cyan-50/50">
-                                <span data-i18n="thSvsPartnerRate">Partner Rate</span><br/><span class="text-[10px] font-normal text-cyan-600" data-i18n="thPartnerDisc15">(15% Discount)</span>
+                            <th scope="col" class="px-6 py-4 text-right text-xs font-bold text-slate-900 uppercase tracking-wider bg-slate-100/80">
+                                <span data-i18n="thSvsPartnerRate">Partner Rate</span><br/><span class="text-[10px] font-normal text-slate-500" data-i18n="thPartnerDisc15">(15% Discount)</span>
                             </th>
                         </tr>
                     </thead>
@@ -147,49 +152,45 @@
                     </tbody>
                 </table>
             </div>
-            <div class="bg-slate-50 px-6 py-4 border-t border-slate-200 text-xs text-slate-500 flex items-start gap-2">
-                <i data-lucide="info" class="w-4 h-4 flex-shrink-0 mt-0.5"></i>
-                <p data-i18n="svsFootnote">Minimum service engagement is highly dependent on Project Scope of Work (SOW). Project management and GovTech compliance documentation man-days will be estimated separately per project requirement.</p>
-            </div>
         </div>
 
-        <!-- Commercial Terms & Conditions -->
+        <!-- Commercial Strategy Cards -->
         <div class="mt-12">
             <h2 class="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
-                <i data-lucide="file-text" class="w-6 h-6 text-cyan-600"></i> <span data-i18n="tcTitle">Commercial Terms & Operating Conditions</span>
+                <i data-lucide="layers" class="w-6 h-6 text-indigo-600"></i> <span data-i18n="tcTitle">Commercial Terms & Strategy</span>
             </h2>
             
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Payment Terms -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- SaaS Payment -->
                 <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
                     <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mb-4">
-                        <i data-lucide="check-circle" class="w-5 h-5 text-blue-600"></i>
+                        <i data-lucide="refresh-cw" class="w-5 h-5 text-blue-600"></i>
                     </div>
-                    <h3 class="font-bold text-slate-900 mb-2" data-i18n="tcPayTitle">Payment Terms (Net 45)</h3>
+                    <h3 class="font-bold text-slate-900 mb-2" data-i18n="tcPayTitle">Pre-billed SaaS Subscription</h3>
                     <p class="text-sm text-slate-600 leading-relaxed" data-i18n="tcPayDesc">
-                        Standard payment terms are set at <strong>45 days</strong> from the receipt of undisputed invoice or Provisional Acceptance of the system, aligning with enterprise PO terms. Hardware procurement (if any) requires a 50% upfront milestone.
+                        To optimize working capital, subscriptions are 100% pre-billed annually upon license provisioning, superseding the legacy 45-day post-acceptance delays.
                     </p>
                 </div>
 
-                <!-- AMC -->
+                <!-- Usage Model / SI perspective -->
                 <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
                     <div class="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center mb-4">
-                        <i data-lucide="database" class="w-5 h-5 text-emerald-600"></i>
+                        <i data-lucide="trending-up" class="w-5 h-5 text-emerald-600"></i>
                     </div>
-                    <h3 class="font-bold text-slate-900 mb-2" data-i18n="tcAmcTitle">Annual Maintenance (AMC)</h3>
+                    <h3 class="font-bold text-slate-900 mb-2" data-i18n="tcAmcTitle">Subscription & Usage: Unlocking Recurring Margins</h3>
                     <p class="text-sm text-slate-600 leading-relaxed" data-i18n="tcAmcDesc">
-                        Year 1 standard warranty is included. From Year 2 onwards, AMC is fixed at <strong>20% of the Net Software License Fee</strong>. This strictly covers security patching, vulnerability remediation, and Tier-1/Tier-2 local technical support.
+                        Replacing low-margin legacy AMC. SIs can seamlessly bundle our base annual subscriptions and usage-based tiers (API Tokens, storage overages) into long-term Managed Services contracts, capturing compounding margins as end-user AI adoption scales.
                     </p>
                 </div>
 
-                <!-- Hardware limits -->
+                <!-- Tax & ESG -->
                 <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
                     <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center mb-4">
-                        <i data-lucide="cpu" class="w-5 h-5 text-purple-600"></i>
+                        <i data-lucide="leaf" class="w-5 h-5 text-purple-600"></i>
                     </div>
-                    <h3 class="font-bold text-slate-900 mb-2" data-i18n="tcHwTitle">Hardware & AI Prerequisites</h3>
+                    <h3 class="font-bold text-slate-900 mb-2" data-i18n="tcHwTitle">IP Tax Incentives & ESG</h3>
                     <p class="text-sm text-slate-600 leading-relaxed" data-i18n="tcHwDesc">
-                        High-density computing (e.g., DeepSeek-R1-70B model via DCD-AGT-V1) necessitates multi-GPU setups (e.g., RTX3090/4090). DCDEEPTECH highly recommends our <strong>Liquid-cooled Architecture design consultancy</strong> to meet GovTech's green ESG requirements.
+                        Structured as a SG IP HoldCo to leverage local tax incentives. High-density AI deployments mandate our Liquid-Cooled Architecture to meet GovTech's stringent green ESG metrics.
                     </p>
                 </div>
             </div>
@@ -202,11 +203,11 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-sm flex flex-col md:flex-row justify-between items-center gap-4">
             <div>
                 <p class="font-semibold text-slate-200">© 2026 DCDEEPTECH PTE. LTD. (UEN: 202550938N)</p>
-                <p class="mt-1"><span data-i18n="footerLoc">Ayer Rajah Crescent, Singapore</span> | <span data-i18n="footerTag">Deep Tech & AI Infrastructure</span></p>
+                <p class="mt-1"><span data-i18n="footerLoc">Ayer Rajah Crescent, Singapore</span> | <span data-i18n="footerTag">AI Infrastructure HoldCo</span></p>
             </div>
             <div class="text-right">
-                <p data-i18n="footerConfTitle">Confidential Pricing Document</p>
-                <p class="mt-1" data-i18n="footerConfDesc">Generated exclusively for authorized System Integrator Evaluation.</p>
+                <p data-i18n="footerConfTitle">Confidential Enterprise Pricing</p>
+                <p class="mt-1" data-i18n="footerConfDesc">Generated exclusively for authorized System Integrators evaluation.</p>
             </div>
         </div>
     </footer>
@@ -216,121 +217,119 @@
         // --- TRANSLATION DATA ---
         const translations = {
             en: {
-                portalTitle: "| Partner Portal",
-                trustMark: "Cyber Trust Mark Ready",
-                govTech: "Compliant with GovTech & CSA Standards",
+                portalTitle: "| SaaS Partner Portal",
+                arrFocus: "ARR & Usage-Based Model",
+                capitalEff: "Scalable SaaS Architecture",
                 noticeTitle: "Important Pricing Notice (Singapore Compliance)",
-                noticeDesc: "All prices listed in this schedule are quoted in <strong>Singapore Dollars (SGD)</strong> and are strictly <strong>exclusive of the prevailing 9% Goods and Services Tax (GST)</strong>. System Integrators (SIs) must account for GST during final quotation to government or enterprise end-users.",
-                heroTitle: "Enterprise AI & Big Data Software Quotation Matrix",
-                heroDesc: "This proprietary pricing schedule is exclusively prepared for <strong>ST Engineering</strong> and authorized Tier-1 System Integrators. The pricing architecture reflects deep localization, enterprise-grade SLA capabilities, and ESG compliance (including liquid-cooled architecture support). Authorized partners enjoy a standard <strong>25% margin tier discount</strong> on software licenses and a <strong>15% margin</strong> on professional services.",
-                tabSoftware: "Software Licenses",
+                noticeDesc: "All prices listed are <strong>Annual Recurring Revenue (ARR)</strong> quoted in <strong>Singapore Dollars (SGD)</strong>, strictly <strong>exclusive of the prevailing 9% GST</strong>.",
+                heroTitle: "Enterprise SaaS & AIaaS Quotation Matrix",
+                heroDesc: "This enterprise pricing architecture is structured for authorized <strong>Tier-1 System Integrators</strong>. Transitioning from legacy perpetual models to a highly scalable <strong>SaaS Subscription + Usage-Based Pricing</strong> model. Authorized partners retain a <strong>25% margin</strong> on annual subscriptions, driving exceptional recurring value via consumption-based upsells.",
+                tabSoftware: "Annual SaaS Subscriptions",
                 tabServices: "Professional Services",
-                searchPlaceholder: "Search products...",
+                searchPlaceholder: "Search SaaS modules...",
                 thSku: "SKU Code",
-                thDesc: "Platform Description",
-                thBounds: "Technical Boundaries",
-                thListPrice: "SG List Price",
-                thPartnerPrice: "Partner Price",
+                thDesc: "SaaS Platform Description",
+                thBounds: "Usage-Based Upsell Model",
+                thListPrice: "Base Annual SaaS Price",
+                perAnnum: "(Per Annum)",
+                thPartnerPrice: "Partner ARR",
                 thPartnerDisc25: "(25% Discount)",
-                svsTitle: "Blended Delivery Architecture Rates",
-                svsDesc: "Rates reflect local Singapore senior architect deployment combined with offshore execution capabilities.",
+                svsTitle: "Implementation Services (Revenue Isolated)",
+                svsDesc: "Professional services are physically isolated from ARR metrics. Blended rates utilize local SG architects + offshore execution.",
                 thSvsModule: "Service Module",
                 thSvsScope: "Scope of Work (SOW)",
                 thSvsListRate: "SG List Rate",
                 thPerManDay: "(Per Man-Day)",
                 thSvsPartnerRate: "Partner Rate",
                 thPartnerDisc15: "(15% Discount)",
-                svsFootnote: "Minimum service engagement is highly dependent on Project Scope of Work (SOW). Project management and GovTech compliance documentation man-days will be estimated separately per project requirement.",
-                tcTitle: "Commercial Terms & Operating Conditions",
-                tcPayTitle: "Payment Terms (Net 45)",
-                tcPayDesc: "Standard payment terms are set at <strong>45 days</strong> from the receipt of undisputed invoice or Provisional Acceptance of the system, aligning with enterprise PO terms. Hardware procurement (if any) requires a 50% upfront milestone.",
-                tcAmcTitle: "Annual Maintenance (AMC)",
-                tcAmcDesc: "Year 1 standard warranty is included. From Year 2 onwards, AMC is fixed at <strong>20% of the Net Software License Fee</strong>. This strictly covers security patching, vulnerability remediation, and Tier-1/Tier-2 local technical support.",
-                tcHwTitle: "Hardware & AI Prerequisites",
-                tcHwDesc: "High-density computing (e.g., DeepSeek-R1-70B model via DCD-AGT-V1) necessitates multi-GPU setups (e.g., RTX3090/4090). DCDEEPTECH highly recommends our <strong>Liquid-cooled Architecture design consultancy</strong> to meet GovTech's green ESG requirements.",
+                tcTitle: "Commercial Terms & Strategy",
+                tcPayTitle: "Pre-billed SaaS Subscription",
+                tcPayDesc: "To optimize working capital, subscriptions are 100% pre-billed annually upon license provisioning, superseding the legacy 45-day post-acceptance delays.",
+                tcAmcTitle: "Subscription & Usage: Unlocking Recurring Margins",
+                tcAmcDesc: "Replacing low-margin legacy AMC. SIs can seamlessly bundle our base annual subscriptions and usage-based tiers (API Tokens, storage overages) into long-term Managed Services contracts, capturing compounding margins as end-user AI adoption scales.",
+                tcHwTitle: "IP Tax Incentives & ESG",
+                tcHwDesc: "Structured as a SG IP HoldCo to leverage local tax incentives. High-density AI deployments mandate our Liquid-Cooled Architecture to meet GovTech's stringent green ESG metrics.",
                 footerLoc: "Ayer Rajah Crescent, Singapore",
-                footerTag: "Deep Tech & AI Infrastructure",
-                footerConfTitle: "Confidential Pricing Document",
-                footerConfDesc: "Generated exclusively for authorized System Integrator Evaluation.",
-                noProductsFound: "No products found matching"
+                footerTag: "AI Infrastructure HoldCo",
+                footerConfTitle: "Confidential Enterprise Pricing",
+                footerConfDesc: "Generated exclusively for authorized System Integrators evaluation.",
+                noProductsFound: "No SaaS modules found matching"
             },
             zh: {
-                portalTitle: "| 合作伙伴报价门户",
-                trustMark: "Cyber Trust 网络安全认证就绪",
-                govTech: "全面符合新加坡 GovTech 与 CSA 标准",
+                portalTitle: "| 合作伙伴 SaaS 报价门户",
+                arrFocus: "ARR 与用量计费模型",
+                capitalEff: "高可扩展 SaaS 架构",
                 noticeTitle: "重要报价合规提示（新加坡税法）",
-                noticeDesc: "本报价单中列出的所有价格均以 <strong>新加坡元 (SGD)</strong> 计价，且严格 <strong>未含现行 9% 的消费税 (GST)</strong>。系统集成商在向政府或企业最终用户生成最终报价时，必须将 GST 计算在内。",
-                heroTitle: "企业级人工智能与大数据软件报价矩阵",
-                heroDesc: "此专属定价时间表专为 <strong>ST Engineering (新科工程)</strong> 及授权的一级系统集成商制定。定价架构反映了深度的本地化重构、企业级 SLA 保障能力以及 ESG 合规性（含液冷架构支持）。授权合作伙伴享有软件许可标准 <strong>25% 的渠道折扣</strong>，以及专业实施服务 <strong>15% 的利润折扣</strong>。",
-                tabSoftware: "软件平台许可",
+                noticeDesc: "本列表所有价格均为 <strong>年度经常性收入 (ARR)</strong>，以 <strong>新加坡元 (SGD)</strong> 计价，且严格 <strong>未含现行 9% 消费税 (GST)</strong>。",
+                heroTitle: "企业级 SaaS 与 AIaaS 年度订阅报价矩阵",
+                heroDesc: "此企业级定价架构专为 <strong>授权一级系统集成商</strong> 打造。从传统的买断制全面转型为高可扩展的 <strong>SaaS 订阅 + 用量计费 (Usage-Based)</strong> 混合模型。合作伙伴在年度订阅上享有 <strong>25% 渠道利润</strong>，并通过后端的用量超额实现持续的利润增长。",
+                tabSoftware: "SaaS 年度订阅许可",
                 tabServices: "专业实施服务",
-                searchPlaceholder: "搜索产品...",
+                searchPlaceholder: "搜索 SaaS 模块...",
                 thSku: "产品代码 (SKU)",
-                thDesc: "本地化产品名称与平台描述",
-                thBounds: "技术边界与并发限制",
-                thListPrice: "新加坡目录标价",
-                thPartnerPrice: "STE 合作伙伴结算价",
+                thDesc: "SaaS 平台模块描述",
+                thBounds: "增量用量 / 并发扩容计价模型",
+                thListPrice: "基础年度订阅价",
+                perAnnum: "(SGD / 每年)",
+                thPartnerPrice: "合作伙伴年度结算价",
                 thPartnerDisc25: "(包含 25% 渠道折扣)",
-                svsTitle: "混合交付架构 (Blended Delivery) 费率",
-                svsDesc: "费率反映了新加坡本地高级架构师 (客户对接/需求/验收) 与离岸研发团队 (核心编码) 相结合的交付优势。",
+                svsTitle: "专业实施服务 (系统独立报价)",
+                svsDesc: "为确保核心 SaaS 订阅模式清晰，一次性人工实施服务与订阅费物理隔离。费率采用本地与离岸混合交付架构。",
                 thSvsModule: "专业服务模块",
                 thSvsScope: "业务交付范围 (SOW)",
                 thSvsListRate: "新加坡服务目录价",
                 thPerManDay: "(单人天 / SGD)",
                 thSvsPartnerRate: "合作伙伴结算费率",
                 thPartnerDisc15: "(包含 15% 渠道折扣)",
-                svsFootnote: "服务类项目的人天数量高度依赖于最终约定的业务交付范围 (SOW)。项目管理、系统对接以及 GovTech 规范合规文档撰写的人天将根据具体项目单独评估。",
-                tcTitle: "商业条款与运营边界约束",
-                tcPayTitle: "付款周期条款 (Net 45)",
-                tcPayDesc: "遵循跨国集成商的采购惯例，标准付款条款设定为收到卖方无争议发票或系统通过临时验收后的 <strong>45 天内</strong>支付。若涉及底层硬件代采，则强制要求 50% 的前期预付款。",
-                tcAmcTitle: "软件全生命周期维护费 (AMC)",
-                tcAmcDesc: "初始采购包含首年标准原厂质保。自系统上线运行的第二年起，将强制收取相当于 <strong>净软件许可费用 20%</strong> 的年度维护费 (AMC)。该费用严格用于涵盖合规性安全漏洞修补、第三方底层库更新及新加坡本地 Level-1/2 故障响应。",
-                tcHwTitle: "硬件算力与高可用(HA)前提条件",
-                tcHwDesc: "高密度 AI 推理（如部署 DeepSeek-R1-70B 大模型）强制要求配置多显卡节点（如 RTX3090/4090 集群）。为降低高耗能基础设施的 PUE 负担，DCDEEPTECH 强烈建议搭售 <strong>液冷数据中心架构设计咨询服务</strong>，以满足新加坡政府严苛的绿色采购 ESG 标准。",
+                tcTitle: "核心商业条款与运营策略",
+                tcPayTitle: "预收年度订阅费 (优化流动性)",
+                tcPayDesc: "为优化项目运营资金，在系统账号开通、License发放的当月，即全额开具第一年订阅费 Invoice，取代传统的 45 天验收后账期。",
+                tcAmcTitle: "订阅与用量双擎：赋能集成商长尾利润",
+                tcAmcDesc: "取代传统低毛利的 20% 维保模式。系统集成商可将全额年度订阅与弹性用量阶梯（如 API 调用、存储扩容）无缝打包至其年度托管服务 (Managed Services) 中，随着终端客户算力消耗的增长，持续捕获高额的经常性利润。",
+                tcHwTitle: "IP 税收优惠与 ESG 绿色算力",
+                tcHwDesc: "以新加坡本地 IP 实体架构充分享受税收激励政策。针对大模型部署，主打液冷数据中心架构，直击 GovTech 绿色采购核心环保诉求。",
                 footerLoc: "新加坡 Ayer Rajah Crescent 科技创新走廊",
-                footerTag: "深度科技与人工智能基础设施底座",
-                footerConfTitle: "机密级商业报价文件",
-                footerConfDesc: "本文件仅供授权系统集成商供应链评估与内部立项使用，严禁未经授权的二次分发。"
+                footerTag: "AI 基础设施企业",
+                footerConfTitle: "机密级企业商业报价",
+                footerConfDesc: "本文件仅供授权系统集成商评估与内部立项使用。"
             }
         };
 
-        // --- DATA DEFINITIONS WITH BILINGUAL SUPPORT ---
+        // --- NEW SAAS DATA DEFINITIONS (Based on Usage Model, retained exact prices) ---
         const softwareProducts = [
-            { id: 'DCD-DS-V2', name: { en: 'Enterprise Data Synchronization Platform', zh: '企业级异构数据同步与流批处理平台' }, category: { en: 'Data Infrastructure', zh: '数据基础设施' }, limits: { en: 'Max 60 concurrent tasks', zh: '最高并发 60 个数据同步任务' }, listPrice: 120000, partnerPrice: 90000 },
-            { id: 'DCD-SP-V3', name: { en: 'Big Data Storage and Compute Node', zh: '大数据分布式存储与计算底层节点' }, category: { en: 'Data Infrastructure', zh: '数据基础设施' }, limits: { en: 'Per Node (Max 20TB, Hadoop HA)', zh: '单节点授权 (支持最高20TB, 需最少3节点HA部署)' }, listPrice: 25000, partnerPrice: 18750 },
-            { id: 'DCD-DG-V1', name: { en: 'Data Governance and Quality Platform', zh: '全链路数据治理与自动数据质量检测平台' }, category: { en: 'Data Governance', zh: '数据治理体系' }, limits: { en: 'Max 200 concurrent tasks', zh: '单节点支持最高 200 个并发校验任务' }, listPrice: 240000, partnerPrice: 180000 },
-            { id: 'DCD-EX-V1', name: { en: 'Enterprise Data Exchange Platform', zh: '政企级数据资源目录与共享交换平台' }, category: { en: 'Data Governance', zh: '数据治理体系' }, limits: { en: 'Enterprise License', zh: '企业级无限制授权 (不限 API 调用量)' }, listPrice: 210000, partnerPrice: 157500 },
-            { id: 'DCD-AM-V1', name: { en: 'Data Asset Management Platform', zh: '数据资产盘点与全生命周期管理平台' }, category: { en: 'Data Governance', zh: '数据治理体系' }, limits: { en: 'Enterprise License', zh: '企业级全局授权 (含资产地图可视化)' }, listPrice: 190000, partnerPrice: 142500 },
-            { id: 'DCD-MDM-V1', name: { en: 'Master Data Management (MDM) Platform', zh: '主数据管理平台 (MDM)' }, category: { en: 'Data Governance', zh: '数据治理体系' }, limits: { en: 'Enterprise License', zh: '企业级应用授权' }, listPrice: 210000, partnerPrice: 157500 },
-            { id: 'DCD-BI-V2', name: { en: 'Advanced BI & Visualization Platform', zh: '高级管理驾驶舱与增强 BI 可视化平台' }, category: { en: 'Analytics & BI', zh: 'BI 与数据分析' }, limits: { en: 'Unlimited Viewers', zh: '不限制并发数据大屏查看者数量' }, listPrice: 40000, partnerPrice: 30000 },
-            { id: 'DCD-BIA-V2', name: { en: 'AI-Augmented BI (with Smart Inquiry)', zh: 'AI 增强型智能 BI (内嵌自然语言查询问答)' }, category: { en: 'Analytics & BI', zh: 'BI 与数据分析' }, limits: { en: 'Includes Smart Inquiry API', zh: '包含底层 NL2SQL 智能查询转换引擎 API' }, listPrice: 80000, partnerPrice: 60000 },
-            { id: 'DCD-AI-V2', name: { en: 'Low-Code AI Model Development Platform', zh: '低代码人工智能行业模型开发与训练平台' }, category: { en: 'AI & Machine Learning', zh: '人工智能与机器学习' }, limits: { en: 'Cluster Deployment', zh: '强制要求分布式 GPU 计算集群部署' }, listPrice: 230000, partnerPrice: 172500 },
-            { id: 'DCD-KG-V1', name: { en: 'Enterprise Knowledge Graph Platform', zh: '企业级语义网络与知识图谱平台' }, category: { en: 'AI & Machine Learning', zh: '人工智能与机器学习' }, limits: { en: 'Ontology mapping included', zh: '包含核心行业本体 (Ontology) 映射框架' }, listPrice: 250000, partnerPrice: 187500 },
-            { id: 'DCD-MK-V1', name: { en: 'Multi-Modal Data Annotation Platform', zh: '多模态 (图像/视频/文本) 数据协同标注平台' }, category: { en: 'AI & Machine Learning', zh: '人工智能与机器学习' }, limits: { en: 'Unlimited Annotators', zh: '不限制并发标注团队账号数量' }, listPrice: 150000, partnerPrice: 112500 },
-            { id: 'DCD-AGT-V1', name: { en: 'LLM Agent Orchestration Platform', zh: '大语言模型 (LLM) 智能体工作流编排平台' }, category: { en: 'AI & Machine Learning', zh: '人工智能与机器学习' }, limits: { en: 'RAG Support (Req. GPU cluster)', zh: '深度支持 RAG (检索增强生成)，需外挂高算力节点' }, listPrice: 130000, partnerPrice: 97500 },
-            { id: 'DCD-VA-V1', name: { en: 'Cognitive AI Video Analytics Platform', zh: '认知 AI 视频结构化与多维态势感知平台' }, category: { en: 'Edge & IoT', zh: '边缘计算与物联网' }, limits: { en: 'Per Core/Stream limits apply', zh: '并发视频流解析路数视配置 GPU 加速卡数量而定' }, listPrice: 195000, partnerPrice: 146250 },
-            { id: 'DCD-IOT-V1', name: { en: 'AIoT Infrastructure Management Platform', zh: 'AIoT 万物智联基础设施底座管理平台' }, category: { en: 'Edge & IoT', zh: '边缘计算与物联网' }, limits: { en: 'Enterprise License', zh: '支持大规模异构传感器设备协议接入授权' }, listPrice: 200000, partnerPrice: 150000 },
+            { id: 'DCD-DS-V2', name: { en: 'Enterprise Data Synchronization Platform', zh: '企业级异构数据同步平台' }, limits: { en: 'Base 60 tasks. Overage: $1,000/10 tasks/mo.', zh: '包含60个基础并发任务。超额按 $1,000/10并发/月 计费。' }, listPrice: 48000, partnerPrice: 36000, nodeBased: false },
+            { id: 'DCD-SP-V3', name: { en: 'Big Data Storage and Compute Node', zh: '大数据分布式存储与计算节点' }, limits: { en: 'Base 20TB storage. Overage: $500/TB/yr.', zh: '基础包含 20TB 存储管理。海量扩展按 $500/TB/年 计费。' }, listPrice: 12000, partnerPrice: 9000, nodeBased: true },
+            { id: 'DCD-DG-V1', name: { en: 'Data Governance and Quality Platform', zh: '全链路数据治理与质量平台' }, limits: { en: 'Base 200 tasks. Overage: $1,500/20 tasks/mo.', zh: '包含200个治理并发任务。超额按 $1,500/20并发/月 计费。' }, listPrice: 85000, partnerPrice: 63750, nodeBased: false },
+            { id: 'DCD-EX-V1', name: { en: 'Enterprise Data Exchange Platform', zh: '政企级共享交换平台' }, limits: { en: 'Usage-based traffic. Overage: $0.05/GB.', zh: '按数据交换流量计费，超出基础额度后按 $0.05 / GB 计费。' }, listPrice: 75000, partnerPrice: 56250, nodeBased: false },
+            { id: 'DCD-BIA-V2', name: { en: 'AI-Augmented BI (with Smart Inquiry)', zh: 'AI 增强型智能 BI (Smart Inquiry)' }, limits: { en: 'Base 100 Named Users. Add-on: $5,000/50 users/yr.', zh: '包含 100 个命名用户。扩容包 $5,000/50用户/年。' }, listPrice: 36000, partnerPrice: 27000, nodeBased: false },
+            { id: 'DCD-AI-V2', name: { en: 'Low-Code AI Model Development Platform', zh: '低代码人工智能行业模型开发平台' }, limits: { en: 'Base orchestration. Deep learning billed per GPU Hour.', zh: '包含基础算力调度。深度学习训练按 GPU 小时额外结算。' }, listPrice: 90000, partnerPrice: 67500, nodeBased: false },
+            { id: 'DCD-KG-V1', name: { en: 'Enterprise Knowledge Graph Platform', zh: '企业级语义网络知识图谱平台' }, limits: { en: 'Base 100M nodes/edges. Stepped pricing for overage.', zh: '包含 1亿 个图谱节点与边。超额节点按千万级阶梯计费。' }, listPrice: 95000, partnerPrice: 71250, nodeBased: false },
+            { id: 'DCD-AGT-V1', name: { en: 'LLM Agent Orchestration Platform', zh: '大语言模型 (LLM) 智能体工作流编排' }, limits: { en: 'Platform framework only. RAG inference billed by Token/GPU.', zh: '订阅费仅含平台框架。RAG及推理调用按 Token 消耗量计费。' }, listPrice: 55000, partnerPrice: 41250, nodeBased: false },
+            { id: 'DCD-VA-V1', name: { en: 'Cognitive AI Video Analytics Platform', zh: '认知 AI 视频分析平台' }, limits: { en: 'Base 50 cameras. Add-on: $1,200/stream/yr.', zh: '基础包含 50 路摄像头并发分析。增量按 $1,200 / 路 / 年 计费。' }, listPrice: 78000, partnerPrice: 58500, nodeBased: false },
         ];
 
         const professionalServices = [
-            { name: { en: 'On-site Product Implementation', zh: '平台现场实施与环境部署交付' }, desc: { en: 'Environment setup, HA cluster deployment, administrator training.', zh: '硬件环境初始化调试、高可用(HA)集群部署搭建及系统管理员移交培训。' }, listPrice: 2000, partnerPrice: 1700 },
-            { name: { en: 'Data Integration & Pipeline Dev', zh: '异构数据源集成与汇集流开发' }, desc: { en: 'Kafka streaming extraction, heterogeneous source integration.', zh: '复杂业务系统底层数据抓取、Kafka 流式数据集成、消息队列配置探测。' }, listPrice: 2000, partnerPrice: 1700 },
-            { name: { en: 'Data Warehouse & Semantic Modeling', zh: '数仓建设与业务语义建模规划' }, desc: { en: 'Multi-dimensional data models, E-R modeling, storage optimization.', zh: '主题域全链路分析、多维数据模型与 E-R 实体关系设计、数据索引与下推计算优化。' }, listPrice: 2000, partnerPrice: 1700 },
-            { name: { en: 'Data Governance & Quality Rules', zh: '数据治理体系建设与质量检核规则开发' }, desc: { en: 'Data standard formulation, lineage analysis, metadata graph drawing.', zh: '协助建立内部数据管理标准、核心数据血缘关系分析、敏感数据脱敏规则与异动告警配置。' }, listPrice: 2000, partnerPrice: 1700 },
-            { name: { en: 'AI/ML Custom Model Engineering', zh: 'AI 核心算法与大模型定制工程开发' }, desc: { en: 'Deep learning custom models and LLM fine-tuning.', zh: '基于机器学习的业务场景分类聚类预测开发、计算机视觉定制网络训练及开源大语言模型微调 (Fine-tuning)。' }, listPrice: 2000, partnerPrice: 1700 },
-            { name: { en: 'Advanced BI & Dashboard Dev', zh: '高阶分析洞察与大屏驾驶舱开发' }, desc: { en: 'Management cockpit, OLAP statistical analysis, advanced charts.', zh: '定制化高管业务驾驶舱绘制、复杂 OLAP 联机统计分析计算、大屏组件高级图表联动交互开发。' }, listPrice: 2000, partnerPrice: 1700 },
+            { name: { en: 'On-site Product Implementation', zh: '混合云环境现场实施' }, desc: { en: 'Hybrid cloud setup, HA cluster deployment validation.', zh: '混合云环境现场实施、高可用架构（HA）部署验证。' }, listPrice: 2000, partnerPrice: 1700 },
+            { name: { en: 'Data Integration & Pipeline Dev', zh: '异构数据源集成与汇集流开发' }, desc: { en: 'Kafka streaming extraction, incremental probe development.', zh: '异构数据源汇集开发，Kafka流式数据抽取、增量探测开发。' }, listPrice: 2000, partnerPrice: 1700 },
+            { name: { en: 'Data Warehouse & Semantic Modeling', zh: '数仓建模与语义模型设计' }, desc: { en: 'Multi-dimensional data models, E-R modeling, performance tuning.', zh: '主题域分析，多维数据模型与E-R模型设计，性能调优。' }, listPrice: 2000, partnerPrice: 1700 },
+            { name: { en: 'AI / LLM Custom Model Engineering', zh: 'AI / LLM 核心算法定制工程' }, desc: { en: 'Private Fine-tuning of open-source foundational models (e.g., DeepSeek-R1) and prompt engineering.', zh: '基于开源基座模型（如DeepSeek-R1）的私有化微调（Fine-tuning）及提示词工程。' }, listPrice: 2500, partnerPrice: 2125 },
         ];
 
         // --- GLOBAL STATE ---
         let currentLang = 'en';
 
         // --- FORMAT CURRENCY HELPER ---
-        const formatCurrency = (amount) => {
-            return new Intl.NumberFormat('en-SG', {
+        const formatCurrency = (amount, isNodeBased) => {
+            const formatted = new Intl.NumberFormat('en-SG', {
                 style: 'currency',
                 currency: 'SGD',
                 minimumFractionDigits: 0,
             }).format(amount);
+            
+            if (isNodeBased) {
+                return currentLang === 'en' ? `${formatted} / node` : `${formatted} / 节点`;
+            }
+            return formatted;
         };
 
         // --- DOM ELEMENTS ---
@@ -363,8 +362,7 @@
             const term = searchTerm.toLowerCase();
             const filtered = softwareProducts.filter(p => 
                 p.name[currentLang].toLowerCase().includes(term) || 
-                p.id.toLowerCase().includes(term) ||
-                p.category[currentLang].toLowerCase().includes(term)
+                p.id.toLowerCase().includes(term)
             );
 
             if (filtered.length === 0) {
@@ -373,24 +371,24 @@
             }
 
             softwareTbody.innerHTML = filtered.map(product => `
-                <tr class="hover:bg-slate-50 transition-colors">
+                <tr class="hover:bg-indigo-50/30 transition-colors">
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">${product.id}</td>
                     <td class="px-6 py-4">
                         <div class="text-sm font-bold text-slate-900">${product.name[currentLang]}</div>
-                        <div class="text-xs text-slate-500 mt-1 flex items-center gap-1">
-                            <i data-lucide="server" class="w-3 h-3"></i> ${product.category[currentLang]}
+                        <div class="text-xs text-indigo-500 mt-1 flex items-center gap-1 font-medium">
+                            <i data-lucide="refresh-cw" class="w-3 h-3"></i> SaaS ARR
                         </div>
                     </td>
-                    <td class="px-6 py-4 text-sm text-slate-600">
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800">
+                    <td class="px-6 py-4 text-sm text-indigo-800 bg-indigo-50/20">
+                        <span class="block text-xs font-semibold leading-relaxed">
                             ${product.limits[currentLang]}
                         </span>
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500 text-right line-through decoration-slate-300">
-                        ${formatCurrency(product.listPrice)}
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500 text-right">
+                        ${formatCurrency(product.listPrice, product.nodeBased)} <span class="text-xs text-slate-400">/ yr</span>
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-cyan-700 text-right bg-cyan-50/30">
-                        ${formatCurrency(product.partnerPrice)}
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-slate-900 text-right bg-slate-50">
+                        ${formatCurrency(product.partnerPrice, product.nodeBased)} <span class="text-xs text-slate-500">/ yr</span>
                     </td>
                 </tr>
             `).join('');
@@ -401,18 +399,29 @@
 
         // --- RENDER SERVICES TABLE ---
         const renderServices = () => {
-            servicesTbody.innerHTML = professionalServices.map(service => `
-                <tr class="hover:bg-slate-50 transition-colors">
-                    <td class="px-6 py-4 text-sm font-bold text-slate-900">${service.name[currentLang]}</td>
+            servicesTbody.innerHTML = professionalServices.map(service => {
+                // Highlight the premium AI model engineering service
+                const isPremium = service.listPrice >= 2500;
+                const rowClass = isPremium ? "bg-amber-50/30 hover:bg-amber-50 transition-colors" : "hover:bg-slate-50 transition-colors";
+                const nameClass = isPremium ? "text-amber-700 flex items-center gap-2" : "text-slate-900";
+                const iconHtml = isPremium ? `<i data-lucide="cpu" class="w-4 h-4 text-amber-500"></i>` : '';
+
+                return `
+                <tr class="${rowClass}">
+                    <td class="px-6 py-4 text-sm font-bold ${nameClass}">
+                        ${iconHtml} ${service.name[currentLang]}
+                    </td>
                     <td class="px-6 py-4 text-sm text-slate-600 leading-relaxed">${service.desc[currentLang]}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500 text-right">
-                        ${formatCurrency(service.listPrice)}
+                        ${formatCurrency(service.listPrice, false)}
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-cyan-700 text-right bg-cyan-50/30">
-                        ${formatCurrency(service.partnerPrice)}
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-slate-900 text-right bg-slate-50">
+                        ${formatCurrency(service.partnerPrice, false)}
                     </td>
                 </tr>
-            `).join('');
+            `}).join('');
+            
+            lucide.createIcons();
         };
 
         // --- TAB SWITCHING LOGIC ---
@@ -435,7 +444,7 @@
                 btnSoftware.className = "px-6 py-2.5 rounded-md text-sm font-semibold transition-all bg-white text-slate-900 shadow-sm ring-1 ring-slate-200 flex items-center gap-2";
                 secSoftware.classList.remove('hidden');
                 searchContainer.classList.remove('hidden');
-                searchInput.value = ''; // Clear search on tab switch
+                searchInput.value = ''; // Clear search
                 renderSoftware();
             } else {
                 btnServices.className = "px-6 py-2.5 rounded-md text-sm font-semibold transition-all bg-white text-slate-900 shadow-sm ring-1 ring-slate-200 flex items-center gap-2";
@@ -451,7 +460,7 @@
         // --- INITIALIZE APP ---
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
-            // Initial render based on default language (English)
+            // Initial render
             renderSoftware();
             renderServices();
         });
