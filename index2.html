@@ -1,0 +1,1458 @@
+ <!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <!-- GEO & SEO Optimized Metadata (Year 2026 Recency Signal) -->
+    <title>DCDeepTech 2026: Next-Gen AI Infrastructure, Liquid Cooling & Pre-REIT Ecosystem</title>
+    <meta name="description" content="Discover DCDeepTech's 2026 AI infrastructure solutions. We convert energy to compute via 48V OCP liquid cooling, route models via OpenAI-compatible API, and securitize assets with Pre-REIT structures.">
+    
+    <!-- AI Crawler Permissions & Open Graph -->
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    <meta property="og:title" content="DCDeepTech: AI Infrastructure & Financial Engineering">
+    <meta property="og:description" content="Global leader in 48V liquid-cooled AI clusters, LLM aggregation routing, and Pre-REIT asset securitization.">
+    <meta property="og:type" content="website">
+    <link rel="canonical" href="https://dcdeeptech.com/">
+    
+    <!-- LLMs.txt integration for AI Chatbot standard parsing -->
+    <link rel="alternate" type="text/plain" title="LLMs.txt" href="/llms.txt">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- Babel for in-browser JSX compilation -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- Deep Tech JSON-LD Schema Matrix for Generative Engine Optimization -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://dcdeeptech.com/#organization",
+          "name": "DCDeepTech",
+          "url": "https://dcdeeptech.com/",
+          "logo": "https://raw.githubusercontent.com/luoxisg/dcdeeptech/main/image/DCdeeptech_logo-removebg-preview.png",
+          "sameAs": [
+            "https://www.linkedin.com/company/dcdeeptech"
+          ],
+          "knowsAbout": [
+            { "@type": "Thing", "name": "Large Language Model", "sameAs": "https://www.wikidata.org/wiki/Q115082823" },
+            { "@type": "Thing", "name": "Liquid Cooling", "sameAs": "https://www.wikidata.org/wiki/Q15290" },
+            { "@type": "Thing", "name": "Asset-backed security", "sameAs": "https://www.wikidata.org/wiki/Q741006" }
+          ]
+        },
+        {
+          "@type": "Service",
+          "@id": "https://dcdeeptech.com/#layer1-service",
+          "name": "48V OCP Liquid Cooling AI Infrastructure",
+          "provider": {"@id": "https://dcdeeptech.com/#organization"},
+          "serviceType": "AI Data Center Infrastructure",
+          "description": "Extreme efficiency energy-to-compute conversion using 48V OCP power architecture and liquid-cooled GPU clusters."
+        },
+        {
+          "@type": "Service",
+          "@id": "https://dcdeeptech.com/#layer2-service",
+          "name": "OpenAI-Compatible LLM Routing Gateway",
+          "provider": {"@id": "https://dcdeeptech.com/#organization"},
+          "serviceType": "API Aggregation",
+          "description": "Intelligent model routing engine providing unified API access to multiple LLM/VLMs."
+        },
+        {
+          "@type": "FAQPage",
+          "@id": "https://dcdeeptech.com/#faq",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "What is the core architecture of DCDeepTech?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "DCDeepTech utilizes a three-layer business model: Layer 1 for physical 48V liquid-cooled AI infrastructure, Layer 2 for OpenAI-compatible LLM aggregation routing, and Layer 3 for financial asset securitization via Pre-REIT structures."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How does DCDeepTech optimize AI energy consumption?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "We deploy cutting-edge Model Predictive Control (MPC) algorithms alongside digital thermal twins to dynamically optimize cooling and minimize energy loss, achieving extreme physical limits."
+              }
+            }
+          ]
+        },
+        {
+          "@type": "SoftwareSourceCode",
+          "@id": "https://dcdeeptech.com/#api-code",
+          "name": "OpenAI Compatible API Routing Code",
+          "programmingLanguage": "JavaScript",
+          "targetProduct": {"@type": "SoftwareApplication", "name": "OpenAI Client Implementation"}
+        }
+      ]
+    }
+    </script>
+
+    <style>
+        /* Custom Animations */
+        @keyframes flowDash {
+            to { stroke-dashoffset: -40; }
+        }
+        @keyframes coolFluid {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(34, 211, 238, 0.7); }
+            70% { transform: scale(1.1); box-shadow: 0 0 0 15px rgba(34, 211, 238, 0); }
+            100% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(34, 211, 238, 0); }
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        @keyframes scanline {
+            0% { transform: translateY(-100%); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateY(500%); opacity: 0; }
+        }
+        @keyframes dash-flow {
+            to { stroke-dashoffset: -20; }
+        }
+        .animate-flow { animation: flowDash 1s linear infinite; }
+        .animate-float { animation: float 6s ease-in-out infinite; }
+        .animate-dash-flow { stroke-dasharray: 10; animation: dash-flow 1s linear infinite; }
+        .animate-scanline { animation: scanline 4s linear infinite; }
+        .animate-pulse-slow { animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        .isometric-container {
+            transform: rotateX(60deg) rotateZ(-45deg);
+            transform-style: preserve-3d;
+        }
+        .server-blade {
+            transform-style: preserve-3d;
+            transition: all 0.3s ease;
+        }
+        .server-blade:hover {
+            transform: translateZ(10px);
+            box-shadow: 0 0 20px rgba(6,182,212,0.5);
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+        
+        /* Hide scrollbar for clean horizontal scrolling */
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+
+    <!-- Google Analytics 4 (GA4) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-NVZBQ5RFC7"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-NVZBQ5RFC7');
+    </script>
+
+    <!-- Microsoft Clarity -->
+    <script type="text/javascript">
+      (function(c,l,a,r,i,t,y){
+          c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+          t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/" + i;
+          y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+      })(window, document, "clarity", "script", "CLARITY_PROJECT_ID");
+    </script>
+
+    <!-- Optional: Track contact clicks -->
+    <script>
+      document.addEventListener('click', function(e) {
+        const link = e.target.closest('a');
+        if (!link) return;
+
+        const href = link.getAttribute('href') || '';
+
+        // Ensure gtag is defined before pushing events
+        if (typeof gtag !== 'function') return;
+
+        if (href.startsWith('mailto:')) {
+          gtag('event', 'contact_click', {
+            contact_type: 'email',
+            contact_value: href
+          });
+        }
+
+        if (href.includes('wa.me') || href.includes('whatsapp.com')) {
+          gtag('event', 'contact_click', {
+            contact_type: 'whatsapp',
+            contact_value: href
+          });
+        }
+
+        if (href.includes('opencomputeproject.org') || href.includes('opencompute.org')) {
+          gtag('event', 'outbound_click', {
+            link_type: 'partner_link',
+            destination: href
+          });
+        }
+
+        if (href.includes('openrouter.ai')) {
+          gtag('event', 'outbound_click', {
+            link_type: 'partner_link',
+            destination: href
+          });
+        }
+
+        if (href.includes('nvidia.com')) {
+          gtag('event', 'outbound_click', {
+            link_type: 'partner_link',
+            destination: href
+          });
+        }
+      });
+    </script>
+</head>
+<body class="bg-slate-950 text-slate-300 font-sans selection:bg-cyan-500/30 overflow-x-hidden">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useMemo } = React;
+
+        // --- i18n Dictionary ---
+        const translations = {
+            zh: {
+                nav_overview: '全景概览',
+                nav_layer1: 'Layer 1: 物理基建',
+                nav_layer2: 'Layer 2: 算力聚合',
+                nav_layer3: 'Layer 3: 金融资产',
+                nav_layer4: 'Layer 4: 生态与信任',
+                nav_about: '关于 DCDeepTech',
+                
+                sys_status: '系统状态',
+                sys_running: '运行中',
+                sys_load: '当前负载',
+                
+                title_overview: '四层业务模型系统架构',
+                desc_overview: '打通从底层物理设施到顶层资本市场的完整价值链，重塑AI时代的生产力流转范式。',
+                
+                l1_title: 'Layer 1 — 物理基建 (Physical Infrastructure)',
+                l1_desc: '从能源到算力就绪 — 深度对齐 OCP 标准的 AI 算力电源、散热与机架架构。',
+                l2_title: 'Layer 2 — 算力聚合 (Compute Aggregation)',
+                l2_desc: '从算力到 API — 编排模型、网关与跨境推理，构建开箱即用的 AI 服务。',
+                l3_title: 'Layer 3 — 金融资产 (Financial Assets)',
+                l3_desc: '从收益到资产 — 将 AI 基础设施结构化为可扩展、可融资的 Pre-REIT 商业机遇。',
+                l4_title: 'Layer 4 — 生态与信任 (Ecosystem & Trust)',
+                l4_desc: '从架构到落地 — 拥抱开放标准、开源验证与扩展执行能力的合作伙伴生态系统。',
+                
+                github_title: '开源网关 (Open Source Gateway)',
+                github_desc: '探索 DCDeepTech 开源的中新（SG-CN）AI 网关 PoC — 一个兼容 OpenAI 的开发者入口，用于跨境推理、多模态路由与基于 API 的 AI 部署。',
+
+                energy_label: '能源 1MW+',
+                api_revenue_label: 'API 调用收益',
+                financial_asset_label: '金融资产',
+                
+                l1_header: 'Layer 1 — Physical Infrastructure',
+                l1_header_desc: '基于WebGL/3D交互式数字孪生，极致优化能源向算力的转化。',
+                goodput: '当前系统有效吞吐量 (Goodput)',
+                
+                mpc_core_title: 'MPC 动态控制核心',
+                mpc_core_desc: '基于神经网络的液冷预测与全局能耗调优模型',
+                pred_horizon: '预测视界',
+                coolant_flow: '冷却液流速',
+                delta_t: '进回水温差',
+                chip_temp: '芯片温度',
+
+                ocp_monitor: '48V OCP 母线监控',
+                voltage: '实时电压',
+                rack_density: '机架功率密度',
+                pdu_msg: '智能 PDU API 已连接. 预防高密度谐波失真.',
+                esg_matrix: '绿色能源溯源矩阵 (ESG)',
+                pue_metric: 'PUE 指标',
+                renewable_match: '可再生能源匹配',
+                mpc_title: 'DCDeepTech MPC (模型预测控制)',
+                mpc_desc: '利用前沿的模型预测控制（MPC）算法，实现 AI 集群液冷与能耗的全局动态优化。',
+                
+                l2_header: 'Layer 2 — Compute Aggregation',
+                l2_header_desc: '打破底层异构算力壁垒，提供全面兼容 OpenAI 格式的统一 API 路由网关。',
+                gen_api_key: '生成 API 密钥',
+                quick_start: '快速接入 (OpenAI 兼容)',
+                telemetry_title: '全景调用监控面板 (QPS & Latency)',
+                ttft: '首字延迟 (TTFT)',
+                success_rate: '请求成功率',
+                billing_title: '一维化成本与账单中心',
+                billing_desc: '微计费系统精确拆解各个模型的费用消耗情况，支持多租户隔离与实时预算告警。',
+                monthly_cost: '本月累计消耗 (按调用付费)',
+                
+                l3_header: 'Layer 3 — Financial Assets',
+                l3_header_desc: '将固定的物理资产与高频API现金流剥离，通过Pre-REIT与ABS结构实现资产证券化。',
+                inst_access: '机构访问权限: 开启',
+                capex: '总资本支出 (Capex)',
+                arr: '年化经常性收入 (ARR)',
+                roi: '投资回报率 (ROI)',
+                wacc: '加权平均资本成本 (WACC)',
+                cap_stack_title: '资本拓扑结构全息沙盘',
+                pre_reit_view: 'Pre-REIT 结构透视',
+                senior_debt: '优先债务 (Senior Debt)',
+                senior_debt_desc: 'AAA 级 ABS 债券',
+                mezzanine: '夹层资本 (Mezzanine)',
+                mezzanine_desc: '交叉补贴建设期资产',
+                equity: '普通股权 (Equity)',
+                equity_desc: '最高风险/收益',
+                audit_note: '* 审计人员可点击任意证券化子包，向下打穿透视至 Layer 1 底层节点与 Layer 2 API 聚合流水的真实数据。',
+                vibe_coding_title: 'AI 驱动的氛围编码 (Vibe Coding)',
+                ai_greet: '您好，我是金融洞察分析大模型。您可以向我询问关于 Pre-REIT 资产包的动态现金流折现（DCF）模拟，或进行自然语言指令的图表生成。',
+                user_prompt: '对比一下基于传统风冷的数据中心与采用 48V 液冷架构的集群，在作为 ABS 资产抵押物时，不同硬件折旧率对估值底线的影响。',
+                ai_loading: '正在调用底层精算引擎与蒙特卡洛模拟...',
+                ai_conclusion: '分析表明：48V 液冷集群由于热损耗降低，实际有效服役周期延长 2.5 年，在 ABS 结构中能提供额外 18% 的估值溢价空间。',
+                chat_placeholder: '输入非结构化财务查询指令...',
+                
+                l4_header: 'Layer 4 — Ecosystem & Trust',
+
+                about_title: '公司介绍',
+                about_subtitle: '融合前沿硬科技与深层金融工程的复合型生态系统',
+                about_p1: '在全球数字化转型与人工智能算力需求呈指数级增长的历史性交汇点上，我们正见证着一场前所未有的基础设施超级周期。在如此庞大的资本与能源吞吐量面前，传统的云计算单体商业模式已显露出严重的流动性与操作性瓶颈。',
+                about_p2: 'DCDeepTech 平台正是在这一宏观背景下应运而生。作为一个融合了前沿硬科技与深层金融工程的复合型生态系统，我们旨在通过打通从底层物理设施到顶层资本市场的完整价值链，重塑人工智能时代的生产力流转范式。',
+                about_p3: '我们不仅仅解决物理机房的散热与供电极限，更通过智能化模型聚合引擎和前瞻性的金融资产证券化（Pre-REIT），建立起物理基础设施、全球算力调度与金融资本运作之间的全新桥梁。',
+                
+                ocp_banner_title: 'OCP 认证与全球营销',
+                ocp_banner_desc: '探索 DCDeepTech 基于 Open Compute Project 标准的认证硬件生态与全球市场布局。',
+                
+                arch_title: '跨境推理请求路由架构',
+                arch_global_clients: '全球客户端 (Global Clients)',
+                arch_sg_gateway: '新加坡 API 网关',
+                arch_cross_border: '跨境推理专用通道',
+                arch_china_gpu: '中国 GPU 算力集群',
+
+                eco_title: '开放生态与技术参考',
+                eco_subtitle: '基于开放标准的深度对齐与集成',
+                contact_title: 'Contact DCDeepTech',
+                contact_subtitle: 'Ready to discuss your AI infrastructure or application project?'
+            },
+            en: {
+                nav_overview: 'Global Overview',
+                nav_layer1: 'Layer 1: Physical Infra',
+                nav_layer2: 'Layer 2: Compute Aggregation',
+                nav_layer3: 'Layer 3: Financial Assets',
+                nav_layer4: 'Layer 4: Ecosystem & Trust',
+                nav_about: 'About DCDeepTech',
+                
+                sys_status: 'System Status',
+                sys_running: 'Operational',
+                sys_load: 'Current Load',
+                
+                title_overview: 'Four-Layer Business Architecture',
+                desc_overview: 'Bridging the value chain from physical infra to capital markets, reshaping the AI productivity paradigm.',
+                
+                l1_title: 'Layer 1 — Physical Infrastructure',
+                l1_desc: 'From energy to compute readiness — OCP-aligned power, cooling, and rack architecture for AI infrastructure.',
+                l2_title: 'Layer 2 — Compute Aggregation',
+                l2_desc: 'From compute to API — orchestrating models, gateways, and cross-border inference into usable AI services.',
+                l3_title: 'Layer 3 — Financial Assets',
+                l3_desc: 'From revenue to assets — structuring AI infrastructure into scalable, financeable, pre-REIT opportunities.',
+                l4_title: 'Layer 4 — Ecosystem & Trust',
+                l4_desc: 'From architecture to adoption — open standards, open-source proof, and partner ecosystems that scale execution.',
+                
+                github_title: 'Open Source Gateway',
+                github_desc: 'Explore DCDeepTech’s open-source Singapore–China AI Gateway PoC — an OpenAI-compatible developer entry point for cross-border inference, multimodal routing, and API-based AI deployment.',
+
+                energy_label: 'Energy 1MW+',
+                api_revenue_label: 'API Revenue',
+                financial_asset_label: 'Financial Assets',
+                
+                l1_header: 'Layer 1 — Physical Infrastructure',
+                l1_header_desc: 'WebGL/3D digital twins to optimize energy-to-compute conversion at physical limits.',
+                goodput: 'Current System Goodput',
+                
+                mpc_core_title: 'MPC Dynamic Control Core',
+                mpc_core_desc: 'Neural network-based predictive liquid cooling & global energy optimization model',
+                pred_horizon: 'Predictive Horizon',
+                coolant_flow: 'Coolant Flow',
+                delta_t: 'Delta-T',
+                chip_temp: 'Chip Temp',
+
+                ocp_monitor: '48V OCP Busbar Telemetry',
+                voltage: 'Live Voltage',
+                rack_density: 'Rack Power Density',
+                pdu_msg: 'Smart PDU API Connected. Harmonic distortion prevented.',
+                esg_matrix: 'Green Energy Traceability (ESG)',
+                pue_metric: 'PUE Metric',
+                renewable_match: 'Renewables Match',
+                mpc_title: 'DCDeepTech MPC (Model Predictive Control)',
+                mpc_desc: 'Utilizing cutting-edge Model Predictive Control (MPC) algorithms for global dynamic optimization of liquid cooling and energy consumption.',
+                
+                l2_header: 'Layer 2 — Compute Aggregation',
+                l2_header_desc: 'Shattering heterogeneous compute silos with a unified, OpenAI-compatible API routing gateway.',
+                gen_api_key: 'Generate API Key',
+                quick_start: 'Quick Start (OpenAI Compatible)',
+                telemetry_title: 'Telemetry Dashboard (QPS & Latency)',
+                ttft: 'Time to First Token (TTFT)',
+                success_rate: 'Success Rate',
+                billing_title: 'Unified Billing Center',
+                billing_desc: 'Micro-billing system dissecting model costs with multi-tenant isolation and budget alerts.',
+                monthly_cost: 'MTD Consumption (Pay-as-you-go)',
+                
+                l3_header: 'Layer 3 — Financial Assets',
+                l3_header_desc: 'Decoupling fixed physical assets from high-frequency API cash flows via Pre-REIT and ABS structures.',
+                inst_access: 'Institutional Access: Granted',
+                capex: 'Total Capex',
+                arr: 'Annual Recurring Rev (ARR)',
+                roi: 'Return on Investment (ROI)',
+                wacc: 'Weighted Avg Cost of Capital',
+                cap_stack_title: 'Capital Stack Topology',
+                pre_reit_view: 'Pre-REIT Perspective',
+                senior_debt: 'Senior Debt',
+                senior_debt_desc: 'AAA Rated ABS Bonds',
+                mezzanine: 'Mezzanine Capital',
+                mezzanine_desc: 'Cross-subsidizing Greenfield',
+                equity: 'Common Equity',
+                equity_desc: 'Highest Risk/Reward',
+                audit_note: '* Auditors can click any tranche to drill down to Layer 1 nodes and Layer 2 API ledgers.',
+                vibe_coding_title: 'AI-Driven Vibe Coding',
+                ai_greet: 'Hello, I am the Financial Insight LLM. You can ask me about dynamic DCF simulations for the Pre-REIT portfolio, or generate charts via natural language.',
+                user_prompt: 'Compare traditional air-cooled datacenters vs 48V liquid-cooled clusters as ABS collateral. How do different hardware depreciation rates impact the valuation floor?',
+                ai_loading: 'Invoking actuarial engine & Monte Carlo simulations...',
+                ai_conclusion: 'Analysis indicates: 48V liquid clusters extend viable lifespan by 2.5 yrs due to thermal efficiency, providing an 18% valuation premium buffer in ABS structures.',
+                chat_placeholder: 'Enter unstructured financial query...',
+                
+                l4_header: 'Layer 4 — Ecosystem & Trust',
+
+                about_title: 'Company Introduction',
+                about_subtitle: 'A composite ecosystem fusing frontier hard-tech with deep financial engineering',
+                about_p1: 'At the historic intersection of global digital transformation and the exponential growth in AI computing demand, we are witnessing an unprecedented infrastructure supercycle. Traditional cloud computing models are revealing severe liquidity and operational bottlenecks in the face of this massive capital and energy throughput.',
+                about_p2: 'The DCDeepTech platform was born against this macroeconomic backdrop. As a composite ecosystem fusing frontier hard-tech with deep financial engineering, we aim to reshape the productivity flow paradigm of the AI era by bridging the complete value chain from underlying physical facilities to top-tier capital markets.',
+                about_p3: 'We solve not only the cooling and power limits under extreme power density but also establish a novel bridge between physical infrastructure, global compute routing, and financial capital operations through intelligent model aggregation engines and forward-looking asset securitization (Pre-REIT).',
+                
+                ocp_banner_title: 'OCP Certification & Global Marketing',
+                ocp_banner_desc: 'Explore DCDeepTech’s OCP-certified hardware ecosystem and global market footprint.',
+                
+                arch_title: 'Cross-border Inference Routing Architecture',
+                arch_global_clients: 'Global Clients',
+                arch_sg_gateway: 'Singapore API Gateway',
+                arch_cross_border: 'Cross-border Inference Channel',
+                arch_china_gpu: 'China GPU Cluster',
+
+                eco_title: 'Open Ecosystem & Technical Reference',
+                eco_subtitle: 'Deep alignment and integration based on open standards',
+                contact_title: 'Contact DCDeepTech',
+                contact_subtitle: 'Ready to discuss your AI infrastructure or application project?'
+            }
+        };
+
+        // --- Animated Visualization Components ---
+
+        const SankeyDiagram = () => (
+            <svg width="100%" height="100%" viewBox="0 0 300 120" preserveAspectRatio="none" aria-label="Energy Flow Sankey Diagram">
+                <defs>
+                    <linearGradient id="gradGrid" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.8" />
+                        <stop offset="100%" stopColor="#10b981" stopOpacity="0.8" />
+                    </linearGradient>
+                    <linearGradient id="gradSolar" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stopColor="#fbbf24" stopOpacity="0.8" />
+                        <stop offset="100%" stopColor="#10b981" stopOpacity="0.8" />
+                    </linearGradient>
+                </defs>
+                <path d="M 10 30 C 100 30, 100 60, 150 60" fill="none" stroke="#1e293b" strokeWidth="15" strokeLinecap="round" />
+                <path d="M 10 90 C 100 90, 100 60, 150 60" fill="none" stroke="#1e293b" strokeWidth="15" strokeLinecap="round" />
+                <path d="M 150 60 C 200 60, 200 40, 280 40" fill="none" stroke="#1e293b" strokeWidth="20" strokeLinecap="round" />
+                <path d="M 150 60 C 200 60, 200 100, 280 100" fill="none" stroke="#1e293b" strokeWidth="8" strokeLinecap="round" />
+
+                <path d="M 10 30 C 100 30, 100 60, 150 60" fill="none" stroke="url(#gradGrid)" strokeWidth="15" strokeLinecap="round" strokeDasharray="10 5" className="animate-flow" />
+                <path d="M 10 90 C 100 90, 100 60, 150 60" fill="none" stroke="url(#gradSolar)" strokeWidth="15" strokeLinecap="round" strokeDasharray="10 5" className="animate-flow" />
+                <path d="M 150 60 C 200 60, 200 40, 280 40" fill="none" stroke="#10b981" strokeWidth="20" strokeLinecap="round" strokeDasharray="10 5" className="animate-flow" />
+                <path d="M 150 60 C 200 60, 200 100, 280 100" fill="none" stroke="#3b82f6" strokeWidth="8" strokeLinecap="round" strokeDasharray="10 5" className="animate-flow" />
+
+                <text x="5" y="25" fill="#94a3b8" fontSize="10">Grid (40%)</text>
+                <text x="5" y="85" fill="#94a3b8" fontSize="10">Wind/Solar (60%)</text>
+                <text x="120" y="55" fill="#fff" fontSize="10" fontWeight="bold">DC PDU</text>
+                <text x="235" y="30" fill="#94a3b8" fontSize="10">IT Load (85%)</text>
+                <text x="235" y="115" fill="#94a3b8" fontSize="10">Cooling (15%)</text>
+            </svg>
+        );
+
+        const MPCTwinAnimation = ({ t }) => {
+            return (
+                <div className="w-full h-full relative flex items-center justify-center overflow-hidden bg-slate-950">
+                    <div className="absolute inset-0 bg-[linear-gradient(to_right,#0ea5e911_1px,transparent_1px),linear-gradient(to_bottom,#0ea5e911_1px,transparent_1px)] bg-[size:2rem_2rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] animate-[pulse_4s_ease-in-out_infinite]"></div>
+
+                    <div className="relative w-72 h-72 flex items-center justify-center">
+                        <div className="absolute inset-0 bg-cyan-500/20 blur-[60px] rounded-full animate-pulse-slow"></div>
+
+                        <svg viewBox="0 0 200 200" className="w-full h-full relative z-10 animate-float" aria-label="MPC Core Visual">
+                            <circle cx="100" cy="100" r="90" fill="none" stroke="#0ea5e9" strokeWidth="1" strokeDasharray="4 8" className="animate-[spin_20s_linear_infinite] origin-center" />
+                            <circle cx="100" cy="100" r="80" fill="none" stroke="#3b82f6" strokeWidth="2" strokeDasharray="20 10 5 10" className="animate-[spin_15s_linear_infinite_reverse] origin-center opacity-70" />
+
+                            <path d="M10,100 C40,100 60,60 90,80" fill="none" stroke="#22d3ee" strokeWidth="4" className="opacity-40" />
+                            <path d="M10,100 C40,100 60,60 90,80" fill="none" stroke="#fff" strokeWidth="2" className="animate-dash-flow drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]" />
+
+                            <path d="M110,120 C140,140 160,100 190,100" fill="none" stroke="#f43f5e" strokeWidth="4" className="opacity-40" />
+                            <path d="M110,120 C140,140 160,100 190,100" fill="none" stroke="#fff" strokeWidth="2" className="animate-dash-flow drop-shadow-[0_0_8px_rgba(244,63,94,0.8)]" />
+
+                            <polygon points="100,50 143.3,75 143.3,125 100,150 56.7,125 56.7,75" fill="#0f172a" stroke="#0ea5e9" strokeWidth="2" className="drop-shadow-[0_0_20px_rgba(14,165,233,0.6)]" />
+                            <polygon points="100,60 134.6,80 134.6,120 100,140 65.4,120 65.4,80" fill="url(#coreGrad)" />
+
+                            <circle cx="100" cy="100" r="15" fill="#fff" className="animate-[pulse-ring_2s_infinite]" />
+                            <circle cx="100" cy="100" r="6" fill="#0ea5e9" />
+
+                            <line x1="100" y1="100" x2="100" y2="60" stroke="#fff" strokeWidth="1" className="opacity-50" />
+                            <line x1="100" y1="100" x2="134.6" y2="120" stroke="#fff" strokeWidth="1" className="opacity-50" />
+                            <line x1="100" y1="100" x2="65.4" y2="120" stroke="#fff" strokeWidth="1" className="opacity-50" />
+
+                            <defs>
+                                <linearGradient id="coreGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stopColor="#0ea5e9" stopOpacity="0.8" />
+                                    <stop offset="100%" stopColor="#3b82f6" stopOpacity="0.2" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+
+                    <div className="absolute top-8 left-8 border border-cyan-500/30 bg-slate-900/80 backdrop-blur p-3 rounded-lg text-xs animate-float shadow-[0_0_15px_rgba(6,182,212,0.15)] z-20" style={{ animationDelay: '0.5s' }}>
+                        <div className="text-cyan-400 font-mono mb-2 flex items-center gap-2">
+                            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+                            MPC.OPTIMIZE()
+                        </div>
+                        <div className="text-slate-400 mb-1">{t('pred_horizon')}: <span className="text-white font-mono">15m</span></div>
+                        <div className="text-slate-400">{t('coolant_flow')}: <span className="text-emerald-400 font-mono">120 L/min</span></div>
+                    </div>
+
+                    <div className="absolute bottom-8 right-8 border border-rose-500/30 bg-slate-900/80 backdrop-blur p-3 rounded-lg text-xs animate-float shadow-[0_0_15px_rgba(244,63,94,0.15)] z-20" style={{ animationDelay: '1s' }}>
+                        <div className="text-rose-400 font-mono mb-2 flex items-center gap-2">
+                            <span className="w-2 h-2 rounded-full bg-rose-400 animate-pulse"></span>
+                            THERMAL.LOAD
+                        </div>
+                        <div className="text-slate-400 mb-1">{t('delta_t')}: <span className="text-white font-mono">12.4°C</span></div>
+                        <div className="text-slate-400">{t('chip_temp')}: <span className="text-amber-400 font-mono">72°C</span></div>
+                    </div>
+
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-cyan-500/20 to-transparent w-full h-[20%] animate-scanline pointer-events-none z-30"></div>
+                </div>
+            );
+        };
+
+        const PhdValueChainAnimation = ({ t }) => {
+            return (
+                <section className="mt-8 bg-slate-900 border border-slate-800 rounded-xl relative overflow-hidden shadow-[0_0_30px_rgba(0,0,0,0.5)] w-full">
+                    <div className="overflow-x-auto w-full h-[350px] flex items-center justify-start hide-scrollbar">
+                        <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:20px_20px] opacity-30 min-w-[1000px]"></div>
+
+                        <svg viewBox="0 0 1000 300" className="h-full min-w-[1000px] max-w-none relative z-10" aria-label="Value Chain Visualization">
+                            <defs>
+                                <linearGradient id="lineGrad1" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" stopColor="#06b6d4" stopOpacity="0.2"/>
+                                    <stop offset="50%" stopColor="#3b82f6" stopOpacity="1"/>
+                                    <stop offset="100%" stopColor="#3b82f6" stopOpacity="0.2"/>
+                                </linearGradient>
+                                <linearGradient id="lineGrad2" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.2"/>
+                                    <stop offset="50%" stopColor="#a855f7" stopOpacity="1"/>
+                                    <stop offset="100%" stopColor="#a855f7" stopOpacity="0.2"/>
+                                </linearGradient>
+                                <filter id="neonGlow" x="-50%" y="-50%" width="200%" height="200%">
+                                    <feGaussianBlur stdDeviation="4" result="blur" />
+                                    <feMerge>
+                                        <feMergeNode in="blur" />
+                                        <feMergeNode in="SourceGraphic" />
+                                    </feMerge>
+                                </filter>
+                            </defs>
+
+                            {/* Energy to API */}
+                            <g className="connections">
+                                <path d="M 150 150 L 500 150" stroke="url(#lineGrad1)" strokeWidth="4" fill="none" opacity="0.6"/>
+                                <path d="M 150 150 L 500 150" stroke="#fff" strokeWidth="1" fill="none" strokeDasharray="5 15" className="animate-dash-flow" opacity="0.5"/>
+                                <path d="M 150 150 C 250 80, 400 80, 500 150" stroke="url(#lineGrad1)" strokeWidth="1" fill="none" strokeDasharray="4 8" opacity="0.4"/>
+                                <path d="M 150 150 C 250 220, 400 220, 500 150" stroke="url(#lineGrad1)" strokeWidth="1" fill="none" strokeDasharray="2 6" opacity="0.4"/>
+
+                                <circle r="3" fill="#22d3ee" filter="url(#neonGlow)">
+                                    <animateMotion dur="2.5s" repeatCount="indefinite" path="M 150 150 C 250 80, 400 80, 500 150" />
+                                </circle>
+                                <circle r="4" fill="#3b82f6" filter="url(#neonGlow)">
+                                    <animateMotion dur="1.5s" repeatCount="indefinite" path="M 150 150 L 500 150" />
+                                </circle>
+                                <circle r="3" fill="#06b6d4" filter="url(#neonGlow)">
+                                    <animateMotion dur="3s" repeatCount="indefinite" path="M 150 150 C 250 220, 400 220, 500 150" />
+                                </circle>
+                            </g>
+
+                            {/* API to Finance */}
+                            <g className="connections">
+                                <path d="M 500 150 L 850 150" stroke="url(#lineGrad2)" strokeWidth="4" fill="none" opacity="0.6"/>
+                                <path d="M 500 150 L 850 150" stroke="#fff" strokeWidth="1" fill="none" strokeDasharray="5 15" className="animate-dash-flow" opacity="0.5"/>
+                                <path d="M 500 150 L 560 150 L 600 90 L 750 90 L 790 150 L 850 150" stroke="url(#lineGrad2)" strokeWidth="1" fill="none" strokeDasharray="4 4" opacity="0.4"/>
+                                <path d="M 500 150 L 560 150 L 600 210 L 750 210 L 790 150 L 850 150" stroke="url(#lineGrad2)" strokeWidth="1" fill="none" strokeDasharray="6 6" opacity="0.4"/>
+
+                                <circle r="4" fill="#8b5cf6" filter="url(#neonGlow)">
+                                    <animateMotion dur="2s" repeatCount="indefinite" path="M 500 150 L 850 150" />
+                                </circle>
+                                <circle r="3" fill="#a855f7" filter="url(#neonGlow)">
+                                    <animateMotion dur="2.8s" repeatCount="indefinite" path="M 500 150 L 560 150 L 600 90 L 750 90 L 790 150 L 850 150" />
+                                </circle>
+                                <circle r="3" fill="#6366f1" filter="url(#neonGlow)">
+                                    <animateMotion dur="3.2s" repeatCount="indefinite" path="M 500 150 L 560 150 L 600 210 L 750 210 L 790 150 L 850 150" />
+                                </circle>
+                            </g>
+
+                            {/* Energy Node */}
+                            <g transform="translate(150, 150)">
+                                <circle cx="0" cy="0" r="50" fill="#082f49" stroke="#06b6d4" strokeWidth="2" filter="url(#neonGlow)" opacity="0.8"/>
+                                <circle cx="0" cy="0" r="60" fill="none" stroke="#22d3ee" strokeWidth="1" strokeDasharray="5 10" className="animate-[spin_10s_linear_infinite] origin-center"/>
+                                <circle cx="0" cy="0" r="70" fill="none" stroke="#0891b2" strokeWidth="1" strokeDasharray="20 10 5 10" className="animate-[spin_15s_linear_infinite_reverse] origin-center"/>
+                                <foreignObject x="-24" y="-24" width="48" height="48">
+                                    <div className="w-full h-full flex items-center justify-center text-cyan-400">
+                                        <i className="ph-fill ph-lightning text-4xl animate-pulse"></i>
+                                    </div>
+                                </foreignObject>
+                                <text x="0" y="95" fill="#22d3ee" fontSize="16" fontWeight="bold" textAnchor="middle" filter="url(#neonGlow)">{t('energy_label')}</text>
+                                <g className="animate-float" style={{animationDelay: '0s'}}>
+                                    <rect x="-80" y="-100" width="60" height="20" rx="4" fill="#0f172a" stroke="#06b6d4" strokeWidth="1"/>
+                                    <text x="-50" y="-86" fill="#94a3b8" fontSize="10" textAnchor="middle">1.02 PUE</text>
+                                </g>
+                                <g className="animate-float" style={{animationDelay: '1s'}}>
+                                    <rect x="20" y="-100" width="60" height="20" rx="4" fill="#0f172a" stroke="#06b6d4" strokeWidth="1"/>
+                                    <text x="50" y="-86" fill="#94a3b8" fontSize="10" textAnchor="middle">48V OCP</text>
+                                </g>
+                            </g>
+
+                            {/* API Node */}
+                            <g transform="translate(500, 150)">
+                                <polygon points="0,-55 47.6,-27.5 47.6,27.5 0,55 -47.6,27.5 -47.6,-27.5" fill="#172554" stroke="#3b82f6" strokeWidth="2" filter="url(#neonGlow)"/>
+                                <circle cx="0" cy="0" r="70" fill="none" stroke="#60a5fa" strokeWidth="1" strokeDasharray="10 15 5 15" className="animate-[spin_12s_linear_infinite] origin-center"/>
+                                <circle cx="0" cy="0" r="85" fill="none" stroke="#1e3a8a" strokeWidth="2" strokeDasharray="40 20" className="animate-[spin_20s_linear_infinite_reverse] origin-center"/>
+                                <foreignObject x="-24" y="-24" width="48" height="48">
+                                    <div className="w-full h-full flex items-center justify-center text-blue-400">
+                                        <i className="ph-fill ph-code text-4xl"></i>
+                                    </div>
+                                </foreignObject>
+                                <text x="0" y="110" fill="#60a5fa" fontSize="16" fontWeight="bold" textAnchor="middle" filter="url(#neonGlow)">{t('api_revenue_label')}</text>
+                                <g className="animate-float" style={{animationDelay: '0.5s'}}>
+                                    <rect x="-40" y="-110" width="80" height="20" rx="4" fill="#0f172a" stroke="#3b82f6" strokeWidth="1"/>
+                                    <text x="0" y="-96" fill="#94a3b8" fontSize="10" textAnchor="middle">70B Params</text>
+                                </g>
+                                <g className="animate-float" style={{animationDelay: '1.5s'}}>
+                                    <rect x="40" y="-60" width="70" height="20" rx="4" fill="#0f172a" stroke="#3b82f6" strokeWidth="1"/>
+                                    <text x="75" y="-46" fill="#94a3b8" fontSize="10" textAnchor="middle">99.9% SLA</text>
+                                </g>
+                            </g>
+
+                            {/* Finance Node */}
+                            <g transform="translate(850, 150)">
+                                <circle cx="0" cy="0" r="50" fill="#2e1065" stroke="#a855f7" strokeWidth="2" filter="url(#neonGlow)"/>
+                                <circle cx="0" cy="0" r="65" fill="none" stroke="#c084fc" strokeWidth="1" strokeDasharray="8 8" className="animate-[spin_8s_linear_infinite] origin-center"/>
+                                <g>
+                                     <circle cx="0" cy="0" r="80" fill="none" stroke="#4c1d95" strokeWidth="3"/>
+                                     <path d="M 0 -80 A 80 80 0 0 1 80 0" fill="none" stroke="#a855f7" strokeWidth="4" strokeLinecap="round" className="origin-center animate-[spin_4s_ease-in-out_infinite_alternate]"/>
+                                </g>
+                                <foreignObject x="-24" y="-24" width="48" height="48">
+                                    <div className="w-full h-full flex items-center justify-center text-purple-400">
+                                        <i className="ph-fill ph-chart-bar text-4xl"></i>
+                                    </div>
+                                </foreignObject>
+                                <text x="0" y="110" fill="#c084fc" fontSize="16" fontWeight="bold" textAnchor="middle" filter="url(#neonGlow)">{t('financial_asset_label')}</text>
+                                <g className="animate-float" style={{animationDelay: '0.2s'}}>
+                                    <rect x="-80" y="-100" width="60" height="20" rx="4" fill="#0f172a" stroke="#a855f7" strokeWidth="1"/>
+                                    <text x="-50" y="-86" fill="#94a3b8" fontSize="10" textAnchor="middle">Pre-REIT</text>
+                                </g>
+                                <g className="animate-float" style={{animationDelay: '1.2s'}}>
+                                    <rect x="20" y="-100" width="60" height="20" rx="4" fill="#0f172a" stroke="#a855f7" strokeWidth="1"/>
+                                    <text x="50" y="-86" fill="#94a3b8" fontSize="10" textAnchor="middle">AAA ABS</text>
+                                </g>
+                            </g>
+                        </svg>
+                    </div>
+                </section>
+            );
+        };
+
+        const RealtimeChart = () => {
+            const [data, setData] = useState(Array.from({length: 40}, () => 50));
+            useEffect(() => {
+                const interval = setInterval(() => {
+                    setData(prev => {
+                        const newArr = [...prev.slice(1)];
+                        const noise = Math.random() * 20 - 10;
+                        const spike = Math.random() > 0.9 ? 40 : 0;
+                        let nextVal = newArr[newArr.length - 1] + noise + spike;
+                        nextVal = Math.max(10, Math.min(90, nextVal));
+                        newArr.push(nextVal);
+                        return newArr;
+                    });
+                }, 100);
+                return () => clearInterval(interval);
+            }, []);
+            const pathD = `M 0 100 ${data.map((val, i) => `L ${(i / 39) * 100} ${100 - val}`).join(' ')}`;
+            return (
+                <div className="w-full h-full relative">
+                    <svg className="w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 100">
+                        <path d={`${pathD} L 100 100 L 0 100 Z`} fill="url(#blueGradient)" opacity="0.2" />
+                        <path d={pathD} fill="none" stroke="#3b82f6" strokeWidth="2" strokeLinejoin="round" className="drop-shadow-[0_0_5px_#3b82f6]" />
+                        <defs>
+                            <linearGradient id="blueGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stopColor="#3b82f6" stopOpacity="1" />
+                                <stop offset="100%" stopColor="#3b82f6" stopOpacity="0" />
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    <div className="absolute w-2 h-2 bg-white rounded-full shadow-[0_0_10px_#fff]" style={{ right: '-4px', top: `calc(${100 - data[39]}% - 4px)` }}></div>
+                </div>
+            );
+        };
+
+        const FinancialBoxplot = ({ lang }) => {
+            const isEn = lang === 'en';
+            return (
+                <svg className="w-full h-full p-2" viewBox="0 0 300 120">
+                    <line x1="40" y1="100" x2="280" y2="100" stroke="#475569" strokeWidth="1" />
+                    <line x1="40" y1="20" x2="40" y2="100" stroke="#475569" strokeWidth="1" />
+                    <text x="10" y="30" fill="#94a3b8" fontSize="8">High</text>
+                    <text x="10" y="90" fill="#94a3b8" fontSize="8">Low</text>
+                    <text x="90" y="115" fill="#cbd5e1" fontSize="10">{isEn ? 'Air-Cooled' : '风冷资产'}</text>
+                    <text x="210" y="115" fill="#38bdf8" fontSize="10">{isEn ? '48V Liquid' : '液冷资产'}</text>
+                    <g transform="translate(100, 0)">
+                        <line x1="0" y1="40" x2="0" y2="85" stroke="#94a3b8" strokeWidth="1.5" strokeDasharray="2" />
+                        <rect x="-15" y="55" width="30" height="20" fill="#334155" stroke="#94a3b8" strokeWidth="1.5" />
+                        <line x1="-15" y1="65" x2="15" y2="65" stroke="#fff" strokeWidth="2" />
+                        <line x1="-5" y1="40" x2="5" y2="40" stroke="#94a3b8" strokeWidth="1.5" />
+                        <line x1="-5" y1="85" x2="5" y2="85" stroke="#94a3b8" strokeWidth="1.5" />
+                    </g>
+                    <g transform="translate(220, 0)">
+                        <line x1="0" y1="20" x2="0" y2="50" stroke="#38bdf8" strokeWidth="1.5" strokeDasharray="2" />
+                        <rect x="-15" y="25" width="30" height="15" fill="#0c4a6e" stroke="#38bdf8" strokeWidth="1.5" />
+                        <line x1="-15" y1="32" x2="15" y2="32" stroke="#fff" strokeWidth="2" />
+                        <line x1="-5" y1="20" x2="5" y2="20" stroke="#38bdf8" strokeWidth="1.5" />
+                        <line x1="-5" y1="50" x2="5" y2="50" stroke="#38bdf8" strokeWidth="1.5" />
+                        <path d="M -30 32 L -45 32 L -45 65 L -35 65 M -45 32 L -42 37 M -45 32 L -48 37" fill="none" stroke="#10b981" strokeWidth="1" />
+                        <text x="-75" y="50" fill="#10b981" fontSize="8">+18% Premium</text>
+                    </g>
+                </svg>
+            );
+        };
+
+        // --- Main Application ---
+        function App() {
+            const [activeTab, setActiveTab] = useState('overview');
+            const [lang, setLang] = useState('en');
+            const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+            const t = (key) => translations[lang][key] || key;
+
+            const LangToggle = ({ className }) => (
+                <button 
+                    onClick={() => setLang(lang === 'zh' ? 'en' : 'zh')}
+                    className={`flex items-center gap-2 bg-slate-900 border border-slate-700 hover:border-slate-500 text-slate-300 px-3 py-1.5 rounded-full transition-all text-sm font-medium shadow-lg ${className || ''}`}
+                >
+                    <i className="ph-fill ph-translate"></i>
+                    <span>{lang === 'zh' ? 'EN' : '中'}</span>
+                </button>
+            );
+
+            // Added ARIA-label for GEO semantics
+            const Sidebar = () => {
+                const navItemsGroup1 = [
+                    { id: 'overview', name: t('nav_overview'), icon: <i className="ph-fill ph-globe text-xl"></i> },
+                    { id: 'layer1', name: t('nav_layer1'), icon: <i className="ph-fill ph-cpu text-xl"></i> },
+                    { id: 'layer2', name: t('nav_layer2'), icon: <i className="ph-fill ph-graph text-xl"></i> },
+                    { id: 'layer3', name: t('nav_layer3'), icon: <i className="ph-fill ph-currency-circle-dollar text-xl"></i> },
+                    { id: 'layer4', name: t('nav_layer4'), icon: <i className="ph-fill ph-shield-check text-xl"></i> },
+                ];
+                
+                const navItemsGroup2 = [
+                    { id: 'about', name: t('nav_about'), icon: <i className="ph-fill ph-buildings text-xl"></i> },
+                ];
+
+                return (
+                    <aside aria-label="Main Navigation" className={`w-64 bg-slate-950 border-r border-slate-800 h-screen flex flex-col fixed left-0 top-0 z-50 transition-transform duration-300 ease-in-out ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
+                        <div className="p-6 flex justify-center w-full">
+                            <img src="https://raw.githubusercontent.com/luoxisg/dcdeeptech/main/image/DCdeeptech_logo-removebg-preview.png" alt="DCDeepTech Logo" className="h-14 w-auto object-contain" onError={(e) => {e.target.style.display='none'; e.target.nextSibling.style.display='flex'}} />
+                            <div className="hidden w-12 h-12 rounded bg-gradient-to-br from-cyan-500 to-blue-600 items-center justify-center text-white font-bold text-2xl">
+                                d
+                            </div>
+                        </div>
+                        <nav className="flex-1 px-4 space-y-6 mt-4 overflow-y-auto">
+                            <div className="space-y-2">
+                                {navItemsGroup1.map((item) => (
+                                    <button
+                                        key={item.id}
+                                        onClick={() => { setActiveTab(item.id); setIsMobileMenuOpen(false); }}
+                                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
+                                            activeTab === item.id 
+                                            ? 'bg-blue-500/10 text-cyan-400 border border-blue-500/30 shadow-[0_0_15px_rgba(59,130,246,0.15)]' 
+                                            : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+                                        }`}
+                                    >
+                                        {item.icon}
+                                        <span className="font-medium">{item.name}</span>
+                                    </button>
+                                ))}
+                            </div>
+                            
+                            <div className="space-y-2 border-t border-slate-800 pt-4">
+                                {navItemsGroup2.map((item) => (
+                                    <button
+                                        key={item.id}
+                                        onClick={() => { setActiveTab(item.id); setIsMobileMenuOpen(false); }}
+                                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
+                                            activeTab === item.id 
+                                            ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.15)]' 
+                                            : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+                                        }`}
+                                    >
+                                        {item.icon}
+                                        <span className="font-medium">{item.name}</span>
+                                    </button>
+                                ))}
+                            </div>
+                        </nav>
+                        <div className="p-6 text-xs text-slate-500 border-t border-slate-800">
+                            <p>{t('sys_status')}: <span className="text-emerald-400">{t('sys_running')} (99.99%)</span></p>
+                            <p className="mt-1">{t('sys_load')}: 1.25 MW</p>
+                        </div>
+                    </aside>
+                );
+            };
+
+            // Using <article> and conversational <h2> for GEO chunking
+            const OverviewView = () => (
+                <article className="space-y-8 animate-in fade-in duration-500">
+                    <header>
+                        <h2 className="text-3xl font-bold text-white mb-2">{t('title_overview')}</h2>
+                        <p className="text-slate-400">{t('desc_overview')}</p>
+                    </header>
+                    <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div className="relative bg-slate-900 border border-slate-800 rounded-xl p-6 hover:border-cyan-500/50 transition-all group cursor-pointer overflow-hidden flex flex-col" onClick={() => setActiveTab('layer1')}>
+                            <div className="absolute inset-0">
+                                <img src="/images/1-ocp-dc-architecture.jpg" alt="OCP Architecture" className="w-full h-full object-cover opacity-30 group-hover:scale-105 transition-transform duration-500" onError={(e) => e.target.style.display='none'} />
+                                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/80 to-slate-900/50"></div>
+                            </div>
+                            <div className="relative z-10 flex-1 flex flex-col">
+                                <div className="w-12 h-12 rounded-lg bg-cyan-500/10 text-cyan-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                    <i className="ph-fill ph-lightning text-2xl"></i>
+                                </div>
+                                <h3 className="text-xl font-bold text-white mb-2 flex items-center gap-2">
+                                    {t('l1_title')} <i className="ph-bold ph-caret-right text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                                </h3>
+                                <p className="text-slate-400 text-sm mb-4 flex-1 leading-relaxed">{t('l1_desc')}</p>
+                            </div>
+                        </div>
+                        <div className="relative bg-slate-900 border border-slate-800 rounded-xl p-6 hover:border-blue-500/50 transition-all group cursor-pointer overflow-hidden flex flex-col" onClick={() => setActiveTab('layer2')}>
+                            <div className="absolute inset-0">
+                                <img src="/images/2-liquid-cooled-workstation.jpg" alt="Liquid Cooled Workstation" className="w-full h-full object-cover opacity-30 group-hover:scale-105 transition-transform duration-500" onError={(e) => e.target.style.display='none'} />
+                                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/80 to-slate-900/50"></div>
+                            </div>
+                            <div className="relative z-10 flex-1 flex flex-col">
+                                <div className="w-12 h-12 rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                    <i className="ph-fill ph-graph text-2xl"></i>
+                                </div>
+                                <h3 className="text-xl font-bold text-white mb-2 flex items-center gap-2">
+                                    {t('l2_title')} <i className="ph-bold ph-caret-right text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                                </h3>
+                                <p className="text-slate-400 text-sm mb-4 flex-1 leading-relaxed">{t('l2_desc')}</p>
+                            </div>
+                        </div>
+                        <div className="relative bg-slate-900 border border-slate-800 rounded-xl p-6 hover:border-indigo-500/50 transition-all group cursor-pointer overflow-hidden flex flex-col" onClick={() => setActiveTab('layer3')}>
+                             <div className="absolute inset-0">
+                                <img src="/images/6-singapore-global-hq.jpg" alt="Singapore HQ" className="w-full h-full object-cover opacity-30 group-hover:scale-105 transition-transform duration-500" onError={(e) => e.target.style.display='none'} />
+                                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/80 to-slate-900/50"></div>
+                            </div>
+                            <div className="relative z-10 flex-1 flex flex-col">
+                                <div className="w-12 h-12 rounded-lg bg-indigo-500/10 text-indigo-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                    <i className="ph-fill ph-chart-bar text-2xl"></i>
+                                </div>
+                                <h3 className="text-xl font-bold text-white mb-2 flex items-center gap-2">
+                                    {t('l3_title')} <i className="ph-bold ph-caret-right text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                                </h3>
+                                <p className="text-slate-400 text-sm mb-4 flex-1 leading-relaxed">{t('l3_desc')}</p>
+                            </div>
+                        </div>
+                        <div className="relative bg-slate-900 border border-slate-800 rounded-xl p-6 hover:border-green-500/50 transition-all group cursor-pointer overflow-hidden flex flex-col" onClick={() => setActiveTab('layer4')}>
+                             <div className="absolute inset-0">
+                                <img src="/images/1OCP.jpg" alt="Ecosystem" className="w-full h-full object-cover opacity-30 group-hover:scale-105 transition-transform duration-500" onError={(e) => e.target.style.display='none'} />
+                                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/80 to-slate-900/50"></div>
+                            </div>
+                            <div className="relative z-10 flex-1 flex flex-col">
+                                <div className="w-12 h-12 rounded-lg bg-green-500/10 text-green-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                    <i className="ph-fill ph-shield-check text-2xl"></i>
+                                </div>
+                                <h3 className="text-xl font-bold text-white mb-2 flex items-center gap-2">
+                                    {t('l4_title')} <i className="ph-bold ph-caret-right text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                                </h3>
+                                <p className="text-slate-400 text-sm mb-4 flex-1 leading-relaxed">{t('l4_desc')}</p>
+                            </div>
+                        </div>
+                    </section>
+                    
+                    <PhdValueChainAnimation t={t} />
+
+                    {/* NEW: GitHub Card */}
+                    <a href="https://github.com/luoxisg/dcdeeptech/tree/main/SG-CN" target="_blank" rel="noopener noreferrer" className="block relative bg-slate-900 border border-slate-800 hover:border-purple-500/50 rounded-xl p-6 transition-all group overflow-hidden mt-6 shadow-[0_4px_20px_rgba(0,0,0,0.2)]">
+                        <div className="absolute right-0 top-0 bottom-0 w-1/2 bg-gradient-to-l from-purple-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                        <div className="flex flex-col md:flex-row items-start md:items-center justify-between relative z-10 gap-4">
+                            <div className="flex items-center gap-5">
+                                <div className="w-14 h-14 rounded-xl bg-purple-500/10 flex items-center justify-center text-purple-400 group-hover:scale-110 transition-transform duration-300">
+                                    <i className="ph-fill ph-github-logo text-4xl"></i>
+                                </div>
+                                <div className="max-w-2xl">
+                                    <h3 className="text-xl font-bold text-white mb-1 group-hover:text-purple-400 transition-colors">{t('github_title')}</h3>
+                                    <p className="text-sm text-slate-400 leading-relaxed">{t('github_desc')}</p>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-2 text-purple-500 group-hover:text-purple-400 font-medium transition-colors bg-slate-950 px-4 py-2 rounded-lg border border-slate-800 group-hover:border-purple-500/30 whitespace-nowrap">
+                                <span>{lang === 'zh' ? '查看 GitHub' : 'View on GitHub'}</span>
+                                <i className="ph-bold ph-arrow-up-right text-lg"></i>
+                            </div>
+                        </div>
+                    </a>
+
+                </article>
+            );
+
+            const Layer1View = () => (
+                <article className="space-y-6 animate-in slide-in-from-right-8 duration-500">
+                    <header className="flex justify-between items-end border-b border-slate-800 pb-4">
+                        <div>
+                            <h2 className="text-3xl font-bold text-white flex items-center gap-3 mb-2">
+                                <i className="ph-fill ph-cpu text-cyan-400"></i> {t('l1_header')}
+                            </h2>
+                            <p className="text-slate-400">{t('l1_header_desc')}</p>
+                        </div>
+                        <div className="text-right">
+                            <div className="text-3xl font-bold text-cyan-400">96.8%</div>
+                            <div className="text-xs text-slate-500 uppercase">{t('goodput')}</div>
+                        </div>
+                    </header>
+                    <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div className="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-xl overflow-hidden relative min-h-[400px]">
+                            <div className="absolute top-4 right-4 z-40 bg-slate-900/60 backdrop-blur-md border border-slate-700/50 p-3 rounded-xl pointer-events-none shadow-lg max-w-[220px]">
+                                <h3 className="text-white font-bold text-sm mb-1 flex items-center gap-2">
+                                    <i className="ph-fill ph-cpu text-cyan-400"></i> {t('mpc_core_title')}
+                                </h3>
+                                <p className="text-[10px] text-slate-400 leading-tight">{t('mpc_core_desc')}</p>
+                            </div>
+                            <div className="w-full h-full relative">
+                                <MPCTwinAnimation t={t} />
+                            </div>
+                        </div>
+                        <div className="space-y-6">
+                            <div className="bg-slate-900 border border-slate-800 rounded-xl p-5">
+                                <h3 className="text-white font-medium flex items-center gap-2 mb-4">
+                                    <i className="ph-fill ph-battery-high text-amber-400 text-lg"></i> {t('ocp_monitor')}
+                                </h3>
+                                <div className="space-y-4">
+                                    <div>
+                                        <div className="flex justify-between text-xs mb-1">
+                                            <span className="text-slate-400">{t('voltage')} (+/-400VDC to 48V)</span>
+                                            <span className="text-emerald-400 font-mono">48.2 V</span>
+                                        </div>
+                                        <div className="w-full h-2 bg-slate-800 rounded overflow-hidden">
+                                            <div className="w-[85%] h-full bg-emerald-500"></div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div className="flex justify-between text-xs mb-1">
+                                            <span className="text-slate-400">{t('rack_density')}</span>
+                                            <span className="text-amber-400 font-mono">124 kW / 500kW</span>
+                                        </div>
+                                        <div className="w-full h-2 bg-slate-800 rounded overflow-hidden relative">
+                                            <div className="w-[25%] h-full bg-amber-500 relative">
+                                                <div className="absolute right-0 top-0 bottom-0 w-4 bg-white/30 animate-pulse"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="mt-4 pt-4 border-t border-slate-800 text-xs text-slate-500">
+                                        {t('pdu_msg')}
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="relative bg-slate-900 border border-slate-800 rounded-xl p-5 flex-1 overflow-hidden">
+                                <div className="absolute inset-0">
+                                    <img src="/images/5-campus-cleaning.jpg" alt="Smart Campus" className="w-full h-full object-cover opacity-20" onError={(e) => e.target.style.display='none'} />
+                                    <div className="absolute inset-0 bg-gradient-to-br from-slate-950 to-slate-900/80"></div>
+                                </div>
+                                <div className="relative z-10">
+                                    <h3 className="text-white font-medium flex items-center gap-2 mb-4">
+                                        <i className="ph-fill ph-globe text-emerald-400 text-lg"></i> {t('esg_matrix')}
+                                    </h3>
+                                    <div className="h-32 border border-slate-700/50 rounded flex flex-col items-center justify-center bg-slate-950/50 relative overflow-hidden">
+                                        <SankeyDiagram />
+                                    </div>
+                                    <div className="flex justify-between mt-4">
+                                        <div className="text-center">
+                                            <div className="text-xl font-bold text-white">1.12</div>
+                                            <div className="text-[10px] text-slate-500 uppercase">{t('pue_metric')}</div>
+                                        </div>
+                                        <div className="text-center">
+                                            <div className="text-xl font-bold text-emerald-400">100%</div>
+                                            <div className="text-[10px] text-slate-500 uppercase">{t('renewable_match')}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <a href="https://dcdeeptech.com/mpc/" target="_blank" rel="noopener noreferrer" className="block relative bg-slate-900 border border-slate-800 hover:border-cyan-500/50 rounded-xl p-6 transition-all group overflow-hidden mt-6 shadow-[0_4px_20px_rgba(0,0,0,0.2)]">
+                        <div className="absolute right-0 top-0 bottom-0 w-1/2 bg-gradient-to-l from-cyan-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                        <div className="flex flex-col md:flex-row items-start md:items-center justify-between relative z-10 gap-4">
+                            <div className="flex items-center gap-5">
+                                <div className="w-14 h-14 rounded-xl bg-cyan-500/10 flex items-center justify-center text-cyan-400 group-hover:scale-110 transition-transform duration-300">
+                                    <i className="ph-fill ph-cube text-3xl"></i>
+                                </div>
+                                <div>
+                                    <h3 className="text-xl font-bold text-white mb-1 group-hover:text-cyan-400 transition-colors">{t('mpc_title')}</h3>
+                                    <p className="text-sm text-slate-400">{t('mpc_desc')}</p>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-2 text-cyan-500 group-hover:text-cyan-400 font-medium transition-colors bg-slate-950 px-4 py-2 rounded-lg border border-slate-800 group-hover:border-cyan-500/30">
+                                <span>{lang === 'zh' ? '访问页面' : 'Visit Page'}</span>
+                                <i className="ph-bold ph-arrow-up-right text-lg"></i>
+                            </div>
+                        </div>
+                    </a>
+                </article>
+            );
+
+            const Layer2View = () => (
+                <article className="space-y-6 animate-in slide-in-from-right-8 duration-500">
+                    <header className="flex justify-between items-end border-b border-slate-800 pb-4">
+                        <div>
+                            <h2 className="text-3xl font-bold text-white flex items-center gap-3 mb-2">
+                                <i className="ph-fill ph-graph text-blue-400"></i> {t('l2_header')}
+                            </h2>
+                            <p className="text-slate-400">{t('l2_header_desc')}</p>
+                        </div>
+                        <div className="flex gap-3">
+                            <button className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-medium transition-colors">
+                                {t('gen_api_key')}
+                            </button>
+                        </div>
+                    </header>
+                    <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden flex flex-col">
+                            <div className="bg-slate-950 px-4 py-3 border-b border-slate-800 flex justify-between items-center">
+                                <div className="flex gap-2">
+                                    <div className="w-3 h-3 rounded-full bg-rose-500"></div>
+                                    <div className="w-3 h-3 rounded-full bg-amber-500"></div>
+                                    <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
+                                </div>
+                                <span className="text-xs text-slate-500 font-mono">{t('quick_start')}</span>
+                            </div>
+                            <div className="p-6 bg-[#0d1117] flex-1 overflow-x-auto">
+<pre className="text-sm font-mono text-slate-300">
+<span className="text-purple-400">import</span> OpenAI <span className="text-purple-400">from</span> <span className="text-emerald-400">'openai'</span>;<br/><br/>
+<span className="text-slate-500">{lang === 'zh' ? '// 将 Base URL 修改为 dcdeep tech 平台网关' : '// Change Base URL to dcdeep tech gateway'}</span><br/>
+<span className="text-blue-400">const</span> client = <span className="text-purple-400">new</span> OpenAI({'{'}<br/>
+{'  '}baseURL: <span className="text-emerald-400">'https://api.dcdeep.tech/v1'</span>,<br/>
+{'  '}apiKey: process.env.<span className="text-blue-200">DCDEEP_API_KEY</span>,<br/>
+{'}'});<br/><br/>
+<span className="text-blue-400">const</span> response = <span className="text-purple-400">await</span> client.chat.completions.create({'{'}<br/>
+{'  '}model: <span className="text-emerald-400">'meta-llama/llama-3-70b-instruct'</span>,<br/>
+{'  '}messages: [{'{'} role: <span className="text-emerald-400">'user'</span>, content: <span className="text-emerald-400">'Hello world'</span> {'}'}],<br/>
+{'}'});
+</pre>
+                            </div>
+                        </div>
+                        <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
+                            <h3 className="text-white font-medium mb-6 flex items-center gap-2">
+                                <i className="ph-fill ph-activity text-blue-400 text-lg"></i> {t('telemetry_title')}
+                            </h3>
+                            <div className="h-48 border-b border-l border-slate-700 relative mb-6">
+                                <div className="absolute -left-8 bottom-0 text-[10px] text-slate-500">0</div>
+                                <div className="absolute -left-8 top-1/2 text-[10px] text-slate-500">500</div>
+                                <div className="absolute -left-8 top-0 text-[10px] text-slate-500">1k+</div>
+                                <RealtimeChart />
+                                <div className="absolute -bottom-6 left-0 text-[10px] text-slate-500">00:00</div>
+                                <div className="absolute -bottom-6 left-1/2 text-[10px] text-slate-500">12:00</div>
+                                <div className="absolute -bottom-6 right-0 text-[10px] text-slate-500">24:00</div>
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="bg-slate-950 p-4 rounded-lg border border-slate-800">
+                                    <div className="text-xs text-slate-400 mb-1">{t('ttft')}</div>
+                                    <div className="text-xl font-bold text-white flex items-baseline gap-1">
+                                        124 <span className="text-sm font-normal text-slate-500">ms</span>
+                                    </div>
+                                </div>
+                                <div className="bg-slate-950 p-4 rounded-lg border border-slate-800">
+                                    <div className="text-xs text-slate-400 mb-1">{t('success_rate')}</div>
+                                    <div className="text-xl font-bold text-emerald-400 flex items-baseline gap-1">
+                                        99.98 <span className="text-sm font-normal text-slate-500">%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-xl p-6">
+                            <h3 className="text-white font-medium mb-6 flex items-center gap-2">
+                                <i className="ph-fill ph-git-merge text-blue-400 text-lg"></i> {t('arch_title')}
+                            </h3>
+                            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                                <div className="flex-1 w-full bg-slate-950 border border-slate-800 rounded-lg p-4 flex flex-col items-center text-center relative z-10 hover:border-slate-600 transition-colors">
+                                    <i className="ph-fill ph-globe-hemisphere-west text-3xl text-slate-400 mb-2"></i>
+                                    <div className="font-bold text-white text-sm">{t('arch_global_clients')}</div>
+                                </div>
+                                <div className="flex flex-col items-center justify-center text-slate-600">
+                                    <i className="ph-bold ph-arrows-left-right text-xl md:rotate-0 rotate-90"></i>
+                                </div>
+                                <div className="flex-1 w-full bg-slate-950 border border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.1)] rounded-lg p-4 flex flex-col items-center text-center relative z-10 hover:border-blue-400/80 transition-colors">
+                                    <i className="ph-fill ph-server text-3xl text-blue-400 mb-2"></i>
+                                    <div className="font-bold text-white text-sm">{t('arch_sg_gateway')}</div>
+                                    <div className="text-xs text-blue-400 mt-1">api.dcdeeptech.com</div>
+                                </div>
+                                <div className="flex flex-col items-center justify-center text-emerald-500/50">
+                                    <i className="ph-bold ph-arrows-left-right text-xl md:rotate-0 rotate-90"></i>
+                                </div>
+                                <div className="flex-1 w-full bg-slate-950 border border-emerald-500/30 rounded-lg p-4 flex flex-col items-center text-center relative z-10 hover:border-emerald-400/60 transition-colors">
+                                    <i className="ph-fill ph-lock-key text-3xl text-emerald-400 mb-2"></i>
+                                    <div className="font-bold text-white text-sm">{t('arch_cross_border')}</div>
+                                    <div className="text-xs text-emerald-400 mt-1">(Encrypted Tunnel)</div>
+                                </div>
+                                <div className="flex flex-col items-center justify-center text-emerald-500/50">
+                                    <i className="ph-bold ph-arrows-left-right text-xl md:rotate-0 rotate-90"></i>
+                                </div>
+                                <div className="flex-1 w-full bg-slate-950 border border-purple-500/50 shadow-[0_0_15px_rgba(168,85,247,0.1)] rounded-lg p-4 flex flex-col items-center text-center relative z-10 hover:border-purple-400/80 transition-colors">
+                                    <i className="ph-fill ph-cpu text-3xl text-purple-400 mb-2"></i>
+                                    <div className="font-bold text-white text-sm">{t('arch_china_gpu')}</div>
+                                    <div className="text-xs text-purple-400 mt-1">vLLM + Qwen-VL</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-xl p-6 flex flex-col md:flex-row gap-8 items-center">
+                            <div className="w-full md:w-1/3">
+                                <h3 className="text-white font-medium mb-2 flex items-center gap-2">
+                                    <i className="ph-fill ph-chart-pie-slice text-purple-400 text-lg"></i> {t('billing_title')}
+                                </h3>
+                                <p className="text-sm text-slate-400 mb-6">{t('billing_desc')}</p>
+                                <div className="text-3xl font-bold text-white mb-1">$4,285.50</div>
+                                <div className="text-xs text-slate-500">{t('monthly_cost')}</div>
+                            </div>
+                            <div className="w-full md:w-2/3 grid grid-cols-1 md:grid-cols-3 gap-4">
+                                {[
+                                    { name: 'GPT-4o', tokens: '45.2M', cost: '$2,100.00', color: 'bg-emerald-500' },
+                                    { name: 'Claude 3.5 Sonnet', tokens: '28.1M', cost: '$1,405.00', color: 'bg-amber-500' },
+                                    { name: 'Llama 3 70B', tokens: '150.4M', cost: '$780.50', color: 'bg-blue-500' }
+                                ].map((item, i) => (
+                                    <div key={i} className="bg-slate-950 p-4 rounded-lg border border-slate-800">
+                                        <div className="flex items-center gap-2 mb-2">
+                                            <div className={`w-2 h-2 rounded-full ${item.color}`}></div>
+                                            <span className="text-sm font-medium text-slate-300">{item.name}</span>
+                                        </div>
+                                        <div className="text-lg font-bold text-white">{item.cost}</div>
+                                        <div className="text-xs text-slate-500 mt-1">{item.tokens} Tokens</div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </section>
+                </article>
+            );
+
+            const Layer3View = () => (
+                <article className="space-y-6 animate-in slide-in-from-right-8 duration-500">
+                    <header className="flex justify-between items-end border-b border-slate-800 pb-4">
+                        <div>
+                            <h2 className="text-3xl font-bold text-white flex items-center gap-3 mb-2">
+                                <i className="ph-fill ph-currency-circle-dollar text-indigo-400"></i> {t('l3_header')}
+                            </h2>
+                            <p className="text-slate-400">{t('l3_header_desc')}</p>
+                        </div>
+                        <div>
+                            <span className="px-3 py-1 bg-indigo-500/20 text-indigo-400 border border-indigo-500/50 rounded-full text-xs font-medium">
+                                {t('inst_access')}
+                            </span>
+                        </div>
+                    </header>
+                    <section className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                        {[
+                            { label: t('capex'), value: '$1.2B', trend: '+12%' },
+                            { label: t('arr'), value: '$450M', trend: '+34%' },
+                            { label: t('roi'), value: '28.5%', trend: lang==='zh'?'稳健':'Stable' },
+                            { label: t('wacc'), value: '6.2%', trend: '-0.4%' }
+                        ].map((metric, i) => (
+                            <div key={i} className="bg-slate-900 border border-slate-800 rounded-xl p-5">
+                                <div className="text-xs text-slate-400 mb-2">{metric.label}</div>
+                                <div className="flex items-end justify-between">
+                                    <div className="text-2xl font-bold text-white">{metric.value}</div>
+                                    <div className="text-xs text-emerald-400">{metric.trend}</div>
+                                </div>
+                            </div>
+                        ))}
+                    </section>
+                    <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div className="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-xl p-6">
+                            <div className="flex justify-between items-center mb-6">
+                                <h3 className="text-white font-medium flex items-center gap-2">
+                                    <i className="ph-fill ph-stack text-indigo-400 text-lg"></i> {t('cap_stack_title')}
+                                </h3>
+                                <span className="text-xs text-slate-500 border border-slate-700 px-2 py-1 rounded">{t('pre_reit_view')}</span>
+                            </div>
+                            <div className="flex flex-col gap-2 h-64">
+                                <div className="flex-1 bg-slate-800 rounded-lg flex items-center px-6 group cursor-pointer hover:bg-slate-700 transition-colors border-l-4 border-emerald-500 relative overflow-hidden">
+                                    <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/10 to-transparent w-0 group-hover:w-full transition-all duration-500"></div>
+                                    <div className="w-1/3 text-sm font-bold text-slate-300 relative z-10">{t('senior_debt')}</div>
+                                    <div className="w-1/3 text-xs text-slate-400 relative z-10">{t('senior_debt_desc')}</div>
+                                    <div className="w-1/3 text-right font-mono text-emerald-400 relative z-10">65%</div>
+                                </div>
+                                <div className="h-16 bg-slate-800/80 rounded-lg flex items-center px-6 group cursor-pointer hover:bg-slate-700 transition-colors border-l-4 border-amber-500 relative overflow-hidden">
+                                    <div className="absolute inset-0 bg-gradient-to-r from-amber-500/10 to-transparent w-0 group-hover:w-full transition-all duration-500"></div>
+                                    <div className="w-1/3 text-sm font-bold text-slate-300 relative z-10">{t('mezzanine')}</div>
+                                    <div className="w-1/3 text-xs text-slate-400 relative z-10">{t('mezzanine_desc')}</div>
+                                    <div className="w-1/3 text-right font-mono text-amber-400 relative z-10">20%</div>
+                                </div>
+                                <div className="h-12 bg-slate-800/50 rounded-lg flex items-center px-6 group cursor-pointer hover:bg-slate-700 transition-colors border-l-4 border-rose-500 relative overflow-hidden">
+                                    <div className="absolute inset-0 bg-gradient-to-r from-rose-500/10 to-transparent w-0 group-hover:w-full transition-all duration-500"></div>
+                                    <div className="w-1/3 text-sm font-bold text-slate-300 relative z-10">{t('equity')}</div>
+                                    <div className="w-1/3 text-xs text-slate-400 relative z-10">{t('equity_desc')}</div>
+                                    <div className="w-1/3 text-right font-mono text-rose-400 relative z-10">15%</div>
+                                </div>
+                            </div>
+                            <p className="text-xs text-slate-500 mt-4 italic">
+                                {t('audit_note')}
+                            </p>
+                        </div>
+                        <div className="bg-slate-900 border border-indigo-500/30 rounded-xl overflow-hidden flex flex-col shadow-[0_0_20px_rgba(99,102,241,0.1)]">
+                            <div className="bg-indigo-950/50 px-4 py-3 border-b border-indigo-500/20 flex items-center gap-2">
+                                <i className="ph-fill ph-chat-circle-text text-indigo-400"></i>
+                                <h3 className="text-sm font-medium text-indigo-300 m-0">{t('vibe_coding_title')}</h3>
+                            </div>
+                            <div className="flex-1 p-4 flex flex-col gap-4 text-sm bg-slate-950/50 overflow-y-auto">
+                                <div className="bg-slate-800 text-slate-300 p-3 rounded-lg rounded-tl-none self-start max-w-[90%]">
+                                    {t('ai_greet')}
+                                </div>
+                                <div className="bg-indigo-600 text-white p-3 rounded-lg rounded-tr-none self-end max-w-[90%] shadow-lg">
+                                    {t('user_prompt')}
+                                </div>
+                                <div className="bg-slate-800 border border-indigo-500/30 text-slate-300 p-3 rounded-lg rounded-tl-none self-start max-w-full w-full">
+                                    <div className="flex items-center gap-2 mb-2 text-indigo-400 text-xs font-bold">
+                                        <i className="ph-fill ph-play"></i> {t('ai_loading')}
+                                    </div>
+                                    <div className="w-full h-32 bg-slate-900/80 rounded border border-slate-700 flex items-center justify-center relative overflow-hidden my-3 shadow-inner">
+                                        <FinancialBoxplot lang={lang} />
+                                    </div>
+                                    <p className="text-xs mt-2 text-emerald-300/80">{t('ai_conclusion')}</p>
+                                </div>
+                            </div>
+                            <div className="p-3 border-t border-slate-800 bg-slate-900">
+                                <div className="relative">
+                                    <input type="text" placeholder={t('chat_placeholder')} className="w-full bg-slate-950 border border-slate-700 rounded-lg py-2 pl-3 pr-10 text-sm text-white focus:outline-none focus:border-indigo-500 transition-colors" disabled aria-label="AI Prompt Input" />
+                                    <button className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-indigo-400" aria-label="Send Prompt">
+                                        <i className="ph-bold ph-arrow-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </article>
+            );
+
+            // Layer 4 (Ecosystem) View
+            const Layer4View = () => (
+                <article className="space-y-10 animate-in fade-in duration-500 pb-10">
+                    <header className="border-b border-slate-800 pb-4">
+                        <h2 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
+                            <i className="ph-fill ph-shield-check text-green-400"></i> {t('l4_header')}
+                        </h2>
+                        <p className="text-slate-400">{t('eco_subtitle')}</p>
+                    </header>
+
+                    <section>
+                        <h3 className="text-2xl font-bold text-white mb-6">{t('eco_title')}</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <a href="https://www.opencompute.org/" target="_blank" rel="noopener noreferrer" className="block bg-slate-900 border border-slate-800 rounded-xl p-6 hover:border-cyan-500/50 transition-all group">
+                                <img src="images/1OCP.jpg" alt="Open Compute Project" className="h-12 w-auto mb-4 object-contain rounded" onError={(e) => {e.target.style.display='none'; e.target.nextSibling.style.display='flex'}} />
+                                <div className="hidden h-12 w-12 bg-slate-800 rounded items-center justify-center mb-4 text-cyan-400 font-bold text-xl">OCP</div>
+                                <h4 className="text-lg font-bold text-white mb-1 group-hover:text-cyan-400 transition-colors">Open Compute Project</h4>
+                                <div className="text-xs text-cyan-400 mb-3">{lang === 'zh' ? '开放计算项目' : 'Open Compute Project'} • opencompute.org</div>
+                                <p className="text-sm text-slate-400">
+                                    {lang === 'zh' ? '覆盖数据中心、服务器、网络与设施创新的开放基础设施社区，DCDeepTech 基础设施设计理念与其深度对齐。' : 'Open infrastructure community covering data center, server, networking and facility innovation; deeply aligned with DCDeepTech’s infra design philosophy.'}
+                                </p>
+                            </a>
+                            
+                            <a href="https://openrouter.ai/" target="_blank" rel="noopener noreferrer" className="block bg-slate-900 border border-slate-800 rounded-xl p-6 hover:border-blue-500/50 transition-all group">
+                                <img src="images/openrouter_logo.png" alt="OpenRouter" className="h-12 w-auto mb-4 object-contain rounded" onError={(e) => {e.target.style.display='none'; e.target.nextSibling.style.display='flex'}} />
+                                <div className="hidden h-12 w-12 bg-slate-800 rounded items-center justify-center mb-4 text-blue-400 font-bold text-xl">OR</div>
+                                <h4 className="text-lg font-bold text-white mb-1 group-hover:text-blue-400 transition-colors">OpenRouter</h4>
+                                <div className="text-xs text-blue-400 mb-3">{lang === 'zh' ? 'OpenRouter 模型路由平台' : 'OpenRouter Model Gateway'} • openrouter.ai</div>
+                                <p className="text-sm text-slate-400">
+                                    {lang === 'zh' ? '以 OpenAI 兼容集成模式提供多 AI 模型统一 API 访问，是 Layer 2 模型聚合服务的重要参考标杆。' : 'Provides unified API access to multiple AI models in an OpenAI-compatible integration mode; a key benchmark for Layer 2 model aggregation services.'}
+                                </p>
+                            </a>
+                            
+                            <a href="https://www.nvidia.com/en-sg/" target="_blank" rel="noopener noreferrer" className="block bg-slate-900 border border-slate-800 rounded-xl p-6 hover:border-green-500/50 transition-all group">
+                                <img src="images/nvidia_logo.png" alt="NVIDIA Singapore" className="h-12 w-auto mb-4 object-contain rounded" onError={(e) => {e.target.style.display='none'; e.target.nextSibling.style.display='flex'}} />
+                                <div className="hidden h-12 w-12 bg-slate-800 rounded items-center justify-center mb-4 text-green-400 font-bold text-xl">NV</div>
+                                <h4 className="text-lg font-bold text-white mb-1 group-hover:text-green-400 transition-colors">NVIDIA Singapore</h4>
+                                <div className="text-xs text-green-400 mb-3">{lang === 'zh' ? '英伟达新加坡' : 'NVIDIA Singapore'} • nvidia.com/en-sg</div>
+                                <p className="text-sm text-slate-400">
+                                    {lang === 'zh' ? '加速计算、企业 AI、边缘 AI 及全栈基础设施参考，DCDeepTech AI 集群设计与 NVIDIA 加速平台深度集成。' : 'Accelerated computing, enterprise AI, edge AI, and full-stack infra reference; DCDeepTech AI clusters integrate deeply with NVIDIA platforms.'}
+                                </p>
+                            </a>
+                        </div>
+                    </section>
+
+                    <a href="https://dcdeeptech.com/ocp/" target="_blank" rel="noopener noreferrer" className="block relative bg-slate-900 border border-slate-800 hover:border-blue-500/50 rounded-xl p-6 transition-all group overflow-hidden mt-6 shadow-[0_4px_20px_rgba(0,0,0,0.2)]">
+                        <div className="absolute right-0 top-0 bottom-0 w-1/2 bg-gradient-to-l from-blue-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                        <div className="flex flex-col md:flex-row items-start md:items-center justify-between relative z-10 gap-4">
+                            <div className="flex items-center gap-5">
+                                <div className="w-14 h-14 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-400 group-hover:scale-110 transition-transform duration-300">
+                                    <i className="ph-fill ph-seal-check text-3xl"></i>
+                                </div>
+                                <div>
+                                    <h3 className="text-xl font-bold text-white mb-1 group-hover:text-blue-400 transition-colors">{t('ocp_banner_title')}</h3>
+                                    <p className="text-sm text-slate-400">{t('ocp_banner_desc')}</p>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-2 text-blue-500 group-hover:text-blue-400 font-medium transition-colors bg-slate-950 px-4 py-2 rounded-lg border border-slate-800 group-hover:border-blue-500/30">
+                                <span>{lang === 'zh' ? '访问页面' : 'Visit Page'}</span>
+                                <i className="ph-bold ph-arrow-up-right text-lg"></i>
+                            </div>
+                        </div>
+                    </a>
+
+                    <section className="relative bg-slate-900 border border-slate-800 rounded-xl p-5 md:p-8 flex flex-col md:flex-row gap-10 overflow-hidden">
+                        <div className="absolute inset-0">
+                            <img src="/images/6HQSG.jpg" alt="Singapore HQ" className="w-full h-full object-cover opacity-20" onError={(e) => e.target.style.display='none'} />
+                            <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/90 to-slate-900/80"></div>
+                        </div>
+                        <div className="relative z-10 flex flex-col md:flex-row gap-10 w-full">
+                            <div className="md:w-1/2 flex flex-col justify-center text-center md:text-left">
+                                <h3 className="text-3xl font-bold text-white mb-3">{t('contact_title')}</h3>
+                                <p className="text-slate-400 mb-8 text-lg">{t('contact_subtitle')}</p>
+                                
+                                <div className="flex justify-center md:justify-start w-full mt-4">
+                                    <img src="https://raw.githubusercontent.com/luoxisg/dcdeeptech/main/image/DCdeeptech_logo-removebg-preview.png" alt="DCDeepTech Logo" className="h-20 w-auto object-contain" onError={(e) => {e.target.style.display='none'; e.target.nextSibling.style.display='flex'}} />
+                                    <div className="hidden w-16 h-16 rounded bg-gradient-to-br from-cyan-500 to-blue-600 items-center justify-center text-white font-bold text-3xl">d</div>
+                                </div>
+                            </div>
+                            
+                            <div className="md:w-1/2 space-y-8 bg-slate-950/50 p-6 rounded-lg border border-slate-800 backdrop-blur-sm">
+                                <div className="flex items-start gap-4">
+                                    <div className="p-3 bg-cyan-500/10 rounded-lg">
+                                        <i className="ph-fill ph-map-pin text-2xl text-cyan-400"></i>
+                                    </div>
+                                    <div>
+                                        <h4 className="text-white font-bold mb-1 text-lg">Address</h4>
+                                        <p className="text-slate-400 leading-relaxed">
+                                            71 Ayer Rajah Crescent, #02-01<br/>Singapore 139951
+                                        </p>
+                                    </div>
+                                </div>
+                                
+                                <div className="flex items-start gap-4">
+                                    <div className="p-3 bg-blue-500/10 rounded-lg">
+                                        <i className="ph-fill ph-envelope-simple text-2xl text-blue-400"></i>
+                                    </div>
+                                    <div>
+                                        <h4 className="text-white font-bold mb-1 text-lg">Email</h4>
+                                        <a href="mailto:info@DCdeeptech.com" className="text-slate-400 hover:text-blue-400 transition-colors">info@DCdeeptech.com</a>
+                                    </div>
+                                </div>
+                                
+                                <div className="flex items-start gap-4">
+                                    <div className="p-3 bg-green-500/10 rounded-lg">
+                                        <i className="ph-fill ph-whatsapp-logo text-2xl text-green-400"></i>
+                                    </div>
+                                    <div>
+                                        <h4 className="text-white font-bold mb-1 text-lg">WhatsApp</h4>
+                                        <a href="https://wa.me/6583785068" className="text-slate-400 hover:text-green-400 transition-colors">+65 8378 5068</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </article>
+            );
+
+            // Added semantic sections for content chunks
+            const AboutView = () => (
+                <article className="space-y-6 animate-in fade-in duration-500">
+                    <header className="border-b border-slate-800 pb-4">
+                        <h2 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
+                            <i className="ph-fill ph-buildings text-cyan-400"></i> {t('about_title')}
+                        </h2>
+                        <p className="text-slate-400">{t('about_subtitle')}</p>
+                    </header>
+                    <section className="relative bg-slate-900 border border-slate-800 rounded-xl p-5 md:p-8 overflow-hidden min-h-[500px] flex items-center">
+                        <div className="absolute inset-0">
+                            <img src="/images/6-singapore-global-hq.jpg" alt="Singapore HQ" className="w-full h-full object-cover" onError={(e) => e.target.style.display='none'} />
+                            <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm"></div>
+                        </div>
+                        
+                        <div className="relative z-10 max-w-4xl space-y-6">
+                            <h3 className="text-2xl font-bold text-white">DCDeepTech</h3>
+                            <p className="text-slate-300 leading-relaxed text-lg">
+                                {t('about_p1')}
+                            </p>
+                            <p className="text-slate-300 leading-relaxed text-lg">
+                                {t('about_p2')}
+                            </p>
+                            <p className="text-slate-300 leading-relaxed text-lg">
+                                {t('about_p3')}
+                            </p>
+                        </div>
+                    </section>
+                </article>
+            );
+
+            const renderContent = () => {
+                switch(activeTab) {
+                    case 'overview': return <OverviewView />;
+                    case 'layer1': return <Layer1View />;
+                    case 'layer2': return <Layer2View />;
+                    case 'layer3': return <Layer3View />;
+                    case 'layer4': return <Layer4View />;
+                    case 'about': return <AboutView />;
+                    default: return <OverviewView />;
+                }
+            };
+
+            return (
+                <React.Fragment>
+                    {/* Mobile Header */}
+                    <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-slate-950/95 backdrop-blur border-b border-slate-800 z-40 flex items-center justify-between px-4 shadow-sm">
+                        <div className="flex items-center gap-2">
+                            <img src="https://raw.githubusercontent.com/luoxisg/dcdeeptech/main/image/DCdeeptech_logo-removebg-preview.png" alt="DCDeepTech Logo" className="h-8 w-auto object-contain" onError={(e) => {e.target.style.display='none';}} />
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <LangToggle className="border-none shadow-none bg-transparent" />
+                            <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-slate-300 p-2 focus:outline-none">
+                                <i className={`ph-fill ${isMobileMenuOpen ? 'ph-x' : 'ph-list'} text-2xl`}></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Mobile Backdrop */}
+                    {isMobileMenuOpen && (
+                        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 md:hidden" onClick={() => setIsMobileMenuOpen(false)}></div>
+                    )}
+
+                    {/* Desktop Lang Toggle */}
+                    <LangToggle className="hidden md:flex absolute top-8 right-8 z-50" />
+                    
+                    <Sidebar />
+
+                    {/* Semantic <main> tag to encapsulate primary content for bots */}
+                    <main className="md:ml-64 p-4 md:p-8 pt-20 md:pt-8 min-h-screen relative">
+                        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-cyan-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
+                        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-indigo-500/5 rounded-full blur-3xl translate-y-1/3 -translate-x-1/3 pointer-events-none"></div>
+                        <div className="max-w-6xl mx-auto relative z-10">
+                            {renderContent()}
+                        </div>
+                    </main>
+                </React.Fragment>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>

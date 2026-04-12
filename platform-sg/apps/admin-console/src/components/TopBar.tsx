@@ -1,65 +1,61 @@
-import { Activity, DollarSign } from 'lucide-react';
+import { Download, RefreshCw, Sparkles } from 'lucide-react';
 import { useStore } from '../store';
 
-const VIEW_LABELS: Record<string, string> = {
-  dashboard:  '系统总览与拓扑',
-  playground: '推理测试游乐场',
-  routing:    '请求路由配置 (LiteLLM)',
-  nodes:      '后端工作节点 (vLLM)',
-  debug:      '底层硬件与容器调试',
-};
+const VIEW_LABELS = {
+  search: 'Candidate discovery and qualification',
+  leads: 'Ranked lead intelligence list',
+  detail: 'CRM-ready lead card detail',
+  export: 'Export and handoff workspace',
+} as const;
 
 export function TopBar() {
-  const activeView = useStore((s) => s.activeView);
-  const health = useStore((s) => s.health);
-  const nodes = useStore((s) => s.nodes);
-
-  const avgTps = nodes
-    .filter((n) => n.status === 'running')
-    .reduce((sum, n) => sum + n.currentMetric.tps, 0);
-
-  const upDays = Math.floor(health.uptime / 86400);
-  const upHours = Math.floor((health.uptime % 86400) / 3600);
+  const activeView = useStore((state) => state.activeView);
+  const lastUpdatedAt = useStore((state) => state.lastUpdatedAt);
+  const loadingLeads = useStore((state) => state.loadingLeads);
+  const runDiscovery = useStore((state) => state.runDiscovery);
+  const loadLeads = useStore((state) => state.loadLeads);
+  const generateExport = useStore((state) => state.generateExport);
 
   return (
-    <header className="h-14 shrink-0 bg-gray-900 border-b border-gray-800 flex items-center justify-between px-8">
-      <h2 className="text-lg font-semibold text-gray-100">
-        {VIEW_LABELS[activeView]}
-      </h2>
-      <div className="flex gap-3 items-center">
-        <MetricPill
-          icon={<Activity size={13} />}
-          label="吞吐"
-          value={`${avgTps} T/s`}
-          color="text-emerald-400"
-        />
-        <MetricPill
-          icon={<DollarSign size={13} />}
-          label="本月"
-          value="$12.45"
-          color="text-blue-400"
-        />
-        <div className="text-xs text-gray-500 bg-gray-800 px-3 py-1.5 rounded-full border border-gray-700">
-          运行 {upDays}d {upHours}h
+    <header className="border-b border-white/10 bg-[#111827]/70 px-8 py-5 backdrop-blur">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-orange-300/20 bg-orange-300/10 px-3 py-1 text-xs font-medium uppercase tracking-[0.22em] text-orange-100">
+            <Sparkles size={12} />
+            Lead Discovery Agent Platform
+          </div>
+          <h2 className="text-2xl font-semibold tracking-tight text-white">{VIEW_LABELS[activeView]}</h2>
+          <p className="mt-2 text-sm text-slate-300">
+            Focused on accurate qualification, demand inference, and exportable intelligence for DCDeepTech sellers.
+          </p>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-3">
+          <button
+            onClick={() => void runDiscovery()}
+            className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-200 transition hover:bg-white/10"
+          >
+            <RefreshCw size={15} />
+            Refresh discovery
+          </button>
+          <button
+            onClick={() => void loadLeads()}
+            className="inline-flex items-center gap-2 rounded-full border border-emerald-300/20 bg-emerald-400/10 px-4 py-2 text-sm text-emerald-100 transition hover:bg-emerald-400/15"
+          >
+            {loadingLeads ? <RefreshCw size={15} className="animate-spin" /> : <RefreshCw size={15} />}
+            Re-score list
+          </button>
+          <button
+            onClick={() => void generateExport('csv')}
+            className="inline-flex items-center gap-2 rounded-full border border-orange-300/25 bg-gradient-to-r from-orange-500 to-amber-400 px-4 py-2 text-sm font-medium text-slate-950 transition hover:opacity-95"
+          >
+            <Download size={15} />
+            Export CSV
+          </button>
         </div>
       </div>
-    </header>
-  );
-}
 
-function MetricPill({
-  icon, label, value, color,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-  color: string;
-}) {
-  return (
-    <div className="flex items-center gap-1.5 bg-gray-800 px-3 py-1.5 rounded-full border border-gray-700 text-xs">
-      <span className={color}>{icon}</span>
-      <span className="text-gray-400">{label}:</span>
-      <span className="font-semibold">{value}</span>
-    </div>
+      <div className="mt-4 text-xs text-slate-400">Last intelligence refresh: {new Date(lastUpdatedAt).toLocaleString()}</div>
+    </header>
   );
 }

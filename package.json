@@ -8,7 +8,9 @@
     "dev": "turbo run dev --parallel",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
-    "clean": "turbo run clean && rm -rf node_modules"
+    "clean": "turbo run clean && rm -rf node_modules",
+    "dev:lead-web": "pnpm --filter @lead-intel/web dev",
+    "dev:lead-api": "python -m uvicorn apps.api.app.main:app --reload --host 0.0.0.0 --port 8000"
   },
   "devDependencies": {
     "turbo": "^2.3.3"

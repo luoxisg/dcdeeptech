@@ -1,39 +1,34 @@
-import { useStore } from './store';
-import { useMetricsSimulator } from './hooks/useMetricsSimulator';
-import { useLogStream } from './hooks/useLogStream';
+import { useEffect } from 'react';
 import { Sidebar } from './components/Sidebar';
 import { TopBar } from './components/TopBar';
-import { Dashboard } from './views/Dashboard';
-import { Playground } from './views/Playground';
-import { Routing } from './views/Routing';
-import { Nodes } from './views/Nodes';
-import { Debug } from './views/Debug';
-import { Keys } from './views/Keys';
-import { Compliance } from './views/Compliance';
+import { useStore } from './store';
+import { ExportView } from './views/Export';
+import { LeadDetailView } from './views/LeadDetail';
+import { LeadsView } from './views/Leads';
+import { SearchView } from './views/Search';
 
 export default function App() {
-  // Mount background simulators once at root
-  useMetricsSimulator();
-  useLogStream();
+  const activeView = useStore((state) => state.activeView);
+  const loadLeads = useStore((state) => state.loadLeads);
+  const runDiscovery = useStore((state) => state.runDiscovery);
 
-  const activeView = useStore((s) => s.activeView);
+  useEffect(() => {
+    void Promise.all([loadLeads(), runDiscovery()]);
+  }, [loadLeads, runDiscovery]);
 
   return (
-    <div className="flex h-screen bg-gray-900 text-gray-100 overflow-hidden font-sans">
-      <Sidebar />
-
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <TopBar />
-
-        <main className="flex-1 overflow-auto p-6" style={{ minHeight: 0 }}>
-          {activeView === 'dashboard'  && <Dashboard />}
-          {activeView === 'playground' && <Playground />}
-          {activeView === 'routing'    && <Routing />}
-          {activeView === 'nodes'      && <Nodes />}
-          {activeView === 'debug'      && <Debug />}
-          {activeView === 'keys'       && <Keys />}
-          {activeView === 'compliance' && <Compliance />}
-        </main>
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(14,165,233,0.12),transparent_32%),linear-gradient(180deg,#07111c_0%,#0b1320_38%,#111827_100%)] text-white">
+      <div className="mx-auto flex min-h-screen max-w-[1600px]">
+        <Sidebar />
+        <div className="flex min-h-screen flex-1 flex-col">
+          <TopBar />
+          <main className="flex-1 px-6 py-6 lg:px-8">
+            {activeView === 'search' && <SearchView />}
+            {activeView === 'leads' && <LeadsView />}
+            {activeView === 'detail' && <LeadDetailView />}
+            {activeView === 'export' && <ExportView />}
+          </main>
+        </div>
       </div>
     </div>
   );

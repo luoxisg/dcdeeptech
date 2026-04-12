@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DCDeepTech USD Lead Discovery Platform</title>
+    <style>
+      :root {
+        --bg: #07111a;
+        --panel: rgba(255, 255, 255, 0.06);
+        --line: rgba(255, 255, 255, 0.12);
+        --text: #edf6ff;
+        --muted: #97a9bc;
+        --orange: #f97316;
+        --amber: #fbbf24;
+        --green: #34d399;
+        --cyan: #22d3ee;
+      }
+
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: "Segoe UI", Arial, sans-serif;
+        color: var(--text);
+        background:
+          radial-gradient(circle at top, rgba(249, 115, 22, 0.12), transparent 28%),
+          linear-gradient(180deg, #07111a 0%, #0d1726 48%, #111827 100%);
+      }
+
+      .app {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        min-height: 100vh;
+      }
+
+      .sidebar {
+        padding: 28px 20px;
+        border-right: 1px solid var(--line);
+        background: rgba(7, 17, 26, 0.88);
+        backdrop-filter: blur(14px);
+      }
+
+      .logo {
+        width: 52px;
+        height: 52px;
+        border-radius: 18px;
+        display: grid;
+        place-items: center;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--orange), var(--green));
+        color: white;
+        box-shadow: 0 16px 40px rgba(249, 115, 22, 0.28);
+      }
+
+      .sidebar h1 {
+        margin: 16px 0 8px;
+        font-size: 22px;
+      }
+
+      .sidebar p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.6;
+        font-size: 14px;
+      }
+
+      .nav {
+        margin-top: 28px;
+        display: grid;
+        gap: 10px;
+      }
+
+      .nav-item {
+        padding: 14px 16px;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.03);
+      }
+
+      .nav-item.active {
+        background: rgba(249, 115, 22, 0.14);
+        border-color: rgba(249, 115, 22, 0.35);
+      }
+
+      .nav-item strong {
+        display: block;
+        margin-bottom: 4px;
+      }
+
+      .content {
+        padding: 28px;
+      }
+
+      .hero, .panel {
+        border: 1px solid var(--line);
+        border-radius: 28px;
+        background: var(--panel);
+        backdrop-filter: blur(10px);
+      }
+
+      .hero {
+        padding: 28px;
+        background:
+          radial-gradient(circle at top left, rgba(34, 211, 238, 0.14), transparent 30%),
+          radial-gradient(circle at bottom right, rgba(249, 115, 22, 0.14), transparent 28%),
+          var(--panel);
+      }
+
+      .eyebrow {
+        color: #ffd7b5;
+        text-transform: uppercase;
+        letter-spacing: 0.22em;
+        font-size: 12px;
+      }
+
+      h2 {
+        margin: 14px 0 10px;
+        font-size: 34px;
+        line-height: 1.15;
+      }
+
+      .sub {
+        color: var(--muted);
+        line-height: 1.7;
+        max-width: 900px;
+      }
+
+      .grid-2 {
+        margin-top: 24px;
+        display: grid;
+        gap: 20px;
+        grid-template-columns: 1.15fr 0.85fr;
+      }
+
+      .filters, .notes, .section {
+        padding: 22px;
+      }
+
+      .field-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+        margin-top: 18px;
+      }
+
+      label {
+        display: block;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        color: var(--muted);
+      }
+
+      input, select, textarea {
+        margin-top: 8px;
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: rgba(6, 13, 20, 0.72);
+        color: var(--text);
+        padding: 12px 14px;
+      }
+
+      .chips, .tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 16px;
+      }
+
+      .chip, .tag {
+        padding: 8px 12px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.04);
+        font-size: 13px;
+      }
+
+      .cta {
+        display: inline-block;
+        margin-top: 18px;
+        padding: 12px 18px;
+        border-radius: 999px;
+        background: linear-gradient(90deg, var(--orange), var(--amber));
+        color: #1a1a1a;
+        font-weight: 700;
+      }
+
+      .stats {
+        margin-top: 22px;
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .stat {
+        padding: 18px;
+        border-radius: 22px;
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.04);
+      }
+
+      .stat .value {
+        font-size: 30px;
+        font-weight: 700;
+        margin-top: 8px;
+      }
+
+      .section-title {
+        font-size: 22px;
+        margin: 0 0 8px;
+      }
+
+      .cards, .lead-grid, .export-grid {
+        display: grid;
+        gap: 16px;
+      }
+
+      .cards {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .card {
+        padding: 20px;
+        border-radius: 24px;
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.04);
+      }
+
+      .score {
+        display: inline-block;
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: rgba(52, 211, 153, 0.14);
+        color: #c6ffe8;
+        font-weight: 700;
+      }
+
+      .muted {
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+      }
+
+      th, td {
+        padding: 14px 12px;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        text-align: left;
+        vertical-align: top;
+      }
+
+      th {
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        font-size: 12px;
+      }
+
+      .lead-grid {
+        grid-template-columns: 1.1fr 0.9fr;
+      }
+
+      .signal-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      pre {
+        white-space: pre-wrap;
+        word-break: break-word;
+        padding: 18px;
+        border-radius: 22px;
+        background: #091018;
+        border: 1px solid var(--line);
+        overflow: auto;
+        color: #d5ffe8;
+      }
+
+      .spacer { height: 20px; }
+
+      @media (max-width: 1100px) {
+        .app, .grid-2, .lead-grid, .signal-grid, .cards, .stats {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar">
+        <div class="logo">DC</div>
+        <h1>USD Lead Platform</h1>
+        <p>Find and qualify China-linked companies that are likely USD-funded or internationally backed.</p>
+
+        <div class="nav">
+          <div class="nav-item active">
+            <strong>Search / Filter</strong>
+            <span class="muted">Candidate discovery and qualification sweep</span>
+          </div>
+          <div class="nav-item">
+            <strong>Lead List</strong>
+            <span class="muted">Ranked prospects for SDR or BD review</span>
+          </div>
+          <div class="nav-item">
+            <strong>Lead Detail</strong>
+            <span class="muted">Funding, globalization, infra demand, opening angle</span>
+          </div>
+          <div class="nav-item">
+            <strong>Export</strong>
+            <span class="muted">CRM-ready payload without auto-email</span>
+          </div>
+        </div>
+      </aside>
+
+      <main class="content">
+        <section class="hero">
+          <div class="eyebrow">DCDeepTech B2B Lead Discovery Agent</div>
+          <h2>Cross-border AI infra lead intelligence for China-linked, globally scaling companies.</h2>
+          <p class="sub">
+            This v1 focuses on accurate qualification and exportable lead intelligence for API gateway, inference service,
+            compliance support, and OCP-based infrastructure opportunities. Auto-email sending is intentionally excluded.
+          </p>
+
+          <div class="stats">
+            <div class="stat">
+              <div class="muted">Qualified leads</div>
+              <div class="value">48</div>
+            </div>
+            <div class="stat">
+              <div class="muted">USD-backed</div>
+              <div class="value">31</div>
+            </div>
+            <div class="stat">
+              <div class="muted">Avg lead score</div>
+              <div class="value">84</div>
+            </div>
+            <div class="stat">
+              <div class="muted">Export-ready cards</div>
+              <div class="value">22</div>
+            </div>
+          </div>
+        </section>
+
+        <div class="grid-2">
+          <section class="panel filters">
+            <div class="eyebrow">Frontend · Search / Filter Page</div>
+            <h3 class="section-title">Candidate Discovery</h3>
+            <p class="muted">Search for robotics, chip, enterprise AI, health AI, or industrial AI companies with China-linked operating signals and international funding patterns.</p>
+
+            <div class="field-grid">
+              <div>
+                <label>Search focus</label>
+                <input value="APAC enterprise AI + China-linked infra buyers" />
+              </div>
+              <div>
+                <label>Region signal</label>
+                <input value="Singapore, Hong Kong, Dubai, Munich" />
+              </div>
+              <div>
+                <label>Funding stage</label>
+                <select>
+                  <option>Series A to Growth</option>
+                </select>
+              </div>
+              <div>
+                <label>Minimum lead score</label>
+                <input value="75+" />
+              </div>
+            </div>
+
+            <div class="chips">
+              <div class="chip">USD-funded only</div>
+              <div class="chip">International backing</div>
+              <div class="chip">China-linked ops / founders / supply chain</div>
+              <div class="chip">Likely infra spend</div>
+            </div>
+
+            <div class="cta">Run qualification sweep</div>
+          </section>
+
+          <section class="panel notes">
+            <div class="eyebrow">Backend Modules</div>
+            <h3 class="section-title">System Design</h3>
+            <div class="cards">
+              <div class="card">
+                <strong>1. Candidate discovery</strong>
+                <p class="muted">Crawler/search connector pulls company candidates from public web, directories, media, and hiring signals.</p>
+              </div>
+              <div class="card">
+                <strong>2. Company normalization</strong>
+                <p class="muted">Deduplicates names, domains, headquarters, regions, and China-link patterns.</p>
+              </div>
+              <div class="card">
+                <strong>3. Funding signal analysis</strong>
+                <p class="muted">Summarizes USD round clues, investor geography, and international backing strength.</p>
+              </div>
+              <div class="card">
+                <strong>4. Lead scoring</strong>
+                <p class="muted">Combines funding, globalization, infra fit, and qualification confidence into a final score.</p>
+              </div>
+              <div class="card">
+                <strong>5. Lead card generation</strong>
+                <p class="muted">Outputs CRM-ready intelligence with profile, opening angle, and target roles.</p>
+              </div>
+              <div class="card">
+                <strong>Export service</strong>
+                <p class="muted">Delivers JSON / CSV payloads for CRM or analyst workflow handoff.</p>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <div class="spacer"></div>
+
+        <section class="panel section">
+          <div class="eyebrow">Frontend · Lead List Page</div>
+          <h3 class="section-title">Ranked Lead List</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Company</th>
+                <th>Funding signal</th>
+                <th>Globalization signal</th>
+                <th>Infra-demand likelihood</th>
+                <th>Score</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Jade Inference Labs</strong><br><span class="muted">US HQ · Beijing research · Singapore GTM</span></td>
+                <td>US-led Series A with Singapore operator angels</td>
+                <td>Cross-border product expansion into APAC enterprise accounts</td>
+                <td>High need for gatewaying, managed inference, and regional traffic separation</td>
+                <td><span class="score">92</span></td>
+              </tr>
+              <tr>
+                <td><strong>Harbor Robotics Cloud</strong><br><span class="muted">Hong Kong HQ · Shanghai ops · Munich deployments</span></td>
+                <td>Large USD growth round with European logistics investor</td>
+                <td>EU customers and multilingual systems integration motion</td>
+                <td>Strong need for cross-border API gateway and inference control plane</td>
+                <td><span class="score">90</span></td>
+              </tr>
+              <tr>
+                <td><strong>Aurora Semi Systems</strong><br><span class="muted">Singapore HQ · Shenzhen hardware · US reseller</span></td>
+                <td>Series B with US strategic semiconductor investor</td>
+                <td>Clear US + ASEAN go-to-market posture</td>
+                <td>Likely buyer of compliant inference access and OCP-aligned infra</td>
+                <td><span class="score">89</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <div class="spacer"></div>
+
+        <section class="lead-grid">
+          <div class="panel section">
+            <div class="eyebrow">Frontend · Lead Detail Page</div>
+            <h3 class="section-title">Lead Detail · Jade Inference Labs</h3>
+            <p class="muted">
+              US-incorporated applied AI company with research and annotation presence in Beijing, plus commercial expansion in Singapore for APAC accounts.
+            </p>
+
+            <div class="signal-grid">
+              <div class="card">
+                <strong>Company profile</strong>
+                <p class="muted">Multilingual enterprise AI tooling for support and developer workflows with distributed regional operations.</p>
+              </div>
+              <div class="card">
+                <strong>Funding signal summary</strong>
+                <p class="muted">US-led Series A plus Singapore angels suggests fast overseas customer acquisition and willingness to buy infrastructure.</p>
+              </div>
+              <div class="card">
+                <strong>Globalization summary</strong>
+                <p class="muted">US fundraising, APAC hiring, and customer security docs all point to cross-border deployment complexity.</p>
+              </div>
+            </div>
+
+            <div class="tags">
+              <div class="tag">Infra-demand likelihood: High</div>
+              <div class="tag">Target role: CEO</div>
+              <div class="tag">Target role: Head of Infrastructure</div>
+              <div class="tag">Target role: VP Product</div>
+            </div>
+
+            <div class="card" style="margin-top: 16px;">
+              <strong>Recommended opening angle</strong>
+              <p class="muted">
+                Position DCDeepTech as the APAC launchpad for enterprise inference with Singapore governance,
+                China-compatible deployment options, API gateway control, and compliance-aware traffic routing.
+              </p>
+            </div>
+          </div>
+
+          <div class="panel section">
+            <div class="eyebrow">Backend + Data Model</div>
+            <h3 class="section-title">Tables and Services</h3>
+            <div class="cards" style="grid-template-columns: 1fr;">
+              <div class="card">
+                <strong>Tables</strong>
+                <p class="muted">`companies`, `funding_events`, `lead_scores`</p>
+              </div>
+              <div class="card">
+                <strong>Backend services</strong>
+                <p class="muted">Company crawler/search connector, LLM-based qualification service, scoring engine, export service</p>
+              </div>
+              <div class="card">
+                <strong>Required lead outputs</strong>
+                <p class="muted">Profile, funding signal, globalization signal, infra-demand likelihood, target roles, opening angle, final lead score</p>
+              </div>
+              <div class="card">
+                <strong>v1 scope</strong>
+                <p class="muted">Accurate qualification and exportable intelligence only. No automated outbound email sending.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div class="spacer"></div>
+
+        <section class="panel section">
+          <div class="eyebrow">Frontend · Export Page</div>
+          <h3 class="section-title">CRM-Ready Export Preview</h3>
+          <div class="export-grid">
+            <pre>{
+  "company": "Jade Inference Labs",
+  "company_profile": "US-incorporated applied AI company with Beijing research presence and Singapore GTM expansion.",
+  "funding_signal_summary": "US-led Series A plus Singapore operator angels.",
+  "globalization_signal_summary": "Cross-border customer growth and regional data-handling constraints.",
+  "infra_demand_likelihood": "High",
+  "target_contact_roles": ["CEO", "Head of Infrastructure", "VP Product"],
+  "recommended_opening_angle": "APAC enterprise expansion with Singapore governance and China-compatible inference architecture.",
+  "final_lead_score": 92
+}</pre>
+          </div>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

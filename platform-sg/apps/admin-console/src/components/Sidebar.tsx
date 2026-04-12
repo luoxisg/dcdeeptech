@@ -1,65 +1,82 @@
-import { Activity, KeyRound, MessageSquare, Route, Server, Shield, Terminal, Zap } from 'lucide-react';
+import { Download, FileSearch, LayoutList, Radar, Sparkles } from 'lucide-react';
 import { useStore } from '../store';
 import type { ActiveView } from '../types';
 
-const NAV_ITEMS: { id: ActiveView; label: string; icon: React.ReactNode }[] = [
-  { id: 'dashboard',  label: '总览拓扑',         icon: <Activity size={18} /> },
-  { id: 'playground', label: '聊天测试',          icon: <MessageSquare size={18} /> },
-  { id: 'routing',    label: '路由与负载均衡',    icon: <Route size={18} /> },
-  { id: 'nodes',      label: 'vLLM 节点管理',    icon: <Server size={18} /> },
-  { id: 'debug',      label: '底层与容器调试',    icon: <Terminal size={18} /> },
-  { id: 'keys',       label: 'API Key 管理',      icon: <KeyRound size={18} /> },
-  { id: 'compliance', label: 'PDPA 合规',          icon: <Shield size={18} /> },
+const NAV_ITEMS: { id: ActiveView; label: string; hint: string; icon: React.ReactNode }[] = [
+  { id: 'search', label: 'Discovery', hint: 'Search + qualify', icon: <Radar size={18} /> },
+  { id: 'leads', label: 'Lead List', hint: 'Ranked prospects', icon: <LayoutList size={18} /> },
+  { id: 'detail', label: 'Lead Detail', hint: 'Card + rationale', icon: <FileSearch size={18} /> },
+  { id: 'export', label: 'Export', hint: 'CRM-ready output', icon: <Download size={18} /> },
 ];
 
 export function Sidebar() {
-  const activeView = useStore((s) => s.activeView);
-  const setActiveView = useStore((s) => s.setActiveView);
-  const nodes = useStore((s) => s.nodes);
-  const onlineCount = nodes.filter((n) => n.status === 'running').length;
+  const activeView = useStore((state) => state.activeView);
+  const setActiveView = useStore((state) => state.setActiveView);
+  const leads = useStore((state) => state.leads);
+  const selectedLeadIds = useStore((state) => state.selectedLeadIds);
+  const avgScore =
+    leads.length === 0 ? 0 : Math.round(leads.reduce((sum, lead) => sum + lead.lead_score.final_lead_score, 0) / leads.length);
 
   return (
-    <div className="w-64 shrink-0 bg-gray-950 border-r border-gray-800 flex flex-col">
-      {/* Logo */}
-      <div className="p-5 flex items-center gap-3 border-b border-gray-800">
-        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-emerald-500 flex items-center justify-center shadow-lg">
-          <Zap size={18} className="text-white" />
+    <aside className="w-full max-w-[290px] shrink-0 border-r border-white/10 bg-[#0f1720]/90 backdrop-blur">
+      <div className="border-b border-white/10 px-6 py-6">
+        <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#f97316] via-[#fb923c] to-[#22c55e] shadow-[0_12px_30px_rgba(249,115,22,0.28)]">
+          <Sparkles size={22} className="text-white" />
         </div>
-        <div>
-          <h1 className="font-bold text-base leading-tight tracking-wide">AI Gateway</h1>
-          <p className="text-xs text-gray-400">LiteLLM + vLLM</p>
-        </div>
+        <h1 className="text-xl font-semibold tracking-tight text-white">DCDeepTech Leads</h1>
+        <p className="mt-2 text-sm text-slate-300">
+          China-linked B2B lead discovery for cross-border AI infrastructure, gateway, inference, and compliance demand.
+        </p>
       </div>
 
-      {/* Nav */}
-      <nav className="flex-1 p-3 space-y-1">
-        {NAV_ITEMS.map(({ id, label, icon }) => {
-          const active = activeView === id;
+      <nav className="space-y-2 px-4 py-5">
+        {NAV_ITEMS.map((item) => {
+          const active = item.id === activeView;
           return (
             <button
-              key={id}
-              onClick={() => setActiveView(id)}
-              className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 ${
+              key={item.id}
+              onClick={() => setActiveView(item.id)}
+              className={`w-full rounded-2xl border px-4 py-3 text-left transition ${
                 active
-                  ? 'bg-blue-600/20 text-blue-400'
-                  : 'text-gray-400 hover:bg-gray-800 hover:text-gray-200'
+                  ? 'border-orange-300/40 bg-orange-400/12 text-white shadow-[0_12px_30px_rgba(249,115,22,0.12)]'
+                  : 'border-white/5 bg-white/[0.03] text-slate-300 hover:border-white/15 hover:bg-white/[0.05]'
               }`}
             >
-              {icon}
-              <span>{label}</span>
+              <div className="flex items-center gap-3">
+                <span className={active ? 'text-orange-200' : 'text-slate-400'}>{item.icon}</span>
+                <div>
+                  <div className="text-sm font-medium">{item.label}</div>
+                  <div className="text-xs text-slate-400">{item.hint}</div>
+                </div>
+              </div>
             </button>
           );
         })}
       </nav>
 
-      {/* Footer */}
-      <div className="p-4 border-t border-gray-800 flex justify-between items-center text-xs text-gray-500">
-        <span>v1.0.0-beta</span>
-        <span className="flex items-center gap-1 text-emerald-400">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-          {onlineCount} 节点在线
-        </span>
+      <div className="px-4 pb-6">
+        <div className="rounded-3xl border border-emerald-300/15 bg-gradient-to-br from-emerald-400/10 via-transparent to-cyan-400/10 p-4">
+          <div className="text-xs uppercase tracking-[0.24em] text-emerald-200/80">Pipeline Snapshot</div>
+          <div className="mt-4 grid grid-cols-2 gap-3 text-sm text-slate-200">
+            <div className="rounded-2xl bg-black/20 p-3">
+              <div className="text-xl font-semibold text-white">{leads.length}</div>
+              <div className="text-xs text-slate-400">Qualified leads</div>
+            </div>
+            <div className="rounded-2xl bg-black/20 p-3">
+              <div className="text-xl font-semibold text-white">{avgScore}</div>
+              <div className="text-xs text-slate-400">Avg score</div>
+            </div>
+            <div className="rounded-2xl bg-black/20 p-3">
+              <div className="text-xl font-semibold text-white">{selectedLeadIds.length}</div>
+              <div className="text-xs text-slate-400">Marked for export</div>
+            </div>
+            <div className="rounded-2xl bg-black/20 p-3">
+              <div className="text-xl font-semibold text-white">v1</div>
+              <div className="text-xs text-slate-400">No auto-email</div>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
+    </aside>
   );
 }
