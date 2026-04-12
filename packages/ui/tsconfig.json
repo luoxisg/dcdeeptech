@@ -1,0 +1,7 @@
+{
+  "extends": "../../shared/packages/config-typescript/react-library.json",
+  "compilerOptions": {
+    "jsx": "react-jsx"
+  },
+  "include": ["src"]
+}

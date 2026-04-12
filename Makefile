@@ -1,4 +1,4 @@
-.PHONY: setup dev-front dev-sg dev-all seed test-sg lint build clean help
+.PHONY: setup dev-front dev-sg dev-all dev-lead-web dev-lead-api dev-lead-stack seed seed-lead test-sg test-lead lint build clean help
 
 # ── Setup ──────────────────────────────────────────────────────────────────────
 
@@ -26,12 +26,24 @@ dev-all: ## Start everything (front + platform-sg docker services) in parallel
 	$(MAKE) dev-sg &
 	$(MAKE) dev-front
 
+dev-lead-web: ## Start the lead intelligence Next.js app
+	pnpm --filter @lead-intel/web dev
+
+dev-lead-api: ## Start the lead intelligence FastAPI app
+	python -m uvicorn apps.api.app.main:app --reload --host 0.0.0.0 --port 8000
+
+dev-lead-stack: ## Start Postgres and Redis for the lead intelligence MVP
+	docker compose up postgres redis
+
 # ── One-time Ops ───────────────────────────────────────────────────────────────
 
 seed: ## Seed initial admin key (run ONCE per environment — do NOT automate)
 	@echo "WARNING: This creates the initial admin key. Run once per environment only."
 	@read -p "Target environment (local/staging/production): " env; \
 	cd platform-sg/services/gateway && python ../../scripts/seed-admin-key.py --env $$env
+
+seed-lead: ## Seed lead intelligence fixture data
+	python scripts/seed/seed_lead_intel.py
 
 # ── Quality ────────────────────────────────────────────────────────────────────
 
@@ -44,6 +56,9 @@ typecheck: ## Type-check all TS packages
 test-sg: ## Run Python tests for platform-sg services
 	cd platform-sg/services/gateway && python -m pytest tests/ -v
 	cd platform-sg/services/compliance && python -m pytest tests/ -v
+
+test-lead: ## Run lead intelligence unit and integration tests
+	python -m pytest tests/unit tests/integration -v
 
 # ── Build ──────────────────────────────────────────────────────────────────────
 

@@ -147,6 +147,7 @@ export interface WatchlistEntry {
   notes: string;
   tags: string[];
   created_at: string;
+  lead?: LeadCard | null;
 }
 
 export interface WatchlistRequest {

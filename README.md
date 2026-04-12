@@ -6,6 +6,17 @@ Cross-border AI inference platform. Singapore control plane enforces auth, PII d
 
 ```
 monorepo-root/
+├── apps/               # New lead intelligence product slice
+│   ├── api/            # FastAPI + SQLAlchemy + Alembic
+│   └── web/            # Next.js + React Query + TanStack Table
+├── packages/           # New shared product packages
+│   ├── config/         # Tailwind and app config
+│   ├── connectors/     # Seed/demo connectors
+│   ├── db/             # SQLAlchemy models
+│   ├── llm/            # LLM output contract helpers
+│   ├── scoring/        # Rule-based scoring engine
+│   ├── types/          # Shared TypeScript DTOs
+│   └── ui/             # Shared UI primitives
 ├── front/              # Customer-facing and commercial surfaces
 │   └── apps/
 │       ├── marketing/  # Public marketing site (Next.js 16)
@@ -44,6 +55,21 @@ monorepo-root/
 ```bash
 # First time
 bash scripts/bootstrap.sh
+
+# Lead intelligence MVP dependencies
+pnpm install
+
+# Start Postgres and Redis
+docker compose up -d postgres redis
+
+# Seed lead intelligence demo data
+python scripts/seed/seed_lead_intel.py
+
+# Start lead intelligence API
+python -m uvicorn apps.api.app.main:app --reload --host 0.0.0.0 --port 8000
+
+# Start lead intelligence web
+pnpm --filter @lead-intel/web dev
 
 # Start Singapore control plane
 make dev-sg
@@ -95,6 +121,9 @@ Every `POST /v1/chat/completions` passes through in strict order:
 
 ## Documentation
 
+- [Lead intelligence product notes](docs/product/china-outbound-enterprise-lead-intelligence.md)
+- [Lead intelligence architecture](docs/architecture/lead-intel-mvp.md)
+- [Lead intelligence API summary](docs/api/lead-intel-endpoints.md)
 - [Architecture overview](docs/architecture/overview.md)
 - [Trust zones and boundary rules](docs/architecture/trust-zones.md)
 - [PDPA compliance posture](docs/compliance/pdpa-posture.md)
