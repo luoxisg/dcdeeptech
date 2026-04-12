@@ -1,0 +1,23 @@
+{
+  "name": "lead-intel-usd-workspace",
+  "private": true,
+  "version": "0.1.0",
+  "description": "China Outbound Enterprise Lead Intelligence Platform MVP workspace",
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev --parallel",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "dev:web": "pnpm --filter @lead-intel/web dev",
+    "dev:api": "python -m uvicorn apps.api.app.main:app --reload --host 0.0.0.0 --port 8000"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.1",
+    "turbo": "^2.9.6"
+  },
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=9"
+  },
+  "packageManager": "pnpm@9.15.0"
+}
