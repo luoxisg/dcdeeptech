@@ -1,0 +1,64 @@
+name: Publish static root to GitHub Pages
+run-name: Publish static root (${{ github.sha }})
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    # Manual dispatch from a feature branch must not publish unreviewed content.
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout existing static files without submodules
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+          persist-credentials: false
+
+      - name: Configure Pages metadata
+        uses: actions/configure-pages@v5
+        with:
+          # Repository owner must select Pages Source = GitHub Actions.
+          # Do not auto-enable Pages or change domain/DNS settings.
+          enablement: false
+
+      - name: Stage and audit public static root
+        run: >-
+          python3 scripts/pages/stage_public.py
+          --output "${{ runner.temp }}/dcdeeptech-pages/site"
+          --report "${{ runner.temp }}/dcdeeptech-pages/audit.json"
+
+      - name: Upload public Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        env:
+          # The official action otherwise excludes .nojekyll via .[^/]*.
+          # Only the allowlisted dotfiles exist in the audited staging root.
+          TAR_OPTIONS: --no-wildcards
+        with:
+          path: ${{ runner.temp }}/dcdeeptech-pages/site
+
+      - name: Verify actual uploaded archive contents
+        run: >-
+          python3 scripts/pages/stage_public.py
+          --audit-tar "${{ runner.temp }}/artifact.tar"
+          --report "${{ runner.temp }}/dcdeeptech-pages/audit.json"
+
+      - name: Deploy reviewed static artifact
+        id: deployment
+        uses: actions/deploy-pages@v4
