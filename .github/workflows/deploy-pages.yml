@@ -25,11 +25,20 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Checkout existing static files without submodules
-        uses: actions/checkout@v4
-        with:
-          submodules: false
-          persist-credentials: true
+      - name: Fetch exact production commit without submodule traversal
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git init .
+          git remote add origin "https://github.com/${GITHUB_REPOSITORY}.git"
+          auth_header="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)"
+          git -c "http.extraheader=$auth_header" fetch --no-tags --depth=1 origin "$GITHUB_SHA"
+          unset auth_header
+          git -c submodule.recurse=false checkout --detach --force FETCH_HEAD
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test -f DeepFamily/en/index.html
 
       - name: Configure Pages metadata
         uses: actions/configure-pages@v5
