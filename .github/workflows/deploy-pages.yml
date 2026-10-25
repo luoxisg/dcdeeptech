@@ -25,11 +25,60 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Checkout existing static files without submodules
-        uses: actions/checkout@v4
-        with:
-          submodules: false
-          persist-credentials: true
+      - name: Download pinned GitHub source archive (no checkout)
+        env:
+          SOURCE_REPOSITORY: ${{ github.repository }}
+          SOURCE_COMMIT: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          test "$SOURCE_REPOSITORY" = "luoxisg/dcdeeptech"
+          [[ "$SOURCE_COMMIT" =~ ^[0-9a-f]{40}$ ]]
+          mkdir -p "$RUNNER_TEMP/dcdeeptech-archive"
+          # Public repository: no authentication header/token is needed.
+          # Never use a mutable branch URL or fall back to Git/submodules.
+          curl --fail --silent --show-error --location --retry 3 \
+            --connect-timeout 15 --max-time 180 \
+            --proto '=https' --proto-redir '=https' --tlsv1.2 \
+            "https://codeload.github.com/$SOURCE_REPOSITORY/tar.gz/$SOURCE_COMMIT" \
+            --output "$RUNNER_TEMP/dcdeeptech-archive/source.tar.gz"
+          python3 - <<'PY'
+          import os, re, tarfile
+          from pathlib import Path, PurePosixPath
+          def require(condition, message):
+              if not condition:
+                  raise ValueError(message)
+          sha = os.environ["SOURCE_COMMIT"]
+          repo = os.environ["SOURCE_REPOSITORY"]
+          require(re.fullmatch(r"[0-9a-f]{40}", sha), "Full commit SHA required")
+          prefix = repo.split("/")[1] + "-" + sha
+          base = Path(os.environ["RUNNER_TEMP"]) / "dcdeeptech-archive"
+          root = base / "repository"
+          required = {"scripts/pages/stage_public.py", "scripts/pages/public-files.json"}
+          tools, seen, expanded = {}, set(), 0
+          with tarfile.open(base / "source.tar.gz", "r:gz") as archive:
+              for number, item in enumerate(archive, 1):
+                  path = PurePosixPath(item.name)
+                  require(number <= 100000, "Too many archive entries")
+                  require(not path.is_absolute() and ".." not in path.parts and chr(92) not in item.name, "Unsafe archive path")
+                  require(path.parts and path.parts[0] == prefix, "Archive SHA/root mismatch")
+                  require(str(path) not in seen, "Duplicate archive path")
+                  seen.add(str(path))
+                  require(item.isdir() or item.isfile(), "Archive links/devices rejected")
+                  require(0 <= item.size <= 512 * 1024 * 1024, "Oversized archive entry")
+                  expanded += item.size
+                  require(expanded <= 1024 * 1024 * 1024, "Archive expanded size limit")
+                  relative = str(PurePosixPath(*path.parts[1:]))
+                  if relative in required:
+                      require(item.isfile() and item.size <= 1024 * 1024, "Invalid staging tool")
+                      tools[relative] = archive.extractfile(item).read()
+          require(set(tools) == required, "Archive missing approved staging tools")
+          require(not root.exists(), "Use a fresh temporary source directory")
+          for relative, content in tools.items():
+              destination = root / relative
+              destination.parent.mkdir(parents=True, exist_ok=True)
+              destination.write_bytes(content)
+          print("Verified pinned archive root; extracted only the two staging tools.")
+          PY
 
       - name: Configure Pages metadata
         uses: actions/configure-pages@v5
@@ -40,7 +89,10 @@ jobs:
 
       - name: Stage and audit public static root
         run: >-
-          python3 scripts/pages/stage_public.py
+          python3 "${{ runner.temp }}/dcdeeptech-archive/repository/scripts/pages/stage_public.py"
+          --source-archive "${{ runner.temp }}/dcdeeptech-archive/source.tar.gz"
+          --repository "${{ github.repository }}"
+          --commit "${{ github.sha }}"
           --output "${{ runner.temp }}/dcdeeptech-pages/site"
           --report "${{ runner.temp }}/dcdeeptech-pages/audit.json"
 
@@ -55,7 +107,7 @@ jobs:
 
       - name: Verify actual uploaded archive contents
         run: >-
-          python3 scripts/pages/stage_public.py
+          python3 "${{ runner.temp }}/dcdeeptech-archive/repository/scripts/pages/stage_public.py"
           --audit-tar "${{ runner.temp }}/artifact.tar"
           --report "${{ runner.temp }}/dcdeeptech-pages/audit.json"
 

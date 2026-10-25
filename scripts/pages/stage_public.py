@@ -8,7 +8,6 @@ import argparse
 import hashlib
 import json
 import re
-import shutil
 import subprocess
 import tarfile
 from pathlib import Path, PurePosixPath
@@ -68,7 +67,7 @@ def tracked_entries():
     return entries
 
 
-def selected_files(entries):
+def selected_files(entries, check_worktree=True):
     config = json.loads(MANIFEST.read_text())
     files = set(config["files"])
     for tree, suffixes in config["static_trees"].items():
@@ -84,9 +83,10 @@ def selected_files(entries):
     for name in files:
         safe_path(name)
         require(name in entries and entries[name][0] in {"100644", "100755"}, "Not a tracked regular file: " + name)
-        target = ROOT / name
-        require(not target.is_symlink() and all(not parent.is_symlink() for parent in target.parents if parent != ROOT.parent), "Symlink in public path: " + name)
-        require(target.resolve().is_relative_to(ROOT), "Path escapes repository: " + name)
+        if check_worktree:
+            target = ROOT / name
+            require(not target.is_symlink() and all(not parent.is_symlink() for parent in target.parents if parent != ROOT.parent), "Symlink in public path: " + name)
+            require(target.resolve().is_relative_to(ROOT), "Path escapes repository: " + name)
     return sorted(files)
 
 
@@ -94,32 +94,88 @@ def sha256(data):
     return hashlib.sha256(data).hexdigest()
 
 
-def stage(output, report_path):
+class ArchiveSource:
+    """Read a GitHub codeload archive without extracting the repository or Git links."""
+    def __init__(self, archive, repository, commit):
+        require(repository is not None and re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", repository), "Invalid repository identity")
+        require(commit is not None and re.fullmatch(r"[0-9a-f]{40}", commit), "A full lowercase 40-character commit SHA is required")
+        self.prefix = repository.split("/")[1] + "-" + commit
+        self.archive = archive
+        self.repository = repository
+        self.commit = commit
+        self.tar = tarfile.open(archive, "r:gz")
+        self.members = {}
+        seen = set()
+        expanded = 0
+        try:
+            for number, member in enumerate(self.tar, 1):
+                require(number <= 100000, "Too many archive members")
+                path = PurePosixPath(member.name)
+                require(not path.is_absolute() and ".." not in path.parts and chr(92) not in member.name, "Unsafe source archive path")
+                require(path.parts and path.parts[0] == self.prefix, "Archive root does not match the requested repository/commit")
+                normalized = str(path)
+                require(normalized not in seen, "Duplicate source archive path")
+                seen.add(normalized)
+                require(member.isdir() or member.isfile(), "Links/devices are forbidden in source archives")
+                require(0 <= member.size <= 512 * 1024 * 1024, "Oversized archive member")
+                expanded += member.size
+                require(expanded <= 1024 * 1024 * 1024, "Source archive exceeds expanded size limit")
+                if member.isdir():
+                    continue
+                require(len(path.parts) > 1, "Missing archive relative filename")
+                self.members[str(PurePosixPath(*path.parts[1:]))] = member
+        except Exception:
+            self.tar.close()
+            raise
+
+    def entries(self):
+        return {name: ("100644", "archive") for name in self.members}
+
+    def read(self, name):
+        return self.tar.extractfile(self.members[name]).read()
+
+    def close(self):
+        self.tar.close()
+
+
+def stage(output, report_path, archive=None, repository=None, commit=None):
     output, report_path = output.resolve(), report_path.resolve()
-    require(not output.is_relative_to(ROOT), "Stage outside the checkout, preferably RUNNER_TEMP")
+    require(not output.is_relative_to(ROOT), "Stage outside the source/tools directory, preferably RUNNER_TEMP")
     require(not report_path.is_relative_to(output), "Audit report must not be publicly staged")
     require(not output.exists(), "Output already exists; use a fresh staging directory")
-    entries = tracked_entries()
-    files = selected_files(entries)
-    hashes = {}
-    for name in files:
-        data = (ROOT / name).read_bytes()
-        scan_content(name, data)
-        # Compare to index blobs without relying on checkout autocrlf settings.
-        require(data == subprocess.check_output(["git", "cat-file", "blob", entries[name][1]], cwd=ROOT), "Working file differs from tracked blob: " + name)
-        hashes[name] = sha256(data)
-    require((ROOT / "CNAME").read_text().strip() == "dcdeeptech.com", "Unexpected custom domain; do not change it automatically")
-    logo = (ROOT / "DeepFamily/brand/deepfamily-logo.png").read_bytes()
-    require(logo.startswith(b"\x89PNG\r\n\x1a\n"), "Brand logo is not PNG")
-    output.mkdir(parents=True)
-    for name in files:
-        destination = output / name
-        destination.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copyfile(ROOT / name, destination)
-        require(sha256(destination.read_bytes()) == hashes[name], "Copy changed bytes: " + name)
-    report_path.parent.mkdir(parents=True, exist_ok=True)
-    report_path.write_text(json.dumps({"source_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT).decode().strip(), "files": hashes}, indent=2) + "\n")
-    print("PASS: staged", len(hashes), "reviewed static files; tracked bytes preserved; no submodule command executed.")
+    source = ArchiveSource(archive, repository, commit) if archive else None
+    try:
+        # Both bootstrap tools and allowlist must belong to the exact same archive.
+        if source:
+            require(MANIFEST.read_bytes() == source.read("scripts/pages/public-files.json"), "Allowlist differs from source archive")
+            require(Path(__file__).read_bytes() == source.read("scripts/pages/stage_public.py"), "Staging script differs from source archive")
+        entries = source.entries() if source else tracked_entries()
+        files = selected_files(entries, check_worktree=source is None)
+        hashes = {}
+        output.mkdir(parents=True)
+        for name in files:
+            data = source.read(name) if source else (ROOT / name).read_bytes()
+            scan_content(name, data)
+            if source is None:
+                require(data == subprocess.check_output(["git", "cat-file", "blob", entries[name][1]], cwd=ROOT), "Working file differs from tracked blob: " + name)
+            hashes[name] = sha256(data)
+            if name == "CNAME":
+                require(data.decode().strip() == "dcdeeptech.com", "Unexpected custom domain; do not change it automatically")
+            if name == "DeepFamily/brand/deepfamily-logo.png":
+                require(data.startswith(b"\x89PNG\r\n\x1a\n"), "Brand logo is not PNG")
+            destination = output / name
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            destination.write_bytes(data)
+            require(sha256(destination.read_bytes()) == hashes[name], "Copy changed bytes: " + name)
+        provenance = {"source_commit": commit, "source_repository": repository,
+                      "source_archive_sha256": sha256(archive.read_bytes())} if source else {
+                          "source_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT).decode().strip()}
+        report_path.parent.mkdir(parents=True, exist_ok=True)
+        report_path.write_text(json.dumps({**provenance, "files": hashes}, indent=2) + "\n")
+        print("PASS: staged", len(hashes), "reviewed static files; source bytes preserved; no submodule command executed.")
+    finally:
+        if source:
+            source.close()
 
 
 def audit_tar(archive, report_path):
@@ -149,12 +205,15 @@ def main():
     parser.add_argument("--output", type=Path)
     parser.add_argument("--report", required=True, type=Path)
     parser.add_argument("--audit-tar", type=Path)
+    parser.add_argument("--source-archive", type=Path)
+    parser.add_argument("--repository")
+    parser.add_argument("--commit")
     args = parser.parse_args()
     if args.audit_tar:
         audit_tar(args.audit_tar, args.report)
     else:
         require(args.output is not None, "--output is required when staging")
-        stage(args.output, args.report)
+        stage(args.output, args.report, args.source_archive, args.repository, args.commit)
 
 
 if __name__ == "__main__":
