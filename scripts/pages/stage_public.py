@@ -71,13 +71,21 @@ def tracked_entries():
 def selected_files(entries):
     config = json.loads(MANIFEST.read_text())
     files = set(config["files"])
+    # New media is allowed only by exact reviewed path AND content hash. Do not
+    # broaden the static-tree extensions to arbitrary MP4 or subtitle files.
+    media = config.get("approved_media", {})
+    for name, digest in media.items():
+        media_path = safe_path(name)
+        require(name.startswith("DeepFamily/media/") and media_path.suffix.lower() in {".mp4", ".vtt"}, "Invalid approved media path: " + name)
+        require(isinstance(digest, str) and re.fullmatch(r"[0-9a-f]{64}", digest), "Invalid approved media hash: " + name)
     for tree, suffixes in config["static_trees"].items():
         safe_path(tree)
         for name in entries:
             if name.startswith(tree + "/"):
                 path = safe_path(name)
-                require(path.suffix.lower() in suffixes or path.name == ".nojekyll", "Unexpected static-tree file: " + name)
+                require(path.suffix.lower() in suffixes or path.name == ".nojekyll" or name in media, "Unexpected static-tree file: " + name)
                 files.add(name)
+    require(set(media) <= files, "Approved media absent from tracked static tree")
     require(REQUIRED <= files, "Required production files absent from allowlist")
     require(any(n.startswith("DeepFamily/_next/") and n.endswith(".js") for n in files), "Missing Next JavaScript")
     require(any(n.startswith("DeepFamily/_next/") and n.endswith(".css") for n in files), "Missing Next stylesheets")
@@ -87,6 +95,8 @@ def selected_files(entries):
         target = ROOT / name
         require(not target.is_symlink() and all(not parent.is_symlink() for parent in target.parents if parent != ROOT.parent), "Symlink in public path: " + name)
         require(target.resolve().is_relative_to(ROOT), "Path escapes repository: " + name)
+        if name in media:
+            require(sha256(target.read_bytes()) == media[name], "Approved media hash mismatch: " + name)
     return sorted(files)
 
 

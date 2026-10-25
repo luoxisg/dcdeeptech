@@ -7,15 +7,399 @@ a:I[4431,[],"ViewportBoundary"]
 c:I[4431,[],"MetadataBoundary"]
 d:"$Sreact.suspense"
 f:I[7150,[],""]
-:HL["/DeepFamily/_next/static/css/b9ede8d9f5977d63.css","style"]
-0:{"P":null,"b":"Q3TSW1lIWQELtzYdFQYzG","p":"/DeepFamily","c":["","en","family-legacy",""],"i":false,"f":[[["",{"children":[["locale","en","d"],{"children":[["page","family-legacy","d"],{"children":["__PAGE__",{}]}]},"$undefined","$undefined",true]}],["",["$","$1","c",{"children":[null,["$","$L2",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L3",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":[[["$","title",null,{"children":"404: This page could not be found."}],["$","div",null,{"style":{"fontFamily":"system-ui,\"Segoe UI\",Roboto,Helvetica,Arial,sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\"","height":"100vh","textAlign":"center","display":"flex","flexDirection":"column","alignItems":"center","justifyContent":"center"},"children":["$","div",null,{"children":[["$","style",null,{"dangerouslySetInnerHTML":{"__html":"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}"}}],["$","h1",null,{"className":"next-error-h1","style":{"display":"inline-block","margin":"0 20px 0 0","padding":"0 23px 0 0","fontSize":24,"fontWeight":500,"verticalAlign":"top","lineHeight":"49px"},"children":404}],["$","div",null,{"style":{"display":"inline-block"},"children":["$","h2",null,{"style":{"fontSize":14,"fontWeight":400,"lineHeight":"49px","margin":0},"children":"This page could not be found."}]}]]}]}]],[]],"forbidden":"$undefined","unauthorized":"$undefined"}]]}],{"children":[["locale","en","d"],["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/DeepFamily/_next/static/css/b9ede8d9f5977d63.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}]],"$L4"]}],{"children":[["page","family-legacy","d"],["$","$1","c",{"children":[null,["$","$L2",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L3",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}],{"children":["__PAGE__",["$","$1","c",{"children":["$L5",null,["$","$L6",null,{"children":["$L7",["$","$L8",null,{"promise":"$@9"}]]}]]}],{},null,false]},null,false]},null,false]},null,false],["$","$1","h",{"children":[null,[["$","$La",null,{"children":"$Lb"}],null],["$","$Lc",null,{"children":["$","div",null,{"hidden":true,"children":["$","$d",null,{"fallback":null,"children":"$Le"}]}]}]]}],false]],"m":"$undefined","G":["$f",[]],"s":false,"S":true}
-10:I[3647,["619","static/chunks/619-ba102abea3e3d0e4.js","239","static/chunks/239-f66fa0b581f968dc.js","647","static/chunks/647-0de1012767f9aa8c.js","39","static/chunks/app/%5Blocale%5D/%5Bpage%5D/page-9faec0b71fc3dcca.js"],"Footer"]
-11:I[3647,["619","static/chunks/619-ba102abea3e3d0e4.js","239","static/chunks/239-f66fa0b581f968dc.js","647","static/chunks/647-0de1012767f9aa8c.js","39","static/chunks/app/%5Blocale%5D/%5Bpage%5D/page-9faec0b71fc3dcca.js"],"Header"]
-13:I[3647,["619","static/chunks/619-ba102abea3e3d0e4.js","239","static/chunks/239-f66fa0b581f968dc.js","647","static/chunks/647-0de1012767f9aa8c.js","39","static/chunks/app/%5Blocale%5D/%5Bpage%5D/page-9faec0b71fc3dcca.js"],"PageContent"]
+:HL["/DeepFamily/_next/static/css/cf91d2d38a9f9acd.css","style"]
+0:{"P":null,"b":"46oPWRf1_WHwhAngMm3K_","p":"/DeepFamily","c":["","en","family-legacy",""],"i":false,"f":[[["",{"children":[["locale","en","d"],{"children":[["page","family-legacy","d"],{"children":["__PAGE__",{}]}]},"$undefined","$undefined",true]}],["",["$","$1","c",{"children":[null,["$","$L2",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L3",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":[[["$","title",null,{"children":"404: This page could not be found."}],["$","div",null,{"style":{"fontFamily":"system-ui,\"Segoe UI\",Roboto,Helvetica,Arial,sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\"","height":"100vh","textAlign":"center","display":"flex","flexDirection":"column","alignItems":"center","justifyContent":"center"},"children":["$","div",null,{"children":[["$","style",null,{"dangerouslySetInnerHTML":{"__html":"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}"}}],["$","h1",null,{"className":"next-error-h1","style":{"display":"inline-block","margin":"0 20px 0 0","padding":"0 23px 0 0","fontSize":24,"fontWeight":500,"verticalAlign":"top","lineHeight":"49px"},"children":404}],["$","div",null,{"style":{"display":"inline-block"},"children":["$","h2",null,{"style":{"fontSize":14,"fontWeight":400,"lineHeight":"49px","margin":0},"children":"This page could not be found."}]}]]}]}]],[]],"forbidden":"$undefined","unauthorized":"$undefined"}]]}],{"children":[["locale","en","d"],["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/DeepFamily/_next/static/css/cf91d2d38a9f9acd.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}]],"$L4"]}],{"children":[["page","family-legacy","d"],["$","$1","c",{"children":[null,["$","$L2",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L3",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}],{"children":["__PAGE__",["$","$1","c",{"children":["$L5",null,["$","$L6",null,{"children":["$L7",["$","$L8",null,{"promise":"$@9"}]]}]]}],{},null,false]},null,false]},null,false]},null,false],["$","$1","h",{"children":[null,[["$","$La",null,{"children":"$Lb"}],null],["$","$Lc",null,{"children":["$","div",null,{"hidden":true,"children":["$","$d",null,{"fallback":null,"children":"$Le"}]}]}]]}],false]],"m":"$undefined","G":["$f",[]],"s":false,"S":true}
+10:I[3647,["619","static/chunks/619-ba102abea3e3d0e4.js","239","static/chunks/239-f66fa0b581f968dc.js","647","static/chunks/647-ebc4dc4c1cfb91d9.js","39","static/chunks/app/%5Blocale%5D/%5Bpage%5D/page-9faec0b71fc3dcca.js"],"Footer"]
+11:I[3647,["619","static/chunks/619-ba102abea3e3d0e4.js","239","static/chunks/239-f66fa0b581f968dc.js","647","static/chunks/647-ebc4dc4c1cfb91d9.js","39","static/chunks/app/%5Blocale%5D/%5Bpage%5D/page-9faec0b71fc3dcca.js"],"Header"]
+13:I[3647,["619","static/chunks/619-ba102abea3e3d0e4.js","239","static/chunks/239-f66fa0b581f968dc.js","647","static/chunks/647-ebc4dc4c1cfb91d9.js","39","static/chunks/app/%5Blocale%5D/%5Bpage%5D/page-9faec0b71fc3dcca.js"],"PageContent"]
 4:["$","html",null,{"lang":"en","children":[["$","head",null,{"children":["$","link",null,{"rel":"sitemap","type":"application/xml","href":"https://dcdeeptech.com/DeepFamily/sitemap.xml"}]}],["$","body",null,{"children":["$","div",null,{"lang":"en","children":[["$","$L2",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L3",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}],["$","a",null,{"className":"mobile-contact","href":"https://wa.me/6581279739?text=Hello%2C%20I%E2%80%99d%20like%20to%20learn%20more%20about%20DeepFamily.","target":"_blank","rel":"noreferrer","children":["Private conversation",["$","span",null,{"children":"↗"}]]}],["$","$L10",null,{"locale":"en"}]]}]}]]}]
-12:T63a,{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://dcdeeptech.com/DeepFamily/#organization","name":"DeepFamily","url":"https://dcdeeptech.com/DeepFamily/","description":"A Singapore-based family heritage initiative.","logo":{"@type":"ImageObject","url":"https://dcdeeptech.com/DeepFamily/brand/deepfamily-logo.png","width":2054,"height":766}},{"@type":"WebSite","@id":"https://dcdeeptech.com/DeepFamily/#website","url":"https://dcdeeptech.com/DeepFamily/","name":"DeepFamily","publisher":{"@id":"https://dcdeeptech.com/DeepFamily/#organization"},"inLanguage":["en","zh-Hans"]},{"@type":"WebPage","@id":"https://dcdeeptech.com/DeepFamily/en/family-legacy/#webpage","url":"https://dcdeeptech.com/DeepFamily/en/family-legacy/","name":"Family Legacy & Chinese Genealogy Preservation","description":"Plan family history digitization, Chinese genealogy research and private family archives with source verification, oral histories and clear publication permissions.","inLanguage":"en","isPartOf":{"@id":"https://dcdeeptech.com/DeepFamily/#website"},"about":{"@id":"https://dcdeeptech.com/DeepFamily/#organization"},"breadcrumb":{"@id":"https://dcdeeptech.com/DeepFamily/en/family-legacy/#breadcrumbs"}},{"@type":"BreadcrumbList","@id":"https://dcdeeptech.com/DeepFamily/en/family-legacy/#breadcrumbs","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://dcdeeptech.com/DeepFamily/en/"},{"@type":"ListItem","position":2,"name":"Family Legacy & Chinese Genealogy Preservation","item":"https://dcdeeptech.com/DeepFamily/en/family-legacy/"}]}]}5:[["$","$L11",null,{"locale":"en","page":"family-legacy"}],["$","main",null,{"id":"main-content","children":[["$","script",null,{"type":"application/ld+json","dangerouslySetInnerHTML":{"__html":"$12"}}],["$","$L13",null,{"locale":"en","page":"family-legacy","videos":{}}],false]}]]
+12:T63a,{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://dcdeeptech.com/DeepFamily/#organization","name":"DeepFamily","url":"https://dcdeeptech.com/DeepFamily/","description":"A Singapore-based family heritage initiative.","logo":{"@type":"ImageObject","url":"https://dcdeeptech.com/DeepFamily/brand/deepfamily-logo.png","width":2054,"height":766}},{"@type":"WebSite","@id":"https://dcdeeptech.com/DeepFamily/#website","url":"https://dcdeeptech.com/DeepFamily/","name":"DeepFamily","publisher":{"@id":"https://dcdeeptech.com/DeepFamily/#organization"},"inLanguage":["en","zh-Hans"]},{"@type":"WebPage","@id":"https://dcdeeptech.com/DeepFamily/en/family-legacy/#webpage","url":"https://dcdeeptech.com/DeepFamily/en/family-legacy/","name":"Family Legacy & Chinese Genealogy Preservation","description":"Plan family history digitization, Chinese genealogy research and private family archives with source verification, oral histories and clear publication permissions.","inLanguage":"en","isPartOf":{"@id":"https://dcdeeptech.com/DeepFamily/#website"},"about":{"@id":"https://dcdeeptech.com/DeepFamily/#organization"},"breadcrumb":{"@id":"https://dcdeeptech.com/DeepFamily/en/family-legacy/#breadcrumbs"}},{"@type":"BreadcrumbList","@id":"https://dcdeeptech.com/DeepFamily/en/family-legacy/#breadcrumbs","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://dcdeeptech.com/DeepFamily/en/"},{"@type":"ListItem","position":2,"name":"Family Legacy & Chinese Genealogy Preservation","item":"https://dcdeeptech.com/DeepFamily/en/family-legacy/"}]}]}14:T194a,This photograph captures the physical grit of a Samsui woman working on a construction site.
+
+For 140 years, the people of Samsui
+
+literally laid the physical foundations of early Singapore.
+
+The Samsui Hui Kuan began in 1886
+
+as a mutual aid society for these immigrants.
+
+Today, it operates as a sophisticated cultural institution,
+
+managing real estate, scholarships and ancestral memory.
+
+The executive committee recently secured a permanent future for this community
+
+by acquiring a six-storey, nine-million-dollar headquarters in Geylang.
+
+A major achievement of this new property is the Level 4 Ancestral Hall,
+
+which provides a dedicated, highly organized space for ancestor remembrance.
+
+Visitors can scan a QR code,
+
+directly linked to a tablet to bring up an ancestor's name,
+
+a static photograph and their place in the lineage.
+
+The physical real estate is secure; the names are captured.
+
+But the complex lived experiences of the people behind those names
+
+are still heavily vulnerable to time.
+
+Institutional memorials operate with a specific limitation.
+
+They are highly efficient at recording who an ancestor was,
+
+but they lack the structure to record how they lived
+
+or why they made their specific sacrifices.
+
+The detailed context of migration, hardship and business decisions
+
+lives entirely in the memories of the oldest generation.
+
+When they pass, that history disappears permanently.
+
+A memorial serves as a static marker of the past.
+
+Living heritage requires continuous, active interaction
+
+to hold the attention of younger generations.
+
+The executive committee faces a practical problem:
+
+building an interactive, rigorous heritage system is incredibly resource-intensive.
+
+The association cannot absorb that burden directly.
+
+The DeepFamily living heritage layer addresses this exact gap.
+
+It is a system designed to map migration routes,
+
+document core values and verify the individual decisions of a specific lineage.
+
+Executing this requires intense private commitment.
+
+A full digital initialization costs a single family approximately $100,000,
+
+along with weeks of rigorous interviews and strict data governance.
+
+The association does not need to fund or manage this software.
+
+The strategic decision is simply whether to act as the trusted bridge
+
+for interested families to initiate this preservation before their elders' memories are lost.
+
+This matrix compares the existing Level 4 QR
+
+system directly against the proposed DeepFamily layer, to clarify their distinct roles.
+
+On scope, the current system is designed to memorialize a single individual efficiently.
+
+DeepFamily maps an entire multi-generational branch ontology.
+
+For evidence, the QR tablets accept standard family inputs.
+
+DeepFamily mandates strict provenance tracking and a formal four-state factual verification protocol.
+
+And regarding media, the current hall provides static photos,
+
+while DeepFamily yields a fully interactive, AI-structured historical asset.
+
+DeepFamily does not replace the QR tablets.
+
+It operates in a completely separate private lane, specifically for families seeking a comprehensive historical record.
+
+Because individual families fund their own projects
+
+and deploy them to isolated local or cloud workspaces,
+
+the financial cost to the association is zero.
+
+The association serves exclusively as a cultural facilitator,
+
+introducing the capability without assuming the liability of managing private data.
+
+This dual-track strategy protects the association's operating budget
+
+and honors the massive investment in the new hall,
+
+while simultaneously offering a premium cultural asset to families who value it.
+
+There is no automated shortcut here.
+
+This layer relies on deep anthropological work, not a magic AI button.
+
+The data collection starts with living elders dedicating time to structured 90-minute interviews,
+
+designed to carefully extract their firsthand experiences.
+
+Every extracted claim passes through a four-state verification protocol.
+
+Family members must manually review the documentation
+
+and sign off on any factual disputes before the data is committed.
+
+This graph illustrates how the DeepFamily data standards from S01 to S09
+
+transform those raw interviews into a structured digital ontology, using a fictional pilot family.
+
+You can visually trace the generational branches as they extend across geographies,
+
+physically mapping the connections between Guangdong, Malaysia and Singapore.
+
+Every migration event or major business decision is permanently anchored to the specific family member,
+
+backed by verified documentation.
+
+Younger generations use this interface to directly retrieve the exact
+
+core values and principles, the Jia Feng Jia Xun, that guided their ancestors and built their lineage.
+
+The result is a highly secure private digital asset designed to survive
+
+and remain accessible for the next 100 years.
+
+The high friction of the input process is exactly what ensures the final output is irrefutable
+
+and deeply valuable to the family.
+
+We recommend starting small.
+
+We are seeking just one voluntary pilot family to prove this methodology works for the membership.
+
+This checklist outlines the ideal candidate.
+
+The family must be willing to invest the required time and the hundred-thousand-dollar budget.
+
+Second, they need available living elders to record their oral histories.
+
+Third, a baseline of physical archives, like letters or old photographs, is needed as foundational evidence.
+
+Restricting the rollout to a single pilot directly addresses the executive committee's
+
+valid concerns regarding data sovereignty and Singapore's PDPA regulations.
+
+The selected family retains 100% data sovereignty.
+
+They hold full export rights at all times,
+
+receiving their data on vendor-independent Blu-ray cold storage.
+
+A single, strictly governed pilot isolates the association from financial risk,
+
+while delivering a tangible proof of concept for the broader community.
+
+We invite the president and the executive committee to evaluate the membership
+
+and nominate one family to pioneer this effort.
+
+With the family's permission, this verified digital history could serve as a powerful centerpiece
+
+showcase for the 2027 Samsui Cultural Festival.
+
+Preserving ancestors is where heritage begins.
+
+Connecting generations is how heritage lives.
+
+The 1886 pioneers relied on immense grit to build this community.
+
+The association now has a precise method to secure their stories for 140 years.15:T16c4,这张照片记录了一位在建筑工地劳动的三水妇女，以及她坚韧的身影。
+
+140年来，三水人
+
+实实在在地奠定了早期新加坡的建设基础。
+
+三水会馆始于1886年，
+
+最初是这些移民互助的组织。
+
+如今，它作为一所成熟的文化机构运作，
+
+管理房地产、奖学金，以及先辈的记忆。
+
+执行委员会最近为这一社群确立了长远的未来，
+
+在芽笼购置了一栋价值九百万元的六层总部大楼。
+
+这处新会所的一项重要成果，是位于四楼的祖先堂，
+
+为缅怀先辈提供专门而有序的空间。
+
+访客可以扫描二维码，
+
+直接连接纪念牌位，查看先辈的姓名、
+
+静态照片，以及其在家族世系中的位置。
+
+实体会所已经落实，姓名也得以记录。
+
+然而，这些姓名背后复杂而丰富的人生经历，
+
+依然非常容易随时间流逝而消失。
+
+机构纪念系统存在一项特定局限：
+
+它们善于记录先辈是谁，
+
+却缺少记录他们如何生活，
+
+以及为何作出那些牺牲的结构。
+
+迁徙、艰辛生活和商业抉择的详细背景，
+
+往往只保存在最年长一代的记忆中。
+
+当他们离世，这段历史也可能永久消失。
+
+纪念设施是标记过去的静态载体。
+
+活态传承则需要持续、主动的互动，
+
+才能吸引年轻一代的关注。
+
+执行委员会面临一个实际问题：
+
+建设一个严谨、可互动的传承系统，需要投入大量资源。
+
+会馆无法直接承担全部负担。
+
+DeepFamily构想中的活态传承层，正是针对这一缺口。
+
+这一系统旨在绘制迁徙路线、
+
+记录核心价值，并核实特定家族世系中的个人抉择。
+
+落实这项工作，需要家庭深入参与。
+
+片中所述的完整数字化初始化，每个家庭的估算费用约为十万元，
+
+还需要数周的严谨访谈，以及严格的数据治理。
+
+会馆无需为这套软件出资或负责管理。
+
+战略选择只是：是否愿意成为值得信赖的桥梁，
+
+让有兴趣的家庭在长者记忆消失前，启动保存工作。
+
+这张对照表把现有的四楼二维码系统，
+
+与拟议的DeepFamily层进行比较，以说明两者的不同角色。
+
+在涵盖范围上，现有系统旨在高效纪念单一个体。
+
+DeepFamily的构想是建立跨越多代的完整家族支系关系。
+
+在证据方面，二维码纪念牌接受家庭提供的常规资料。
+
+DeepFamily方案则要求严格追踪来源，并采用正式的四状态事实核验流程。
+
+在呈现方式上，现有纪念堂提供静态照片，
+
+DeepFamily方案则设想形成可互动、由AI辅助组织的历史资料资产。
+
+DeepFamily并不取代二维码纪念牌。
+
+它采用完全独立的私人项目路径，面向希望建立完整历史记录的家庭。
+
+因为各个家庭自行资助自己的项目，
+
+并把资料部署在隔离的本地或云端工作空间，
+
+片中方案设想，会馆不承担这部分财务成本。
+
+会馆仅担任文化促进者，
+
+介绍这一能力，而不承担私人资料管理职责。
+
+这种双轨策略旨在保护会馆的日常运营预算，
+
+尊重新会所的大额投入，
+
+同时为重视传承的家庭提供高价值的文化资产。
+
+这里没有全自动的捷径。
+
+这一层依靠深入的人类学研究工作，而非一个神奇的AI按钮。
+
+资料收集从健在长者开始，他们参与有结构的九十分钟访谈，
+
+用以细致记录亲身经历。
+
+每一项提取的陈述，都要经过四状态核验流程。
+
+家族成员必须亲自审核资料，
+
+并在资料正式录入前，就事实争议作出确认。
+
+这张图展示DeepFamily的S01至S09资料标准，
+
+如何以一个虚构试点家族为例，把原始访谈转化为结构化的数字关系体系。
+
+可以直观追踪家族支系如何跨越地域延伸，
+
+绘制广东、马来西亚和新加坡之间的联系。
+
+每一次迁徙事件或重大商业抉择，都与具体家族成员建立明确关联，
+
+并由经过核实的文件支持。
+
+年轻一代可以通过这一界面，直接查阅具体的
+
+核心价值与原则，也就是指引先辈、塑造家族的家风家训。
+
+片中设想的成果，是以长期延续为目标的私人数字资产，
+
+并以未来百年仍可访问为愿景。
+
+资料输入过程的严格要求，旨在使最终成果有据可查，
+
+并对家族具有深远价值。
+
+我们建议从小规模开始。
+
+方案建议先寻找一个自愿参与的试点家庭，检验这套方法对会员家庭的价值。
+
+这份清单列出理想候选家庭的条件。
+
+家庭需要愿意投入所需时间，以及片中所述的十万元预算。
+
+其次，需要有健在长者能够参与口述历史记录。
+
+第三，需要信件或老照片等实体档案，作为基础证据。
+
+把实施范围限制在单一试点，旨在回应执行委员会对于
+
+资料主权，以及新加坡《个人资料保护法》的合理关切。
+
+方案设想，入选家庭保留完整的资料主权。
+
+家庭应始终享有完整的数据导出权，
+
+并通过不依赖单一供应商的蓝光冷存储载体取得资料。
+
+一个治理严格的单一试点，旨在隔离会馆的相关财务风险，
+
+同时为更广泛社群提供可见的概念验证成果。
+
+方案邀请会长与执行委员会评估会员家庭的情况，
+
+提名一个家庭，率先开展这项尝试。
+
+经家庭许可，经过核实的数字家史可以成为展示的核心内容，
+
+用于片中设想的2027年三水文化节展示。
+
+保存先辈记忆，是传承的起点。
+
+连接世代，是传承延续的方式。
+
+1886年的先行者凭借坚韧不拔的努力，建立起这一社群。
+
+片中提出的方法，旨在让这些故事跨越未来的一百四十年。5:[["$","$L11",null,{"locale":"en","page":"family-legacy"}],["$","main",null,{"id":"main-content","children":[["$","script",null,{"type":"application/ld+json","dangerouslySetInnerHTML":{"__html":"$12"}}],["$","$L13",null,{"locale":"en","page":"family-legacy","videos":{"clan-film":{"id":"clan-film","kind":"film","title":{"en":"Clan Heritage — An Illustrative Collaboration Proposal","zh":"宗亲文化传承：合作构想示例"},"notice":{"en":"Illustrative proposal with reconstructed visuals. This film does not establish a commission or institutional endorsement. Costs, capabilities and historical/legal details need confirmation; no medium guarantees 100- or 140-year preservation.","zh":"合作构想示例，含示意重构画面，不代表已签约项目或机构背书。费用、功能及历史/法规细节须另行确认；任何介质均不保证保存100年或140年。"},"desktop":"$undefined","mobile":{"src":"/DeepFamily/media/clan-film.mobile.mp4","poster":"/DeepFamily/posters/clan-film.poster.mobile.webp"},"tracks":[{"src":"/DeepFamily/media/clan-film.en.vtt","language":"en","label":"English"},{"src":"/DeepFamily/media/clan-film.zh.vtt","language":"zh","label":"简体中文"}],"transcript":{"en":"$14","zh":"$15"}}}}],false]}]]
 b:[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]
 7:null
-14:I[622,[],"IconMark"]
-9:{"metadata":[["$","title","0",{"children":"Family Legacy & Chinese Genealogy Preservation | DeepFamily"}],["$","meta","1",{"name":"description","content":"Plan family history digitization, Chinese genealogy research and private family archives with source verification, oral histories and clear publication permissions."}],["$","meta","2",{"name":"robots","content":"index, follow"}],["$","meta","3",{"name":"content-language","content":"en"}],["$","link","4",{"rel":"canonical","href":"https://dcdeeptech.com/DeepFamily/en/family-legacy/"}],["$","link","5",{"rel":"alternate","hrefLang":"en","href":"https://dcdeeptech.com/DeepFamily/en/family-legacy/"}],["$","link","6",{"rel":"alternate","hrefLang":"zh-Hans","href":"https://dcdeeptech.com/DeepFamily/zh/family-legacy/"}],["$","meta","7",{"property":"og:title","content":"Family Legacy & Chinese Genealogy Preservation | DeepFamily"}],["$","meta","8",{"property":"og:description","content":"Plan family history digitization, Chinese genealogy research and private family archives with source verification, oral histories and clear publication permissions."}],["$","meta","9",{"property":"og:url","content":"https://dcdeeptech.com/DeepFamily/en/family-legacy/"}],["$","meta","10",{"property":"og:site_name","content":"DeepFamily"}],["$","meta","11",{"property":"og:locale","content":"en_SG"}],["$","meta","12",{"property":"og:image","content":"https://dcdeeptech.com/DeepFamily/og-cover.png"}],["$","meta","13",{"property":"og:image:width","content":"1200"}],["$","meta","14",{"property":"og:image:height","content":"630"}],["$","meta","15",{"property":"og:image:alt","content":"DeepFamily — A Legacy Beyond Generations, illustrated landscape"}],["$","meta","16",{"property":"og:locale:alternate","content":"zh_CN"}],["$","meta","17",{"property":"og:type","content":"website"}],["$","meta","18",{"name":"twitter:card","content":"summary_large_image"}],["$","meta","19",{"name":"twitter:title","content":"Family Legacy & Chinese Genealogy Preservation | DeepFamily"}],["$","meta","20",{"name":"twitter:description","content":"Plan family history digitization, Chinese genealogy research and private family archives with source verification, oral histories and clear publication permissions."}],["$","meta","21",{"name":"twitter:image","content":"https://dcdeeptech.com/DeepFamily/og-cover.png"}],["$","link","22",{"rel":"icon","href":"/DeepFamily/brand/deepfamily-logo.png","type":"image/png"}],["$","$L14","23",{}]],"error":null,"digest":"$undefined"}
+16:I[622,[],"IconMark"]
+9:{"metadata":[["$","title","0",{"children":"Family Legacy & Chinese Genealogy Preservation | DeepFamily"}],["$","meta","1",{"name":"description","content":"Plan family history digitization, Chinese genealogy research and private family archives with source verification, oral histories and clear publication permissions."}],["$","meta","2",{"name":"robots","content":"index, follow"}],["$","meta","3",{"name":"content-language","content":"en"}],["$","link","4",{"rel":"canonical","href":"https://dcdeeptech.com/DeepFamily/en/family-legacy/"}],["$","link","5",{"rel":"alternate","hrefLang":"en","href":"https://dcdeeptech.com/DeepFamily/en/family-legacy/"}],["$","link","6",{"rel":"alternate","hrefLang":"zh-Hans","href":"https://dcdeeptech.com/DeepFamily/zh/family-legacy/"}],["$","meta","7",{"property":"og:title","content":"Family Legacy & Chinese Genealogy Preservation | DeepFamily"}],["$","meta","8",{"property":"og:description","content":"Plan family history digitization, Chinese genealogy research and private family archives with source verification, oral histories and clear publication permissions."}],["$","meta","9",{"property":"og:url","content":"https://dcdeeptech.com/DeepFamily/en/family-legacy/"}],["$","meta","10",{"property":"og:site_name","content":"DeepFamily"}],["$","meta","11",{"property":"og:locale","content":"en_SG"}],["$","meta","12",{"property":"og:image","content":"https://dcdeeptech.com/DeepFamily/og-cover.png"}],["$","meta","13",{"property":"og:image:width","content":"1200"}],["$","meta","14",{"property":"og:image:height","content":"630"}],["$","meta","15",{"property":"og:image:alt","content":"DeepFamily — A Legacy Beyond Generations, illustrated landscape"}],["$","meta","16",{"property":"og:locale:alternate","content":"zh_CN"}],["$","meta","17",{"property":"og:type","content":"website"}],["$","meta","18",{"name":"twitter:card","content":"summary_large_image"}],["$","meta","19",{"name":"twitter:title","content":"Family Legacy & Chinese Genealogy Preservation | DeepFamily"}],["$","meta","20",{"name":"twitter:description","content":"Plan family history digitization, Chinese genealogy research and private family archives with source verification, oral histories and clear publication permissions."}],["$","meta","21",{"name":"twitter:image","content":"https://dcdeeptech.com/DeepFamily/og-cover.png"}],["$","link","22",{"rel":"icon","href":"/DeepFamily/brand/deepfamily-logo.png","type":"image/png"}],["$","$L16","23",{}]],"error":null,"digest":"$undefined"}
 e:"$9:metadata"

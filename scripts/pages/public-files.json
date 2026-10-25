@@ -110,5 +110,10 @@
       ".woff",
       ".woff2"
     ]
+  },
+  "approved_media": {
+    "DeepFamily/media/clan-film.mobile.mp4": "1b87b98161824653f5e58b64e617cc260fe505ef6196c78f83876700c965e739",
+    "DeepFamily/media/clan-film.en.vtt": "dc457a6072475bbec5ed264817e2c94e44f33c053c507a0ce7ef38e32892a7fb",
+    "DeepFamily/media/clan-film.zh.vtt": "fe22cc49ee0c7677c0115af07547e14c64e0fc4864fe7d43b789cbe2019f82ac"
   }
 }
