@@ -54,3 +54,11 @@ Pages Source is therefore **owner-reported branch main / root, independently unv
 ## Rollback and release gate
 
 Before merge, keep the existing production state. After approval, follow the runbook transition and verify the actual deploy-pages result and public URLs. If rollback is required, use a reviewed revert PR, not a hard reset or force-push. Restoring branch-based Pages Source would reintroduce the known unmapped-gitlink checkout blocker unless separately resolved; it is not an automatically working fallback. Homepage/CNAME/DeepFamily source files are unchanged by this PR and need not be replaced. Do not change DNS, Cloudflare or the custom domain.
+
+## Delivery evidence
+
+Workflow implementation commit: `c6e503fa21d7f9f9613c5adff6a344c2e9eeb061`. Branch `fix/pages-static-root-workflow` was pushed successfully to `luoxisg/dcdeeptech`. The proposed tree is exactly five additions; all prior blobs and gitlink object IDs remain unchanged.
+
+`gh pr create --repo luoxisg/dcdeeptech --base main --head fix/pages-static-root-workflow --title "Restore V3.1 Pages publishing with static-root Actions workflow" --body-file /tmp/dcdeeptech-pages-workflow-pr.md` failed with `Post "https://api.github.com/graphql": Forbidden`. No PR number or deployment run URL is claimed. Create/review the PR at https://github.com/luoxisg/dcdeeptech/pull/new/fix/pages-static-root-workflow; the prepared description is available in the task workspace at `/tmp/dcdeeptech-pages-workflow-pr.md`.
+
+Release remains blocked at owner review/approval and GitHub access/settings: merge the reviewed workflow PR, switch Pages Source to GitHub Actions, run the workflow on main and inspect its real result. Public URL acceptance must then be checked from a network that can reach dcdeeptech.com. This task did not merge a PR, edit Pages Source, dispatch a deployment, change DNS or alter the custom domain.
