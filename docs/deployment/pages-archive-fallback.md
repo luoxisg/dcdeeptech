@@ -29,7 +29,15 @@ The official upload-pages-artifact action and scoped `TAR_OPTIONS=--no-wildcards
 - Workflow YAML and shell syntax were checked. Only configure-pages@v5, upload-pages-artifact@v4 and deploy-pages@v4 remain; no actions/checkout, Git command or download token is present.
 - Read-only GitHub codeload tests confirmed both archive availability and the full-SHA root convention. No production deployment is inferred from a source archive fetch or a local test.
 
-End-to-end candidate-commit archive/download/stage/tar comparisons are recorded below after pushing the review branch. Actual hosted Actions execution, Pages environment approval, publication and live-domain acceptance still require the reviewed main workflow run. Report any actual new runtime error instead of declaring deployment success.
+### Real GitHub archive end-to-end result
+
+The implementation was pushed as `8be07dfbc65bb7ff9438ae1cb929f4ef3f0e6164`. The actual first workflow step (parsed from its YAML) was executed locally with that full SHA and a fresh temporary runner directory. It downloaded the real codeload archive, verified its root, and extracted only the two staging tools. The extracted staging script then ran in archive mode, followed by the unchanged upload-style tar creation and actual-tar audit.
+
+Result: PASS — exactly 163 files / 28,888,623 bytes. Every public filename/SHA-256 equals the previous reviewed main-branch artifact. No `.git` directory exists in the temporary source/tools/site tree. The downloaded archive SHA-256 for this test was `a6af54aad473ac7540b369ad70721b17a179723ba65a07c7855bdb4fc0ee38d1`; this records the observed download, not an independently published signature or a permanently stable compression digest. Source commit identity is pinned in the request and root check.
+
+Local evidence: `/tmp/pages-real-archive-result.json`, `/tmp/pages-real-archive-81y4ukgu/dcdeeptech-pages/audit.json`, `/tmp/pages-real-archive-81y4ukgu/artifact.tar`, and `/tmp/pages-archive-unit-tests.txt`. The source tar, tools and reports remain outside the public site. All three gitlink object IDs and the original allowlist file remain unchanged.
+
+Actual hosted Actions execution, Pages environment approval, publication and live-domain acceptance still require the reviewed main workflow run. This is a prepared alternative, not a claim of a successful production deployment. Report any actual new runtime error instead of declaring deployment success.
 
 ## Owner activation and rollback
 
