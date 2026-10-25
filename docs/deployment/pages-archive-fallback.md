@@ -2,7 +2,7 @@
 
 ## Why this is a separate alternative
 
-Base: `dcdeeptech/main` at `b5524ff4eab217760900dcecf784c112b222a6ae`, including the credential-persistence change from PR #13. This branch replaces actions/checkout entirely. It does not try another submodule or authentication-cleanup option. No checkout action means no checkout setup/post-job submodule traversal.
+Initial base: `dcdeeptech/main` at `b5524ff4eab217760900dcecf784c112b222a6ae`, including PR #13. While preparing this alternative, main advanced to `31360549d60cc887a92ea4656006aa52fc175d45`, which replaces actions/checkout with a manual Git fetch. That main update is incorporated into this branch without changing production. The proposed archive alternative replaces the manual Git fetch as well: it uses neither actions/checkout nor any local Git repository/index/submodule operation. It is not another credential-cleanup tweak. Main keeps its existing manual-fetch method until an owner reviews and merges this alternative.
 
 The production `github-pages` job remains main-only with the same events, concurrency group, minimal permissions and official configure/upload/deploy actions. A branch push does not publish this alternative. Review and merge are required before running it on main. Pages Source, custom domain, DNS and Cloudflare are not changed by this branch.
 
