@@ -1,0 +1,4 @@
+User-Agent: *
+Allow: /DeepFamily/
+
+Sitemap: https://dcdeeptech.com/DeepFamily/sitemap.xml
