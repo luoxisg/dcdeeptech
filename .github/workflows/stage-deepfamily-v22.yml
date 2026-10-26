@@ -1,0 +1,68 @@
+name: Stage verified DeepFamily V2.2 static release
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/stage-deepfamily-v22.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  stage:
+    if: github.ref == 'refs/heads/main' && github.event.head_commit.message == 'release: stage DeepFamily V2.2 static artifact'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download and validate the exact Next.js static export
+        env:
+          VERIFIED_ZIP_URL: 'https://sdmntprindiasocentral.oaiusercontent.com/files/00000000-cec0-8211-a36f-489e6452c690/raw?se=2026-10-26T03%3A36%3A14Z&sp=r&sv=2026-02-06&sr=b&scid=77713616-c866-59e9-9e3a-9022979ecf3f&skoid=54865dd2-31dc-44cc-a877-635aa4250446&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-26T00%3A42%3A24Z&ske=2026-10-27T00%3A42%3A24Z&sks=b&skv=2026-02-06&sig=yzYT7jDBBEcE9%2BlDjwcIQKxITs4Rz7/QZ8uLaYJagZI%3D'
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --silent --show-error --max-time 120 "$VERIFIED_ZIP_URL" -o /tmp/deepfamily-v22.zip
+          echo "5bdfd1a537f433e4f67d85ed46eda90ca6afd9683f3c61b8f68e0280721c6416  /tmp/deepfamily-v22.zip" | sha256sum --check --status
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          import os
+          target=Path("DeepFamily").resolve()
+          with ZipFile("/tmp/deepfamily-v22.zip") as z:
+              names=[f.filename for f in z.infolist()]
+              required=[
+                "en/social-impact/index.html",
+                "zh/social-impact/index.html",
+                "en/for-family-offices/index.html",
+                "zh/for-family-offices/index.html",
+                "_next/static/css/4f50b3a2381a11be.css",
+              ]
+              for name in required:
+                  if name not in names:
+                      raise SystemExit("Missing required static output: "+name)
+              for f in z.infolist():
+                  p=Path(f.filename)
+                  if p.is_absolute() or ".." in p.parts or any(c=="\\" for c in f.filename):
+                      raise SystemExit("Unsafe zip path")
+                  destination=(target / p).resolve()
+                  if not str(destination).startswith(str(target)+os.sep):
+                      raise SystemExit("Export escapes DeepFamily")
+              social=z.read("en/social-impact/index.html").decode("utf-8")
+              family=z.read("en/for-family-offices/index.html").decode("utf-8")
+              if "Community organisations only" not in social or "98,000" not in family:
+                  raise SystemExit("Content invariant failed")
+              z.extractall("DeepFamily")
+          print("Extracted",len(names),"verified static files to DeepFamily/")
+          PY
+      - name: Stage only DeepFamily directory in a new branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git switch -c deploy/deepfamily-v22-static-20261026
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add DeepFamily/
+          git diff --cached --stat | tail -n 20
+          git diff --cached --quiet && { echo "No changes found"; exit 1; }
+          git commit -m "release: DeepFamily V2.2 verified bilingual static website"
+          git push -u origin deploy/deepfamily-v22-static-20261026
