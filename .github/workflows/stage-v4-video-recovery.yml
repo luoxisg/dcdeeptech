@@ -1,0 +1,68 @@
+name: Stage restored V4 brand and family video links
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/stage-v4-video-recovery.yml"
+permissions:
+  contents: write
+jobs:
+  stage:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch exact hashed static V4 patch and validate target pages
+        env:
+          V4_ZIP_URL: 'https://sdmntprindiasocentral.oaiusercontent.com/files/00000000-afbc-8211-8638-b909a79542fc/raw?se=2026-10-26T04%3A12%3A14Z&sp=r&sv=2026-02-06&sr=b&scid=b64f2c2c-89e2-531e-8684-35cad0aaf45b&skoid=54865dd2-31dc-44cc-a877-635aa4250446&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-26T03%3A01%3A59Z&ske=2026-10-27T03%3A01%3A59Z&sks=b&skv=2026-02-06&sig=L%2Bq9j0KKezB%2BGqNeHtQr9UULM0bjqiZl0Y%2BZQOVfXvc%3D'
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --silent --show-error --max-time 120 "$V4_ZIP_URL" -o /tmp/deepfamily-v4.patch.zip
+          echo "8c39d860ac780a0f360d828b6d1e11413003e1b5ef44937554603004b34d9356  /tmp/deepfamily-v4.patch.zip" | sha256sum --check
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          import os
+          root=Path("DeepFamily").resolve()
+          with ZipFile("/tmp/deepfamily-v4.patch.zip") as z:
+              filenames=z.namelist()
+              for key in ["en/index.html","zh/index.html","en/family-legacy/index.html",
+                          "zh/family-legacy/index.html","en/for-family-offices/index.html",
+                          "zh/for-family-offices/index.html"]:
+                  if key not in filenames:
+                      raise SystemExit("Expected original V4 page missing: "+key)
+              for key in ["en/index.html","zh/index.html"]:
+                  source=z.read(key).decode("utf-8")
+                  if "film-direct-link" not in source or "brand-film.mobile.mp4" not in source or "family-case-film.mobile.mp4" not in source:
+                      raise SystemExit("Brand/family film recovery link missing on "+key)
+              for info in z.infolist():
+                  name=info.filename
+                  rel=Path(name)
+                  if rel.is_absolute() or ".." in rel.parts or "\\" in name:
+                      raise SystemExit("Unsafe ZIP path: "+name)
+                  if rel.parts[0] in ("media","posters","brand"):
+                      raise SystemExit("Video files and posters must remain unchanged: "+name)
+                  destination=(root/rel).resolve()
+                  if not str(destination).startswith(str(root)+os.sep):
+                      raise SystemExit("ZIP escapes DeepFamily: "+name)
+              z.extractall("DeepFamily")
+          print("Staged",len(filenames),"static V4 repair files. Existing MP4s, posters, captions untouched.")
+          PY
+          test -s DeepFamily/media/brand-film.mobile.mp4
+          test -s DeepFamily/media/family-case-film.mobile.mp4
+          test -s DeepFamily/media/clan-film.mobile.mp4
+          test -s DeepFamily/media/brand-film.en.vtt
+          test -s DeepFamily/media/family-case-film.zh.vtt
+      - name: Commit only DeepFamily changes to separate review branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git switch -c deploy/deepfamily-v4-video-recovery
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add DeepFamily/
+          git diff --cached --quiet && { echo "Patch has no changes"; exit 1; }
+          git commit -m "fix: restore native brand and family video viewing in V4"
+          git push -u origin deploy/deepfamily-v4-video-recovery
