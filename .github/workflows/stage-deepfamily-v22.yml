@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   stage:
-    if: github.ref == 'refs/heads/main' && github.event.head_commit.message == 'release: stage DeepFamily V2.2 static artifact'
+    if: "github.ref == 'refs/heads/main' && github.event.head_commit.message == 'release: stage DeepFamily V2.2 static artifact'"
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
