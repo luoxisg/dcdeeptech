@@ -1,0 +1,89 @@
+name: Stage DeepFamily V4 institution-led and private-price content
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/stage-v4-community-pricing.yml"
+permissions:
+  contents: write
+jobs:
+  stage:
+    if: "github.event.head_commit.message == 'release: stage verified DeepFamily V4 community pricing'"
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download exact source-verified artifact; preserve all existing V4 media
+        env:
+          REVIEWED_ZIP: 'https://sdmntprindiasocentral.oaiusercontent.com/files/00000000-2468-8211-836f-208268cbdc4a/raw?se=2026-10-26T04%3A42%3A57Z&sp=r&sv=2026-02-06&sr=b&scid=f9104f45-92b0-5ee6-9494-37ed85c4d4be&skoid=54865dd2-31dc-44cc-a877-635aa4250446&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-25T23%3A48%3A54Z&ske=2026-10-26T23%3A48%3A54Z&sks=b&skv=2026-02-06&sig=0lejtO59DHnJCzNk7KfoV2dLbvhqGjLwOam39eCbDBc%3D'
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --silent --show-error --max-time 120 "$REVIEWED_ZIP" -o /tmp/deepfamily-v4-programmes.zip
+          echo "aa5007ed06fc92c537dcf1ba556f7d19c026fa83a7a5381807f200e416aecc34  /tmp/deepfamily-v4-programmes.zip" | sha256sum --check --status
+          test "$(git hash-object DeepFamily/media/brand-film.mobile.mp4)" = c8fdc290a6a354fe4f4e74177cfd822132ebdb2c
+          test "$(git hash-object DeepFamily/media/family-case-film.mobile.mp4)" = def2d90e2d1ace7426bfbb04a59deed0484a0956
+          test "$(git hash-object DeepFamily/media/clan-film.mobile.mp4)" = c623623501bf97932a98fb49b126bf13cbe886ca
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          import os,stat
+          dest=Path("DeepFamily").resolve()
+          with ZipFile("/tmp/deepfamily-v4-programmes.zip") as archive:
+              files=archive.infolist()
+              for required in [
+                  "en/social-impact/index.html","zh/social-impact/index.html",
+                  "en/for-family-offices/index.html","zh/for-family-offices/index.html",
+                  "en/index.html","zh/index.html"
+              ]:
+                  if required not in archive.namelist():
+                      raise SystemExit("Missing V4 target page: "+required)
+              for item in files:
+                  p=Path(item.filename)
+                  if p.is_absolute() or ".." in p.parts or "\\" in item.filename:
+                      raise SystemExit("Unsafe ZIP path: "+item.filename)
+                  if p.parts[0] in ("media","posters","brand"):
+                      raise SystemExit("Source package must NOT overwrite original films, captions, posters, brand: "+item.filename)
+                  if stat.S_IFMT(item.external_attr>>16)==stat.S_IFLNK:
+                      raise SystemExit("Unexpected symbolic link")
+                  final=(dest/p).resolve()
+                  if not str(final).startswith(str(dest)+os.sep):
+                      raise SystemExit("Untrusted path")
+              en_social=archive.read("en/social-impact/index.html").decode("utf-8")
+              zh_social=archive.read("zh/social-impact/index.html").decode("utf-8")
+              for s,rule in [(en_social,"We do not accept applications"),(zh_social,"不接受个人或单个家庭申请")]:
+                  if rule not in s or "5–10" not in s:
+                      raise SystemExit("Community content check failed: "+rule)
+              for locale in ("en","zh"):
+                  quote=archive.read(locale+"/for-family-offices/index.html").decode("utf-8")
+                  if "S$98,000" not in quote or 'data-programme="private-family"' not in quote:
+                      raise SystemExit("Private family price check failed")
+                  home=archive.read(locale+"/index.html").decode("utf-8")
+                  for film in ("brand-film","family-case-film","clan-film"):
+                      if 'data-video-id="'+film+'"' not in home:
+                          raise SystemExit("V4 original film missing: "+film)
+              archive.extractall("DeepFamily")
+          print("Staged bilingual programme and price extension, retaining original V4 video assets")
+          PY
+          test "$(git hash-object DeepFamily/media/brand-film.mobile.mp4)" = c8fdc290a6a354fe4f4e74177cfd822132ebdb2c
+          test "$(git hash-object DeepFamily/media/family-case-film.mobile.mp4)" = def2d90e2d1ace7426bfbb04a59deed0484a0956
+          test "$(git hash-object DeepFamily/media/clan-film.mobile.mp4)" = c623623501bf97932a98fb49b126bf13cbe886ca
+          test -s DeepFamily/media/brand-film.en.vtt
+          test -s DeepFamily/media/brand-film.zh.vtt
+          test -s DeepFamily/media/family-case-film.en.vtt
+          test -s DeepFamily/media/family-case-film.zh.vtt
+          test -s DeepFamily/media/clan-film.en.vtt
+          test -s DeepFamily/media/clan-film.zh.vtt
+      - name: Commit scoped public-site changes to review branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git switch -c deploy/deepfamily-v4-community-pricing-20261026
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add DeepFamily/
+          git diff --cached --quiet && { echo "No change to publish"; exit 1; }
+          git diff --cached --name-only | grep -v '^DeepFamily/' && { echo "Unexpected out-of-scope files"; exit 1; } || true
+          git diff --cached --name-only | grep -E '^DeepFamily/(media|posters|brand)/' && { echo "Attempted original video/brand change"; exit 1; } || true
+          git commit -m "feat: V4 community heritage and private S$98,000 quotation"
+          git push -u origin deploy/deepfamily-v4-community-pricing-20261026
