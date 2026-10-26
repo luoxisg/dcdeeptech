@@ -85,5 +85,5 @@ jobs:
           git diff --cached --quiet && { echo "No change to publish"; exit 1; }
           git diff --cached --name-only | grep -v '^DeepFamily/' && { echo "Unexpected out-of-scope files"; exit 1; } || true
           git diff --cached --name-only | grep -E '^DeepFamily/(media|posters|brand)/' && { echo "Attempted original video/brand change"; exit 1; } || true
-          git commit -m "feat: V4 community heritage and private S$98,000 quotation"
+          git commit -m 'feat: V4 community heritage and private S$98,000 quotation'
           git push -u origin deploy/deepfamily-v4-community-pricing-20261026
