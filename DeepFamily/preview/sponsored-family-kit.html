@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="color-scheme" content="dark">
+  <link rel="icon" type="image/png" href="../brand/deepfamily-logo.png">
+  <title>尊享家庭套装 · 前端演示 | DeepFamily</title>
+  <link rel="stylesheet" href="./sponsored-family-kit.css">
+</head>
+<body class="min-h-screen bg-slate-950 font-sans text-slate-100 antialiased selection:bg-amber-300/30">
+  <svg class="hidden" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="icon-vault" viewBox="0 0 48 48"><rect x="6" y="9" width="36" height="30" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="24" cy="24" r="9" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="24" cy="24" r="2" fill="currentColor"/><path d="M24 15v6m0 6v6m-9-9h6m6 0h6" stroke="currentColor" stroke-width="1.5"/></symbol>
+    <symbol id="icon-ai-wiki" viewBox="0 0 48 48"><rect x="12" y="12" width="24" height="24" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M18 18h12v12H18zM18 5v7m12-7v7M18 36v7m12-7v7M5 18h7m-7 12h7m24-12h7m-7 12h7" fill="none" stroke="currentColor" stroke-width="1.5"/></symbol>
+    <symbol id="icon-events" viewBox="0 0 48 48"><path d="M7 13h34v8a4 4 0 0 0 0 8v7H7v-7a4 4 0 0 0 0-8v-8Z" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M24 13v4m0 4v4m0 4v7M14 19h5m10 0h5" stroke="currentColor" stroke-width="1.5" stroke-dasharray="2 3"/></symbol>
+    <symbol id="icon-arrow" viewBox="0 0 24 24"><path d="M4 12h15m-6-6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="icon-close" viewBox="0 0 24 24"><path d="m5 5 14 14M19 5 5 19" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol>
+  </svg>
+
+  <div class="pointer-events-none fixed inset-0 overflow-hidden" aria-hidden="true">
+    <div class="absolute -left-36 top-24 h-96 w-96 rounded-full bg-sky-800/20 blur-3xl"></div>
+    <div class="absolute -right-40 top-1/2 h-[34rem] w-[34rem] rounded-full bg-amber-700/10 blur-3xl"></div>
+  </div>
+
+  <div class="relative mx-auto max-w-[1480px] px-5 pb-14 sm:px-8 lg:px-12">
+    <header class="flex min-h-24 flex-wrap items-center justify-between gap-4 border-b border-white/10 py-4">
+      <div class="flex items-center gap-4">
+        <span class="flex h-12 w-36 items-center justify-center rounded-md bg-slate-100 px-2 shadow-lg shadow-black/20">
+          <img src="../brand/deepfamily-logo.png" alt="DeepFamily" class="h-auto max-h-10 w-full object-contain">
+        </span>
+        <span class="hidden h-8 w-px bg-white/15 sm:block" aria-hidden="true"></span>
+        <span class="hidden text-[10px] font-semibold uppercase tracking-[.25em] text-slate-400 sm:block" data-i18n="headerLabel">COMMUNITY / FAMILY SUITE</span>
+      </div>
+      <div class="flex items-center gap-3 sm:gap-6">
+        <span class="inline-flex items-center gap-2 rounded-full border border-amber-300/30 bg-amber-300/5 px-3 py-2 text-[10px] font-semibold uppercase tracking-[.18em] text-amber-200"><span class="h-1.5 w-1.5 rounded-full bg-amber-300"></span><span data-i18n="demoBadge">内部演示 · 非公开领取</span></span>
+        <button type="button" data-action="locale" class="min-h-11 border-b border-sky-200/40 px-1 text-xs font-semibold tracking-widest text-sky-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sky-300" aria-label="Switch language">EN</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="relative isolate mt-7 min-h-[650px] overflow-hidden rounded-[2rem] border border-sky-200/15 bg-fixed bg-cover shadow-[0_36px_100px_rgba(0,0,0,.35)] lg:min-h-[720px]" style="background-image:linear-gradient(120deg,#07111e 5%,#102a43 56%,#06101d 100%)" aria-labelledby="hero-title">
+        <div class="pointer-events-none absolute inset-0 opacity-40" aria-hidden="true">
+          <div class="absolute inset-x-7 top-8 border-t border-sky-200/20"></div><div class="absolute inset-x-7 bottom-8 border-t border-sky-200/20"></div>
+          <div class="absolute inset-y-8 left-7 border-l border-sky-200/20"></div><div class="absolute inset-y-8 right-7 border-l border-sky-200/20"></div>
+          <div class="absolute left-1/2 top-0 h-full border-l border-dashed border-sky-200/10"></div>
+          <div class="absolute left-0 top-1/2 w-full border-t border-dashed border-sky-200/10"></div>
+          <div class="absolute right-[8%] top-[14%] h-48 w-48 rounded-full border border-sky-200/10 sm:h-80 sm:w-80"></div>
+          <div class="absolute right-[11%] top-[18%] h-40 w-40 rounded-full border border-amber-200/15 sm:h-64 sm:w-64"></div>
+        </div>
+        <div class="relative grid min-h-[650px] items-center gap-10 px-8 py-16 sm:px-12 lg:min-h-[720px] lg:grid-cols-[.88fr_1.12fr] lg:gap-14 lg:px-20">
+          <div class="max-w-lg">
+            <div class="mb-8 flex items-center gap-4 text-[10px] font-semibold uppercase tracking-[.3em] text-sky-200/80"><span class="h-px w-10 bg-sky-300/70"></span><span data-i18n="edition">PRIVATE SPONSORSHIP / CONCEPT 01</span></div>
+            <h1 id="hero-title" class="max-w-xl font-serif text-[clamp(3rem,5vw,5.4rem)] font-normal leading-[1.04] tracking-tight text-white" data-i18n="heroTitle">为家族记忆，开启新的传承空间。</h1>
+            <p class="mt-7 max-w-md text-sm leading-8 text-slate-300 sm:text-base" data-i18n="heroBody">一个面向受邀家庭的数字传承套装概念。以私人档案、代际叙事与社群交流，勾勒值得审慎建设的未来服务。</p>
+            <div class="mt-10 flex flex-wrap items-center gap-x-6 gap-y-4 border-t border-white/15 pt-6 text-[10px] font-semibold uppercase tracking-[.2em] text-slate-400"><span>01 / 03</span><span class="h-px w-12 bg-amber-300/70"></span><span data-i18n="heroFoot">INVITATION · HERITAGE · STEWARDSHIP</span></div>
+          </div>
+
+          <div class="relative mx-auto flex min-h-[350px] w-full max-w-[690px] flex-col justify-between overflow-hidden rounded-2xl border border-white/20 bg-white/10 p-7 shadow-[0_30px_70px_rgba(0,0,0,.35)] backdrop-blur-md sm:p-8 lg:aspect-video lg:min-h-0" aria-label="Sponsor preview">
+            <div class="pointer-events-none absolute -right-16 -top-20 h-60 w-60 rounded-full border border-amber-200/20" aria-hidden="true"></div>
+            <div class="pointer-events-none absolute bottom-0 left-[20%] h-44 w-px rotate-[35deg] bg-gradient-to-t from-transparent via-amber-200/30 to-transparent" aria-hidden="true"></div>
+            <div class="relative flex items-start justify-between gap-4">
+              <div><p class="text-[10px] font-semibold uppercase tracking-[.32em] text-amber-200" data-i18n="sponsoredBy">SPONSORED BY · DEMO</p><p id="tier" class="mt-2 text-xs uppercase tracking-[.2em] text-slate-300"></p></div>
+              <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-amber-200/50 text-sm font-serif text-amber-100" aria-hidden="true"><img id="sponsorLogo" alt="" class="hidden h-9 w-9 object-contain"><span id="sponsorInitials">EF</span></div>
+            </div>
+            <div class="relative py-5"><span class="mb-4 block h-px w-20 bg-amber-300/70"></span><h2 id="sponsorName" class="max-w-xl font-serif text-3xl leading-tight text-white sm:text-4xl"></h2><p id="sponsorMessage" class="mt-3 max-w-md text-sm leading-7 text-slate-200"></p></div>
+            <div class="relative flex flex-wrap items-end justify-between gap-5 border-t border-white/20 pt-4">
+              <div><p class="text-[10px] uppercase tracking-[.24em] text-slate-300" data-i18n="sponsorEdition">FAMILY SUITE / PROTOTYPE</p><p id="claimStatus" class="mt-2 text-xs text-amber-200"></p></div>
+              <button type="button" data-action="open" class="group inline-flex min-h-12 items-center gap-3 rounded-sm bg-amber-200 px-5 py-3 text-left text-xs font-bold uppercase tracking-[.12em] text-slate-950 transition hover:bg-amber-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sky-200"><span data-i18n="claimButton">演示领取流程</span><svg class="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden="true"><use href="#icon-arrow"></use></svg></button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="py-20 sm:py-24" aria-labelledby="features-title">
+        <div class="mb-9 grid items-end gap-6 lg:grid-cols-[1fr_auto]"><div><p class="mb-4 text-[10px] font-semibold uppercase tracking-[.3em] text-amber-200" data-i18n="featureEyebrow">KIT COMPONENTS / 01—03</p><h2 id="features-title" class="max-w-2xl font-serif text-4xl leading-tight text-white sm:text-5xl" data-i18n="featureHeading">一份为未来预留的家族档案蓝图。</h2></div><p class="max-w-sm text-sm leading-7 text-slate-400" data-i18n="featureIntro">以下为拟议权益的前端示意；额度、服务、供应商和活动均未开通或确认。</p></div>
+        <div id="features" class="grid grid-cols-1 gap-6 md:grid-cols-3" aria-live="polite"></div>
+      </section>
+
+      <section class="grid gap-8 border-y border-white/10 py-12 lg:grid-cols-[.7fr_1.3fr] lg:items-center" aria-labelledby="process-title">
+        <div><p class="text-[10px] font-semibold uppercase tracking-[.3em] text-sky-200" data-i18n="processEyebrow">ACTIVATION BLUEPRINT</p><h2 id="process-title" class="mt-4 font-serif text-3xl text-white sm:text-4xl" data-i18n="processTitle">有序、私密、由邀请开始。</h2><p class="mt-5 max-w-md text-sm leading-7 text-slate-400" data-i18n="processBody">这个流程只演示交互与信息结构。邀请码仅在浏览器本地核对；不会验证身份、申请服务或上传家族资料。</p></div>
+        <ol class="grid gap-3 sm:grid-cols-3" id="flowOverview">
+          <li class="min-h-40 border border-sky-200/15 bg-slate-900/60 p-5"><span class="text-xs tracking-widest text-amber-200">01</span><p class="mt-5 font-serif text-xl text-white" data-i18n="stepOne">演示邀请码</p><p class="mt-2 text-xs leading-6 text-slate-400" data-i18n="stepOneBody">使用公开的演示代码，不输入真实社区凭证。</p></li>
+          <li class="min-h-40 border border-sky-200/15 bg-slate-900/60 p-5"><span class="text-xs tracking-widest text-amber-200">02</span><p class="mt-5 font-serif text-xl text-white" data-i18n="stepTwo">示例主理人</p><p class="mt-2 text-xs leading-6 text-slate-400" data-i18n="stepTwoBody">仅预览个性化称谓，不保存任何姓名。</p></li>
+          <li class="min-h-40 border border-sky-200/15 bg-slate-900/60 p-5"><span class="text-xs tracking-widest text-amber-200">03</span><p class="mt-5 font-serif text-xl text-white" data-i18n="stepThree">模拟初始化</p><p class="mt-2 text-xs leading-6 text-slate-400" data-i18n="stepThreeBody">动画不连接云端、Google Drive 或 AI 后端。</p></li>
+        </ol>
+      </section>
+    </main>
+
+    <footer class="flex flex-col gap-5 py-9 text-xs leading-6 text-slate-500 sm:flex-row sm:items-start sm:justify-between"><p class="max-w-3xl" data-i18n="footerNotice">内部前端概念稿。示例赞助方、15GB 配额、无限次 AI 功能与私享活动均非真实承诺；现有 DeepFamily 社会影响计划仍仅接受机构合作咨询，不开放个人申请。</p><span class="shrink-0 uppercase tracking-[.2em]">DEEPFAMILY / CONCEPT 2026</span></footer>
+  </div>
+
+  <dialog id="claimDialog" aria-labelledby="dialogTitle" class="fixed inset-0 m-auto max-h-[calc(100dvh-2rem)] w-[min(92vw,640px)] overflow-y-auto rounded-2xl border border-sky-200/20 bg-slate-900 p-0 text-slate-100 shadow-[0_30px_100px_rgba(0,0,0,.75)] backdrop:bg-slate-950/85">
+    <div class="border-b border-white/10 px-6 py-6 sm:px-9"><div class="flex items-start justify-between gap-5"><div><p class="text-[10px] font-semibold uppercase tracking-[.28em] text-amber-200" data-i18n="dialogEyebrow">INTERACTIVE PROTOTYPE / NO ACCOUNT CREATED</p><h2 id="dialogTitle" class="mt-3 font-serif text-3xl text-white" data-i18n="dialogTitle">预览领取体验</h2></div><button type="button" data-action="close" class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/15 text-slate-300 hover:border-white/50 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-300" aria-label="关闭 / Close"><svg class="h-5 w-5" aria-hidden="true"><use href="#icon-close"></use></svg></button></div><p class="mt-5 text-xs leading-6 text-slate-400" data-i18n="dialogIntro">仅供界面评审。请勿输入真实邀请码、邮箱或家族成员资料。</p></div>
+    <div class="px-6 py-7 sm:px-9">
+      <ol id="stepper" class="mb-8 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-widest text-slate-500" aria-label="Progress"><li data-step="1" aria-current="step" class="flex-1 border-t-2 border-amber-200 pt-3 text-amber-200" data-i18n="stepOne">演示邀请码</li><li data-step="2" class="flex-1 border-t-2 border-white/15 pt-3" data-i18n="stepTwo">示例主理人</li><li data-step="3" class="flex-1 border-t-2 border-white/15 pt-3" data-i18n="stepThree">模拟初始化</li></ol>
+      <form id="claimForm" novalidate>
+        <div id="claimStep1"><label for="inviteCode" class="block text-sm font-medium text-white" data-i18n="codeLabel">演示邀请码</label><p class="mt-2 text-xs leading-6 text-slate-400" data-i18n="codeHelp">请使用公开演示代码 <strong class="font-mono text-amber-200">DEMO-2026</strong>；真实邀请码不会被接受或发送。</p><input id="inviteCode" name="inviteCode" type="text" inputmode="text" autocomplete="off" spellcheck="false" maxlength="20" required class="mt-5 min-h-12 w-full rounded-md border border-sky-200/25 bg-slate-950 px-4 font-mono text-sm tracking-widest text-white placeholder:text-slate-600 focus:border-amber-200 focus:outline-none" placeholder="DEMO-2026"><p id="codeError" role="alert" class="mt-3 hidden text-xs text-rose-300"></p><button type="submit" class="mt-8 inline-flex min-h-12 items-center gap-3 bg-amber-200 px-6 text-xs font-bold uppercase tracking-widest text-slate-950 hover:bg-amber-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sky-300"><span data-i18n="continue">继续</span><svg class="h-4 w-4" aria-hidden="true"><use href="#icon-arrow"></use></svg></button></div>
+        <div id="claimStep2" hidden><label for="principalName" class="block text-sm font-medium text-white" data-i18n="nameLabel">示例家庭主理人</label><p class="mt-2 text-xs leading-6 text-slate-400" data-i18n="nameHelp">仅用于本次预览称谓；请使用虚构名称，关闭窗口即清除。</p><input id="principalName" name="principalName" type="text" autocomplete="off" maxlength="32" required class="mt-5 min-h-12 w-full rounded-md border border-sky-200/25 bg-slate-950 px-4 text-sm text-white placeholder:text-slate-600 focus:border-amber-200 focus:outline-none" placeholder="示例主理人" data-i18n-placeholder="namePlaceholder"><p id="nameError" role="alert" class="mt-3 hidden text-xs text-rose-300"></p><div class="mt-8 flex flex-wrap gap-3"><button type="button" data-action="back" class="min-h-12 border border-white/25 px-5 text-xs font-semibold uppercase tracking-widest text-white hover:border-white/60" data-i18n="back">返回</button><button type="submit" class="min-h-12 bg-amber-200 px-6 text-xs font-bold uppercase tracking-widest text-slate-950 hover:bg-amber-100" data-i18n="simulate">模拟初始化</button></div></div>
+      </form>
+      <div id="claimStep3" hidden><p class="font-serif text-2xl text-white" data-i18n="terminalTitle">正在展开家族档案蓝图</p><p class="mt-2 text-xs leading-6 text-slate-400" data-i18n="terminalNotice">以下为动画，不会分配容量或启动服务。</p><ol id="terminalLines" class="mt-6 min-h-36 space-y-3 border border-sky-200/15 bg-slate-950 p-5 font-mono text-xs leading-6 text-sky-200" aria-live="polite" aria-atomic="false"></ol><div id="demoComplete" hidden class="mt-6 border-l-2 border-amber-200 pl-4"><p class="font-serif text-xl text-white" data-i18n="completeTitle">界面演示完成</p><p id="completeMessage" class="mt-2 text-xs leading-6 text-slate-300"></p><p class="mt-2 text-xs leading-6 text-amber-200" data-i18n="completeWarning">未创建账户、储存空间、AI 功能或活动资格。</p><button id="finishButton" type="button" data-action="close" class="mt-5 min-h-11 border border-white/30 px-5 text-xs uppercase tracking-widest text-white hover:border-white" data-i18n="finish">关闭演示</button></div></div>
+    </div>
+  </dialog>
+
+  <script type="module">
+    // Mock data only. No authentication, upload, Google Drive, AI API, network call or persistence.
+    const sponsoredKitData = {
+      sponsor: {name: "Example Family Trust", logoUrl: null, message: "赋能社区核心力量，传承数字时代家族记忆。"},
+      tier: "Executive Platinum · Concept",
+      features: [
+        {id: "vault", title: "DeepFamily 数字金库", description: "拟议 15GB 专属存储，可探索照片、视频与录音整理；Google Drive 对接尚未实施或审核。", icon: "icon-vault"},
+        {id: "ai-wiki", title: "AI 世代叙事", description: "拟议无限次语音转文字与私有知识问答；模型、配额与隐私条款尚未确认。", icon: "icon-ai-wiki"},
+        {id: "events", title: "社区私享活动", description: "拟议受邀家庭闭门交流、自驾或水上活动；主办方、名额及日期均未确定。", icon: "icon-events"}
+      ],
+      claimStatus: "available"
+    };
+
+    const copy = {
+      zh: {
+        headerLabel: "社区 / 尊享家庭套装", demoBadge: "内部演示 · 非公开领取", edition: "PRIVATE SPONSORSHIP / CONCEPT 01",
+        heroTitle: "为家族记忆，开启新的传承空间。", heroBody: "一个面向受邀家庭的数字传承套装概念。以私人档案、代际叙事与社群交流，勾勒值得审慎建设的未来服务。", heroFoot: "邀请 · 传承 · 审慎守护",
+        sponsoredBy: "SPONSORED BY · 虚构示例", sponsorEdition: "FAMILY SUITE / 交互原型", claimButton: "演示领取流程", statusAvailable: "演示状态：可预览", statusPending: "演示状态：处理中", statusClaimed: "演示状态：已完成",
+        featureEyebrow: "套装概念 / 01—03", featureHeading: "一份为未来预留的家族档案蓝图。", featureIntro: "以下为拟议权益的前端示意；额度、服务、供应商和活动均未开通或确认。", featureLabel: "拟议权益 · 尚未上线", featureDetail: "查看演示领取流程",
+        processEyebrow: "ACTIVATION BLUEPRINT", processTitle: "有序、私密、由邀请开始。", processBody: "这个流程只演示交互与信息结构。邀请码仅在浏览器本地核对；不会验证身份、申请服务或上传家族资料。",
+        stepOne: "演示邀请码", stepOneBody: "使用公开的演示代码，不输入真实社区凭证。", stepTwo: "示例主理人", stepTwoBody: "仅预览个性化称谓，不保存任何姓名。", stepThree: "模拟初始化", stepThreeBody: "动画不连接云端、Google Drive 或 AI 后端。",
+        footerNotice: "内部前端概念稿。示例赞助方、15GB 配额、无限次 AI 功能与私享活动均非真实承诺；现有 DeepFamily 社会影响计划仍仅接受机构合作咨询，不开放个人申请。",
+        dialogEyebrow: "交互原型 / 不创建账户", dialogTitle: "预览领取体验", dialogIntro: "仅供界面评审。请勿输入真实邀请码、邮箱或家族成员资料。", codeLabel: "演示邀请码", codeHelp: "请使用公开演示代码 DEMO-2026；真实邀请码不会被接受或发送。", continue: "继续", codeError: "请输入公开演示代码 DEMO-2026。",
+        nameLabel: "示例家庭主理人", nameHelp: "仅用于本次预览称谓；请使用虚构名称，关闭窗口即清除。", namePlaceholder: "示例主理人", nameError: "请输入 2–32 个字符的虚构名称。", back: "返回", simulate: "模拟初始化",
+        terminalTitle: "正在展开家族档案蓝图", terminalNotice: "以下为动画，不会分配容量或启动服务。", terminal: ["[01] 模拟核对演示邀请码", "[02] 模拟分配数字金库", "[03] 模拟初始化 AI 叙事界面"], completeTitle: "界面演示完成", completeMessage: name => `${name}，这只是前端预览。`, completeWarning: "未创建账户、储存空间、AI 功能或活动资格。", finish: "关闭演示",
+        sponsorMessage: sponsoredKitData.sponsor.message,
+        featureText: Object.fromEntries(sponsoredKitData.features.map(feature => [feature.id, {title: feature.title, description: feature.description}]))
+      },
+      en: {
+        headerLabel: "COMMUNITY / FAMILY SUITE", demoBadge: "INTERNAL DEMO · NO LIVE CLAIM", edition: "PRIVATE SPONSORSHIP / CONCEPT 01",
+        heroTitle: "A new space for family memory.", heroBody: "An invitation-based digital heritage kit concept. Private archives, intergenerational stories and considered gatherings outline a service that would require further design and approval.", heroFoot: "INVITATION · HERITAGE · STEWARDSHIP",
+        sponsoredBy: "SPONSORED BY · FICTIONAL EXAMPLE", sponsorEdition: "FAMILY SUITE / PROTOTYPE", claimButton: "Preview claim flow", statusAvailable: "Demo state: available", statusPending: "Demo state: pending", statusClaimed: "Demo state: complete",
+        featureEyebrow: "KIT CONCEPT / 01—03", featureHeading: "A blueprint for a future family archive.", featureIntro: "These are proposed benefits in a frontend demonstration. Quotas, services, suppliers and events are not active or confirmed.", featureLabel: "PROPOSED · NOT LIVE", featureDetail: "Preview the claim flow",
+        processEyebrow: "ACTIVATION BLUEPRINT", processTitle: "Private by design. Invitation first.", processBody: "This flow demonstrates interface structure only. The sample code is checked locally in your browser; it does not verify identity, request a service or upload family records.",
+        stepOne: "Demo invitation code", stepOneBody: "Use the public sample code, never a real community credential.", stepTwo: "Sample family lead", stepTwoBody: "Preview a personalized salutation; no name is saved.", stepThree: "Simulated setup", stepThreeBody: "The animation connects to no cloud, Google Drive or AI backend.",
+        footerNotice: "Internal frontend concept. The sample sponsor, 15 GB quota, unlimited AI capability and private events are not commitments. DeepFamily's current Social Impact programme accepts organisational enquiries only, with no individual applications.",
+        dialogEyebrow: "INTERACTIVE PROTOTYPE / NO ACCOUNT CREATED", dialogTitle: "Preview the claim experience", dialogIntro: "For interface review only. Do not enter real invitation codes, email addresses or family-member information.", codeLabel: "Demo invitation code", codeHelp: "Use the public sample code DEMO-2026. Real invitation codes are neither accepted nor sent.", continue: "Continue", codeError: "Enter the public sample code DEMO-2026.",
+        nameLabel: "Sample family lead", nameHelp: "Used only in this preview. Enter a fictional name; closing the dialog clears it.", namePlaceholder: "Sample family lead", nameError: "Enter a fictional name of 2–32 characters.", back: "Back", simulate: "Simulate setup",
+        terminalTitle: "Drafting the family archive blueprint", terminalNotice: "This animation allocates no storage and starts no service.", terminal: ["[01] Checking the sample code locally", "[02] Simulating vault allocation", "[03] Simulating the AI narrative interface"], completeTitle: "Interface preview complete", completeMessage: name => `${name}, this was a frontend preview only.`, completeWarning: "No account, storage, AI feature or event entitlement was created.", finish: "Close preview",
+        sponsorMessage: "Supporting community memory and the family stories of a digital age.",
+        featureText: {
+          vault: {title: "DeepFamily Vault", description: "A proposed 15 GB personal archive for photos, video and audio. Google Drive integration has not been built or security-reviewed."},
+          "ai-wiki": {title: "AI Heritage Narrative", description: "A concept for unlimited speech-to-text and private heritage Q&A. Models, quotas and privacy terms are unconfirmed."},
+          events: {title: "Private community access", description: "Proposed invitation-only gatherings, driving retreats or boat days. Hosts, seats and dates have not been confirmed."}
+        }
+      }
+    };
+
+    const $ = selector => document.querySelector(selector);
+    const dialog = $("#claimDialog");
+    const form = $("#claimForm");
+    let locale = "zh";
+    let step = 1;
+    let runId = 0;
+    let returnFocus = null;
+
+    function iconFor(id) {
+      const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      const use = document.createElementNS("http://www.w3.org/2000/svg", "use");
+      svg.setAttribute("class", "h-11 w-11 text-sky-100"); svg.setAttribute("aria-hidden", "true");
+      use.setAttribute("href", `#${id}`); svg.append(use); return svg;
+    }
+
+    function renderFeatures() {
+      const grid = $("#features"); grid.replaceChildren();
+      sponsoredKitData.features.forEach((feature, index) => {
+        const article = document.createElement("article");
+        article.className = "group flex min-h-80 flex-col border border-sky-200/15 bg-slate-900/70 p-7 transition-all duration-300 hover:-translate-y-1 hover:border-amber-300/60 hover:ring-1 hover:ring-yellow-500/50 focus-within:border-amber-300/60 sm:p-8";
+        const top = document.createElement("div"); top.className = "flex items-start justify-between gap-4";
+        const iconBox = document.createElement("div"); iconBox.className = "flex h-16 w-16 items-center justify-center border border-sky-200/20 bg-sky-200/5"; iconBox.append(iconFor(feature.icon));
+        const number = document.createElement("span"); number.className = "text-xs font-semibold tracking-[.2em] text-slate-500"; number.textContent = String(index + 1).padStart(2, "0"); top.append(iconBox, number);
+        const caption = document.createElement("p"); caption.className = "mt-8 text-[10px] font-semibold uppercase tracking-[.22em] text-amber-200"; caption.textContent = copy[locale].featureLabel;
+        const title = document.createElement("h3"); title.className = "mt-3 font-serif text-2xl text-white"; title.textContent = copy[locale].featureText[feature.id].title;
+        const description = document.createElement("p"); description.className = "mt-4 flex-1 text-sm leading-7 text-slate-400"; description.textContent = copy[locale].featureText[feature.id].description;
+        const action = document.createElement("button"); action.type = "button"; action.dataset.action = "open"; action.className = "mt-8 inline-flex min-h-11 items-center gap-2 self-start border-b border-sky-200/30 text-xs font-semibold text-sky-100 transition hover:border-amber-200 hover:text-amber-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sky-300"; action.textContent = copy[locale].featureDetail;
+        article.append(top, caption, title, description, action); grid.append(article);
+      });
+    }
+
+    function renderCopy() {
+      document.documentElement.lang = locale === "zh" ? "zh-CN" : "en";
+      document.title = locale === "zh" ? "尊享家庭套装 · 前端演示 | DeepFamily" : "Sponsored Family Suite · Frontend Demo | DeepFamily";
+      document.querySelectorAll("[data-i18n]").forEach(node => { const value = copy[locale][node.dataset.i18n]; if (typeof value === "string") node.textContent = value; });
+      document.querySelectorAll("[data-i18n-placeholder]").forEach(node => { node.placeholder = copy[locale][node.dataset.i18nPlaceholder]; });
+      $("[data-action='locale']").textContent = locale === "zh" ? "EN" : "中文";
+      $("#sponsorName").textContent = sponsoredKitData.sponsor.name;
+      $("#sponsorMessage").textContent = copy[locale].sponsorMessage;
+      $("#tier").textContent = sponsoredKitData.tier;
+      $("#claimStatus").textContent = copy[locale][`status${sponsoredKitData.claimStatus[0].toUpperCase()}${sponsoredKitData.claimStatus.slice(1)}`];
+      $("#sponsorInitials").textContent = sponsoredKitData.sponsor.name.split(/\s+/).slice(0, 2).map(word => word[0]).join("");
+      if (sponsoredKitData.sponsor.logoUrl) { $("#sponsorLogo").src = sponsoredKitData.sponsor.logoUrl; $("#sponsorLogo").classList.remove("hidden"); $("#sponsorInitials").classList.add("hidden"); }
+      renderFeatures();
+      if (dialog.open) { $("#codeError").textContent = ""; $("#nameError").textContent = ""; }
+    }
+
+    function showError(id, message) { const node = $(id); node.textContent = message; node.classList.remove("hidden"); }
+    function clearError(id) { const node = $(id); node.textContent = ""; node.classList.add("hidden"); }
+    function setStep(next) {
+      step = next;
+      $("#claimStep1").hidden = next !== 1;
+      $("#claimStep2").hidden = next !== 2;
+      $("#claimStep3").hidden = next !== 3;
+      form.hidden = next === 3;
+      document.querySelectorAll("#stepper [data-step]").forEach(item => {
+        const current = Number(item.dataset.step) === next;
+        item.classList.toggle("border-amber-200", current); item.classList.toggle("text-amber-200", current);
+        item.classList.toggle("border-white/15", !current); item.classList.toggle("text-slate-500", !current);
+        if (current) item.setAttribute("aria-current", "step"); else item.removeAttribute("aria-current");
+      });
+      if (next === 1) $("#inviteCode").focus();
+      if (next === 2) $("#principalName").focus();
+    }
+
+    const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
+    async function runSimulation() {
+      const thisRun = ++runId;
+      const lines = $("#terminalLines"); lines.replaceChildren(); $("#demoComplete").hidden = true;
+      const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+      for (const entry of copy[locale].terminal) {
+        await pause(reduced ? 30 : 650);
+        if (thisRun !== runId || !dialog.open) return;
+        const line = document.createElement("li"); line.textContent = entry; lines.append(line);
+      }
+      await pause(reduced ? 30 : 450);
+      if (thisRun !== runId || !dialog.open) return;
+      $("#completeMessage").textContent = copy[locale].completeMessage($("#principalName").value.trim());
+      $("#demoComplete").hidden = false;
+      $("#finishButton").focus();
+    }
+
+    document.addEventListener("click", event => {
+      const button = event.target.closest("[data-action]"); if (!button) return;
+      switch (button.dataset.action) {
+        case "locale": locale = locale === "zh" ? "en" : "zh"; renderCopy(); break;
+        case "open": returnFocus = button; form.reset(); clearError("#codeError"); clearError("#nameError"); $("#demoComplete").hidden = true; dialog.showModal(); setStep(1); break;
+        case "close": dialog.close(); break;
+        case "back": clearError("#nameError"); setStep(1); break;
+      }
+    });
+    document.addEventListener("submit", event => {
+      if (event.target !== form) return;
+      event.preventDefault();
+      if (step === 1) {
+        if ($("#inviteCode").value.trim().toUpperCase() !== "DEMO-2026") return showError("#codeError", copy[locale].codeError);
+        clearError("#codeError"); setStep(2); return;
+      }
+      if (step === 2) {
+        const value = $("#principalName").value.trim();
+        if (value.length < 2 || value.length > 32) return showError("#nameError", copy[locale].nameError);
+        clearError("#nameError"); setStep(3); runSimulation();
+      }
+    });
+    dialog.addEventListener("click", event => { if (event.target === dialog) dialog.close(); });
+    dialog.addEventListener("close", () => { runId++; form.reset(); $("#terminalLines").replaceChildren(); $("#demoComplete").hidden = true; clearError("#codeError"); clearError("#nameError"); setStep(1); returnFocus?.focus(); returnFocus = null; });
+    renderCopy();
+  </script>
+</body>
+</html>
