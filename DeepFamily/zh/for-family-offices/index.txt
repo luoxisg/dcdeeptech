@@ -7,14 +7,85 @@ a:I[4431,[],"ViewportBoundary"]
 c:I[4431,[],"MetadataBoundary"]
 d:"$Sreact.suspense"
 f:I[7150,[],""]
-:HL["/DeepFamily/_next/static/css/4f50b3a2381a11be.css","style"]
-0:{"P":null,"b":"YsXjqSlgXJtwMJiTRUilD","p":"/DeepFamily","c":["","zh","for-family-offices",""],"i":false,"f":[[["",{"children":[["locale","zh","d"],{"children":[["page","for-family-offices","d"],{"children":["__PAGE__",{}]}]}]},"$undefined","$undefined",true],["",["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/DeepFamily/_next/static/css/4f50b3a2381a11be.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}]],["$","html",null,{"children":["$","body",null,{"children":["$","$L2",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L3",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":[[["$","title",null,{"children":"404: This page could not be found."}],["$","div",null,{"style":{"fontFamily":"system-ui,\"Segoe UI\",Roboto,Helvetica,Arial,sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\"","height":"100vh","textAlign":"center","display":"flex","flexDirection":"column","alignItems":"center","justifyContent":"center"},"children":["$","div",null,{"children":[["$","style",null,{"dangerouslySetInnerHTML":{"__html":"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}"}}],["$","h1",null,{"className":"next-error-h1","style":{"display":"inline-block","margin":"0 20px 0 0","padding":"0 23px 0 0","fontSize":24,"fontWeight":500,"verticalAlign":"top","lineHeight":"49px"},"children":404}],["$","div",null,{"style":{"display":"inline-block"},"children":["$","h2",null,{"style":{"fontSize":14,"fontWeight":400,"lineHeight":"49px","margin":0},"children":"This page could not be found."}]}]]}]}]],[]],"forbidden":"$undefined","unauthorized":"$undefined"}]}]}]]}],{"children":[["locale","zh","d"],["$","$1","c",{"children":[null,"$L4"]}],{"children":[["page","for-family-offices","d"],["$","$1","c",{"children":[null,["$","$L2",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L3",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}],{"children":["__PAGE__",["$","$1","c",{"children":["$L5",null,["$","$L6",null,{"children":["$L7",["$","$L8",null,{"promise":"$@9"}]]}]]}],{},null,false]},null,false]},null,false]},null,false],["$","$1","h",{"children":[null,[["$","$La",null,{"children":"$Lb"}],null],["$","$Lc",null,{"children":["$","div",null,{"hidden":true,"children":["$","$d",null,{"fallback":null,"children":"$Le"}]}]}]]}],false]],"m":"$undefined","G":["$f",[]],"s":false,"S":true}
-10:I[3889,["481","static/chunks/481-ba4f0101accdf213.js","889","static/chunks/889-e28454b6f5fe3ba9.js","39","static/chunks/app/%5Blocale%5D/%5Bpage%5D/page-587bfeae4b454f46.js"],"Footer"]
-11:I[3889,["481","static/chunks/481-ba4f0101accdf213.js","889","static/chunks/889-e28454b6f5fe3ba9.js","39","static/chunks/app/%5Blocale%5D/%5Bpage%5D/page-587bfeae4b454f46.js"],"Header"]
-12:I[3889,["481","static/chunks/481-ba4f0101accdf213.js","889","static/chunks/889-e28454b6f5fe3ba9.js","39","static/chunks/app/%5Blocale%5D/%5Bpage%5D/page-587bfeae4b454f46.js"],"PageContent"]
-4:["$","div",null,{"lang":"zh","children":[["$","$L2",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L3",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}],["$","a",null,{"className":"mobile-contact","href":"https://wa.me/6581279739?text=%E6%82%A8%E5%A5%BD%EF%BC%8C%E6%88%91%E6%83%B3%E4%BA%86%E8%A7%A3%20DeepFamily%E3%80%82","target":"_blank","rel":"noreferrer","children":["预约私密交流",["$","span",null,{"children":"↗"}]]}],["$","$L10",null,{"locale":"zh"}]]}]
-5:[["$","$L11",null,{"locale":"zh","page":"for-family-offices"}],["$","$L12",null,{"locale":"zh","page":"for-family-offices"}]]
+:HL["/DeepFamily/_next/static/css/0a417941aa4ade18.css","style"]
+0:{"P":null,"b":"y0ZIUb7i9KXXLf4o599mA","p":"/DeepFamily","c":["","zh","for-family-offices",""],"i":false,"f":[[["",{"children":[["locale","zh","d"],{"children":[["page","for-family-offices","d"],{"children":["__PAGE__",{}]}]},"$undefined","$undefined",true]}],["",["$","$1","c",{"children":[null,["$","$L2",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L3",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":[[["$","title",null,{"children":"404: This page could not be found."}],["$","div",null,{"style":{"fontFamily":"system-ui,\"Segoe UI\",Roboto,Helvetica,Arial,sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\"","height":"100vh","textAlign":"center","display":"flex","flexDirection":"column","alignItems":"center","justifyContent":"center"},"children":["$","div",null,{"children":[["$","style",null,{"dangerouslySetInnerHTML":{"__html":"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}"}}],["$","h1",null,{"className":"next-error-h1","style":{"display":"inline-block","margin":"0 20px 0 0","padding":"0 23px 0 0","fontSize":24,"fontWeight":500,"verticalAlign":"top","lineHeight":"49px"},"children":404}],["$","div",null,{"style":{"display":"inline-block"},"children":["$","h2",null,{"style":{"fontSize":14,"fontWeight":400,"lineHeight":"49px","margin":0},"children":"This page could not be found."}]}]]}]}]],[]],"forbidden":"$undefined","unauthorized":"$undefined"}]]}],{"children":[["locale","zh","d"],["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/DeepFamily/_next/static/css/0a417941aa4ade18.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}]],"$L4"]}],{"children":[["page","for-family-offices","d"],["$","$1","c",{"children":[null,["$","$L2",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L3",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}],{"children":["__PAGE__",["$","$1","c",{"children":["$L5",null,["$","$L6",null,{"children":["$L7",["$","$L8",null,{"promise":"$@9"}]]}]]}],{},null,false]},null,false]},null,false]},null,false],["$","$1","h",{"children":[null,[["$","$La",null,{"children":"$Lb"}],null],["$","$Lc",null,{"children":["$","div",null,{"hidden":true,"children":["$","$d",null,{"fallback":null,"children":"$Le"}]}]}]]}],false]],"m":"$undefined","G":["$f",[]],"s":false,"S":true}
+10:I[3647,["619","static/chunks/619-ba102abea3e3d0e4.js","239","static/chunks/239-f66fa0b581f968dc.js","647","static/chunks/647-94508284c219cecf.js","39","static/chunks/app/%5Blocale%5D/%5Bpage%5D/page-9faec0b71fc3dcca.js"],"Footer"]
+11:I[3647,["619","static/chunks/619-ba102abea3e3d0e4.js","239","static/chunks/239-f66fa0b581f968dc.js","647","static/chunks/647-94508284c219cecf.js","39","static/chunks/app/%5Blocale%5D/%5Bpage%5D/page-9faec0b71fc3dcca.js"],"Header"]
+13:I[3647,["619","static/chunks/619-ba102abea3e3d0e4.js","239","static/chunks/239-f66fa0b581f968dc.js","647","static/chunks/647-94508284c219cecf.js","39","static/chunks/app/%5Blocale%5D/%5Bpage%5D/page-9faec0b71fc3dcca.js"],"PageContent"]
+4:["$","html",null,{"lang":"zh-Hans","children":[["$","head",null,{"children":["$","link",null,{"rel":"sitemap","type":"application/xml","href":"https://dcdeeptech.com/DeepFamily/sitemap.xml"}]}],["$","body",null,{"children":["$","div",null,{"lang":"zh","children":[["$","$L2",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L3",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}],["$","a",null,{"className":"mobile-contact","href":"https://wa.me/6581279739?text=%E6%82%A8%E5%A5%BD%EF%BC%8C%E6%88%91%E6%83%B3%E4%BA%86%E8%A7%A3%20DeepFamily%E3%80%82","target":"_blank","rel":"noreferrer","children":["预约私密交流",["$","span",null,{"children":"↗"}]]}],["$","$L10",null,{"locale":"zh"}]]}]}]]}]
+12:T64a,{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://dcdeeptech.com/DeepFamily/#organization","name":"DeepFamily","url":"https://dcdeeptech.com/DeepFamily/","description":"立足新加坡的家族文化传承项目。","logo":{"@type":"ImageObject","url":"https://dcdeeptech.com/DeepFamily/brand/deepfamily-logo.png","width":2054,"height":766}},{"@type":"WebSite","@id":"https://dcdeeptech.com/DeepFamily/#website","url":"https://dcdeeptech.com/DeepFamily/","name":"DeepFamily","publisher":{"@id":"https://dcdeeptech.com/DeepFamily/#organization"},"inLanguage":["en","zh-Hans"]},{"@type":"WebPage","@id":"https://dcdeeptech.com/DeepFamily/zh/for-family-offices/#webpage","url":"https://dcdeeptech.com/DeepFamily/zh/for-family-offices/","name":"家族办公室文化传承与精神财富","description":"探索家族治理与传承中的非金融遗产：创始人故事、代际价值与家族历史档案。本项目不提供金融、信托或法律意见。","inLanguage":"zh-Hans","isPartOf":{"@id":"https://dcdeeptech.com/DeepFamily/#website"},"about":{"@id":"https://dcdeeptech.com/DeepFamily/#organization"},"breadcrumb":{"@id":"https://dcdeeptech.com/DeepFamily/zh/for-family-offices/#breadcrumbs"}},{"@type":"BreadcrumbList","@id":"https://dcdeeptech.com/DeepFamily/zh/for-family-offices/#breadcrumbs","itemListElement":[{"@type":"ListItem","position":1,"name":"首页","item":"https://dcdeeptech.com/DeepFamily/zh/"},{"@type":"ListItem","position":2,"name":"家族办公室文化传承与精神财富","item":"https://dcdeeptech.com/DeepFamily/zh/for-family-offices/"}]}]}14:T9c3,Context: this brand narrative uses illustrative scenes. Century-long preservation and future AI references are aspirations, not verified storage-life or continuous-service guarantees. Actual services require separate confirmation.
+
+Tracing back to 1376, the Wu family lineage has survived through the sheer weight of ink and fragile paper.
+
+But strokes of ink offer no sound, carrying cold dates and formal titles,
+
+while the human philosophy that built a bloodline fades completely into silence.
+
+When the architects of a dynasty depart, their calculated risks, their private regrets,
+
+and the exact cadence of their voice disappear forever,
+
+stranding their descendants in quiet halls devoid of warmth.
+
+Today, the modern creators of family wealth stand on the precipice of that exact same erasure.
+
+A family portrait captured in 1962 begins to yellow,
+
+its contrast fading as the physical chemistry breaks down.
+
+We are in the final countdown to capture the truth of this living generation,
+
+because no future algorithm can resurrect a human voice it never heard,
+
+or deduce a memory that was never spoken.
+
+And abandoning these fragile remnants in cardboard storage boxes
+
+or generic cloud folders does not save them.
+
+It merely delays their disappearance.
+
+A carved wooden seal, a tangled cassette tape of oral history,
+
+and a folded letter from the old country,
+
+are scattered across disparate living rooms and continents.
+
+Dragging them into a sterile online drive strips away their vital context,
+
+creating a digital graveyard of unnamed files severed from the people they belong to.
+
+True preservation demands securing the living spirit, the fierce ambition, and the heavy sacrifices
+
+that defined a lifetime of choices.
+
+Protecting that essence requires an impenetrable foundation built to outlast us all.
+
+We anchor these memories inside localized, century-grade optical cold storage.
+
+By capturing the raw, uncompromised truth of your ancestors right now,
+
+you guarantee their right to be understood and articulated by the intelligence engines of tomorrow.
+
+The static archives of the past are preparing to speak,
+
+from a silent paper lineage to a living network,
+
+from a fading portrait to a philosophy that speaks back.
+
+Will your bloodline survive the jump into the digital age?
+
+Your data exists for a century. AI models will evolve for a century,
+
+but your family endures for a century.
+
+The window to save your founders is closing.
+
+Explore DeepFamily.
+
+Preserve your legacy today.5:[["$","$L11",null,{"locale":"zh","page":"for-family-offices"}],["$","main",null,{"id":"main-content","children":[["$","script",null,{"type":"application/ld+json","dangerouslySetInnerHTML":{"__html":"$12"}}],["$","$L13",null,{"locale":"zh","page":"for-family-offices","videos":{"brand-film":{"id":"brand-film","kind":"film","title":{"en":"DeepFamily — Our Story","zh":"DeepFamily 品牌介绍"},"notice":{"en":"Brand narrative with illustrative footage. Century references express an aspiration, not a storage-life or continuous-service guarantee. Actual services and AI capabilities require confirmation; reconstructed scenes are not verified client records.","zh":"品牌叙事，含示意画面。片中“百年”为保存愿景，不构成介质寿命或持续服务保证；具体服务与AI能力须另行确认，重构场景不作为客户档案实证。"},"desktop":"$undefined","mobile":{"src":"/DeepFamily/media/brand-film.mobile.mp4","poster":"/DeepFamily/posters/brand-film.poster.mobile.webp"},"tracks":[{"src":"/DeepFamily/media/brand-film.en.vtt","language":"en","label":"English"},{"src":"/DeepFamily/media/brand-film.zh.vtt","language":"zh","label":"简体中文"}],"transcript":{"en":"$14","zh":"阅读说明：本片为品牌叙事，含示意场景。“百年保存”及未来AI能力表达长远愿景，不构成介质寿命或持续服务保证；具体服务须另行确认。\n\n追溯至1376年，片中讲述的吴氏世系，依靠墨迹与脆弱纸张传承至今。\n\n然而墨迹没有声音，留下的是日期与正式名衔，\n\n支撑家族延续的人生理念，却可能逐渐沉寂。\n\n当开创家业的一代离去，他们权衡过的风险、心底的遗憾，\n\n以及说话时独有的语调，也可能随之消失，\n\n使后人面对寂静的厅堂，却难以感受到往昔温度。\n\n今天，现代家业的开创者，也面临同样的记忆流失风险。\n\n一张摄于1962年的全家福开始泛黄，\n\n随着材料老化，影像的明暗层次也在消退。\n\n记录这一代亲历者的记忆，需要把握当下，\n\n因为未来的算法，无法找回从未记录的真实声音，\n\n也无法可靠还原从未讲述的记忆。\n\n把这些脆弱的遗存放入纸箱，\n\n或存进普通云端文件夹，并不等于完成长期保存。\n\n那可能只是延缓资料的流失。\n\n一枚木印、一盘口述历史磁带，\n\n以及一封来自故乡的旧信，\n\n可能散落在不同家庭、不同大陆。\n\n若只把它们放进网盘，却没有记录来龙去脉，\n\n这些文件便可能失去姓名，也失去与相关人物的联系。\n\n有意义的保存，还要留住鲜活的精神、志向，以及沉重的付出，\n\n理解它们如何塑造一生的选择。\n\n影片以此表达：守护这些记忆，需要以长期延续为目标的基础安排。\n\n片中提出以本地光学冷存储支撑长期保存，并将百年作为愿景。\n\n现在就忠实记录先辈的经历，\n\n是为了让未来的智能工具有机会基于真实资料，帮助后人理解他们。\n\n让过去静默的档案，开始讲述故事，\n\n从无声的纸本世系，走向彼此关联的记忆网络，\n\n从逐渐褪色的照片，走向能够被理解、被讨论的人生理念。\n\n你的家族记忆，能否跨越这道数字时代的门槛？\n\n让资料跨越百年，让AI模型持续迭代，\n\n让家族记忆长久延续，是影片表达的愿景。\n\n记录创始一代经历的时间窗口，正在缩小。\n\n了解DeepFamily。\n\n从今天开始，悉心保存属于你的传承。"}}}}],false]}]]
 b:[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]
 7:null
-9:{"metadata":[["$","title","0",{"children":"高净值家族传承 | DeepFamily"}],["$","meta","1",{"name":"description","content":"为高净值家族提供私密文化传承工程，标准项目参考报价S$98,000，最终以书面方案为准。"}],["$","meta","2",{"name":"robots","content":"index, follow"}],["$","link","3",{"rel":"canonical","href":"https://dcdeeptech.com/DeepFamily/DeepFamily/zh/for-family-offices/"}],["$","link","4",{"rel":"alternate","hrefLang":"en","href":"https://dcdeeptech.com/DeepFamily/DeepFamily/en/for-family-offices/"}],["$","link","5",{"rel":"alternate","hrefLang":"zh","href":"https://dcdeeptech.com/DeepFamily/DeepFamily/zh/for-family-offices/"}],["$","meta","6",{"property":"og:title","content":"高净值家族传承 | DeepFamily"}],["$","meta","7",{"property":"og:description","content":"为高净值家族提供私密文化传承工程，标准项目参考报价S$98,000，最终以书面方案为准。"}],["$","meta","8",{"property":"og:site_name","content":"DeepFamily"}],["$","meta","9",{"property":"og:image","content":"https://dcdeeptech.com/DeepFamily/DeepFamily/og-cover.svg"}],["$","meta","10",{"property":"og:type","content":"website"}],["$","meta","11",{"name":"twitter:card","content":"summary_large_image"}],["$","meta","12",{"name":"twitter:title","content":"高净值家族传承 | DeepFamily"}],["$","meta","13",{"name":"twitter:description","content":"为高净值家族提供私密文化传承工程，标准项目参考报价S$98,000，最终以书面方案为准。"}],["$","meta","14",{"name":"twitter:image","content":"https://dcdeeptech.com/DeepFamily/DeepFamily/og-cover.svg"}]],"error":null,"digest":"$undefined"}
+15:I[622,[],"IconMark"]
+9:{"metadata":[["$","title","0",{"children":"家族办公室文化传承与精神财富 | DeepFamily"}],["$","meta","1",{"name":"description","content":"探索家族治理与传承中的非金融遗产：创始人故事、代际价值与家族历史档案。本项目不提供金融、信托或法律意见。"}],["$","meta","2",{"name":"robots","content":"index, follow"}],["$","meta","3",{"name":"content-language","content":"zh-Hans"}],["$","link","4",{"rel":"canonical","href":"https://dcdeeptech.com/DeepFamily/zh/for-family-offices/"}],["$","link","5",{"rel":"alternate","hrefLang":"en","href":"https://dcdeeptech.com/DeepFamily/en/for-family-offices/"}],["$","link","6",{"rel":"alternate","hrefLang":"zh-Hans","href":"https://dcdeeptech.com/DeepFamily/zh/for-family-offices/"}],["$","meta","7",{"property":"og:title","content":"家族办公室文化传承与精神财富 | DeepFamily"}],["$","meta","8",{"property":"og:description","content":"探索家族治理与传承中的非金融遗产：创始人故事、代际价值与家族历史档案。本项目不提供金融、信托或法律意见。"}],["$","meta","9",{"property":"og:url","content":"https://dcdeeptech.com/DeepFamily/zh/for-family-offices/"}],["$","meta","10",{"property":"og:site_name","content":"DeepFamily"}],["$","meta","11",{"property":"og:locale","content":"zh_CN"}],["$","meta","12",{"property":"og:image","content":"https://dcdeeptech.com/DeepFamily/og-cover.png"}],["$","meta","13",{"property":"og:image:width","content":"1200"}],["$","meta","14",{"property":"og:image:height","content":"630"}],["$","meta","15",{"property":"og:image:alt","content":"DeepFamily 世代传承：示意山水图"}],["$","meta","16",{"property":"og:locale:alternate","content":"en_SG"}],["$","meta","17",{"property":"og:type","content":"website"}],["$","meta","18",{"name":"twitter:card","content":"summary_large_image"}],["$","meta","19",{"name":"twitter:title","content":"家族办公室文化传承与精神财富 | DeepFamily"}],["$","meta","20",{"name":"twitter:description","content":"探索家族治理与传承中的非金融遗产：创始人故事、代际价值与家族历史档案。本项目不提供金融、信托或法律意见。"}],["$","meta","21",{"name":"twitter:image","content":"https://dcdeeptech.com/DeepFamily/og-cover.png"}],["$","link","22",{"rel":"icon","href":"/DeepFamily/brand/deepfamily-logo.png","type":"image/png"}],["$","$L15","23",{}]],"error":null,"digest":"$undefined"}
 e:"$9:metadata"
