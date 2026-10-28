@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="ABC Decision Intelligence — evidence-led decision assessments by DCDeepTech">
+<meta name="robots" content="noindex,nofollow">
+<title>ABC Decision Intelligence | DCDeepTech</title>
+<style>
+:root{color-scheme:dark;--bg:#090f1b;--panel:#111a2a;--panel2:#152137;--line:#283752;--ink:#ecf2fc;--muted:#9baac2;--blue:#6da9ff;--teal:#4dd5ba;--amber:#f6bd67;--red:#f07d87;--shadow:0 20px 55px #050b17a8}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 78% -14%,#1c385d 0,transparent 49%),var(--bg);color:var(--ink);font:15px/1.55 Inter,"Segoe UI",Arial,"Noto Sans SC",sans-serif}
+a{color:var(--blue)}button,input,textarea,select{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.shell{display:grid;grid-template-columns:236px minmax(0,1fr);min-height:100vh}
+aside{background:#0b1322d9;border-right:1px solid var(--line);padding:26px 17px;position:sticky;top:0;height:100vh}
+.brand{display:flex;align-items:center;gap:12px;margin-bottom:32px}.brandicon{font-weight:850;letter-spacing:-1px;background:linear-gradient(135deg,#3984ef,#4de0ca);color:#071421;padding:9px 10px;border-radius:12px}.brand strong{display:block;font-size:16px}.brand small{color:var(--muted);font-size:11px;letter-spacing:.13em}
+nav a{display:flex;align-items:center;gap:10px;padding:12px 13px;text-decoration:none;color:var(--muted);border-radius:9px;margin-bottom:4px}nav a.active,nav a:hover{background:#182b44;color:#eef6ff}
+.asidefoot{position:absolute;bottom:24px;left:20px;right:20px;color:var(--muted);font-size:12px;line-height:1.6}
+.main{padding:32px clamp(16px,3.4vw,54px) 80px;max-width:1650px;width:100%;margin:auto}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:20px;margin-bottom:22px}.eyebrow{text-transform:uppercase;letter-spacing:.19em;color:var(--teal);font-size:11px;font-weight:700}.toplinks{display:flex;gap:8px}.pill{border:1px solid var(--line);border-radius:99px;padding:7px 11px;color:var(--muted);font-size:12px}
+button{border:1px solid var(--line);border-radius:9px;padding:11px 16px;background:#1b2b44;color:var(--ink);font-weight:650}button:hover{background:#253957}button.primary{border-color:#5294f5;background:linear-gradient(110deg,#276ad1,#3679da);color:#fff}button.primary:hover{filter:brightness(1.12)}button.secondary{background:#0d1829}button.small{padding:7px 10px;font-size:12px}
+.hero{display:grid;grid-template-columns:1.5fr 1fr;gap:24px;margin-bottom:28px;align-items:stretch}.hero h1{font-size:clamp(29px,3vw,46px);letter-spacing:-1.5px;line-height:1.14;margin:14px 0}.hero h1 span{color:var(--teal)}.hero p{color:var(--muted);margin:0;max-width:690px}.heroactions{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+.visual{border:1px solid #2b4563;background:linear-gradient(140deg,#183151,#101a2d);border-radius:16px;padding:24px;display:flex;align-items:center;justify-content:center;min-height:222px}.diagram{width:100%;max-width:310px}.diagram .node{padding:9px;border:1px solid #45638a;border-radius:8px;text-align:center;font-size:13px;font-weight:700;background:#15273e}.diagram .start{border-color:#57b9d0}.diagram .line{height:19px;width:1px;background:#6585a6;margin:auto}.diagram .agents{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.diagram .agents .node{font-size:11px;padding:9px 3px}.diagram .mini{font-size:10px;color:#9cb8d6;text-align:center;margin:8px}
+.grid{display:grid;grid-template-columns:1.1fr .9fr;gap:20px}.panel{border:1px solid var(--line);background:linear-gradient(180deg,#121d30,#101928);border-radius:15px;padding:23px;box-shadow:var(--shadow)}.panel h2{font-size:18px;margin:0 0 6px}.sub{color:var(--muted);font-size:13px;margin:0 0 20px}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:13px}label{display:block;color:#bfd0e9;font-weight:650;font-size:12px;margin-bottom:7px}.field{margin-bottom:15px}input,textarea,select{background:#0b1424;color:#e8f1ff;border:1px solid #344561;border-radius:8px;width:100%;padding:11px 12px}textarea{min-height:90px;resize:vertical}input::placeholder,textarea::placeholder{color:#7185a6}select{appearance:auto}small.help{display:block;color:var(--muted);margin-top:5px}
+.sectionline{border:none;border-top:1px solid var(--line);margin:23px 0}.flexhead{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.evidence-row{border:1px solid #2b3e5c;background:#0d1829;border-radius:10px;padding:12px;margin-bottom:10px}.evidence-row .rowhead{display:flex;justify-content:space-between;gap:10px;align-items:center}.evidence-row .rowhead strong{font-size:12px;color:var(--teal)}.evidence-row .fields{display:grid;grid-template-columns:1fr 180px;gap:10px;margin-top:10px}
+.notice{font-size:12px;color:#d8c4a6;border-left:3px solid #d9a65d;background:#37291452;padding:11px 13px;border-radius:5px;margin-bottom:14px}.callout{border:1px solid #285b60;background:#12323b69;color:#bfebdf;font-size:13px;border-radius:9px;padding:12px;margin-top:14px}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:19px}.metric{border:1px solid #2c3e59;border-radius:10px;padding:16px;background:#0e192a}.metric .big{font-size:24px;font-weight:800;letter-spacing:-.8px}.metric small{display:block;color:var(--muted);font-size:11px}
+.steps{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:18px}.steps span{background:#1a2a42;border:1px solid #314a6a;padding:7px 10px;border-radius:6px;font-size:12px;color:#c8d7e9}
+.agentgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.agent{padding:14px;border:1px solid #2b3b52;border-radius:11px;background:#0e192a;min-height:138px}.agent .agentname{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px;font-weight:800}.agent .text{color:#aebdd1;font-size:12px;margin:10px 0 0}.status{font-size:10px;padding:3px 7px;border-radius:99px;background:#29374e;color:#c4d0df;white-space:nowrap}.status.pass{background:#143f34;color:#7ce7c4}.status.fail{background:#492731;color:#ffc0c7}.status.unknown{background:#41321c;color:#ffd494}
+.report{margin-top:20px;display:none}.report.show{display:block}.reporthead{display:flex;align-items:center;justify-content:space-between;gap:12px}.decision{background:#13243a;border:1px solid #395981;border-radius:11px;padding:18px;margin:14px 0}.decision strong{color:#8bc1ff;font-size:20px}.decision p{color:var(--muted);font-size:13px;margin:5px 0 0}.report ul{padding-left:22px;color:#c6d3e7}.report li{margin:6px 0}.foot{margin-top:22px;color:#7f95b2;font-size:11px}
+@media(max-width:1000px){.shell{display:block}aside{height:auto;position:relative;padding:12px 16px;display:flex;align-items:center;justify-content:space-between}.brand{margin:0}nav{display:none}.asidefoot{display:none}.hero,.grid{grid-template-columns:1fr}.visual{min-height:170px}}@media(max-width:620px){.main{padding:20px 12px 50px}.topbar{align-items:flex-start;flex-direction:column}.formgrid,.metrics,.agentgrid,.evidence-row .fields{grid-template-columns:1fr}.panel{padding:16px}.hero h1{font-size:30px}.visual{display:none}}
+@media print{aside,.topbar,.hero,.grid,#actions,button{display:none!important}.shell{display:block}.main{padding:0}.report{display:block!important;border:none;box-shadow:none;color:#111;background:#fff}body{background:#fff;color:#111}.decision{color:#111;border:1px solid #ccc;background:#fff}.decision strong,.decision p,.report ul{color:#111}}
+</style>
+</head>
+<body>
+<div class="shell">
+<aside>
+<div class="brand"><div class="brandicon">ABC</div><div><strong>Decision Intelligence</strong><small>DCDEEPTECH · V2</small></div></div>
+<nav><a href="#overview" class="active">▦ &nbsp;<span data-en="Overview">总览 Overview</span></a><a href="#assessment">◈ &nbsp;<span data-en="Assessment">决策审查</span></a><a href="#evidence">▤ &nbsp;<span data-en="Evidence">证据登记</span></a><a href="#results">▥ &nbsp;<span data-en="Report">分析报告</span></a></nav>
+<div class="asidefoot">Evidence over consensus.<br>Logic · Economics · Risk · Experiment<br><br>© DCDeepTech</div>
+</aside>
+<main class="main">
+<div class="topbar"><div class="eyebrow">DECISION SYSTEM / EVIDENCE FIRST</div><div class="toplinks"><span class="pill" id="modePill">● LOCAL RULES DEMO</span><button class="small secondary" id="langBtn" type="button">EN / 中</button></div></div>
+<section class="hero" id="overview">
+<div><div class="eyebrow" data-en="FROM HYPOTHESIS TO VERIFIABLE ACTION">从假设到可验证行动</div><h1 data-en="Make better decisions.<br><span>Prove what matters.</span>">让每一项决策<br><span>经得起验证。</span></h1><p data-en="Six review roles and an optional experiment planner, backed by traceable evidence and deterministic decision gates. This hosted page is an offline rules demonstration, not a live AI model.">A–F 六种独立审查能力，按需触发 G 实验设计。结合可追溯证据与确定性决策规则。当前公开页面是本地规则演示，不会调用真实 AI 模型。</p>
+<div class="heroactions"><button class="primary" type="button" id="demoBtn" data-en="Load sample case">加载示例项目</button><button type="button" class="secondary" id="goBtn" data-en="Start assessment">开始审查</button></div></div>
+<div class="visual"><div class="diagram"><div class="node start">A · Orchestrator</div><div class="line"></div><div class="node">D · Evidence Registry</div><div class="line"></div><div class="agents"><div class="node">B · Sufficiency</div><div class="node">C · Necessity</div><div class="node">E · Economics</div></div><div class="line"></div><div class="node">F · Risk / Policy Gate</div><div class="mini">↓ if material unknowns</div><div class="node start">G · Validation Experiment</div></div></div>
+</section>
+<div class="grid">
+<section class="panel" id="assessment">
+<div class="flexhead"><div><h2 data-en="01 — Define your decision">01 — 定义决策命题</h2><p class="sub" data-en="Provide measurable objectives and explicit assumptions.">明确 X 方案、Y 目标、成功标准及约束条件。</p></div></div>
+<form id="form" novalidate>
+<div class="field"><label for="project" data-en="Project name">项目名称</label><input id="project" maxlength="180" required placeholder="Example: AI Alarm Verification"></div>
+<div class="field"><label for="objective" data-en="Objective (Y)">决策目标 Y</label><textarea id="objective" required placeholder="目标、KPI、完成时间或可衡量业务效果"></textarea></div>
+<div class="field"><label for="solution" data-en="Proposed solution (X)">待审方案 X</label><textarea id="solution" required placeholder="具体方案与应用环境"></textarea></div>
+<div class="field"><label for="criteria" data-en="Success criteria (one per line)">成功标准（每行一项）</label><textarea id="criteria" required placeholder="例如：降低人工复核工时 30%"></textarea></div>
+<div class="field"><label for="alternatives" data-en="Known alternatives (one per line)">替代方案（每行一项）</label><textarea id="alternatives" placeholder="现有系统 / 人工流程 / 竞争方案"></textarea></div>
+<div class="formgrid">
+<div class="field"><label for="technical" data-en="Technical validation status">技术验证状态（B）</label><select id="technical"><option value="UNKNOWN">尚未验证 / UNKNOWN</option><option value="PASS">有证据支持达标 / PASS</option><option value="FAIL">测试未达标 / FAIL</option></select></div>
+<div class="field"><label for="problem" data-en="Need urgency (C1)">问题必要性（C1）</label><select id="problem"><option value="UNKNOWN">未知 / UNKNOWN</option><option value="PASS">必须解决 / PASS</option><option value="FAIL">可暂不解决 / FAIL</option></select></div>
+<div class="field"><label for="replace" data-en="Equivalent alternative (C2)">可行等效替代（C2）</label><select id="replace"><option value="UNKNOWN">尚无证据 / UNKNOWN</option><option value="YES">已验证存在替代</option><option value="NO">已排除限定范围内替代</option></select></div>
+<div class="field"><label for="risk" data-en="Risk constraints (F)">风险约束（F）</label><select id="risk"><option value="UNKNOWN">尚未评估</option><option value="ACCEPTABLE">可接受</option><option value="MITIGATION_REQUIRED">须缓解措施</option><option value="HARD_BLOCKER">有已确认硬阻断项</option></select></div>
+</div>
+<hr class="sectionline">
+<h2 data-en="02 — Commercial assumptions">02 — 经济价值假设</h2><p class="sub" data-en="Enter comparable numbers for the same period and currency. No invented ROI.">请使用相同时间周期及币种；不输入时保持未知。</p>
+<div class="formgrid"><div class="field"><label for="cost" data-en="Total proposed cost">方案总成本</label><input type="number" min="0" step="0.01" id="cost" placeholder="SGD / year"></div><div class="field"><label for="savings" data-en="Projected benefit">预计总收益</label><input type="number" min="0" step="0.01" id="savings" placeholder="SGD / year"></div></div>
+<hr class="sectionline">
+<div id="evidence"><div class="flexhead"><div><h2 data-en="03 — Evidence registry">03 — 证据登记 D</h2><p class="sub" data-en="Verification labels are user declarations, not independent verification.">证据状态由用户声明，不等于系统独立核验。</p></div><button type="button" id="addEvidence" class="small" data-en="+ Evidence">+ 添加</button></div>
+<div id="evidenceList"></div>
+<div class="field"><label for="localfile" data-en="Import one TXT/MD file locally (optional)">导入 TXT/MD 文本证据（可选）</label><input id="localfile" type="file" accept=".txt,.md,text/plain,text/markdown"><small class="help" data-en="Parsed only in this browser; max 512 KB; never uploaded by this page.">只在浏览器中读取；最大 512KB；本页面不会上传文件。</small></div></div>
+<div class="notice" data-en="Privacy: This public static page performs calculations in your browser. No model calls or external submissions. Avoid entering confidential or personal information on a shared device.">隐私提醒：此公开静态页面只在浏览器中计算，不发送至 AI 服务或外部服务器。请避免在共用设备输入机密或个人资料。</div>
+<div class="heroactions" id="actions"><button class="primary" type="submit" data-en="Run local review">运行本地审查</button><button type="reset" class="secondary" id="clearBtn" data-en="Clear fields">清空输入</button></div>
+</form></section>
+<aside class="panel" style="display:block;height:auto;position:static" id="insights">
+<h2 data-en="Decision control center">决策审查控制台</h2><p class="sub" data-en="The review remains conservative when evidence is missing.">证据不足时，系统会保留 UNKNOWN，不会自动推定成功。</p>
+<div class="metrics"><div class="metric"><div class="big" id="mEvidence">0</div><small data-en="Evidence records">证据条目</small></div><div class="metric"><div class="big" id="mVerified">0</div><small data-en="Self-labeled verified">自报已验证</small></div><div class="metric"><div class="big" id="mGaps">—</div><small data-en="Open review gaps">关键缺口</small></div></div>
+<div class="steps"><span>A · Orchestrate</span><span>D · Evidence</span><span>B · Sufficiency</span><span>C1/C2 · Necessity</span><span>E · Economics</span><span>F · Risk</span><span>G · Experiment</span></div>
+<div class="agentgrid">
+<div class="agent"><div class="agentname">B · Sufficiency <span id="sB" class="status unknown">NOT RUN</span></div><div class="text" id="dB">能否在既定边界内达到目标？</div></div>
+<div class="agent"><div class="agentname">C1 · Problem Need <span id="sC1" class="status unknown">NOT RUN</span></div><div class="text" id="dC1">客户问题是否必须解决？</div></div>
+<div class="agent"><div class="agentname">C2 · Replaceability <span id="sC2" class="status unknown">NOT RUN</span></div><div class="text" id="dC2">特定方案是否存在等效替代？</div></div>
+<div class="agent"><div class="agentname">D · Evidence <span id="sD" class="status unknown">NOT RUN</span></div><div class="text" id="dD">证据来源与验证状态。</div></div>
+<div class="agent"><div class="agentname">E · Economic Value <span id="sE" class="status unknown">NOT RUN</span></div><div class="text" id="dE">收益成本及价值边界。</div></div>
+<div class="agent"><div class="agentname">F · Risk <span id="sF" class="status unknown">NOT RUN</span></div><div class="text" id="dF">不可接受的硬约束。</div></div>
+</div><div class="callout" data-en="G is activated only when a critical evidence gap remains. A summary is generated from rules; no generative AI is running on this public page.">G 仅在存在关键证据缺口时启动。这里的 A 综合结论来自确定性规则，不是生成式 AI 的真实运行结果。</div>
+</aside>
+</div>
+<section class="panel report" id="results" aria-live="polite"><div class="reporthead"><div><h2 data-en="Decision report">决策审查报告</h2><p class="sub" id="reportTime"></p></div><div class="heroactions"><button id="exportJson" type="button" class="small" data-en="Export JSON">导出 JSON</button><button id="printReport" type="button" class="small secondary" data-en="Print / PDF">打印 / PDF</button></div></div>
+<div class="decision"><div class="eyebrow" data-en="DETERMINISTIC POLICY OUTCOME">确定性决策结果</div><strong id="decisionTitle">—</strong><p id="decisionExplanation"></p></div>
+<div class="formgrid"><div><h2 data-en="Evidence gaps & validation">证据缺口与验证</h2><ul id="gapList"></ul></div><div><h2 data-en="Suggested next experiment (G)">G · 下一项验证实验</h2><p id="gPlan" class="sub"></p></div></div>
+<p class="foot" data-en="LOCAL RULES DEMO — output reflects your own inputs, not independently verified facts. No live AI or hosted API is connected.">本地规则演示：结果只基于用户输入，不代表独立核验事实。未连接在线 AI 或受保护后端。</p></section>
+<p class="foot">ABC Decision Intelligence V2 · A–G decision review model · No autonomous financial, legal or deployment decisions. <a href="/">DCDeepTech</a></p>
+</main></div>
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+let records=[],latest=null,english=false;
+const zh={PASS:"通过",FAIL:"不通过",UNKNOWN:"证据不足",ACCEPTABLE:"可接受",MITIGATION_REQUIRED:"需风险缓解",HARD_BLOCKER:"硬阻断",PROCEED_WITH_APPROVAL:"人工审批后可推进",PROCEED_TO_PILOT:"有条件开展试点",GATHER_EVIDENCE:"补充关键证据",REDESIGN_SOLUTION:"重新设计方案",COMPARE_ALTERNATIVES:"比较替代方案",BLOCKED_BY_CONSTRAINT:"存在硬阻断项"};
+const en={PASS:"PASS",FAIL:"FAIL",UNKNOWN:"UNKNOWN",ACCEPTABLE:"ACCEPTABLE",MITIGATION_REQUIRED:"MITIGATION NEEDED",HARD_BLOCKER:"HARD BLOCKER",PROCEED_WITH_APPROVAL:"PROCEED WITH APPROVAL",PROCEED_TO_PILOT:"CONDITIONAL PILOT",GATHER_EVIDENCE:"GATHER EVIDENCE",REDESIGN_SOLUTION:"REDESIGN SOLUTION",COMPARE_ALTERNATIVES:"COMPARE ALTERNATIVES",BLOCKED_BY_CONSTRAINT:"BLOCKED BY CONSTRAINT"};
+function label(k){return (english?en:zh)[k]||k}
+function el(tag,text){const e=document.createElement(tag);if(text!==undefined)e.textContent=text;return e}
+function addRecord(claim="",source="",status="UNVERIFIED"){records.push({id:"EV-"+String(Date.now())+"-"+Math.random().toString(36).slice(2,5),claim,source,status});renderEvidence()}
+function renderEvidence(){
+ const list=$("evidenceList");list.replaceChildren();
+ for(const [i,r] of records.entries()){
+  const wrapper=el("div");wrapper.className="evidence-row";
+  const head=el("div");head.className="rowhead";head.append(el("strong","EV-"+String(i+1).padStart(3,"0")));
+  const del=el("button",english?"Remove":"删除");del.type="button";del.className="small secondary";del.addEventListener("click",()=>{records=records.filter(x=>x.id!==r.id);renderEvidence()});head.append(del);wrapper.append(head);
+  const claim=el("textarea");claim.placeholder=english?"Evidence claim":"证据内容与具体主张";claim.rows=2;claim.style.minHeight="64px";claim.value=r.claim;claim.addEventListener("input",()=>{r.claim=claim.value;metrics()});wrapper.append(claim);
+  const fields=el("div");fields.className="fields";const src=el("input");src.placeholder=english?"Source / URL / document":"来源 / URL / 文件名";src.value=r.source;src.addEventListener("input",()=>{r.source=src.value;metrics()});fields.append(src);
+  const select=el("select");for(const [v,t] of [["UNVERIFIED",english?"Unverified":"未验证"],["VERIFIED",english?"User-labelled verified":"用户标注已验证"],["DISPUTED",english?"Disputed":"存在争议"],["INVALID",english?"Invalid":"无效"]]){const op=el("option",t);op.value=v;select.append(op)}select.value=r.status;select.addEventListener("change",()=>{r.status=select.value;metrics()});fields.append(select);wrapper.append(fields);list.append(wrapper);
+ }metrics();
+}
+function metrics(){const n=records.filter(x=>x.claim.trim());$("mEvidence").textContent=n.length;$("mVerified").textContent=n.filter(x=>x.status==="VERIFIED"&&x.source.trim()).length}
+function formData(){
+ const take=id=>$(id).value.trim(), toNum=id=>$(id).value===""?null:Number($(id).value);
+ return{project:take("project"),objective:take("objective"),solution:take("solution"),success_criteria:take("criteria").split("\n").map(x=>x.trim()).filter(Boolean),alternatives:take("alternatives").split("\n").map(x=>x.trim()).filter(Boolean),technical:take("technical"),problem:take("problem"),replace:take("replace"),risk:take("risk"),cost:toNum("cost"),savings:toNum("savings"),evidence:records.filter(r=>r.claim.trim()).map((r,i)=>({id:"EV-"+String(i+1).padStart(3,"0"),claim:r.claim.trim(),source:r.source.trim(),status:r.status}))}
+}
+function gate(b,c,e,ev,risk){if(risk==="HARD_BLOCKER")return"BLOCKED_BY_CONSTRAINT";if(!ev||risk==="UNKNOWN")return"GATHER_EVIDENCE";if(b==="FAIL")return"REDESIGN_SOLUTION";if(e==="FAIL")return"COMPARE_ALTERNATIVES";if([b,c,e].includes("UNKNOWN"))return"GATHER_EVIDENCE";if(c==="FAIL")return"COMPARE_ALTERNATIVES";if(risk==="MITIGATION_REQUIRED")return"PROCEED_TO_PILOT";return"PROCEED_WITH_APPROVAL"}
+function review(d){
+ const complete=d.evidence.length>0&&d.evidence.every(x=>x.status==="VERIFIED"&&x.source&&x.claim);
+ const B=complete?d.technical:"UNKNOWN",C1=complete?d.problem:"UNKNOWN",C2=complete?(d.replace==="YES"?"FAIL":d.replace==="NO"?"PASS":"UNKNOWN"):"UNKNOWN";
+ const net=d.cost!==null&&d.savings!==null?Math.round((d.savings-d.cost)*100)/100:null;
+ const E=complete&&net!==null?(net>=0?"PASS":"FAIL"):"UNKNOWN";
+ const F=d.risk;
+ const decision=gate(B,C2,E,complete,F);
+ const missing=[];if(!d.evidence.length)missing.push(english?"No evidence provided":"没有提供证据");if(!complete)missing.push(english?"Evidence is not independently authenticated; user-provided verification labels require independent checking":"证据尚未全部由用户标注已核实；即使自报已验证，仍须独立核验");if(B==="UNKNOWN")missing.push(english?"Technical acceptance test required":"需要技术验收测试");if(C1==="UNKNOWN")missing.push(english?"Problem urgency not substantiated":"客户问题必要性未核实");if(C2==="UNKNOWN")missing.push(english?"Equivalent alternatives not established or excluded":"尚未验证是否存在等效替代");if(E==="UNKNOWN")missing.push(english?"Comparable cost/benefit evidence missing":"缺少同周期收益成本依据");if(F==="UNKNOWN")missing.push(english?"Risk and compliance review missing":"缺少风险和合规审查");
+ return{mode:"LOCAL_RULES_DEMO",timestamp:new Date().toISOString(),inputs:d,assessments:{B,C1,C2,D:complete?"PASS":"UNKNOWN",E,F},net_value:net,decision,missing,
+ experiment:missing.length?(english?"Validate the most consequential missing assumption first. Agree on an observable baseline, acceptance threshold, comparison/control, time window and stop condition before a paid pilot.":"先验证最影响决策的未知条件：建立基线、对照/替代方案、可观测指标、验收阈值、测试周期和停止条件，再考虑付费 PoC。"):(english?"Conduct a limited pilot with a human-approved scope and measurable KPIs.":"在人工批准的范围内进行受控试点，记录可验证的 KPI。"),
+ disclaimer:"Rules-only browser demonstration. No AI inference, independent fact checking, or production API calls."};
+}
+function setStatus(id,status,detail){const n=$("s"+id);n.textContent=label(status);n.className="status "+(status==="PASS"||status==="ACCEPTABLE"?"pass":status==="FAIL"||status==="HARD_BLOCKER"?"fail":"unknown");$("d"+id).textContent=detail}
+function showReport(r){latest=r;const a=r.assessments;
+ setStatus("B",a.B,english?"Technical sufficiency within stated success criteria":"按设定成功标准判断技术充分性");
+ setStatus("C1",a.C1,english?"Is the underlying problem truly required to solve?":"问题本身是否有解决的必要性");
+ setStatus("C2",a.C2,english?"Can equivalent alternatives achieve the objective?":"限定范围内是否有等效替代方案");
+ setStatus("D",a.D,english?"Self-labeled evidence coverage (not verified by this site)":"用户自报证据覆盖（本站未独立核验）");
+ setStatus("E",a.E,r.net_value===null?(english?"No comparable cost/benefit figures":"缺少可比收益/成本数据"):(english?"Benefit minus cost: ":"收益减成本：")+r.net_value.toLocaleString());
+ setStatus("F",a.F,english?"Risk status as declared in the form":"风险状态基于表单声明");
+ $("mGaps").textContent=r.missing.length;$("reportTime").textContent=new Date(r.timestamp).toLocaleString();$("decisionTitle").textContent=label(r.decision);
+ $("decisionExplanation").textContent=english?"This is an offline rules assessment based solely on user-supplied labels. It is not a model-based AI review.":"此结果完全基于用户填写状态的离线规则判断，不是 AI 模型生成的专业审查。";
+ const g=$("gapList");g.replaceChildren();for(const item of r.missing)g.append(el("li",item));if(!r.missing.length)g.append(el("li",english?"No internal checklist gaps, but independent validation and approvals remain required.":"本地规则未发现未完成项，但仍需独立证据核验和人工审批。"));
+ $("gPlan").textContent=r.experiment;$("results").classList.add("show");$("results").scrollIntoView({behavior:"smooth",block:"start"});
+}
+$("form").addEventListener("submit",ev=>{ev.preventDefault();const d=formData();if(!d.project||!d.objective||!d.solution||!d.success_criteria.length){alert(english?"Please complete the project, objective, solution and criteria.":"请填写项目名称、目标、方案和成功标准。");return}for(const [k,v] of [["cost",d.cost],["savings",d.savings]])if(v!==null&&(!Number.isFinite(v)||v<0)){alert(english?"Costs and benefits must be non-negative numbers.":"成本与收益必须为非负数。");return}showReport(review(d))});
+$("addEvidence").addEventListener("click",()=>addRecord());$("goBtn").addEventListener("click",()=>$("assessment").scrollIntoView({behavior:"smooth"}));
+$("clearBtn").addEventListener("click",()=>{records=[];latest=null;renderEvidence();$("results").classList.remove("show");for(const id of ["B","C1","C2","D","E","F"])setStatus(id,"UNKNOWN",english?"Not run":"尚未审查");$("mGaps").textContent="—"});
+$("demoBtn").addEventListener("click",()=>{$("project").value="AI Security Alarm Verification";$("objective").value="将控制室人工告警复核工时降低30%，同时不增加关键事件漏报";$("solution").value="在现有 VMS 之上集成 AI 告警复核服务，并保留操作员人工批准";$("criteria").value="复核工时相对基线减少30%\n关键事件漏报率不高于批准阈值\n客户签署付费试点协议";$("alternatives").value="现有 VMS 内置筛选\n人工流程优化\n第三方 AI 供应商";$("technical").value="UNKNOWN";$("problem").value="UNKNOWN";$("replace").value="UNKNOWN";$("risk").value="UNKNOWN";$("cost").value="";$("savings").value="";records=[];addRecord("目前缺少经客户确认的告警与复核工时基线","待客户提供", "UNVERIFIED");$("assessment").scrollIntoView({behavior:"smooth"})});
+$("exportJson").addEventListener("click",()=>{if(!latest)return;const blob=new Blob([JSON.stringify(latest,null,2)],{type:"application/json"});const url=URL.createObjectURL(blob);const a=el("a");a.href=url;a.download="abc-assessment-"+new Date().toISOString().slice(0,10)+".json";document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000)});
+$("printReport").addEventListener("click",()=>window.print());
+$("localfile").addEventListener("change",async e=>{const file=e.target.files?.[0];if(!file)return;if(file.size>512*1024||!(/\.(txt|md)$/i).test(file.name)){alert(english?"Only TXT/MD files under 512KB.":"只支持小于 512KB 的 TXT/MD 文件。");e.target.value="";return}const txt=await file.text();addRecord(txt.slice(0,4500),file.name,"UNVERIFIED");e.target.value=""});
+$("langBtn").addEventListener("click",()=>{english=!english;document.documentElement.lang=english?"en":"zh-CN";for(const e of document.querySelectorAll("[data-en]")){if(e.dataset.zh===undefined)e.dataset.zh=e.innerHTML;e.innerHTML=english?e.dataset.en:e.dataset.zh}renderEvidence();if(latest){latest=review(formData());showReport(latest)}});
+renderEvidence();
+</script>
+</body></html>
