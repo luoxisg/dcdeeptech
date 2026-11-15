@@ -1,3 +1,4 @@
+import { renderPhone, phoneEditor, matchesCategory } from "./phone-ui.js";
 import { seedTasks } from "./data.js";
 import {
   statuses,
@@ -19,7 +20,34 @@ const esc = (v) =>
         c
       ],
   );
+const phoneQuery =
+  typeof window.matchMedia === "function"
+    ? window.matchMedia(
+        "(max-width: 900px), (pointer: coarse) and (max-width: 1200px)",
+      )
+    : { matches: false };
+const isPhone = () => phoneQuery.matches;
+let largeText = false;
+try {
+  largeText = localStorage.getItem("deepfamily.dfplan.largeText") === "true";
+} catch {}
 const icons = {
+  text: "M3 5h12M9 5v15m-5 0h10M16 12h6m-3 0v8m-3 0h6",
+  settings: "M4 6h16M4 12h16M4 18h16M8 3v6M16 9v6M10 15v6",
+  people:
+    "M9 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6M3 21v-4a6 6 0 0 1 12 0v4M17 5a3 3 0 0 1 0 6m2 10v-4a5 5 0 0 0-2-4",
+  photo: "M3 4h18v16H3zM3 16l6-7 5 6 3-4 4 5M16 7h1",
+  backup: "M4 4h15l2 2v15H3V4zM7 4v6h10V4M7 21v-7h10v7",
+  mic: "M9 5a3 3 0 0 1 6 0v7a3 3 0 0 1-6 0zM5 11v1a7 7 0 0 0 14 0v-1M12 19v3M8 22h8",
+  archive: "M3 3h18v5H3zM5 8v13h14V8M9 12h6",
+  tree: "M12 21V5M4 18v-5h16v5M7 8h10M5 21h-2v-3h4v3zM11 5h-2V2h6v3h-4M19 21h-2v-3h4v3z",
+  app: "M6 2h12v20H6zM10 18h4M9 6h6M9 10h6",
+  review: "M8 3h8v3H8zM8 4H4v18h16V4h-4M8 13l3 3 5-6",
+  handover: "M3 12h4v9H3zM7 14l4-2h8a2 2 0 0 1 0 4h-5m-7 4h9l6-5M12 4l3 3 5-5",
+  question:
+    "M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18M9 9a3 3 0 1 1 5 2c-2 1-2 1-2 3M12 17h.01",
+  play: "m9 5 11 7-11 7z",
+  pause: "M7 5v14M17 5v14",
   home: "M3 10 12 3l9 7v10H3z M9 20v-7h6v7",
   board: "M3 4h5v16H3z M10 4h5v10h-5z M17 4h4v13h-4z",
   list: "M9 6h12M9 12h12M9 18h12M3 6h1M3 12h1M3 18h1",
@@ -44,6 +72,8 @@ const icons = {
 };
 const icon = (name, cls = "") =>
   `<svg class="icon ${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${icons[name] || icons.leaf}"/></svg>`;
+const art = (name) =>
+  `<span class="phone-picture" aria-hidden="true"><svg viewBox="0 0 96 96" fill="none"><rect x="4" y="4" width="88" height="88" rx="25" fill="#e8eedf"/><circle cx="75" cy="20" r="10" fill="#ecdcc7"/><path d="M13 76c10-7 20-7 29 0" stroke="#b2bd9b" stroke-width="2"/><g transform="translate(20 20) scale(2.3)" stroke="#284f3d" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="${icons[name] || icons.leaf}"/></g></svg></span>`;
 let lang =
   new URLSearchParams(location.search).get("lang") === "en" ? "en" : "zh";
 try {
@@ -62,6 +92,7 @@ const views = ["overview", "board", "list", "timeline", "history"];
 let view = views.includes(location.hash.slice(1))
     ? location.hash.slice(1)
     : "overview",
+  category = "all",
   query = "",
   filter = "all",
   owner = "",
@@ -163,17 +194,25 @@ function filtered() {
           .includes(query.toLowerCase())) &&
       (!owner || t.owner === owner) &&
       (filter === "all" ||
-        (filter === "P0" && t.priority === "P0") ||
+        (["P0", "P1", "P2"].includes(filter) && t.priority === filter) ||
         (filter === "overdue" && overdue(t)) ||
-        t.status === filter),
+        t.status === filter) &&
+      matchesCategory(t, category),
   );
 }
-function changeView(v) {
+function changeView(v, reset = true) {
+  if (isPhone() && reset) {
+    query = "";
+    filter = "all";
+    owner = "";
+    category = "all";
+  }
   view = v;
   mobile = false;
   location.hash = v;
   render();
   $("#page-title")?.focus({ preventScroll: true });
+  if (isPhone()) window.scrollTo({ top: 0, behavior: "instant" });
 }
 function toolbar() {
   return `<div class="toolbar"><label class="search">${icon("search")}<input id="search" type="search" aria-label="${s("搜索任务", "Search tasks")}" placeholder="${s("搜索任务、负责人或下一步…", "Search tasks, people or next steps…")}" value="${esc(query)}"></label><select id="owner-filter" aria-label="${s("筛选负责人", "Filter by owner")}"><option value="">${s("全部负责人", "All owners")}</option>${[
@@ -269,6 +308,30 @@ function render() {
     "家族传承计划 · DeepFamily",
     "Family Legacy Plan · DeepFamily",
   );
+  document.body.classList.toggle("phone-layout", isPhone());
+  document.body.classList.toggle("larger-text", largeText);
+  if (isPhone()) {
+    $("#app").innerHTML = renderPhone(
+      {
+        project,
+        view,
+        query,
+        filter,
+        owner,
+        category,
+        largeText,
+        storageIssue,
+        lang,
+      },
+      { s, esc, icon, art, value, complete, due, dateLabel, fmt, filtered },
+    );
+    if (activeId === "search") {
+      const input = $("#search");
+      input?.focus();
+      input?.setSelectionRange(selection, selection);
+    }
+    return;
+  }
   const done = project.tasks.filter(complete).length,
     percent = project.tasks.length
       ? Math.round((done / project.tasks.length) * 100)
@@ -317,6 +380,17 @@ function openEditor(task) {
         accepted: false,
         updatedAt: "",
       };
+  if (isPhone()) {
+    $("#editor").innerHTML = phoneEditor(editing, editingWasNew, lang, {
+      s,
+      esc,
+      icon,
+      art,
+      value,
+    });
+    $("#editor").showModal();
+    return;
+  }
   const t = editing,
     key = (k) => (lang === "en" ? k + "En" : k);
   const input = (k, label, type = "text", extra = "") =>
@@ -449,6 +523,12 @@ function exportFile(type) {
   a.href = url;
   a.download = `DeepFamily_Plan_${today()}.${type}`;
   a.click();
+  toast(
+    s(
+      "已交给浏览器下载，请在手机“下载”中查看。",
+      "Sent to your browser. Check your Downloads folder.",
+    ),
+  );
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 function openStart() {
@@ -475,11 +555,40 @@ document.addEventListener("click", (e) => {
     render();
     return;
   }
+  if (btn.dataset.category) {
+    category = btn.dataset.category;
+    filter = "all";
+    query = "";
+    owner = "";
+    changeView("list", false);
+    return;
+  }
+  if (btn.dataset.stage) {
+    category = "all";
+    filter = btn.dataset.stage;
+    query = "";
+    owner = "";
+    changeView("list", false);
+    return;
+  }
+  if (btn.dataset.filter) {
+    filter = btn.dataset.filter;
+    render();
+    return;
+  }
   if (btn.dataset.view) {
     changeView(btn.dataset.view);
     return;
   }
   const action = btn.dataset.action;
+  if (action === "text-size") {
+    largeText = !largeText;
+    try {
+      localStorage.setItem("deepfamily.dfplan.largeText", String(largeText));
+    } catch {}
+    render();
+    return;
+  }
   if (action === "edit")
     openEditor(project.tasks.find((t) => t.id === btn.dataset.id));
   else if (action === "add") openEditor();
@@ -488,6 +597,7 @@ document.addEventListener("click", (e) => {
     mobile = !mobile;
     render();
   } else if (action === "clear") {
+    category = "all";
     query = "";
     filter = "all";
     owner = "";
@@ -529,6 +639,8 @@ document.addEventListener("change", (e) => {
     const completion = $('#task-form [name="completed"]');
     if (el.value === "已完成" && !completion.value) completion.value = today();
     else if (el.value !== "已完成") completion.value = "";
+    if (el.value === "已完成" && $("#acceptance-details"))
+      $("#acceptance-details").open = true;
   }
 });
 document.addEventListener("submit", (e) => {
@@ -575,6 +687,13 @@ document.addEventListener("submit", (e) => {
               "请检查名称、日期和建议周次；结束周不能早于开始周。",
               "Check the title, dates and week range; the end week cannot precede the start week.",
             );
+      const error = $("#form-error");
+      error.setAttribute("tabindex", "-1");
+      error.focus();
+      $("#acceptance-details") && ($("#acceptance-details").open = true);
+      $("#task-form .phone-plan-settings") &&
+        err.message !== "acceptance" &&
+        ($("#task-form .phone-plan-settings").open = true);
       return;
     }
     if (
@@ -662,4 +781,5 @@ window.addEventListener("storage", (e) => {
     }
   }
 });
+phoneQuery.addEventListener?.("change", render);
 render();

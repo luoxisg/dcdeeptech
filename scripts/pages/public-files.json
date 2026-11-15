@@ -100,7 +100,9 @@
     "token/index1.html",
     "USD/index.html",
     "vlmpricing/index.html",
-    "VLMpricing/index.html"
+    "VLMpricing/index.html",
+    "dfplan/phone-ui.js",
+    "dfplan/phone.css"
   ],
   "static_trees": {
     "DeepFamily": [
