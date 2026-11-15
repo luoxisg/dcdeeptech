@@ -1,3 +1,5 @@
+import { cloudEnabled, connectBackend } from "./backend-client.js";
+import { cloudError, cloudGate, cloudBar, adminDialog } from "./cloud-ui.js";
 import { renderPhone, phoneEditor, matchesCategory } from "./phone-ui.js";
 import { seedTasks } from "./data.js";
 import {
@@ -88,6 +90,28 @@ try {
 } catch {
   storageIssue = true;
 }
+const legacyProject = storageIssue ? null : structuredClone(project);
+const hasLegacy = (() => {
+  try {
+    return !!localStorage.getItem(KEY);
+  } catch {
+    return false;
+  }
+})();
+let startBaseline = "",
+  pendingImportRevision = -1;
+let cloud = null,
+  cloudSession = { phase: cloudEnabled ? "connecting" : "local" },
+  cloudLoaded = false,
+  cloudRevision = -1,
+  cloudUpdatedAt = "",
+  cloudMessage = "",
+  cloudSaving = false;
+if (cloudEnabled) {
+  project = { startDate: "", tasks: structuredClone(seedTasks), history: [] };
+  storageIssue = false;
+}
+const cloudReady = () => cloudSession.phase === "ready" && cloudLoaded;
 const views = ["overview", "board", "list", "timeline", "history"];
 let view = views.includes(location.hash.slice(1))
     ? location.hash.slice(1)
@@ -136,7 +160,42 @@ function toast(message) {
   clearTimeout(toast.timer);
   toast.timer = setTimeout(() => $("#toast").classList.remove("visible"), 4500);
 }
-function persist(next, zh, en, replacing = false) {
+async function persist(next, zh, en, replacing = false) {
+  if (cloudEnabled) {
+    if (!cloudReady() || cloudSaving) {
+      toast(
+        s(
+          "请先登录并等待云端读取完成。",
+          "Sign in and wait for the cloud records to load.",
+        ),
+      );
+      return false;
+    }
+    cloudSaving = true;
+    const submit = $('#task-form [type="submit"]');
+    if (submit) submit.disabled = true;
+    document.body.classList.add("cloud-saving");
+    try {
+      await cloud.save(next, cloudRevision, zh, en);
+      cloudMessage = "";
+      toast(
+        s(
+          "已保存到后端，其他管理员会同步看到。",
+          "Saved in the backend. Other administrators will receive the update.",
+        ),
+      );
+      return true;
+    } catch (error) {
+      cloudMessage = cloudError(error, lang);
+      toast(cloudMessage);
+      return false;
+    } finally {
+      cloudSaving = false;
+      document.body.classList.remove("cloud-saving");
+      if (submit) submit.disabled = false;
+      render();
+    }
+  }
   if (storageIssue && !replacing) {
     toast(
       s(
@@ -310,6 +369,14 @@ function render() {
   );
   document.body.classList.toggle("phone-layout", isPhone());
   document.body.classList.toggle("larger-text", largeText);
+  if (cloudEnabled && !cloudReady()) {
+    $("#app").innerHTML = cloudGate(cloudSession, !!cloud, cloudMessage, {
+      s,
+      esc,
+      icon,
+    });
+    return;
+  }
   if (isPhone()) {
     $("#app").innerHTML = renderPhone(
       {
@@ -321,10 +388,12 @@ function render() {
         category,
         largeText,
         storageIssue,
+        cloudEnabled,
         lang,
       },
       { s, esc, icon, art, value, complete, due, dateLabel, fmt, filtered },
     );
+    decorateCloud();
     if (activeId === "search") {
       const input = $("#search");
       input?.focus();
@@ -338,6 +407,7 @@ function render() {
       : 0;
   $("#app").innerHTML =
     `${mobile ? '<button class="nav-scrim" data-action="menu" aria-label="Close navigation"></button>' : ""}<aside class="sidebar ${mobile ? "mobile-open" : ""}"><a class="brand" href="${lang === "en" ? "/DeepFamily/en/" : "/DeepFamily/zh/"}"><img src="./assets/seal.svg" width="39" height="39" alt=""><span>DeepFamily<small>${s("让家族记忆，世代相承", "MEMORY ACROSS GENERATIONS")}</small></span></a><div class="workspace"><span class="family-character" aria-hidden="true">吴</span><span><strong>${s("Wu 家族传承计划", "Wu Family Legacy")}</strong><small>FAMILY LEGACY WORKSPACE</small></span></div><p class="nav-caption">${s("传承工作空间", "YOUR WORKSPACE")}</p><nav aria-label="${s("项目导航", "Project navigation")}">${views.map((v, i) => `<button data-view="${v}" class="${view === v ? "active" : ""}" ${view === v ? 'aria-current="page"' : ""}>${icon(["home", "board", "list", "timeline", "history"][i])}<span>${names()[i]}</span>${v === "list" ? `<b>${project.tasks.length}</b>` : ""}</button>`).join("")}</nav><div class="sidebar-bottom"><div class="family-motto"><span>家</span><p>${s("承先人之志，<br>启后人之路。", "Honor those before us.<br>Make room for those to come.")}</p><small>${s("先整理家族内部事项，再讨论对外展示。", "Care for the family archive before considering public display.")}</small></div><a href="https://wu-family-project-hub.luoxi.chatgpt.site/" class="source-link">${s("打开原私密云端工作台", "Original private cloud workspace")} ↗</a><a href="https://github.com/luoxisg/dcdeeptech/tree/main/dfplan" target="_blank" rel="noopener" class="source-link">GitHub ${s("源码", "source")} ↗</a></div></aside><main id="main"><header class="topbar"><div class="breadcrumb"><button class="icon-button menu-button" data-action="menu" aria-label="${s("打开导航", "Open navigation")}" aria-expanded="${mobile}">${icon("menu")}</button><span>DeepFamily</span>${icon("chevron")}<strong>${s("家族传承计划", "Family legacy plan")}</strong></div><div class="topbar-right"><span class="local-status"><i></i>${s("本机保存", "Saved locally")}</span><div class="language-switch" role="group" aria-label="Language / 语言"><button data-lang="zh" class="${lang === "zh" ? "selected" : ""}" aria-pressed="${lang === "zh"}">中</button><button data-lang="en" class="${lang === "en" ? "selected" : ""}" aria-pressed="${lang === "en"}">EN</button></div></div></header><div class="content"><section class="hero"><div class="hero-copy"><span class="eyebrow">A LEGACY WORTH KEEPING</span><h1>${s("把家族记忆，<br>认真交给下一代。", "Keep the memories.<br>Carry the legacy forward.")}</h1><p>${s("从一张老照片，到一部家族史。<br>让每一份资料被珍藏，让每一步传承有章可循。", "From a treasured photograph to a family history.<br>A thoughtful plan to preserve what connects us.")}</p><div class="hero-tags"><span>${icon("folder")}${s("10 项基础行动", "10 foundational actions")}</span><span>${icon("clock")}${s("12 周建议周期", "12-week suggested plan")}</span></div></div><img class="heritage-art" src="./assets/heritage-tree.svg" alt="" width="540" height="340"><span class="hero-corner">${s("根深 · 叶茂 · 家长青", "ROOTS · STORIES · GENERATIONS")}</span></section><div class="storage-note">${icon("shield")}<p>${s("此页为公开的计划模板；你的修改仅保存在当前浏览器，不会自动同步。请定期导出备份，勿在此记录密码或敏感家族资料。", "This is a public planning template. Your edits stay in this browser and do not sync automatically. Export backups regularly; keep passwords and sensitive family records elsewhere.")}</p><button data-action="export-json">${s("备份", "Back up")}${icon("download")}</button></div>${storageIssue ? `<div role="alert" class="alert">${s("本机存储无法读取。当前显示基础模板；请先检查或导出原有浏览器数据，再保存。", "Browser storage could not be read. The base template is shown; check or recover existing browser data before saving.")}</div>` : ""}<section class="metrics" aria-label="${s("项目进度", "Project progress")}"><div class="metric"><span>${s("传承进度", "LEGACY PROGRESS")}</span><strong>${percent}<small>%</small></strong><div class="progress"><i style="width:${percent}%"></i></div><p>${done} / ${project.tasks.length} ${s("项已验收完成", "actions accepted")}</p></div><div class="metric"><span>${s("优先落实", "PRIORITIES")}</span><strong>${project.tasks.filter((t) => t.priority === "P0" && !complete(t)).length}<small>${s("项", "open")}</small></strong><p>${s("联系人 · 盘点 · 备份 · 授权", "Contacts · assets · backups · consent")}</p></div><div class="metric"><span>${s("等待家族审阅", "FAMILY REVIEW")}</span><strong>${project.tasks.filter((t) => t.status === "待家族确认").length}<small>${s("项", "open")}</small></strong><p>${s("共同审阅，才是传承的开始", "Shared review makes a shared legacy")}</p></div><div class="metric start-metric"><span>${s("项目启动日", "PROJECT START")}</span><button data-action="start">${esc(dateLabel(project.startDate))}${icon("calendar")}</button><p>${s("确认日期，让计划循序展开", "Set the date to bring the plan to life")}</p></div></section><div class="section-heading main-heading"><div><span class="section-kicker">THE FAMILY ARCHIVE / ${s("有序传承", "THOUGHTFUL STEWARDSHIP")}</span><h2 id="page-title" tabindex="-1">${names()[views.indexOf(view)]}</h2><p>${s("负责人及周期为建议，请核实后逐项推进。", "Owners and schedules are proposals. Verify each before proceeding.")}</p></div><div class="actions"><button class="icon-button" data-action="import" title="${s("导入项目备份", "Import project backup")}" aria-label="${s("导入项目备份", "Import project backup")}">${icon("upload")}</button><button class="secondary" data-action="export-csv">${icon("download")}${s("导出清单", "Export CSV")}</button><button class="primary" data-action="add">${icon("plus")}${s("新增行动", "Add action")}</button></div></div>${view !== "history" ? toolbar() : ""}<div id="view-content">${{ overview, board, list, timeline, history }[view]()}</div><footer class="page-footer"><span><img src="./assets/seal.svg" width="22" height="22" alt="">DeepFamily <b>·</b> ${s("家族传承计划", "Family legacy plan")}</span><span>${s("珍藏过去，连接未来。", "Preserve the past. Connect the future.")} <b>·</b> UTC+8</span></footer></div></main>`;
+  decorateCloud();
   if (activeId === "search") {
     const input = $("#search");
     input.focus();
@@ -413,6 +483,14 @@ function openEditor(task) {
       .join(
         "",
       )}</details><fieldset class="acceptance"><legend>${s("交付与家族验收", "Delivery and family acceptance")}</legend><label>${s("交付凭据 / 受控文件链接", "Evidence / controlled file reference")}<textarea name="evidence" rows="2" maxlength="12000" placeholder="${s("仅记录交付说明或文件编号，请勿记录密码。", "Use a delivery note or file reference. Never enter passwords.")}">${esc(t.evidence)}</textarea></label><label class="checkbox"><input type="checkbox" name="accepted" ${t.accepted ? "checked" : ""}>${s("已确认交付，并经家族验收", "Delivery confirmed and accepted by the family")}</label></fieldset><p id="form-error" class="form-error" role="alert"></p></div><div class="dialog-footer"><small>${s("仅保存到当前浏览器", "Saved in this browser only")}</small><button type="button" class="secondary" data-close="editor">${s("取消", "Cancel")}</button><button class="primary" type="submit">${s("保存行动", "Save action")}</button></div></form>`;
+  if (cloudEnabled) {
+    const note = $("#editor .dialog-footer small");
+    if (note)
+      note.textContent = s(
+        "保存到后端并记录本次修改",
+        "Saved in the backend with an activity record",
+      );
+  }
   $("#editor").showModal();
 }
 function changeStatus(id, status) {
@@ -446,11 +524,15 @@ function changeStatus(id, status) {
     `${id}: ${statusEn[statuses.indexOf(t.status)]} → ${statusEn[statuses.indexOf(status)]}`,
   );
 }
-function exportFile(type) {
+function exportFile(type, dataProject = project) {
   let data, mime;
   if (type === "json") {
     data = JSON.stringify(
-      { schemaVersion: 1, exportedAt: new Date().toISOString(), ...project },
+      {
+        schemaVersion: 1,
+        exportedAt: new Date().toISOString(),
+        ...dataProject,
+      },
       null,
       2,
     );
@@ -496,7 +578,7 @@ function exportFile(type) {
           ];
     const rows = [
       header,
-      ...project.tasks.map((t) => [
+      ...dataProject.tasks.map((t) => [
         t.id,
         value(t, "title"),
         t.priority,
@@ -505,7 +587,7 @@ function exportFile(type) {
         t.weekStart,
         t.weekEnd,
         statusLabel(t.status),
-        due(t),
+        targetDate(t, dataProject.startDate),
         t.completed,
         value(t, "action"),
         value(t, "deliverable"),
@@ -532,14 +614,59 @@ function exportFile(type) {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 function openStart() {
+  startBaseline = project.startDate;
   const d = $("#start-dialog");
   d.innerHTML = `<form id="start-form"><div class="dialog-head"><h2 id="start-title">${s("为传承定一个起点", "Set a starting point")}</h2><button type="button" class="icon-button" data-close="start-dialog" aria-label="${s("关闭", "Close")}">${icon("close")}</button></div><div class="form-body"><p>${s("建议周次从这一天起算。手动设置的截止日保持不变。", "Suggested weeks run from this date. Manual due dates remain unchanged.")}</p><label>${s("项目启动日", "Project start date")}<input type="date" name="startDate" value="${esc(project.startDate)}"></label></div><div class="dialog-footer"><button type="button" class="secondary" data-close="start-dialog">${s("取消", "Cancel")}</button><button class="primary">${s("保存日期", "Save date")}</button></div></form>`;
   d.showModal();
 }
 
-document.addEventListener("click", (e) => {
+document.addEventListener("click", async (e) => {
   const btn = e.target.closest("button");
   if (!btn) return;
+  if (btn.dataset.adminEmail) {
+    if (cloudSaving) return;
+    btn.disabled = true;
+    try {
+      await cloud.setAdminActive(
+        btn.dataset.adminEmail,
+        btn.dataset.adminEnable === "true",
+      );
+      await showAdmins();
+    } catch (error) {
+      $("#account-error").textContent = cloudError(error, lang);
+      btn.disabled = false;
+    }
+    return;
+  }
+  if (btn.dataset.action?.startsWith("cloud-")) {
+    const action = btn.dataset.action;
+    try {
+      if (action === "cloud-login") {
+        cloudMessage = "";
+        btn.disabled = true;
+        await cloud?.login();
+      } else if (action === "cloud-logout") {
+        if (cloudSaving) return;
+        await cloud?.logout();
+      } else if (action === "cloud-account") await showAdmins();
+      else if (action === "cloud-refresh") {
+        if (cloud) await cloud.reload();
+        else window.location.reload();
+      } else if (action === "cloud-legacy-export")
+        exportFile("json", legacyProject);
+      else if (action === "cloud-migrate" && legacyProject) {
+        $("#account-dialog").close();
+        confirmImport(legacyProject, s("本机旧记录", "Earlier device records"));
+      }
+    } catch (error) {
+      cloudMessage = cloudError(error, lang);
+      toast(cloudMessage);
+      if (!cloudReady()) render();
+    } finally {
+      btn.disabled = false;
+    }
+    return;
+  }
   if (btn.dataset.close) {
     $("#" + btn.dataset.close).close();
     return;
@@ -608,13 +735,22 @@ document.addEventListener("click", (e) => {
     $("#import-file").value = "";
     $("#import-file").click();
   } else if (action === "confirm-import" && pendingImport) {
+    if (cloudEnabled && pendingImportRevision !== cloudRevision) {
+      toast(
+        s(
+          "确认期间云端已有更新，请重新打开导入并核对。",
+          "The backend changed during confirmation. Reopen and review the import.",
+        ),
+      );
+      return;
+    }
     const next = pendingImport;
     const old = project;
-    project = next;
-    if (persist(next, "导入项目备份", "Imported project backup", true)) {
+    if (!cloudEnabled) project = next;
+    if (await persist(next, "导入项目备份", "Imported project backup", true)) {
       pendingImport = null;
       $("#import-dialog").close();
-    } else project = old;
+    } else if (!cloudEnabled) project = old;
   }
 });
 function historyReplace(url) {
@@ -643,7 +779,28 @@ document.addEventListener("change", (e) => {
       $("#acceptance-details").open = true;
   }
 });
-document.addEventListener("submit", (e) => {
+document.addEventListener("submit", async (e) => {
+  if (e.target.id === "add-admin-form") {
+    e.preventDefault();
+    const data = new FormData(e.target),
+      button = e.target.querySelector('[type="submit"]');
+    button.disabled = true;
+    $("#account-error").textContent = "";
+    try {
+      await cloud.addAdmin(data.get("email"), data.get("displayName"));
+      await showAdmins();
+      toast(
+        s(
+          "已加入管理员名单，对方可用 Google 账号登录。",
+          "Added to the administrator list. They can now sign in with Google.",
+        ),
+      );
+    } catch (error) {
+      $("#account-error").textContent = cloudError(error, lang);
+      button.disabled = false;
+    }
+    return;
+  }
   if (e.target.id === "task-form") {
     e.preventDefault();
     const current = project.tasks.find((t) => t.id === editing.id);
@@ -697,7 +854,7 @@ document.addEventListener("submit", (e) => {
       return;
     }
     if (
-      persist(
+      await persist(
         next,
         `${task.id} 更新「${task.title}」`,
         `${task.id} updated “${task.titleEn || task.title}”`,
@@ -706,9 +863,18 @@ document.addEventListener("submit", (e) => {
       $("#editor").close();
   } else if (e.target.id === "start-form") {
     e.preventDefault();
+    if (cloudEnabled && project.startDate !== startBaseline) {
+      toast(
+        s(
+          "其他管理员已调整启动日期，请关闭后重新设置。",
+          "Another administrator changed the start date. Close and reopen this form.",
+        ),
+      );
+      return;
+    }
     const date = new FormData(e.target).get("startDate");
     if (
-      persist(
+      await persist(
         { ...project, startDate: date },
         `启动日调整为 ${date || "待定"}`,
         `Start date changed to ${date || "to be agreed"}`,
@@ -717,15 +883,19 @@ document.addEventListener("submit", (e) => {
       $("#start-dialog").close();
   }
 });
+function confirmImport(data, label) {
+  pendingImportRevision = cloudRevision;
+  pendingImport = validateProject(data);
+  $("#import-dialog").innerHTML =
+    `<div class="dialog-head"><h2 id="import-title">${s("导入项目备份", "Import a project backup")}</h2><button class="icon-button" data-close="import-dialog" aria-label="${s("关闭", "Close")}">${icon("close")}</button></div><div class="form-body"><p>${cloudEnabled ? s("将导入 " + pendingImport.tasks.length + " 项行动及启动日期。云端更新记录会保留；已有任务不能删除。建议先导出云端备份。", "Import " + pendingImport.tasks.length + " actions and the start date. Cloud history is retained; existing actions cannot be deleted. Export a cloud backup first.") : s("将用备份中的 " + pendingImport.tasks.length + " 项行动替换当前浏览器的计划。建议先备份现有内容。", "This will replace this browser’s plan with " + pendingImport.tasks.length + " actions from the backup. Back up the current plan first.")}</p><small>${esc(label)}</small></div><div class="dialog-footer"><button class="secondary" data-action="export-json">${s("先导出现有备份", "Export current backup")}</button><button class="primary" data-action="confirm-import">${s("确认导入", "Replace and import")}</button></div>`;
+  $("#import-dialog").showModal();
+}
 $("#import-file").addEventListener("change", async (e) => {
   const file = e.target.files[0];
   if (!file) return;
   try {
     if (file.size > 5 * 1024 * 1024) throw Error();
-    pendingImport = validateProject(JSON.parse(await file.text()));
-    $("#import-dialog").innerHTML =
-      `<div class="dialog-head"><h2 id="import-title">${s("导入项目备份", "Import a project backup")}</h2><button class="icon-button" data-close="import-dialog" aria-label="${s("关闭", "Close")}">${icon("close")}</button></div><div class="form-body"><p>${s("将用备份中的 " + pendingImport.tasks.length + " 项行动替换当前浏览器的计划。建议先备份现有内容。", "This will replace this browser’s plan with " + pendingImport.tasks.length + " actions from the backup. Back up the current plan first.")}</p><small>${esc(file.name)}</small></div><div class="dialog-footer"><button class="secondary" data-action="export-json">${s("先导出现有备份", "Export current backup")}</button><button class="primary" data-action="confirm-import">${s("确认导入", "Replace and import")}</button></div>`;
-    $("#import-dialog").showModal();
+    confirmImport(JSON.parse(await file.text()), file.name);
   } catch {
     pendingImport = null;
     toast(
@@ -761,7 +931,7 @@ window.addEventListener("hashchange", () => {
   }
 });
 window.addEventListener("storage", (e) => {
-  if (e.key === KEY) {
+  if (!cloudEnabled && e.key === KEY) {
     try {
       const next = e.newValue ? validateProject(JSON.parse(e.newValue)) : null;
       if (next) {
@@ -781,5 +951,85 @@ window.addEventListener("storage", (e) => {
     }
   }
 });
+
+function decorateCloud() {
+  if (!cloudEnabled || !cloudReady()) return;
+  const host = $(".phone-content") || $(".content");
+  host?.insertAdjacentHTML(
+    "afterbegin",
+    cloudBar(cloudSession, cloudUpdatedAt, cloudSaving, { s, esc, icon, fmt }),
+  );
+  if (cloudMessage)
+    host?.insertAdjacentHTML(
+      "afterbegin",
+      `<p class="cloud-alert cloud-inline-error" role="alert">${esc(cloudMessage)}</p>`,
+    );
+  const note = $(".storage-note p");
+  if (note)
+    note.textContent = s(
+      "共享资料保存在后端，只有已启用的管理员可读写。请保管好导出的备份。",
+      "Shared records are stored in the backend. Only active administrators can read or change them. Keep exported backups safe.",
+    );
+  const status = $(".local-status");
+  if (status) status.textContent = s("云端共享", "Shared backend");
+}
+async function showAdmins() {
+  const uid = cloudSession.user?.uid;
+  const members = await cloud.listAdmins(),
+    dialog = $("#account-dialog");
+  if (!cloudReady() || uid !== cloudSession.user?.uid) return;
+  dialog.innerHTML = adminDialog(members, cloudSession, hasLegacy, {
+    s,
+    esc,
+    icon,
+  });
+  if (!dialog.open) dialog.showModal();
+}
+async function startCloud() {
+  try {
+    cloud = await connectBackend(
+      (session) => {
+        cloudSession = session;
+        if (session.phase !== "ready") {
+          cloudLoaded = false;
+          cloudRevision = -1;
+          project = {
+            startDate: "",
+            tasks: structuredClone(seedTasks),
+            history: [],
+          };
+          document
+            .querySelectorAll("dialog[open]")
+            .forEach((dialog) => dialog.close());
+        } else if (!cloudLoaded) {
+          cloudSession = { ...session, phase: "reading" };
+        }
+        render();
+      },
+      (data) => {
+        project = data.project;
+        cloudRevision = data.revision;
+        cloudUpdatedAt = data.updatedAt;
+        cloudLoaded = true;
+        cloudMessage = "";
+        if (cloudSession.phase === "reading")
+          cloudSession = { ...cloudSession, phase: "ready" };
+        render();
+      },
+      (error) => {
+        cloudMessage = cloudError(error, lang);
+        if (!cloudLoaded) cloudSession = { ...cloudSession, phase: "error" };
+        render();
+      },
+    );
+    render();
+  } catch (error) {
+    cloudMessage = cloudError(error, lang);
+    cloudSession = { phase: "error" };
+    render();
+  }
+}
+
 phoneQuery.addEventListener?.("change", render);
 render();
+if (cloudEnabled) startCloud();

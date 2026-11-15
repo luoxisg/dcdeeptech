@@ -1,0 +1,21 @@
+{
+  "name": "dfplan-firebase-backend",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "firebase emulators:exec --project demo-dfplan --only firestore 'node --test tests/rules.test.mjs'",
+    "bootstrap": "node scripts/bootstrap.mjs",
+    "deploy:rules": "firebase deploy --only firestore:rules"
+  },
+  "dependencies": {
+    "firebase-admin": "14.5.1"
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "6.0.0",
+    "firebase": "13.3.0",
+    "firebase-tools": "15.36.0"
+  }
+}

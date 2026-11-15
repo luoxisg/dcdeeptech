@@ -102,7 +102,11 @@
     "vlmpricing/index.html",
     "VLMpricing/index.html",
     "dfplan/phone-ui.js",
-    "dfplan/phone.css"
+    "dfplan/phone.css",
+    "dfplan/backend-config.js",
+    "dfplan/backend-client.js",
+    "dfplan/cloud-ui.js",
+    "dfplan/cloud.css"
   ],
   "static_trees": {
     "DeepFamily": [

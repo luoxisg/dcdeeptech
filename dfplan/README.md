@@ -4,6 +4,12 @@
 
 纯静态中英文工作台，无需构建或安装依赖。宣纸暖白、墨绿、印章红与原创谱系树插画组成家族传承视觉风格。基础计划改编自原 Wu 家族项目的 10 项行动，负责人改为通用角色，初始状态均为「待核实」；不包含原站的私密云端记录。
 
+## Google 账号与共享后端（已准备，未启用）
+
+已准备 Firebase Authentication + Firestore 接入、管理员管理、共享保存和修改记录。当前 `backend-config.js` 的 `enabled` 为 `false`，生产网站仍使用本机版；尚无真实 Firebase 管理员或数据库。
+
+建立专用 Firebase 项目、启用 Google 登录、部署规则并初始化首位管理员后，填写 Web 配置即可切换。详见 [Firebase 启用说明](../dfplan-backend/README.md)。Patrick 暂不启用，以后可由管理员在网页加入。
+
 ## 使用
 
 - 右上角 `中 / EN` 切换语言。界面和 10 项基础行动有完整中英文；自定义内容可在行动编辑器中补充另一语言，不会自动翻译。
@@ -46,6 +52,9 @@ node scripts/dfplan/check-model.mjs
 - `styles.css`：桌面响应式视觉及打印样式。
 - `phone-ui.js`：图形手机版、任务分类与简化编辑界面。
 - `phone.css`：长者大字、触控目标、底部导航与手机对话框。
+- `backend-config.js`：公开 Web 配置与云端启用开关。
+- `backend-client.js`：Google 登录、Firestore 事务及管理员接口。
+- `cloud-ui.js` / `cloud.css`：登录、同步状态和管理员管理界面。
 - `assets/`：原创 SVG 印章与谱系树插画。
 
 生产使用仓库现有的 GitHub Pages 发布流程。资源逐一列入 `scripts/pages/public-files.json`；README、测试和其他源目录不加入公开发布产物。提交到 `main` 后由现有 workflow 发布，保持现有域名及其他页面配置。
