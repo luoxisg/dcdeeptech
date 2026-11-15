@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 340" fill="none">
+<defs><pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M24 0H0V24" stroke="#a5b1a1" stroke-opacity=".12"/></pattern><linearGradient id="hill" x2="0" y2="1"><stop stop-color="#c6cdb8"/><stop offset="1" stop-color="#e5e5d7" stop-opacity=".1"/></linearGradient></defs>
+<path fill="url(#grid)" d="M0 0h540v340H0z"/><circle cx="320" cy="157" r="121" stroke="#abb59c" stroke-opacity=".4"/><circle cx="320" cy="157" r="97" stroke="#abb59c" stroke-opacity=".25"/>
+<path d="M0 302 90 227l57 41 100-96 92 92 71-53 130 91v38H0" fill="url(#hill)"/>
+<g stroke="#66836d" stroke-width="1.5"><path d="M316 286V103m0 135-65-46m65 17 64-52m-64-5-38-42m38 15 38-40M251 192l-36-37m36 37-5-66m134 31 32-24m-32 24-2-52"/><path d="M288 294h56m-71 8h86" stroke-width="2"/></g>
+<g fill="#f6f4e9" stroke="#7c927b" stroke-width="1.2"><circle cx="316" cy="91" r="17"/><circle cx="276" cy="103" r="13"/><circle cx="357" cy="80" r="13"/><circle cx="246" cy="116" r="12"/><circle cx="211" cy="149" r="14"/><circle cx="380" cy="95" r="13"/><circle cx="418" cy="128" r="14"/><circle cx="251" cy="192" r="17"/><circle cx="380" cy="157" r="17"/></g>
+<g fill="#81987e"><circle cx="316" cy="91" r="4"/><circle cx="251" cy="192" r="4"/><circle cx="380" cy="157" r="4"/></g>
+<path d="M90 61h36v36H90z" fill="#a85541"/><path d="M99 70h18v18H99zm9 0v18m-9-9h18" stroke="#f2e9d8"/>
+<path d="M111 122v105m-5-105v105" stroke="#b1ac93" stroke-width=".6"/><g fill="#857d62" font-size="11" font-family="serif"><text x="88" y="246">根</text><text x="111" y="246">脉</text><text x="134" y="246">相</text><text x="157" y="246">承</text></g>
+<g stroke="#a8b59b" stroke-width=".8"><path d="m448 62 14-4-4 14m-14-4 14-10M181 67l9 3 8-5"/></g>
+</svg>

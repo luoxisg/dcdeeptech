@@ -1,0 +1,665 @@
+import { seedTasks } from "./data.js";
+import {
+  statuses,
+  statusEn,
+  targetDate,
+  today,
+  validateProject,
+  csvCell,
+} from "./model.mjs";
+
+const KEY = "deepfamily.dfplan.v1",
+  LANG = "deepfamily.dfplan.language";
+const $ = (s) => document.querySelector(s);
+const esc = (v) =>
+  String(v ?? "").replace(
+    /[&<>"']/g,
+    (c) =>
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[
+        c
+      ],
+  );
+const icons = {
+  home: "M3 10 12 3l9 7v10H3z M9 20v-7h6v7",
+  board: "M3 4h5v16H3z M10 4h5v10h-5z M17 4h4v13h-4z",
+  list: "M9 6h12M9 12h12M9 18h12M3 6h1M3 12h1M3 18h1",
+  timeline: "M4 4v16h17M8 7h9M11 12h9M7 17h7",
+  history: "M3 11a9 9 0 1 1 2 7M3 4v7h7M12 7v5l3 2",
+  arrow: "M5 12h14M14 7l5 5-5 5",
+  plus: "M12 5v14M5 12h14",
+  search: "M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16M16 16l6 6",
+  download: "M12 3v12m-5-5 5 5 5-5M4 17v4h16v-4",
+  upload: "M12 16V4m-5 5 5-5 5 5M4 17v4h16v-4",
+  check: "m5 12 4 4L19 6",
+  clock: "M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18M12 7v5l3 2",
+  calendar: "M4 5h16v16H4z M8 2v6M16 2v6M4 10h16",
+  close: "m6 6 12 12M18 6 6 18",
+  menu: "M4 6h16M4 12h16M4 18h16",
+  leaf: "M20 3C8 2 2 6 5 14c3 8 16 6 15-11ZM4 21 15 10",
+  shield: "m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6z m-4 9 3 3 5-6",
+  chevron: "m9 5 7 7-7 7",
+  folder: "M3 6h7l2 3h9v11H3z",
+  globe:
+    "M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18M3 12h18M12 3c-5 5-5 13 0 18 5-5 5-13 0-18",
+};
+const icon = (name, cls = "") =>
+  `<svg class="icon ${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${icons[name] || icons.leaf}"/></svg>`;
+let lang =
+  new URLSearchParams(location.search).get("lang") === "en" ? "en" : "zh";
+try {
+  if (!new URLSearchParams(location.search).has("lang"))
+    lang = localStorage.getItem(LANG) === "en" ? "en" : "zh";
+} catch {}
+let project = { startDate: "", tasks: structuredClone(seedTasks), history: [] };
+let storageIssue = false;
+try {
+  const saved = localStorage.getItem(KEY);
+  if (saved) project = validateProject(JSON.parse(saved));
+} catch {
+  storageIssue = true;
+}
+const views = ["overview", "board", "list", "timeline", "history"];
+let view = views.includes(location.hash.slice(1))
+    ? location.hash.slice(1)
+    : "overview",
+  query = "",
+  filter = "all",
+  owner = "",
+  mobile = false,
+  editing = null,
+  editingWasNew = false,
+  pendingImport = null;
+const s = (zh, en) => (lang === "en" ? en : zh);
+const names = () => [
+  s("传承总览", "Overview"),
+  s("任务看板", "Task board"),
+  s("行动清单", "Action list"),
+  s("传承时间线", "Timeline"),
+  s("更新记录", "Activity log"),
+];
+const value = (t, k) =>
+  lang === "en" && t[k + "En"] ? t[k + "En"] : t[k] || "";
+const statusLabel = (st) =>
+  lang === "en" ? statusEn[statuses.indexOf(st)] || st : st;
+const dateLabel = (d) => d || s("待确定", "To be agreed");
+const fmt = (at) =>
+  new Intl.DateTimeFormat(lang === "en" ? "en-GB" : "zh-CN", {
+    timeZone: "Asia/Shanghai",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).format(new Date(at));
+const due = (t) => targetDate(t, project.startDate);
+const overdue = (t) => !!due(t) && due(t) < today() && t.status !== "已完成";
+const complete = (t) =>
+  t.status === "已完成" && t.accepted && !!t.evidence.trim() && !!t.completed;
+const statusBadge = (t) =>
+  `<span class="status status-${statuses.indexOf(t.status)}"><i></i>${esc(statusLabel(t.status))}</span>`;
+const priority = (t) =>
+  `<span class="priority ${t.priority}">${t.priority}</span>`;
+function toast(message) {
+  $("#toast").textContent = message;
+  $("#toast").classList.add("visible");
+  clearTimeout(toast.timer);
+  toast.timer = setTimeout(() => $("#toast").classList.remove("visible"), 4500);
+}
+function persist(next, zh, en, replacing = false) {
+  if (storageIssue && !replacing) {
+    toast(
+      s(
+        "请先导出模板或导入有效备份，再恢复编辑，避免覆盖无法读取的本机数据。",
+        "Import a valid backup before editing to avoid overwriting unreadable browser data.",
+      ),
+    );
+    return false;
+  }
+  const at = new Date().toISOString();
+  next.history = [
+    {
+      id: crypto.randomUUID(),
+      at,
+      actor: s("本机用户", "Local user"),
+      text: zh,
+      textEn: en,
+    },
+    ...project.history,
+  ].slice(0, 5000);
+  try {
+    validateProject(next);
+    localStorage.setItem(KEY, JSON.stringify(next));
+    project = next;
+    storageIssue = false;
+    render();
+    toast(s("已保存到当前浏览器", "Saved in this browser"));
+    return true;
+  } catch {
+    toast(
+      s(
+        "保存失败，请导出备份并检查浏览器存储空间。",
+        "Save failed. Export a backup and check browser storage.",
+      ),
+    );
+    return false;
+  }
+}
+function filtered() {
+  return project.tasks.filter(
+    (t) =>
+      (!query ||
+        [
+          t.id,
+          t.title,
+          t.titleEn,
+          t.owner,
+          t.ownerEn,
+          t.action,
+          t.actionEn,
+          t.next,
+        ]
+          .join(" ")
+          .toLowerCase()
+          .includes(query.toLowerCase())) &&
+      (!owner || t.owner === owner) &&
+      (filter === "all" ||
+        (filter === "P0" && t.priority === "P0") ||
+        (filter === "overdue" && overdue(t)) ||
+        t.status === filter),
+  );
+}
+function changeView(v) {
+  view = v;
+  mobile = false;
+  location.hash = v;
+  render();
+  $("#page-title")?.focus({ preventScroll: true });
+}
+function toolbar() {
+  return `<div class="toolbar"><label class="search">${icon("search")}<input id="search" type="search" aria-label="${s("搜索任务", "Search tasks")}" placeholder="${s("搜索任务、负责人或下一步…", "Search tasks, people or next steps…")}" value="${esc(query)}"></label><select id="owner-filter" aria-label="${s("筛选负责人", "Filter by owner")}"><option value="">${s("全部负责人", "All owners")}</option>${[
+    ...new Set(project.tasks.map((t) => t.owner)),
+  ]
+    .filter(Boolean)
+    .map(
+      (o) =>
+        `<option value="${esc(o)}" ${owner === o ? "selected" : ""}>${esc(
+          value(
+            project.tasks.find((t) => t.owner === o),
+            "owner",
+          ),
+        )}</option>`,
+    )
+    .join(
+      "",
+    )}</select><select id="status-filter" aria-label="${s("筛选状态", "Filter by status")}"><option value="all">${s("全部任务", "All tasks")}</option><option value="P0" ${filter === "P0" ? "selected" : ""}>${s("P0 优先事项", "P0 priorities")}</option><option value="overdue" ${filter === "overdue" ? "selected" : ""}>${s("已逾期", "Overdue")}</option>${statuses.map((st) => `<option value="${st}" ${filter === st ? "selected" : ""}>${esc(statusLabel(st))}</option>`).join("")}</select><span class="results">${filtered().length} ${s("项", "tasks")}</span>${query || filter !== "all" || owner ? `<button class="text-button" data-action="clear">${s("清除", "Clear")}</button>` : ""}</div>`;
+}
+function taskCard(t) {
+  return `<article class="task-card" draggable="true" data-task="${esc(t.id)}"><button class="card-open" data-action="edit" data-id="${esc(t.id)}"><span class="card-meta"><span>${esc(t.id)}</span>${priority(t)}${icon("arrow")}</span><h3>${esc(value(t, "title"))}</h3><p>${esc(t.next || value(t, "action"))}</p><span class="card-person"><i>${esc(value(t, "owner").slice(0, 1) || "?")}</i>${esc(value(t, "owner") || s("负责人待定", "Owner to confirm"))}</span><span class="card-date ${overdue(t) ? "late" : ""}">${icon("calendar")}${esc(dateLabel(due(t)))}<small>W${t.weekStart}–${t.weekEnd}</small></span></button><select class="status-select status-${statuses.indexOf(t.status)}" data-status="${esc(t.id)}" aria-label="${esc(t.id + " " + s("状态", "status"))}">${statuses.map((st) => `<option value="${st}" ${t.status === st ? "selected" : ""}>${esc(statusLabel(st))}</option>`).join("")}</select></article>`;
+}
+function empty() {
+  return `<div class="empty">${icon("search")}<h3>${s("未找到匹配的行动", "No matching actions")}</h3><p>${s("试试其他关键词，或清除筛选。", "Try another keyword or clear the filters.")}</p><button class="secondary" data-action="clear">${s("清除筛选", "Clear filters")}</button></div>`;
+}
+function overview() {
+  const rows = filtered(),
+    p0 = rows.filter((t) => t.priority === "P0");
+  return `<div class="overview-grid"><section class="priority-panel"><div class="panel-top"><div><span class="section-kicker">01 / ${s("筑牢根基", "LAY THE FOUNDATIONS")}</span><h2>${s("先把这几件事落实", "Start with what matters")}</h2></div><span class="outline-tag">P0 · ${s("优先行动", "PRIORITY")}</span></div>${p0.map((t) => `<button class="focus-row" data-action="edit" data-id="${esc(t.id)}"><span class="task-index">${esc(t.id.slice(-2))}</span><span class="focus-body"><strong>${esc(value(t, "title"))}</strong><span>${esc(t.next || value(t, "deliverable"))}</span><small>${esc(value(t, "owner"))} <b>·</b> ${esc(dateLabel(due(t)))}</small></span>${statusBadge(t)}${icon("chevron")}</button>`).join("") || `<div class="empty compact">${s("当前筛选下没有优先事项。", "No priorities match these filters.")}</div>`}</section><aside class="legacy-note"><span class="section-kicker">${s("传承的尺度", "OUR STANDARD OF CARE")}</span><h2>${s("让记忆有出处，<br>让家人接得住。", "Rooted in evidence.<br>Ready for the next generation.")}</h2><div class="note-rule"></div>${[
+    [
+      s("资料有编号、有来源", "Numbered records with clear sources"),
+      s("授权与访问边界明确", "Clear consent and access boundaries"),
+    ],
+    [
+      s("长辈与下一代共同审阅", "Reviewed by elders and the next generation"),
+      s("档案可导出、可恢复", "Archives that can be exported and restored"),
+    ],
+  ]
+    .flat()
+    .map((x) => `<p>${icon("check")}${x}</p>`)
+    .join(
+      "",
+    )}<span class="note-seal">${s("慎终追远 · 薪火相传", "REMEMBER · PRESERVE · PASS ON")}</span></aside></div><div class="section-heading"><div><span class="section-kicker">02 / ${s("记录与延续", "RECORD & CONTINUE")}</span><h2>${s("把每一份记忆，落成行动", "Turn every memory into an action")}</h2></div><button class="text-button" data-view="list">${s("全部行动", "All actions")} ${icon("arrow")}</button></div><div class="card-grid">${
+    rows
+      .filter((t) => t.priority !== "P0")
+      .map(taskCard)
+      .join("") ||
+    `<div class="empty compact">${s("当前筛选下没有其他行动。", "No other actions match these filters.")}</div>`
+  }</div>`;
+}
+function board() {
+  return `<p class="helper">${s("拖动卡片或选择状态来推进任务。标记完成前，请补齐交付凭据和家族验收。", "Drag cards or use the status menu. Completion requires evidence, a completion date and family acceptance.")}</p><div class="kanban">${statuses
+    .map(
+      (st, i) =>
+        `<section class="lane" data-lane="${st}"><h2><i class="dot status-${i}"></i>${esc(statusLabel(st))}<span>${filtered().filter((t) => t.status === st).length}</span></h2>${
+          filtered()
+            .filter((t) => t.status === st)
+            .map(taskCard)
+            .join("") ||
+          `<div class="drop-zone">${icon("leaf")}<span>${s("在这里开始下一步", "A place for the next step")}</span></div>`
+        }</section>`,
+    )
+    .join("")}</div>`;
+}
+function list() {
+  return filtered().length
+    ? `<div class="table-wrap"><table><thead><tr>${[s("行动事项", "Action"), s("优先级", "Priority"), s("负责人", "Owner"), s("状态", "Status"), s("截止日", "Due date"), s("下一步", "Next step")].map((x) => `<th>${x}</th>`).join("")}</tr></thead><tbody>${filtered()
+        .map(
+          (t) =>
+            `<tr><td><button class="table-title" data-action="edit" data-id="${esc(t.id)}"><small>${esc(t.id)}</small>${esc(value(t, "title"))}</button></td><td>${priority(t)}</td><td>${esc(value(t, "owner"))}</td><td>${statusBadge(t)}</td><td class="${overdue(t) ? "late" : ""}">${esc(dateLabel(due(t)))}</td><td>${esc(t.next || s("待填写", "To be added"))}</td></tr>`,
+        )
+        .join("")}</tbody></table></div>`
+    : empty();
+}
+function timeline() {
+  const weeks = Math.max(12, ...project.tasks.map((t) => t.weekEnd));
+  return `<p class="helper">${s("建议周期从启动日起算；手动截止日优先。横向滚动查看全部周次。", "Suggested weeks run from the start date; manual due dates take precedence. Scroll horizontally to see all weeks.")}</p><div class="phase-strip"><span>01 ${s("盘点与保全", "Inventory & safeguard")} <b>W1–2</b></span><span>02 ${s("采集与完善", "Collect & improve")} <b>W2–8</b></span><span>03 ${s("审阅与交接", "Review & hand over")} <b>W8–12</b></span></div><div class="timeline-wrap"><div class="timeline" style="--weeks:${weeks}"><div class="timeline-head">${s("行动 / 建议周次", "Action / suggested weeks")}</div>${Array.from({ length: weeks }, (_, i) => `<div class="week-label">W${i + 1}</div>`).join("")}${filtered()
+    .map(
+      (t) =>
+        `<div class="timeline-row"><button data-action="edit" data-id="${esc(t.id)}"><small>${esc(t.id)}</small>${esc(value(t, "title"))}</button>${Array.from({ length: weeks }, (_, i) => `<div class="week-cell">${i + 1 >= t.weekStart && i + 1 <= t.weekEnd ? `<button class="bar ${t.priority} ${complete(t) ? "finished" : ""}" data-action="edit" data-id="${esc(t.id)}" aria-label="${esc(value(t, "title") + " W" + (i + 1))}">${i + 1 === t.weekStart ? t.priority : ""}</button>` : ""}</div>`).join("")}</div>`,
+    )
+    .join("")}</div></div>${filtered().length ? "" : empty()}`;
+}
+function history() {
+  return `<section class="history-list">${project.history.length ? project.history.map((h) => `<article><span class="history-mark">${icon("check")}</span><div><h3>${esc(lang === "en" && h.textEn ? h.textEn : h.text)}</h3><p>${esc(h.actor)} · ${esc(fmt(h.at))} <span>UTC+8</span></p></div></article>`).join("") : `<div class="empty">${icon("history")}<h3>${s("每一步，都值得被记住", "Every step deserves a record")}</h3><p>${s("保存任务或调整启动日期后，更新会记录在这里。", "Updates appear here when you save a task or change the start date.")}</p></div>`}</section>`;
+}
+function render() {
+  const active = document.activeElement,
+    activeId = active?.id,
+    selection = active?.selectionStart;
+  document.documentElement.lang = lang === "en" ? "en" : "zh-CN";
+  document.title = s(
+    "家族传承计划 · DeepFamily",
+    "Family Legacy Plan · DeepFamily",
+  );
+  const done = project.tasks.filter(complete).length,
+    percent = project.tasks.length
+      ? Math.round((done / project.tasks.length) * 100)
+      : 0;
+  $("#app").innerHTML =
+    `${mobile ? '<button class="nav-scrim" data-action="menu" aria-label="Close navigation"></button>' : ""}<aside class="sidebar ${mobile ? "mobile-open" : ""}"><a class="brand" href="${lang === "en" ? "/DeepFamily/en/" : "/DeepFamily/zh/"}"><img src="./assets/seal.svg" width="39" height="39" alt=""><span>DeepFamily<small>${s("让家族记忆，世代相承", "MEMORY ACROSS GENERATIONS")}</small></span></a><div class="workspace"><span class="family-character" aria-hidden="true">吴</span><span><strong>${s("Wu 家族传承计划", "Wu Family Legacy")}</strong><small>FAMILY LEGACY WORKSPACE</small></span></div><p class="nav-caption">${s("传承工作空间", "YOUR WORKSPACE")}</p><nav aria-label="${s("项目导航", "Project navigation")}">${views.map((v, i) => `<button data-view="${v}" class="${view === v ? "active" : ""}" ${view === v ? 'aria-current="page"' : ""}>${icon(["home", "board", "list", "timeline", "history"][i])}<span>${names()[i]}</span>${v === "list" ? `<b>${project.tasks.length}</b>` : ""}</button>`).join("")}</nav><div class="sidebar-bottom"><div class="family-motto"><span>家</span><p>${s("承先人之志，<br>启后人之路。", "Honor those before us.<br>Make room for those to come.")}</p><small>${s("先整理家族内部事项，再讨论对外展示。", "Care for the family archive before considering public display.")}</small></div><a href="https://wu-family-project-hub.luoxi.chatgpt.site/" class="source-link">${s("打开原私密云端工作台", "Original private cloud workspace")} ↗</a><a href="https://github.com/luoxisg/dcdeeptech/tree/main/DFplan" target="_blank" rel="noopener" class="source-link">GitHub ${s("源码", "source")} ↗</a></div></aside><main id="main"><header class="topbar"><div class="breadcrumb"><button class="icon-button menu-button" data-action="menu" aria-label="${s("打开导航", "Open navigation")}" aria-expanded="${mobile}">${icon("menu")}</button><span>DeepFamily</span>${icon("chevron")}<strong>${s("家族传承计划", "Family legacy plan")}</strong></div><div class="topbar-right"><span class="local-status"><i></i>${s("本机保存", "Saved locally")}</span><div class="language-switch" role="group" aria-label="Language / 语言"><button data-lang="zh" class="${lang === "zh" ? "selected" : ""}" aria-pressed="${lang === "zh"}">中</button><button data-lang="en" class="${lang === "en" ? "selected" : ""}" aria-pressed="${lang === "en"}">EN</button></div></div></header><div class="content"><section class="hero"><div class="hero-copy"><span class="eyebrow">A LEGACY WORTH KEEPING</span><h1>${s("把家族记忆，<br>认真交给下一代。", "Keep the memories.<br>Carry the legacy forward.")}</h1><p>${s("从一张老照片，到一部家族史。<br>让每一份资料被珍藏，让每一步传承有章可循。", "From a treasured photograph to a family history.<br>A thoughtful plan to preserve what connects us.")}</p><div class="hero-tags"><span>${icon("folder")}${s("10 项基础行动", "10 foundational actions")}</span><span>${icon("clock")}${s("12 周建议周期", "12-week suggested plan")}</span></div></div><img class="heritage-art" src="./assets/heritage-tree.svg" alt="" width="540" height="340"><span class="hero-corner">${s("根深 · 叶茂 · 家长青", "ROOTS · STORIES · GENERATIONS")}</span></section><div class="storage-note">${icon("shield")}<p>${s("此页为公开的计划模板；你的修改仅保存在当前浏览器，不会自动同步。请定期导出备份，勿在此记录密码或敏感家族资料。", "This is a public planning template. Your edits stay in this browser and do not sync automatically. Export backups regularly; keep passwords and sensitive family records elsewhere.")}</p><button data-action="export-json">${s("备份", "Back up")}${icon("download")}</button></div>${storageIssue ? `<div role="alert" class="alert">${s("本机存储无法读取。当前显示基础模板；请先检查或导出原有浏览器数据，再保存。", "Browser storage could not be read. The base template is shown; check or recover existing browser data before saving.")}</div>` : ""}<section class="metrics" aria-label="${s("项目进度", "Project progress")}"><div class="metric"><span>${s("传承进度", "LEGACY PROGRESS")}</span><strong>${percent}<small>%</small></strong><div class="progress"><i style="width:${percent}%"></i></div><p>${done} / ${project.tasks.length} ${s("项已验收完成", "actions accepted")}</p></div><div class="metric"><span>${s("优先落实", "PRIORITIES")}</span><strong>${project.tasks.filter((t) => t.priority === "P0" && !complete(t)).length}<small>${s("项", "open")}</small></strong><p>${s("联系人 · 盘点 · 备份 · 授权", "Contacts · assets · backups · consent")}</p></div><div class="metric"><span>${s("等待家族审阅", "FAMILY REVIEW")}</span><strong>${project.tasks.filter((t) => t.status === "待家族确认").length}<small>${s("项", "open")}</small></strong><p>${s("共同审阅，才是传承的开始", "Shared review makes a shared legacy")}</p></div><div class="metric start-metric"><span>${s("项目启动日", "PROJECT START")}</span><button data-action="start">${esc(dateLabel(project.startDate))}${icon("calendar")}</button><p>${s("确认日期，让计划循序展开", "Set the date to bring the plan to life")}</p></div></section><div class="section-heading main-heading"><div><span class="section-kicker">THE FAMILY ARCHIVE / ${s("有序传承", "THOUGHTFUL STEWARDSHIP")}</span><h2 id="page-title" tabindex="-1">${names()[views.indexOf(view)]}</h2><p>${s("负责人及周期为建议，请核实后逐项推进。", "Owners and schedules are proposals. Verify each before proceeding.")}</p></div><div class="actions"><button class="icon-button" data-action="import" title="${s("导入项目备份", "Import project backup")}" aria-label="${s("导入项目备份", "Import project backup")}">${icon("upload")}</button><button class="secondary" data-action="export-csv">${icon("download")}${s("导出清单", "Export CSV")}</button><button class="primary" data-action="add">${icon("plus")}${s("新增行动", "Add action")}</button></div></div>${view !== "history" ? toolbar() : ""}<div id="view-content">${{ overview, board, list, timeline, history }[view]()}</div><footer class="page-footer"><span><img src="./assets/seal.svg" width="22" height="22" alt="">DeepFamily <b>·</b> ${s("家族传承计划", "Family legacy plan")}</span><span>${s("珍藏过去，连接未来。", "Preserve the past. Connect the future.")} <b>·</b> UTC+8</span></footer></div></main>`;
+  if (activeId === "search") {
+    const input = $("#search");
+    input.focus();
+    input.setSelectionRange(selection, selection);
+  }
+}
+function openEditor(task) {
+  editingWasNew = !task;
+  editing = task
+    ? structuredClone(task)
+    : {
+        id:
+          "WU-" +
+          String(
+            Math.max(
+              0,
+              ...project.tasks.map((t) => Number(t.id.replace("WU-", "")) || 0),
+            ) + 1,
+          ).padStart(2, "0"),
+        title: "",
+        titleEn: "",
+        owner: "",
+        ownerEn: "",
+        collaborators: "",
+        collaboratorsEn: "",
+        action: "",
+        actionEn: "",
+        deliverable: "",
+        deliverableEn: "",
+        dependency: "",
+        dependencyEn: "",
+        next: "",
+        evidence: "",
+        priority: "P1",
+        status: "未开始",
+        weekStart: 1,
+        weekEnd: 1,
+        due: "",
+        completed: "",
+        accepted: false,
+        updatedAt: "",
+      };
+  const t = editing,
+    key = (k) => (lang === "en" ? k + "En" : k);
+  const input = (k, label, type = "text", extra = "") =>
+    `<label>${label}<input name="${k}" type="${type}" value="${esc(t[k] ?? (k.endsWith("En") ? t[k.slice(0, -2)] || "" : ""))}" ${extra}></label>`;
+  const bilingual = (k, label, rows = 2) =>
+    `<label>${label}<textarea name="${key(k)}" rows="${rows}" maxlength="12000">${esc(value(t, k))}</textarea></label>`;
+  $("#editor").innerHTML =
+    `<form id="task-form"><div class="dialog-head"><div><span class="eyebrow">${esc(t.id)} / ${s("行动详情", "ACTION DETAILS")}</span><h2 id="dialog-title">${s("让传承有据可循", "Give the next step a clear purpose")}</h2></div><button type="button" class="icon-button" data-close="editor" aria-label="${s("关闭", "Close")}">${icon("close")}</button></div><div class="form-body">${input(key("title"), s("行动名称", "Action title"), "text", 'required maxlength="160"')}<div class="form-grid"><label>${s("优先级", "Priority")}<select name="priority">${["P0", "P1", "P2"].map((p) => `<option ${p === t.priority ? "selected" : ""}>${p}</option>`).join("")}</select></label><label>${s("当前状态", "Status")}<select name="status">${statuses.map((st) => `<option value="${st}" ${st === t.status ? "selected" : ""}>${statusLabel(st)}</option>`).join("")}</select></label>${input(key("owner"), s("负责人", "Owner"))}${input(key("collaborators"), s("配合人员", "Collaborators"))}${input("weekStart", s("建议开始周", "Suggested start week"), "number", 'min="1" max="104" required')}${input("weekEnd", s("建议结束周", "Suggested end week"), "number", 'min="1" max="104" required')}${input("due", s("手动截止日", "Manual due date"), "date")}${input("completed", s("实际完成日", "Completion date"), "date")}</div><small class="form-hint">${s("手动截止日留空时，按启动日与建议结束周计算。", "Leave the manual due date blank to calculate it from the start date and end week.")}</small>${bilingual("action", s("具体行动", "Action steps"), 3)}${bilingual("deliverable", s("交付物与完成标准", "Deliverables and acceptance criteria"), 3)}${bilingual("dependency", s("前置条件", "Dependencies"))}<label>${s("下一步 / 阻碍（中英文共用）", "Next step / blockers (shared across languages)")}<textarea name="next" rows="2" maxlength="12000">${esc(t.next)}</textarea></label><details class="translations"><summary>${s("补充英文内容（可选）", "Chinese content (optional)")}</summary>${[
+      "title",
+      "owner",
+      "collaborators",
+      "action",
+      "deliverable",
+      "dependency",
+    ]
+      .map((k, i) => {
+        const opposite = lang === "en" ? k : k + "En";
+        return `<label>${["Title", "Owner", "Collaborators", "Action", "Deliverables", "Dependencies"][i]} · ${lang === "en" ? "中文" : "English"}<textarea name="${opposite}" rows="2" maxlength="${k === "title" ? 160 : 12000}">${esc(t[opposite])}</textarea></label>`;
+      })
+      .join(
+        "",
+      )}</details><fieldset class="acceptance"><legend>${s("交付与家族验收", "Delivery and family acceptance")}</legend><label>${s("交付凭据 / 受控文件链接", "Evidence / controlled file reference")}<textarea name="evidence" rows="2" maxlength="12000" placeholder="${s("仅记录交付说明或文件编号，请勿记录密码。", "Use a delivery note or file reference. Never enter passwords.")}">${esc(t.evidence)}</textarea></label><label class="checkbox"><input type="checkbox" name="accepted" ${t.accepted ? "checked" : ""}>${s("已确认交付，并经家族验收", "Delivery confirmed and accepted by the family")}</label></fieldset><p id="form-error" class="form-error" role="alert"></p></div><div class="dialog-footer"><small>${s("仅保存到当前浏览器", "Saved in this browser only")}</small><button type="button" class="secondary" data-close="editor">${s("取消", "Cancel")}</button><button class="primary" type="submit">${s("保存行动", "Save action")}</button></div></form>`;
+  $("#editor").showModal();
+}
+function changeStatus(id, status) {
+  const t = project.tasks.find((t) => t.id === id);
+  if (!t || t.status === status) return;
+  if (
+    status === "已完成" &&
+    (!t.accepted || !t.evidence.trim() || !t.completed)
+  ) {
+    openEditor({ ...t, status, completed: t.completed || today() });
+    $("#form-error").textContent = s(
+      "完成前请提供凭据、完成日期，并确认家族验收。",
+      "Add evidence, a completion date and family acceptance before completing this action.",
+    );
+    render();
+    return;
+  }
+  const tasks = project.tasks.map((t) =>
+    t.id === id
+      ? {
+          ...t,
+          status,
+          completed: status === "已完成" ? t.completed : "",
+          updatedAt: new Date().toISOString(),
+        }
+      : t,
+  );
+  persist(
+    { ...project, tasks },
+    `${id}：${t.status} → ${status}`,
+    `${id}: ${statusEn[statuses.indexOf(t.status)]} → ${statusEn[statuses.indexOf(status)]}`,
+  );
+}
+function exportFile(type) {
+  let data, mime;
+  if (type === "json") {
+    data = JSON.stringify(
+      { schemaVersion: 1, exportedAt: new Date().toISOString(), ...project },
+      null,
+      2,
+    );
+    mime = "application/json";
+  } else {
+    const header =
+      lang === "en"
+        ? [
+            "ID",
+            "Action",
+            "Priority",
+            "Owner",
+            "Collaborators",
+            "Start week",
+            "End week",
+            "Status",
+            "Due date",
+            "Completed on",
+            "Action steps",
+            "Deliverables",
+            "Dependencies",
+            "Next step",
+            "Evidence",
+            "Family accepted",
+          ]
+        : [
+            "任务编号",
+            "行动名称",
+            "优先级",
+            "负责人",
+            "配合人员",
+            "开始周",
+            "结束周",
+            "状态",
+            "截止日",
+            "完成日",
+            "具体行动",
+            "交付标准",
+            "前置条件",
+            "下一步",
+            "凭据",
+            "家族验收",
+          ];
+    const rows = [
+      header,
+      ...project.tasks.map((t) => [
+        t.id,
+        value(t, "title"),
+        t.priority,
+        value(t, "owner"),
+        value(t, "collaborators"),
+        t.weekStart,
+        t.weekEnd,
+        statusLabel(t.status),
+        due(t),
+        t.completed,
+        value(t, "action"),
+        value(t, "deliverable"),
+        value(t, "dependency"),
+        t.next,
+        t.evidence,
+        t.accepted ? s("是", "Yes") : s("否", "No"),
+      ]),
+    ];
+    data = "\uFEFF" + rows.map((r) => r.map(csvCell).join(",")).join("\r\n");
+    mime = "text/csv;charset=utf-8";
+  }
+  const url = URL.createObjectURL(new Blob([data], { type: mime })),
+    a = document.createElement("a");
+  a.href = url;
+  a.download = `DeepFamily_Plan_${today()}.${type}`;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+function openStart() {
+  const d = $("#start-dialog");
+  d.innerHTML = `<form id="start-form"><div class="dialog-head"><h2 id="start-title">${s("为传承定一个起点", "Set a starting point")}</h2><button type="button" class="icon-button" data-close="start-dialog" aria-label="${s("关闭", "Close")}">${icon("close")}</button></div><div class="form-body"><p>${s("建议周次从这一天起算。手动设置的截止日保持不变。", "Suggested weeks run from this date. Manual due dates remain unchanged.")}</p><label>${s("项目启动日", "Project start date")}<input type="date" name="startDate" value="${esc(project.startDate)}"></label></div><div class="dialog-footer"><button type="button" class="secondary" data-close="start-dialog">${s("取消", "Cancel")}</button><button class="primary">${s("保存日期", "Save date")}</button></div></form>`;
+  d.showModal();
+}
+
+document.addEventListener("click", (e) => {
+  const btn = e.target.closest("button");
+  if (!btn) return;
+  if (btn.dataset.close) {
+    $("#" + btn.dataset.close).close();
+    return;
+  }
+  if (btn.dataset.lang) {
+    lang = btn.dataset.lang;
+    try {
+      localStorage.setItem(LANG, lang);
+    } catch {}
+    const url = new URL(location.href);
+    url.searchParams.set("lang", lang);
+    historyReplace(url);
+    render();
+    return;
+  }
+  if (btn.dataset.view) {
+    changeView(btn.dataset.view);
+    return;
+  }
+  const action = btn.dataset.action;
+  if (action === "edit")
+    openEditor(project.tasks.find((t) => t.id === btn.dataset.id));
+  else if (action === "add") openEditor();
+  else if (action === "start") openStart();
+  else if (action === "menu") {
+    mobile = !mobile;
+    render();
+  } else if (action === "clear") {
+    query = "";
+    filter = "all";
+    owner = "";
+    render();
+  } else if (action === "export-json") exportFile("json");
+  else if (action === "export-csv") exportFile("csv");
+  else if (action === "import") {
+    $("#import-file").value = "";
+    $("#import-file").click();
+  } else if (action === "confirm-import" && pendingImport) {
+    const next = pendingImport;
+    const old = project;
+    project = next;
+    if (persist(next, "导入项目备份", "Imported project backup", true)) {
+      pendingImport = null;
+      $("#import-dialog").close();
+    } else project = old;
+  }
+});
+function historyReplace(url) {
+  window.history.replaceState(null, "", url);
+}
+document.addEventListener("input", (e) => {
+  if (e.target.id === "search") {
+    query = e.target.value;
+    render();
+  }
+});
+document.addEventListener("change", (e) => {
+  const el = e.target;
+  if (el.id === "owner-filter") {
+    owner = el.value;
+    render();
+  } else if (el.id === "status-filter") {
+    filter = el.value;
+    render();
+  } else if (el.dataset.status) changeStatus(el.dataset.status, el.value);
+  if (el.name === "status" && el.closest("#task-form")) {
+    const completion = $('#task-form [name="completed"]');
+    if (el.value === "已完成" && !completion.value) completion.value = today();
+    else if (el.value !== "已完成") completion.value = "";
+  }
+});
+document.addEventListener("submit", (e) => {
+  if (e.target.id === "task-form") {
+    e.preventDefault();
+    const current = project.tasks.find((t) => t.id === editing.id);
+    if (
+      (editingWasNew && current) ||
+      (!editingWasNew && current && current.updatedAt !== editing.updatedAt)
+    ) {
+      $("#form-error").textContent = s(
+        "此任务已在另一窗口更新，请关闭后重新打开，避免覆盖最新内容。",
+        "This action changed in another tab. Close and reopen it to keep the latest changes.",
+      );
+      return;
+    }
+    const fields = Object.fromEntries(new FormData(e.target));
+    const task = {
+      ...editing,
+      ...fields,
+      weekStart: Number(fields.weekStart),
+      weekEnd: Number(fields.weekEnd),
+      accepted: new FormData(e.target).has("accepted"),
+      updatedAt: new Date().toISOString(),
+    };
+    if (!task.title.trim()) task.title = task.titleEn || "";
+    if (task.status !== "已完成") task.completed = "";
+    const next = {
+      ...project,
+      tasks: project.tasks.some((t) => t.id === task.id)
+        ? project.tasks.map((t) => (t.id === task.id ? task : t))
+        : [...project.tasks, task],
+    };
+    try {
+      validateProject(next);
+    } catch (err) {
+      $("#form-error").textContent =
+        err.message === "acceptance"
+          ? s(
+              "请补齐交付凭据、实际完成日，并确认家族验收。",
+              "Provide evidence, a completion date and family acceptance.",
+            )
+          : s(
+              "请检查名称、日期和建议周次；结束周不能早于开始周。",
+              "Check the title, dates and week range; the end week cannot precede the start week.",
+            );
+      return;
+    }
+    if (
+      persist(
+        next,
+        `${task.id} 更新「${task.title}」`,
+        `${task.id} updated “${task.titleEn || task.title}”`,
+      )
+    )
+      $("#editor").close();
+  } else if (e.target.id === "start-form") {
+    e.preventDefault();
+    const date = new FormData(e.target).get("startDate");
+    if (
+      persist(
+        { ...project, startDate: date },
+        `启动日调整为 ${date || "待定"}`,
+        `Start date changed to ${date || "to be agreed"}`,
+      )
+    )
+      $("#start-dialog").close();
+  }
+});
+$("#import-file").addEventListener("change", async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  try {
+    if (file.size > 5 * 1024 * 1024) throw Error();
+    pendingImport = validateProject(JSON.parse(await file.text()));
+    $("#import-dialog").innerHTML =
+      `<div class="dialog-head"><h2 id="import-title">${s("导入项目备份", "Import a project backup")}</h2><button class="icon-button" data-close="import-dialog" aria-label="${s("关闭", "Close")}">${icon("close")}</button></div><div class="form-body"><p>${s("将用备份中的 " + pendingImport.tasks.length + " 项行动替换当前浏览器的计划。建议先备份现有内容。", "This will replace this browser’s plan with " + pendingImport.tasks.length + " actions from the backup. Back up the current plan first.")}</p><small>${esc(file.name)}</small></div><div class="dialog-footer"><button class="secondary" data-action="export-json">${s("先导出现有备份", "Export current backup")}</button><button class="primary" data-action="confirm-import">${s("确认导入", "Replace and import")}</button></div>`;
+    $("#import-dialog").showModal();
+  } catch {
+    pendingImport = null;
+    toast(
+      s(
+        "无法导入：请使用有效的项目 JSON 备份（最大 5 MB），已完成任务需具备验收凭据。",
+        "Import failed. Use a valid project JSON backup (up to 5 MB); completed tasks must have acceptance evidence.",
+      ),
+    );
+  }
+});
+document.addEventListener("dragstart", (e) => {
+  const card = e.target.closest("[data-task]");
+  if (card) {
+    e.dataTransfer.setData("text/plain", card.dataset.task);
+    e.dataTransfer.effectAllowed = "move";
+  }
+});
+document.addEventListener("dragover", (e) => {
+  if (e.target.closest("[data-lane]")) e.preventDefault();
+});
+document.addEventListener("drop", (e) => {
+  const lane = e.target.closest("[data-lane]");
+  if (lane) {
+    e.preventDefault();
+    changeStatus(e.dataTransfer.getData("text/plain"), lane.dataset.lane);
+  }
+});
+window.addEventListener("hashchange", () => {
+  const next = location.hash.slice(1);
+  if (views.includes(next) && next !== view) {
+    view = next;
+    render();
+  }
+});
+window.addEventListener("storage", (e) => {
+  if (e.key === KEY) {
+    try {
+      const next = e.newValue ? validateProject(JSON.parse(e.newValue)) : null;
+      if (next) {
+        project = next;
+        render();
+        toast(
+          s("已读取另一窗口保存的更新", "Loaded updates saved in another tab"),
+        );
+      }
+    } catch {
+      toast(
+        s(
+          "其他窗口数据无效，请刷新前备份。",
+          "Invalid data from another tab. Back up before refreshing.",
+        ),
+      );
+    }
+  }
+});
+render();

@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#183e35" />
+    <meta
+      name="description"
+      content="DeepFamily 家族传承计划：用行动整理记忆，以关怀延续家风。A thoughtful workspace for preserving family memories."
+    />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>家族传承计划 · DeepFamily</title>
+    <link rel="icon" href="./assets/seal.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <a class="skip" href="#main">跳至主内容 / Skip to content</a>
+    <div id="app"></div>
+    <dialog id="editor" aria-labelledby="dialog-title"></dialog>
+    <dialog id="start-dialog" aria-labelledby="start-title"></dialog>
+    <dialog id="import-dialog" aria-labelledby="import-title"></dialog>
+    <input
+      type="file"
+      id="import-file"
+      accept="application/json,.json"
+      hidden
+    />
+    <div id="toast" role="status" aria-live="polite"></div>
+    <noscript
+      >请启用 JavaScript 以使用家族传承工作台。Please enable JavaScript to use
+      this workspace.</noscript
+    >
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
