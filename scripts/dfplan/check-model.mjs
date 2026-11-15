@@ -1,10 +1,10 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { validateProject, targetDate, csvCell } from "../../DFplan/model.mjs";
+import { validateProject, targetDate, csvCell } from "../../dfplan/model.mjs";
 const { seedTasks } = await import(
   "data:text/javascript," +
     encodeURIComponent(
-      readFileSync(new URL("../../DFplan/data.js", import.meta.url), "utf8"),
+      readFileSync(new URL("../../dfplan/data.js", import.meta.url), "utf8"),
     )
 );
 const fresh = () => ({

@@ -1,6 +1,6 @@
 # DeepFamily · 家族传承计划 / Family Legacy Plan
 
-部署地址：**https://dcdeeptech.com/DFplan/**
+部署地址：**https://dcdeeptech.com/dfplan/**
 
 纯静态中英文工作台，无需构建或安装依赖。宣纸暖白、墨绿、印章红与原创谱系树插画组成家族传承视觉风格。基础计划改编自原 Wu 家族项目的 10 项行动，负责人改为通用角色，初始状态均为「待核实」；不包含原站的私密云端记录。
 
@@ -21,7 +21,7 @@
 
 ```sh
 python3 -m http.server 8080
-# 打开 http://localhost:8080/DFplan/
+# 打开 http://localhost:8080/dfplan/
 node scripts/dfplan/check-model.mjs
 ```
 
@@ -43,3 +43,5 @@ node scripts/dfplan/check-model.mjs
 A buildless, bilingual family legacy workspace with ten editable planning actions, overview, board, list, timeline, activity log, completion acceptance, JSON backup/restore and CSV export. English UI and seed content are included; custom text can be entered in both languages in the editor.
 
 Edits are stored only in this browser. This static edition does not provide cloud synchronization or shared accounts. JSON exports from the original private workspace can be imported after a replacement confirmation. The original private workspace remains available through the sidebar link.
+
+旧地址 `/DFplan/` 会跳转到 `/dfplan/`，保留语言参数与当前视图。两个地址同域，沿用已有的本机存储。
