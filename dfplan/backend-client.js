@@ -1,4 +1,5 @@
-import { backendConfig } from "./backend-config.js";
+import { seedTasks } from "./data.js";
+import { backendConfig } from "./backend-config.js?v=20261116-admin";
 import { validateProject } from "./model.mjs";
 
 export const cloudEnabled = backendConfig.enabled === true;
@@ -143,10 +144,39 @@ export async function connectBackend(onSession, onProject, onError) {
         return;
       }
       const myEpoch = epoch;
+      let initialClaimAttempted = false;
       stopAdmin = dbSdk.onSnapshot(
         dbSdk.doc(admins, user.email.toLowerCase()),
+        { includeMetadataChanges: true },
         (snapshot) => {
-          if (myEpoch !== epoch) return;
+          if (
+            myEpoch !== epoch ||
+            snapshot.metadata.fromCache ||
+            snapshot.metadata.hasPendingWrites
+          )
+            return;
+          if (!snapshot.exists() && !initialClaimAttempted) {
+            initialClaimAttempted = true;
+            const at = dbSdk.serverTimestamp(),
+              address = user.email.toLowerCase();
+            dbSdk
+              .setDoc(dbSdk.doc(admins, address), {
+                email: address,
+                displayName:
+                  backendConfig.bootstrapDisplayName || "Initial administrator",
+                role: "owner",
+                active: true,
+                createdAt: at,
+                updatedAt: at,
+                createdBy: user.uid,
+                updatedBy: user.uid,
+              })
+              .catch(() => {
+                if (myEpoch === epoch && !member)
+                  onSession({ phase: "denied", user: { email: user.email } });
+              });
+            return;
+          }
           const data = snapshot.exists() ? snapshot.data() : null;
           if (!data?.active || !["owner", "admin"].includes(data.role)) {
             member = null;
@@ -206,6 +236,44 @@ export async function connectBackend(onSession, onProject, onError) {
       return authSdk.signOut(auth);
     },
     reload: load,
+    async initialize() {
+      if (!member || member.role !== "owner" || !auth.currentUser)
+        throw codeError("dfplan/not-admin");
+      const uid = auth.currentUser.uid,
+        email = auth.currentUser.email,
+        actor = member.displayName,
+        myEpoch = epoch;
+      await dbSdk.runTransaction(db, async (transaction) => {
+        const existing = await transaction.get(projectRef);
+        if (existing.exists()) return;
+        if (epoch !== myEpoch || member?.role !== "owner")
+          throw codeError("dfplan/not-admin");
+        const at = dbSdk.serverTimestamp();
+        transaction.set(projectRef, {
+          startDate: "",
+          revision: 0,
+          updatedAt: at,
+          updatedBy: uid,
+        });
+        for (const task of seedTasks)
+          transaction.set(dbSdk.doc(tasks, task.id), {
+            task: cleanTask(task),
+            revision: 0,
+            updatedAt: at,
+            updatedBy: uid,
+          });
+        transaction.set(dbSdk.doc(history, "0"), {
+          revision: 0,
+          text: "初始化家族传承计划",
+          textEn: "Initialized the family legacy plan",
+          actor,
+          actorEmail: email,
+          actorUid: uid,
+          createdAt: at,
+        });
+      });
+      return load();
+    },
     async save(project, expectedRevision, text, textEn) {
       validateProject(project);
       if (!member || !last || !auth.currentUser)

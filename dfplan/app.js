@@ -1,6 +1,18 @@
-import { cloudEnabled, connectBackend } from "./backend-client.js";
-import { cloudError, cloudGate, cloudBar, adminDialog } from "./cloud-ui.js";
-import { renderPhone, phoneEditor, matchesCategory } from "./phone-ui.js";
+import {
+  cloudEnabled,
+  connectBackend,
+} from "./backend-client.js?v=20261116-admin";
+import {
+  cloudError,
+  cloudGate,
+  cloudBar,
+  adminDialog,
+} from "./cloud-ui.js?v=20261116-admin";
+import {
+  renderPhone,
+  phoneEditor,
+  matchesCategory,
+} from "./phone-ui.js?v=20261116-admin";
 import { seedTasks } from "./data.js";
 import {
   statuses,
@@ -645,6 +657,9 @@ document.addEventListener("click", async (e) => {
         cloudMessage = "";
         btn.disabled = true;
         await cloud?.login();
+      } else if (action === "cloud-initialize") {
+        btn.disabled = true;
+        await cloud.initialize();
       } else if (action === "cloud-logout") {
         if (cloudSaving) return;
         await cloud?.logout();
@@ -1012,13 +1027,23 @@ async function startCloud() {
         cloudUpdatedAt = data.updatedAt;
         cloudLoaded = true;
         cloudMessage = "";
-        if (cloudSession.phase === "reading")
+        if (
+          cloudSession.admin &&
+          ["reading", "not-initialized", "error"].includes(cloudSession.phase)
+        )
           cloudSession = { ...cloudSession, phase: "ready" };
         render();
       },
       (error) => {
         cloudMessage = cloudError(error, lang);
-        if (!cloudLoaded) cloudSession = { ...cloudSession, phase: "error" };
+        if (!cloudLoaded)
+          cloudSession = {
+            ...cloudSession,
+            phase:
+              error.code === "dfplan/not-initialized"
+                ? "not-initialized"
+                : "error",
+          };
         render();
       },
     );

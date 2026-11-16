@@ -7,6 +7,7 @@ import {
   assertFails,
 } from "@firebase/rules-unit-testing";
 import {
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
@@ -104,10 +105,9 @@ before(async () => {
     firestore: {
       host: "127.0.0.1",
       port: 8088,
-      rules: await readFile(
-        new URL("../firestore.rules", import.meta.url),
-        "utf8",
-      ),
+      rules: (
+        await readFile(new URL("../firestore.rules", import.meta.url), "utf8")
+      ).replaceAll("__DFPLAN_INITIAL_OWNER_EMAIL__", ownerEmail),
     },
   });
 });
@@ -327,4 +327,136 @@ test("calendar dates are validated by the backend", async () => {
     commit(db, { changedTask: { ...task, due: "2026-99-99" } }),
   );
   await assertSucceeds(commit(db, { startDate: "2028-02-29" }));
+});
+
+async function clearProject() {
+  await env.withSecurityRulesDisabled(async (context) => {
+    const db = context.firestore();
+    await deleteDoc(doc(db, projectPath + "/tasks/WU-01"));
+    await deleteDoc(doc(db, projectPath));
+  });
+}
+function initializeProject(
+  db,
+  uid = "owner",
+  email = ownerEmail,
+  includeAudit = true,
+) {
+  const batch = writeBatch(db),
+    at = serverTimestamp();
+  batch.set(doc(db, projectPath), {
+    startDate: "",
+    revision: 0,
+    updatedAt: at,
+    updatedBy: uid,
+  });
+  batch.set(doc(db, projectPath + "/tasks/WU-01"), {
+    task,
+    revision: 0,
+    updatedAt: at,
+    updatedBy: uid,
+  });
+  if (includeAudit)
+    batch.set(doc(db, projectPath + "/history/0"), {
+      revision: 0,
+      text: "Initialize",
+      textEn: "Initialize",
+      actor: "Owner",
+      actorEmail: email,
+      actorUid: uid,
+      createdAt: at,
+    });
+  return batch.commit();
+}
+test("only the protected initial owner can bootstrap the fixed project once, with an audit record", async () => {
+  await clearProject();
+  await assertFails(
+    initializeProject(client("member", adminEmail), "member", adminEmail),
+  );
+  await assertFails(initializeProject(client(), "owner", ownerEmail, false));
+  await assertSucceeds(initializeProject(client()));
+  await assertFails(initializeProject(client()));
+  assert.equal((await getDoc(doc(client(), projectPath))).data().revision, 0);
+});
+
+test("owner can atomically initialize all ten actions with one backend audit record", async () => {
+  await clearProject();
+  const db = client(),
+    batch = writeBatch(db),
+    at = serverTimestamp();
+  batch.set(doc(db, projectPath), {
+    startDate: "",
+    revision: 0,
+    updatedAt: at,
+    updatedBy: "owner",
+  });
+  for (let i = 1; i <= 10; i++) {
+    const id = "WU-" + String(i).padStart(2, "0");
+    batch.set(doc(db, projectPath + "/tasks/" + id), {
+      task: { ...task, id },
+      revision: 0,
+      updatedAt: at,
+      updatedBy: "owner",
+    });
+  }
+  batch.set(doc(db, projectPath + "/history/0"), {
+    revision: 0,
+    text: "Initialize",
+    textEn: "Initialize",
+    actor: "Owner",
+    actorEmail: ownerEmail,
+    actorUid: "owner",
+    createdAt: at,
+  });
+  await assertSucceeds(batch.commit());
+  assert.equal(
+    (await getDocs(collection(db, projectPath + "/tasks"))).size,
+    10,
+  );
+});
+
+test("only the configured verified Google account can claim the initial owner once", async () => {
+  await env.withSecurityRulesDisabled(async (c) => {
+    await deleteDoc(doc(c.firestore(), "dfplanAdmins/" + ownerEmail));
+  });
+  const record = adminRecord(ownerEmail, "Initial owner", "owner");
+  await assertFails(
+    setDoc(
+      doc(
+        client("outsider", "outsider@example.com"),
+        "dfplanAdmins/outsider@example.com",
+      ),
+      {
+        ...adminRecord("outsider@example.com", "Impostor", "owner"),
+        createdBy: "outsider",
+        updatedBy: "outsider",
+      },
+    ),
+  );
+  await assertFails(
+    setDoc(
+      doc(
+        client("owner", ownerEmail, { email_verified: false }),
+        "dfplanAdmins/" + ownerEmail,
+      ),
+      record,
+    ),
+  );
+  await assertFails(
+    setDoc(
+      doc(
+        client("owner", ownerEmail, {
+          firebase: { sign_in_provider: "password" },
+        }),
+        "dfplanAdmins/" + ownerEmail,
+      ),
+      record,
+    ),
+  );
+  await assertSucceeds(
+    setDoc(doc(client(), "dfplanAdmins/" + ownerEmail), record),
+  );
+  await assertFails(
+    setDoc(doc(client(), "dfplanAdmins/" + ownerEmail), record),
+  );
 });

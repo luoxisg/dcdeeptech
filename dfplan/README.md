@@ -4,11 +4,11 @@
 
 纯静态中英文工作台，无需构建或安装依赖。宣纸暖白、墨绿、印章红与原创谱系树插画组成家族传承视觉风格。基础计划改编自原 Wu 家族项目的 10 项行动，负责人改为通用角色，初始状态均为「待核实」；不包含原站的私密云端记录。
 
-## Google 账号与共享后端（已准备，未启用）
+## Google 账号与共享后端
 
-已准备 Firebase Authentication + Firestore 接入、管理员管理、共享保存和修改记录。当前 `backend-config.js` 的 `enabled` 为 `false`，生产网站仍使用本机版；尚无真实 Firebase 管理员或数据库。
+Firebase 项目 `deepfamily-dfplan` 已创建，Google 登录与域名已配置，权限规则发布及初始化仍待完成。当前 `enabled: false`，网站继续使用本机保存。完成后开启云端，只有管理员可访问共享数据，并保留事务版本与修改记录。
 
-建立专用 Firebase 项目、启用 Google 登录、部署规则并初始化首位管理员后，填写 Web 配置即可切换。详见 [Firebase 启用说明](../dfplan-backend/README.md)。Patrick 暂不启用，以后可由管理员在网页加入。
+初始管理员须使用预先确认的 Google 邮箱登录。首次领取受保护角色后，点击「建立家族计划」初始化 10 项行动；随后可增加其他管理员。详见 [Firebase 启用说明](../dfplan-backend/README.md)。Patrick 暂不启用。
 
 ## 使用
 
@@ -19,7 +19,7 @@
 - `备份` 导出完整 JSON；上传按钮可恢复备份，也兼容原站导出的项目 JSON。导入会先展示替换确认。
 - `导出清单` 生成当前语言的 UTF-8 CSV，包含全部任务。
 
-**修改仅保存在当前浏览器的 localStorage。** 不会上传到 GitHub，不提供跨设备、多人或云端同步。清除浏览器数据会移除本机修改，请定期导出 JSON。此页面及模板源码公开；实际私密资料继续保留在原站或受控档案系统。左侧提供原私密云端工作台入口。
+**云端开启后，项目修改保存在 Firestore，不再写入本机 localStorage。** 原本机记录继续保留，管理员登录后可先备份，再确认导入云端；语言与大字偏好仍保存在设备上。若配置关闭云端，则回到本机模板模式。
 
 ## 三星手机与长者操作
 
@@ -63,6 +63,6 @@ node scripts/dfplan/check-model.mjs
 
 A buildless, bilingual family legacy workspace with ten editable planning actions, overview, board, list, timeline, activity log, completion acceptance, JSON backup/restore and CSV export. English UI and seed content are included; custom text can be entered in both languages in the editor.
 
-Edits are stored only in this browser. This static edition does not provide cloud synchronization or shared accounts. JSON exports from the original private workspace can be imported after a replacement confirmation. The original private workspace remains available through the sidebar link.
+With the Firebase backend enabled, verified Google administrators access a shared Firestore project. Only the pre-authorized initial owner can claim the protected role and initialize the ten-action plan once. Device-only legacy records are kept and can be imported after review; language and reading-size preferences remain local.
 
 旧地址 `/DFplan/` 会跳转到 `/dfplan/`，保留语言参数与当前视图。两个地址同域，沿用已有的本机存储。

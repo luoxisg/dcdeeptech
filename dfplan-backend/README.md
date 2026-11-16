@@ -1,6 +1,6 @@
 # DFplan · Google 管理员与 Firebase 后端
 
-准备状态：代码与模拟器测试已完成，**尚未创建生产 Firebase 项目、启用 Google 登录或写入真实管理员记录**。网页配置默认 `enabled: false`，现有本机版继续工作。完成下面的设置后再启用。
+生产项目 `deepfamily-dfplan` 已创建，使用 Spark 方案、新加坡 `asia-southeast1` 默认数据库，Google 登录和 `dcdeeptech.com` 已授权。当前仍等待权限规则发布与初始化；`backend-config.js` 保持 `enabled: false`，现网仍使用本机保存。
 
 ## 提供的功能
 
@@ -44,9 +44,13 @@ npx firebase login
 npx firebase deploy --only firestore:rules --project YOUR_FIREBASE_PROJECT_ID
 ```
 
-规则默认拒绝其他集合访问。网页不能自行建立第一位管理员，也不能绕过后端给自己授权。
+规则默认拒绝其他集合访问。规则模板中的 `__DFPLAN_INITIAL_OWNER_EMAIL__` 需在部署前替换为预先确认的初始管理员邮箱。只有这个已验证的 Google 账号可首次领取 `owner`，其他账号不能自行授权。初始管理员记录创建后，网页不能停用或改写它。生产规则中的该邮箱由部署时设置，不需要放在公开网页配置中。
 
 ## 4. 初始化 luoxi 与家族项目
+
+推荐流程：部署已设置初始管理员邮箱的权限规则后，在网站用该 Google 账号登录。后端验证身份后，首次自动建立受保护的 `owner` 成员记录；点击 **建立家族计划**，以事务一次性创建 10 项基础行动和初始化记录。只有初始管理员可以执行，已有项目不能重置，普通管理员不能初始化。手机旧资料不会自动上传。
+
+如需使用管理员 SDK 初始化，也可采用以下命令行方式：
 
 初始化脚本使用 Google Application Default Credentials，需具备该项目 Firestore 的管理权限。在自己的电脑上通过 Google Cloud CLI 登录，无需把凭据交给网页：
 
@@ -61,7 +65,7 @@ npm run bootstrap -- --project YOUR_FIREBASE_PROJECT_ID
 - `/dfplanProjects/wu-family`：共享项目和版本号。
 - `/dfplanProjects/wu-family/tasks/{任务编号}`：10 项基础行动。
 
-脚本不会覆盖已有项目数据；若已经存在其他初始管理员则停止。只有成功执行这一步，真实后台才有管理员记录。
+脚本不会覆盖已有项目数据；若已经存在其他初始管理员则停止。Google 首次领取或管理员 SDK 初始化成功后，后台才有真实管理员记录。
 
 ## 5. 配置网页并切换云端
 
@@ -104,4 +108,4 @@ export const backendConfig = Object.freeze({
 
 网页可导出完整项目 JSON 作为可携带备份。项目达到较多记录或管理员规模时，按 Firebase 实际配额与预算配置数据库备份及保留策略；本实现读取最多 5,000 条最近历史。
 
-生产 Google 登录和跨设备同步尚未验证，须待项目配置完成后验证。模拟器验证不代表真实 Google 登录已启用。
+生产 Google 登录、首次初始化和云端保存须在完成部署后逐项验证；模拟器测试已通过 14 项权限与事务场景。
