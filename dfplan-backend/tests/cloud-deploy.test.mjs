@@ -9,6 +9,8 @@ import {
   deployRules,
   assertOwnerCompatible,
   initializeRecords,
+  enableAnonymousAuth,
+  createPatrickInvitation,
 } from "../scripts/deploy-core.mjs";
 const template = await readFile(
   new URL("../firestore.rules", import.meta.url),
@@ -420,4 +422,85 @@ test("orphaned task or history records cannot be silently replaced", async () =>
     await assert.rejects(() => initializeRecords(db, options), /Orphaned/);
     assert.deepEqual([...db.records], before);
   }
+});
+
+test("Patrick setup enables only anonymous sign-in with the correct quota project and verifies it", async () => {
+  const calls = [];
+  let enabled = false;
+  await enableAnonymousAuth({
+    projectId,
+    getAccessToken: async () => "private-test-token",
+    fetchImpl: async (url, request) => {
+      calls.push({ url, request });
+      assert.equal(request.headers["x-goog-user-project"], projectId);
+      assert.equal(request.headers.Authorization, "Bearer private-test-token");
+      assert.ok(!url.includes("private-test-token"));
+      if (request.method === "PATCH") {
+        assert.equal(
+          new URL(url).searchParams.get("updateMask"),
+          "signIn.anonymous.enabled",
+        );
+        assert.deepEqual(JSON.parse(request.body), {
+          signIn: { anonymous: { enabled: true } },
+        });
+        enabled = true;
+      }
+      return new Response(
+        JSON.stringify({
+          signIn: { anonymous: { enabled }, google: { enabled: true } },
+        }),
+      );
+    },
+  });
+  assert.deepEqual(
+    calls.map((c) => c.request.method),
+    ["GET", "PATCH", "GET"],
+  );
+});
+test("already enabled anonymous sign-in does not rewrite the authentication settings", async () => {
+  await enableAnonymousAuth({
+    projectId,
+    getAccessToken: async () => "test",
+    fetchImpl: async (url, request) => {
+      assert.equal(request.method, "GET");
+      return new Response(
+        JSON.stringify({ signIn: { anonymous: { enabled: true } } }),
+      );
+    },
+  });
+  await assert.rejects(
+    enableAnonymousAuth({
+      projectId,
+      getAccessToken: async () => "test",
+      fetchImpl: async () => new Response("denied", { status: 403 }),
+    }),
+    /403/,
+  );
+});
+test("Patrick invitations are private one-time capabilities with a fixed editor role", async () => {
+  let record, path;
+  const link = await createPatrickInvitation(
+    {
+      doc: (p) => {
+        path = p;
+        return {
+          create: async (r) => {
+            record = r;
+          },
+        };
+      },
+    },
+    { serverTimestamp: () => "SERVER_TIME", expiresAt: "EXPIRY" },
+  );
+  const url = new URL(link),
+    token = new URLSearchParams(url.hash.slice(1)).get("invite");
+  assert.equal(url.origin, "https://dcdeeptech.com");
+  assert.equal(url.pathname, "/dfplan/");
+  assert.equal(url.search, "");
+  assert.match(token, /^[A-Za-z0-9_-]{43}$/);
+  assert.equal(path, "dfplanInvites/" + token);
+  assert.equal(record.claimedBy, "");
+  assert.equal(record.role, "editor");
+  assert.equal(record.displayName, "Patrick");
+  assert.equal(record.expiresAt, "EXPIRY");
 });

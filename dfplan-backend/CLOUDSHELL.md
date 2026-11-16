@@ -41,3 +41,14 @@ Cloud Shell 的临时授权可能不会出现在 `gcloud auth list` 中；脚本
 回到聊天回复 **后端已部署**，再接入网站的云端开关。
 
 网页仍使用 <https://dcdeeptech.com/dfplan/>。Google 登录后，由管理员维护共享资料；Patrick 后续可从管理员界面添加。
+
+## 开通 Patrick 无账号密码访问
+
+保留现有计划，运行：
+
+```bash
+git pull --ff-only origin main
+bash dfplan-backend/scripts/deploy-cloudshell.sh --project deepfamily-dfplan --owner-email YOUR_GOOGLE_EMAIL --display-name luoxi --enable-patrick
+```
+
+完成后终端显示 `PATRICK_LINK_READY` 和专属链接。把链接只发给 Patrick，无需发到聊天。Patrick 打开链接，点击“进入家族计划”，同一浏览器以后自动进入。换手机或清除浏览器数据后需新邀请。luoxi 可以在网页“管理员 → Patrick 的专属入口”生成新链接或撤销访问。继续使用免费 Spark，无需绑卡。

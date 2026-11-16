@@ -315,3 +315,51 @@
 .phone-layout .cloud-member-list span {
   font-size: var(--phone-font);
 }
+
+.cloud-invitations {
+  display: grid;
+  gap: 16px;
+  border-top: 1px solid #c9d4bb;
+  padding-top: 22px;
+}
+.cloud-invitations h3 {
+  font-size: 23px;
+  line-height: 1.7;
+  margin: 0;
+}
+.cloud-invitations p,
+.cloud-invitations label {
+  font-size: 18px;
+  line-height: 1.9;
+  color: #304b34;
+}
+.cloud-invitations label {
+  display: grid;
+  gap: 8px;
+}
+.cloud-invitations input {
+  min-height: 58px;
+  width: 100%;
+  min-width: 0;
+  font-size: 18px;
+  padding: 12px;
+  border: 1px solid #98ab85;
+  border-radius: 10px;
+}
+#patrick-link-result:not([hidden]) {
+  display: grid;
+  gap: 14px;
+}
+.patrick-enter {
+  min-height: 76px;
+  font-size: 24px;
+}
+.patrick-enter .icon {
+  width: 32px;
+  height: 32px;
+}
+.phone-layout .cloud-invitations p,
+.phone-layout .cloud-invitations label,
+.phone-layout .cloud-invitations input {
+  font-size: var(--phone-font);
+}

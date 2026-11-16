@@ -460,3 +460,228 @@ test("only the configured verified Google account can claim the initial owner on
     setDoc(doc(client(), "dfplanAdmins/" + ownerEmail), record),
   );
 });
+
+const inviteId = "A".repeat(43);
+const anonymous = (uid = "patrick-device") =>
+  env
+    .authenticatedContext(uid, { firebase: { sign_in_provider: "anonymous" } })
+    .firestore();
+const invitation = (overrides = {}) => ({
+  displayName: "Patrick",
+  projectKey: "wu-family",
+  role: "editor",
+  active: true,
+  expiresAt: Timestamp.fromMillis(Date.now() + 86400000),
+  claimedBy: "",
+  createdAt: serverTimestamp(),
+  updatedAt: serverTimestamp(),
+  createdBy: "owner",
+  updatedBy: "owner",
+  ...overrides,
+});
+async function issueInvite(overrides = {}) {
+  await assertSucceeds(
+    setDoc(doc(client(), "dfplanInvites/" + inviteId), invitation(overrides)),
+  );
+}
+function redeem(db, uid = "patrick-device", overrides = {}) {
+  const batch = writeBatch(db),
+    at = serverTimestamp();
+  batch.set(doc(db, "dfplanGuests/" + uid), {
+    uid,
+    displayName: "Patrick",
+    projectKey: "wu-family",
+    role: "editor",
+    active: true,
+    inviteId,
+    createdAt: at,
+    updatedAt: at,
+    createdBy: uid,
+    updatedBy: uid,
+    ...overrides,
+  });
+  batch.update(doc(db, "dfplanInvites/" + inviteId), {
+    claimedBy: uid,
+    updatedAt: at,
+    updatedBy: uid,
+  });
+  return batch.commit();
+}
+function guestCommit(
+  db,
+  { actor = "Patrick", actorEmail = "", accepted = false } = {},
+) {
+  const uid = "patrick-device",
+    batch = writeBatch(db),
+    at = serverTimestamp();
+  batch.update(doc(db, projectPath), {
+    startDate: "",
+    revision: 1,
+    updatedAt: at,
+    updatedBy: uid,
+  });
+  batch.set(doc(db, projectPath + "/tasks/WU-01"), {
+    task: {
+      ...task,
+      next: "Patrick updated the shared action",
+      status: accepted ? "已完成" : "进行中",
+    },
+    revision: 1,
+    updatedAt: at,
+    updatedBy: uid,
+  });
+  batch.set(doc(db, projectPath + "/history/1"), {
+    revision: 1,
+    text: "Update",
+    textEn: "Update",
+    actor,
+    actorEmail,
+    actorUid: uid,
+    createdAt: at,
+  });
+  return batch.commit();
+}
+test("only the owner can issue a bounded one-time Patrick invitation", async () => {
+  await assertFails(
+    setDoc(
+      doc(client("member", adminEmail), "dfplanInvites/" + inviteId),
+      invitation(),
+    ),
+  );
+  await assertFails(
+    setDoc(doc(anonymous(), "dfplanInvites/" + inviteId), invitation()),
+  );
+  await assertFails(
+    setDoc(
+      doc(client(), "dfplanInvites/" + inviteId),
+      invitation({ role: "admin" }),
+    ),
+  );
+  await assertFails(
+    setDoc(
+      doc(client(), "dfplanInvites/" + inviteId),
+      invitation({
+        expiresAt: Timestamp.fromMillis(Date.now() + 8 * 86400000),
+      }),
+    ),
+  );
+  await issueInvite();
+  await assertSucceeds(getDoc(doc(anonymous(), "dfplanInvites/" + inviteId)));
+  await assertFails(getDocs(collection(anonymous(), "dfplanInvites")));
+  await assertFails(
+    getDoc(
+      doc(
+        env.unauthenticatedContext().firestore(),
+        "dfplanInvites/" + inviteId,
+      ),
+    ),
+  );
+  await assertFails(getDoc(doc(anonymous(), projectPath)));
+});
+test("one-time invitation binds to one anonymous device and permits audited edits", async () => {
+  await issueInvite();
+  const db = anonymous();
+  await assertSucceeds(redeem(db));
+  await assertSucceeds(getDoc(doc(db, projectPath)));
+  await assertSucceeds(getDocs(collection(db, projectPath + "/tasks")));
+  await assertSucceeds(guestCommit(db));
+  await assertFails(redeem(anonymous("other-device"), "other-device"));
+  await assertFails(getDoc(doc(anonymous("other-device"), projectPath)));
+  await assertFails(getDocs(collection(db, "dfplanAdmins")));
+  await assertFails(
+    setDoc(
+      doc(db, "dfplanAdmins/patrick@example.com"),
+      adminRecord("patrick@example.com"),
+    ),
+  );
+  await assertFails(getDoc(doc(db, "dfplanProjects/other")));
+  await assertFails(
+    updateDoc(doc(db, "dfplanGuests/patrick-device"), {
+      active: true,
+      role: "admin",
+    }),
+  );
+});
+test("invitation requires atomic claim and cannot elevate identity or role", async () => {
+  await issueInvite();
+  const db = anonymous();
+  await assertFails(
+    updateDoc(doc(db, "dfplanInvites/" + inviteId), {
+      claimedBy: "patrick-device",
+      updatedAt: serverTimestamp(),
+      updatedBy: "patrick-device",
+    }),
+  );
+  await assertFails(redeem(db, "patrick-device", { displayName: "Owner" }));
+  await assertFails(redeem(db, "patrick-device", { role: "admin" }));
+  await assertFails(redeem(db, "patrick-device", { projectKey: "other" }));
+  await assertFails(redeem(client(), "owner"));
+  await assertSucceeds(redeem(db));
+  await assertFails(guestCommit(db, { actor: "Owner" }));
+  await assertFails(guestCommit(db, { actorEmail: ownerEmail }));
+  await assertFails(guestCommit(db, { accepted: true }));
+});
+test("revoking Patrick's invitation immediately denies existing-device reads and writes", async () => {
+  await issueInvite();
+  const db = anonymous();
+  await assertSucceeds(redeem(db));
+  await assertFails(
+    updateDoc(doc(db, "dfplanInvites/" + inviteId), {
+      active: false,
+      updatedAt: serverTimestamp(),
+      updatedBy: "patrick-device",
+    }),
+  );
+  await assertSucceeds(
+    updateDoc(doc(client(), "dfplanInvites/" + inviteId), {
+      active: false,
+      updatedAt: serverTimestamp(),
+      updatedBy: "owner",
+    }),
+  );
+  await assertFails(getDoc(doc(db, projectPath)));
+  await assertFails(guestCommit(db));
+  // The device can still observe the revoked invite to clear its private UI.
+  await assertSucceeds(getDoc(doc(db, "dfplanInvites/" + inviteId)));
+});
+test("expired or disabled invitations cannot be redeemed", async () => {
+  await env.withSecurityRulesDisabled(async (c) => {
+    await setDoc(
+      doc(c.firestore(), "dfplanInvites/" + inviteId),
+      invitation({ expiresAt: Timestamp.fromMillis(Date.now() - 10000) }),
+    );
+  });
+  await assertFails(redeem(anonymous()));
+  await env.withSecurityRulesDisabled(async (c) => {
+    await updateDoc(doc(c.firestore(), "dfplanInvites/" + inviteId), {
+      expiresAt: Timestamp.fromMillis(Date.now() + 86400000),
+      active: false,
+    });
+  });
+  await assertFails(redeem(anonymous()));
+});
+
+test("two devices racing for one invitation cannot both receive access", async () => {
+  await issueInvite();
+  const attempts = await Promise.allSettled([
+    redeem(anonymous("device-one"), "device-one"),
+    redeem(anonymous("device-two"), "device-two"),
+  ]);
+  assert.equal(attempts.filter((a) => a.status === "fulfilled").length, 1);
+  assert.equal(attempts.filter((a) => a.status === "rejected").length, 1);
+});
+test("activation expiry does not remove an already bound device, while other membership stays private", async () => {
+  await issueInvite();
+  const db = anonymous();
+  await assertSucceeds(redeem(db));
+  await env.withSecurityRulesDisabled(async (c) => {
+    await updateDoc(doc(c.firestore(), "dfplanInvites/" + inviteId), {
+      expiresAt: Timestamp.fromMillis(Date.now() - 10000),
+    });
+  });
+  await assertSucceeds(getDoc(doc(db, projectPath)));
+  await assertFails(
+    getDoc(doc(anonymous("other-device"), "dfplanGuests/patrick-device")),
+  );
+  await assertFails(getDocs(collection(db, "dfplanGuests")));
+});

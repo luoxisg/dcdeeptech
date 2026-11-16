@@ -14,6 +14,28 @@ service cloud.firestore {
         && get(/databases/$(database)/documents/dfplanAdmins/$(email())).data.active == true
         && get(/databases/$(database)/documents/dfplanAdmins/$(email())).data.role in ['owner','admin'];
     }
+    function anonymousUser() {
+      return request.auth != null && request.auth.token.firebase.sign_in_provider == 'anonymous';
+    }
+    function guest(project) {
+      let member = get(/databases/$(database)/documents/dfplanGuests/$(request.auth.uid)).data;
+      let invitation = get(/databases/$(database)/documents/dfplanInvites/$(member.inviteId)).data;
+      return anonymousUser() && member.active == true && member.role == 'editor'
+        && member.projectKey == project && invitation.active == true
+        && invitation.claimedBy == request.auth.uid && invitation.projectKey == project;
+    }
+    function access(project) { return admin() || (anonymousUser() && guest(project)); }
+    function actorEmail() { return googleUser() ? request.auth.token.email : ''; }
+    function actorName() {
+      return googleUser()
+        ? get(/databases/$(database)/documents/dfplanAdmins/$(email())).data.displayName
+        : get(/databases/$(database)/documents/dfplanGuests/$(request.auth.uid)).data.displayName;
+    }
+    function redeemable(invitation) {
+      return invitation.active == true && invitation.claimedBy == ''
+        && invitation.expiresAt > request.time && invitation.projectKey == 'wu-family'
+        && invitation.role == 'editor';
+    }
     function initialOwnerClaim(address) {
       return googleUser() && email() == '__DFPLAN_INITIAL_OWNER_EMAIL__'
         && address == email() && !exists(/databases/$(database)/documents/dfplanAdmins/$(address))
@@ -85,19 +107,59 @@ service cloud.firestore {
         && request.resource.data.updatedAt == request.time && request.resource.data.updatedBy == request.auth.uid;
       allow delete: if false;
     }
+    match /dfplanInvites/{invite} {
+      allow get: if owner() || (anonymousUser()
+        && (resource.data.claimedBy == request.auth.uid || redeemable(resource.data)));
+      allow list: if owner();
+      allow create: if owner() && invite.matches('^[A-Za-z0-9_-]{43}$')
+        && request.resource.data.keys().hasOnly(['displayName','projectKey','role','active','expiresAt','claimedBy','createdAt','createdBy','updatedAt','updatedBy'])
+        && request.resource.data.displayName is string && request.resource.data.displayName.size() > 0 && request.resource.data.displayName.size() <= 120
+        && request.resource.data.projectKey == 'wu-family' && request.resource.data.role == 'editor'
+        && request.resource.data.active == true && request.resource.data.claimedBy == ''
+        && request.resource.data.expiresAt is timestamp && request.resource.data.expiresAt > request.time
+        && request.resource.data.expiresAt <= request.time + duration.value(7,'d')
+        && request.resource.data.createdAt == request.time && request.resource.data.updatedAt == request.time
+        && request.resource.data.createdBy == request.auth.uid && request.resource.data.updatedBy == request.auth.uid;
+      allow update: if (owner()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['active','updatedAt','updatedBy'])
+        && request.resource.data.active is bool
+        && request.resource.data.updatedAt == request.time && request.resource.data.updatedBy == request.auth.uid)
+        || (anonymousUser() && redeemable(resource.data)
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['claimedBy','updatedAt','updatedBy'])
+          && request.resource.data.claimedBy == request.auth.uid
+          && request.resource.data.updatedAt == request.time && request.resource.data.updatedBy == request.auth.uid
+          && getAfter(/databases/$(database)/documents/dfplanGuests/$(request.auth.uid)).data.inviteId == invite
+          && getAfter(/databases/$(database)/documents/dfplanGuests/$(request.auth.uid)).data.createdAt == request.time);
+      allow delete: if false;
+    }
+    match /dfplanGuests/{uid} {
+      allow get: if owner() || (anonymousUser() && request.auth.uid == uid);
+      allow list: if owner();
+      allow create: if anonymousUser() && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['uid','displayName','projectKey','role','active','inviteId','createdAt','createdBy','updatedAt','updatedBy'])
+        && request.resource.data.uid == uid && request.resource.data.role == 'editor' && request.resource.data.active == true
+        && request.resource.data.projectKey == 'wu-family'
+        && request.resource.data.inviteId is string && request.resource.data.inviteId.matches('^[A-Za-z0-9_-]{43}$')
+        && redeemable(get(/databases/$(database)/documents/dfplanInvites/$(request.resource.data.inviteId)).data)
+        && request.resource.data.displayName == get(/databases/$(database)/documents/dfplanInvites/$(request.resource.data.inviteId)).data.displayName
+        && getAfter(/databases/$(database)/documents/dfplanInvites/$(request.resource.data.inviteId)).data.claimedBy == uid
+        && request.resource.data.createdAt == request.time && request.resource.data.updatedAt == request.time
+        && request.resource.data.createdBy == uid && request.resource.data.updatedBy == uid;
+      allow update,delete: if false;
+    }
     match /dfplanProjects/{project} {
-      allow get: if admin();
+      allow get: if access(project);
       allow list,delete: if false;
       allow create: if owner()
         && request.resource.data.keys().hasOnly(['startDate','revision','updatedAt','updatedBy'])
         && consistentCommit(project,request.resource.data.revision);
-      allow update: if admin()
+      allow update: if access(project)
         && request.resource.data.keys().hasOnly(['startDate','revision','updatedAt','updatedBy'])
         && validDate(request.resource.data.startDate)
         && consistentCommit(project,request.resource.data.revision);
       match /tasks/{id} {
-        allow read: if admin();
-        allow create,update: if admin()
+        allow read: if access(project);
+        allow create,update: if access(project)
           && request.resource.data.keys().hasOnly(['task','revision','updatedAt','updatedBy'])
           && validTask(request.resource.data.task,id)
           && request.resource.data.updatedBy == request.auth.uid && request.resource.data.updatedAt == request.time
@@ -105,13 +167,14 @@ service cloud.firestore {
         allow delete: if false;
       }
       match /history/{event} {
-        allow read: if admin();
-        allow create: if admin()
+        allow read: if access(project);
+        allow create: if access(project)
           && request.resource.data.keys().hasOnly(['revision','text','textEn','actor','actorEmail','actorUid','createdAt'])
           && event == string(request.resource.data.revision)
           && text(request.resource.data.text) && text(request.resource.data.textEn)
           && request.resource.data.actor is string && request.resource.data.actor.size() <= 120
-          && request.resource.data.actorEmail == request.auth.token.email
+          && request.resource.data.actorEmail == actorEmail()
+          && request.resource.data.actor == actorName()
           && request.resource.data.actorUid == request.auth.uid && request.resource.data.createdAt == request.time
           && consistentCommit(project,request.resource.data.revision);
         allow update,delete: if false;

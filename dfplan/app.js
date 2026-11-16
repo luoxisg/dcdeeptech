@@ -1,18 +1,19 @@
 import {
   cloudEnabled,
   connectBackend,
-} from "./backend-client.js?v=20261116-cloud";
+} from "./backend-client.js?v=20261116-links";
 import {
   cloudError,
   cloudGate,
   cloudBar,
   adminDialog,
-} from "./cloud-ui.js?v=20261116-cloud";
+  guestDialog,
+} from "./cloud-ui.js?v=20261116-links";
 import {
   renderPhone,
   phoneEditor,
   matchesCategory,
-} from "./phone-ui.js?v=20261116-cloud";
+} from "./phone-ui.js?v=20261116-links";
 import { seedTasks } from "./data.js";
 import {
   statuses,
@@ -657,6 +658,51 @@ document.addEventListener("click", async (e) => {
         cloudMessage = "";
         btn.disabled = true;
         await cloud?.login();
+      } else if (action === "cloud-link-login") {
+        cloudMessage = "";
+        btn.disabled = true;
+        await cloud?.loginWithLink();
+      } else if (action === "cloud-create-link") {
+        btn.disabled = true;
+        const link = await cloud.createPatrickLink();
+        await showAdmins();
+        const output = $("#patrick-link-output");
+        if (output && cloudReady() && cloudSession.admin?.role === "owner") {
+          output.value = link;
+          $("#patrick-link-result").hidden = false;
+          output.focus();
+          output.select();
+        }
+      } else if (action === "cloud-copy-link") {
+        const output = $("#patrick-link-output");
+        if (navigator.clipboard?.writeText) {
+          await navigator.clipboard.writeText(output.value);
+          toast(
+            s(
+              "邀请链接已复制，请只发给 Patrick。",
+              "Invitation copied. Send it only to Patrick.",
+            ),
+          );
+        } else {
+          output.focus();
+          output.select();
+          toast(
+            s(
+              "请长按选中的链接并复制。",
+              "Press and hold the selected link to copy it.",
+            ),
+          );
+        }
+      } else if (action === "cloud-revoke-link") {
+        btn.disabled = true;
+        await cloud.revokeInvite(btn.dataset.inviteId);
+        await showAdmins();
+        toast(
+          s(
+            "已撤销，这个入口无法继续访问家族资料。",
+            "Revoked. This access can no longer open family records.",
+          ),
+        );
       } else if (action === "cloud-initialize") {
         btn.disabled = true;
         await cloud.initialize();
@@ -982,22 +1028,29 @@ function decorateCloud() {
   const note = $(".storage-note p");
   if (note)
     note.textContent = s(
-      "共享资料保存在后端，只有已启用的管理员可读写。请保管好导出的备份。",
-      "Shared records are stored in the backend. Only active administrators can read or change them. Keep exported backups safe.",
+      "共享资料保存在云端，只有已授权的家族成员可读写。请保管好导出的备份。",
+      "Shared records are stored in the cloud. Only authorized family members can read or change them. Keep exported backups safe.",
     );
   const status = $(".local-status");
   if (status) status.textContent = s("云端共享", "Shared backend");
 }
 async function showAdmins() {
-  const uid = cloudSession.user?.uid;
-  const members = await cloud.listAdmins(),
-    dialog = $("#account-dialog");
+  const uid = cloudSession.user?.uid,
+    dialog = $("#account-dialog"),
+    h = { s, esc, icon };
+  if (cloudSession.admin?.role === "editor") {
+    dialog.innerHTML = guestDialog(cloudSession, h);
+    if (!dialog.open) dialog.showModal();
+    return;
+  }
+  const [members, invites] = await Promise.all([
+    cloud.listAdmins(),
+    cloudSession.admin?.role === "owner"
+      ? cloud.listInvites().catch(() => null)
+      : Promise.resolve([]),
+  ]);
   if (!cloudReady() || uid !== cloudSession.user?.uid) return;
-  dialog.innerHTML = adminDialog(members, cloudSession, hasLegacy, {
-    s,
-    esc,
-    icon,
-  });
+  dialog.innerHTML = adminDialog(members, cloudSession, hasLegacy, h, invites);
   if (!dialog.open) dialog.showModal();
 }
 async function startCloud() {

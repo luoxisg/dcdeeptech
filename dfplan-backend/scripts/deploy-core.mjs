@@ -1,4 +1,62 @@
-import { createHash } from "node:crypto";
+import { createHash, randomBytes } from "node:crypto";
+
+export async function enableAnonymousAuth({
+  projectId,
+  getAccessToken,
+  fetchImpl = fetch,
+}) {
+  if (!/^[a-z][a-z0-9-]{4,61}[a-z0-9]$/.test(projectId || ""))
+    throw Error("Invalid Firebase project ID.");
+  const base = `https://identitytoolkit.googleapis.com/admin/v2/projects/${projectId}/config`;
+  const request = async (method, suffix = "", body) => {
+    const response = await fetchImpl(base + suffix, {
+      method,
+      headers: {
+        Authorization: "Bearer " + (await getAccessToken()),
+        "x-goog-user-project": projectId,
+        "Content-Type": "application/json",
+      },
+      ...(body ? { body: JSON.stringify(body) } : {}),
+      signal: AbortSignal.timeout(45000),
+    });
+    if (!response.ok)
+      throw Error(
+        `Cannot configure Patrick’s passwordless access (${response.status}).`,
+      );
+    return response.json();
+  };
+  const existing = await request("GET");
+  if (!existing.signIn?.anonymous?.enabled) {
+    // A field mask preserves every existing sign-in provider, including Google.
+    await request("PATCH", "?updateMask=signIn.anonymous.enabled", {
+      signIn: { anonymous: { enabled: true } },
+    });
+    const verified = await request("GET");
+    if (verified.signIn?.anonymous?.enabled !== true)
+      throw Error("Anonymous sign-in was not enabled.");
+  }
+}
+
+export async function createPatrickInvitation(
+  db,
+  { serverTimestamp, expiresAt },
+) {
+  const token = randomBytes(32).toString("base64url"),
+    at = serverTimestamp();
+  await db.doc("dfplanInvites/" + token).create({
+    displayName: "Patrick",
+    projectKey: "wu-family",
+    role: "editor",
+    active: true,
+    expiresAt,
+    claimedBy: "",
+    createdAt: at,
+    updatedAt: at,
+    createdBy: "cloud-shell",
+    updatedBy: "cloud-shell",
+  });
+  return "https://dcdeeptech.com/dfplan/#invite=" + token;
+}
 
 // Cloud Shell can supply temporary credentials without any `gcloud auth list`
 // entries. Resolve the identity from the same access token used for deployment.

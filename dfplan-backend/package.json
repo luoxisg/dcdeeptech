@@ -9,7 +9,8 @@
     "test": "firebase emulators:exec --project demo-dfplan --only firestore 'node --test tests/rules.test.mjs'",
     "bootstrap": "node scripts/bootstrap.mjs",
     "deploy:rules": "firebase deploy --only firestore:rules",
-    "test:deploy": "node --test tests/cloud-deploy.test.mjs"
+    "test:deploy": "node --test tests/cloud-deploy.test.mjs",
+    "test:links": "node --test tests/link-client.test.mjs"
   },
   "dependencies": {
     "firebase-admin": "14.5.1",

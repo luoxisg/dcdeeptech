@@ -2,6 +2,29 @@
 
 生产项目 `deepfamily-dfplan` 已创建，使用 Spark 方案、新加坡 `asia-southeast1` 默认数据库，Google 登录和 `dcdeeptech.com` 已授权。管理员已确认完成 Cloud Shell 后端部署；`backend-config.js` 已设为 `enabled: true`，网页使用 Google 登录和云端共享保存。
 
+## Patrick 无账号密码入口
+
+Patrick 使用一次性专属邀请进入，后台以 Firebase Anonymous Authentication 为手机浏览器建立身份；无需提供邮箱或密码。被邀请者可读取和编辑固定的 `wu-family` 计划，修改记录显示 Patrick。管理员和邀请名单由 Google 管理员维护；仅受保护的初始管理员可以签发、查看和撤销邀请。
+
+已登录的 Google Cloud Shell 在仓库根目录运行：
+
+```sh
+git pull --ff-only origin main
+bash dfplan-backend/scripts/deploy-cloudshell.sh --project deepfamily-dfplan --owner-email YOUR_GOOGLE_EMAIL --display-name luoxi --enable-patrick
+```
+
+此命令保留现有资料及 Google 登录，仅在配置中开启匿名认证、更新 Firestore 规则，并生成 Patrick 的第一条专属链接。看到 `PATRICK_LINK_READY` 后，把其下方的完整链接私下发给 Patrick，链接无需发到聊天。后续在 **管理员 → Patrick 的专属入口** 中生成新链接或撤销已有访问。
+
+- 256 位随机邀请仅放在 URL 片段中，不进入请求查询参数；页面读取后会从地址栏移除，仅暂存内存。
+- 须在 6 天内首次点击“进入家族计划”，以事务同时绑定匿名用户与邀请。已使用、过期或撤销的邀请不能被其他设备重用。
+- 首次启用后，同一浏览器使用 Firebase 持久化登录；启用期限不会使已绑定设备自动退出。
+- 换手机、清除浏览器数据或主动退出后，需要新的邀请。每台设备单独一条邀请。
+- 撤销邀请立即使对应身份无法读取或修改后台资料，网页监听撤销状态并清除私密界面。曾查看或导出的资料无法远程收回。
+- 后端验证 Patrick 的实际身份为受邀请的匿名设备；持有未使用邀请的人可领取访问，因此仅私下发给 Patrick。
+- 不使用短信、Cloud Functions 或付费身份服务，继续使用 Spark 免费额度。
+
+验证：`npm run test:links --prefix dfplan-backend` 检查真实网页客户端的邀请启用、再次打开、保存及撤销流程（模拟 SDK 网络边界）；`npm test --prefix dfplan-backend` 使用官方 Firestore 模拟器验证权限与重用、越权、过期、撤销等情况。
+
 ## 免费部署入口（推荐）
 
 [在 Google Cloud Shell 打开部署教程](https://shell.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fluoxisg%2Fdcdeeptech.git&cloudshell_git_branch=main&cloudshell_tutorial=dfplan-backend%2FCLOUDSHELL.md&cloudshell_print=dfplan-backend%2FCLOUDSHELL-START.txt&project=deepfamily-dfplan)
@@ -26,7 +49,7 @@ node --test dfplan-backend/tests/cloud-deploy.test.mjs
 
 - 使用现有 Google 账号登录，无需为本网站另设密码。
 - 初始管理员由一次性初始化脚本设为 `owner`，其记录不能通过网页停用或改写。
-- 已启用的管理员可以增加其他管理员、启用或停用普通管理员。Patrick 暂不加入；以后填写其 Google 邮箱即可。
+- 已启用的管理员可以增加其他管理员、启用或停用普通管理员。Patrick 可使用专属邀请入口；如以后改用 Google 管理员登录，填写其 Google 邮箱即可。
 - 一个共享家族计划保存在 Cloud Firestore，手机及电脑读取同一份数据。
 - 任务、启动日期和只追加的修改记录存放在后端；修改使用事务和版本号，避免覆盖并发修改。
 - 完成条件由后端规则校验：交付凭据、实际完成日及家族验收必须齐全。

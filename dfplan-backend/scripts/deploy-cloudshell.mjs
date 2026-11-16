@@ -1,7 +1,7 @@
 // Run in the user's own Google Cloud Shell. Credentials stay inside that session.
 import { execFileSync } from "node:child_process";
 import { readFile } from "node:fs/promises";
-import { Firestore, FieldValue } from "@google-cloud/firestore";
+import { Firestore, FieldValue, Timestamp } from "@google-cloud/firestore";
 import { GoogleAuth, OAuth2Client } from "google-auth-library";
 import {
   getAuthenticatedEmail,
@@ -11,6 +11,8 @@ import {
   deployRules,
   inspectOwner,
   initializeRecords,
+  enableAnonymousAuth,
+  createPatrickInvitation,
 } from "./deploy-core.mjs";
 const args = process.argv.slice(2);
 function option(name) {
@@ -113,6 +115,12 @@ async function main() {
       source,
     );
     console.log("Security rules verified: " + policy.sha256.slice(0, 16));
+    if (args.includes("--enable-patrick")) {
+      await enableAnonymousAuth({ projectId, getAccessToken });
+      console.log(
+        "Patrick passwordless authentication enabled. Google sign-in preserved.",
+      );
+    }
     const taskSource = await readFile(
       new URL("../../dfplan/data.js", import.meta.url),
       "utf8",
@@ -155,9 +163,20 @@ async function main() {
         2,
       ),
     );
-    console.log(
-      "后端已部署并验证。回到聊天告诉我“后端已部署”，即可继续切换网站的云端保存。",
-    );
+    if (args.includes("--enable-patrick")) {
+      const link = await createPatrickInvitation(db, {
+        serverTimestamp: () => FieldValue.serverTimestamp(),
+        expiresAt: Timestamp.fromMillis(Date.now() + 6 * 86400000),
+      });
+      console.log("PATRICK_LINK_READY");
+      console.log(
+        "以下专属链接请只发给 Patrick，无需发到聊天。须在6天内首次启用：",
+      );
+      console.log(link);
+    } else
+      console.log(
+        "后端已部署并验证。网站现已支持 Google 管理员登录和云端保存。",
+      );
   } finally {
     await db.terminate();
   }

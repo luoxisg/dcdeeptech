@@ -1,5 +1,5 @@
 import { seedTasks } from "./data.js";
-import { backendConfig } from "./backend-config.js?v=20261116-cloud";
+import { backendConfig } from "./backend-config.js?v=20261116-links";
 import { validateProject } from "./model.mjs";
 
 export const cloudEnabled = backendConfig.enabled === true;
@@ -36,6 +36,14 @@ const cleanTask = (task) =>
 
 export async function connectBackend(onSession, onProject, onError) {
   if (!cloudEnabled) return null;
+  const fragment = new URLSearchParams(location.hash.slice(1));
+  let pendingToken = fragment.get("invite") || "",
+    redeeming = false;
+  if (fragment.has("invite")) {
+    window.history.replaceState(null, "", location.pathname + location.search);
+    if (!/^[A-Za-z0-9_-]{43}$/.test(pendingToken))
+      throw codeError("dfplan/link-invalid");
+  }
   const config = backendConfig.firebase;
   if (
     !config.apiKey ||
@@ -65,6 +73,7 @@ export async function connectBackend(onSession, onProject, onError) {
   let member = null,
     stopAdmin = () => {},
     stopProject = () => {},
+    stopLink = () => {},
     epoch = 0,
     loadGeneration = 0,
     last = null;
@@ -119,110 +128,265 @@ export async function connectBackend(onSession, onProject, onError) {
   function reset() {
     stopAdmin();
     stopProject();
+    stopLink();
+    stopLink = () => {};
     stopAdmin = () => {};
     stopProject = () => {};
     member = null;
     last = null;
     ++loadGeneration;
   }
+  function denied(user, error) {
+    ++epoch;
+    reset();
+    onSession({
+      phase: "denied",
+      invite: !!pendingToken,
+      user: {
+        uid: user.uid,
+        email: user.email || "",
+        isGuest: user.isAnonymous,
+      },
+    });
+    if (error) onError(error);
+  }
+  function useMembership(user, data, myEpoch) {
+    if (!data?.active || !["owner", "admin", "editor"].includes(data.role)) {
+      denied(user, user.isAnonymous ? codeError("dfplan/link-invalid") : null);
+      return false;
+    }
+    const first = !member;
+    member = {
+      email: data.email || "",
+      displayName: data.displayName,
+      role: data.role,
+      inviteId: data.inviteId || "",
+    };
+    onSession({
+      phase: "ready",
+      user: {
+        uid: user.uid,
+        email: user.email || "",
+        isGuest: user.isAnonymous,
+      },
+      admin: { ...member },
+    });
+    if (first)
+      stopProject = dbSdk.onSnapshot(
+        projectRef,
+        { includeMetadataChanges: true },
+        (snap) => {
+          if (
+            snap.metadata.fromCache ||
+            snap.metadata.hasPendingWrites ||
+            myEpoch !== epoch
+          )
+            return;
+          load().catch((error) => {
+            if (myEpoch === epoch) onError(error);
+          });
+        },
+        (error) => {
+          if (myEpoch === epoch) denied(user, error);
+        },
+      );
+    return first;
+  }
+  async function claimLink(user, myEpoch) {
+    const token = pendingToken,
+      invitation = dbSdk.doc(db, "dfplanInvites", token),
+      guest = dbSdk.doc(db, "dfplanGuests", user.uid);
+    await dbSdk.runTransaction(db, async (tx) => {
+      const [link, existing] = await Promise.all([
+        tx.get(invitation),
+        tx.get(guest),
+      ]);
+      if (myEpoch !== epoch || auth.currentUser?.uid !== user.uid)
+        throw codeError("dfplan/link-invalid");
+      const data = link.exists() ? link.data() : null;
+      if (existing.exists()) {
+        if (
+          existing.data().inviteId === token &&
+          data?.claimedBy === user.uid &&
+          data.active &&
+          existing.data().active
+        )
+          return;
+        throw codeError("dfplan/link-invalid");
+      }
+      if (
+        !data?.active ||
+        data.claimedBy ||
+        data.expiresAt.toMillis() <= Date.now() ||
+        data.projectKey !== backendConfig.projectKey ||
+        data.role !== "editor"
+      )
+        throw codeError("dfplan/link-invalid");
+      const at = dbSdk.serverTimestamp();
+      tx.set(guest, {
+        uid: user.uid,
+        displayName: data.displayName,
+        projectKey: data.projectKey,
+        role: "editor",
+        active: true,
+        inviteId: token,
+        createdAt: at,
+        createdBy: user.uid,
+        updatedAt: at,
+        updatedBy: user.uid,
+      });
+      tx.update(invitation, {
+        claimedBy: user.uid,
+        updatedAt: at,
+        updatedBy: user.uid,
+      });
+    });
+    if (myEpoch === epoch) {
+      pendingToken = "";
+      redeeming = false;
+    }
+  }
+  async function handleUser(user) {
+    const myEpoch = ++epoch;
+    reset();
+    if (!user) {
+      onSession({
+        phase: pendingToken ? "invited" : "signed-out",
+        invite: !!pendingToken,
+      });
+      return;
+    }
+    if (user.isAnonymous && pendingToken && !redeeming) {
+      onSession({
+        phase: "invited",
+        invite: true,
+        user: { uid: user.uid, email: "", isGuest: true },
+      });
+      return;
+    }
+    onSession({
+      phase: "checking",
+      user: {
+        uid: user.uid,
+        email: user.email || "",
+        isGuest: user.isAnonymous,
+      },
+    });
+    if (user.isAnonymous) {
+      if (pendingToken && redeeming) {
+        try {
+          await claimLink(user, myEpoch);
+        } catch (error) {
+          if (myEpoch === epoch)
+            denied(
+              user,
+              ["permission-denied", "dfplan/link-invalid"].includes(error.code)
+                ? codeError("dfplan/link-invalid")
+                : error,
+            );
+          return;
+        }
+      }
+      if (myEpoch !== epoch) return;
+      stopAdmin = dbSdk.onSnapshot(
+        dbSdk.doc(db, "dfplanGuests", user.uid),
+        { includeMetadataChanges: true },
+        (snap) => {
+          if (
+            myEpoch !== epoch ||
+            snap.metadata.fromCache ||
+            snap.metadata.hasPendingWrites
+          )
+            return;
+          const data = snap.exists() ? snap.data() : null;
+          if (useMembership(user, data, myEpoch)) {
+            stopLink = dbSdk.onSnapshot(
+              dbSdk.doc(db, "dfplanInvites", data.inviteId),
+              { includeMetadataChanges: true },
+              (link) => {
+                if (
+                  myEpoch !== epoch ||
+                  link.metadata.fromCache ||
+                  link.metadata.hasPendingWrites
+                )
+                  return;
+                if (
+                  !link.exists() ||
+                  !link.data().active ||
+                  link.data().claimedBy !== user.uid
+                )
+                  denied(user, codeError("dfplan/link-invalid"));
+              },
+              (error) => {
+                if (myEpoch === epoch) denied(user, error);
+              },
+            );
+          }
+        },
+        (error) => {
+          if (myEpoch === epoch) denied(user, error);
+        },
+      );
+      return;
+    }
+    if (
+      !user.email ||
+      !user.emailVerified ||
+      !user.providerData.some((p) => p.providerId === "google.com")
+    ) {
+      denied(user);
+      return;
+    }
+    let initialClaimAttempted = false;
+    stopAdmin = dbSdk.onSnapshot(
+      dbSdk.doc(admins, user.email.toLowerCase()),
+      { includeMetadataChanges: true },
+      (snapshot) => {
+        if (
+          myEpoch !== epoch ||
+          snapshot.metadata.fromCache ||
+          snapshot.metadata.hasPendingWrites
+        )
+          return;
+        if (!snapshot.exists() && !initialClaimAttempted) {
+          initialClaimAttempted = true;
+          const at = dbSdk.serverTimestamp(),
+            address = user.email.toLowerCase();
+          dbSdk
+            .setDoc(dbSdk.doc(admins, address), {
+              email: address,
+              displayName:
+                backendConfig.bootstrapDisplayName || "Initial administrator",
+              role: "owner",
+              active: true,
+              createdAt: at,
+              updatedAt: at,
+              createdBy: user.uid,
+              updatedBy: user.uid,
+            })
+            .catch(() => {
+              if (myEpoch === epoch && !member) denied(user);
+            });
+          return;
+        }
+        useMembership(
+          user,
+          snapshot.exists() ? snapshot.data() : null,
+          myEpoch,
+        );
+      },
+      (error) => {
+        if (myEpoch === epoch) denied(user, error);
+      },
+    );
+  }
   authSdk.onAuthStateChanged(
     auth,
     (user) => {
-      ++epoch;
-      reset();
-      if (!user) {
-        onSession({ phase: "signed-out" });
-        return;
-      }
-      onSession({ phase: "checking", user: { email: user.email } });
-      if (
-        !user.email ||
-        !user.emailVerified ||
-        !user.providerData.some((p) => p.providerId === "google.com")
-      ) {
-        onSession({ phase: "denied", user: { email: user.email } });
-        return;
-      }
-      const myEpoch = epoch;
-      let initialClaimAttempted = false;
-      stopAdmin = dbSdk.onSnapshot(
-        dbSdk.doc(admins, user.email.toLowerCase()),
-        { includeMetadataChanges: true },
-        (snapshot) => {
-          if (
-            myEpoch !== epoch ||
-            snapshot.metadata.fromCache ||
-            snapshot.metadata.hasPendingWrites
-          )
-            return;
-          if (!snapshot.exists() && !initialClaimAttempted) {
-            initialClaimAttempted = true;
-            const at = dbSdk.serverTimestamp(),
-              address = user.email.toLowerCase();
-            dbSdk
-              .setDoc(dbSdk.doc(admins, address), {
-                email: address,
-                displayName:
-                  backendConfig.bootstrapDisplayName || "Initial administrator",
-                role: "owner",
-                active: true,
-                createdAt: at,
-                updatedAt: at,
-                createdBy: user.uid,
-                updatedBy: user.uid,
-              })
-              .catch(() => {
-                if (myEpoch === epoch && !member)
-                  onSession({ phase: "denied", user: { email: user.email } });
-              });
-            return;
-          }
-          const data = snapshot.exists() ? snapshot.data() : null;
-          if (!data?.active || !["owner", "admin"].includes(data.role)) {
-            member = null;
-            last = null;
-            stopProject();
-            onSession({ phase: "denied", user: { email: user.email } });
-            return;
-          }
-          const first = !member;
-          member = {
-            email: data.email,
-            displayName: data.displayName,
-            role: data.role,
-          };
-          onSession({
-            phase: "ready",
-            user: { uid: user.uid, email: user.email },
-            admin: { ...member },
-          });
-          if (first)
-            stopProject = dbSdk.onSnapshot(
-              projectRef,
-              { includeMetadataChanges: true },
-              (snap) => {
-                if (
-                  snap.metadata.fromCache ||
-                  snap.metadata.hasPendingWrites ||
-                  myEpoch !== epoch
-                )
-                  return;
-                load().catch(onError);
-              },
-              (error) => {
-                member = null;
-                last = null;
-                onSession({ phase: "denied", user: { email: user.email } });
-                onError(error);
-              },
-            );
-        },
-        (error) => {
-          reset();
-          onSession({ phase: "denied", user: { email: user.email } });
-          onError(error);
-        },
-      );
+      handleUser(user).catch((error) => {
+        if (auth.currentUser?.uid === user?.uid && user) denied(user, error);
+        else onError(error);
+      });
     },
     onError,
   );
@@ -232,6 +396,19 @@ export async function connectBackend(onSession, onProject, onError) {
       provider.setCustomParameters({ prompt: "select_account" });
       return authSdk.signInWithPopup(auth, provider);
     },
+    async loginWithLink() {
+      if (!pendingToken) throw codeError("dfplan/link-invalid");
+      redeeming = true;
+      if (auth.currentUser?.isAnonymous) {
+        const prior = await dbSdk.getDocFromServer(
+          dbSdk.doc(db, "dfplanGuests", auth.currentUser.uid),
+        );
+        if (!prior.exists() || prior.data().inviteId === pendingToken)
+          return handleUser(auth.currentUser);
+      }
+      if (auth.currentUser) await authSdk.signOut(auth);
+      return authSdk.signInAnonymously(auth);
+    },
     logout() {
       return authSdk.signOut(auth);
     },
@@ -240,7 +417,7 @@ export async function connectBackend(onSession, onProject, onError) {
       if (!member || member.role !== "owner" || !auth.currentUser)
         throw codeError("dfplan/not-admin");
       const uid = auth.currentUser.uid,
-        email = auth.currentUser.email,
+        email = auth.currentUser.email || "",
         actor = member.displayName,
         myEpoch = epoch;
       await dbSdk.runTransaction(db, async (transaction) => {
@@ -280,7 +457,7 @@ export async function connectBackend(onSession, onProject, onError) {
         throw codeError("dfplan/not-admin");
       const actor = { ...member },
         uid = auth.currentUser.uid,
-        email = auth.currentUser.email,
+        email = auth.currentUser.email || "",
         baseline = structuredClone(last.project),
         myEpoch = epoch;
       if (baseline.tasks.some((t) => !project.tasks.some((n) => n.id === t.id)))
@@ -329,7 +506,8 @@ export async function connectBackend(onSession, onProject, onError) {
       return load();
     },
     async listAdmins() {
-      if (!member) throw codeError("dfplan/not-admin");
+      if (!member || !["owner", "admin"].includes(member.role))
+        throw codeError("dfplan/not-admin");
       const rows = await dbSdk.getDocsFromServer(admins);
       return rows.docs
         .map((d) => ({
@@ -345,7 +523,12 @@ export async function connectBackend(onSession, onProject, onError) {
     async addAdmin(email, displayName) {
       const address = email.trim().toLowerCase(),
         name = displayName.trim();
-      if (!member || !auth.currentUser) throw codeError("dfplan/not-admin");
+      if (
+        !member ||
+        !auth.currentUser ||
+        !["owner", "admin"].includes(member.role)
+      )
+        throw codeError("dfplan/not-admin");
       if (
         !/^[^/@\s]+@[^/@\s]+\.[^/@\s]+$/.test(address) ||
         !name ||
@@ -369,8 +552,61 @@ export async function connectBackend(onSession, onProject, onError) {
         });
       });
     },
+    async listInvites() {
+      if (member?.role !== "owner") throw codeError("dfplan/not-admin");
+      const rows = await dbSdk.getDocsFromServer(
+        dbSdk.collection(db, "dfplanInvites"),
+      );
+      return rows.docs
+        .map((d) => ({
+          id: d.id,
+          displayName: d.data().displayName,
+          active: d.data().active,
+          claimed: !!d.data().claimedBy,
+          expired: d.data().expiresAt.toMillis() <= Date.now(),
+          createdAt: d.data().createdAt.toMillis(),
+        }))
+        .sort((a, b) => b.createdAt - a.createdAt);
+    },
+    async createPatrickLink() {
+      if (member?.role !== "owner" || !auth.currentUser)
+        throw codeError("dfplan/not-admin");
+      const bytes = crypto.getRandomValues(new Uint8Array(32)),
+        token = btoa(String.fromCharCode(...bytes))
+          .replaceAll("+", "-")
+          .replaceAll("/", "_")
+          .replaceAll("=", "");
+      const at = dbSdk.serverTimestamp();
+      await dbSdk.setDoc(dbSdk.doc(db, "dfplanInvites", token), {
+        displayName: "Patrick",
+        projectKey: backendConfig.projectKey,
+        role: "editor",
+        active: true,
+        claimedBy: "",
+        expiresAt: dbSdk.Timestamp.fromMillis(Date.now() + 6 * 86400000),
+        createdAt: at,
+        updatedAt: at,
+        createdBy: auth.currentUser.uid,
+        updatedBy: auth.currentUser.uid,
+      });
+      return new URL("./#invite=" + token, location.href).href;
+    },
+    async revokeInvite(id) {
+      if (member?.role !== "owner" || !auth.currentUser)
+        throw codeError("dfplan/not-admin");
+      await dbSdk.updateDoc(dbSdk.doc(db, "dfplanInvites", id), {
+        active: false,
+        updatedAt: dbSdk.serverTimestamp(),
+        updatedBy: auth.currentUser.uid,
+      });
+    },
     async setAdminActive(email, active) {
-      if (!member || !auth.currentUser) throw codeError("dfplan/not-admin");
+      if (
+        !member ||
+        !auth.currentUser ||
+        !["owner", "admin"].includes(member.role)
+      )
+        throw codeError("dfplan/not-admin");
       if (email === member.email) throw codeError("dfplan/self-disable");
       return dbSdk.updateDoc(dbSdk.doc(admins, email), {
         active: !!active,
