@@ -1,5 +1,34 @@
 import { createHash } from "node:crypto";
 
+// Cloud Shell can supply temporary credentials without any `gcloud auth list`
+// entries. Resolve the identity from the same access token used for deployment.
+export async function getAuthenticatedEmail({
+  getAccessToken,
+  fetchImpl = fetch,
+}) {
+  const response = await fetchImpl(
+    "https://www.googleapis.com/oauth2/v2/userinfo",
+    {
+      headers: { Authorization: "Bearer " + (await getAccessToken()) },
+      signal: AbortSignal.timeout(45000),
+    },
+  );
+  if (!response.ok)
+    throw Error(
+      `Google account verification failed (${response.status}). Run gcloud auth login in Cloud Shell, authorize the administrator account, then retry.`,
+    );
+  const identity = await response.json();
+  if (
+    identity.verified_email !== true ||
+    typeof identity.email !== "string" ||
+    !identity.email.trim()
+  )
+    throw Error(
+      "Google did not return a verified email. Run gcloud auth login in Cloud Shell, then retry.",
+    );
+  return identity.email.trim().toLowerCase();
+}
+
 export function validateInputs({
   projectId,
   ownerEmail,

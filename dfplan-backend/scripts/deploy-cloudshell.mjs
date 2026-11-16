@@ -4,6 +4,7 @@ import { readFile } from "node:fs/promises";
 import { Firestore, FieldValue } from "@google-cloud/firestore";
 import { GoogleAuth, OAuth2Client } from "google-auth-library";
 import {
+  getAuthenticatedEmail,
   validateInputs,
   renderRules,
   createRulesApi,
@@ -27,16 +28,14 @@ async function main() {
     console.log(
       "Use your own authorized Google Cloud Shell account for this command.",
     );
+  // This first token request triggers Cloud Shell's native authorization dialog.
+  const getAccessToken = async () => gcloud("auth", "print-access-token");
+  const activeAccount = await getAuthenticatedEmail({ getAccessToken });
   const settings = validateInputs({
     projectId: option("--project"),
     ownerEmail: option("--owner-email"),
     displayName: option("--display-name") || "luoxi",
-    activeAccount: gcloud(
-      "auth",
-      "list",
-      "--filter=status:ACTIVE",
-      "--format=value(account)",
-    ),
+    activeAccount,
   });
   const { projectId, email, displayName } = settings;
   const configSource = await readFile(
@@ -55,7 +54,6 @@ async function main() {
   console.log(
     `Deploying DFplan to ${projectId} for the selected administrator. Existing project records will be preserved.`,
   );
-  const getAccessToken = async () => gcloud("auth", "print-access-token");
   const response = await fetch(
     `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)`,
     {

@@ -18,6 +18,8 @@ bash dfplan-backend/scripts/deploy-cloudshell.sh --project deepfamily-dfplan --o
 
 脚本会核对当前 Google 账号、Firebase 项目和新加坡数据库。首次运行需要安装依赖，可能等待几分钟。
 
+Cloud Shell 的临时授权可能不会出现在 `gcloud auth list` 中；脚本会直接通过 Google 核对部署凭据对应的已验证邮箱。如果提示无法核对账号，请在终端运行 `gcloud auth login`，使用管理员账号完成 Google 授权，再运行部署命令。
+
 它会：
 
 1. 以指定初始管理员邮箱生成权限规则，调用 Google 官方 API 编译及发布，并核对发布结果。

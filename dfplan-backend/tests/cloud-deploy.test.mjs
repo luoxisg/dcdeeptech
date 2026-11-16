@@ -2,6 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import {
+  getAuthenticatedEmail,
   validateInputs,
   renderRules,
   createRulesApi,
@@ -146,6 +147,60 @@ const options = {
   serverTimestamp: () => "SERVER_TIME",
 };
 const owner = { email, displayName: "Owner", role: "owner", active: true };
+test("Cloud Shell resolves identity through the deployment token without listing local accounts", async () => {
+  let authorized = false;
+  const actual = await getAuthenticatedEmail({
+    getAccessToken: async () => {
+      authorized = true;
+      return "temporary-credential";
+    },
+    fetchImpl: async (url, options) => {
+      assert.equal(authorized, true);
+      assert.equal(url, "https://www.googleapis.com/oauth2/v2/userinfo");
+      assert.equal(
+        options.headers.Authorization,
+        "Bearer temporary-credential",
+      );
+      assert.ok(!url.includes("temporary-credential"));
+      return new Response(
+        JSON.stringify({ email: " Owner@Example.com ", verified_email: true }),
+      );
+    },
+  });
+  assert.equal(actual, email);
+  assert.equal(
+    validateInputs({ ...settings, activeAccount: actual }).email,
+    email,
+  );
+});
+test("Cloud Shell rejects denied identity access and unverified or missing emails", async () => {
+  for (const response of [
+    new Response("denied", { status: 403 }),
+    new Response(JSON.stringify({ email, verified_email: false })),
+    new Response(JSON.stringify({ verified_email: true })),
+  ]) {
+    await assert.rejects(
+      getAuthenticatedEmail({
+        getAccessToken: async () => "temporary-credential",
+        fetchImpl: async () => response,
+      }),
+      /gcloud auth login/,
+    );
+  }
+});
+test("Cloud Shell never queries identity when native authorization fails", async () => {
+  await assert.rejects(
+    getAuthenticatedEmail({
+      getAccessToken: async () => {
+        throw Error("Authorization cancelled");
+      },
+      fetchImpl: async () => {
+        assert.fail("Must not query identity");
+      },
+    }),
+    /Authorization cancelled/,
+  );
+});
 test("deployment normalizes the selected account and rejects account mismatch", () => {
   assert.equal(
     validateInputs({ ...settings, ownerEmail: " Owner@Example.com " }).email,
