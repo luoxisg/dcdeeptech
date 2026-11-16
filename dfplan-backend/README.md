@@ -1,6 +1,6 @@
 # DFplan · Google 管理员与 Firebase 后端
 
-生产项目 `deepfamily-dfplan` 已创建，使用 Spark 方案、新加坡 `asia-southeast1` 默认数据库，Google 登录和 `dcdeeptech.com` 已授权。当前仍等待权限规则发布与初始化；`backend-config.js` 保持 `enabled: false`，现网仍使用本机保存。
+生产项目 `deepfamily-dfplan` 已创建，使用 Spark 方案、新加坡 `asia-southeast1` 默认数据库，Google 登录和 `dcdeeptech.com` 已授权。管理员已确认完成 Cloud Shell 后端部署；`backend-config.js` 已设为 `enabled: true`，网页使用 Google 登录和云端共享保存。
 
 ## 免费部署入口（推荐）
 

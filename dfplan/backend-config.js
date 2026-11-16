@@ -1,6 +1,6 @@
 // Public Firebase web configuration. Access is enforced by Firestore rules.
 export const backendConfig = Object.freeze({
-  enabled: false,
+  enabled: true,
   bootstrapDisplayName: "luoxi",
   projectKey: "wu-family",
   firebase: {

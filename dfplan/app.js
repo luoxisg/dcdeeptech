@@ -1,18 +1,18 @@
 import {
   cloudEnabled,
   connectBackend,
-} from "./backend-client.js?v=20261116-admin";
+} from "./backend-client.js?v=20261116-cloud";
 import {
   cloudError,
   cloudGate,
   cloudBar,
   adminDialog,
-} from "./cloud-ui.js?v=20261116-admin";
+} from "./cloud-ui.js?v=20261116-cloud";
 import {
   renderPhone,
   phoneEditor,
   matchesCategory,
-} from "./phone-ui.js?v=20261116-admin";
+} from "./phone-ui.js?v=20261116-cloud";
 import { seedTasks } from "./data.js";
 import {
   statuses,

@@ -1,5 +1,5 @@
 import { seedTasks } from "./data.js";
-import { backendConfig } from "./backend-config.js?v=20261116-admin";
+import { backendConfig } from "./backend-config.js?v=20261116-cloud";
 import { validateProject } from "./model.mjs";
 
 export const cloudEnabled = backendConfig.enabled === true;
