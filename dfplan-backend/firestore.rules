@@ -56,9 +56,10 @@ service cloud.firestore {
     }
     function validTask(t, id) {
       return t.keys().hasAll(['id','title','priority','owner','collaborators','action','deliverable','dependency','weekStart','weekEnd','status','due','completed','next','evidence','accepted','updatedAt'])
-        && t.keys().hasOnly(['id','title','titleEn','priority','owner','ownerEn','collaborators','collaboratorsEn','action','actionEn','deliverable','deliverableEn','dependency','dependencyEn','weekStart','weekEnd','status','due','completed','next','evidence','accepted','updatedAt'])
+        && t.keys().hasOnly(['id','title','titleEn','priority','owner','ownerEn','assignee','collaborators','collaboratorsEn','action','actionEn','deliverable','deliverableEn','dependency','dependencyEn','weekStart','weekEnd','status','due','completed','next','evidence','accepted','updatedAt'])
         && t.id == id && id.matches('^[A-Za-z0-9_-]{1,80}$')
         && text(t.title) && t.title.size() > 0 && t.title.matches('(?s).*[^\\s].*')
+        && t.get('assignee','') is string && t.get('assignee','').size() <= 120
         && text(t.owner) && text(t.collaborators) && text(t.action) && text(t.deliverable)
         && text(t.dependency) && text(t.next) && text(t.evidence) && text(t.updatedAt)
         && text(t.get('titleEn','')) && text(t.get('ownerEn','')) && text(t.get('collaboratorsEn',''))
@@ -88,6 +89,13 @@ service cloud.firestore {
     function consistentCommit(project, revision) {
       return exists(/databases/$(database)/documents/dfplanProjects/$(project))
         ? regularCommit(project, revision) : initialCommit(project, revision);
+    }
+    function taskWrite(project, id) {
+      return access(project)
+        && request.resource.data.keys().hasOnly(['task','revision','updatedAt','updatedBy'])
+        && validTask(request.resource.data.task,id)
+        && request.resource.data.updatedBy == request.auth.uid && request.resource.data.updatedAt == request.time
+        && consistentCommit(project,request.resource.data.revision);
     }
     match /dfplanAdmins/{address} {
       allow get: if googleUser() && (address == email() || admin());
@@ -159,11 +167,11 @@ service cloud.firestore {
         && consistentCommit(project,request.resource.data.revision);
       match /tasks/{id} {
         allow read: if access(project);
-        allow create,update: if access(project)
-          && request.resource.data.keys().hasOnly(['task','revision','updatedAt','updatedBy'])
-          && validTask(request.resource.data.task,id)
-          && request.resource.data.updatedBy == request.auth.uid && request.resource.data.updatedAt == request.time
-          && consistentCommit(project,request.resource.data.revision);
+        allow create: if taskWrite(project,id);
+        // Older clients must not silently discard names introduced by this schema.
+        // An intentional clear sends the explicit empty-string value instead.
+        allow update: if taskWrite(project,id)
+          && (!resource.data.task.keys().hasAny(['assignee']) || request.resource.data.task.keys().hasAll(['assignee']));
         allow delete: if false;
       }
       match /history/{event} {

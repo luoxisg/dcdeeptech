@@ -76,6 +76,11 @@ export function validateProject(p) {
       !validDate(t.completed)
     )
       throw Error("format");
+    if (
+      t.assignee !== undefined &&
+      (typeof t.assignee !== "string" || t.assignee.length > 120)
+    )
+      throw Error("format");
     for (const k of [
       "titleEn",
       "ownerEn",

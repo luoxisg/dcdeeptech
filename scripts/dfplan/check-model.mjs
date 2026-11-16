@@ -32,6 +32,8 @@ for (const mutate of [
   (p) => (p.startDate = "2026-02-30"),
   (p) => (p.tasks[0].due = "2026-99-99"),
   (p) => (p.tasks[0].titleEn = {}),
+  (p) => (p.tasks[0].assignee = {}),
+  (p) => (p.tasks[0].assignee = "x".repeat(121)),
   (p) =>
     p.history.push({ id: "x", at: "invalid", actor: "test", text: "test" }),
 ]) {
@@ -47,7 +49,11 @@ Object.assign(completed.tasks[0], {
   evidence: "Reviewed record 001",
 });
 assert.doesNotThrow(() => validateProject(completed));
+const named = fresh();
+named.tasks[0].assignee = "Alex Example";
+assert.doesNotThrow(() => validateProject(named));
 const oldExport = fresh();
+oldExport.tasks.forEach((t) => delete t.assignee);
 oldExport.tasks.forEach((t) =>
   Object.keys(t)
     .filter((k) => k.endsWith("En"))

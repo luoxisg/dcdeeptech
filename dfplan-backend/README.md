@@ -2,6 +2,23 @@
 
 生产项目 `deepfamily-dfplan` 已创建，使用 Spark 方案、新加坡 `asia-southeast1` 默认数据库，Google 登录和 `dcdeeptech.com` 已授权。管理员已确认完成 Cloud Shell 后端部署；`backend-config.js` 已设为 `enabled: true`，网页使用 Google 登录和云端共享保存。
 
+## 从手工表格更新具体人名
+
+任务新增可选字段 `assignee`（最多 120 字符），与 `owner` / `ownerEn` 的负责人描述分开。手机卡片、任务编辑、电脑列表、搜索筛选、JSON 备份及 CSV 导出均支持该字段；人名在中英文界面使用相同原文。旧记录和旧备份没有此字段时显示待确认，不改变原有任务状态。
+
+实际人名仅保存在私密 Firestore 文档中。不要将填写过的表格或人名清单提交到公开仓库。
+
+在已有 Google 授权的 Cloud Shell 中，先拉取最新代码，然后执行（下方只是虚构示例）：
+
+```sh
+git pull --ff-only origin main
+bash dfplan-backend/scripts/deploy-cloudshell.sh --project deepfamily-dfplan --owner-email YOUR_GOOGLE_EMAIL --display-name luoxi --assignees-json '{"WU-01":"Alex Example","WU-05":""}'
+```
+
+此命令先发布兼容新字段的规则，再以事务按任务编号合并人名。保留当前任务说明、负责人描述、状态、日期、下一步、凭据、启动日期及既有历史；更改统一增加一个版本和一条修改记录。相同名单重复运行不再产生修改；遇到缺失任务或初始管理员停用会整批停止。新规则还会拒绝旧页面静默丢弃已导入的人名；有意清空需由新版显式提交空字符串。仅在带 `--enable-patrick` 时才会另外创建 Patrick 邀请。
+
+终端出现 `DFPLAN_ASSIGNEES_UPDATED` 后，刷新网页即可查看。若同时带其他选项，应同时检查相应完成标记。
+
 ## Patrick 无账号密码入口
 
 Patrick 使用一次性专属邀请进入，后台以 Firebase Anonymous Authentication 为手机浏览器建立身份；无需提供邮箱或密码。被邀请者可读取和编辑固定的 `wu-family` 计划，修改记录显示 Patrick。管理员和邀请名单由 Google 管理员维护；仅受保护的初始管理员可以签发、查看和撤销邀请。

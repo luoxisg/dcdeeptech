@@ -13,6 +13,8 @@ import {
   initializeRecords,
   enableAnonymousAuth,
   createPatrickInvitation,
+  parseAssigneeUpdates,
+  mergeAssignees,
 } from "./deploy-core.mjs";
 const args = process.argv.slice(2);
 function option(name) {
@@ -26,6 +28,10 @@ function gcloud(...args) {
   }).trim();
 }
 async function main() {
+  // Parse private input before any deployment writes. Names are never stored in source.
+  const assignments = args.includes("--assignees-json")
+    ? parseAssigneeUpdates(option("--assignees-json"))
+    : null;
   if (!process.env.CLOUD_SHELL)
     console.log(
       "Use your own authorized Google Cloud Shell account for this command.",
@@ -134,6 +140,13 @@ async function main() {
       seedTasks,
       serverTimestamp: () => FieldValue.serverTimestamp(),
     });
+    const assignmentUpdate = assignments
+      ? await mergeAssignees(db, {
+          assignments,
+          email,
+          serverTimestamp: () => FieldValue.serverTimestamp(),
+        })
+      : null;
     const [owner, project, tasks] = await Promise.all([
       db.doc("dfplanAdmins/" + email).get(),
       db.doc("dfplanProjects/wu-family").get(),
@@ -158,11 +171,13 @@ async function main() {
           taskCount: tasks.size,
           revision: project.data().revision,
           ...initialized,
+          ...(assignmentUpdate ? { assignmentUpdate } : {}),
         },
         null,
         2,
       ),
     );
+    if (assignmentUpdate) console.log("DFPLAN_ASSIGNEES_UPDATED");
     if (args.includes("--enable-patrick")) {
       const link = await createPatrickInvitation(db, {
         serverTimestamp: () => FieldValue.serverTimestamp(),

@@ -1,5 +1,5 @@
 import { seedTasks } from "./data.js";
-import { backendConfig } from "./backend-config.js?v=20261116-links";
+import { backendConfig } from "./backend-config.js?v=20261116-assignees";
 import { validateProject } from "./model.mjs";
 
 export const cloudEnabled = backendConfig.enabled === true;
@@ -11,6 +11,7 @@ const taskFields = [
   "priority",
   "owner",
   "ownerEn",
+  "assignee",
   "collaborators",
   "collaboratorsEn",
   "action",
@@ -29,9 +30,15 @@ const taskFields = [
   "accepted",
   "updatedAt",
 ];
-const cleanTask = (task) =>
+const cleanTask = (task, preserveEmptyAssignee = true) =>
   Object.fromEntries(
-    taskFields.filter((k) => task[k] !== undefined).map((k) => [k, task[k]]),
+    taskFields
+      .filter(
+        (k) =>
+          task[k] !== undefined &&
+          (k !== "assignee" || task[k] !== "" || preserveEmptyAssignee),
+      )
+      .map((k) => [k, task[k]]),
   );
 
 export async function connectBackend(onSession, onProject, onError) {
@@ -434,7 +441,7 @@ export async function connectBackend(onSession, onProject, onError) {
         });
         for (const task of seedTasks)
           transaction.set(dbSdk.doc(tasks, task.id), {
-            task: cleanTask(task),
+            task: cleanTask(task, false),
             revision: 0,
             updatedAt: at,
             updatedBy: uid,
@@ -464,13 +471,19 @@ export async function connectBackend(onSession, onProject, onError) {
         throw codeError("dfplan/no-delete");
       if (project.tasks.some((t) => !/^[A-Za-z0-9_-]{1,80}$/.test(t.id)))
         throw codeError("dfplan/task-id");
-      const changed = project.tasks.filter(
-        (t) =>
-          JSON.stringify(cleanTask(t)) !==
-          JSON.stringify(
-            cleanTask(baseline.tasks.find((old) => old.id === t.id) || {}),
-          ),
-      );
+      const changed = project.tasks
+        .map((task) => {
+          const original =
+            baseline.tasks.find((old) => old.id === task.id) || {};
+          return cleanTask(task, Object.hasOwn(original, "assignee"));
+        })
+        .filter(
+          (t) =>
+            JSON.stringify(cleanTask(t)) !==
+            JSON.stringify(
+              cleanTask(baseline.tasks.find((old) => old.id === t.id) || {}),
+            ),
+        );
       if (!changed.length && project.startDate === baseline.startDate)
         return load();
       await dbSdk.runTransaction(db, async (transaction) => {

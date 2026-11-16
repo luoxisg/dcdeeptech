@@ -1,19 +1,19 @@
 import {
   cloudEnabled,
   connectBackend,
-} from "./backend-client.js?v=20261116-links";
+} from "./backend-client.js?v=20261116-assignees";
 import {
   cloudError,
   cloudGate,
   cloudBar,
   adminDialog,
   guestDialog,
-} from "./cloud-ui.js?v=20261116-links";
+} from "./cloud-ui.js?v=20261116-assignees";
 import {
   renderPhone,
   phoneEditor,
   matchesCategory,
-} from "./phone-ui.js?v=20261116-links";
+} from "./phone-ui.js?v=20261116-assignees";
 import { seedTasks } from "./data.js";
 import {
   statuses,
@@ -257,6 +257,7 @@ function filtered() {
           t.titleEn,
           t.owner,
           t.ownerEn,
+          t.assignee,
           t.action,
           t.actionEn,
           t.next,
@@ -264,7 +265,7 @@ function filtered() {
           .join(" ")
           .toLowerCase()
           .includes(query.toLowerCase())) &&
-      (!owner || t.owner === owner) &&
+      (!owner || t.owner === owner || t.assignee === owner) &&
       (filter === "all" ||
         (["P0", "P1", "P2"].includes(filter) && t.priority === filter) ||
         (filter === "overdue" && overdue(t)) ||
@@ -288,16 +289,18 @@ function changeView(v, reset = true) {
 }
 function toolbar() {
   return `<div class="toolbar"><label class="search">${icon("search")}<input id="search" type="search" aria-label="${s("搜索任务", "Search tasks")}" placeholder="${s("搜索任务、负责人或下一步…", "Search tasks, people or next steps…")}" value="${esc(query)}"></label><select id="owner-filter" aria-label="${s("筛选负责人", "Filter by owner")}"><option value="">${s("全部负责人", "All owners")}</option>${[
-    ...new Set(project.tasks.map((t) => t.owner)),
+    ...new Set(project.tasks.flatMap((t) => [t.assignee, t.owner])),
   ]
     .filter(Boolean)
     .map(
       (o) =>
         `<option value="${esc(o)}" ${owner === o ? "selected" : ""}>${esc(
-          value(
-            project.tasks.find((t) => t.owner === o),
-            "owner",
-          ),
+          project.tasks.some((t) => t.owner === o)
+            ? value(
+                project.tasks.find((t) => t.owner === o),
+                "owner",
+              )
+            : o,
         )}</option>`,
     )
     .join(
@@ -305,7 +308,7 @@ function toolbar() {
     )}</select><select id="status-filter" aria-label="${s("筛选状态", "Filter by status")}"><option value="all">${s("全部任务", "All tasks")}</option><option value="P0" ${filter === "P0" ? "selected" : ""}>${s("P0 优先事项", "P0 priorities")}</option><option value="overdue" ${filter === "overdue" ? "selected" : ""}>${s("已逾期", "Overdue")}</option>${statuses.map((st) => `<option value="${st}" ${filter === st ? "selected" : ""}>${esc(statusLabel(st))}</option>`).join("")}</select><span class="results">${filtered().length} ${s("项", "tasks")}</span>${query || filter !== "all" || owner ? `<button class="text-button" data-action="clear">${s("清除", "Clear")}</button>` : ""}</div>`;
 }
 function taskCard(t) {
-  return `<article class="task-card" draggable="true" data-task="${esc(t.id)}"><button class="card-open" data-action="edit" data-id="${esc(t.id)}"><span class="card-meta"><span>${esc(t.id)}</span>${priority(t)}${icon("arrow")}</span><h3>${esc(value(t, "title"))}</h3><p>${esc(t.next || value(t, "action"))}</p><span class="card-person"><i>${esc(value(t, "owner").slice(0, 1) || "?")}</i>${esc(value(t, "owner") || s("负责人待定", "Owner to confirm"))}</span><span class="card-date ${overdue(t) ? "late" : ""}">${icon("calendar")}${esc(dateLabel(due(t)))}<small>W${t.weekStart}–${t.weekEnd}</small></span></button><select class="status-select status-${statuses.indexOf(t.status)}" data-status="${esc(t.id)}" aria-label="${esc(t.id + " " + s("状态", "status"))}">${statuses.map((st) => `<option value="${st}" ${t.status === st ? "selected" : ""}>${esc(statusLabel(st))}</option>`).join("")}</select></article>`;
+  return `<article class="task-card" draggable="true" data-task="${esc(t.id)}"><button class="card-open" data-action="edit" data-id="${esc(t.id)}"><span class="card-meta"><span>${esc(t.id)}</span>${priority(t)}${icon("arrow")}</span><h3>${esc(value(t, "title"))}</h3><p>${esc(t.next || value(t, "action"))}</p><span class="card-person"><i>${esc((t.assignee || value(t, "owner")).slice(0, 1) || "?")}</i>${esc(t.assignee || s("人名待确认", "Person to confirm"))} · ${esc(value(t, "owner"))}</span><span class="card-date ${overdue(t) ? "late" : ""}">${icon("calendar")}${esc(dateLabel(due(t)))}<small>W${t.weekStart}–${t.weekEnd}</small></span></button><select class="status-select status-${statuses.indexOf(t.status)}" data-status="${esc(t.id)}" aria-label="${esc(t.id + " " + s("状态", "status"))}">${statuses.map((st) => `<option value="${st}" ${t.status === st ? "selected" : ""}>${esc(statusLabel(st))}</option>`).join("")}</select></article>`;
 }
 function empty() {
   return `<div class="empty">${icon("search")}<h3>${s("未找到匹配的行动", "No matching actions")}</h3><p>${s("试试其他关键词，或清除筛选。", "Try another keyword or clear the filters.")}</p><button class="secondary" data-action="clear">${s("清除筛选", "Clear filters")}</button></div>`;
@@ -313,7 +316,7 @@ function empty() {
 function overview() {
   const rows = filtered(),
     p0 = rows.filter((t) => t.priority === "P0");
-  return `<div class="overview-grid"><section class="priority-panel"><div class="panel-top"><div><span class="section-kicker">01 / ${s("筑牢根基", "LAY THE FOUNDATIONS")}</span><h2>${s("先把这几件事落实", "Start with what matters")}</h2></div><span class="outline-tag">P0 · ${s("优先行动", "PRIORITY")}</span></div>${p0.map((t) => `<button class="focus-row" data-action="edit" data-id="${esc(t.id)}"><span class="task-index">${esc(t.id.slice(-2))}</span><span class="focus-body"><strong>${esc(value(t, "title"))}</strong><span>${esc(t.next || value(t, "deliverable"))}</span><small>${esc(value(t, "owner"))} <b>·</b> ${esc(dateLabel(due(t)))}</small></span>${statusBadge(t)}${icon("chevron")}</button>`).join("") || `<div class="empty compact">${s("当前筛选下没有优先事项。", "No priorities match these filters.")}</div>`}</section><aside class="legacy-note"><span class="section-kicker">${s("传承的尺度", "OUR STANDARD OF CARE")}</span><h2>${s("让记忆有出处，<br>让家人接得住。", "Rooted in evidence.<br>Ready for the next generation.")}</h2><div class="note-rule"></div>${[
+  return `<div class="overview-grid"><section class="priority-panel"><div class="panel-top"><div><span class="section-kicker">01 / ${s("筑牢根基", "LAY THE FOUNDATIONS")}</span><h2>${s("先把这几件事落实", "Start with what matters")}</h2></div><span class="outline-tag">P0 · ${s("优先行动", "PRIORITY")}</span></div>${p0.map((t) => `<button class="focus-row" data-action="edit" data-id="${esc(t.id)}"><span class="task-index">${esc(t.id.slice(-2))}</span><span class="focus-body"><strong>${esc(value(t, "title"))}</strong><span>${esc(t.next || value(t, "deliverable"))}</span><small>${esc(t.assignee || s("人名待确认", "Person to confirm"))} · ${esc(value(t, "owner"))} <b>·</b> ${esc(dateLabel(due(t)))}</small></span>${statusBadge(t)}${icon("chevron")}</button>`).join("") || `<div class="empty compact">${s("当前筛选下没有优先事项。", "No priorities match these filters.")}</div>`}</section><aside class="legacy-note"><span class="section-kicker">${s("传承的尺度", "OUR STANDARD OF CARE")}</span><h2>${s("让记忆有出处，<br>让家人接得住。", "Rooted in evidence.<br>Ready for the next generation.")}</h2><div class="note-rule"></div>${[
     [
       s("资料有编号、有来源", "Numbered records with clear sources"),
       s("授权与访问边界明确", "Clear consent and access boundaries"),
@@ -351,10 +354,10 @@ function board() {
 }
 function list() {
   return filtered().length
-    ? `<div class="table-wrap"><table><thead><tr>${[s("行动事项", "Action"), s("优先级", "Priority"), s("负责人", "Owner"), s("状态", "Status"), s("截止日", "Due date"), s("下一步", "Next step")].map((x) => `<th>${x}</th>`).join("")}</tr></thead><tbody>${filtered()
+    ? `<div class="table-wrap"><table><thead><tr>${[s("行动事项", "Action"), s("优先级", "Priority"), s("负责人描述", "Responsibility"), s("具体人名", "Assignee"), s("状态", "Status"), s("截止日", "Due date"), s("下一步", "Next step")].map((x) => `<th>${x}</th>`).join("")}</tr></thead><tbody>${filtered()
         .map(
           (t) =>
-            `<tr><td><button class="table-title" data-action="edit" data-id="${esc(t.id)}"><small>${esc(t.id)}</small>${esc(value(t, "title"))}</button></td><td>${priority(t)}</td><td>${esc(value(t, "owner"))}</td><td>${statusBadge(t)}</td><td class="${overdue(t) ? "late" : ""}">${esc(dateLabel(due(t)))}</td><td>${esc(t.next || s("待填写", "To be added"))}</td></tr>`,
+            `<tr><td><button class="table-title" data-action="edit" data-id="${esc(t.id)}"><small>${esc(t.id)}</small>${esc(value(t, "title"))}</button></td><td>${priority(t)}</td><td>${esc(value(t, "owner"))}</td><td>${esc(t.assignee || s("待确认", "To confirm"))}</td><td>${statusBadge(t)}</td><td class="${overdue(t) ? "late" : ""}">${esc(dateLabel(due(t)))}</td><td>${esc(t.next || s("待填写", "To be added"))}</td></tr>`,
         )
         .join("")}</tbody></table></div>`
     : empty();
@@ -444,6 +447,7 @@ function openEditor(task) {
         titleEn: "",
         owner: "",
         ownerEn: "",
+        assignee: "",
         collaborators: "",
         collaboratorsEn: "",
         action: "",
@@ -481,7 +485,7 @@ function openEditor(task) {
   const bilingual = (k, label, rows = 2) =>
     `<label>${label}<textarea name="${key(k)}" rows="${rows}" maxlength="12000">${esc(value(t, k))}</textarea></label>`;
   $("#editor").innerHTML =
-    `<form id="task-form"><div class="dialog-head"><div><span class="eyebrow">${esc(t.id)} / ${s("行动详情", "ACTION DETAILS")}</span><h2 id="dialog-title">${s("让传承有据可循", "Give the next step a clear purpose")}</h2></div><button type="button" class="icon-button" data-close="editor" aria-label="${s("关闭", "Close")}">${icon("close")}</button></div><div class="form-body">${input(key("title"), s("行动名称", "Action title"), "text", 'required maxlength="160"')}<div class="form-grid"><label>${s("优先级", "Priority")}<select name="priority">${["P0", "P1", "P2"].map((p) => `<option ${p === t.priority ? "selected" : ""}>${p}</option>`).join("")}</select></label><label>${s("当前状态", "Status")}<select name="status">${statuses.map((st) => `<option value="${st}" ${st === t.status ? "selected" : ""}>${statusLabel(st)}</option>`).join("")}</select></label>${input(key("owner"), s("负责人", "Owner"))}${input(key("collaborators"), s("配合人员", "Collaborators"))}${input("weekStart", s("建议开始周", "Suggested start week"), "number", 'min="1" max="104" required')}${input("weekEnd", s("建议结束周", "Suggested end week"), "number", 'min="1" max="104" required')}${input("due", s("手动截止日", "Manual due date"), "date")}${input("completed", s("实际完成日", "Completion date"), "date")}</div><small class="form-hint">${s("手动截止日留空时，按启动日与建议结束周计算。", "Leave the manual due date blank to calculate it from the start date and end week.")}</small>${bilingual("action", s("具体行动", "Action steps"), 3)}${bilingual("deliverable", s("交付物与完成标准", "Deliverables and acceptance criteria"), 3)}${bilingual("dependency", s("前置条件", "Dependencies"))}<label>${s("下一步 / 阻碍（中英文共用）", "Next step / blockers (shared across languages)")}<textarea name="next" rows="2" maxlength="12000">${esc(t.next)}</textarea></label><details class="translations"><summary>${s("补充英文内容（可选）", "Chinese content (optional)")}</summary>${[
+    `<form id="task-form"><div class="dialog-head"><div><span class="eyebrow">${esc(t.id)} / ${s("行动详情", "ACTION DETAILS")}</span><h2 id="dialog-title">${s("让传承有据可循", "Give the next step a clear purpose")}</h2></div><button type="button" class="icon-button" data-close="editor" aria-label="${s("关闭", "Close")}">${icon("close")}</button></div><div class="form-body">${input(key("title"), s("行动名称", "Action title"), "text", 'required maxlength="160"')}<div class="form-grid"><label>${s("优先级", "Priority")}<select name="priority">${["P0", "P1", "P2"].map((p) => `<option ${p === t.priority ? "selected" : ""}>${p}</option>`).join("")}</select></label><label>${s("当前状态", "Status")}<select name="status">${statuses.map((st) => `<option value="${st}" ${st === t.status ? "selected" : ""}>${statusLabel(st)}</option>`).join("")}</select></label>${input(key("owner"), s("负责人描述", "Responsibility"))}${input("assignee", s("具体人名", "Assignee"), "text", 'maxlength="120" autocomplete="off"')}${input(key("collaborators"), s("配合人员", "Collaborators"))}${input("weekStart", s("建议开始周", "Suggested start week"), "number", 'min="1" max="104" required')}${input("weekEnd", s("建议结束周", "Suggested end week"), "number", 'min="1" max="104" required')}${input("due", s("手动截止日", "Manual due date"), "date")}${input("completed", s("实际完成日", "Completion date"), "date")}</div><small class="form-hint">${s("手动截止日留空时，按启动日与建议结束周计算。", "Leave the manual due date blank to calculate it from the start date and end week.")}</small>${bilingual("action", s("具体行动", "Action steps"), 3)}${bilingual("deliverable", s("交付物与完成标准", "Deliverables and acceptance criteria"), 3)}${bilingual("dependency", s("前置条件", "Dependencies"))}<label>${s("下一步 / 阻碍（中英文共用）", "Next step / blockers (shared across languages)")}<textarea name="next" rows="2" maxlength="12000">${esc(t.next)}</textarea></label><details class="translations"><summary>${s("补充英文内容（可选）", "Chinese content (optional)")}</summary>${[
       "title",
       "owner",
       "collaborators",
@@ -557,7 +561,8 @@ function exportFile(type, dataProject = project) {
             "ID",
             "Action",
             "Priority",
-            "Owner",
+            "Responsibility",
+            "Assignee",
             "Collaborators",
             "Start week",
             "End week",
@@ -575,7 +580,8 @@ function exportFile(type, dataProject = project) {
             "任务编号",
             "行动名称",
             "优先级",
-            "负责人",
+            "负责人描述",
+            "具体人名",
             "配合人员",
             "开始周",
             "结束周",
@@ -596,6 +602,7 @@ function exportFile(type, dataProject = project) {
         value(t, "title"),
         t.priority,
         value(t, "owner"),
+        t.assignee || "",
         value(t, "collaborators"),
         t.weekStart,
         t.weekEnd,
@@ -884,6 +891,7 @@ document.addEventListener("submit", async (e) => {
       accepted: new FormData(e.target).has("accepted"),
       updatedAt: new Date().toISOString(),
     };
+    task.assignee = (task.assignee || "").trim();
     if (!task.title.trim()) task.title = task.titleEn || "";
     if (task.status !== "已完成") task.completed = "";
     const next = {

@@ -230,8 +230,13 @@ test("Patrick clicks once to claim, saves with his own audit identity, and revoc
   assert.equal(h.projects.at(-1).project.tasks.length, 10);
   const next = structuredClone(h.projects.at(-1).project);
   next.tasks[0].next = "Patrick added a family memory";
+  next.tasks[0].assignee = "Alex Example";
   await h.client.save(next, 0, "修改行动", "Updated action");
   await tick();
+  assert.equal(
+    h.records.get(project + "/tasks/WU-01").task.assignee,
+    "Alex Example",
+  );
   assert.equal(h.records.get(project + "/history/1").actor, "Patrick");
   assert.equal(h.records.get(project + "/history/1").actorEmail, "");
   await assert.rejects(
@@ -294,4 +299,38 @@ test("a used invitation on a different browser does not create a membership or l
   assert.equal(h.sessions.at(-1).phase, "denied");
   assert.equal(h.projects.length, 0);
   assert.equal(h.records.has("dfplanGuests/patrick-device"), false);
+});
+
+test("editing an older task with an empty assignee preserves its legacy task schema", async () => {
+  const h = await harness({
+    user: { uid: "patrick-device", email: null, isAnonymous: true },
+    claimed: true,
+  });
+  delete h.records.get(project + "/tasks/WU-01").task.assignee;
+  await h.client.reload();
+  const next = structuredClone(h.projects.at(-1).project);
+  next.tasks[0].next = "A progress edit before the name migration";
+  next.tasks[0].assignee = "";
+  await h.client.save(next, 0, "Progress", "Progress");
+  assert.equal(
+    Object.hasOwn(h.records.get(project + "/tasks/WU-01").task, "assignee"),
+    false,
+  );
+});
+
+test("an intentional assignee clear is explicit so the backend can distinguish an older client", async () => {
+  const h = await harness({
+    user: { uid: "patrick-device", email: null, isAnonymous: true },
+    claimed: true,
+  });
+  h.records.get(project + "/tasks/WU-01").task.assignee = "Alex Example";
+  await h.client.reload();
+  const next = structuredClone(h.projects.at(-1).project);
+  next.tasks[0].assignee = "";
+  await h.client.save(next, 0, "Clear person", "Clear person");
+  assert.equal(
+    Object.hasOwn(h.records.get(project + "/tasks/WU-01").task, "assignee"),
+    true,
+  );
+  assert.equal(h.records.get(project + "/tasks/WU-01").task.assignee, "");
 });

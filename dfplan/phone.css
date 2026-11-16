@@ -1142,3 +1142,11 @@
     break-inside: avoid;
   }
 }
+
+.phone-owner-role {
+  display: block;
+  font-size: 0.94em;
+  line-height: 1.7;
+  font-weight: 400;
+  color: #53634d;
+}

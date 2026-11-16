@@ -52,3 +52,7 @@ bash dfplan-backend/scripts/deploy-cloudshell.sh --project deepfamily-dfplan --o
 ```
 
 完成后终端显示 `PATRICK_LINK_READY` 和专属链接。把链接只发给 Patrick，无需发到聊天。Patrick 打开链接，点击“进入家族计划”，同一浏览器以后自动进入。换手机或清除浏览器数据后需新邀请。luoxi 可以在网页“管理员 → Patrick 的专属入口”生成新链接或撤销访问。继续使用免费 Spark，无需绑卡。
+
+## 同步手工表格中的具体人名
+
+使用 `--assignees-json` 参数传入私密的“任务编号 → 具体人名”映射；不要把真实名单提交到公开仓库。该模式更新规则后，仅合并指定任务的人名，保留线上进度与历史；出现 `DFPLAN_ASSIGNEES_UPDATED` 表示完成。姓名留空的任务在网页显示“待确认”。

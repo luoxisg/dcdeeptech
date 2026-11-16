@@ -509,7 +509,7 @@ function redeem(db, uid = "patrick-device", overrides = {}) {
 }
 function guestCommit(
   db,
-  { actor = "Patrick", actorEmail = "", accepted = false } = {},
+  { actor = "Patrick", actorEmail = "", accepted = false, assignee } = {},
 ) {
   const uid = "patrick-device",
     batch = writeBatch(db),
@@ -524,6 +524,7 @@ function guestCommit(
     task: {
       ...task,
       next: "Patrick updated the shared action",
+      ...(assignee !== undefined ? { assignee } : {}),
       status: accepted ? "已完成" : "进行中",
     },
     revision: 1,
@@ -684,4 +685,48 @@ test("activation expiry does not remove an already bound device, while other mem
     getDoc(doc(anonymous("other-device"), "dfplanGuests/patrick-device")),
   );
   await assertFails(getDocs(collection(db, "dfplanGuests")));
+});
+
+test("optional assignee names are writable without changing responsibility, and invalid names are rejected", async () => {
+  const db = client();
+  await assertFails(
+    commit(db, { changedTask: { ...task, assignee: { name: "Invalid" } } }),
+  );
+  await assertFails(
+    commit(db, { changedTask: { ...task, assignee: "x".repeat(121) } }),
+  );
+  await assertSucceeds(
+    commit(db, { changedTask: { ...task, assignee: "Alex Example" } }),
+  );
+  const saved = (await getDoc(doc(db, projectPath + "/tasks/WU-01"))).data()
+    .task;
+  assert.equal(saved.assignee, "Alex Example");
+  assert.equal(saved.owner, task.owner);
+});
+test("an invited Patrick device can update named assignees under the same project rules", async () => {
+  await issueInvite();
+  const db = anonymous();
+  await assertSucceeds(redeem(db));
+  await assertSucceeds(guestCommit(db, { assignee: "Alex Example" }));
+  assert.equal(
+    (await getDoc(doc(db, projectPath + "/tasks/WU-01"))).data().task.assignee,
+    "Alex Example",
+  );
+});
+
+test("older clients cannot drop an imported assignee while an explicit clear remains possible", async () => {
+  await env.withSecurityRulesDisabled(async (c) => {
+    await updateDoc(doc(c.firestore(), projectPath + "/tasks/WU-01"), {
+      task: { ...task, assignee: "Alex Example" },
+    });
+  });
+  const db = client();
+  await assertFails(
+    commit(db, { changedTask: { ...task, next: "Old page editing progress" } }),
+  );
+  await assertSucceeds(commit(db, { changedTask: { ...task, assignee: "" } }));
+  assert.equal(
+    (await getDoc(doc(db, projectPath + "/tasks/WU-01"))).data().task.assignee,
+    "",
+  );
 });

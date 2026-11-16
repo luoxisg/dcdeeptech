@@ -11,6 +11,8 @@ import {
   initializeRecords,
   enableAnonymousAuth,
   createPatrickInvitation,
+  parseAssigneeUpdates,
+  mergeAssignees,
 } from "../scripts/deploy-core.mjs";
 const template = await readFile(
   new URL("../firestore.rules", import.meta.url),
@@ -132,14 +134,25 @@ class FakeDb {
           .map((k) => this.snapshot(k));
         return { docs };
       },
+      update: (ref, data) => {
+        if (!this.records.has(ref.path)) throw Error("Missing document");
+        writes.push([
+          ref.path,
+          {
+            ...structuredClone(this.records.get(ref.path)),
+            ...structuredClone(data),
+          },
+        ]);
+      },
       create: (ref, data) => {
         if (this.records.has(ref.path) || writes.some(([k]) => k === ref.path))
           throw Error("Already exists");
         writes.push([ref.path, structuredClone(data)]);
       },
     };
-    await fn(tx);
+    const result = await fn(tx);
     for (const [k, v] of writes) this.records.set(k, v);
+    return result;
   }
 }
 const options = {
@@ -503,4 +516,115 @@ test("Patrick invitations are private one-time capabilities with a fixed editor 
   assert.equal(record.role, "editor");
   assert.equal(record.displayName, "Patrick");
   assert.equal(record.expiresAt, "EXPIRY");
+});
+
+const assignmentFixture = () =>
+  new FakeDb([
+    ["dfplanAdmins/" + email, { ...owner }],
+    [
+      "dfplanProjects/wu-family",
+      { startDate: "2026-11-15", revision: 4, updatedAt: "old" },
+    ],
+    [
+      "dfplanProjects/wu-family/tasks/WU-01",
+      {
+        task: {
+          ...seedTasks[0],
+          status: "进行中",
+          next: "Saved online progress",
+          owner: "Online role",
+          updatedAt: "old",
+        },
+        revision: 4,
+      },
+    ],
+    [
+      "dfplanProjects/wu-family/tasks/WU-05",
+      { task: { ...seedTasks[4] }, revision: 0 },
+    ],
+    ["dfplanProjects/wu-family/history/2", { text: "Earlier private history" }],
+  ]);
+const assignmentOptions = {
+  email,
+  serverTimestamp: () => "SERVER_TIME",
+  now: () => "2026-11-16T00:00:00.000Z",
+};
+test("private name input validates task IDs and bounded strings before deployment", () => {
+  assert.deepEqual(
+    parseAssigneeUpdates('{"WU-01":"  Alex Example  ","WU-05":""}'),
+    [
+      ["WU-01", "Alex Example"],
+      ["WU-05", ""],
+    ],
+  );
+  for (const value of [
+    "null",
+    "[]",
+    "{}",
+    "not-json",
+    '{"../other":"Name"}',
+    '{"WU-01":123}',
+    JSON.stringify({ "WU-01": "x".repeat(121) }),
+  ])
+    assert.throws(() => parseAssigneeUpdates(value));
+});
+test("private assignee merge preserves all online progress, roles, dates and history", async () => {
+  const db = assignmentFixture();
+  const result = await mergeAssignees(db, {
+    ...assignmentOptions,
+    assignments: [
+      ["WU-01", "Alex Example"],
+      ["WU-05", ""],
+    ],
+  });
+  assert.deepEqual(result, { changedTaskCount: 1, revision: 5 });
+  const task = db.records.get("dfplanProjects/wu-family/tasks/WU-01").task;
+  assert.equal(task.assignee, "Alex Example");
+  assert.equal(task.status, "进行中");
+  assert.equal(task.next, "Saved online progress");
+  assert.equal(task.owner, "Online role");
+  assert.equal(
+    db.records.get("dfplanProjects/wu-family").startDate,
+    "2026-11-15",
+  );
+  assert.equal(
+    db.records.get("dfplanProjects/wu-family/history/2").text,
+    "Earlier private history",
+  );
+  assert.equal(
+    db.records.get("dfplanProjects/wu-family/history/5").actorEmail,
+    email,
+  );
+  assert.equal(
+    db.records.get("dfplanProjects/wu-family/tasks/WU-05").revision,
+    0,
+  );
+  const before = JSON.stringify([...db.records]);
+  assert.deepEqual(
+    await mergeAssignees(db, {
+      ...assignmentOptions,
+      assignments: [["WU-01", "Alex Example"]],
+    }),
+    { changedTaskCount: 0, revision: 5 },
+  );
+  assert.equal(JSON.stringify([...db.records]), before);
+});
+test("missing tasks or inactive owners stop the whole assignee merge without partial writes", async () => {
+  for (const type of ["missing-task", "disabled-owner"]) {
+    const db = assignmentFixture();
+    if (type === "disabled-owner")
+      db.records.get("dfplanAdmins/" + email).active = false;
+    const before = JSON.stringify([...db.records]);
+    const assignments =
+      type === "missing-task"
+        ? [
+            ["WU-01", "Alex Example"],
+            ["WU-99", "New person"],
+          ]
+        : [["WU-01", "Alex Example"]];
+    await assert.rejects(
+      mergeAssignees(db, { ...assignmentOptions, assignments }),
+    );
+    assert.equal(JSON.stringify([...db.records]), before);
+  }
 });

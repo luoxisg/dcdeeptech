@@ -1,5 +1,96 @@
 import { createHash, randomBytes } from "node:crypto";
 
+export function parseAssigneeUpdates(raw) {
+  if (typeof raw !== "string" || raw.length > 256000)
+    throw Error("Invalid assignee update.");
+  let input;
+  try {
+    input = JSON.parse(raw);
+  } catch {
+    throw Error("Assignee update must be a JSON object of task IDs and names.");
+  }
+  if (!input || Array.isArray(input) || typeof input !== "object")
+    throw Error("Invalid assignee update.");
+  const entries = Object.entries(input);
+  if (!entries.length || entries.length > 300)
+    throw Error("Assignee update must contain 1–300 tasks.");
+  for (const [id, name] of entries)
+    if (
+      !/^[A-Za-z0-9_-]{1,80}$/.test(id) ||
+      typeof name !== "string" ||
+      name.length > 120
+    )
+      throw Error("Invalid task ID or assignee name (maximum 120 characters).");
+  return entries.map(([id, name]) => [id, name.trim()]);
+}
+
+export async function mergeAssignees(
+  db,
+  { assignments, email, serverTimestamp, now = () => new Date().toISOString() },
+) {
+  const checked = parseAssigneeUpdates(
+    JSON.stringify(Object.fromEntries(assignments)),
+  );
+  const root = db.doc("dfplanProjects/wu-family"),
+    ownerRef = db.doc("dfplanAdmins/" + email);
+  return db.runTransaction(async (tx) => {
+    const [project, owner, ...tasks] = await Promise.all([
+      tx.get(root),
+      tx.get(ownerRef),
+      ...checked.map(([id]) =>
+        tx.get(db.doc("dfplanProjects/wu-family/tasks/" + id)),
+      ),
+    ]);
+    if (
+      !project.exists ||
+      !owner.exists ||
+      owner.data().email !== email ||
+      owner.data().role !== "owner" ||
+      owner.data().active !== true
+    )
+      throw Error(
+        "An initialized project and its active protected owner are required.",
+      );
+    const baseline = project.data().revision;
+    if (
+      !Number.isSafeInteger(baseline) ||
+      baseline < 0 ||
+      baseline >= Number.MAX_SAFE_INTEGER
+    )
+      throw Error("Invalid project revision; no names were changed.");
+    const changed = [];
+    checked.forEach(([id, name], i) => {
+      if (!tasks[i].exists || tasks[i].data().task?.id !== id)
+        throw Error("A referenced task does not exist; no names were changed.");
+      const task = tasks[i].data().task;
+      if ((task.assignee || "") !== name)
+        changed.push({ ...task, assignee: name });
+    });
+    if (!changed.length) return { changedTaskCount: 0, revision: baseline };
+    const revision = baseline + 1,
+      at = serverTimestamp(),
+      updatedAt = now();
+    tx.update(root, { revision, updatedAt: at, updatedBy: "cloud-shell" });
+    for (const task of changed)
+      tx.update(db.doc("dfplanProjects/wu-family/tasks/" + task.id), {
+        task: { ...task, updatedAt },
+        revision,
+        updatedAt: at,
+        updatedBy: "cloud-shell",
+      });
+    tx.create(db.doc("dfplanProjects/wu-family/history/" + revision), {
+      revision,
+      text: `根据手工更新表格更新具体人名（${changed.length}项）`,
+      textEn: `Updated named assignees from the edited workbook (${changed.length} actions)`,
+      actor: owner.data().displayName,
+      actorEmail: email,
+      actorUid: "cloud-shell",
+      createdAt: at,
+    });
+    return { changedTaskCount: changed.length, revision };
+  });
+}
+
 export async function enableAnonymousAuth({
   projectId,
   getAccessToken,
