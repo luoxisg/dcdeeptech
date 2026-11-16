@@ -72,7 +72,13 @@ export function renderRules(template, email) {
     throw Error("Default-deny policy is missing.");
   return template.replace("__DFPLAN_INITIAL_OWNER_EMAIL__", checked.email);
 }
-export function createRulesApi({ getAccessToken, fetchImpl = fetch }) {
+export function createRulesApi({
+  projectId,
+  getAccessToken,
+  fetchImpl = fetch,
+}) {
+  if (!/^[a-z][a-z0-9-]{4,61}[a-z0-9]$/.test(projectId || ""))
+    throw Error("A valid quota project ID is required for Firebase Rules.");
   return async (method, path, body, allowMissing = false) => {
     const response = await fetchImpl(
       "https://firebaserules.googleapis.com/v1/" + path,
@@ -80,6 +86,7 @@ export function createRulesApi({ getAccessToken, fetchImpl = fetch }) {
         method,
         headers: {
           Authorization: "Bearer " + (await getAccessToken()),
+          "x-goog-user-project": projectId,
           "Content-Type": "application/json",
         },
         ...(body ? { body: JSON.stringify(body) } : {}),

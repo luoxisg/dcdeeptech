@@ -20,6 +20,8 @@ bash dfplan-backend/scripts/deploy-cloudshell.sh --project deepfamily-dfplan --o
 
 Cloud Shell 的临时授权可能不会出现在 `gcloud auth list` 中；脚本会直接通过 Google 核对部署凭据对应的已验证邮箱。如果提示无法核对账号，请在终端运行 `gcloud auth login`，使用管理员账号完成 Google 授权，再运行部署命令。
 
+脚本会将 `deepfamily-dfplan` 明确设为 Google API 的配额归属项目。这只是请求使用哪个项目的配额，不会开通计费或升级 Spark 方案，也不需要另外配置 Application Default Credentials。
+
 它会：
 
 1. 以指定初始管理员邮箱生成权限规则，调用 Google 官方 API 编译及发布，并核对发布结果。

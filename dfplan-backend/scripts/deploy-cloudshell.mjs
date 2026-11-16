@@ -57,7 +57,10 @@ async function main() {
   const response = await fetch(
     `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)`,
     {
-      headers: { Authorization: "Bearer " + (await getAccessToken()) },
+      headers: {
+        Authorization: "Bearer " + (await getAccessToken()),
+        "x-goog-user-project": projectId,
+      },
       signal: AbortSignal.timeout(45000),
     },
   );
@@ -74,6 +77,7 @@ async function main() {
       "The database is not the expected Singapore native database. No changes made.",
     );
   const accountClient = new OAuth2Client();
+  accountClient.quotaProjectId = projectId;
   accountClient.refreshHandler = async () => ({
     access_token: await getAccessToken(),
     expiry_date: Date.now() + 240000,
@@ -81,7 +85,11 @@ async function main() {
   accountClient.setCredentials(await accountClient.refreshHandler());
   const db = new Firestore({
     projectId,
-    auth: new GoogleAuth({ projectId, authClient: accountClient }),
+    auth: new GoogleAuth({
+      projectId,
+      quotaProjectId: projectId,
+      authClient: accountClient,
+    }),
   });
   try {
     await inspectOwner(db, email);
@@ -100,7 +108,7 @@ async function main() {
       "--quiet",
     );
     const policy = await deployRules(
-      createRulesApi({ getAccessToken }),
+      createRulesApi({ projectId, getAccessToken }),
       projectId,
       source,
     );

@@ -292,6 +292,7 @@ test("cross-project ruleset response is rejected before publication", async () =
 test("API access token is carried only in the authorization header", async () => {
   let observed;
   const api = createRulesApi({
+    projectId,
     getAccessToken: async () => "test-token",
     fetchImpl: async (url, request) => {
       observed = { url, request };
@@ -300,16 +301,19 @@ test("API access token is carried only in the authorization header", async () =>
   });
   await api("POST", prefix + "/rulesets", { source: { files: [] } });
   assert.equal(observed.request.headers.Authorization, "Bearer test-token");
+  assert.equal(observed.request.headers["x-goog-user-project"], projectId);
   assert.ok(!observed.url.includes("test-token"));
   assert.ok(!observed.request.body.includes("test-token"));
 });
 test("rules API reports missing release and authorization failures safely", async () => {
   const missing = createRulesApi({
+    projectId,
     getAccessToken: async () => "test-token",
     fetchImpl: async () => ({ status: 404, ok: false, json: async () => ({}) }),
   });
   assert.equal(await missing("GET", "missing", undefined, true), null);
   const denied = createRulesApi({
+    projectId,
     getAccessToken: async () => "test-token",
     fetchImpl: async () => ({
       status: 403,
@@ -321,6 +325,32 @@ test("rules API reports missing release and authorization failures safely", asyn
     () => denied("POST", "rulesets", {}),
     /Permission denied/,
   );
+});
+test("Rules reads and publications always identify the quota project", async () => {
+  const requests = [];
+  const api = createRulesApi({
+    projectId,
+    getAccessToken: async () => "test-token",
+    fetchImpl: async (url, request) => {
+      requests.push(request);
+      return new Response("{}");
+    },
+  });
+  for (const method of ["GET", "POST", "PATCH"])
+    await api(
+      method,
+      prefix + "/releases/cloud.firestore",
+      method === "GET" ? undefined : {},
+    );
+  assert.equal(requests.length, 3);
+  assert.ok(
+    requests.every((r) => r.headers["x-goog-user-project"] === projectId),
+  );
+  for (const invalid of [undefined, "", "../other-project", "wrong\r\nheader"])
+    assert.throws(
+      () => createRulesApi({ projectId: invalid }),
+      /quota project/,
+    );
 });
 test("fresh initialization atomically creates owner, ten tasks and audit", async () => {
   const db = new FakeDb();
