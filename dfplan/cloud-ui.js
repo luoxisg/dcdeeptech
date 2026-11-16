@@ -87,13 +87,13 @@ export function cloudError(error, lang) {
   ])[lang === "en" ? 1 : 0];
 }
 export function cloudGate(session, available, message, h) {
-  const { s, esc, icon } = h;
+  const { s, esc, icon, readingControl = "" } = h;
   const busy = ["connecting", "checking", "reading"].includes(session.phase),
     invited = !!session.invite,
     denied = session.phase === "denied",
     canInitialize =
       session.phase === "not-initialized" && session.admin?.role === "owner";
-  return `<main id="main" class="cloud-gate"><header><img src="./assets/seal.svg" width="54" height="54" alt=""><strong>DeepFamily</strong><div class="cloud-lang"><button data-lang="zh" aria-pressed="${document.documentElement.lang !== "en"}">中文</button><button data-lang="en" aria-pressed="${document.documentElement.lang === "en"}">EN</button></div></header><section>
+  return `<main id="main" class="cloud-gate"><header><img src="./assets/seal.svg" width="54" height="54" alt=""><strong>DeepFamily</strong><div class="cloud-lang">${readingControl}<button data-lang="zh" aria-pressed="${document.documentElement.lang !== "en"}">中文</button><button data-lang="en" aria-pressed="${document.documentElement.lang === "en"}">EN</button></div></header><section>
   ${icon(invited ? "people" : "shield")}
   <h1>${busy ? s("正在打开家族计划", "Opening the family plan") : invited ? s("Patrick，欢迎回家", "Welcome home, Patrick") : canInitialize ? s("建立家族传承计划", "Create the family legacy plan") : denied ? s("请使用有效的家族访问方式", "Use an authorized family sign-in") : s("登录家族工作台", "Sign in to the family workspace")}</h1>
   <p>${busy ? s("请稍候，正在读取家族记录。", "Please wait while we load the family records.") : invited ? s("点一下，即可一起整理家族记忆。无需填写账号或密码。", "One tap to preserve our family memories. No account or password to enter.") : s("登录后，可以查看和修改共享计划。", "Sign in to view and update the shared plan.")}</p>

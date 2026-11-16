@@ -2468,3 +2468,174 @@ html[lang="en"] .metric > span {
     font-size: 10px;
   }
 }
+
+/* The same device preference powers the desktop and phone reading controls. */
+.reading-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid #8c9d82;
+  border-radius: 9px;
+  background: #fffdf7;
+  color: #254432;
+  font-size: 16px;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+.reading-toggle[aria-pressed="true"] {
+  background: #234b37;
+  border-color: #234b37;
+  color: #fffdf7;
+}
+.reading-toggle-icon {
+  font-weight: 700;
+}
+body:not(.phone-layout) .cloud-lang {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+body:not(.phone-layout) .cloud-gate header {
+  flex-wrap: wrap;
+}
+body.larger-text:not(.phone-layout) {
+  font-size: 20px;
+  line-height: 1.75;
+  --muted: #53634d;
+  --serif: var(--sans);
+}
+body.larger-text:not(.phone-layout) :is(
+  p, label, input, select, textarea, button, summary, legend, td, th,
+  .cloud-gate, .df-dashboard, .df-people, .toolbar, .phase-strip,
+  .timeline-head, .week-label, .empty, .helper
+) {
+  font-size: 20px;
+  line-height: 1.75;
+}
+body.larger-text:not(.phone-layout) :is(
+  span, small, b, .eyebrow, .section-kicker, .nav-caption, .card-meta,
+  .card-person, .card-date, .results, .form-hint, .module-kicker,
+  .status-select, .status, .priority, .source-link
+  , .breadcrumb strong, .workspace strong
+) {
+  font-size: 18px;
+  line-height: 1.65;
+  letter-spacing: normal;
+}
+body.larger-text:not(.phone-layout) :is(
+  p, small, label, td, th, .eyebrow, .section-kicker, .card-meta,
+  .card-person, .card-date, .results, .form-hint, .local-status,
+  .table-title small, .breadcrumb, .module-kicker
+  , .metric > span, .focus-body > span
+) {
+  color: #435a47;
+}
+body.larger-text:not(.phone-layout) :is(h1, .hero h1) {
+  font-size: 36px;
+  line-height: 1.5;
+}
+body.larger-text:not(.phone-layout) :is(h2, .section-heading h2) {
+  font-size: 28px;
+  line-height: 1.6;
+}
+body.larger-text:not(.phone-layout) :is(
+  h3, .task-card h3, .focus-body strong, .table-title,
+  .people-card h2, .workload-name strong, .lane > h2
+) {
+  font-size: 22px;
+  line-height: 1.65;
+}
+body.larger-text:not(.phone-layout) .sidebar {
+  width: 270px;
+  padding: 24px 18px;
+  overflow-y: auto;
+}
+body.larger-text:not(.phone-layout) .sidebar :is(p, small, span, .nav-caption) {
+  color: #e0e8d9;
+}
+body.larger-text:not(.phone-layout) .sidebar nav button.active :is(span, b) {
+  color: #193e34;
+}
+body.larger-text:not(.phone-layout) .brand > span {
+  font-size: 24px;
+}
+body.larger-text:not(.phone-layout) .sidebar-bottom {
+  padding-top: 22px;
+}
+body.larger-text:not(.phone-layout) #app > main:not(.cloud-gate) {
+  margin-left: 270px;
+  min-width: 0;
+}
+body.larger-text:not(.phone-layout) .topbar {
+  height: auto;
+  min-height: 84px;
+  padding: 16px 24px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+body.larger-text:not(.phone-layout) .topbar-right {
+  flex-wrap: wrap;
+  gap: 12px;
+}
+body.larger-text:not(.phone-layout) .content {
+  padding: 26px 24px 0;
+}
+body.larger-text:not(.phone-layout) :is(button, select, input:not([type="checkbox"])) {
+  min-height: 48px;
+}
+body.larger-text:not(.phone-layout) .language-switch button {
+  width: auto;
+  height: auto;
+  min-width: 48px;
+  padding: 6px 10px;
+}
+body.larger-text:not(.phone-layout) .reading-toggle[aria-pressed="true"] span {
+  color: #fffdf7;
+}
+body.larger-text:not(.phone-layout) :is(.toolbar, .section-heading, .actions, .phase-strip, .page-footer) {
+  flex-wrap: wrap;
+}
+body.larger-text:not(.phone-layout) .toolbar select {
+  max-width: 100%;
+}
+body.larger-text:not(.phone-layout) .search {
+  min-width: min(280px, 100%);
+}
+body.larger-text:not(.phone-layout) .card-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+body.larger-text:not(.phone-layout) .card-open > p {
+  display: block;
+  overflow: visible;
+  min-height: 0;
+}
+body.larger-text:not(.phone-layout) .kanban {
+  grid-template-columns: repeat(6, 330px);
+}
+body.larger-text:not(.phone-layout) .timeline {
+  grid-template-columns: 300px repeat(var(--weeks), 76px);
+}
+body.larger-text:not(.phone-layout) .table-wrap table {
+  min-width: 1100px;
+}
+body.larger-text:not(.phone-layout) dialog {
+  font-size: 20px;
+  max-width: min(900px, calc(100% - 48px));
+}
+body.larger-text:not(.phone-layout) .dialog-footer {
+  flex-wrap: wrap;
+}
+body.larger-text:not(.phone-layout) .checkbox input {
+  width: 24px;
+  height: 24px;
+}
+@media (min-width: 901px) and (max-width: 1250px) {
+  body.larger-text:not(.phone-layout) :is(.overview-grid, .card-grid, .person-form, .dashboard-top, .dashboard-charts) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  body.larger-text:not(.phone-layout) .metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
