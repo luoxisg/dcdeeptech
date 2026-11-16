@@ -56,3 +56,14 @@ bash dfplan-backend/scripts/deploy-cloudshell.sh --project deepfamily-dfplan --o
 ## 同步手工表格中的具体人名
 
 使用 `--assignees-json` 参数传入私密的“任务编号 → 具体人名”映射；不要把真实名单提交到公开仓库。该模式更新规则后，仅合并指定任务的人名，保留线上进度与历史；出现 `DFPLAN_ASSIGNEES_UPDATED` 表示完成。姓名留空的任务在网页显示“待确认”。
+
+## 开通人员管理和仪表盘
+
+运行以下命令，将权限规则升级并从后端已有任务人名建立人员名单：
+
+```bash
+git pull --ff-only origin main
+bash dfplan-backend/scripts/deploy-cloudshell.sh --project deepfamily-dfplan --owner-email YOUR_GOOGLE_EMAIL --display-name luoxi --sync-people
+```
+
+看到 `DFPLAN_PEOPLE_READY` 后，刷新网站。管理员可在“人员管理”新增、移出及恢复人员；普通成员仅查看名单。任务与历史保留，新任务只能选择在册人员。仪表盘可按人员、阶段筛选，点击图表打开对应任务。重复运行不覆盖分工、不恢复已移出人员。

@@ -10,7 +10,8 @@
     "bootstrap": "node scripts/bootstrap.mjs",
     "deploy:rules": "firebase deploy --only firestore:rules",
     "test:deploy": "node --test tests/cloud-deploy.test.mjs",
-    "test:links": "node --test tests/link-client.test.mjs"
+    "test:links": "node --test tests/link-client.test.mjs",
+    "test:modules": "node --test tests/modules.test.mjs"
   },
   "dependencies": {
     "firebase-admin": "14.5.1",

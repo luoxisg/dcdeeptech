@@ -106,7 +106,11 @@
     "dfplan/backend-config.js",
     "dfplan/backend-client.js",
     "dfplan/cloud-ui.js",
-    "dfplan/cloud.css"
+    "dfplan/cloud.css",
+    "dfplan/people-model.mjs",
+    "dfplan/people-ui.mjs",
+    "dfplan/dashboard.mjs",
+    "dfplan/modules.css"
   ],
   "static_trees": {
     "DeepFamily": [

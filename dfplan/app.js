@@ -1,19 +1,27 @@
 import {
+  renderDashboard,
+  matchesDashboardTask,
+} from "./dashboard.mjs?v=20261116-people";
+import {
+  renderPeople,
+  assigneeSelect,
+} from "./people-ui.mjs?v=20261116-people";
+import {
   cloudEnabled,
   connectBackend,
-} from "./backend-client.js?v=20261116-assignees";
+} from "./backend-client.js?v=20261116-people";
 import {
   cloudError,
   cloudGate,
   cloudBar,
   adminDialog,
   guestDialog,
-} from "./cloud-ui.js?v=20261116-assignees";
+} from "./cloud-ui.js?v=20261116-people";
 import {
   renderPhone,
   phoneEditor,
   matchesCategory,
-} from "./phone-ui.js?v=20261116-assignees";
+} from "./phone-ui.js?v=20261116-people";
 import { seedTasks } from "./data.js";
 import {
   statuses,
@@ -125,7 +133,25 @@ if (cloudEnabled) {
   storageIssue = false;
 }
 const cloudReady = () => cloudSession.phase === "ready" && cloudLoaded;
-const views = ["overview", "board", "list", "timeline", "history"];
+let people = [],
+  peopleReady = false,
+  peopleMessage = "",
+  peopleBusy = false,
+  peopleFormError = "";
+let peopleDraft = { displayName: "", responsibility: "" };
+let dashboardSelection = { person: "all", priority: "all" },
+  dashboardDrilldown = null;
+const canManagePeople = () =>
+  cloudReady() && ["owner", "admin"].includes(cloudSession.admin?.role);
+const views = [
+  "overview",
+  "board",
+  "list",
+  "timeline",
+  "history",
+  "dashboard",
+  "people",
+];
 let view = views.includes(location.hash.slice(1))
     ? location.hash.slice(1)
     : "overview",
@@ -144,6 +170,8 @@ const names = () => [
   s("行动清单", "Action list"),
   s("传承时间线", "Timeline"),
   s("更新记录", "Activity log"),
+  s("仪表盘", "Dashboard"),
+  s("人员管理", "People"),
 ];
 const value = (t, k) =>
   lang === "en" && t[k + "En"] ? t[k + "En"] : t[k] || "";
@@ -270,10 +298,13 @@ function filtered() {
         (["P0", "P1", "P2"].includes(filter) && t.priority === filter) ||
         (filter === "overdue" && overdue(t)) ||
         t.status === filter) &&
-      matchesCategory(t, category),
+      matchesCategory(t, category) &&
+      (!dashboardDrilldown ||
+        matchesDashboardTask(t, project, people, dashboardDrilldown)),
   );
 }
 function changeView(v, reset = true) {
+  if (reset) dashboardDrilldown = null;
   if (isPhone() && reset) {
     query = "";
     filter = "all";
@@ -284,7 +315,9 @@ function changeView(v, reset = true) {
   mobile = false;
   location.hash = v;
   render();
-  $("#page-title")?.focus({ preventScroll: true });
+  (document.querySelector(".module-heading h1") || $("#page-title"))?.focus({
+    preventScroll: true,
+  });
   if (isPhone()) window.scrollTo({ top: 0, behavior: "instant" });
 }
 function toolbar() {
@@ -385,6 +418,10 @@ function render() {
   );
   document.body.classList.toggle("phone-layout", isPhone());
   document.body.classList.toggle("larger-text", largeText);
+  document.body.classList.toggle(
+    "module-view",
+    ["dashboard", "people"].includes(view),
+  );
   if (cloudEnabled && !cloudReady()) {
     $("#app").innerHTML = cloudGate(cloudSession, !!cloud, cloudMessage, {
       s,
@@ -406,12 +443,15 @@ function render() {
         storageIssue,
         cloudEnabled,
         lang,
+        dashboardContent: view === "dashboard" ? dashboardView() : "",
+        peopleContent: view === "people" ? peopleView() : "",
+        drilldown: !!dashboardDrilldown,
       },
       { s, esc, icon, art, value, complete, due, dateLabel, fmt, filtered },
     );
     decorateCloud();
-    if (activeId === "search") {
-      const input = $("#search");
+    if (["search", "person-name", "person-responsibility"].includes(activeId)) {
+      const input = $("#" + activeId);
       input?.focus();
       input?.setSelectionRange(selection, selection);
     }
@@ -422,13 +462,58 @@ function render() {
       ? Math.round((done / project.tasks.length) * 100)
       : 0;
   $("#app").innerHTML =
-    `${mobile ? '<button class="nav-scrim" data-action="menu" aria-label="Close navigation"></button>' : ""}<aside class="sidebar ${mobile ? "mobile-open" : ""}"><a class="brand" href="${lang === "en" ? "/DeepFamily/en/" : "/DeepFamily/zh/"}"><img src="./assets/seal.svg" width="39" height="39" alt=""><span>DeepFamily<small>${s("让家族记忆，世代相承", "MEMORY ACROSS GENERATIONS")}</small></span></a><div class="workspace"><span class="family-character" aria-hidden="true">吴</span><span><strong>${s("Wu 家族传承计划", "Wu Family Legacy")}</strong><small>FAMILY LEGACY WORKSPACE</small></span></div><p class="nav-caption">${s("传承工作空间", "YOUR WORKSPACE")}</p><nav aria-label="${s("项目导航", "Project navigation")}">${views.map((v, i) => `<button data-view="${v}" class="${view === v ? "active" : ""}" ${view === v ? 'aria-current="page"' : ""}>${icon(["home", "board", "list", "timeline", "history"][i])}<span>${names()[i]}</span>${v === "list" ? `<b>${project.tasks.length}</b>` : ""}</button>`).join("")}</nav><div class="sidebar-bottom"><div class="family-motto"><span>家</span><p>${s("承先人之志，<br>启后人之路。", "Honor those before us.<br>Make room for those to come.")}</p><small>${s("先整理家族内部事项，再讨论对外展示。", "Care for the family archive before considering public display.")}</small></div><a href="https://wu-family-project-hub.luoxi.chatgpt.site/" class="source-link">${s("打开原私密云端工作台", "Original private cloud workspace")} ↗</a><a href="https://github.com/luoxisg/dcdeeptech/tree/main/dfplan" target="_blank" rel="noopener" class="source-link">GitHub ${s("源码", "source")} ↗</a></div></aside><main id="main"><header class="topbar"><div class="breadcrumb"><button class="icon-button menu-button" data-action="menu" aria-label="${s("打开导航", "Open navigation")}" aria-expanded="${mobile}">${icon("menu")}</button><span>DeepFamily</span>${icon("chevron")}<strong>${s("家族传承计划", "Family legacy plan")}</strong></div><div class="topbar-right"><span class="local-status"><i></i>${s("本机保存", "Saved locally")}</span><div class="language-switch" role="group" aria-label="Language / 语言"><button data-lang="zh" class="${lang === "zh" ? "selected" : ""}" aria-pressed="${lang === "zh"}">中</button><button data-lang="en" class="${lang === "en" ? "selected" : ""}" aria-pressed="${lang === "en"}">EN</button></div></div></header><div class="content"><section class="hero"><div class="hero-copy"><span class="eyebrow">A LEGACY WORTH KEEPING</span><h1>${s("把家族记忆，<br>认真交给下一代。", "Keep the memories.<br>Carry the legacy forward.")}</h1><p>${s("从一张老照片，到一部家族史。<br>让每一份资料被珍藏，让每一步传承有章可循。", "From a treasured photograph to a family history.<br>A thoughtful plan to preserve what connects us.")}</p><div class="hero-tags"><span>${icon("folder")}${s("10 项基础行动", "10 foundational actions")}</span><span>${icon("clock")}${s("12 周建议周期", "12-week suggested plan")}</span></div></div><img class="heritage-art" src="./assets/heritage-tree.svg" alt="" width="540" height="340"><span class="hero-corner">${s("根深 · 叶茂 · 家长青", "ROOTS · STORIES · GENERATIONS")}</span></section><div class="storage-note">${icon("shield")}<p>${s("此页为公开的计划模板；你的修改仅保存在当前浏览器，不会自动同步。请定期导出备份，勿在此记录密码或敏感家族资料。", "This is a public planning template. Your edits stay in this browser and do not sync automatically. Export backups regularly; keep passwords and sensitive family records elsewhere.")}</p><button data-action="export-json">${s("备份", "Back up")}${icon("download")}</button></div>${storageIssue ? `<div role="alert" class="alert">${s("本机存储无法读取。当前显示基础模板；请先检查或导出原有浏览器数据，再保存。", "Browser storage could not be read. The base template is shown; check or recover existing browser data before saving.")}</div>` : ""}<section class="metrics" aria-label="${s("项目进度", "Project progress")}"><div class="metric"><span>${s("传承进度", "LEGACY PROGRESS")}</span><strong>${percent}<small>%</small></strong><div class="progress"><i style="width:${percent}%"></i></div><p>${done} / ${project.tasks.length} ${s("项已验收完成", "actions accepted")}</p></div><div class="metric"><span>${s("优先落实", "PRIORITIES")}</span><strong>${project.tasks.filter((t) => t.priority === "P0" && !complete(t)).length}<small>${s("项", "open")}</small></strong><p>${s("联系人 · 盘点 · 备份 · 授权", "Contacts · assets · backups · consent")}</p></div><div class="metric"><span>${s("等待家族审阅", "FAMILY REVIEW")}</span><strong>${project.tasks.filter((t) => t.status === "待家族确认").length}<small>${s("项", "open")}</small></strong><p>${s("共同审阅，才是传承的开始", "Shared review makes a shared legacy")}</p></div><div class="metric start-metric"><span>${s("项目启动日", "PROJECT START")}</span><button data-action="start">${esc(dateLabel(project.startDate))}${icon("calendar")}</button><p>${s("确认日期，让计划循序展开", "Set the date to bring the plan to life")}</p></div></section><div class="section-heading main-heading"><div><span class="section-kicker">THE FAMILY ARCHIVE / ${s("有序传承", "THOUGHTFUL STEWARDSHIP")}</span><h2 id="page-title" tabindex="-1">${names()[views.indexOf(view)]}</h2><p>${s("负责人及周期为建议，请核实后逐项推进。", "Owners and schedules are proposals. Verify each before proceeding.")}</p></div><div class="actions"><button class="icon-button" data-action="import" title="${s("导入项目备份", "Import project backup")}" aria-label="${s("导入项目备份", "Import project backup")}">${icon("upload")}</button><button class="secondary" data-action="export-csv">${icon("download")}${s("导出清单", "Export CSV")}</button><button class="primary" data-action="add">${icon("plus")}${s("新增行动", "Add action")}</button></div></div>${view !== "history" ? toolbar() : ""}<div id="view-content">${{ overview, board, list, timeline, history }[view]()}</div><footer class="page-footer"><span><img src="./assets/seal.svg" width="22" height="22" alt="">DeepFamily <b>·</b> ${s("家族传承计划", "Family legacy plan")}</span><span>${s("珍藏过去，连接未来。", "Preserve the past. Connect the future.")} <b>·</b> UTC+8</span></footer></div></main>`;
+    `${mobile ? '<button class="nav-scrim" data-action="menu" aria-label="Close navigation"></button>' : ""}<aside class="sidebar ${mobile ? "mobile-open" : ""}"><a class="brand" href="${lang === "en" ? "/DeepFamily/en/" : "/DeepFamily/zh/"}"><img src="./assets/seal.svg" width="39" height="39" alt=""><span>DeepFamily<small>${s("让家族记忆，世代相承", "MEMORY ACROSS GENERATIONS")}</small></span></a><div class="workspace"><span class="family-character" aria-hidden="true">吴</span><span><strong>${s("Wu 家族传承计划", "Wu Family Legacy")}</strong><small>FAMILY LEGACY WORKSPACE</small></span></div><p class="nav-caption">${s("传承工作空间", "YOUR WORKSPACE")}</p><nav aria-label="${s("项目导航", "Project navigation")}">${views.map((v, i) => `<button data-view="${v}" class="${view === v ? "active" : ""}" ${view === v ? 'aria-current="page"' : ""}>${icon(["home", "board", "list", "timeline", "history", "board", "people"][i])}<span>${names()[i]}</span>${v === "list" ? `<b>${project.tasks.length}</b>` : ""}</button>`).join("")}</nav><div class="sidebar-bottom"><div class="family-motto"><span>家</span><p>${s("承先人之志，<br>启后人之路。", "Honor those before us.<br>Make room for those to come.")}</p><small>${s("先整理家族内部事项，再讨论对外展示。", "Care for the family archive before considering public display.")}</small></div><a href="https://wu-family-project-hub.luoxi.chatgpt.site/" class="source-link">${s("打开原私密云端工作台", "Original private cloud workspace")} ↗</a><a href="https://github.com/luoxisg/dcdeeptech/tree/main/dfplan" target="_blank" rel="noopener" class="source-link">GitHub ${s("源码", "source")} ↗</a></div></aside><main id="main"><header class="topbar"><div class="breadcrumb"><button class="icon-button menu-button" data-action="menu" aria-label="${s("打开导航", "Open navigation")}" aria-expanded="${mobile}">${icon("menu")}</button><span>DeepFamily</span>${icon("chevron")}<strong>${s("家族传承计划", "Family legacy plan")}</strong></div><div class="topbar-right"><span class="local-status"><i></i>${s("本机保存", "Saved locally")}</span><div class="language-switch" role="group" aria-label="Language / 语言"><button data-lang="zh" class="${lang === "zh" ? "selected" : ""}" aria-pressed="${lang === "zh"}">中</button><button data-lang="en" class="${lang === "en" ? "selected" : ""}" aria-pressed="${lang === "en"}">EN</button></div></div></header><div class="content"><section class="hero"><div class="hero-copy"><span class="eyebrow">A LEGACY WORTH KEEPING</span><h1>${s("把家族记忆，<br>认真交给下一代。", "Keep the memories.<br>Carry the legacy forward.")}</h1><p>${s("从一张老照片，到一部家族史。<br>让每一份资料被珍藏，让每一步传承有章可循。", "From a treasured photograph to a family history.<br>A thoughtful plan to preserve what connects us.")}</p><div class="hero-tags"><span>${icon("folder")}${s("10 项基础行动", "10 foundational actions")}</span><span>${icon("clock")}${s("12 周建议周期", "12-week suggested plan")}</span></div></div><img class="heritage-art" src="./assets/heritage-tree.svg" alt="" width="540" height="340"><span class="hero-corner">${s("根深 · 叶茂 · 家长青", "ROOTS · STORIES · GENERATIONS")}</span></section><div class="storage-note">${icon("shield")}<p>${s("此页为公开的计划模板；你的修改仅保存在当前浏览器，不会自动同步。请定期导出备份，勿在此记录密码或敏感家族资料。", "This is a public planning template. Your edits stay in this browser and do not sync automatically. Export backups regularly; keep passwords and sensitive family records elsewhere.")}</p><button data-action="export-json">${s("备份", "Back up")}${icon("download")}</button></div>${storageIssue ? `<div role="alert" class="alert">${s("本机存储无法读取。当前显示基础模板；请先检查或导出原有浏览器数据，再保存。", "Browser storage could not be read. The base template is shown; check or recover existing browser data before saving.")}</div>` : ""}<section class="metrics" aria-label="${s("项目进度", "Project progress")}"><div class="metric"><span>${s("传承进度", "LEGACY PROGRESS")}</span><strong>${percent}<small>%</small></strong><div class="progress"><i style="width:${percent}%"></i></div><p>${done} / ${project.tasks.length} ${s("项已验收完成", "actions accepted")}</p></div><div class="metric"><span>${s("优先落实", "PRIORITIES")}</span><strong>${project.tasks.filter((t) => t.priority === "P0" && !complete(t)).length}<small>${s("项", "open")}</small></strong><p>${s("联系人 · 盘点 · 备份 · 授权", "Contacts · assets · backups · consent")}</p></div><div class="metric"><span>${s("等待家族审阅", "FAMILY REVIEW")}</span><strong>${project.tasks.filter((t) => t.status === "待家族确认").length}<small>${s("项", "open")}</small></strong><p>${s("共同审阅，才是传承的开始", "Shared review makes a shared legacy")}</p></div><div class="metric start-metric"><span>${s("项目启动日", "PROJECT START")}</span><button data-action="start">${esc(dateLabel(project.startDate))}${icon("calendar")}</button><p>${s("确认日期，让计划循序展开", "Set the date to bring the plan to life")}</p></div></section><div class="section-heading main-heading"><div><span class="section-kicker">THE FAMILY ARCHIVE / ${s("有序传承", "THOUGHTFUL STEWARDSHIP")}</span><h2 id="page-title" tabindex="-1">${names()[views.indexOf(view)]}</h2><p>${s("负责人及周期为建议，请核实后逐项推进。", "Owners and schedules are proposals. Verify each before proceeding.")}</p></div><div class="actions"><button class="icon-button" data-action="import" title="${s("导入项目备份", "Import project backup")}" aria-label="${s("导入项目备份", "Import project backup")}">${icon("upload")}</button><button class="secondary" data-action="export-csv">${icon("download")}${s("导出清单", "Export CSV")}</button><button class="primary" data-action="add">${icon("plus")}${s("新增行动", "Add action")}</button></div></div>${view !== "history" ? toolbar() : ""}<div id="view-content">${{ overview, board, list, timeline, history, dashboard: dashboardView, people: peopleView }[view]()}</div><footer class="page-footer"><span><img src="./assets/seal.svg" width="22" height="22" alt="">DeepFamily <b>·</b> ${s("家族传承计划", "Family legacy plan")}</span><span>${s("珍藏过去，连接未来。", "Preserve the past. Connect the future.")} <b>·</b> UTC+8</span></footer></div></main>`;
   decorateCloud();
-  if (activeId === "search") {
-    const input = $("#search");
+  if (dashboardDrilldown && !isPhone() && view === "list")
+    $("#view-content")?.insertAdjacentHTML("beforebegin", drilldownNote());
+  if (["search", "person-name", "person-responsibility"].includes(activeId)) {
+    const input = $("#" + activeId);
     input.focus();
     input.setSelectionRange(selection, selection);
   }
+}
+function drilldownNote() {
+  return `<div class="dashboard-drilldown-note"><span>${s("正在查看仪表盘选中的任务", "Showing the actions selected in the dashboard")}</span><button class="module-button" data-action="clear">${s("显示全部任务", "Show all actions")}</button></div>`;
+}
+function dashboardView() {
+  return renderDashboard(project, people, dashboardSelection, {
+    s,
+    esc,
+    icon,
+    lang,
+  });
+}
+function peopleView() {
+  return renderPeople(
+    project,
+    people,
+    {
+      canManage: canManagePeople(),
+      ready: peopleReady,
+      error: peopleMessage,
+      busy: peopleBusy,
+      draft: peopleDraft,
+      formError: peopleFormError,
+    },
+    { s, esc, icon },
+  );
+}
+function openDashboardTasks(options = {}) {
+  dashboardDrilldown = { ...dashboardSelection, focus: "all", ...options };
+  category = "all";
+  filter = "all";
+  owner = "";
+  query = "";
+  changeView("list", false);
+}
+async function refreshPeople() {
+  const uid = cloudSession.user?.uid;
+  const rows = await cloud.listPeople();
+  if (!cloudReady() || uid !== cloudSession.user?.uid) return;
+  people = rows;
+  peopleReady = true;
+  peopleMessage = "";
+  render();
 }
 function openEditor(task) {
   editingWasNew = !task;
@@ -474,6 +559,7 @@ function openEditor(task) {
       icon,
       art,
       value,
+      assigneeField: (task) => assigneeSelect(task, people, { s, esc }),
     });
     $("#editor").showModal();
     return;
@@ -485,7 +571,7 @@ function openEditor(task) {
   const bilingual = (k, label, rows = 2) =>
     `<label>${label}<textarea name="${key(k)}" rows="${rows}" maxlength="12000">${esc(value(t, k))}</textarea></label>`;
   $("#editor").innerHTML =
-    `<form id="task-form"><div class="dialog-head"><div><span class="eyebrow">${esc(t.id)} / ${s("行动详情", "ACTION DETAILS")}</span><h2 id="dialog-title">${s("让传承有据可循", "Give the next step a clear purpose")}</h2></div><button type="button" class="icon-button" data-close="editor" aria-label="${s("关闭", "Close")}">${icon("close")}</button></div><div class="form-body">${input(key("title"), s("行动名称", "Action title"), "text", 'required maxlength="160"')}<div class="form-grid"><label>${s("优先级", "Priority")}<select name="priority">${["P0", "P1", "P2"].map((p) => `<option ${p === t.priority ? "selected" : ""}>${p}</option>`).join("")}</select></label><label>${s("当前状态", "Status")}<select name="status">${statuses.map((st) => `<option value="${st}" ${st === t.status ? "selected" : ""}>${statusLabel(st)}</option>`).join("")}</select></label>${input(key("owner"), s("负责人描述", "Responsibility"))}${input("assignee", s("具体人名", "Assignee"), "text", 'maxlength="120" autocomplete="off"')}${input(key("collaborators"), s("配合人员", "Collaborators"))}${input("weekStart", s("建议开始周", "Suggested start week"), "number", 'min="1" max="104" required')}${input("weekEnd", s("建议结束周", "Suggested end week"), "number", 'min="1" max="104" required')}${input("due", s("手动截止日", "Manual due date"), "date")}${input("completed", s("实际完成日", "Completion date"), "date")}</div><small class="form-hint">${s("手动截止日留空时，按启动日与建议结束周计算。", "Leave the manual due date blank to calculate it from the start date and end week.")}</small>${bilingual("action", s("具体行动", "Action steps"), 3)}${bilingual("deliverable", s("交付物与完成标准", "Deliverables and acceptance criteria"), 3)}${bilingual("dependency", s("前置条件", "Dependencies"))}<label>${s("下一步 / 阻碍（中英文共用）", "Next step / blockers (shared across languages)")}<textarea name="next" rows="2" maxlength="12000">${esc(t.next)}</textarea></label><details class="translations"><summary>${s("补充英文内容（可选）", "Chinese content (optional)")}</summary>${[
+    `<form id="task-form"><div class="dialog-head"><div><span class="eyebrow">${esc(t.id)} / ${s("行动详情", "ACTION DETAILS")}</span><h2 id="dialog-title">${s("让传承有据可循", "Give the next step a clear purpose")}</h2></div><button type="button" class="icon-button" data-close="editor" aria-label="${s("关闭", "Close")}">${icon("close")}</button></div><div class="form-body">${input(key("title"), s("行动名称", "Action title"), "text", 'required maxlength="160"')}<div class="form-grid"><label>${s("优先级", "Priority")}<select name="priority">${["P0", "P1", "P2"].map((p) => `<option ${p === t.priority ? "selected" : ""}>${p}</option>`).join("")}</select></label><label>${s("当前状态", "Status")}<select name="status">${statuses.map((st) => `<option value="${st}" ${st === t.status ? "selected" : ""}>${statusLabel(st)}</option>`).join("")}</select></label>${input(key("owner"), s("负责人描述", "Responsibility"))}${assigneeSelect(t, people, { s, esc })}${input(key("collaborators"), s("配合人员", "Collaborators"))}${input("weekStart", s("建议开始周", "Suggested start week"), "number", 'min="1" max="104" required')}${input("weekEnd", s("建议结束周", "Suggested end week"), "number", 'min="1" max="104" required')}${input("due", s("手动截止日", "Manual due date"), "date")}${input("completed", s("实际完成日", "Completion date"), "date")}</div><small class="form-hint">${s("手动截止日留空时，按启动日与建议结束周计算。", "Leave the manual due date blank to calculate it from the start date and end week.")}</small>${bilingual("action", s("具体行动", "Action steps"), 3)}${bilingual("deliverable", s("交付物与完成标准", "Deliverables and acceptance criteria"), 3)}${bilingual("dependency", s("前置条件", "Dependencies"))}<label>${s("下一步 / 阻碍（中英文共用）", "Next step / blockers (shared across languages)")}<textarea name="next" rows="2" maxlength="12000">${esc(t.next)}</textarea></label><details class="translations"><summary>${s("补充英文内容（可选）", "Chinese content (optional)")}</summary>${[
       "title",
       "owner",
       "collaborators",
@@ -643,6 +729,50 @@ function openStart() {
 document.addEventListener("click", async (e) => {
   const btn = e.target.closest("button");
   if (!btn) return;
+  if (
+    btn.dataset.dashboardFocus ||
+    btn.dataset.dashboardStatus ||
+    btn.dataset.dashboardStage ||
+    btn.dataset.dashboardPerson
+  ) {
+    const selected = {};
+    if (btn.dataset.dashboardFocus) selected.focus = btn.dataset.dashboardFocus;
+    if (btn.dataset.dashboardStatus)
+      selected.focus = "status:" + btn.dataset.dashboardStatus;
+    if (btn.dataset.dashboardStage)
+      selected.priority = btn.dataset.dashboardStage;
+    if (btn.dataset.dashboardPerson)
+      selected.person = btn.dataset.dashboardPerson;
+    if (view === "people") selected.priority = "all";
+    openDashboardTasks(selected);
+    return;
+  }
+  if (btn.dataset.personId) {
+    if (!canManagePeople() || peopleBusy) return;
+    peopleBusy = true;
+    btn.disabled = true;
+    try {
+      await cloud.setPersonActive(
+        btn.dataset.personId,
+        btn.dataset.personActive === "true",
+      );
+      await refreshPeople();
+      toast(
+        btn.dataset.personActive === "true"
+          ? s("已恢复人员。", "Person restored.")
+          : s(
+              "已移出名单，既有任务与历史保留。",
+              "Removed from the directory. Existing actions and history are retained.",
+            ),
+      );
+    } catch (error) {
+      toast(cloudError(error, lang));
+    } finally {
+      peopleBusy = false;
+      render();
+    }
+    return;
+  }
   if (btn.dataset.adminEmail) {
     if (cloudSaving) return;
     btn.disabled = true;
@@ -796,6 +926,7 @@ document.addEventListener("click", async (e) => {
     query = "";
     filter = "all";
     owner = "";
+    dashboardDrilldown = null;
     render();
   } else if (action === "export-json") exportFile("json");
   else if (action === "export-csv") exportFile("csv");
@@ -825,6 +956,11 @@ function historyReplace(url) {
   window.history.replaceState(null, "", url);
 }
 document.addEventListener("input", (e) => {
+  if (
+    e.target.closest("#person-form") &&
+    ["displayName", "responsibility"].includes(e.target.name)
+  )
+    peopleDraft[e.target.name] = e.target.value;
   if (e.target.id === "search") {
     query = e.target.value;
     render();
@@ -832,6 +968,16 @@ document.addEventListener("input", (e) => {
 });
 document.addEventListener("change", (e) => {
   const el = e.target;
+  if (
+    el.id === "dashboard-person-filter" ||
+    el.id === "dashboard-priority-filter"
+  ) {
+    dashboardSelection[
+      el.id === "dashboard-person-filter" ? "person" : "priority"
+    ] = el.value;
+    render();
+    return;
+  }
   if (el.id === "owner-filter") {
     owner = el.value;
     render();
@@ -848,6 +994,35 @@ document.addEventListener("change", (e) => {
   }
 });
 document.addEventListener("submit", async (e) => {
+  if (e.target.id === "person-form") {
+    e.preventDefault();
+    if (!canManagePeople() || !peopleReady || peopleBusy) return;
+    const data = new FormData(e.target);
+    peopleBusy = true;
+    peopleFormError = "";
+    e.target.querySelector('[type="submit"]').disabled = true;
+    try {
+      await cloud.addPerson(
+        data.get("displayName"),
+        data.get("responsibility"),
+      );
+      peopleDraft = { displayName: "", responsibility: "" };
+      await refreshPeople();
+      toast(
+        s(
+          "人员已加入，可以分配任务。",
+          "Person added and available for assignments.",
+        ),
+      );
+    } catch (error) {
+      peopleFormError = cloudError(error, lang);
+      toast(peopleFormError);
+    } finally {
+      peopleBusy = false;
+      render();
+    }
+    return;
+  }
   if (e.target.id === "add-admin-form") {
     e.preventDefault();
     const data = new FormData(e.target),
@@ -892,6 +1067,21 @@ document.addEventListener("submit", async (e) => {
       updatedAt: new Date().toISOString(),
     };
     task.assignee = (task.assignee || "").trim();
+    const person = people.find(
+      (p) => p.active && p.displayName === task.assignee,
+    );
+    if (person) task.assigneeId = person.id;
+    else if (!task.assignee) {
+      if (editing.assigneeId !== undefined) task.assigneeId = "";
+      else delete task.assigneeId;
+    } else if (task.assignee !== (editing.assignee || "")) {
+      $("#form-error").textContent = s(
+        "请从在册人员中选择；新人员需由管理员先加入名单。",
+        "Choose an active person. Ask an administrator to add new people first.",
+      );
+      return;
+    }
+
     if (!task.title.trim()) task.title = task.titleEn || "";
     if (task.status !== "已完成") task.completed = "";
     const next = {
@@ -1067,6 +1257,13 @@ async function startCloud() {
       (session) => {
         cloudSession = session;
         if (session.phase !== "ready") {
+          people = [];
+          peopleReady = false;
+          peopleMessage = "";
+          peopleFormError = "";
+          peopleDraft = { displayName: "", responsibility: "" };
+          dashboardSelection = { person: "all", priority: "all" };
+          dashboardDrilldown = null;
           cloudLoaded = false;
           cloudRevision = -1;
           project = {
@@ -1105,6 +1302,23 @@ async function startCloud() {
                 ? "not-initialized"
                 : "error",
           };
+        render();
+      },
+      (rows) => {
+        people = rows;
+        peopleReady = true;
+        peopleMessage = "";
+        render();
+      },
+      (error) => {
+        peopleReady = false;
+        peopleMessage =
+          error.code === "permission-denied"
+            ? s(
+                "人员管理尚未开通，请管理员运行后台更新命令后刷新页面。",
+                "People management is not enabled yet. Ask an administrator to run the backend update and refresh.",
+              )
+            : cloudError(error, lang);
         render();
       },
     );

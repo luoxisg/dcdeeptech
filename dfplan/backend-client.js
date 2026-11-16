@@ -1,5 +1,10 @@
+import {
+  normalizePersonName,
+  personId,
+  validatePersonName,
+} from "./people-model.mjs?v=20261116-people";
 import { seedTasks } from "./data.js";
-import { backendConfig } from "./backend-config.js?v=20261116-assignees";
+import { backendConfig } from "./backend-config.js?v=20261116-people";
 import { validateProject } from "./model.mjs";
 
 export const cloudEnabled = backendConfig.enabled === true;
@@ -12,6 +17,7 @@ const taskFields = [
   "owner",
   "ownerEn",
   "assignee",
+  "assigneeId",
   "collaborators",
   "collaboratorsEn",
   "action",
@@ -41,7 +47,13 @@ const cleanTask = (task, preserveEmptyAssignee = true) =>
       .map((k) => [k, task[k]]),
   );
 
-export async function connectBackend(onSession, onProject, onError) {
+export async function connectBackend(
+  onSession,
+  onProject,
+  onError,
+  onPeople = null,
+  onPeopleError = () => {},
+) {
   if (!cloudEnabled) return null;
   const fragment = new URLSearchParams(location.hash.slice(1));
   let pendingToken = fragment.get("invite") || "",
@@ -81,6 +93,7 @@ export async function connectBackend(onSession, onProject, onError) {
     stopAdmin = () => {},
     stopProject = () => {},
     stopLink = () => {},
+    stopPeople = () => {},
     epoch = 0,
     loadGeneration = 0,
     last = null;
@@ -136,6 +149,8 @@ export async function connectBackend(onSession, onProject, onError) {
     stopAdmin();
     stopProject();
     stopLink();
+    stopPeople();
+    stopPeople = () => {};
     stopLink = () => {};
     stopAdmin = () => {};
     stopProject = () => {};
@@ -195,6 +210,33 @@ export async function connectBackend(onSession, onProject, onError) {
         },
         (error) => {
           if (myEpoch === epoch) denied(user, error);
+        },
+      );
+    if (first && onPeople)
+      stopPeople = dbSdk.onSnapshot(
+        dbSdk.collection(projectRef, "people"),
+        { includeMetadataChanges: true },
+        (snap) => {
+          if (
+            myEpoch !== epoch ||
+            snap.metadata.fromCache ||
+            snap.metadata.hasPendingWrites
+          )
+            return;
+          onPeople(
+            snap.docs
+              .map((d) => ({
+                id: d.id,
+                displayName: d.data().displayName,
+                nameKey: d.data().nameKey,
+                responsibility: d.data().responsibility,
+                active: d.data().active,
+              }))
+              .sort((a, b) => a.displayName.localeCompare(b.displayName)),
+          );
+        },
+        (error) => {
+          if (myEpoch === epoch) onPeopleError(error);
         },
       );
     return first;
@@ -517,6 +559,66 @@ export async function connectBackend(onSession, onProject, onError) {
         });
       });
       return load();
+    },
+    async listPeople() {
+      if (!member) throw codeError("dfplan/not-admin");
+      const rows = await dbSdk.getDocsFromServer(
+        dbSdk.collection(projectRef, "people"),
+      );
+      return rows.docs.map((d) => ({ id: d.id, ...d.data() }));
+    },
+    async addPerson(displayName, responsibility = "") {
+      if (
+        !member ||
+        !["owner", "admin"].includes(member.role) ||
+        !auth.currentUser
+      )
+        throw codeError("dfplan/not-admin");
+      const name = String(displayName || "").trim(),
+        description = String(responsibility || "").trim();
+      if (!validatePersonName(name) || description.length > 240)
+        throw codeError("dfplan/person-format");
+      const myEpoch = epoch,
+        uid = auth.currentUser.uid,
+        id = await personId(name),
+        ref = dbSdk.doc(projectRef, "people", id);
+      await dbSdk.runTransaction(db, async (tx) => {
+        const existing = await tx.get(ref);
+        if (epoch !== myEpoch || !["owner", "admin"].includes(member?.role))
+          throw codeError("dfplan/not-admin");
+        if (existing.exists())
+          throw codeError(
+            existing.data().active
+              ? "dfplan/person-exists"
+              : "dfplan/person-removed",
+          );
+        const at = dbSdk.serverTimestamp();
+        tx.set(ref, {
+          displayName: name,
+          nameKey: normalizePersonName(name),
+          responsibility: description,
+          active: true,
+          createdAt: at,
+          createdBy: uid,
+          updatedAt: at,
+          updatedBy: uid,
+        });
+      });
+      return id;
+    },
+    async setPersonActive(id, active) {
+      if (
+        !member ||
+        !["owner", "admin"].includes(member.role) ||
+        !auth.currentUser
+      )
+        throw codeError("dfplan/not-admin");
+      if (!/^[a-f0-9]{64}$/.test(id)) throw codeError("dfplan/person-format");
+      return dbSdk.updateDoc(dbSdk.doc(projectRef, "people", id), {
+        active: !!active,
+        updatedAt: dbSdk.serverTimestamp(),
+        updatedBy: auth.currentUser.uid,
+      });
     },
     async listAdmins() {
       if (!member || !["owner", "admin"].includes(member.role))

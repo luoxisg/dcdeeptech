@@ -56,10 +56,11 @@ service cloud.firestore {
     }
     function validTask(t, id) {
       return t.keys().hasAll(['id','title','priority','owner','collaborators','action','deliverable','dependency','weekStart','weekEnd','status','due','completed','next','evidence','accepted','updatedAt'])
-        && t.keys().hasOnly(['id','title','titleEn','priority','owner','ownerEn','assignee','collaborators','collaboratorsEn','action','actionEn','deliverable','deliverableEn','dependency','dependencyEn','weekStart','weekEnd','status','due','completed','next','evidence','accepted','updatedAt'])
+        && t.keys().hasOnly(['id','title','titleEn','priority','owner','ownerEn','assignee','assigneeId','collaborators','collaboratorsEn','action','actionEn','deliverable','deliverableEn','dependency','dependencyEn','weekStart','weekEnd','status','due','completed','next','evidence','accepted','updatedAt'])
         && t.id == id && id.matches('^[A-Za-z0-9_-]{1,80}$')
         && text(t.title) && t.title.size() > 0 && t.title.matches('(?s).*[^\\s].*')
         && t.get('assignee','') is string && t.get('assignee','').size() <= 120
+        && t.get('assigneeId','') is string && t.get('assigneeId','').matches('^([a-f0-9]{64})?$')
         && text(t.owner) && text(t.collaborators) && text(t.action) && text(t.deliverable)
         && text(t.dependency) && text(t.next) && text(t.evidence) && text(t.updatedAt)
         && text(t.get('titleEn','')) && text(t.get('ownerEn','')) && text(t.get('collaboratorsEn',''))
@@ -89,6 +90,16 @@ service cloud.firestore {
     function consistentCommit(project, revision) {
       return exists(/databases/$(database)/documents/dfplanProjects/$(project))
         ? regularCommit(project, revision) : initialCommit(project, revision);
+    }
+    function validAssignment(project, task, original) {
+      let name = task.get('assignee','');
+      let person = task.get('assigneeId','');
+      return (name == original.get('assignee','') && person == original.get('assigneeId',''))
+        || (name == '' && person == '')
+        || (person.matches('^[a-f0-9]{64}$')
+          && exists(/databases/$(database)/documents/dfplanProjects/$(project)/people/$(person))
+          && get(/databases/$(database)/documents/dfplanProjects/$(project)/people/$(person)).data.active == true
+          && get(/databases/$(database)/documents/dfplanProjects/$(project)/people/$(person)).data.displayName == name);
     }
     function taskWrite(project, id) {
       return access(project)
@@ -165,12 +176,31 @@ service cloud.firestore {
         && request.resource.data.keys().hasOnly(['startDate','revision','updatedAt','updatedBy'])
         && validDate(request.resource.data.startDate)
         && consistentCommit(project,request.resource.data.revision);
+      match /people/{person} {
+        allow read: if access(project);
+        allow create: if admin() && project == 'wu-family'
+          && person.matches('^[a-f0-9]{64}$')
+          && request.resource.data.keys().hasOnly(['displayName','nameKey','responsibility','active','createdAt','createdBy','updatedAt','updatedBy'])
+          && request.resource.data.displayName is string && request.resource.data.displayName.size() > 0 && request.resource.data.displayName.size() <= 120
+          && request.resource.data.displayName.matches('(?s).*[^\\s].*')
+          && request.resource.data.nameKey is string && request.resource.data.nameKey.size() > 0 && request.resource.data.nameKey.size() <= 120
+          && request.resource.data.nameKey == request.resource.data.nameKey.lower()
+          && request.resource.data.responsibility is string && request.resource.data.responsibility.size() <= 240
+          && request.resource.data.active == true
+          && request.resource.data.createdAt == request.time && request.resource.data.updatedAt == request.time
+          && request.resource.data.createdBy == request.auth.uid && request.resource.data.updatedBy == request.auth.uid;
+        allow update: if admin() && project == 'wu-family'
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['active','updatedAt','updatedBy'])
+          && request.resource.data.active is bool
+          && request.resource.data.updatedAt == request.time && request.resource.data.updatedBy == request.auth.uid;
+        allow delete: if false;
+      }
       match /tasks/{id} {
         allow read: if access(project);
-        allow create: if taskWrite(project,id);
+        allow create: if taskWrite(project,id) && validAssignment(project,request.resource.data.task,{});
         // Older clients must not silently discard names introduced by this schema.
         // An intentional clear sends the explicit empty-string value instead.
-        allow update: if taskWrite(project,id)
+        allow update: if taskWrite(project,id) && validAssignment(project,request.resource.data.task,resource.data.task)
           && (!resource.data.task.keys().hasAny(['assignee']) || request.resource.data.task.keys().hasAll(['assignee']));
         allow delete: if false;
       }

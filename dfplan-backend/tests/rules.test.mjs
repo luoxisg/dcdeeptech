@@ -1,5 +1,6 @@
 import { before, after, beforeEach, test } from "node:test";
 import assert from "node:assert/strict";
+import { personId } from "../../dfplan/people-model.mjs";
 import { readFile } from "node:fs/promises";
 import {
   initializeTestEnvironment,
@@ -20,6 +21,7 @@ import {
   runTransaction,
 } from "firebase/firestore";
 let env;
+const testPersonId = await personId("Alex Example");
 const ownerEmail = "owner@example.com",
   adminEmail = "admin@example.com";
 const claims = (email) => ({
@@ -509,7 +511,13 @@ function redeem(db, uid = "patrick-device", overrides = {}) {
 }
 function guestCommit(
   db,
-  { actor = "Patrick", actorEmail = "", accepted = false, assignee } = {},
+  {
+    actor = "Patrick",
+    actorEmail = "",
+    accepted = false,
+    assignee,
+    assigneeId,
+  } = {},
 ) {
   const uid = "patrick-device",
     batch = writeBatch(db),
@@ -525,6 +533,7 @@ function guestCommit(
       ...task,
       next: "Patrick updated the shared action",
       ...(assignee !== undefined ? { assignee } : {}),
+      ...(assigneeId !== undefined ? { assigneeId } : {}),
       status: accepted ? "已完成" : "进行中",
     },
     revision: 1,
@@ -689,6 +698,7 @@ test("activation expiry does not remove an already bound device, while other mem
 
 test("optional assignee names are writable without changing responsibility, and invalid names are rejected", async () => {
   const db = client();
+  await addTestPerson();
   await assertFails(
     commit(db, { changedTask: { ...task, assignee: { name: "Invalid" } } }),
   );
@@ -696,7 +706,13 @@ test("optional assignee names are writable without changing responsibility, and 
     commit(db, { changedTask: { ...task, assignee: "x".repeat(121) } }),
   );
   await assertSucceeds(
-    commit(db, { changedTask: { ...task, assignee: "Alex Example" } }),
+    commit(db, {
+      changedTask: {
+        ...task,
+        assignee: "Alex Example",
+        assigneeId: testPersonId,
+      },
+    }),
   );
   const saved = (await getDoc(doc(db, projectPath + "/tasks/WU-01"))).data()
     .task;
@@ -705,9 +721,12 @@ test("optional assignee names are writable without changing responsibility, and 
 });
 test("an invited Patrick device can update named assignees under the same project rules", async () => {
   await issueInvite();
+  await addTestPerson();
   const db = anonymous();
   await assertSucceeds(redeem(db));
-  await assertSucceeds(guestCommit(db, { assignee: "Alex Example" }));
+  await assertSucceeds(
+    guestCommit(db, { assignee: "Alex Example", assigneeId: testPersonId }),
+  );
   assert.equal(
     (await getDoc(doc(db, projectPath + "/tasks/WU-01"))).data().task.assignee,
     "Alex Example",
@@ -728,5 +747,157 @@ test("older clients cannot drop an imported assignee while an explicit clear rem
   assert.equal(
     (await getDoc(doc(db, projectPath + "/tasks/WU-01"))).data().task.assignee,
     "",
+  );
+});
+
+function testPerson(uid = "owner") {
+  return {
+    displayName: "Alex Example",
+    nameKey: "alex example",
+    responsibility: "Archives",
+    active: true,
+    createdAt: serverTimestamp(),
+    createdBy: uid,
+    updatedAt: serverTimestamp(),
+    updatedBy: uid,
+  };
+}
+async function addTestPerson() {
+  await assertSucceeds(
+    setDoc(
+      doc(client(), projectPath + "/people/" + testPersonId),
+      testPerson(),
+    ),
+  );
+}
+test("only active Google administrators can add, remove and restore directory people", async () => {
+  await issueInvite();
+  const guest = anonymous();
+  await assertSucceeds(redeem(guest));
+  await assertFails(
+    setDoc(
+      doc(guest, projectPath + "/people/" + testPersonId),
+      testPerson("patrick-device"),
+    ),
+  );
+  await assertFails(
+    setDoc(
+      doc(
+        env.unauthenticatedContext().firestore(),
+        projectPath + "/people/" + testPersonId,
+      ),
+      testPerson(),
+    ),
+  );
+  const admin = client("member", adminEmail);
+  await assertSucceeds(
+    setDoc(
+      doc(admin, projectPath + "/people/" + testPersonId),
+      testPerson("member"),
+    ),
+  );
+  await assertSucceeds(getDocs(collection(guest, projectPath + "/people")));
+  await assertFails(
+    updateDoc(doc(guest, projectPath + "/people/" + testPersonId), {
+      active: false,
+      updatedAt: serverTimestamp(),
+      updatedBy: "patrick-device",
+    }),
+  );
+  await assertSucceeds(
+    updateDoc(doc(admin, projectPath + "/people/" + testPersonId), {
+      active: false,
+      updatedAt: serverTimestamp(),
+      updatedBy: "member",
+    }),
+  );
+  await assertSucceeds(
+    updateDoc(doc(client(), projectPath + "/people/" + testPersonId), {
+      active: true,
+      updatedAt: serverTimestamp(),
+      updatedBy: "owner",
+    }),
+  );
+  await assertFails(
+    deleteDoc(doc(client(), projectPath + "/people/" + testPersonId)),
+  );
+  await assertFails(
+    getDoc(doc(client("alex", "alex@example.com"), projectPath)),
+  );
+});
+test("directory records reject credential fields and immutable identity edits", async () => {
+  await assertFails(
+    setDoc(doc(client(), projectPath + "/people/" + testPersonId), {
+      ...testPerson(),
+      role: "owner",
+    }),
+  );
+  await assertFails(
+    setDoc(doc(client(), projectPath + "/people/" + testPersonId), {
+      ...testPerson(),
+      displayName: " ".repeat(3),
+    }),
+  );
+  await addTestPerson();
+  await assertFails(
+    updateDoc(doc(client(), projectPath + "/people/" + testPersonId), {
+      displayName: "Someone else",
+      updatedAt: serverTimestamp(),
+      updatedBy: "owner",
+    }),
+  );
+  await assertFails(
+    updateDoc(doc(client(), projectPath + "/people/" + testPersonId), {
+      nameKey: "owner",
+      updatedAt: serverTimestamp(),
+      updatedBy: "owner",
+    }),
+  );
+});
+test("new assignments require an active directory person, while removed people's old assignments survive", async () => {
+  await addTestPerson();
+  const db = client();
+  await assertFails(
+    commit(db, { changedTask: { ...task, assignee: "Unregistered person" } }),
+  );
+  await assertFails(
+    commit(db, {
+      changedTask: {
+        ...task,
+        assignee: "Other name",
+        assigneeId: testPersonId,
+      },
+    }),
+  );
+  await assertSucceeds(
+    updateDoc(doc(db, projectPath + "/people/" + testPersonId), {
+      active: false,
+      updatedAt: serverTimestamp(),
+      updatedBy: "owner",
+    }),
+  );
+  await assertFails(
+    commit(db, {
+      changedTask: {
+        ...task,
+        assignee: "Alex Example",
+        assigneeId: testPersonId,
+      },
+    }),
+  );
+  await env.withSecurityRulesDisabled(async (c) => {
+    await updateDoc(doc(c.firestore(), projectPath + "/tasks/WU-01"), {
+      task: { ...task, assignee: "Alex Example", assigneeId: testPersonId },
+    });
+  });
+  await assertSucceeds(
+    commit(db, {
+      changedTask: {
+        ...task,
+        assignee: "Alex Example",
+        assigneeId: testPersonId,
+        next: "Keep historical assignment",
+      },
+    }),
   );
 });

@@ -1,5 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import { personId } from "../../dfplan/people-model.mjs";
 import { readFile } from "node:fs/promises";
 import {
   getAuthenticatedEmail,
@@ -13,6 +14,7 @@ import {
   createPatrickInvitation,
   parseAssigneeUpdates,
   mergeAssignees,
+  syncPeopleFromTasks,
 } from "../scripts/deploy-core.mjs";
 const template = await readFile(
   new URL("../firestore.rules", import.meta.url),
@@ -94,6 +96,15 @@ class FakeDb {
   collection(path) {
     const query = {
       path,
+      get: async () => ({
+        docs: [...this.records.keys()]
+          .filter(
+            (k) =>
+              k.startsWith(path + "/") &&
+              !k.slice(path.length + 1).includes("/"),
+          )
+          .map((k) => this.snapshot(k)),
+      }),
       filters: [],
       count: Infinity,
       doc: (id) => this.doc(path + "/" + id),
@@ -627,4 +638,45 @@ test("missing tasks or inactive owners stop the whole assignee merge without par
     );
     assert.equal(JSON.stringify([...db.records]), before);
   }
+});
+
+test("people initialization deduplicates current assignments and never reactivates removed people", async () => {
+  const db = assignmentFixture();
+  db.records.get("dfplanProjects/wu-family/tasks/WU-01").task.assignee =
+    "Alex Example";
+  db.records.get("dfplanProjects/wu-family/tasks/WU-05").task.assignee =
+    " ALEX   EXAMPLE ";
+  const first = await syncPeopleFromTasks(db, {
+    email,
+    serverTimestamp: () => "SERVER_TIME",
+  });
+  assert.deepEqual(first, { createdPersonCount: 1, existingPersonCount: 0 });
+  const id = await personId("Alex Example"),
+    path = "dfplanProjects/wu-family/people/" + id;
+  assert.equal(db.records.get(path).displayName, "Alex Example");
+  db.records.get(path).active = false;
+  assert.deepEqual(
+    await syncPeopleFromTasks(db, {
+      email,
+      serverTimestamp: () => "SERVER_TIME",
+    }),
+    { createdPersonCount: 0, existingPersonCount: 1 },
+  );
+  assert.equal(db.records.get(path).active, false);
+  assert.equal(db.records.get("dfplanProjects/wu-family").revision, 4);
+  assert.equal(
+    db.records.get("dfplanProjects/wu-family/tasks/WU-01").task.status,
+    "进行中",
+  );
+});
+test("directory initialization refuses an inactive owner without partial writes", async () => {
+  const db = assignmentFixture();
+  db.records.get("dfplanAdmins/" + email).active = false;
+  db.records.get("dfplanProjects/wu-family/tasks/WU-01").task.assignee =
+    "Alex Example";
+  const before = JSON.stringify([...db.records]);
+  await assert.rejects(
+    syncPeopleFromTasks(db, { email, serverTimestamp: () => "SERVER_TIME" }),
+  );
+  assert.equal(JSON.stringify([...db.records]), before);
 });

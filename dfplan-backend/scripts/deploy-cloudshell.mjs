@@ -15,6 +15,7 @@ import {
   createPatrickInvitation,
   parseAssigneeUpdates,
   mergeAssignees,
+  syncPeopleFromTasks,
 } from "./deploy-core.mjs";
 const args = process.argv.slice(2);
 function option(name) {
@@ -147,6 +148,13 @@ async function main() {
           serverTimestamp: () => FieldValue.serverTimestamp(),
         })
       : null;
+    const peopleUpdate =
+      args.includes("--sync-people") || assignments
+        ? await syncPeopleFromTasks(db, {
+            email,
+            serverTimestamp: () => FieldValue.serverTimestamp(),
+          })
+        : null;
     const [owner, project, tasks] = await Promise.all([
       db.doc("dfplanAdmins/" + email).get(),
       db.doc("dfplanProjects/wu-family").get(),
@@ -172,12 +180,14 @@ async function main() {
           revision: project.data().revision,
           ...initialized,
           ...(assignmentUpdate ? { assignmentUpdate } : {}),
+          ...(peopleUpdate ? { peopleUpdate } : {}),
         },
         null,
         2,
       ),
     );
     if (assignmentUpdate) console.log("DFPLAN_ASSIGNEES_UPDATED");
+    if (peopleUpdate) console.log("DFPLAN_PEOPLE_READY");
     if (args.includes("--enable-patrick")) {
       const link = await createPatrickInvitation(db, {
         serverTimestamp: () => FieldValue.serverTimestamp(),

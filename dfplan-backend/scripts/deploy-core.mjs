@@ -1,4 +1,74 @@
 import { createHash, randomBytes } from "node:crypto";
+import {
+  normalizePersonName,
+  personId,
+  validatePersonName,
+} from "../../dfplan/people-model.mjs";
+
+export async function syncPeopleFromTasks(db, { email, serverTimestamp }) {
+  const tasks = await db.collection("dfplanProjects/wu-family/tasks").get(),
+    names = new Map();
+  for (const row of tasks.docs) {
+    const task = row.data().task,
+      name = task?.assignee?.trim();
+    if (!name) continue;
+    if (!validatePersonName(name))
+      throw Error(
+        "Invalid existing assignee; directory initialization stopped.",
+      );
+    const key = normalizePersonName(name);
+    if (!names.has(key))
+      names.set(key, {
+        displayName: name,
+        nameKey: key,
+        responsibilities: new Set(),
+      });
+    if (task.owner) names.get(key).responsibilities.add(task.owner);
+  }
+  const planned = await Promise.all(
+    [...names.values()].map(async (p) => ({
+      ...p,
+      id: await personId(p.displayName),
+    })),
+  );
+  return db.runTransaction(async (tx) => {
+    const [owner, ...existing] = await Promise.all([
+      tx.get(db.doc("dfplanAdmins/" + email)),
+      ...planned.map((p) =>
+        tx.get(db.doc("dfplanProjects/wu-family/people/" + p.id)),
+      ),
+    ]);
+    if (
+      !owner.exists ||
+      owner.data().role !== "owner" ||
+      !owner.data().active ||
+      owner.data().email !== email
+    )
+      throw Error(
+        "An active protected owner is required to initialize people.",
+      );
+    let createdPersonCount = 0;
+    planned.forEach((person, i) => {
+      if (existing[i].exists) return;
+      const at = serverTimestamp();
+      tx.create(db.doc("dfplanProjects/wu-family/people/" + person.id), {
+        displayName: person.displayName,
+        nameKey: person.nameKey,
+        responsibility: [...person.responsibilities].join("；").slice(0, 240),
+        active: true,
+        createdAt: at,
+        createdBy: "cloud-shell",
+        updatedAt: at,
+        updatedBy: "cloud-shell",
+      });
+      createdPersonCount++;
+    });
+    return {
+      createdPersonCount,
+      existingPersonCount: planned.length - createdPersonCount,
+    };
+  });
+}
 
 export function parseAssigneeUpdates(raw) {
   if (typeof raw !== "string" || raw.length > 256000)
@@ -64,7 +134,11 @@ export async function mergeAssignees(
         throw Error("A referenced task does not exist; no names were changed.");
       const task = tasks[i].data().task;
       if ((task.assignee || "") !== name)
-        changed.push({ ...task, assignee: name });
+        changed.push({
+          ...task,
+          assignee: name,
+          ...(Object.hasOwn(task, "assigneeId") ? { assigneeId: "" } : {}),
+        });
     });
     if (!changed.length) return { changedTaskCount: 0, revision: baseline };
     const revision = baseline + 1,

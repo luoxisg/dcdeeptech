@@ -33,6 +33,7 @@ for (const mutate of [
   (p) => (p.tasks[0].due = "2026-99-99"),
   (p) => (p.tasks[0].titleEn = {}),
   (p) => (p.tasks[0].assignee = {}),
+  (p) => (p.tasks[0].assigneeId = "not-a-person-id"),
   (p) => (p.tasks[0].assignee = "x".repeat(121)),
   (p) =>
     p.history.push({ id: "x", at: "invalid", actor: "test", text: "test" }),

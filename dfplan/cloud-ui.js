@@ -1,5 +1,17 @@
 export function cloudError(error, lang) {
   const messages = {
+    "dfplan/person-format": [
+      "请填写有效姓名（最多120字）与分工说明（最多240字）。",
+      "Enter a valid name (up to 120 characters) and responsibility (up to 240 characters).",
+    ],
+    "dfplan/person-exists": [
+      "这位人员已在名单中。",
+      "This person is already in the directory.",
+    ],
+    "dfplan/person-removed": [
+      "这位人员曾被移出，请在“已移出人员”中恢复。",
+      "This person was removed. Restore them under Removed people.",
+    ],
     "dfplan/link-invalid": [
       "这个邀请已失效、已使用或已撤销。请联系 luoxi 获取新的专属链接。",
       "This invitation has expired, been used or been revoked. Ask luoxi for a new link.",

@@ -14,7 +14,12 @@ const tick = async () => {
   for (let i = 0; i < 12; i++) await new Promise((r) => setTimeout(r, 0));
 };
 let serial = 0;
-async function harness({ hash = "", user = null, claimed = false } = {}) {
+async function harness({
+  hash = "",
+  user = null,
+  claimed = false,
+  directory = false,
+} = {}) {
   const time = (millis = Date.now()) => ({
     toMillis: () => millis,
     toDate: () => new Date(millis),
@@ -61,12 +66,23 @@ async function harness({ hash = "", user = null, claimed = false } = {}) {
   let signIns = 0,
     localPersistence = false;
   const ref = (path) => ({ path });
-  const snap = (r) => ({
-    id: r.path.split("/").at(-1),
-    exists: () => records.has(r.path),
-    data: () => records.get(r.path),
-    metadata: { fromCache: false, hasPendingWrites: false },
-  });
+  const snap = (r) =>
+    r.path === project + "/people"
+      ? {
+          docs: [...records.keys()]
+            .filter((p) => p.startsWith(r.path + "/"))
+            .map((p) => ({
+              id: p.split("/").at(-1),
+              data: () => records.get(p),
+            })),
+          metadata: { fromCache: false, hasPendingWrites: false },
+        }
+      : {
+          id: r.path.split("/").at(-1),
+          exists: () => records.has(r.path),
+          data: () => records.get(r.path),
+          metadata: { fromCache: false, hasPendingWrites: false },
+        };
   const emit = (path) => {
     for (const cb of snapshots.get(path) || [])
       queueMicrotask(() => cb(snap(ref(path))));
@@ -74,6 +90,7 @@ async function harness({ hash = "", user = null, claimed = false } = {}) {
   const write = (r, data, merge = false) => {
     records.set(r.path, merge ? { ...records.get(r.path), ...data } : data);
     emit(r.path);
+    emit(r.path.split("/").slice(0, -1).join("/"));
   };
   const emitAuth = () => {
     for (const cb of authListeners) queueMicrotask(() => cb(auth.currentUser));
@@ -164,7 +181,11 @@ async function harness({ hash = "", user = null, claimed = false } = {}) {
     },
   };
   let source = await readFile(new URL("backend-client.js", root), "utf8");
-  for (const name of ["data.js", "model.mjs"])
+  for (const name of [
+    "data.js",
+    "model.mjs",
+    "people-model.mjs?v=20261116-people",
+  ])
     source = source.replace(
       '"./' + name + '"',
       JSON.stringify(new URL(name, root).href),
@@ -192,11 +213,13 @@ async function harness({ hash = "", user = null, claimed = false } = {}) {
   );
   const sessions = [],
     projects = [],
-    errors = [];
+    errors = [],
+    peopleEvents = [];
   const client = await module.connectBackend(
     (s) => sessions.push(s),
     (p) => projects.push(p),
     (e) => errors.push(e),
+    directory ? (rows) => peopleEvents.push(rows) : null,
   );
   await tick();
   return {
@@ -205,6 +228,7 @@ async function harness({ hash = "", user = null, claimed = false } = {}) {
     sessions,
     projects,
     errors,
+    peopleEvents,
     emit,
     auth,
     signIns: () => signIns,
@@ -333,4 +357,64 @@ test("an intentional assignee clear is explicit so the backend can distinguish a
     true,
   );
   assert.equal(h.records.get(project + "/tasks/WU-01").task.assignee, "");
+});
+
+test("Google owner directory changes stream independently while existing task assignments stay unchanged", async () => {
+  const h = await harness({
+    directory: true,
+    user: {
+      uid: "owner",
+      email: "owner@example.com",
+      emailVerified: true,
+      isAnonymous: false,
+      providerData: [{ providerId: "google.com" }],
+    },
+  });
+  assert.deepEqual(h.peopleEvents.at(-1), []);
+  const before = JSON.stringify(h.records.get(project + "/tasks/WU-01"));
+  const id = await h.client.addPerson("Alex Example", "Archives");
+  await tick();
+  assert.match(id, /^[a-f0-9]{64}$/);
+  assert.equal(h.peopleEvents.at(-1)[0].displayName, "Alex Example");
+  await assert.rejects(
+    h.client.addPerson(" ALEX  Example ", "Other"),
+    (e) => e.code === "dfplan/person-exists",
+  );
+  await h.client.setPersonActive(id, false);
+  await tick();
+  assert.equal(h.peopleEvents.at(-1)[0].active, false);
+  assert.equal(JSON.stringify(h.records.get(project + "/tasks/WU-01")), before);
+  await assert.rejects(
+    h.client.addPerson("Alex Example", "Other"),
+    (e) => e.code === "dfplan/person-removed",
+  );
+  await h.client.setPersonActive(id, true);
+  await tick();
+  assert.equal(h.peopleEvents.at(-1)[0].active, true);
+  await h.client.logout();
+  await tick();
+  const count = h.peopleEvents.length;
+  h.emit(project + "/people");
+  await tick();
+  assert.equal(h.peopleEvents.length, count);
+});
+test("an invited editor cannot add, remove or restore personnel through the real client", async () => {
+  const h = await harness({
+    directory: true,
+    user: { uid: "patrick-device", email: null, isAnonymous: true },
+    claimed: true,
+  });
+  assert.deepEqual(await h.client.listPeople(), []);
+  await assert.rejects(
+    h.client.addPerson("New person", ""),
+    (e) => e.code === "dfplan/not-admin",
+  );
+  await assert.rejects(
+    h.client.setPersonActive("a".repeat(64), false),
+    (e) => e.code === "dfplan/not-admin",
+  );
+  await assert.rejects(
+    h.client.setPersonActive("a".repeat(64), true),
+    (e) => e.code === "dfplan/not-admin",
+  );
 });

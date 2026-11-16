@@ -2,9 +2,38 @@
 
 生产项目 `deepfamily-dfplan` 已创建，使用 Spark 方案、新加坡 `asia-southeast1` 默认数据库，Google 登录和 `dcdeeptech.com` 已授权。管理员已确认完成 Cloud Shell 后端部署；`backend-config.js` 已设为 `enabled: true`，网页使用 Google 登录和云端共享保存。
 
+## 人员管理与仪表盘
+
+网站新增独立的 **人员管理 / People** 与 **仪表盘 / Dashboard** 页面。三星手机首页有两个大按钮，底部“看全局”进入仪表盘；电脑端使用侧栏入口。
+
+- 只有已启用的 Google `owner` / `admin` 能增加、移出和恢复人员，网页控件、客户端和 Firestore 规则同时限制。Patrick 的邀请身份可查看人员及仪表盘、编辑任务，不能维护人员名单。
+- 移出人员使用 `active: false`，保留人员记录、既有任务与历史。旧任务可继续保留移出人员；新的负责人选择必须引用有效人员。恢复后可再次分配任务。
+- 人员记录位于 `dfplanProjects/wu-family/people/{id}`。姓名按 NFKC、空白和大小写归一后取 SHA-256，作为稳定编号，避免同名重复；姓名和分工说明保持私密。名单记录不提供登录权限。
+- 任务保留 `assignee` 显示名，并可记录 `assigneeId` 关联人员。新分配必须同时匹配有效人员编号与姓名；既有文本人名向后兼容。姓名及人员编号在 JSON 备份中保留，CSV 导出显示人名。
+- 仪表盘读取已有任务和人员，显示已验收完成率、尚未完成、逾期、待家族确认、受阻、未指定人员、状态分布、阶段进度及人员工作量。按人员、阶段筛选；点击统计卡片、状态、阶段或人员，可进入严格对应的任务子集并清除筛选。
+- 逾期判断优先使用手动截止日，否则按启动日与结束周计算。没有可用截止日的任务单独提示，不计为逾期；当天到期的任务不算逾期。完成率仅计满足验收条件的任务。
+
+在已有授权的 Google Cloud Shell 运行，部署规则并从**当前后端任务**中补充缺少的人员，不会重新启用曾移出的人员：
+
+```sh
+git pull --ff-only origin main
+bash dfplan-backend/scripts/deploy-cloudshell.sh --project deepfamily-dfplan --owner-email YOUR_GOOGLE_EMAIL --display-name luoxi --sync-people
+```
+
+出现 `DFPLAN_PEOPLE_READY` 后刷新网页即可。已有规则尚未更新时，仪表盘仍可从现有任务生成统计；人员模块显示后台待开通并禁用写入。也可与 `--assignees-json` 一起运行，一次完成私密名单合并和人员初始化。仍使用 Spark 免费额度，不引入服务器、付费图表或新计费产品。
+
+验证命令：
+
+```sh
+npm run test:modules --prefix dfplan-backend
+npm run test:links --prefix dfplan-backend
+npm run test:deploy --prefix dfplan-backend
+npm test --prefix dfplan-backend
+```
+
 ## 从手工表格更新具体人名
 
-任务新增可选字段 `assignee`（最多 120 字符），与 `owner` / `ownerEn` 的负责人描述分开。手机卡片、任务编辑、电脑列表、搜索筛选、JSON 备份及 CSV 导出均支持该字段；人名在中英文界面使用相同原文。旧记录和旧备份没有此字段时显示待确认，不改变原有任务状态。
+任务新增可选字段 `assignee`（最多 120 字符），与 `owner` / `ownerEn` 的负责人描述分开。手机卡片、任务编辑、电脑列表、搜索筛选、JSON 备份及 CSV 导出均支持该字段；任务编辑通过人员名单选择具体人名；人名在中英文界面使用相同原文。旧记录和旧备份没有此字段时显示待确认，不改变原有任务状态。
 
 实际人名仅保存在私密 Firestore 文档中。不要将填写过的表格或人名清单提交到公开仓库。
 

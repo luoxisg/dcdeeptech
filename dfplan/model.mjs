@@ -81,6 +81,12 @@ export function validateProject(p) {
       (typeof t.assignee !== "string" || t.assignee.length > 120)
     )
       throw Error("format");
+    if (
+      t.assigneeId !== undefined &&
+      (typeof t.assigneeId !== "string" ||
+        !/^([a-f0-9]{64})?$/.test(t.assigneeId))
+    )
+      throw Error("format");
     for (const k of [
       "titleEn",
       "ownerEn",
