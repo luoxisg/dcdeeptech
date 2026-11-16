@@ -2,9 +2,9 @@ import {
   normalizePersonName,
   personId,
   validatePersonName,
-} from "./people-model.mjs?v=20261116-people";
+} from "./people-model.mjs?v=20261116-people-directory";
 import { seedTasks } from "./data.js";
-import { backendConfig } from "./backend-config.js?v=20261116-people";
+import { backendConfig } from "./backend-config.js?v=20261116-people-directory";
 import { validateProject } from "./model.mjs";
 
 export const cloudEnabled = backendConfig.enabled === true;
@@ -90,6 +90,7 @@ export async function connectBackend(
     tasks = dbSdk.collection(projectRef, "tasks"),
     history = dbSdk.collection(projectRef, "history");
   let member = null,
+    guestPeopleAllowed = false,
     stopAdmin = () => {},
     stopProject = () => {},
     stopLink = () => {},
@@ -155,6 +156,7 @@ export async function connectBackend(
     stopAdmin = () => {};
     stopProject = () => {};
     member = null;
+    guestPeopleAllowed = false;
     last = null;
     ++loadGeneration;
   }
@@ -173,7 +175,12 @@ export async function connectBackend(
     if (error) onError(error);
   }
   function useMembership(user, data, myEpoch) {
-    if (!data?.active || !["owner", "admin", "editor"].includes(data.role)) {
+    if (
+      !data?.active ||
+      (user.isAnonymous
+        ? data.role !== "editor" || data.projectKey !== backendConfig.projectKey
+        : !["owner", "admin"].includes(data.role))
+    ) {
       denied(user, user.isAnonymous ? codeError("dfplan/link-invalid") : null);
       return false;
     }
@@ -183,6 +190,7 @@ export async function connectBackend(
       displayName: data.displayName,
       role: data.role,
       inviteId: data.inviteId || "",
+      canManagePeople: user.isAnonymous ? guestPeopleAllowed : true,
     };
     onSession({
       phase: "ready",
@@ -365,6 +373,15 @@ export async function connectBackend(
                   link.data().claimedBy !== user.uid
                 )
                   denied(user, codeError("dfplan/link-invalid"));
+                else if (
+                  link.data().projectKey !== backendConfig.projectKey ||
+                  link.data().role !== "editor"
+                )
+                  denied(user, codeError("dfplan/link-invalid"));
+                else {
+                  guestPeopleAllowed = link.data().canManagePeople === true;
+                  useMembership(user, data, myEpoch);
+                }
               },
               (error) => {
                 if (myEpoch === epoch) denied(user, error);
@@ -570,7 +587,7 @@ export async function connectBackend(
     async addPerson(displayName, responsibility = "") {
       if (
         !member ||
-        !["owner", "admin"].includes(member.role) ||
+        member.canManagePeople !== true ||
         !auth.currentUser
       )
         throw codeError("dfplan/not-admin");
@@ -584,7 +601,7 @@ export async function connectBackend(
         ref = dbSdk.doc(projectRef, "people", id);
       await dbSdk.runTransaction(db, async (tx) => {
         const existing = await tx.get(ref);
-        if (epoch !== myEpoch || !["owner", "admin"].includes(member?.role))
+        if (epoch !== myEpoch || member?.canManagePeople !== true)
           throw codeError("dfplan/not-admin");
         if (existing.exists())
           throw codeError(
@@ -609,7 +626,7 @@ export async function connectBackend(
     async setPersonActive(id, active) {
       if (
         !member ||
-        !["owner", "admin"].includes(member.role) ||
+        member.canManagePeople !== true ||
         !auth.currentUser
       )
         throw codeError("dfplan/not-admin");
@@ -694,6 +711,7 @@ export async function connectBackend(
       const at = dbSdk.serverTimestamp();
       await dbSdk.setDoc(dbSdk.doc(db, "dfplanInvites", token), {
         displayName: "Patrick",
+        canManagePeople: true,
         projectKey: backendConfig.projectKey,
         role: "editor",
         active: true,

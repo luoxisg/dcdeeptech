@@ -1,12 +1,13 @@
 # DFplan · Google 管理员与 Firebase 后端
 
-生产项目 `deepfamily-dfplan` 已创建，使用 Spark 方案、新加坡 `asia-southeast1` 默认数据库，Google 登录和 `dcdeeptech.com` 已授权。管理员已确认完成 Cloud Shell 后端部署；`backend-config.js` 已设为 `enabled: true`，网页使用 Google 登录和云端共享保存。
+当前前端 `dfplan/backend-config.js` 已设为 `enabled: true`，配置项目为 `deepfamily-dfplan`、共享计划为 `wu-family`。部署脚本核对新加坡 `asia-southeast1` 原生数据库，发布后读回规则，并在提供私密名单时读回人员、分工、任务关联及指定邀请权限。成功以 `DFPLAN_DIRECTORY_VERIFIED` 和核验数量为准；前端开关不代表后端部署完成，域名授权和网页实际登录读写仍需独立验证。本流程不升级计费或启用付费产品。
 
 ## 人员管理与仪表盘
 
 网站新增独立的 **人员管理 / People** 与 **仪表盘 / Dashboard** 页面。三星手机首页有两个大按钮，底部“看全局”进入仪表盘；电脑端使用侧栏入口。
 
-- 只有已启用的 Google `owner` / `admin` 能增加、移出和恢复人员，网页控件、客户端和 Firestore 规则同时限制。Patrick 的邀请身份可查看人员及仪表盘、编辑任务，不能维护人员名单。
+- 已启用的 Google `owner` / `admin` 和获授人员管理权限的 Patrick 可以增加、移出和恢复人员，网页控件、客户端和 Firestore 规则同时限制。普通邀请成员只能查看人员名单。Patrick 仍通过专属链接及匿名设备身份访问，不需账号密码。
+- Patrick 的人员管理权限取决于受保护邀请记录中的 `canManagePeople: true`，并同时校验邀请有效、设备已绑定、成员启用及项目匹配。显示姓名不会授予权限；缺少此标志的旧邀请默认只读。此能力不允许维护登录账号、管理员名单、签发或撤销邀请。
 - 移出人员使用 `active: false`，保留人员记录、既有任务与历史。旧任务可继续保留移出人员；新的负责人选择必须引用有效人员。恢复后可再次分配任务。
 - 人员记录位于 `dfplanProjects/wu-family/people/{id}`。姓名按 NFKC、空白和大小写归一后取 SHA-256，作为稳定编号，避免同名重复；姓名和分工说明保持私密。名单记录不提供登录权限。
 - 任务保留 `assignee` 显示名，并可记录 `assigneeId` 关联人员。新分配必须同时匹配有效人员编号与姓名；既有文本人名向后兼容。姓名及人员编号在 JSON 备份中保留，CSV 导出显示人名。
@@ -33,6 +34,26 @@ npm test --prefix dfplan-backend
 
 ## 从手工表格更新具体人名
 
+推荐使用仓库外的私密 UTF-8 JSON 文件（任务编号到姓名的映射），不把真实人名放入命令参数、网页源码、测试文件或公开 Git。将文件单独上传至自己的 Cloud Shell 私密目录，然后从已同步本次代码的仓库根目录运行：
+
+```sh
+bash dfplan-backend/scripts/deploy-cloudshell.sh --project deepfamily-dfplan --owner-email YOUR_GOOGLE_EMAIL --display-name luoxi --assignees-file "$HOME/private/dfplan-assignees.json"
+```
+
+`--assignees-file` 与 `--assignees-json` 二选一。合并会在同一事务中建立去重人员及任务的 `assignee` / `assigneeId` 关联，仅更新人员字段与提交元数据；保留任务原有进度、日期、凭据和旧历史，并追加一条合并记录。空姓名保持待确认，不建立占位人员。姓名显示原文与大小写不变，标准化只用于去重编号。重复运行不会重复建人或产生相同任务更新，也不会重新启用已移出的人员。
+
+需要同时初始化分工时，附加 `--people-file "$HOME/private/dfplan-people.json"`。文件是 `displayName`、`responsibility` 对象组成的 JSON 数组（仅私密保存）；重复运行会同步这两项人员资料，保留人员的启用/移出状态。明确名单必须包含所有非空任务人名，格式或引用错误不会进入人员合并事务。
+
+带 `--people-file` 的部署会在写入后从 Firestore 重新读取人员、分工、任务关联及指定邀请权限；首次空目录还会核对人数等于输入名单人数。只有读回匹配才打印 `DFPLAN_DIRECTORY_VERIFIED` 和人数/任务数统计，不打印真实名单。这个标志只证明后端读回通过；网页中实际登录、名单显示和按钮权限仍须另行检查。读取报错会使部署命令失败，不能据此报告空名单或初始化成功。网页同样区分读取中、读取失败和成功读取的空名单，读取失败不显示空名单提示、人数或写入表单。
+
+为**现有** Patrick 链接开通人员权限时，另准备仓库外的 `patrick-invite-id.txt`，只写入 owner 明确选定的邀请 ID（原链接 `#invite=` 后的值），不写完整链接。将以下参数附加到同一部署命令即可；也可单独运行部署命令并带此参数：
+
+```sh
+--people-invite-file "$HOME/private/patrick-invite-id.txt"
+```
+
+该操作核验受保护的启用 owner 及指定项目的有效 editor 邀请，不按显示姓名查找或批量授权，不改变设备绑定或重发链接；可重复运行。新生成的 Patrick 专属链接默认包含人员管理能力。读取文件和校验格式会在任何部署写入前完成。上述命令会部署线上规则并合并私密数据，应在本地检查完成后由 owner 自行执行；本次本地测试不代表线上已经更新。
+
 任务新增可选字段 `assignee`（最多 120 字符），与 `owner` / `ownerEn` 的负责人描述分开。手机卡片、任务编辑、电脑列表、搜索筛选、JSON 备份及 CSV 导出均支持该字段；任务编辑通过人员名单选择具体人名；人名在中英文界面使用相同原文。旧记录和旧备份没有此字段时显示待确认，不改变原有任务状态。
 
 实际人名仅保存在私密 Firestore 文档中。不要将填写过的表格或人名清单提交到公开仓库。
@@ -44,7 +65,7 @@ git pull --ff-only origin main
 bash dfplan-backend/scripts/deploy-cloudshell.sh --project deepfamily-dfplan --owner-email YOUR_GOOGLE_EMAIL --display-name luoxi --assignees-json '{"WU-01":"Alex Example","WU-05":""}'
 ```
 
-此命令先发布兼容新字段的规则，再以事务按任务编号合并人名。保留当前任务说明、负责人描述、状态、日期、下一步、凭据、启动日期及既有历史；更改统一增加一个版本和一条修改记录。相同名单重复运行不再产生修改；遇到缺失任务或初始管理员停用会整批停止。新规则还会拒绝旧页面静默丢弃已导入的人名；有意清空需由新版显式提交空字符串。仅在带 `--enable-patrick` 时才会另外创建 Patrick 邀请。
+此命令先发布兼容新字段的规则，再以事务按任务编号合并人名及人员编号，并建立缺少的人员记录。保留当前任务说明、负责人描述、状态、日期、下一步、凭据、启动日期及既有历史；更改统一增加一个版本和一条修改记录。相同名单重复运行不再产生修改；遇到缺失任务或初始管理员停用会整批停止。新规则还会拒绝旧页面静默丢弃已导入的人名；有意清空需由新版显式提交空字符串。仅在带 `--enable-patrick` 时才会另外创建 Patrick 邀请。
 
 终端出现 `DFPLAN_ASSIGNEES_UPDATED` 后，刷新网页即可查看。若同时带其他选项，应同时检查相应完成标记。
 

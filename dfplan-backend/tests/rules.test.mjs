@@ -770,7 +770,7 @@ async function addTestPerson() {
     ),
   );
 }
-test("only active Google administrators can add, remove and restore directory people", async () => {
+test("ordinary members named Patrick can read people but cannot bypass directory permissions", async () => {
   await issueInvite();
   const guest = anonymous();
   await assertSucceeds(redeem(guest));
@@ -824,6 +824,67 @@ test("only active Google administrators can add, remove and restore directory pe
   await assertFails(
     getDoc(doc(client("alex", "alex@example.com"), projectPath)),
   );
+});
+
+test("an owner-authorized Patrick invitation can create, remove and restore people only", async () => {
+  await issueInvite({ canManagePeople: true });
+  const db = anonymous();
+  await assertSucceeds(redeem(db));
+  const ref = doc(db, projectPath + "/people/" + testPersonId);
+  const beforeTask = (await getDoc(doc(client(), projectPath + "/tasks/WU-01"))).data();
+  const beforeHistory = (await getDocs(collection(client(), projectPath + "/history"))).docs.map(d => d.data());
+  await assertSucceeds(setDoc(ref, testPerson("patrick-device")));
+  for (const active of [false, true])
+    await assertSucceeds(updateDoc(ref, { active, updatedAt: serverTimestamp(), updatedBy: "patrick-device" }));
+  await assertFails(deleteDoc(ref));
+  assert.deepEqual((await getDoc(doc(client(), projectPath + "/tasks/WU-01"))).data(), beforeTask);
+  assert.deepEqual((await getDocs(collection(client(), projectPath + "/history"))).docs.map(d => d.data()), beforeHistory);
+  await assertFails(getDocs(collection(db, "dfplanAdmins")));
+  await assertFails(setDoc(doc(db, "dfplanAdmins/new@example.com"), adminRecord("new@example.com")));
+  await assertFails(updateDoc(doc(db, "dfplanAdmins/" + adminEmail), { active: false }));
+  await assertFails(setDoc(doc(db, "dfplanInvites/" + "B".repeat(43)), invitation({ canManagePeople: true })));
+  await assertFails(updateDoc(doc(db, "dfplanInvites/" + inviteId), { active: false, updatedAt: serverTimestamp(), updatedBy: "patrick-device" }));
+  // Owner can withdraw only this capability without ending task access.
+  await assertSucceeds(updateDoc(doc(client(), "dfplanInvites/" + inviteId), {
+    canManagePeople: false, updatedAt: serverTimestamp(), updatedBy: "owner",
+  }));
+  await assertSucceeds(getDoc(ref));
+  await assertFails(updateDoc(ref, { active: false, updatedAt: serverTimestamp(), updatedBy: "patrick-device" }));
+});
+
+test("guests cannot forge people permission on invitations, redemption or membership records", async () => {
+  await issueInvite();
+  const db = anonymous();
+  await assertFails(redeem(db, "patrick-device", { canManagePeople: true }));
+  await assertFails(updateDoc(doc(db, "dfplanInvites/" + inviteId), {
+    canManagePeople: true, updatedAt: serverTimestamp(), updatedBy: "patrick-device",
+  }));
+  await assertSucceeds(redeem(db));
+  await assertFails(updateDoc(doc(db, "dfplanGuests/patrick-device"), { canManagePeople: true }));
+  await assertFails(updateDoc(doc(db, "dfplanInvites/" + inviteId), {
+    canManagePeople: true, updatedAt: serverTimestamp(), updatedBy: "patrick-device",
+  }));
+});
+
+test("directory permission requires the active bound invitation and membership, independent of display name", async () => {
+  await issueInvite({ canManagePeople: true });
+  const db = anonymous();
+  await assertSucceeds(redeem(db));
+  await env.withSecurityRulesDisabled(async c => {
+    await updateDoc(doc(c.firestore(), "dfplanGuests/patrick-device"), { displayName: "Other label" });
+  });
+  const ref = doc(db, projectPath + "/people/" + testPersonId);
+  await assertSucceeds(setDoc(ref, testPerson("patrick-device")));
+  for (const [path, value, restored] of [
+    ["dfplanGuests/patrick-device", { active: false }, { active: true }],
+    ["dfplanInvites/" + inviteId, { claimedBy: "another-device" }, { claimedBy: "patrick-device" }],
+    ["dfplanInvites/" + inviteId, { projectKey: "other" }, { projectKey: "wu-family" }],
+    ["dfplanInvites/" + inviteId, { active: false }, { active: true }],
+  ]) {
+    await env.withSecurityRulesDisabled(c => updateDoc(doc(c.firestore(), path), value));
+    await assertFails(updateDoc(ref, { active: false, updatedAt: serverTimestamp(), updatedBy: "patrick-device" }));
+    await env.withSecurityRulesDisabled(c => updateDoc(doc(c.firestore(), path), restored));
+  }
 });
 test("directory records reject credential fields and immutable identity edits", async () => {
   await assertFails(

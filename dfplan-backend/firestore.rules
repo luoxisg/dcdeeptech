@@ -22,9 +22,16 @@ service cloud.firestore {
       let invitation = get(/databases/$(database)/documents/dfplanInvites/$(member.inviteId)).data;
       return anonymousUser() && member.active == true && member.role == 'editor'
         && member.projectKey == project && invitation.active == true
-        && invitation.claimedBy == request.auth.uid && invitation.projectKey == project;
+        && invitation.claimedBy == request.auth.uid && invitation.projectKey == project
+        && invitation.role == 'editor';
     }
     function access(project) { return admin() || (anonymousUser() && guest(project)); }
+    // Directory capability is owner-controlled on the invitation, never a name.
+    function peopleManager(project) {
+      let member = get(/databases/$(database)/documents/dfplanGuests/$(request.auth.uid)).data;
+      return guest(project)
+        && get(/databases/$(database)/documents/dfplanInvites/$(member.inviteId)).data.get('canManagePeople', false) == true;
+    }
     function actorEmail() { return googleUser() ? request.auth.token.email : ''; }
     function actorName() {
       return googleUser()
@@ -131,7 +138,8 @@ service cloud.firestore {
         && (resource.data.claimedBy == request.auth.uid || redeemable(resource.data)));
       allow list: if owner();
       allow create: if owner() && invite.matches('^[A-Za-z0-9_-]{43}$')
-        && request.resource.data.keys().hasOnly(['displayName','projectKey','role','active','expiresAt','claimedBy','createdAt','createdBy','updatedAt','updatedBy'])
+        && request.resource.data.keys().hasOnly(['displayName','projectKey','role','active','expiresAt','claimedBy','createdAt','createdBy','updatedAt','updatedBy','canManagePeople'])
+        && request.resource.data.get('canManagePeople', false) is bool
         && request.resource.data.displayName is string && request.resource.data.displayName.size() > 0 && request.resource.data.displayName.size() <= 120
         && request.resource.data.projectKey == 'wu-family' && request.resource.data.role == 'editor'
         && request.resource.data.active == true && request.resource.data.claimedBy == ''
@@ -140,7 +148,8 @@ service cloud.firestore {
         && request.resource.data.createdAt == request.time && request.resource.data.updatedAt == request.time
         && request.resource.data.createdBy == request.auth.uid && request.resource.data.updatedBy == request.auth.uid;
       allow update: if (owner()
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['active','updatedAt','updatedBy'])
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['active','canManagePeople','updatedAt','updatedBy'])
+        && request.resource.data.get('canManagePeople', false) is bool
         && request.resource.data.active is bool
         && request.resource.data.updatedAt == request.time && request.resource.data.updatedBy == request.auth.uid)
         || (anonymousUser() && redeemable(resource.data)
@@ -178,7 +187,7 @@ service cloud.firestore {
         && consistentCommit(project,request.resource.data.revision);
       match /people/{person} {
         allow read: if access(project);
-        allow create: if admin() && project == 'wu-family'
+        allow create: if (admin() || (anonymousUser() && peopleManager(project))) && project == 'wu-family'
           && person.matches('^[a-f0-9]{64}$')
           && request.resource.data.keys().hasOnly(['displayName','nameKey','responsibility','active','createdAt','createdBy','updatedAt','updatedBy'])
           && request.resource.data.displayName is string && request.resource.data.displayName.size() > 0 && request.resource.data.displayName.size() <= 120
@@ -189,7 +198,7 @@ service cloud.firestore {
           && request.resource.data.active == true
           && request.resource.data.createdAt == request.time && request.resource.data.updatedAt == request.time
           && request.resource.data.createdBy == request.auth.uid && request.resource.data.updatedBy == request.auth.uid;
-        allow update: if admin() && project == 'wu-family'
+        allow update: if (admin() || (anonymousUser() && peopleManager(project))) && project == 'wu-family'
           && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['active','updatedAt','updatedBy'])
           && request.resource.data.active is bool
           && request.resource.data.updatedAt == request.time && request.resource.data.updatedBy == request.auth.uid;

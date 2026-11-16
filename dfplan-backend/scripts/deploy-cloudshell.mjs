@@ -16,6 +16,9 @@ import {
   parseAssigneeUpdates,
   mergeAssignees,
   syncPeopleFromTasks,
+  grantPeopleInvitation,
+  parseInitialPeople,
+  verifyPeopleInitialization,
 } from "./deploy-core.mjs";
 const args = process.argv.slice(2);
 function option(name) {
@@ -30,9 +33,22 @@ function gcloud(...args) {
 }
 async function main() {
   // Parse private input before any deployment writes. Names are never stored in source.
-  const assignments = args.includes("--assignees-json")
-    ? parseAssigneeUpdates(option("--assignees-json"))
+  if (args.includes("--assignees-json") && args.includes("--assignees-file"))
+    throw Error("Use either --assignees-file or --assignees-json.");
+  const assignments = args.includes("--assignees-file")
+    ? parseAssigneeUpdates(await readFile(option("--assignees-file"), "utf8"))
+    : args.includes("--assignees-json")
+      ? parseAssigneeUpdates(option("--assignees-json"))
+      : null;
+  const initialPeople = args.includes("--people-file")
+    ? parseInitialPeople(await readFile(option("--people-file"), "utf8")) : [];
+  if (initialPeople.length && !assignments)
+    throw Error("--people-file requires --assignees-file or --assignees-json.");
+  const inviteId = args.includes("--people-invite-file")
+    ? (await readFile(option("--people-invite-file"), "utf8")).trim()
     : null;
+  if (inviteId !== null && !/^[A-Za-z0-9_-]{43}$/.test(inviteId))
+    throw Error("Invalid invitation ID file.");
   if (!process.env.CLOUD_SHELL)
     console.log(
       "Use your own authorized Google Cloud Shell account for this command.",
@@ -102,6 +118,8 @@ async function main() {
   });
   try {
     await inspectOwner(db, email);
+    const initialDirectory = initialPeople.length
+      ? await db.collection("dfplanProjects/wu-family/people").get() : null;
     const template = await readFile(
         new URL("../firestore.rules", import.meta.url),
         "utf8",
@@ -144,10 +162,17 @@ async function main() {
     const assignmentUpdate = assignments
       ? await mergeAssignees(db, {
           assignments,
+          initialPeople,
           email,
           serverTimestamp: () => FieldValue.serverTimestamp(),
         })
       : null;
+    if (inviteId !== null) {
+      await grantPeopleInvitation(db, {
+        inviteId, email, serverTimestamp: () => FieldValue.serverTimestamp(),
+      });
+      console.log("DFPLAN_PEOPLE_INVITATION_READY");
+    }
     const peopleUpdate =
       args.includes("--sync-people") || assignments
         ? await syncPeopleFromTasks(db, {
@@ -155,6 +180,11 @@ async function main() {
             serverTimestamp: () => FieldValue.serverTimestamp(),
           })
         : null;
+    const directoryVerification = initialPeople.length
+      ? await verifyPeopleInitialization(db, {
+          assignments, initialPeople, inviteId,
+          requireExactPeople: initialDirectory.size === 0,
+        }) : null;
     const [owner, project, tasks] = await Promise.all([
       db.doc("dfplanAdmins/" + email).get(),
       db.doc("dfplanProjects/wu-family").get(),
@@ -181,6 +211,7 @@ async function main() {
           ...initialized,
           ...(assignmentUpdate ? { assignmentUpdate } : {}),
           ...(peopleUpdate ? { peopleUpdate } : {}),
+          ...(directoryVerification ? { directoryVerification } : {}),
         },
         null,
         2,
@@ -188,6 +219,7 @@ async function main() {
     );
     if (assignmentUpdate) console.log("DFPLAN_ASSIGNEES_UPDATED");
     if (peopleUpdate) console.log("DFPLAN_PEOPLE_READY");
+    if (directoryVerification) console.log("DFPLAN_DIRECTORY_VERIFIED");
     if (args.includes("--enable-patrick")) {
       const link = await createPatrickInvitation(db, {
         serverTimestamp: () => FieldValue.serverTimestamp(),

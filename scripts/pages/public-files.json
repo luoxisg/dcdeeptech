@@ -19,7 +19,6 @@
     "dfplan/assets/heritage-tree.svg",
     "dfplan/assets/seal.svg",
     "dfplan/data.js",
-    "DFplan/index.html",
     "dfplan/index.html",
     "dfplan/model.mjs",
     "dfplan/styles.css",
@@ -112,6 +111,9 @@
     "dfplan/dashboard.mjs",
     "dfplan/modules.css"
   ],
+  "generated_files": {
+    "DFplan/index.html": "scripts/pages/templates/dfplan-redirect.html"
+  },
   "static_trees": {
     "DeepFamily": [
       ".html",

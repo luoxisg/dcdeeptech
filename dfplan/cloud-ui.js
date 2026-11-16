@@ -29,12 +29,12 @@ export function cloudError(error, lang) {
       "Initialize the owner and project in the backend first.",
     ],
     "dfplan/not-admin": [
-      "这个 Google 账号尚未获得管理员权限。",
-      "This Google account has not been granted administrator access.",
+      "当前身份没有执行此操作的权限。",
+      "Your current identity is not authorized for this operation.",
     ],
     "permission-denied": [
-      "没有管理员权限，或权限已停用。",
-      "Administrator access is missing or has been disabled.",
+      "没有执行此操作的权限，或授权已停用。",
+      "Permission for this operation is missing or has been revoked.",
     ],
     "dfplan/conflict": [
       "其他管理员已更新数据。请先刷新云端，再重新打开任务修改；当前填写的内容尚未保存。",

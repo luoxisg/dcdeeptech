@@ -15,6 +15,8 @@ from pathlib import Path, PurePosixPath
 
 ROOT = Path(__file__).resolve().parents[2]
 MANIFEST = Path(__file__).with_name("public-files.json")
+GENERATED_FILES = {"DFplan/index.html": "scripts/pages/templates/dfplan-redirect.html"}
+DFPLAN_REQUIRED = {"dfplan/index.html", "DFplan/index.html"}
 REQUIRED = {
     "index.html", "CNAME", ".nojekyll", "DeepFamily/.nojekyll",
     "DeepFamily/index.html", "deepfamily/index.html",
@@ -23,7 +25,7 @@ REQUIRED = {
     "DeepFamily/brand/deepfamily-logo.png",
 }
 PRIVATE_PARTS = {".git", ".github", ".aws", ".claude", ".ssh", "node_modules", "__pycache__",
-                 "backend", "backend-cq", "platform-sg", "SG-CN", "src", "tests"}
+                 "backend", "backend-cq", "dfplan-backend", "scripts", "platform-sg", "SG-CN", "src", "tests"}
 PRIVATE_SUFFIXES = {".py", ".pyc", ".ts", ".tsx", ".toml", ".ini", ".yml", ".yaml",
                     ".db", ".sqlite", ".sqlite3", ".pem", ".key", ".map"}
 SECRET_PATTERNS = (
@@ -42,7 +44,7 @@ def require(condition, message):
 def safe_path(name):
     p = PurePosixPath(name)
     require(not p.is_absolute() and ".." not in p.parts and "\\" not in name, "Unsafe path: " + name)
-    require(p.parts and all(part not in PRIVATE_PARTS for part in p.parts), "Private/source path: " + name)
+    require(p.parts and all(part.casefold() not in {s.casefold() for s in PRIVATE_PARTS} for part in p.parts), "Private/source path: " + name)
     require(all(not part.startswith(".") or part == ".nojekyll" for part in p.parts), "Hidden file: " + name)
     require(p.suffix.lower() not in PRIVATE_SUFFIXES, "Non-public file type: " + name)
     require(not p.name.lower().startswith(("env.", "credentials", "id_rsa", "id_ed25519")), "Sensitive filename: " + name)
@@ -71,6 +73,8 @@ def tracked_entries():
 def selected_files(entries):
     config = json.loads(MANIFEST.read_text())
     files = set(config["files"])
+    require(all(name.split("/")[0] == "dfplan" for name in entries if name.split("/")[0].casefold() == "dfplan"),
+            "DFplan source paths must use lowercase dfplan/; keep the legacy redirect in templates")
     # New media is allowed only by exact reviewed path AND content hash. Do not
     # broaden the static-tree extensions to arbitrary MP4 or subtitle files.
     media = config.get("approved_media", {})
@@ -100,8 +104,31 @@ def selected_files(entries):
     return sorted(files)
 
 
+def generated_files(entries, files):
+    generated = json.loads(MANIFEST.read_text()).get("generated_files", {})
+    require(generated == GENERATED_FILES, "Unexpected generated file mapping")
+    for name, source in generated.items():
+        safe_path(name)
+        require(name not in files, "Generated path also selected as source: " + name)
+        require(source in entries and entries[source][0] in {"100644", "100755"},
+                "Not a tracked regular template: " + source)
+        target = ROOT / source
+        require(not target.is_symlink() and all(not parent.is_symlink() for parent in target.parents if parent != ROOT.parent),
+                "Symlink in template path: " + source)
+        require(target.resolve().is_relative_to(ROOT), "Template escapes repository: " + source)
+    require(DFPLAN_REQUIRED <= set(files) | set(generated), "Missing DFplan production entry points")
+    return generated
+
+
 def sha256(data):
     return hashlib.sha256(data).hexdigest()
+
+
+def prepare_output(output):
+    output.mkdir(parents=True)
+    # Both URLs are required in production. Never merge them on Windows/macOS.
+    (output / "dfplan").mkdir()
+    require(not (output / "DFplan").exists(), "Pages output requires a case-sensitive filesystem (for example Linux RUNNER_TEMP)")
 
 
 def stage(output, report_path):
@@ -111,29 +138,33 @@ def stage(output, report_path):
     require(not output.exists(), "Output already exists; use a fresh staging directory")
     entries = tracked_entries()
     files = selected_files(entries)
+    generated = generated_files(entries, files)
+    sources = {name: name for name in files} | generated
     hashes = {}
-    for name in files:
-        data = (ROOT / name).read_bytes()
+    for name, source in sources.items():
+        data = (ROOT / source).read_bytes()
         scan_content(name, data)
         # Compare to index blobs without relying on checkout autocrlf settings.
-        require(data == subprocess.check_output(["git", "cat-file", "blob", entries[name][1]], cwd=ROOT), "Working file differs from tracked blob: " + name)
+        require(data == subprocess.check_output(["git", "cat-file", "blob", entries[source][1]], cwd=ROOT), "Working file differs from tracked blob: " + source)
         hashes[name] = sha256(data)
     require((ROOT / "CNAME").read_text().strip() == "dcdeeptech.com", "Unexpected custom domain; do not change it automatically")
     logo = (ROOT / "DeepFamily/brand/deepfamily-logo.png").read_bytes()
     require(logo.startswith(b"\x89PNG\r\n\x1a\n"), "Brand logo is not PNG")
-    output.mkdir(parents=True)
-    for name in files:
+    prepare_output(output)
+    for name, source in sources.items():
         destination = output / name
         destination.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copyfile(ROOT / name, destination)
+        shutil.copyfile(ROOT / source, destination)
         require(sha256(destination.read_bytes()) == hashes[name], "Copy changed bytes: " + name)
     report_path.parent.mkdir(parents=True, exist_ok=True)
-    report_path.write_text(json.dumps({"source_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT).decode().strip(), "files": hashes}, indent=2) + "\n")
+    report_path.write_text(json.dumps({"source_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT).decode().strip(), "generated_files": generated, "files": hashes}, indent=2) + "\n")
     print("PASS: staged", len(hashes), "reviewed static files; tracked bytes preserved; no submodule command executed.")
 
 
 def audit_tar(archive, report_path):
-    expected = json.loads(report_path.read_text())["files"]
+    report = json.loads(report_path.read_text())
+    require(report.get("generated_files") == GENERATED_FILES, "Unexpected generated file provenance")
+    expected = report["files"]
     actual = {}
     with tarfile.open(archive) as tar:
         for member in tar.getmembers():
@@ -150,7 +181,7 @@ def audit_tar(archive, report_path):
             scan_content(name, data)
             actual[name] = sha256(data)
     require(actual == expected, "Artifact files/hashes differ from audited stage (including .nojekyll)")
-    require(REQUIRED <= set(actual), "Artifact missing required site files")
+    require(REQUIRED | DFPLAN_REQUIRED <= set(actual), "Artifact missing required site files")
     print("PASS: actual Pages tar has exactly", len(actual), "audited files; .nojekyll and all _next assets retained.")
 
 

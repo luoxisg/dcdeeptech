@@ -1,6 +1,8 @@
 """Keep media permission scoped to reviewed paths and immutable source bytes."""
 import hashlib
+import io
 import json
+import tarfile
 import tempfile
 import unittest
 from pathlib import Path
@@ -65,6 +67,78 @@ class MediaBoundaryTests(unittest.TestCase):
                 policy.safe_path(name)
         with self.assertRaisesRegex(ValueError, "Potential private credential"):
             policy.scan_content("fixture.txt", b"-----BEGIN PRIVATE KEY-----")
+
+    def test_rejects_case_conflicting_dfplan_source(self):
+        self.entries["DFplan/index.html"] = ("100644", "fixture-blob")
+        with self.assertRaisesRegex(ValueError, "source paths must use lowercase"):
+            self.select()
+
+
+class RedirectBoundaryTests(unittest.TestCase):
+    def setUp(self):
+        self.directory = tempfile.TemporaryDirectory(prefix="pages-redirect-policy-")
+        self.addCleanup(self.directory.cleanup)
+        self.root = Path(self.directory.name)
+        self.manifest = self.root / "manifest.json"
+        self.source = policy.GENERATED_FILES["DFplan/index.html"]
+        template = self.root / self.source
+        template.parent.mkdir(parents=True)
+        template.write_text("legacy redirect")
+        self.entries = {self.source: ("100644", "fixture-blob")}
+        self.manifest.write_text(json.dumps({"generated_files": policy.GENERATED_FILES}))
+        self.addCleanup(patch.stopall)
+        patch.object(policy, "ROOT", self.root).start()
+        patch.object(policy, "MANIFEST", self.manifest).start()
+
+    def test_only_reviewed_tracked_template_generates_legacy_url(self):
+        self.assertEqual(policy.generated_files(self.entries, ["dfplan/index.html"]), policy.GENERATED_FILES)
+        with self.assertRaisesRegex(ValueError, "tracked regular template"):
+            policy.generated_files({}, ["dfplan/index.html"])
+
+    def test_output_rejects_case_insensitive_filesystem_before_copying(self):
+        (self.root / "case-probe").mkdir()
+        output = self.root / "site"
+        if (self.root / "CASE-PROBE").exists():
+            with self.assertRaisesRegex(ValueError, "case-sensitive filesystem"):
+                policy.prepare_output(output)
+        else:
+            policy.prepare_output(output)
+            self.assertFalse((output / "DFplan").exists())
+        self.assertEqual(list((output / "dfplan").iterdir()), [])
+
+    def test_rejects_private_source_mapping_or_duplicate_destination(self):
+        with self.assertRaisesRegex(ValueError, "also selected as source"):
+            policy.generated_files(self.entries, list(policy.DFPLAN_REQUIRED))
+        self.manifest.write_text(json.dumps({"generated_files": {"DFplan/index.html": "dfplan-backend/firestore.rules"}}))
+        with self.assertRaisesRegex(ValueError, "Unexpected generated"):
+            policy.generated_files(self.entries, ["dfplan/index.html"])
+
+    def audit(self, extra=None, corrupt=False):
+        contents = {name: name.encode() for name in policy.REQUIRED | policy.DFPLAN_REQUIRED}
+        report = self.root / "audit.json"
+        report.write_text(json.dumps({"generated_files": policy.GENERATED_FILES,
+                                     "files": {name: policy.sha256(data) for name, data in contents.items()}}))
+        if corrupt:
+            contents["DFplan/index.html"] = b"overwritten by application"
+        if extra:
+            contents[extra] = b"must not be public"
+        archive = self.root / "artifact.tar"
+        with tarfile.open(archive, "w") as tar:
+            for name, data in contents.items():
+                member = tarfile.TarInfo(name)
+                member.size = len(data)
+                tar.addfile(member, io.BytesIO(data))
+        policy.audit_tar(archive, report)
+
+    def test_audit_preserves_distinct_case_sensitive_urls_and_hashes(self):
+        self.audit()
+        with self.assertRaisesRegex(ValueError, "files/hashes differ"):
+            self.audit(corrupt=True)
+
+    def test_audit_rejects_backend_and_template_sources(self):
+        for name in ["dfplan-backend/firestore.rules", self.source, "DFPLAN-BACKEND/firebase.json"]:
+            with self.subTest(name=name), self.assertRaisesRegex(ValueError, "Private/source path"):
+                self.audit(extra=name)
 
 
 if __name__ == "__main__":

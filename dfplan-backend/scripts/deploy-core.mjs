@@ -96,13 +96,28 @@ export function parseAssigneeUpdates(raw) {
 
 export async function mergeAssignees(
   db,
-  { assignments, email, serverTimestamp, now = () => new Date().toISOString() },
+  { assignments, initialPeople = [], email, serverTimestamp },
 ) {
   const checked = parseAssigneeUpdates(
     JSON.stringify(Object.fromEntries(assignments)),
   );
   const root = db.doc("dfplanProjects/wu-family"),
     ownerRef = db.doc("dfplanAdmins/" + email);
+  const people = new Map();
+  for (const person of parseInitialPeople(JSON.stringify(initialPeople), true)) {
+    const id = await personId(person.displayName);
+    people.set(id, { id, ...person, nameKey: normalizePersonName(person.displayName) });
+  }
+  for (const [, name] of checked) {
+    if (!name) continue;
+    if (!validatePersonName(name)) throw Error("Invalid assignee name.");
+    const id = await personId(name);
+    if (initialPeople.length && !people.has(id))
+      throw Error("A named assignee is missing from the private people input.");
+    if (!people.has(id))
+      people.set(id, { id, displayName: name, nameKey: normalizePersonName(name) });
+  }
+  const planned = [...people.values()];
   return db.runTransaction(async (tx) => {
     const [project, owner, ...tasks] = await Promise.all([
       tx.get(root),
@@ -122,6 +137,9 @@ export async function mergeAssignees(
         "An initialized project and its active protected owner are required.",
       );
     const baseline = project.data().revision;
+    const existingPeople = await Promise.all(
+      planned.map((p) => tx.get(root.collection("people").doc(p.id))),
+    );
     if (
       !Number.isSafeInteger(baseline) ||
       baseline < 0 ||
@@ -133,21 +151,50 @@ export async function mergeAssignees(
       if (!tasks[i].exists || tasks[i].data().task?.id !== id)
         throw Error("A referenced task does not exist; no names were changed.");
       const task = tasks[i].data().task;
-      if ((task.assignee || "") !== name)
+      const assigneeId = name
+        ? planned.find((p) => p.nameKey === normalizePersonName(name)).id
+        : "";
+      if ((task.assignee || "") !== name || (task.assigneeId || "") !== assigneeId)
         changed.push({
           ...task,
           assignee: name,
-          ...(Object.hasOwn(task, "assigneeId") ? { assigneeId: "" } : {}),
+          assigneeId,
         });
+    });
+    // Read and validate the complete batch before creating any people or tasks.
+    planned.forEach((person, i) => {
+      const at = serverTimestamp();
+      if (existingPeople[i].exists) {
+        // Explicit private roster updates names/responsibilities, never active.
+        if (person.responsibility !== undefined && (
+          existingPeople[i].data().displayName !== person.displayName ||
+          existingPeople[i].data().responsibility !== person.responsibility
+        )) tx.update(root.collection("people").doc(person.id), {
+          displayName: person.displayName,
+          responsibility: person.responsibility,
+          updatedAt: at,
+          updatedBy: "cloud-shell",
+        });
+        return;
+      }
+      tx.create(root.collection("people").doc(person.id), {
+        displayName: person.displayName,
+        nameKey: person.nameKey,
+        responsibility: person.responsibility || "",
+        active: true,
+        createdAt: at,
+        createdBy: "cloud-shell",
+        updatedAt: at,
+        updatedBy: "cloud-shell",
+      });
     });
     if (!changed.length) return { changedTaskCount: 0, revision: baseline };
     const revision = baseline + 1,
-      at = serverTimestamp(),
-      updatedAt = now();
+      at = serverTimestamp();
     tx.update(root, { revision, updatedAt: at, updatedBy: "cloud-shell" });
     for (const task of changed)
       tx.update(db.doc("dfplanProjects/wu-family/tasks/" + task.id), {
-        task: { ...task, updatedAt },
+        task,
         revision,
         updatedAt: at,
         updatedBy: "cloud-shell",
@@ -163,6 +210,71 @@ export async function mergeAssignees(
     });
     return { changedTaskCount: changed.length, revision };
   });
+}
+
+export function parseInitialPeople(raw, allowEmpty = false) {
+  if (typeof raw !== "string" || raw.length > 256000)
+    throw Error("Invalid private people input.");
+  let rows;
+  try { rows = JSON.parse(raw); }
+  catch { throw Error("Private people input must be a JSON array."); }
+  if (!Array.isArray(rows) || rows.length > 300 || (!allowEmpty && !rows.length))
+    throw Error("Private people input must contain 1–300 people.");
+  const keys = new Set();
+  return rows.map(row => {
+    if (!row || typeof row !== "object" || Array.isArray(row) ||
+      Object.keys(row).some(key => !["displayName", "responsibility"].includes(key)) ||
+      !validatePersonName(row.displayName) || typeof row.responsibility !== "string" ||
+      row.responsibility.length > 240)
+      throw Error("Invalid private person name or responsibility.");
+    const key = normalizePersonName(row.displayName);
+    if (keys.has(key)) throw Error("Duplicate person in private people input.");
+    keys.add(key);
+    return { displayName: row.displayName.trim(), responsibility: row.responsibility.trim() };
+  });
+}
+
+// Admin SDK gets read the live backend. Return counts only, never private names.
+export async function verifyPeopleInitialization(db, {
+  assignments, initialPeople, inviteId = null, requireExactPeople = false,
+}) {
+  const people = await db.collection("dfplanProjects/wu-family/people").get();
+  if (requireExactPeople && people.docs.length !== initialPeople.length)
+    throw Error("Unexpected initial directory count; read-back verification failed.");
+  const byId = new Map(people.docs.map(row => [row.id, row.data()]));
+  for (const person of initialPeople) {
+    const record = byId.get(await personId(person.displayName));
+    if (!record || record.displayName !== person.displayName ||
+      record.responsibility !== person.responsibility)
+      throw Error("Private directory read-back verification failed.");
+  }
+  for (const [id, name] of assignments) {
+    const snapshot = await db.doc("dfplanProjects/wu-family/tasks/" + id).get();
+    const task = snapshot.exists ? snapshot.data().task : null;
+    if (!task || (task.assignee || "") !== name ||
+      (task.assigneeId || "") !== (name ? await personId(name) : ""))
+      throw Error("Task assignment read-back verification failed.");
+  }
+  if (inviteId) {
+    const snapshot = await db.doc("dfplanInvites/" + inviteId).get();
+    const invitation = snapshot.exists ? snapshot.data() : null;
+    if (!invitation || invitation.active !== true || invitation.canManagePeople !== true ||
+      invitation.projectKey !== "wu-family" || invitation.role !== "editor")
+      throw Error("Invitation permission read-back verification failed.");
+    if (invitation.claimedBy) {
+      const member = await db.doc("dfplanGuests/" + invitation.claimedBy).get();
+      if (!member.exists || member.data().active !== true || member.data().inviteId !== inviteId ||
+        member.data().projectKey !== "wu-family" || member.data().role !== "editor")
+        throw Error("Bound guest identity read-back verification failed.");
+    }
+  }
+  return {
+    personCount: people.docs.length,
+    activePersonCount: people.docs.filter(row => row.data().active === true).length,
+    expectedPersonCount: initialPeople.length,
+    verifiedTaskCount: assignments.length,
+    invitationPermissionVerified: !!inviteId,
+  };
 }
 
 export async function enableAnonymousAuth({
@@ -210,6 +322,7 @@ export async function createPatrickInvitation(
     at = serverTimestamp();
   await db.doc("dfplanInvites/" + token).create({
     displayName: "Patrick",
+    canManagePeople: true,
     projectKey: "wu-family",
     role: "editor",
     active: true,
@@ -221,6 +334,39 @@ export async function createPatrickInvitation(
     updatedBy: "cloud-shell",
   });
   return "https://dcdeeptech.com/dfplan/#invite=" + token;
+}
+
+// Explicitly select an existing protected invitation; names grant no authority.
+export async function grantPeopleInvitation(
+  db,
+  { inviteId, email, serverTimestamp },
+) {
+  if (!/^[A-Za-z0-9_-]{43}$/.test(inviteId || ""))
+    throw Error("Invalid invitation ID.");
+  return db.runTransaction(async (tx) => {
+    const ref = db.doc("dfplanInvites/" + inviteId);
+    const [owner, invitation] = await Promise.all([
+      tx.get(db.doc("dfplanAdmins/" + email)),
+      tx.get(ref),
+    ]);
+    if (
+      !owner.exists || owner.data().role !== "owner" ||
+      owner.data().active !== true || owner.data().email !== email
+    )
+      throw Error("An active protected owner is required.");
+    if (
+      !invitation.exists || invitation.data().active !== true ||
+      invitation.data().role !== "editor" || invitation.data().projectKey !== "wu-family"
+    )
+      throw Error("An active invitation for the family project is required.");
+    if (invitation.data().canManagePeople === true) return { changed: false };
+    tx.update(ref, {
+      canManagePeople: true,
+      updatedAt: serverTimestamp(),
+      updatedBy: "cloud-shell",
+    });
+    return { changed: true };
+  });
 }
 
 // Cloud Shell can supply temporary credentials without any `gcloud auth list`

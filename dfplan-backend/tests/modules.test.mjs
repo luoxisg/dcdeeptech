@@ -189,7 +189,7 @@ const h = {
   icon: () => "",
   lang: "en",
 };
-test("personnel controls are admin-only and removed assignees stay visible without appearing as new choices", () => {
+test("personnel controls require directory capability and removed assignees stay visible without appearing as new choices", () => {
   const viewer = renderPeople(
     project,
     people,
@@ -235,4 +235,20 @@ test("dashboard and personnel views escape names and render an empty project wit
   );
   assert.ok(!roster.includes("<img"));
   assert.ok(roster.includes("&lt;img"));
+});
+
+test("a failed or pending read never renders an empty directory, stale names or enabled write controls", () => {
+  for (const error of ["", "Cannot read: permission denied", "Network unavailable"]) {
+    const html = renderPeople(project, people, { canManage: true, ready: false, error }, h);
+    assert.ok(!html.includes('class="module-empty"'));
+    assert.ok(!html.includes('class="people-list"'));
+    assert.ok(!html.includes('id="person-form"'));
+    assert.ok(!html.includes("Alex Example"));
+    if (error) {
+      assert.ok(html.includes('role="alert"'));
+      assert.ok(html.includes(error));
+    }
+  }
+  const empty = renderPeople(project, [], { ready: true }, h);
+  assert.ok(empty.includes("The directory is empty."));
 });

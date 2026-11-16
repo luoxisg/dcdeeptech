@@ -1,27 +1,27 @@
 import {
   renderDashboard,
   matchesDashboardTask,
-} from "./dashboard.mjs?v=20261116-people";
+} from "./dashboard.mjs?v=20261116-people-directory";
 import {
   renderPeople,
   assigneeSelect,
-} from "./people-ui.mjs?v=20261116-people";
+} from "./people-ui.mjs?v=20261116-people-directory";
 import {
   cloudEnabled,
   connectBackend,
-} from "./backend-client.js?v=20261116-people";
+} from "./backend-client.js?v=20261116-people-directory";
 import {
   cloudError,
   cloudGate,
   cloudBar,
   adminDialog,
   guestDialog,
-} from "./cloud-ui.js?v=20261116-people";
+} from "./cloud-ui.js?v=20261116-people-directory";
 import {
   renderPhone,
   phoneEditor,
   matchesCategory,
-} from "./phone-ui.js?v=20261116-people";
+} from "./phone-ui.js?v=20261116-people-directory";
 import { seedTasks } from "./data.js";
 import {
   statuses,
@@ -142,7 +142,7 @@ let peopleDraft = { displayName: "", responsibility: "" };
 let dashboardSelection = { person: "all", priority: "all" },
   dashboardDrilldown = null;
 const canManagePeople = () =>
-  cloudReady() && ["owner", "admin"].includes(cloudSession.admin?.role);
+  cloudReady() && cloudSession.admin?.canManagePeople === true;
 const views = [
   "overview",
   "board",
@@ -1315,8 +1315,8 @@ async function startCloud() {
         peopleMessage =
           error.code === "permission-denied"
             ? s(
-                "人员管理尚未开通，请管理员运行后台更新命令后刷新页面。",
-                "People management is not enabled yet. Ask an administrator to run the backend update and refresh.",
+                "无法读取人员名单：当前身份没有读取权限，或后台规则尚未更新。请管理员检查授权与规则后刷新重试。",
+                "Cannot read the directory: this identity lacks read access, or the backend rules need updating. Ask an administrator to check access and rules, then refresh.",
               )
             : cloudError(error, lang);
         render();

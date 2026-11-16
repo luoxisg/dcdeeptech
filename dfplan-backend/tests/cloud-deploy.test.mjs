@@ -15,6 +15,9 @@ import {
   parseAssigneeUpdates,
   mergeAssignees,
   syncPeopleFromTasks,
+  grantPeopleInvitation,
+  parseInitialPeople,
+  verifyPeopleInitialization,
 } from "../scripts/deploy-core.mjs";
 const template = await readFile(
   new URL("../firestore.rules", import.meta.url),
@@ -82,7 +85,7 @@ function apiScenario(previous, failCreate = false) {
   };
   return { api, calls };
 }
-class FakeDb {
+export class FakeDb {
   constructor(entries = []) {
     this.records = new Map(entries.map(([k, v]) => [k, structuredClone(v)]));
   }
@@ -526,6 +529,7 @@ test("Patrick invitations are private one-time capabilities with a fixed editor 
   assert.equal(record.claimedBy, "");
   assert.equal(record.role, "editor");
   assert.equal(record.displayName, "Patrick");
+  assert.equal(record.canManagePeople, true);
   assert.equal(record.expiresAt, "EXPIRY");
 });
 
@@ -594,6 +598,8 @@ test("private assignee merge preserves all online progress, roles, dates and his
   assert.equal(task.status, "进行中");
   assert.equal(task.next, "Saved online progress");
   assert.equal(task.owner, "Online role");
+  assert.equal(task.updatedAt, "old");
+  assert.equal(task.assigneeId, await personId("Alex Example"));
   assert.equal(
     db.records.get("dfplanProjects/wu-family").startDate,
     "2026-11-15",
@@ -678,5 +684,97 @@ test("directory initialization refuses an inactive owner without partial writes"
   await assert.rejects(
     syncPeopleFromTasks(db, { email, serverTimestamp: () => "SERVER_TIME" }),
   );
+  assert.equal(JSON.stringify([...db.records]), before);
+});
+
+test("a private ten-task mapping atomically creates five people and stable task links, preserving original case and removed records", async () => {
+  const names = ["Alex Example", "KT Example", "Ben Example", "Carol Example", "Dana Example"];
+  const assignmentNames = [names[0], names[1], names[2], names[3], "", names[4], names[0], names[2], names[0], names[1]];
+  const db = new FakeDb([
+    ["dfplanAdmins/" + email, { ...owner }],
+    ["dfplanProjects/wu-family", { startDate: "2026-11-15", revision: 4 }],
+    ...seedTasks.map(task => ["dfplanProjects/wu-family/tasks/" + task.id,
+      { task: { ...task, due: "2027-01-01", updatedAt: "original date", evidence: "Existing evidence" }, revision: 4 }]),
+    ["dfplanProjects/wu-family/history/2", { text: "Earlier history" }],
+  ]);
+  const assignments = seedTasks.map((task, i) => [task.id, assignmentNames[i]]);
+  await mergeAssignees(db, { ...assignmentOptions, assignments });
+  const directory = [...db.records].filter(([path]) => path.includes("/people/"));
+  assert.equal(directory.length, 5);
+  assert.deepEqual(new Set(directory.map(([, p]) => p.displayName)), new Set(names));
+  for (const [id, name] of assignments) {
+    const task = db.records.get("dfplanProjects/wu-family/tasks/" + id).task;
+    assert.equal(task.assignee || "", name);
+    assert.equal(task.assigneeId || "", name ? await personId(name) : "");
+    assert.equal(task.due, "2027-01-01");
+    assert.equal(task.updatedAt, "original date");
+    assert.equal(task.evidence, "Existing evidence");
+  }
+  assert.equal(db.records.get("dfplanProjects/wu-family/history/2").text, "Earlier history");
+  const removed = directory[0][0];
+  db.records.get(removed).active = false;
+  const before = JSON.stringify([...db.records]);
+  const repeated = await mergeAssignees(db, { ...assignmentOptions, assignments });
+  assert.equal(repeated.changedTaskCount, 0);
+  assert.equal(JSON.stringify([...db.records]), before);
+  assert.equal(db.records.get(removed).active, false);
+});
+
+test("only a protected owner can grant the explicitly selected existing invitation directory permission", async () => {
+  const inviteId = "A".repeat(43), path = "dfplanInvites/" + inviteId;
+  const db = new FakeDb([["dfplanAdmins/" + email, { ...owner }],
+    [path, { displayName: "Any display label", projectKey: "wu-family", role: "editor", active: true, claimedBy: "device" }]]);
+  const options = { email, inviteId, serverTimestamp: () => "SERVER_TIME" };
+  assert.deepEqual(await grantPeopleInvitation(db, options), { changed: true });
+  assert.equal(db.records.get(path).canManagePeople, true);
+  assert.equal(db.records.get(path).claimedBy, "device");
+  const before = JSON.stringify([...db.records]);
+  assert.deepEqual(await grantPeopleInvitation(db, options), { changed: false });
+  assert.equal(JSON.stringify([...db.records]), before);
+  db.records.get("dfplanAdmins/" + email).role = "admin";
+  await assert.rejects(grantPeopleInvitation(db, options), /protected owner/);
+  db.records.get("dfplanAdmins/" + email).role = "owner";
+  db.records.get(path).active = false;
+  await assert.rejects(grantPeopleInvitation(db, options), /active invitation/);
+});
+
+test("private roster initializes responsibilities, preserves removed state and task contents, and verifies server reads", async () => {
+  const db = assignmentFixture();
+  const initialPeople = parseInitialPeople(JSON.stringify([
+    { displayName: "Alex Example", responsibility: "Family representative" },
+    { displayName: "Ben Example", responsibility: "Technical lead" },
+  ]));
+  const assignments = [["WU-01", "Alex Example"], ["WU-05", ""]];
+  const removedPath = "dfplanProjects/wu-family/people/" + await personId("Alex Example");
+  db.records.set(removedPath, { displayName: "Alex Example", responsibility: "", active: false });
+  const original = structuredClone(db.records.get("dfplanProjects/wu-family/tasks/WU-01").task);
+  delete original.assignee;
+  delete original.assigneeId;
+  await mergeAssignees(db, { ...assignmentOptions, assignments, initialPeople });
+  assert.equal(db.records.get(removedPath).active, false);
+  assert.equal(db.records.get(removedPath).responsibility, "Family representative");
+  const { assignee, assigneeId, ...remaining } = db.records.get("dfplanProjects/wu-family/tasks/WU-01").task;
+  assert.deepEqual(remaining, original);
+  const verification = await verifyPeopleInitialization(db, { assignments, initialPeople, requireExactPeople: true });
+  assert.equal(verification.personCount, 2);
+  assert.equal(verification.activePersonCount, 1);
+  assert.equal(verification.verifiedTaskCount, 2);
+  const before = JSON.stringify([...db.records]);
+  await mergeAssignees(db, { ...assignmentOptions, assignments, initialPeople });
+  assert.equal(JSON.stringify([...db.records]), before);
+  db.records.get(removedPath).responsibility = "Wrong";
+  await assert.rejects(verifyPeopleInitialization(db, { assignments, initialPeople }), /directory read-back/);
+});
+
+test("private roster rejects duplicate/credential data and read failures cannot pass verification", async () => {
+  for (const rows of [[], [{ displayName: "Alex", responsibility: "", role: "owner" }],
+    [{ displayName: "Alex", responsibility: "" }, { displayName: "ＡＬＥＸ", responsibility: "" }]])
+    assert.throws(() => parseInitialPeople(JSON.stringify(rows)));
+  const denied = new Error("permission-denied");
+  await assert.rejects(verifyPeopleInitialization({ collection: () => ({ get: async () => { throw denied; } }) },
+    { assignments: [], initialPeople: [] }), error => error === denied);
+  const db = assignmentFixture(), before = JSON.stringify([...db.records]);
+  await assert.rejects(mergeAssignees(db, { ...assignmentOptions, assignments: [["WU-01", "Alex Example"]],
+    initialPeople: [{ displayName: "Ben Example", responsibility: "Technical lead" }] }), /missing from/);
   assert.equal(JSON.stringify([...db.records]), before);
 });

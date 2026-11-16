@@ -3,6 +3,10 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
+import { renderPeople } from "../../dfplan/people-ui.mjs";
+const roster = (session) => renderPeople({ tasks: [] }, [], {
+  ready: true, canManage: session.admin?.canManagePeople === true,
+}, { s: (zh) => zh, esc: (value) => String(value), icon: () => "" });
 const root = new URL("../../dfplan/", import.meta.url);
 const { seedTasks } = await import(
   "data:text/javascript," +
@@ -19,6 +23,8 @@ async function harness({
   user = null,
   claimed = false,
   directory = false,
+  canManagePeople = false,
+  googleRole = "owner",
 } = {}) {
   const time = (millis = Date.now()) => ({
     toMillis: () => millis,
@@ -31,7 +37,7 @@ async function harness({
       {
         email: "owner@example.com",
         displayName: "Owner",
-        role: "owner",
+        role: googleRole,
         active: true,
       },
     ],
@@ -39,6 +45,7 @@ async function harness({
       "dfplanInvites/" + token,
       {
         displayName: "Patrick",
+        canManagePeople,
         projectKey: "wu-family",
         role: "editor",
         active: true,
@@ -184,7 +191,7 @@ async function harness({
   for (const name of [
     "data.js",
     "model.mjs",
-    "people-model.mjs?v=20261116-people",
+    "people-model.mjs?v=20261116-people-directory",
   ])
     source = source.replace(
       '"./' + name + '"',
@@ -398,13 +405,15 @@ test("Google owner directory changes stream independently while existing task as
   await tick();
   assert.equal(h.peopleEvents.length, count);
 });
-test("an invited editor cannot add, remove or restore personnel through the real client", async () => {
+test("an ordinary invitation named Patrick cannot add, remove or restore personnel through the real client", async () => {
   const h = await harness({
     directory: true,
     user: { uid: "patrick-device", email: null, isAnonymous: true },
     claimed: true,
   });
   assert.deepEqual(await h.client.listPeople(), []);
+  assert.equal(h.sessions.at(-1).admin.canManagePeople, false);
+  assert.ok(!roster(h.sessions.at(-1)).includes('id="person-form"'));
   await assert.rejects(
     h.client.addPerson("New person", ""),
     (e) => e.code === "dfplan/not-admin",
@@ -417,4 +426,60 @@ test("an invited editor cannot add, remove or restore personnel through the real
     h.client.setPersonActive("a".repeat(64), true),
     (e) => e.code === "dfplan/not-admin",
   );
+});
+
+test("authorized Patrick manages people using a protected invitation, without admin or invitation powers", async () => {
+  const h = await harness({ directory: true, canManagePeople: true,
+    user: { uid: "patrick-device", email: null, isAnonymous: true }, claimed: true });
+  assert.equal(h.sessions.at(-1).admin.canManagePeople, true);
+  assert.ok(roster(h.sessions.at(-1)).includes('id="person-form"'));
+  const id = await h.client.addPerson("Alex Example", "Archives");
+  await h.client.setPersonActive(id, false);
+  await h.client.setPersonActive(id, true);
+  assert.equal(h.records.get(project + "/people/" + id).active, true);
+  for (const operation of [() => h.client.listAdmins(), () => h.client.addAdmin("new@example.com", "New"),
+    () => h.client.setAdminActive("owner@example.com", false), () => h.client.createPatrickLink(),
+    () => h.client.listInvites(), () => h.client.revokeInvite(token)])
+    await assert.rejects(operation, e => e.code === "dfplan/not-admin");
+  h.records.get("dfplanInvites/" + token).canManagePeople = false;
+  h.emit("dfplanInvites/" + token);
+  await tick();
+  assert.equal(h.sessions.at(-1).phase, "ready");
+  assert.equal(h.sessions.at(-1).admin.canManagePeople, false);
+  assert.ok(!roster(h.sessions.at(-1)).includes('id="person-form"'));
+  await assert.rejects(h.client.addPerson("Other", ""), e => e.code === "dfplan/not-admin");
+  await assert.rejects(h.client.setPersonActive(id, false), e => e.code === "dfplan/not-admin");
+  // A guest membership field cannot grant the permission back.
+  h.records.get("dfplanGuests/patrick-device").canManagePeople = true;
+  h.emit("dfplanGuests/patrick-device");
+  await tick();
+  assert.equal(h.sessions.at(-1).admin.canManagePeople, false);
+});
+
+test("an authorized invitation remains effective after a display-name change and loses access on revocation", async () => {
+  const h = await harness({ directory: true, canManagePeople: true,
+    user: { uid: "patrick-device", email: null, isAnonymous: true }, claimed: true });
+  h.records.get("dfplanGuests/patrick-device").displayName = "Different display name";
+  h.emit("dfplanGuests/patrick-device");
+  await tick();
+  const id = await h.client.addPerson("Example", "");
+  h.records.get("dfplanInvites/" + token).active = false;
+  h.emit("dfplanInvites/" + token);
+  await tick();
+  assert.equal(h.sessions.at(-1).phase, "denied");
+  await assert.rejects(h.client.setPersonActive(id, false), e => e.code === "dfplan/not-admin");
+});
+
+test("both Google owner and admin retain all personnel actions and matching page controls", async () => {
+  for (const googleRole of ["owner", "admin"]) {
+    const h = await harness({ directory: true, googleRole,
+      user: { uid: "owner", email: "owner@example.com", emailVerified: true,
+        isAnonymous: false, providerData: [{ providerId: "google.com" }] } });
+    assert.equal(h.sessions.at(-1).admin.canManagePeople, true);
+    assert.ok(roster(h.sessions.at(-1)).includes('id="person-form"'));
+    const id = await h.client.addPerson("Google test", "");
+    await h.client.setPersonActive(id, false);
+    await h.client.setPersonActive(id, true);
+    assert.equal(h.records.get(project + "/people/" + id).active, true);
+  }
 });

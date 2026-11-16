@@ -6,9 +6,9 @@
 
 ## Google 账号与共享后端
 
-Firebase 项目 `deepfamily-dfplan` 已创建，Google 登录与域名已配置，权限规则发布及初始化仍待完成。当前 `enabled: false`，网站继续使用本机保存。完成后开启云端，只有管理员可访问共享数据，并保留事务版本与修改记录。
+当前 `backend-config.js` 为 `enabled: true`，前端配置连接 Firebase 项目 `deepfamily-dfplan` 的 `wu-family` 共享计划，使用 Google 登录或已授权的邀请身份访问。后端初始化成功须以部署脚本的实际读回结果 `DFPLAN_DIRECTORY_VERIFIED` 及人员、任务核验数量为准；前端开关不能代替后端核验。网页登录、名单显示和操作按钮需在发布后另行检查。
 
-初始管理员须使用预先确认的 Google 邮箱登录。首次领取受保护角色后，点击「建立家族计划」初始化 10 项行动；随后可增加其他管理员。详见 [Firebase 启用说明](../dfplan-backend/README.md)。Patrick 暂不启用。
+初始管理员须使用预先确认的 Google 邮箱登录。首次领取受保护角色后，点击「建立家族计划」初始化 10 项行动；随后可增加其他管理员。邀请入口是否可用取决于线上配置与授权记录。详见 [Firebase 启用说明](../dfplan-backend/README.md)。
 
 ## 使用
 
@@ -65,4 +65,8 @@ A buildless, bilingual family legacy workspace with ten editable planning action
 
 With the Firebase backend enabled, verified Google administrators access a shared Firestore project. Only the pre-authorized initial owner can claim the protected role and initialize the ten-action plan once. Device-only legacy records are kept and can be imported after review; language and reading-size preferences remain local.
 
-旧地址 `/DFplan/` 会跳转到 `/dfplan/`，保留语言参数与当前视图。两个地址同域，沿用已有的本机存储。
+人员名单可由 Google 管理员和获授权的 Patrick 新增、移出与恢复。Patrick 的权限来自 owner 控制的邀请记录 `canManagePeople` 标志及有效设备绑定，不能通过显示姓名获得；普通邀请成员只能查看人员。人员管理不授予账号、管理员名单或邀请管理权限。真实初始人名仅通过仓库外的私密文件合并到后端，不写入网页或公开 Git；移出人员保留原任务和历史。
+
+Git 源码仅保留小写 `dfplan/`。旧地址跳转模板位于 `scripts/pages/templates/dfplan-redirect.html`，Pages 发布脚本按 `generated_files` 清单生成 `/DFplan/index.html`，跳转到 `/dfplan/` 并保留查询参数与片段。模板本身不公开发布；两个地址同域，沿用已有的本机存储。
+
+Windows 工作区不需要同时创建两个目录，也不要修改 `core.ignorecase`。生产发布产物必须同时包含大小写不同的两个 URL，因此应在大小写敏感的文件系统中生成（现有 Pages workflow 使用 Ubuntu 的 `RUNNER_TEMP`）；脚本会拒绝在大小写不敏感的目标目录中生成，避免覆盖正式应用。审计报告包含生成路径、模板来源及每个文件的哈希；`dfplan-backend/`、README、脚本和模板源码不在公开产物中。
