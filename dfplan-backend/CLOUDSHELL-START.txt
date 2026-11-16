@@ -1,0 +1,10 @@
+DFplan 免费后端部署
+
+请确认 Google 账号为预先约定的初始管理员。
+在仓库根目录运行下面的命令，并把 YOUR_GOOGLE_EMAIL 替换为已确认的 Google 邮箱：
+
+bash dfplan-backend/scripts/deploy-cloudshell.sh --project deepfamily-dfplan --owner-email YOUR_GOOGLE_EMAIL --display-name luoxi
+
+Google Cloud Shell 需要授权时，请在其 Google 界面点击 Authorize。
+看到 DFPLAN_BACKEND_READY 后，回聊天回复“后端已部署”。
+不需要发送密码、访问令牌或授权码。

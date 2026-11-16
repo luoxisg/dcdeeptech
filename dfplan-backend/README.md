@@ -2,6 +2,26 @@
 
 生产项目 `deepfamily-dfplan` 已创建，使用 Spark 方案、新加坡 `asia-southeast1` 默认数据库，Google 登录和 `dcdeeptech.com` 已授权。当前仍等待权限规则发布与初始化；`backend-config.js` 保持 `enabled: false`，现网仍使用本机保存。
 
+## 免费部署入口（推荐）
+
+[在 Google Cloud Shell 打开部署教程](https://shell.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fluoxisg%2Fdcdeeptech.git&cloudshell_git_branch=main&cloudshell_tutorial=dfplan-backend%2FCLOUDSHELL.md&cloudshell_print=dfplan-backend%2FCLOUDSHELL-START.txt&project=deepfamily-dfplan)
+
+在自己的 Google 页面授权 Cloud Shell，在仓库根目录运行一条命令：
+
+```sh
+bash dfplan-backend/scripts/deploy-cloudshell.sh --project deepfamily-dfplan --owner-email YOUR_GOOGLE_EMAIL --display-name luoxi
+```
+
+此流程使用现有 Spark 项目，不绑定账单、不启用付费产品，也不依赖远程浏览器工具。脚本只安装生产依赖，通过 Google Cloud Shell 的原生 Google 授权调用 Rules API 和 Firestore；不会保存或打印访问令牌，不要求在聊天中发送授权码。
+
+脚本会编译、发布并读取核对规则；事务初始化管理员、任务和历史；保留已有记录。看到 `DFPLAN_BACKEND_READY` 后，才将前端 `enabled` 改为 `true`。Cloud Shell 和 Spark 均受各自免费配额限制。
+
+本地检查部署逻辑：
+
+```sh
+node --test dfplan-backend/tests/cloud-deploy.test.mjs
+```
+
 ## 提供的功能
 
 - 使用现有 Google 账号登录，无需为本网站另设密码。
