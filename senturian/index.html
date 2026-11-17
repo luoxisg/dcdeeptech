@@ -1,0 +1,842 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<meta name="color-scheme" content="light dark"/>
+<link rel="icon" href="data:,"/>
+<title>Senturian BD 行动计划</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F3F2F2; --bg2:#ECEBEA; --surface:#FFFFFF; --surface2:#FAFAF9; --line:#DDDBDA; --line2:#C9C7C5;
+  --ink:#181818; --muted:#5C5C5C; --faint:#939393;
+  --navy:#032D60; --navtab:#C7DBF2; --navacc:#1B96FF;
+  --blue:#0176D3; --blue-d:#014486; --blue-soft:#EAF3FC;
+  --green:#2E844A; --green-soft:#E3F4EA;
+  --amber:#8C4A03; --amber-soft:#FCF0DC;
+  --red:#BA0517; --red-soft:#FCEBEA;
+  --grey-soft:#ECEBEA; --row-hover:#F0F7FE;
+  --shadow:0 1px 2px rgba(3,45,96,.10);
+  --radius:4px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0D141C; --bg2:#101A24; --surface:#16222E; --surface2:#1B2A38; --line:#2C3D4D; --line2:#3D5469;
+    --ink:#EAF1F8; --muted:#A7B8C9; --faint:#7E93A8;
+    --blue:#4DA3E8; --blue-d:#8CC2F2; --blue-soft:#173A5C;
+    --green:#4CC79A; --green-soft:#123B2E;
+    --amber:#E5B95C; --amber-soft:#3D3112;
+    --red:#F08A80; --red-soft:#42201C;
+    --grey-soft:#1E3249; --row-hover:#1B2E44;
+    --shadow:0 1px 2px rgba(0,0,0,.4);
+  }
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans SC",-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:var(--blue)}
+button,select,input,textarea{font:inherit;color:inherit}
+button,[role="button"],select,input:not([type="checkbox"]){min-height:36px}
+.num{font-family:"Archivo","Noto Sans SC",sans-serif;font-variant-numeric:tabular-nums}
+.wrap{max-width:1240px;margin:0 auto;padding:0 18px 56px}
+
+/* ---------- global header (Salesforce style) ---------- */
+.topbar{background:var(--navy);color:#EAF3FC}
+.topbar-in{max-width:1240px;margin:0 auto;padding:10px 18px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
+.brand{display:flex;gap:12px;align-items:center;min-width:0}
+.launcher{flex:0 0 auto;width:34px;height:34px;border:1px solid rgba(255,255,255,.35);border-radius:4px;background-image:radial-gradient(circle,#fff 1.5px,transparent 1.6px);background-size:8px 8px;background-position:center;opacity:.9}
+.brand h1{margin:0;font-size:17px;font-weight:700;letter-spacing:.01em;line-height:1.25;color:#fff}
+.brand h1 .en{font-family:"Archivo",sans-serif;font-weight:700}
+.brand p{margin:1px 0 0;color:#A9C6E8;font-size:12px}
+.top-links{display:flex;flex-wrap:wrap;gap:8px}
+.top-links a{display:inline-flex;align-items:center;gap:6px;min-height:32px;padding:5px 12px;border:1px solid rgba(255,255,255,.35);border-radius:4px;color:#EAF3FC;text-decoration:none;font-size:12.5px;font-weight:500;background:transparent}
+.top-links a:hover{background:rgba(255,255,255,.14)}
+.top-links a b{font-family:"Archivo",sans-serif;font-weight:600}
+
+/* ---------- app navigation tabs ---------- */
+.tabs{position:sticky;top:0;z-index:30;background:var(--navy);border-top:1px solid rgba(255,255,255,.14);box-shadow:0 2px 4px rgba(3,45,96,.25)}
+.tabs-in{max-width:1240px;margin:0 auto;padding:0 12px;display:flex;gap:2px;flex-wrap:wrap}
+.tab{border:0;background:transparent;border-radius:0;padding:10px 16px;font-weight:600;font-size:13.5px;color:var(--navtab);cursor:pointer;min-height:42px;white-space:nowrap;box-shadow:inset 0 -3px 0 transparent}
+.tab:hover{color:#fff;background:rgba(255,255,255,.08)}
+.tab[aria-selected="true"]{background:rgba(255,255,255,.16);color:#fff;box-shadow:inset 0 -3px 0 var(--navacc)}
+.tab:focus-visible,a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+
+/* ---------- KPI strip ---------- */
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:18px 0 0}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px;box-shadow:var(--shadow)}
+.kpi .lab{font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.07em}
+.kpi .val{font-size:25px;font-weight:700;line-height:1.2;margin-top:2px}
+.kpi .sub{font-size:12px;color:var(--muted);margin-top:1px}
+.kpi .val.blue{color:var(--blue)} .kpi .val.green{color:var(--green)} .kpi .val.amber{color:var(--amber)}
+
+section.panel{display:none;margin-top:16px}
+section.panel.active{display:block;animation:fade .18s ease}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion: reduce){section.panel{animation:none} html{scroll-behavior:auto}}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
+.card>h2{margin:0 0 6px;font-size:16px;font-weight:700;padding-bottom:10px;border-bottom:1px solid var(--line)}
+.card h3{margin:0 0 6px;font-size:14.5px;font-weight:700}
+.card .hint{color:var(--muted);font-size:12.5px;margin:0 0 14px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.stack{display:grid;gap:14px}
+
+/* ---------- badges ---------- */
+.badge{display:inline-flex;align-items:center;padding:1px 9px;border-radius:999px;font-size:11.5px;font-weight:700;line-height:1.8;white-space:nowrap}
+.b-high{background:var(--red-soft);color:var(--red)}
+.b-mid{background:var(--amber-soft);color:var(--amber)}
+.b-low{background:var(--grey-soft);color:var(--muted)}
+.b-watch{background:var(--grey-soft);color:var(--muted)}
+.b-stage{background:var(--blue-soft);color:var(--blue-d)}
+.b-ok{background:var(--green-soft);color:var(--green)}
+.b-un{background:var(--grey-soft);color:var(--faint)}
+
+/* ---------- funnel / bars ---------- */
+.frow{display:grid;grid-template-columns:92px 1fr 44px;gap:10px;align-items:center;padding:5px 0}
+.frow .fl{font-size:12.5px;font-weight:600;color:var(--muted);text-align:right}
+.fbar{height:18px;background:var(--surface2);border:1px solid var(--line);border-radius:3px;overflow:hidden}
+.fbar i{display:block;height:100%;background:var(--blue)}
+.frow .fv{font-weight:700;font-size:14px}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12.5px;color:var(--muted);margin-top:10px}
+.legend span{display:inline-flex;gap:6px;align-items:center}
+.dot{width:10px;height:10px;border-radius:2px;display:inline-block}
+
+/* ---------- play cards ---------- */
+.play .who{display:inline-block;background:var(--blue-soft);color:var(--blue-d);padding:2px 9px;border-radius:4px;font-size:12px;font-weight:700;margin-bottom:8px}
+.play.g .who{background:var(--green-soft);color:var(--green)}
+.play.a .who{background:var(--amber-soft);color:var(--amber)}
+.play p{margin:6px 0 0;font-size:13.5px}
+.play .next{margin-top:12px;background:var(--surface2);border:1px solid var(--line);border-radius:4px;padding:9px 12px;font-size:13px}
+.play .next b{color:var(--blue-d)}
+
+/* ---------- deadline list ---------- */
+.dl{display:grid;gap:0}
+.dl-row{display:flex;gap:14px;padding:10px 0;border-bottom:1px solid var(--line);align-items:flex-start}
+.dl-row:last-child{border-bottom:0}
+.dl-date{flex:0 0 72px;text-align:center;background:var(--surface2);border:1px solid var(--line);color:var(--ink);border-radius:4px;padding:6px 4px}
+.dl-date .d{font-family:"Archivo",sans-serif;font-size:18px;font-weight:700;line-height:1.1}
+.dl-date .m{font-size:11px;font-weight:600;color:var(--muted)}
+.dl-row.urgent .dl-date{background:var(--red-soft);border-color:transparent;color:var(--red)}
+.dl-row.urgent .dl-date .m{color:var(--red)}
+.dl-body{flex:1;min-width:0}
+.dl-body b{font-size:14px}
+.dl-body p{margin:2px 0 0;font-size:12.5px;color:var(--muted)}
+.dl-tag{flex:0 0 auto}
+
+/* ---------- toolbar / table ---------- */
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+.toolbar .grow{flex:1 1 200px}
+input[type="search"],input[type="text"],input[type="date"],select,textarea{background:var(--surface);border:1px solid var(--line2);border-radius:4px;padding:7px 11px;width:100%}
+input:focus,select:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 3px var(--blue);outline:none}
+textarea{min-height:84px;resize:vertical}
+select{width:auto;max-width:100%}
+.btn{border:1px solid var(--line2);background:var(--surface);border-radius:4px;padding:7px 16px;font-weight:600;font-size:13.5px;cursor:pointer;min-height:36px}
+.btn:hover{background:var(--surface2)}
+.btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}
+.btn.primary:hover{background:var(--blue-d)}
+.btn.ghost{background:var(--surface)}
+.btn.small{min-height:32px;padding:4px 12px;font-size:13px}
+.btn.done-btn[aria-pressed="true"]{background:var(--green);border-color:var(--green);color:#fff}
+
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th{text-align:left;font-size:11px;letter-spacing:.06em;color:var(--muted);font-weight:700;padding:8px 10px;background:var(--surface2);border-top:1px solid var(--line);border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+tbody tr{cursor:pointer}
+tbody tr:hover{background:var(--row-hover)}
+td .sub{display:block;color:var(--muted);font-size:12px;margin-top:2px}
+td .agency{font-weight:700;font-size:14.5px}
+.val-cell{font-family:"Archivo",sans-serif;font-weight:700;white-space:nowrap}
+.table-scroll{overflow-x:auto}
+.empty{padding:28px;text-align:center;color:var(--muted)}
+
+/* supplier entry cards (mobile) */
+.sup-cards{display:none}
+.sup-card{border:1px solid var(--line);border-radius:4px;padding:13px;margin-bottom:10px;background:var(--surface)}
+.sup-card .r1{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.sup-card .r1 b{font-size:15px}
+.sup-card p{margin:6px 0 0;font-size:12.5px;color:var(--muted)}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.step .n{font-family:"Archivo",sans-serif;font-weight:700;font-size:12px;color:var(--blue);letter-spacing:.06em}
+.step h3{margin:4px 0 4px}
+.step p{margin:0;font-size:13px;color:var(--muted)}
+
+/* mobile cards for opps */
+.opp-cards{display:none}
+.opp-card{border:1px solid var(--line);border-radius:4px;padding:13px;margin-bottom:10px;background:var(--surface);cursor:pointer;text-align:left;width:100%}
+.opp-card .r1{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.opp-card .r1 b{font-size:15px}
+.opp-card p{margin:6px 0 0;font-size:12.5px;color:var(--muted)}
+.opp-card .r2{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+
+/* ---------- drawer + Salesforce Path ---------- */
+.overlay{position:fixed;inset:0;background:rgba(6,20,36,.5);z-index:50;display:none}
+.overlay.open{display:block}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(520px,100%);background:var(--surface);z-index:51;box-shadow:-12px 0 32px rgba(0,0,0,.25);transform:translateX(105%);transition:transform .22s ease;display:flex;flex-direction:column}
+.drawer.open{transform:none}
+@media (prefers-reduced-motion: reduce){.drawer{transition:none}}
+.drawer header{padding:16px 20px 12px;border-bottom:1px solid var(--line);background:var(--surface2);display:flex;gap:10px;align-items:flex-start;justify-content:space-between}
+.drawer header h2{margin:0;font-size:18px;font-weight:700}
+.drawer header p{margin:3px 0 0;color:var(--muted);font-size:12.5px}
+.drawer .body{padding:16px 20px;overflow-y:auto;flex:1}
+.drawer footer{padding:12px 20px;border-top:1px solid var(--line);display:flex;gap:10px}
+.path{display:flex;margin:0 0 18px}
+.pstep{flex:1 1 0;min-width:0;background:var(--grey-soft);color:var(--muted);font-size:11px;font-weight:700;text-align:center;padding:7px 2px 7px 8px;margin-left:-6px;white-space:nowrap;overflow:hidden;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 50%,calc(100% - 10px) 100%,0 100%,10px 50%)}
+.pstep:first-child{margin-left:0;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 50%,calc(100% - 10px) 100%,0 100%)}
+.pstep.done{background:var(--blue);color:#fff}
+.pstep.now{background:var(--navy);color:#fff}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:5px;letter-spacing:.03em}
+.field select,.field input,.field textarea{width:100%}
+.kv{display:grid;grid-template-columns:86px 1fr;gap:6px 12px;font-size:13px;margin-bottom:16px}
+.kv dt{color:var(--muted);font-weight:700}
+.kv dd{margin:0}
+.icon-btn{border:1px solid var(--line2);background:var(--surface);border-radius:4px;width:36px;height:36px;min-height:36px;font-size:15px;cursor:pointer;flex:0 0 auto}
+
+/* ---------- competition ---------- */
+.comp-table td:first-child{font-weight:700;white-space:nowrap}
+.comp-table tbody tr{cursor:default}
+.taglist{display:flex;flex-wrap:wrap;gap:6px}
+.mini{font-size:12.5px;color:var(--muted)}
+.callout{border:1px solid transparent;background:var(--green-soft);border-radius:4px;padding:13px 16px}
+.callout.blue{background:var(--blue-soft)}
+.callout.amber{background:var(--amber-soft)}
+.callout p{margin:4px 0 0;font-size:13.5px}
+ul.tight{margin:6px 0 0;padding-left:19px}
+ul.tight li{margin:4px 0;font-size:13.5px}
+
+/* ---------- contacts & tasks ---------- */
+.contact{display:flex;gap:14px;padding:13px 0;border-bottom:1px solid var(--line);align-items:flex-start}
+.contact:last-child{border-bottom:0}
+.avatar{flex:0 0 44px;width:44px;height:44px;border-radius:6px;background:var(--blue-soft);color:var(--blue-d);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;font-family:"Archivo",sans-serif}
+.contact .cbody{flex:1;min-width:0}
+.contact .cbody b{font-size:15px}
+.contact .cbody p{margin:2px 0 0;font-size:12.5px;color:var(--muted)}
+.task{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);align-items:flex-start}
+.task:last-child{border-bottom:0}
+.task .tbody2{flex:1;min-width:0}
+.task .tbody2 b{font-size:14px}
+.task .tbody2 p{margin:2px 0 0;font-size:12.5px;color:var(--muted)}
+.task.is-done .tbody2 b,.task.is-done .tbody2 p{text-decoration:line-through;color:var(--faint)}
+.progress{height:8px;background:var(--surface2);border:1px solid var(--line);border-radius:99px;overflow:hidden}
+.progress i{display:block;height:100%;background:var(--green);transition:width .25s ease}
+
+footer.page{margin-top:26px;color:var(--muted);font-size:12px;display:flex;flex-wrap:wrap;gap:8px 18px;justify-content:space-between}
+.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,80px);background:var(--navy);color:#fff;padding:10px 18px;border-radius:4px;font-size:13.5px;font-weight:600;z-index:80;transition:transform .25s ease;box-shadow:var(--shadow)}
+.toast.show{transform:translate(-50%,0)}
+.addform{display:none;margin-bottom:14px}
+.addform.open{display:block}
+.addform .grid2{gap:10px}
+.addform .field{margin-bottom:10px}
+
+@media (max-width:1020px){
+  .kpis{grid-template-columns:repeat(3,1fr)}
+  .grid3{grid-template-columns:1fr 1fr}
+}
+@media (max-width:720px){
+  .kpis{grid-template-columns:1fr 1fr}
+  .kpi .val{font-size:22px}
+  .grid2,.grid3{grid-template-columns:1fr}
+  .tab{flex:1 1 30%;font-size:13px;padding:9px 8px;text-align:center}
+  .brand p{display:none}
+  .table-wrap{display:none}
+  .opp-cards{display:block}
+  .sup-wrap{display:none}
+  .sup-cards{display:block}
+  .steps{grid-template-columns:1fr}
+  .brand h1{font-size:16px}
+  th,td{padding:8px}
+  .pstep{font-size:10px}
+}
+
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-in">
+    <div class="brand">
+      <div class="launcher" aria-hidden="true"></div>
+      <div>
+      <h1><span class="en">Senturian</span> BD 行动计划</h1>
+      <p>新加坡政府与园区视频分析机会的日常跟进台：机会管道、竞争格局、联系人与关键日期，一处看清。</p>
+      </div>
+    </div>
+    <nav class="top-links" aria-label="外部入口">
+      <a href="https://dcdeeptech.com/senturian" target="_blank" rel="noopener"><b>dcdeeptech.com</b>/senturian ↗</a>
+      <a href="https://github.com/luoxisg/dcdeeptech" target="_blank" rel="noopener">GitHub · <b>luoxisg/dcdeeptech</b> ↗</a>
+    </nav>
+  </div>
+</header>
+
+  <div class="tabs">
+    <div class="tabs-in" role="tablist" aria-label="视图切换">
+      <button class="tab" role="tab" aria-selected="true" data-tab="overview">总览</button>
+      <button class="tab" role="tab" aria-selected="false" data-tab="pipeline">机会管道</button>
+      <button class="tab" role="tab" aria-selected="false" data-tab="suppliers">供应商入口</button>
+      <button class="tab" role="tab" aria-selected="false" data-tab="compete">竞争格局</button>
+      <button class="tab" role="tab" aria-selected="false" data-tab="people">联系人</button>
+      <button class="tab" role="tab" aria-selected="false" data-tab="tasks">日程与任务</button>
+    </div>
+  </div>
+
+<div class="wrap">
+
+  <!-- KPI -->
+  <div class="kpis" role="region" aria-label="关键指标">
+    <div class="kpi"><div class="lab">机会总数</div><div class="val num" id="kTotal">17</div><div class="sub">个 agency / 客户群</div></div>
+    <div class="kpi"><div class="lab">高优先级</div><div class="val num blue" id="kHigh">3</div><div class="sub">HDB · PUB · NEA 先动手</div></div>
+    <div class="kpi"><div class="lab">已核实合同额</div><div class="val num green" id="kValue">S$0</div><div class="sub">仅计已公开中标金额</div></div>
+    <div class="kpi"><div class="lab">推进中</div><div class="val num amber" id="kActive">0</div><div class="sub">接触中 + 方案推进 + 投标</div></div>
+    <div class="kpi"><div class="lab">本周待办</div><div class="val num" id="kTasks">0</div><div class="sub">未完成任务（全部任务池）</div></div>
+  </div>
+
+
+  <!-- ============ OVERVIEW ============ -->
+  <section class="panel active" id="panel-overview" role="tabpanel">
+    <div class="stack">
+      <div class="grid3">
+        <div class="card play g">
+          <div class="who">打法 01 · 存量最大</div>
+          <h3>HDB 组屋停车场分析 — 跟 STE 进</h3>
+          <p>STE 2023 年中标 HDB 视频分析系统（停车场运营），S$2.49M。组屋停车场是全岛最大的视频分析存量市场，Senturian 做分析模块供应商，不自己投 VMS。</p>
+          <div class="next"><b>下一步：</b>通过 STE 对口联系人确认现有分析模块的缺口与替换窗口。</div>
+        </div>
+        <div class="card play">
+          <div class="who">打法 02 · 已有视频分析预算</div>
+          <h3>PUB 水务监控 — 跟 HCL 进</h3>
+          <p>HCL 2023 年中标 S$9.89M 监控、巡查与执法系统；蔡厝港水厂升级明确包含 CCTV + 视频分析（未戴防护装备检测）+ 中央 VMS。</p>
+          <div class="next"><b>下一步：</b>摸清 HCL 在 PUB 项目的分析分包结构，递交 PPE / 异常行为分析能力清单。</div>
+        </div>
+        <div class="card play a">
+          <div class="who">打法 03 · 分析即采购本体</div>
+          <h3>NEA 高空抛物 — 盯 GeBIZ</h3>
+          <p>移动摄像头 + 轨迹分析，全年约 2,200 次部署；2025 年 10 月起与全部 19 个市镇会试点。供应商未公开，入口在标，不在关系。</p>
+          <div class="next"><b>下一步：</b>在 GeBIZ 设 NEA 视频分析关键词提醒，出标即评估。</div>
+        </div>
+      </div>
+
+      <div class="grid2">
+        <div class="card">
+          <h2>管道分布（按阶段）</h2>
+          <p class="hint">随「机会管道」里阶段的修改实时重算。</p>
+          <div id="funnel"></div>
+          <div class="legend">
+            <span><i class="dot" style="background:var(--red)"></i>高优先级 <b class="num" id="lgHigh"></b></span>
+            <span><i class="dot" style="background:var(--amber)"></i>中 <b class="num" id="lgMid"></b></span>
+            <span><i class="dot" style="background:var(--faint)"></i>低 / 待观察 <b class="num" id="lgLow"></b></span>
+          </div>
+        </div>
+        <div class="card">
+          <h2>最近关键日期</h2>
+          <p class="hint">2026 年 11–12 月，先近后远。</p>
+          <div class="dl">
+            <div class="dl-row urgent"><div class="dl-date"><div class="d num">19</div><div class="m">11月 · 周四</div></div><div class="dl-body"><b>CAG 合作会 — infologic 办公室</b><p>16:00 · 5 Harper Road #02-02 · 与袁总（大华新加坡）、KT Chow 赵庆夺议 CAG 项目合作：项目范围、投标主体、各方分工。</p></div><span class="badge b-high dl-tag">本周</span></div>
+            <div class="dl-row urgent"><div class="dl-date"><div class="d num">19</div><div class="m">11月 · 周四</div></div><div class="dl-body"><b>Sean Tham 给出明确答复（预期）</b><p>Senturian 创始人；11 月 12 日通话称团队约一周内审完并给确定职位。未到不催，到期未回再跟进。</p></div><span class="badge b-high dl-tag">本周</span></div>
+            <div class="dl-row"><div class="dl-date"><div class="d num">23</div><div class="m">11月 · 周一</div></div><div class="dl-body"><b>LinkedIn 邀请重试窗口</b><p>按周计划推进第 2 周名单，含 Network Optix 的 Sheng Hao Liu——确认 Nx AI Manager 与 Neurolytics 的接入关系。</p></div><span class="badge b-stage dl-tag">BD</span></div>
+            <div class="dl-row"><div class="dl-date"><div class="d num">3</div><div class="m">12月 · 周四</div></div><div class="dl-body"><b>CAG T5 ISMS 标截止</b><p>樟宜 T5 综合安防管理系统。Genetec 为机场主平台，机会在 SI 的分析叠加层，不在平台替换。</p></div><span class="badge b-mid dl-tag">投标</span></div>
+            <div class="dl-row"><div class="dl-date"><div class="d num">7</div><div class="m">12月 · 周一</div></div><div class="dl-body"><b>LTA TR827 截止</b><p>道路视频分析（VAP）分包，Base Offer 为 Synergy VMS，总包 STE Urban Solutions；先核对与 TR872 的范围是否冲突再定投法。</p></div><span class="badge b-mid dl-tag">投标</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>核心判断</h2>
+        <p class="hint">贯穿全部 17 个机会的一句话打法。</p>
+        <div class="grid3">
+          <div><h3>不卖平台，卖分析</h3><p class="mini">新加坡政府没有统一 VMS，每个 agency 各自招标。Senturian 的位置是分析模块供应商，跟在 STE、HCL、Certis 这些总包后面进场。</p></div>
+          <div><h3>入口先于产品</h3><p class="mini">政府这块的入口不在平台厂商，在总包 SI。先确认每个 agency 的在位 SI 和合同窗口，再谈分析能力清单。</p></div>
+          <div><h3>未公开的不猜</h3><p class="mini">SPF PolCam、PSA、学校等平台品牌没有公开资料的，一律标「未公开」，靠盯标和 SI 关系补信息，不写推测。</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PIPELINE ============ -->
+  <section class="panel" id="panel-pipeline" role="tabpanel">
+    <div class="card">
+      <h2>机会管道</h2>
+      <p class="hint">点任意一行打开详情，可改阶段、优先级、下一步和备注，详情里还列了该 agency 的供应商填报入口；改动即时反映到总览统计。筛选只影响当前列表。</p>
+      <div class="toolbar">
+        <div class="grow"><input type="search" id="q" placeholder="搜索 agency、平台、集成商、切入路径…" aria-label="搜索机会"></div>
+        <select id="fPri" aria-label="按优先级筛选"><option value="">全部优先级</option><option>高</option><option>中</option><option>低</option><option>待观察</option></select>
+        <select id="fStage" aria-label="按阶段筛选"><option value="">全部阶段</option></select>
+        <select id="fEntry" aria-label="按入口筛选"><option value="">全部入口</option><option>STE</option><option>HCL</option><option>Certis</option><option>盯标 / GeBIZ</option><option>SI 叠加</option><option>直接</option></select>
+        <button class="btn ghost" id="btnAdd" aria-expanded="false">＋ 新增机会</button>
+        <button class="btn primary" id="btnCsv">导出 CSV</button>
+      </div>
+
+      <form class="addform card" id="addForm" style="box-shadow:none">
+        <h3>新增机会</h3>
+        <div class="grid2">
+          <div class="field"><label for="aAgency">Agency / 客户 *</label><input type="text" id="aAgency" required placeholder="如：JTC"></div>
+          <div class="field"><label for="aSeg">板块</label><input type="text" id="aSeg" placeholder="如：工业园区"></div>
+          <div class="field"><label for="aPri">优先级</label><select id="aPri" style="width:100%"><option>中</option><option>高</option><option>低</option><option>待观察</option></select></div>
+          <div class="field"><label for="aEntry">入口</label><select id="aEntry" style="width:100%"><option>直接</option><option>STE</option><option>HCL</option><option>Certis</option><option>盯标 / GeBIZ</option><option>SI 叠加</option></select></div>
+          <div class="field"><label for="aPlatform">现平台 / 系统</label><input type="text" id="aPlatform" placeholder="未公开可留空"></div>
+          <div class="field"><label for="aNext">下一步</label><input type="text" id="aNext" placeholder="一句话下一步动作"></div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:4px"><button type="submit" class="btn primary">加入管道</button><button type="button" class="btn" id="btnAddCancel">取消</button></div>
+      </form>
+
+      <div class="table-wrap table-scroll">
+        <table aria-label="机会列表">
+          <thead><tr><th>Agency</th><th>优先级</th><th>阶段</th><th>现平台 / 系统</th><th>在位 SI / 入口</th><th>已知合同额</th><th>核实</th></tr></thead>
+          <tbody id="oppBody"></tbody>
+        </table>
+      </div>
+      <div class="opp-cards" id="oppCards"></div>
+      <div class="empty" id="oppEmpty" hidden>没有符合当前筛选的机会。换个关键词或清掉筛选试试。</div>
+      <p class="mini" style="margin:14px 0 0">合同额仅录入已公开的中标金额；空白表示未核实到公开数字，不做估算。阶段与备注的修改保留在本次打开期间，关页后回到预置状态——长期记录请导出 CSV 存档。</p>
+    </div>
+  </section>
+
+  <!-- ============ SUPPLIERS ============ -->
+  <section class="panel" id="panel-suppliers" role="tabpanel">
+    <div class="stack">
+      <div class="card">
+        <h2>填报前先走完三步</h2>
+        <p class="hint">新加坡政府采购的供应商填报有固定顺序：先有公司身份，才有门户账号，最后才是具体某个 agency 的标。</p>
+        <div class="steps">
+          <div class="step"><div class="n">STEP 1</div><h3>Corppass — 一切填报的前置</h3><p>GeBIZ 和多数政府门户都用 Corppass 登录授权。先以公司名义注册 Corppass 并设好管理员与经办人权限，没有这一步后面都填不了。</p></div>
+          <div class="step"><div class="n">STEP 2</div><h3>GeBIZ Trading Partner — 总入口</h3><p>在 <a href="https://gebiz.gov.sg" target="_blank" rel="noopener">gebiz.gov.sg</a> 注册 GeBIZ Trading Partner，首个账号免费。全部部委和法定机构的公开标都在这里发布和填报。</p></div>
+          <div class="step"><div class="n">STEP 3</div><h3>各 agency 自有门户 — 按需补注册</h3><p>CAG、PSA、SP Group、医疗集群等另有自己的供应商门户（见下表），GeBIZ 账号替代不了，要逐个单独注册填报。</p></div>
+        </div>
+        <div class="callout amber" style="margin-top:16px"><h3>两个配套注册别漏</h3><p><b>BCA 承包商注册（CRS）：</b>工程与系统类标看工种等级——LTA TR827 的 VAP 分包涉及 ME04 L6 一类等级要求，投标前先核对公司是否够格，不够格先办注册或找够格主体联合。<b>投标主体：</b>GeBIZ 与各门户都只接受公司名义注册，个人身份投不了标——主体在 11 月 19 日 CAG 三方会上定下来后，再按下面清单逐个启动注册。</p></div>
+      </div>
+
+      <div class="card">
+        <h2>各 agency 供应商填报入口</h2>
+        <p class="hint">与「机会管道」的 17 个机会一一对应，另含 SATS、SMRT、SBS Transit 三家交通/机场运营方。在机会详情里也能看到对应入口。</p>
+        <div class="toolbar">
+          <div class="grow"><input type="search" id="supQ" placeholder="搜索 agency、门户、填报方式…" aria-label="搜索供应商入口"></div>
+          <select id="supCh" aria-label="按渠道筛选"><option value="">全部渠道</option><option>GeBIZ</option><option>自有门户</option><option>邀请制</option><option>无公开入口</option></select>
+        </div>
+        <div class="sup-wrap table-scroll">
+          <table aria-label="供应商填报入口列表">
+            <thead><tr><th>Agency</th><th>渠道</th><th>填报入口 / 门户</th><th>怎么填报</th><th>前置条件</th><th>备注</th></tr></thead>
+            <tbody id="supBody"></tbody>
+          </table>
+        </div>
+        <div class="sup-cards" id="supCards"></div>
+        <div class="empty" id="supEmpty" hidden>没有符合当前筛选的入口。换个关键词或清掉筛选试试。</div>
+        <div class="legend">
+          <span><i class="dot" style="background:var(--blue)"></i>GeBIZ <b class="num" id="supGeBiz"></b></span>
+          <span><i class="dot" style="background:var(--green)"></i>自有门户 <b class="num" id="supOwn"></b></span>
+          <span><i class="dot" style="background:var(--amber)"></i>邀请制 <b class="num" id="supInvite"></b></span>
+          <span><i class="dot" style="background:var(--faint)"></i>无公开入口 <b class="num" id="supNone"></b></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ COMPETE ============ -->
+  <section class="panel" id="panel-compete" role="tabpanel">
+    <div class="stack">
+      <div class="card">
+        <h2>VMS 平台竞争格局</h2>
+        <p class="hint">Senturian 不与这一层正面竞争——这一层决定分析模块要接进谁的生态。</p>
+        <div class="table-scroll"><table class="comp-table" aria-label="VMS竞争格局">
+          <thead><tr><th>平台</th><th>新加坡落点</th><th>对 Senturian 的含义</th></tr></thead>
+          <tbody>
+            <tr><td>Genetec Security Center</td><td>CAG 樟宜机场主平台，2021–2023 三年升级完成</td><td>机场线只能走 SI 做分析叠加，不谈替换</td></tr>
+            <tr><td>Milestone XProtect</td><td>LTA 道路历史部署（+ D-Ron、AllGoVision）；本地集成商 Bytexa 等进政府楼宇；老客户含酒店、园区</td><td>开放平台、老客户多，分析接入路径成熟</td></tr>
+            <tr><td>Network Optix Nx Witness</td><td>新加坡本地分销空白；亚太有分支，越南 DNG 为战略伙伴</td><td><b>已嵌入 Neurolytics 2.1.1</b>——最容易深化的平台，见下方专框</td></tr>
+            <tr><td>Synergy VMS</td><td>LTA TR827 Base Offer，摄像头海康 / 博世，总包 STE Urban Solutions</td><td>TR827 的 VAP 分包要按 Synergy 的接口规格做</td></tr>
+            <tr><td>March Networks VideoSphere</td><td>LTA 地铁站老平台（2009 年选定，51 个 SMRT 车站，集成商 O'Connor's）</td><td>2024 年起 Hitachi Rail + Strides 升级 50+ 站，新 VMS 品牌未公开——盯升级标</td></tr>
+            <tr><td>Avigilon（Motorola）</td><td>全球 VMS 主要玩家之一，新加坡以渠道项目为主</td><td>自带分析较强，正面场景避开，拼跨品牌接入</td></tr>
+            <tr><td>海康 HikCentral / 大华 DSS</td><td>摄像头存量大；两家平台均以 ONVIF 与第三方 VMS 互通</td><td>既是相机来源也是平台对手，合作方式见下方专框</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+
+      <div class="grid2">
+        <div class="card">
+          <h2>Network Optix 机会</h2>
+          <p class="hint">三个平台里深化成本最低的一个。</p>
+          <ul class="tight">
+            <li><b>已经进门：</b>Neurolytics 2.1.1 的 VA 控制已嵌在 Nx Witness 里。</li>
+            <li><b>平台势头：</b>API-first、约 99% 摄像头兼容；Inc. 5000 连续 9 年上榜；ChannelPro 2026 评为 Top 26 利润方案；部署比传统 NVR 快约 20–30%。</li>
+            <li><b>打的是另一块市场：</b>中小商业、多站点、零售、物流、教育、医疗——Milestone / Genetec 嫌贵的地盘，对应市镇会、学校、商场、物流园等分散客户。</li>
+            <li><b>渠道空白：</b>新加坡没找到本地分销商——Senturian 可争当 Nx 在新加坡的分析伙伴。关键人 Sheng Hao Liu 在 LinkedIn 第 2 周名单。</li>
+          </ul>
+          <div class="callout amber" style="margin-top:14px"><h3>进门前先确认一件事</h3><p>Nx 2026 年 4 月推出 Nx AI Manager（通用 AI 推理管线）。Neurolytics 接不接得上，决定它是分发渠道还是新竞争——11 月 23 日窗口直接问 Sheng Hao Liu。</p></div>
+          <div class="callout" style="margin-top:10px"><h3>竞争已经进门</h3><p>VIVOTEK 2026 年 3 月已出 Deep Search 插件，在 Nx 内直接做场景 + 属性搜索（DataLibrary 的活）；Milesight、Provision-ISR 插件也在做 AI 元数据搜索。差异化靠跨品牌接入与声音 / 烟火分析。</p></div>
+        </div>
+
+        <div class="card">
+          <h2>云端与分析层对手</h2>
+          <p class="hint">这一层才是 Senturian 的直接对手。</p>
+          <div class="table-scroll"><table class="comp-table" aria-label="分析层对手">
+            <thead><tr><th>对手</th><th>打法</th><th>应对</th></tr></thead>
+            <tbody>
+              <tr><td>VIVOTEK Deep Search</td><td>Nx 插件，场景 + 属性搜索</td><td>拼跨品牌、跨平台，不绑单一相机厂</td></tr>
+              <tr><td>BriefCam</td><td>录像取证与快速检索</td><td>拼实时告警与本地部署</td></tr>
+              <tr><td>Verkada / Arcules</td><td>云端一体化订阅</td><td>政府与关键基建偏本地部署，此为我方地盘</td></tr>
+              <tr><td>Hafnia 等 VLM 新玩家</td><td>大模型视频理解</td><td>盯其落地案例，未成气候前先占 SI 关系</td></tr>
+              <tr><td>Milesight / Provision-ISR 插件</td><td>相机厂自带 AI 元数据搜索</td><td>只做单品牌——我方卖点是多品牌混合存量</td></tr>
+            </tbody>
+          </table></div>
+          <h3 style="margin-top:18px">海康 / 大华合作</h3>
+          <ul class="tight">
+            <li>两家均以 ONVIF 接入第三方 VMS，全球 VMS 伙伴 90+；平台侧有 HikCentral 与大华 DSS。</li>
+            <li>合作优先级：<b>大华新加坡高于海康</b>——袁总为已有熟悉关系，11 月 19 日 CAG 会即是推进场合。</li>
+            <li>合作形态：相机存量接入 + 分析模块预装 / 联合方案，不碰对方平台替换。</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PEOPLE ============ -->
+  <section class="panel" id="panel-people" role="tabpanel">
+    <div class="card">
+      <h2>联系人</h2>
+      <p class="hint">与本行动计划直接相关的人，按下一步的紧迫度排。</p>
+      <div id="contactList"></div>
+    </div>
+  </section>
+
+  <!-- ============ TASKS ============ -->
+  <section class="panel" id="panel-tasks" role="tabpanel">
+    <div class="grid2">
+      <div class="card">
+        <h2>任务清单</h2>
+        <p class="hint">点「标记完成」更新进度；完成状态保留在本次打开期间。</p>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px"><div class="progress" style="flex:1"><i id="taskBar" style="width:0%"></i></div><b class="num" id="taskPct">0%</b></div>
+        <div id="taskList"></div>
+      </div>
+      <div class="card">
+        <h2>每周节奏</h2>
+        <p class="hint">固定动作，比临时想起来找人有效。</p>
+        <ul class="tight">
+          <li><b>周一：</b>CAG IoT / 视频类招标例行检查（GeBIZ），顺带扫 NEA、PUB 新标。</li>
+          <li><b>周二–周四：</b>SI 关系推进——STE、HCL、Certis 各至少一次有效触达或材料递交。</li>
+          <li><b>周四：</b>更新本页管道阶段与下一步，把口头进展落成文字。</li>
+          <li><b>周五：</b>导出 CSV 存档一周快照；复盘高优先级三家的入口是否有变化。</li>
+          <li><b>持续：</b>LinkedIn 按周名单推进，单周邀请不超平台上限；Nx 的 Sheng Hao Liu 在第 2 周名单内。</li>
+        </ul>
+        <div class="callout blue" style="margin-top:14px"><h3>判断标准</h3><p>一个机会两周没有新的入口信息或下一步，就降一级优先级——管道里只留真的在动的。</p></div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="page">
+    <span>Senturian BD 行动计划 · 数据截至 2026 年 11 月 17 日，源自已核实的竞争格局整理；标「未公开」处为无公开资料，不作推测。</span>
+    <span><a href="https://dcdeeptech.com/senturian" target="_blank" rel="noopener">dcdeeptech.com/senturian</a> · <a href="https://github.com/luoxisg/dcdeeptech" target="_blank" rel="noopener">github.com/luoxisg/dcdeeptech</a></span>
+  </footer>
+</div>
+
+<!-- drawer -->
+<div class="overlay" id="overlay"></div>
+<aside class="drawer" id="drawer" aria-label="机会详情" aria-hidden="true">
+  <header>
+    <div><h2 id="dTitle">—</h2><p id="dSub">—</p></div>
+    <button class="icon-btn" id="dClose" aria-label="关闭详情">✕</button>
+  </header>
+  <div class="body">
+    <div class="path" id="dPath" aria-label="阶段路径"></div>
+    <dl class="kv" id="dKv"></dl>
+    <div class="field"><label for="dStage">阶段</label><select id="dStage"></select></div>
+    <div class="field"><label for="dPri">优先级</label><select id="dPri"><option>高</option><option>中</option><option>低</option><option>待观察</option></select></div>
+    <div class="field"><label for="dNext">下一步</label><input type="text" id="dNext"></div>
+    <div class="field"><label for="dDue">下一步日期</label><input type="date" id="dDue"></div>
+    <div class="field"><label for="dNotes">备注</label><textarea id="dNotes"></textarea></div>
+  </div>
+  <footer>
+    <button class="btn primary" id="dSave" style="flex:1">保存修改</button>
+    <button class="btn" id="dCancel">取消</button>
+  </footer>
+</aside>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+var STAGES = ["未接触","已识别入口","接触中","方案推进","投标","搁置"];
+var ACTIVE_STAGES = ["接触中","方案推进","投标"];
+
+var OPPS = [
+ {id:1, agency:"HDB 建屋局", seg:"组屋停车场", pri:"高", stage:"已识别入口", platform:"视频分析系统（停车场运营）", si:"STE", entry:"STE", value:2.49, valueLabel:"S$2.49M", verified:"已核实", next:"确认 STE 现有分析模块缺口与替换窗口", due:"2026-11-27", notes:"2023 年 STE 中标 HDB000ETT22000128。全岛最大的视频分析存量市场；另有市镇会分散维护（如 Keydence 维护 1,000+ 栋组屋 CCTV）。"},
+ {id:2, agency:"PUB 水务局", seg:"水厂与执法", pri:"高", stage:"已识别入口", platform:"CCTV + 视频分析 + 中央 VMS（蔡厝港水厂）", si:"HCL", entry:"HCL", value:9.89, valueLabel:"S$9.89M", verified:"已核实", next:"摸清 HCL 分包结构，递交 PPE/异常行为分析清单", due:"2026-11-30", notes:"HCL 2023 年中标 Surveillance, Inspection and Enforcement System。水厂升级明确含未戴防护装备检测。"},
+ {id:3, agency:"NEA 环境局", seg:"高空抛物执法", pri:"高", stage:"未接触", platform:"移动摄像头 + 轨迹分析（供应商未公开）", si:"未公开", entry:"盯标 / GeBIZ", value:null, valueLabel:"—", verified:"未公开", next:"GeBIZ 设关键词提醒，出标即评估", due:"2026-11-24", notes:"全年约 2,200 次部署；2025 年 7 月上轨迹分析，10 月起与全部 19 个市镇会试点。分析是采购本体。"},
+ {id:4, agency:"LTA 陆路交通局（TR827）", seg:"道路交通", pri:"中", stage:"方案推进", platform:"Synergy VMS（Base Offer），摄像头海康/博世", si:"STE Urban Solutions", entry:"STE", value:null, valueLabel:"—", verified:"已核实", next:"先核对与 TR872 的范围冲突，再定 VAP 分包投法", due:"2026-12-07", notes:"TR827 截止 12 月 7 日。历史上道路监控用过 Milestone + D-Ron + AllGoVision。"},
+ {id:5, agency:"LTA 地铁站 CCTV 升级", seg:"轨道交通", pri:"中", stage:"已识别入口", platform:"老平台 March Networks VideoSphere；新 VMS 未公开", si:"Hitachi Rail + Strides Engineering", entry:"SI 叠加", value:null, valueLabel:"—", verified:"部分核实", next:"跟升级标的分析需求清单", due:"2026-12-15", notes:"2024 年南北东西线 50+ 站升级。老系统 2009 年选定，覆盖 51 个 SMRT 车站，集成商 O'Connor's。"},
+ {id:6, agency:"CAG 樟宜机场", seg:"机场安防", pri:"中", stage:"接触中", platform:"Genetec Security Center（主平台）", si:"Ademco / D-Ron / STE / Certis", entry:"SI 叠加", value:null, valueLabel:"—", verified:"已核实", next:"11 月 19 日 infologic 会：定项目、投标主体与分工", due:"2026-11-19", notes:"Genetec 2021–2023 三年升级完成。T5 ISMS 标 12 月 3 日截止，机会在分析叠加层。"},
+ {id:7, agency:"JTC 裕廊岛", seg:"关键基建门禁", pri:"中", stage:"已识别入口", platform:"PSIM + 视频墙（BACS 2.0）", si:"STE（建设）/ AEQON（维护）", entry:"STE", value:15.69, valueLabel:"S$15.69M", verified:"已核实", next:"经 STE 确认检查站视频分析的增补空间", due:"2026-12-10", notes:"STE 2021 年中标生物识别门禁 BACS 2.0。关键基建，决策链长。"},
+ {id:8, agency:"SP Group", seg:"变电站与管网", pri:"中", stage:"未接触", platform:"Security Command Centre；CCTV+门禁+入侵探测（品牌未公开）", si:"SP 自行采购", entry:"直接", value:null, valueLabel:"—", verified:"未公开", next:"找 SP 安防采购入口，先递交变电站分析方案", due:"2026-12-18", notes:"天然气管道带视频分析监控；土方工程有 CCTV + 振动监测。"},
+ {id:9, agency:"医院集群 SingHealth / NHG / NUHS", seg:"医疗安防", pri:"中", stage:"未接触", platform:"Certis 安保（SGH，含 Halo 巡逻机器人）；NUHS 机器人+无人机回看", si:"Certis", entry:"Certis", value:null, valueLabel:"—", verified:"部分核实", next:"评估 CHISEL Healthcare InnoMatch 2026 申报", due:"2026-12-20", notes:"InnoMatch 面向 TRL 7+ 初创/中小企业，9 个月 test-bed，三个医疗集群参与——体量正对口。"},
+ {id:10, agency:"NParks 公园局", seg:"公园人流", pri:"低", stage:"未接触", platform:"监控 + 视频分析试点（Bishan-Ang Mo Kio）", si:"未公开", entry:"直接", value:null, valueLabel:"—", verified:"部分核实", next:"以人流计数试点方案试水，量小门槛低", due:"2027-01-15", notes:"试点内容：数人流、分析游客行为；另有公园巡逻机器人。"},
+ {id:11, agency:"URA 市区重建局", seg:"停车执法", pri:"低", stage:"搁置", platform:"Certis 统包（2018 起）；车载摄像头 + LPR 试验", si:"Certis", entry:"Certis", value:null, valueLabel:"—", verified:"已核实", next:"无动作——LPR 不是 Senturian 的产品线", due:"", notes:"车牌识别方向与现有产品不匹配，保留观察。"},
+ {id:12, agency:"ICA 移民与关卡局", seg:"关卡通关", pri:"低", stage:"搁置", platform:"生物识别通关：IDEMIA / NEC / Tascent", si:"生物识别厂商", entry:"直接", value:null, valueLabel:"—", verified:"已核实", next:"无动作——视频分析在通关场景没有位置", due:"", notes:"APCS 2027 年上新山关卡，仍是生物识别的地盘。"},
+ {id:13, agency:"SPF 警察部队（PolCam）", seg:"全岛公共摄像头", pri:"待观察", stage:"未接触", platform:"未公开", si:"未公开", entry:"盯标 / GeBIZ", value:null, valueLabel:"—", verified:"未公开", next:"仅盯标，不投入关系资源", due:"", notes:"PolCam 为 SPF 运营的全岛公共摄像头网，VMS 供应商无公开资料，不猜。"},
+ {id:14, agency:"MPA / PSA 港口", seg:"港口安防", pri:"待观察", stage:"未接触", platform:"未公开（Genetec 有港口方案 ≠ PSA 在用）", si:"未公开", entry:"盯标 / GeBIZ", value:null, valueLabel:"—", verified:"未公开", next:"仅盯标", due:"", notes:"无核实到的公开平台信息。"},
+ {id:15, agency:"MOE 学校", seg:"校园安防", pri:"待观察", stage:"未接触", platform:"按校分散采购（集成商如 Biztech）", si:"各校 / 集成商", entry:"直接", value:null, valueLabel:"—", verified:"未公开", next:"Nx 低成本路线成熟后再评估", due:"", notes:"无统一平台；与 Nx Witness 的中小站点打法天然契合，是远期选项。"},
+ {id:16, agency:"MAS 金管局", seg:"金融监管安防", pri:"低", stage:"搁置", platform:"安保系统升级（STE，2020）", si:"STE", entry:"STE", value:9.07, valueLabel:"S$9.07M", verified:"已核实", next:"远期再说——金融监管门槛极高", due:"", notes:"STE 2020 年中标 S$9.07M 安保系统升级。"},
+ {id:17, agency:"市镇会 / HDB 楼宇 CCTV", seg:"社区楼宇", pri:"中", stage:"未接触", platform:"分散维护（Keydence 等维护商）；Milestone 经 Bytexa 等进部分政府楼宇", si:"维护商 / 集成商", entry:"SI 叠加", value:null, valueLabel:"—", verified:"部分核实", next:"列维护商名单，从一两家试点谈分析叠加", due:"2026-12-22", notes:"无 HDB 全网统一平台。与 NEA 的 19 个市镇会试点有协同入口。"}
+];
+
+/* 每个机会对应的供应商填报入口（抽屉里展示） */
+var PORTALS = {
+ 1:"GeBIZ（gebiz.gov.sg）— 注册 Trading Partner 后投标",
+ 2:"GeBIZ（gebiz.gov.sg）— Trading Partner 投标",
+ 3:"GeBIZ（gebiz.gov.sg）— 供应商未公开，只能盯标填报",
+ 4:"GeBIZ（gebiz.gov.sg）发布；另需 BCA 承包商注册等级核对（ME04 L6）",
+ 5:"GeBIZ / 总包分包 — 经 Hitachi Rail + Strides 的分包填报",
+ 6:"CAG Zycus 供应商门户 — 免费注册填报",
+ 7:"GeBIZ（gebiz.gov.sg）— Trading Partner 投标",
+ 8:"SP Group SRM Portal — 供应商注册填报",
+ 9:"ALPS 采购 · SAP Business Network — 注册后填报",
+ 10:"GeBIZ（gebiz.gov.sg）— Trading Partner 投标",
+ 11:"GeBIZ（gebiz.gov.sg）— 现由 Certis 统包，公开标仍走 GeBIZ",
+ 12:"GeBIZ（gebiz.gov.sg）— Trading Partner 投标",
+ 13:"GeBIZ（gebiz.gov.sg）— 仅盯标，不投入关系资源",
+ 14:"MPA 走 GeBIZ；PSA 走 PSA Supplier Account 注册",
+ 15:"GeBIZ（gebiz.gov.sg）— 各校分散采购，多在 GeBIZ 发布",
+ 16:"GeBIZ（gebiz.gov.sg）— Trading Partner 投标",
+ 17:"GeBIZ / 各市镇会招标公告 — 分散填报，无统一门户"
+};
+
+var SUPPLIERS = [
+ {agency:"HDB 建屋局", ch:"GeBIZ", portal:"GeBIZ — gebiz.gov.sg", how:"注册 Trading Partner 后在线投标、填报资质", need:"Corppass（公司名义）", note:"与 STE 的 S$2.49M 在位分析合同并行：公开标走 GeBIZ，分包走 STE。"},
+ {agency:"PUB 水务局", ch:"GeBIZ", portal:"GeBIZ — gebiz.gov.sg", how:"Trading Partner 投标；先设「视频分析 / CCTV」关键词提醒", need:"Corppass（公司名义）", note:"HCL 为在位总包，分析分包另经 HCL 摸结构。"},
+ {agency:"NEA 环境局", ch:"GeBIZ", portal:"GeBIZ — gebiz.gov.sg", how:"Trading Partner 投标；高空抛物分析标出标即填报评估", need:"Corppass（公司名义）", note:"供应商未公开，入口在标不在关系——只能靠盯标。"},
+ {agency:"LTA 陆路交通局", ch:"GeBIZ", portal:"GeBIZ — gebiz.gov.sg", how:"Trading Partner 投标；TR827 在此发布与填报", need:"Corppass + BCA 承包商注册等级（TR827 涉及 ME04 L6，先核对）", note:"TR827 截止 12 月 7 日；VAP 为分包，总包 STE Urban Solutions。"},
+ {agency:"LTA 地铁站 CCTV 升级", ch:"GeBIZ", portal:"GeBIZ / 总包分包", how:"升级标走 GeBIZ；分析叠加多经总包分包填报", need:"Corppass（公司名义）", note:"总包 Hitachi Rail + Strides Engineering，新 VMS 品牌未公开。"},
+ {agency:"JTC 裕廊集团", ch:"GeBIZ", portal:"GeBIZ — gebiz.gov.sg", how:"Trading Partner 投标", need:"Corppass（公司名义）", note:"裕廊岛 BACS 由 STE 建设、AEQON 维护，增补空间先经 STE 确认。"},
+ {agency:"URA 市区重建局", ch:"GeBIZ", portal:"GeBIZ — gebiz.gov.sg", how:"Trading Partner 投标", need:"Corppass（公司名义）", note:"停车执法现由 Certis 统包（2018 起），公开续标仍走 GeBIZ。"},
+ {agency:"ICA 移民与关卡局", ch:"GeBIZ", portal:"GeBIZ — gebiz.gov.sg", how:"Trading Partner 投标", need:"Corppass（公司名义）", note:"通关以生物识别为主，视频分析暂无位置，保留观察。"},
+ {agency:"SPF 警察部队（PolCam）", ch:"GeBIZ", portal:"GeBIZ — gebiz.gov.sg", how:"Trading Partner 投标；仅盯标", need:"Corppass（公司名义）", note:"PolCam 平台与供应商均未公开，不猜、不投入关系资源。"},
+ {agency:"MPA 海事及港务管理局", ch:"GeBIZ", portal:"GeBIZ — gebiz.gov.sg", how:"Trading Partner 投标", need:"Corppass（公司名义）", note:"注意与 PSA 分开：MPA 是法定机构走 GeBIZ，PSA 走自有门户。"},
+ {agency:"NParks 公园局", ch:"GeBIZ", portal:"GeBIZ — gebiz.gov.sg", how:"Trading Partner 投标；人流分析试点标在此发布", need:"Corppass（公司名义）", note:"量小门槛低，适合以试点方案试水。"},
+ {agency:"MAS 金管局", ch:"GeBIZ", portal:"GeBIZ — gebiz.gov.sg", how:"Trading Partner 投标", need:"Corppass（公司名义）", note:"金融监管安防门槛极高，远期再议。"},
+ {agency:"MOE 学校", ch:"GeBIZ", portal:"GeBIZ — gebiz.gov.sg", how:"各校分散采购，标讯多在 GeBIZ 发布，按校填报", need:"Corppass（公司名义）", note:"无统一平台；与 Nx Witness 的中小站点打法契合，属远期选项。"},
+ {agency:"市镇会 / HDB 楼宇 CCTV", ch:"GeBIZ", portal:"GeBIZ / 各市镇会招标公告", how:"GeBIZ 投标为主，部分市镇会另发公告，按家填报", need:"Corppass（公司名义）", note:"分散维护（Keydence 等），无全网统一门户；与 NEA 的 19 个市镇会试点有协同入口。"},
+ {agency:"CAG 樟宜机场集团", ch:"自有门户", portal:"Zycus 供应商门户", how:"在 Zycus 完成供应商注册与资质填报，免费注册", need:"公司资料与资质文件", note:"T5 ISMS 标 12 月 3 日截止；机场主平台 Genetec，机会在 SI 分析叠加层。"},
+ {agency:"PSA 港务集团", ch:"自有门户", portal:"PSA Supplier Account", how:"注册 PSA 供应商账户后填报资质、参与其采购", need:"公司资料与资质文件", note:"与 MPA 分开：PSA 为企业采购，走自有账户体系。"},
+ {agency:"SP Group", ch:"自有门户", portal:"SP Group SRM Portal", how:"在 SRM Portal 注册供应商并填报", need:"公司资料与资质文件", note:"变电站与管网安防自行采购，品牌未公开，先递交分析方案再补注册。"},
+ {agency:"公共医疗集群 SingHealth / NHG / NUHS", ch:"自有门户", portal:"ALPS 采购 · SAP Business Network", how:"经 ALPS 的 SAP Business Network 注册供应商并填报", need:"公司资料与资质文件", note:"三集群统一经 ALPS 采购；另可评估 CHISEL InnoMatch 2026 的 test-bed 通道。"},
+ {agency:"SATS", ch:"自有门户", portal:"SAP Ariba", how:"按具体标的 onboarding 指引在 Ariba 填报", need:"收到招标/邀请后按指引办理", note:"机场地勤与餐饮运营方，无常设自助注册——按标填表。"},
+ {agency:"SMRT", ch:"邀请制", portal:"SAP Ariba（邀请制）", how:"由 SMRT 联系人发出 Ariba 邀请后才能注册填报", need:"先有对口联系人发出邀请", note:"没有公开自助入口，先建立联系再谈注册。"},
+ {agency:"SBS Transit", ch:"无公开入口", portal:"无公开供应商门户", how:"—", need:"—", note:"未见公开注册入口；留意其招标公告与既有供应商体系。"},
+ {agency:"ST Engineering", ch:"无公开入口", portal:"无公开供应商门户", how:"作为总包 SI 走分包合作，不走门户注册", need:"对口联系人（现有 3 人）", note:"全计划最重的入口本来就不在门户——HDB、TR827、裕廊岛都经 STE 关系推进。"}
+];
+
+var CONTACTS = [
+ {init:"ST", name:"Sean Tham", role:"创始人 · Senturian Technologies", org:"Senturian", status:"等答复", statusCls:"b-mid", note:"11 月 12 日通话：团队约一周内审完 CV 并给确定职位，预期 11 月 19 日。到点未回再跟进，此前不催。", next:"11 月 19 日后视回复跟进"},
+ {init:"袁", name:"袁总", role:"董事长 · 大华新加坡", org:"Dahua Singapore", status:"11/19 见面", statusCls:"b-high", note:"熟悉联系人。海康/大华合作优先级里大华排第一：相机存量接入 + 分析模块联合方案。", next:"11 月 19 日 16:00 infologic 会（CAG 合作）"},
+ {init:"KT", name:"KT Chow 赵庆夺", role:"赵总 · infologic", org:"infologic", status:"11/19 见面", statusCls:"b-high", note:"11 月 19 日 CAG 会的召集方；会议要定清项目范围、投标主体与各方分工。", next:"会前备一页 CAG 分析叠加能力清单"},
+ {init:"SH", name:"Sheng Hao Liu", role:"Network Optix 亚太", org:"Network Optix", status:"第 2 周名单", statusCls:"b-stage", note:"Nx 新加坡分析伙伴的关键人。必问：Nx AI Manager（2026 年 4 月）与 Neurolytics 的接入关系。", next:"11 月 23 日 LinkedIn 窗口发出邀请"},
+ {init:"STE", name:"STE 对口联系人（3 人）", role:"总包 SI · LTA / HDB / JTC / MAS 多线在位", org:"ST Engineering", status:"推进中", statusCls:"b-ok", note:"全计划最重的入口：HDB 停车场分析、TR827 VAP 分包、裕廊岛 BACS 都经 STE。", next:"HDB 分析缺口 + TR827 规格，两件事分开谈"},
+ {init:"TK", name:"Toby Koh", role:"集团董事总经理 · Ademco Security Group", org:"Ademco", status:"关系保温", statusCls:"b-low", note:"关系保持联系，项目 / 渠道合作仍可谈。CAG 线的 SI 之一。", next:"有 CAG 具体项目时再以合作为题联系"}
+];
+
+var TASKS = [
+ {id:"t1", title:"CAG 会前准备：一页分析叠加能力清单", meta:"11 月 19 日 16:00 · infologic，5 Harper Road #02-02 · 对袁总、KT Chow", due:"11月19日", done:false},
+ {id:"t2", title:"核对 TR827 与 TR872 范围是否冲突", meta:"决定 TR827 的 VAP 分包投法 · 截止 12 月 7 日", due:"11月24日", done:false},
+ {id:"t3", title:"Sean Tham 答复跟进", meta:"预期 11 月 19 日给确定职位；到点未回再联系，此前不催", due:"11月20日", done:false},
+ {id:"t4", title:"LinkedIn 第 2 周名单发出（含 Sheng Hao Liu）", meta:"必问 Nx AI Manager 与 Neurolytics 的接入关系", due:"11月23日", done:false},
+ {id:"t5", title:"GeBIZ 关键词提醒设置：NEA / PUB 视频分析", meta:"NEA 供应商未公开，只能靠盯标；顺带 CAG IoT 周检", due:"11月24日", done:false},
+ {id:"t6", title:"向 STE 确认 HDB 停车场分析模块缺口", meta:"S$2.49M 在位合同的替换/增补窗口", due:"11月27日", done:false},
+ {id:"t7", title:"评估 CHISEL Healthcare InnoMatch 2026 申报", meta:"TRL 7+、9 个月 test-bed、三大医疗集群", due:"12月20日", done:false},
+ {id:"t8", title:"CAG T5 ISMS 标：确认 SI 叠加参与方式", meta:"截止 12 月 3 日 · Genetec 主平台，只做分析层", due:"12月3日", done:false},
+ {id:"t9", title:"投标主体定下后启动供应商注册：Corppass → GeBIZ Trading Partner → CAG Zycus", meta:"主体在 11 月 19 日 CAG 会上定；GeBIZ 首个账号免费，另核对 BCA 等级（TR827 涉 ME04 L6）", due:"11月26日", done:false}
+];
+
+/* ---------- helpers ---------- */
+function $(s){return document.querySelector(s)}
+function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+function priBadge(p){var m={"高":"b-high","中":"b-mid","低":"b-low","待观察":"b-watch"};return '<span class="badge '+(m[p]||"b-low")+'">'+esc(p)+(p==="高"?"优先级":"")+'</span>'}
+function toast(msg){var t=$("#toast");t.textContent=msg;t.classList.add("show");setTimeout(function(){t.classList.remove("show")},2200)}
+
+/* ---------- KPIs + funnel ---------- */
+function renderStats(){
+  var total=OPPS.length;
+  var high=OPPS.filter(function(o){return o.pri==="高"}).length;
+  var mid=OPPS.filter(function(o){return o.pri==="中"}).length;
+  var low=total-high-mid;
+  var val=OPPS.reduce(function(s,o){return s+(o.value||0)},0);
+  var active=OPPS.filter(function(o){return ACTIVE_STAGES.indexOf(o.stage)>=0}).length;
+  var openTasks=TASKS.filter(function(t){return !t.done}).length;
+  $("#kTotal").textContent=total;
+  $("#kHigh").textContent=high;
+  $("#kValue").textContent="S$"+val.toFixed(2).replace(/\.?0+$/,"")+"M";
+  $("#kActive").textContent=active;
+  $("#kTasks").textContent=openTasks;
+  $("#lgHigh").textContent=high; $("#lgMid").textContent=mid; $("#lgLow").textContent=low;
+  var max=Math.max.apply(null, STAGES.map(function(s){return OPPS.filter(function(o){return o.stage===s}).length}).concat([1]));
+  $("#funnel").innerHTML=STAGES.map(function(s){
+    var n=OPPS.filter(function(o){return o.stage===s}).length;
+    var w=Math.round(n/max*100);
+    return '<div class="frow"><div class="fl">'+s+'</div><div class="fbar"><i style="width:'+Math.max(w,n?8:0)+'%"></i></div><div class="fv num">'+n+'</div></div>';
+  }).join("");
+}
+
+/* ---------- pipeline ---------- */
+var stageSel=$("#fStage");
+STAGES.forEach(function(s){var op=document.createElement("option");op.textContent=s;stageSel.appendChild(op)});
+
+function filtered(){
+  var q=$("#q").value.trim().toLowerCase();
+  var fp=$("#fPri").value, fs=$("#fStage").value, fe=$("#fEntry").value;
+  return OPPS.filter(function(o){
+    if(fp && o.pri!==fp) return false;
+    if(fs && o.stage!==fs) return false;
+    if(fe && o.entry!==fe) return false;
+    if(q){var hay=(o.agency+" "+o.seg+" "+o.platform+" "+o.si+" "+o.next+" "+o.notes).toLowerCase(); if(hay.indexOf(q)<0) return false;}
+    return true;
+  });
+}
+function renderOpps(){
+  var list=filtered();
+  $("#oppEmpty").hidden=list.length>0;
+  $("#oppBody").innerHTML=list.map(function(o){
+    return '<tr data-id="'+o.id+'" tabindex="0" role="button" aria-label="打开 '+esc(o.agency)+' 详情">'
+      +'<td><span class="agency">'+esc(o.agency)+'</span><span class="sub">'+esc(o.seg)+'</span></td>'
+      +'<td>'+priBadge(o.pri)+'</td>'
+      +'<td><span class="badge b-stage">'+esc(o.stage)+'</span></td>'
+      +'<td>'+esc(o.platform)+'</td>'
+      +'<td>'+esc(o.si)+'<span class="sub">下一步：'+esc(o.next||"—")+'</span></td>'
+      +'<td class="val-cell">'+esc(o.valueLabel)+'</td>'
+      +'<td><span class="badge '+(o.verified==="已核实"?"b-ok":"b-un")+'">'+esc(o.verified)+'</span></td></tr>';
+  }).join("");
+  $("#oppCards").innerHTML=list.map(function(o){
+    return '<button class="opp-card" data-id="'+o.id+'"><span class="r1"><b>'+esc(o.agency)+'</b>'+priBadge(o.pri)+'</span>'
+      +'<p>'+esc(o.platform)+'</p><p>入口：'+esc(o.si)+' · 合同额 '+esc(o.valueLabel)+'</p>'
+      +'<span class="r2"><span class="badge b-stage">'+esc(o.stage)+'</span><span class="badge '+(o.verified==="已核实"?"b-ok":"b-un")+'">'+esc(o.verified)+'</span></span></button>';
+  }).join("");
+  document.querySelectorAll("#oppBody tr[data-id], .opp-card[data-id]").forEach(function(el){
+    el.addEventListener("click",function(){openDrawer(+el.getAttribute("data-id"))});
+    el.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();openDrawer(+el.getAttribute("data-id"))}});
+  });
+}
+["#q","#fPri","#fStage","#fEntry"].forEach(function(s){$(s).addEventListener("input",renderOpps);$(s).addEventListener("change",renderOpps)});
+
+/* add opportunity */
+$("#btnAdd").addEventListener("click",function(){
+  var f=$("#addForm"); var open=f.classList.toggle("open");
+  this.setAttribute("aria-expanded",open); if(open) $("#aAgency").focus();
+});
+$("#btnAddCancel").addEventListener("click",function(){$("#addForm").classList.remove("open");$("#btnAdd").setAttribute("aria-expanded","false")});
+$("#addForm").addEventListener("submit",function(e){
+  e.preventDefault();
+  var agency=$("#aAgency").value.trim(); if(!agency) return;
+  OPPS.unshift({id:Date.now(), agency:agency, seg:$("#aSeg").value.trim()||"—", pri:$("#aPri").value, stage:"未接触",
+    platform:$("#aPlatform").value.trim()||"未公开", si:$("#aEntry").value, entry:$("#aEntry").value,
+    value:null, valueLabel:"—", verified:"未公开", next:$("#aNext").value.trim(), due:"", notes:""});
+  this.reset(); this.classList.remove("open");
+  renderOpps(); renderStats(); toast("已加入管道："+agency);
+});
+
+/* export CSV */
+$("#btnCsv").addEventListener("click",function(){
+  var head=["Agency","板块","优先级","阶段","现平台/系统","在位SI/入口","已知合同额","核实状态","下一步","下一步日期","备注"];
+  function cell(v){return '"'+String(v==null?"":v).replace(/"/g,'""')+'"'}
+  var rows=OPPS.map(function(o){return [o.agency,o.seg,o.pri,o.stage,o.platform,o.si,o.valueLabel,o.verified,o.next,o.due,o.notes].map(cell).join(",")});
+  var csv="\ufeff"+head.map(cell).join(",")+"\n"+rows.join("\n");
+  var a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));
+  a.download="senturian-bd-pipeline-2026-11-17.csv"; a.click();
+  setTimeout(function(){URL.revokeObjectURL(a.href)},2000);
+  toast("CSV 已导出（全部 "+OPPS.length+" 个机会）");
+});
+
+/* ---------- drawer ---------- */
+var currentId=null;
+var dStage=$("#dStage");
+STAGES.forEach(function(s){var op=document.createElement("option");op.textContent=s;dStage.appendChild(op)});
+function buildPath(stage){var idx=STAGES.indexOf(stage);$("#dPath").innerHTML=STAGES.map(function(st,i){var cls=i<idx?"done":(i===idx?"now":"");return '<div class="pstep '+cls+'">'+(i<idx?"✓ ":"")+esc(st)+'</div>'}).join("")}
+dStage.addEventListener("change",function(){buildPath(dStage.value)});
+function openDrawer(id){
+  var o=OPPS.find(function(x){return x.id===id}); if(!o) return;
+  currentId=id;
+  $("#dTitle").textContent=o.agency;
+  $("#dSub").textContent=o.seg+" · 入口 "+o.si;
+  $("#dKv").innerHTML=
+    "<dt>现平台</dt><dd>"+esc(o.platform)+"</dd>"
+    +"<dt>在位 SI</dt><dd>"+esc(o.si)+"</dd>"
+    +"<dt>已知合同额</dt><dd>"+esc(o.valueLabel)+(o.value?"（已公开中标金额）":"（未核实到公开数字）")+"</dd>"
+    +"<dt>核实状态</dt><dd>"+esc(o.verified)+"</dd>"
+    +"<dt>供应商入口</dt><dd>"+esc(PORTALS[o.id]||"见「供应商入口」页签对应 agency")+"</dd>";
+  dStage.value=o.stage; buildPath(o.stage); $("#dPri").value=o.pri; $("#dNext").value=o.next||""; $("#dDue").value=o.due||""; $("#dNotes").value=o.notes||"";
+  $("#drawer").classList.add("open"); $("#overlay").classList.add("open");
+  $("#drawer").setAttribute("aria-hidden","false");
+}
+function closeDrawer(){$("#drawer").classList.remove("open");$("#overlay").classList.remove("open");$("#drawer").setAttribute("aria-hidden","true");currentId=null}
+$("#dClose").addEventListener("click",closeDrawer);
+$("#dCancel").addEventListener("click",closeDrawer);
+$("#overlay").addEventListener("click",closeDrawer);
+document.addEventListener("keydown",function(e){if(e.key==="Escape")closeDrawer()});
+$("#dSave").addEventListener("click",function(){
+  var o=OPPS.find(function(x){return x.id===currentId}); if(!o) return;
+  o.stage=dStage.value; o.pri=$("#dPri").value; o.next=$("#dNext").value.trim(); o.due=$("#dDue").value; o.notes=$("#dNotes").value.trim();
+  renderOpps(); renderStats(); closeDrawer(); toast("已更新："+o.agency);
+});
+
+/* ---------- suppliers ---------- */
+function chBadge(ch){var m={"GeBIZ":"b-stage","自有门户":"b-ok","邀请制":"b-mid","无公开入口":"b-un"};return '<span class="badge '+(m[ch]||"b-low")+'">'+esc(ch)+'</span>'}
+function renderSuppliers(){
+  var q=$("#supQ").value.trim().toLowerCase();
+  var fc=$("#supCh").value;
+  var list=SUPPLIERS.filter(function(s){
+    if(fc && s.ch!==fc) return false;
+    if(q){var hay=(s.agency+" "+s.portal+" "+s.how+" "+s.need+" "+s.note).toLowerCase(); if(hay.indexOf(q)<0) return false;}
+    return true;
+  });
+  $("#supEmpty").hidden=list.length>0;
+  $("#supBody").innerHTML=list.map(function(s){
+    return '<tr style="cursor:default"><td><span class="agency">'+esc(s.agency)+'</span></td>'
+      +'<td>'+chBadge(s.ch)+'</td><td>'+esc(s.portal)+'</td><td>'+esc(s.how)+'</td><td>'+esc(s.need)+'</td><td>'+esc(s.note)+'</td></tr>';
+  }).join("");
+  $("#supCards").innerHTML=list.map(function(s){
+    return '<div class="sup-card"><span class="r1"><b>'+esc(s.agency)+'</b>'+chBadge(s.ch)+'</span>'
+      +'<p><b>入口：</b>'+esc(s.portal)+'</p><p>'+esc(s.how)+'</p><p>前置：'+esc(s.need)+'</p><p>'+esc(s.note)+'</p></div>';
+  }).join("");
+  $("#supGeBiz").textContent=SUPPLIERS.filter(function(s){return s.ch==="GeBIZ"}).length;
+  $("#supOwn").textContent=SUPPLIERS.filter(function(s){return s.ch==="自有门户"}).length;
+  $("#supInvite").textContent=SUPPLIERS.filter(function(s){return s.ch==="邀请制"}).length;
+  $("#supNone").textContent=SUPPLIERS.filter(function(s){return s.ch==="无公开入口"}).length;
+}
+["#supQ","#supCh"].forEach(function(s){$(s).addEventListener("input",renderSuppliers);$(s).addEventListener("change",renderSuppliers)});
+
+/* ---------- contacts ---------- */
+$("#contactList").innerHTML=CONTACTS.map(function(c){
+  return '<div class="contact"><div class="avatar">'+esc(c.init)+'</div><div class="cbody">'
+    +'<b>'+esc(c.name)+'</b> <span class="badge '+c.statusCls+'">'+esc(c.status)+'</span>'
+    +'<p>'+esc(c.role)+'</p><p>'+esc(c.note)+'</p>'
+    +'<p><b style="color:var(--blue-d)">下一步：</b>'+esc(c.next)+'</p></div></div>';
+}).join("");
+
+/* ---------- tasks ---------- */
+function renderTasks(){
+  $("#taskList").innerHTML=TASKS.map(function(t){
+    return '<div class="task'+(t.done?" is-done":"")+'"><div class="tbody2"><b>'+esc(t.title)+'</b>'
+      +'<p>'+esc(t.meta)+'</p><p>到期：'+esc(t.due)+'</p></div>'
+      +'<button class="btn small done-btn" data-task="'+t.id+'" aria-pressed="'+t.done+'">'+(t.done?"已完成":"标记完成")+'</button></div>';
+  }).join("");
+  var done=TASKS.filter(function(t){return t.done}).length;
+  var pct=TASKS.length?Math.round(done/TASKS.length*100):0;
+  $("#taskBar").style.width=pct+"%"; $("#taskPct").textContent=pct+"%";
+  document.querySelectorAll("[data-task]").forEach(function(b){
+    b.addEventListener("click",function(){
+      var t=TASKS.find(function(x){return x.id===b.getAttribute("data-task")});
+      t.done=!t.done; renderTasks(); renderStats();
+    });
+  });
+}
+
+/* ---------- tabs ---------- */
+document.querySelectorAll(".tab").forEach(function(tab){
+  tab.addEventListener("click",function(){
+    document.querySelectorAll(".tab").forEach(function(t){t.setAttribute("aria-selected","false")});
+    tab.setAttribute("aria-selected","true");
+    document.querySelectorAll("section.panel").forEach(function(p){p.classList.remove("active")});
+    $("#panel-"+tab.getAttribute("data-tab")).classList.add("active");
+    window.scrollTo({top:0,behavior:"smooth"});
+  });
+});
+
+renderStats(); renderOpps(); renderTasks(); renderSuppliers();
+</script>
+</body>
+</html>
