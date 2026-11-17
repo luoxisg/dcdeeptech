@@ -109,7 +109,8 @@
     "dfplan/people-model.mjs",
     "dfplan/people-ui.mjs",
     "dfplan/dashboard.mjs",
-    "dfplan/modules.css"
+    "dfplan/modules.css",
+    "dfplan/stewardship.mjs"
   ],
   "generated_files": {
     "DFplan/index.html": "scripts/pages/templates/dfplan-redirect.html"

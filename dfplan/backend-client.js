@@ -6,10 +6,12 @@ import {
 import { seedTasks } from "./data.js";
 import { backendConfig } from "./backend-config.js?v=20261116-people-directory";
 import { validateProject } from "./model.mjs";
+import { stewardshipFields } from "./stewardship.mjs";
 
 export const cloudEnabled = backendConfig.enabled === true;
 const codeError = (code) => Object.assign(new Error(code), { code });
 const taskFields = [
+  ...stewardshipFields.map(([key]) => key),
   "id",
   "title",
   "titleEn",

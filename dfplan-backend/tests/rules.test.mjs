@@ -322,6 +322,33 @@ test("client cannot create a different private project or overwrite public owner
   );
 });
 
+test("optional stewardship records are bounded and do not bypass completion acceptance", async () => {
+  const db = client();
+  for (const invalid of [
+    { reviewer: "x".repeat(121) }, { backup: [] },
+    { claimedOn: "2026-02-30" }, { effort: "x".repeat(501) },
+    { blockers: false }, { outcomes: {} }, { recovery: "x".repeat(12001) },
+    { status: "已完成", outcomes: "Not acceptance evidence" },
+  ]) await assertFails(commit(db, { changedTask: { ...task, ...invalid } }));
+  await assertSucceeds(commit(db, { changedTask: {
+    ...task, reviewer: "Reviewer", backup: "Custodian", claimedOn: "2026-11-17",
+    effort: "1 hour weekly", blockers: "Budget pending", outcomes: "Batch 001", recovery: "R-001",
+  } }));
+});
+
+test("older clients cannot silently discard stewardship records; explicit clearing remains possible", async () => {
+  const db = client();
+  const recorded = { ...task, reviewer: "Reviewer", backup: "Backup", claimedOn: "2026-11-17",
+    effort: "1h", blockers: "Pending", outcomes: "Batch 001", recovery: "R-001" };
+  await assertSucceeds(commit(db, { changedTask: recorded }));
+  for (const key of ["reviewer", "backup", "claimedOn", "effort", "blockers", "outcomes", "recovery"]) {
+    const missing = { ...recorded };
+    delete missing[key];
+    await assertFails(commit(db, { revision: 2, changedTask: missing }));
+  }
+  await assertSucceeds(commit(db, { revision: 2, changedTask: { ...recorded, reviewer: "" } }));
+});
+
 test("calendar dates are validated by the backend", async () => {
   const db = client();
   await assertFails(commit(db, { startDate: "2026-02-30" }));

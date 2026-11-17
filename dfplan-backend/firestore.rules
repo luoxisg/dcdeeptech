@@ -63,7 +63,7 @@ service cloud.firestore {
     }
     function validTask(t, id) {
       return t.keys().hasAll(['id','title','priority','owner','collaborators','action','deliverable','dependency','weekStart','weekEnd','status','due','completed','next','evidence','accepted','updatedAt'])
-        && t.keys().hasOnly(['id','title','titleEn','priority','owner','ownerEn','assignee','assigneeId','collaborators','collaboratorsEn','action','actionEn','deliverable','deliverableEn','dependency','dependencyEn','weekStart','weekEnd','status','due','completed','next','evidence','accepted','updatedAt'])
+        && t.keys().hasOnly(['id','title','titleEn','priority','owner','ownerEn','assignee','assigneeId','collaborators','collaboratorsEn','action','actionEn','deliverable','deliverableEn','dependency','dependencyEn','weekStart','weekEnd','status','due','completed','next','evidence','accepted','updatedAt','reviewer','backup','claimedOn','effort','blockers','outcomes','recovery'])
         && t.id == id && id.matches('^[A-Za-z0-9_-]{1,80}$')
         && text(t.title) && t.title.size() > 0 && t.title.matches('(?s).*[^\\s].*')
         && t.get('assignee','') is string && t.get('assignee','').size() <= 120
@@ -72,6 +72,11 @@ service cloud.firestore {
         && text(t.dependency) && text(t.next) && text(t.evidence) && text(t.updatedAt)
         && text(t.get('titleEn','')) && text(t.get('ownerEn','')) && text(t.get('collaboratorsEn',''))
         && text(t.get('actionEn','')) && text(t.get('deliverableEn','')) && text(t.get('dependencyEn',''))
+        && t.get('reviewer','') is string && t.get('reviewer','').size() <= 120
+        && t.get('backup','') is string && t.get('backup','').size() <= 120
+        && validDate(t.get('claimedOn',''))
+        && t.get('effort','') is string && t.get('effort','').size() <= 500
+        && text(t.get('blockers','')) && text(t.get('outcomes','')) && text(t.get('recovery',''))
         && t.priority in ['P0','P1','P2']
         && t.weekStart is int && t.weekEnd is int
         && t.weekStart >= 1 && t.weekEnd >= t.weekStart && t.weekEnd <= 104
@@ -210,6 +215,13 @@ service cloud.firestore {
         // Older clients must not silently discard names introduced by this schema.
         // An intentional clear sends the explicit empty-string value instead.
         allow update: if taskWrite(project,id) && validAssignment(project,request.resource.data.task,resource.data.task)
+          && (!resource.data.task.keys().hasAny(['reviewer']) || request.resource.data.task.keys().hasAll(['reviewer']))
+          && (!resource.data.task.keys().hasAny(['backup']) || request.resource.data.task.keys().hasAll(['backup']))
+          && (!resource.data.task.keys().hasAny(['claimedOn']) || request.resource.data.task.keys().hasAll(['claimedOn']))
+          && (!resource.data.task.keys().hasAny(['effort']) || request.resource.data.task.keys().hasAll(['effort']))
+          && (!resource.data.task.keys().hasAny(['blockers']) || request.resource.data.task.keys().hasAll(['blockers']))
+          && (!resource.data.task.keys().hasAny(['outcomes']) || request.resource.data.task.keys().hasAll(['outcomes']))
+          && (!resource.data.task.keys().hasAny(['recovery']) || request.resource.data.task.keys().hasAll(['recovery']))
           && (!resource.data.task.keys().hasAny(['assignee']) || request.resource.data.task.keys().hasAll(['assignee']));
         allow delete: if false;
       }

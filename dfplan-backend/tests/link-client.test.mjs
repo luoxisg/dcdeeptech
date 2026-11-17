@@ -191,6 +191,7 @@ async function harness({
   for (const name of [
     "data.js",
     "model.mjs",
+    "stewardship.mjs",
     "people-model.mjs?v=20261116-people-directory",
   ])
     source = source.replace(
@@ -347,6 +348,31 @@ test("editing an older task with an empty assignee preserves its legacy task sch
     Object.hasOwn(h.records.get(project + "/tasks/WU-01").task, "assignee"),
     false,
   );
+});
+
+test("stewardship records survive cloud save and reload without changing progress", async () => {
+  const h = await harness({
+    user: { uid: "patrick-device", email: null, isAnonymous: true },
+    claimed: true,
+  });
+  const next = structuredClone(h.projects.at(-1).project);
+  const original = structuredClone(next.tasks[0]);
+  const records = {
+    reviewer: "Family reviewer (pending agreement)",
+    backup: "Archive custodian (pending agreement)",
+    claimedOn: "2026-11-17",
+    effort: "1 hour per week (proposal)",
+    blockers: "Budget decision pending",
+    outcomes: "Controlled register batch-001",
+    recovery: "2026-11-17: sample audio restored; record R-001",
+  };
+  Object.assign(next.tasks[0], records);
+  await h.client.save(next, 0, "Planning records", "Planning records");
+  await h.client.reload();
+  const saved = h.projects.at(-1).project.tasks.find(t => t.id === original.id);
+  for (const [key, value] of Object.entries(records)) assert.equal(saved[key], value);
+  for (const key of ["status", "accepted", "completed", "evidence", "assignee"])
+    assert.equal(saved[key], original[key]);
 });
 
 test("an intentional assignee clear is explicit so the backend can distinguish an older client", async () => {

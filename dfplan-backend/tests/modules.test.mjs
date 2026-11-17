@@ -1,5 +1,22 @@
 import { test } from "node:test";
+import { stewardshipEditor, stewardshipSummary } from "../../dfplan/stewardship.mjs";
 import assert from "node:assert/strict";
+
+test("stewardship coverage measures recorded tasks and escapes controlled references", () => {
+  assert.deepEqual(stewardshipSummary([
+    { reviewer: " ", backup: "Custodian", outcomes: "Batch A", recovery: "" },
+    { reviewer: "Reviewer", claimedOn: "2026-11-17", recovery: "R-001" },
+    {},
+  ]), { reviewer: 1, backup: 1, claimed: 1, outcomes: 1, recovery: 1 });
+  const html = stewardshipEditor({ id: "WU-05", reviewer: '<img src=x onerror="bad()">' }, {
+    s: (_, en) => en,
+    esc: v => String(v).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll('"', "&quot;"),
+  });
+  assert.ok(!html.includes("<img"));
+  assert.ok(html.includes("&lt;img"));
+  assert.ok(html.includes("subject to family agreement"));
+  assert.ok(html.includes('name="recovery"'));
+});
 import {
   dashboardData,
   matchesDashboardTask,

@@ -685,3 +685,10 @@ body.module-view .content {
 .phone-layout .df-people h2 {
   font-size: calc(var(--phone-font) * 1.15);
 }
+.stewardship-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 16px; }
+.stewardship-stats > div { padding: 12px; border: 1px solid #d5dfd5; border-radius: 12px; }
+.stewardship-stats dt { line-height: 1.6; }
+.stewardship-stats dd { margin: 8px 0 0; font-size: 24px; font-weight: 700; }
+.stewardship { margin: 20px 0; }
+.stewardship summary { cursor: pointer; padding: 12px 0; font-weight: 700; }
+.stewardship .phone-plan-fields { display: grid; gap: 14px; }

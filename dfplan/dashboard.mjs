@@ -1,4 +1,5 @@
 import { statuses, targetDate, today } from "./model.mjs";
+import { stewardshipSummary, stewardshipDashboard } from "./stewardship.mjs";
 import { isAccepted, assigneeGroup } from "./people-model.mjs";
 export function matchesDashboardTask(
   task,
@@ -76,6 +77,7 @@ export function dashboardData(
         a.name.localeCompare(b.name),
     );
   return {
+    stewardship: stewardshipSummary(tasks),
     tasks,
     total: tasks.length,
     done,
@@ -132,6 +134,7 @@ export function renderDashboard(project, people, selection, h) {
     )
     .join("")}</div></div>
   ${data.noDue ? `<p class="module-notice">${icon("calendar")}${s(`${data.noDue} 项未完成任务尚无截止日期；设置启动日或任务截止日后，可计算是否逾期。`, `${data.noDue} open actions have no due date. Set the start date or an action’s due date to calculate overdue status.`)}</p>` : ""}
+  ${stewardshipDashboard(data.tasks, { s })}
   <div class="dashboard-charts"><section class="dashboard-panel"><h2>${s("现在走到哪一步", "Where things stand")}</h2><div class="status-chart" aria-label="${s("任务状态分布", "Action status distribution")}">${data.statuses.map((row, i) => `<button class="status-chart-row" data-dashboard-status="${esc(row.status)}"><span><i class="dash-dot dash-status-${i}"></i>${esc(labels[i])}</span><span class="dash-bar"><i class="dash-status-${i}" style="width:${data.total ? (row.count / data.total) * 100 : 0}%"></i></span><b>${row.count}</b></button>`).join("")}</div></section>
   <section class="dashboard-panel"><h2>${s("三个阶段，逐步推进", "Three stages, one shared journey")}</h2>${data.stages.map((stage, i) => `<button class="dashboard-stage" data-dashboard-stage="${stage.priority}"><span>${icon(["shield", "tree", "handover"][i])}<strong>${[s("保护资料", "Safeguard"), s("采集与完善", "Collect & improve"), s("审阅与交接", "Review & handover")][i]}</strong><b>${stage.completed} / ${stage.total}</b></span><span class="dash-bar"><i style="width:${stage.percent}%"></i></span><small>${stage.percent}% ${s("已验收", "accepted")}</small></button>`).join("")}<button class="module-button" data-view="timeline">${icon("tree")}${s("打开传承时间线", "Open the legacy timeline")}</button></section></div>
   <section class="dashboard-panel"><h2>${s("每个人的任务", "Workload by person")}</h2><p>${s("点击一位家人，查看对应任务。", "Tap a person to open their actions.")}</p><div class="workload-list">${data.workload.map((row) => `<button class="workload-row" data-dashboard-person="${esc(row.key)}"><span class="person-avatar">${row.name ? esc([...row.name][0]) : icon("question")}</span><span class="workload-name"><strong>${esc(row.name || s("待指定人员", "Unassigned"))}</strong><small>${row.person?.active === false ? s("已移出人员名单", "Removed from the directory") : !row.person && row.name ? s("原有任务人名", "Existing assignment") : row.person ? s("已登记人员", "Registered person") : s("等待指定负责人", "Awaiting an assignee")}</small><span class="dash-bar"><i style="width:${row.total ? (row.completed / row.total) * 100 : 0}%"></i></span></span><span class="workload-count"><b>${row.completed} / ${row.total}</b><small class="${row.overdue ? "dash-late" : ""}">${row.overdue ? s(`${row.overdue} 项逾期`, `${row.overdue} overdue`) : s("项已验收", "accepted")}</small></span>${icon("chevron")}</button>`).join("") || `<p class="module-empty">${s("暂无任务。可以先增加一件事。", "No actions yet. Start by adding an action.")}</p>`}</div></section></section>`;

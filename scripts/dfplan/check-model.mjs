@@ -35,6 +35,12 @@ for (const mutate of [
   (p) => (p.tasks[0].assignee = {}),
   (p) => (p.tasks[0].assigneeId = "not-a-person-id"),
   (p) => (p.tasks[0].assignee = "x".repeat(121)),
+  (p) => (p.tasks[0].reviewer = "x".repeat(121)),
+  (p) => (p.tasks[0].backup = {}),
+  (p) => (p.tasks[0].claimedOn = "2026-02-30"),
+  (p) => (p.tasks[0].effort = "x".repeat(501)),
+  (p) => (p.tasks[0].outcomes = true),
+  (p) => (p.tasks[0].recovery = "x".repeat(12001)),
   (p) =>
     p.history.push({ id: "x", at: "invalid", actor: "test", text: "test" }),
 ]) {

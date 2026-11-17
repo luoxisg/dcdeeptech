@@ -1,3 +1,5 @@
+import { stewardshipFields } from "./stewardship.mjs";
+
 export const statuses = [
   "待核实",
   "未开始",
@@ -23,7 +25,7 @@ export function targetDate(task, start) {
 }
 export const today = () =>
   new Intl.DateTimeFormat("en-CA", {
-    timeZone: "Asia/Shanghai",
+    timeZone: "Asia/Singapore",
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
@@ -76,6 +78,12 @@ export function validateProject(p) {
       !validDate(t.completed)
     )
       throw Error("format");
+    for (const [key, , , type, limit] of stewardshipFields) {
+      if (t[key] !== undefined &&
+          (type === "date" ? !validDate(t[key]) :
+           typeof t[key] !== "string" || t[key].length > limit))
+        throw Error("format");
+    }
     if (
       t.assignee !== undefined &&
       (typeof t.assignee !== "string" || t.assignee.length > 120)

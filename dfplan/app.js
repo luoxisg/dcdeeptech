@@ -1,7 +1,8 @@
+import { stewardshipEditor, stewardshipFields } from "./stewardship.mjs";
 import {
   renderDashboard,
   matchesDashboardTask,
-} from "./dashboard.mjs?v=20261116-people-directory";
+} from "./dashboard.mjs?v=20261117-stewardship";
 import {
   renderPeople,
   assigneeSelect,
@@ -9,7 +10,7 @@ import {
 import {
   cloudEnabled,
   connectBackend,
-} from "./backend-client.js?v=20261116-people-directory";
+} from "./backend-client.js?v=20261117-stewardship";
 import {
   cloudError,
   cloudGate,
@@ -21,7 +22,7 @@ import {
   renderPhone,
   phoneEditor,
   matchesCategory,
-} from "./phone-ui.js?v=20261116-people-directory";
+} from "./phone-ui.js?v=20261117-stewardship";
 import { seedTasks } from "./data.js";
 import {
   statuses,
@@ -589,7 +590,7 @@ function openEditor(task) {
       })
       .join(
         "",
-      )}</details><fieldset class="acceptance"><legend>${s("交付与家族验收", "Delivery and family acceptance")}</legend><label>${s("交付凭据 / 受控文件链接", "Evidence / controlled file reference")}<textarea name="evidence" rows="2" maxlength="12000" placeholder="${s("仅记录交付说明或文件编号，请勿记录密码。", "Use a delivery note or file reference. Never enter passwords.")}">${esc(t.evidence)}</textarea></label><label class="checkbox"><input type="checkbox" name="accepted" ${t.accepted ? "checked" : ""}>${s("已确认交付，并经家族验收", "Delivery confirmed and accepted by the family")}</label></fieldset><p id="form-error" class="form-error" role="alert"></p></div><div class="dialog-footer"><small>${s("仅保存到当前浏览器", "Saved in this browser only")}</small><button type="button" class="secondary" data-close="editor">${s("取消", "Cancel")}</button><button class="primary" type="submit">${s("保存行动", "Save action")}</button></div></form>`;
+      )}</details>${stewardshipEditor(t, { s, esc })}<fieldset class="acceptance"><legend>${s("交付与家族验收", "Delivery and family acceptance")}</legend><label>${s("交付凭据 / 受控文件链接", "Evidence / controlled file reference")}<textarea name="evidence" rows="2" maxlength="12000" placeholder="${s("仅记录交付说明或文件编号，请勿记录密码。", "Use a delivery note or file reference. Never enter passwords.")}">${esc(t.evidence)}</textarea></label><label class="checkbox"><input type="checkbox" name="accepted" ${t.accepted ? "checked" : ""}>${s("已确认交付，并经家族验收", "Delivery confirmed and accepted by the family")}</label></fieldset><p id="form-error" class="form-error" role="alert"></p></div><div class="dialog-footer"><small>${s("仅保存到当前浏览器", "Saved in this browser only")}</small><button type="button" class="secondary" data-close="editor">${s("取消", "Cancel")}</button><button class="primary" type="submit">${s("保存行动", "Save action")}</button></div></form>`;
   if (cloudEnabled) {
     const note = $("#editor .dialog-footer small");
     if (note)
@@ -685,6 +686,7 @@ function exportFile(type, dataProject = project) {
             "凭据",
             "家族验收",
           ];
+    header.push(...stewardshipFields.map(([, zh, en]) => s(zh, en)));
     const rows = [
       header,
       ...dataProject.tasks.map((t) => [
@@ -705,6 +707,7 @@ function exportFile(type, dataProject = project) {
         t.next,
         t.evidence,
         t.accepted ? s("是", "Yes") : s("否", "No"),
+        ...stewardshipFields.map(([key]) => t[key] || ""),
       ]),
     ];
     data = "\uFEFF" + rows.map((r) => r.map(csvCell).join(",")).join("\r\n");
