@@ -1,4 +1,9 @@
 import {
+  renderDigitization,
+  updateDigitizationEstimator,
+  switchDigitizationCategory,
+} from "./digitization.mjs?v=20261118-capture";
+import {
   normalizePersonName,
   personId,
   validatePersonName,
@@ -33,7 +38,7 @@ import {
   renderPhone,
   phoneEditor,
   matchesCategory,
-} from "./phone-ui.js?v=20261118-security";
+} from "./phone-ui.js?v=20261118-capture";
 import { seedTasks } from "./data.js";
 import {
   statuses,
@@ -237,6 +242,7 @@ const views = [
   "dashboard",
   "people",
   "security",
+  "digitization",
 ];
 let view = views.includes(location.hash.slice(1))
     ? location.hash.slice(1)
@@ -259,6 +265,7 @@ const names = () => [
   s("仪表盘", "Dashboard"),
   s("人员管理", "People"),
   s("资料与安全", "Materials & safety"),
+  s("一阶段采集", "Phase 1 capture"),
 ];
 const value = (t, k) =>
   lang === "en" && t[k + "En"] ? t[k + "En"] : t[k] || "";
@@ -510,7 +517,7 @@ function render() {
   document.body.classList.toggle("larger-text", largeText);
   document.body.classList.toggle(
     "module-view",
-    ["dashboard", "people", "security"].includes(view),
+    ["dashboard", "people", "security", "digitization"].includes(view),
   );
   if (cloudEnabled && !cloudReady()) {
     $("#app").innerHTML = cloudGate(cloudSession, !!cloud, cloudMessage, {
@@ -538,6 +545,7 @@ function render() {
         dashboardContent: view === "dashboard" ? dashboardView() : "",
         peopleContent: view === "people" ? peopleView() : "",
         securityContent: view === "security" ? securityView() : "",
+        digitizationContent: view === "digitization" ? digitizationView() : "",
         drilldown: !!dashboardDrilldown,
       },
       { s, esc, icon, art, value, complete, due, dateLabel, fmt, filtered },
@@ -555,7 +563,7 @@ function render() {
       ? Math.round((done / project.tasks.length) * 100)
       : 0;
   $("#app").innerHTML =
-    `${mobile ? '<button class="nav-scrim" data-action="menu" aria-label="Close navigation"></button>' : ""}<aside class="sidebar ${mobile ? "mobile-open" : ""}"><a class="brand" href="${lang === "en" ? "/DeepFamily/en/" : "/DeepFamily/zh/"}"><img src="./assets/seal.svg" width="39" height="39" alt=""><span>DeepFamily<small>${s("让家族记忆，世代相承", "MEMORY ACROSS GENERATIONS")}</small></span></a><div class="workspace"><span class="family-character" aria-hidden="true">吴</span><span><strong>${s("Wu 家族传承计划", "Wu Family Legacy")}</strong><small>FAMILY LEGACY WORKSPACE</small></span></div><p class="nav-caption">${s("传承工作空间", "YOUR WORKSPACE")}</p><nav aria-label="${s("项目导航", "Project navigation")}">${views.map((v, i) => `<button data-view="${v}" class="${view === v ? "active" : ""}" ${view === v ? 'aria-current="page"' : ""}>${icon(["home", "board", "list", "timeline", "history", "board", "people", "shield"][i])}<span>${names()[i]}</span>${v === "list" ? `<b>${project.tasks.length}</b>` : ""}</button>`).join("")}</nav><div class="sidebar-bottom"><div class="family-motto"><span>家</span><p>${s("承先人之志，<br>启后人之路。", "Honor those before us.<br>Make room for those to come.")}</p><small>${s("先整理家族内部事项，再讨论对外展示。", "Care for the family archive before considering public display.")}</small></div><a href="https://wu-family-project-hub.luoxi.chatgpt.site/" class="source-link">${s("打开原私密云端工作台", "Original private cloud workspace")} ↗</a><a href="https://github.com/luoxisg/dcdeeptech/tree/main/dfplan" target="_blank" rel="noopener" class="source-link">GitHub ${s("源码", "source")} ↗</a></div></aside><main id="main"><header class="topbar"><div class="breadcrumb"><button class="icon-button menu-button" data-action="menu" aria-label="${s("打开导航", "Open navigation")}" aria-expanded="${mobile}">${icon("menu")}</button><span>DeepFamily</span>${icon("chevron")}<strong>${s("家族传承计划", "Family legacy plan")}</strong></div><div class="topbar-right">${readingControl()}<span class="local-status"><i></i>${s("本机保存", "Saved locally")}</span><div class="language-switch" role="group" aria-label="Language / 语言"><button data-lang="zh" class="${lang === "zh" ? "selected" : ""}" aria-pressed="${lang === "zh"}">中</button><button data-lang="en" class="${lang === "en" ? "selected" : ""}" aria-pressed="${lang === "en"}">EN</button></div></div></header><div class="content"><section class="hero"><div class="hero-copy"><span class="eyebrow">A LEGACY WORTH KEEPING</span><h1>${s("把家族记忆，<br>认真交给下一代。", "Keep the memories.<br>Carry the legacy forward.")}</h1><p>${s("从一张老照片，到一部家族史。<br>让每一份资料被珍藏，让每一步传承有章可循。", "From a treasured photograph to a family history.<br>A thoughtful plan to preserve what connects us.")}</p><div class="hero-tags"><span>${icon("folder")}${s("10 项基础行动", "10 foundational actions")}</span><span>${icon("clock")}${s("12 周建议周期", "12-week suggested plan")}</span></div></div><img class="heritage-art" src="./assets/heritage-tree.svg" alt="" width="540" height="340"><span class="hero-corner">${s("根深 · 叶茂 · 家长青", "ROOTS · STORIES · GENERATIONS")}</span></section><div class="storage-note">${icon("shield")}<p>${s("此页为公开的计划模板；你的修改仅保存在当前浏览器，不会自动同步。请定期导出备份，勿在此记录密码或敏感家族资料。", "This is a public planning template. Your edits stay in this browser and do not sync automatically. Export backups regularly; keep passwords and sensitive family records elsewhere.")}</p><button data-action="export-json">${s("备份", "Back up")}${icon("download")}</button></div>${storageIssue ? `<div role="alert" class="alert">${s("本机存储无法读取。当前显示基础模板；请先检查或导出原有浏览器数据，再保存。", "Browser storage could not be read. The base template is shown; check or recover existing browser data before saving.")}</div>` : ""}<section class="metrics" aria-label="${s("项目进度", "Project progress")}"><div class="metric"><span>${s("传承进度", "LEGACY PROGRESS")}</span><strong>${percent}<small>%</small></strong><div class="progress"><i style="width:${percent}%"></i></div><p>${done} / ${project.tasks.length} ${s("项已验收完成", "actions accepted")}</p></div><div class="metric"><span>${s("优先落实", "PRIORITIES")}</span><strong>${project.tasks.filter((t) => t.priority === "P0" && !complete(t)).length}<small>${s("项", "open")}</small></strong><p>${s("联系人 · 盘点 · 备份 · 授权", "Contacts · assets · backups · consent")}</p></div><div class="metric"><span>${s("等待家族审阅", "FAMILY REVIEW")}</span><strong>${project.tasks.filter((t) => t.status === "待家族确认").length}<small>${s("项", "open")}</small></strong><p>${s("共同审阅，才是传承的开始", "Shared review makes a shared legacy")}</p></div><div class="metric start-metric"><span>${s("项目启动日", "PROJECT START")}</span><button data-action="start">${esc(dateLabel(project.startDate))}${icon("calendar")}</button><p>${s("确认日期，让计划循序展开", "Set the date to bring the plan to life")}</p></div></section><div class="section-heading main-heading"><div><span class="section-kicker">THE FAMILY ARCHIVE / ${s("有序传承", "THOUGHTFUL STEWARDSHIP")}</span><h2 id="page-title" tabindex="-1">${names()[views.indexOf(view)]}</h2><p>${s("负责人及周期为建议，请核实后逐项推进。", "Owners and schedules are proposals. Verify each before proceeding.")}</p></div><div class="actions"><button class="icon-button" data-action="import" title="${s("导入项目备份", "Import project backup")}" aria-label="${s("导入项目备份", "Import project backup")}">${icon("upload")}</button><button class="secondary" data-action="export-csv">${icon("download")}${s("导出清单", "Export CSV")}</button><button class="primary" data-action="add">${icon("plus")}${s("新增行动", "Add action")}</button></div></div>${view !== "history" ? toolbar() : ""}<div id="view-content">${{ overview, board, list, timeline, history, dashboard: dashboardView, people: peopleView, security: securityView }[view]()}</div><footer class="page-footer"><span><img src="./assets/seal.svg" width="22" height="22" alt="">DeepFamily <b>·</b> ${s("家族传承计划", "Family legacy plan")}</span><span>${s("珍藏过去，连接未来。", "Preserve the past. Connect the future.")} <b>·</b> UTC+8</span></footer></div></main>`;
+    `${mobile ? '<button class="nav-scrim" data-action="menu" aria-label="Close navigation"></button>' : ""}<aside class="sidebar ${mobile ? "mobile-open" : ""}"><a class="brand" href="${lang === "en" ? "/DeepFamily/en/" : "/DeepFamily/zh/"}"><img src="./assets/seal.svg" width="39" height="39" alt=""><span>DeepFamily<small>${s("让家族记忆，世代相承", "MEMORY ACROSS GENERATIONS")}</small></span></a><div class="workspace"><span class="family-character" aria-hidden="true">吴</span><span><strong>${s("Wu 家族传承计划", "Wu Family Legacy")}</strong><small>FAMILY LEGACY WORKSPACE</small></span></div><p class="nav-caption">${s("传承工作空间", "YOUR WORKSPACE")}</p><nav aria-label="${s("项目导航", "Project navigation")}">${views.map((v, i) => `<button data-view="${v}" class="${view === v ? "active" : ""}" ${view === v ? 'aria-current="page"' : ""}>${icon(["home", "board", "list", "timeline", "history", "board", "people", "shield", "photo"][i])}<span>${names()[i]}</span>${v === "list" ? `<b>${project.tasks.length}</b>` : ""}</button>`).join("")}</nav><div class="sidebar-bottom"><div class="family-motto"><span>家</span><p>${s("承先人之志，<br>启后人之路。", "Honor those before us.<br>Make room for those to come.")}</p><small>${s("先整理家族内部事项，再讨论对外展示。", "Care for the family archive before considering public display.")}</small></div><a href="https://wu-family-project-hub.luoxi.chatgpt.site/" class="source-link">${s("打开原私密云端工作台", "Original private cloud workspace")} ↗</a><a href="https://github.com/luoxisg/dcdeeptech/tree/main/dfplan" target="_blank" rel="noopener" class="source-link">GitHub ${s("源码", "source")} ↗</a></div></aside><main id="main"><header class="topbar"><div class="breadcrumb"><button class="icon-button menu-button" data-action="menu" aria-label="${s("打开导航", "Open navigation")}" aria-expanded="${mobile}">${icon("menu")}</button><span>DeepFamily</span>${icon("chevron")}<strong>${s("家族传承计划", "Family legacy plan")}</strong></div><div class="topbar-right">${readingControl()}<span class="local-status"><i></i>${s("本机保存", "Saved locally")}</span><div class="language-switch" role="group" aria-label="Language / 语言"><button data-lang="zh" class="${lang === "zh" ? "selected" : ""}" aria-pressed="${lang === "zh"}">中</button><button data-lang="en" class="${lang === "en" ? "selected" : ""}" aria-pressed="${lang === "en"}">EN</button></div></div></header><div class="content"><section class="hero"><div class="hero-copy"><span class="eyebrow">A LEGACY WORTH KEEPING</span><h1>${s("把家族记忆，<br>认真交给下一代。", "Keep the memories.<br>Carry the legacy forward.")}</h1><p>${s("从一张老照片，到一部家族史。<br>让每一份资料被珍藏，让每一步传承有章可循。", "From a treasured photograph to a family history.<br>A thoughtful plan to preserve what connects us.")}</p><div class="hero-tags"><span>${icon("folder")}${s("10 项基础行动", "10 foundational actions")}</span><span>${icon("clock")}${s("12 周建议周期", "12-week suggested plan")}</span></div></div><img class="heritage-art" src="./assets/heritage-tree.svg" alt="" width="540" height="340"><span class="hero-corner">${s("根深 · 叶茂 · 家长青", "ROOTS · STORIES · GENERATIONS")}</span></section><div class="storage-note">${icon("shield")}<p>${s("此页为公开的计划模板；你的修改仅保存在当前浏览器，不会自动同步。请定期导出备份，勿在此记录密码或敏感家族资料。", "This is a public planning template. Your edits stay in this browser and do not sync automatically. Export backups regularly; keep passwords and sensitive family records elsewhere.")}</p><button data-action="export-json">${s("备份", "Back up")}${icon("download")}</button></div>${storageIssue ? `<div role="alert" class="alert">${s("本机存储无法读取。当前显示基础模板；请先检查或导出原有浏览器数据，再保存。", "Browser storage could not be read. The base template is shown; check or recover existing browser data before saving.")}</div>` : ""}<section class="metrics" aria-label="${s("项目进度", "Project progress")}"><div class="metric"><span>${s("传承进度", "LEGACY PROGRESS")}</span><strong>${percent}<small>%</small></strong><div class="progress"><i style="width:${percent}%"></i></div><p>${done} / ${project.tasks.length} ${s("项已验收完成", "actions accepted")}</p></div><div class="metric"><span>${s("优先落实", "PRIORITIES")}</span><strong>${project.tasks.filter((t) => t.priority === "P0" && !complete(t)).length}<small>${s("项", "open")}</small></strong><p>${s("联系人 · 盘点 · 备份 · 授权", "Contacts · assets · backups · consent")}</p></div><div class="metric"><span>${s("等待家族审阅", "FAMILY REVIEW")}</span><strong>${project.tasks.filter((t) => t.status === "待家族确认").length}<small>${s("项", "open")}</small></strong><p>${s("共同审阅，才是传承的开始", "Shared review makes a shared legacy")}</p></div><div class="metric start-metric"><span>${s("项目启动日", "PROJECT START")}</span><button data-action="start">${esc(dateLabel(project.startDate))}${icon("calendar")}</button><p>${s("确认日期，让计划循序展开", "Set the date to bring the plan to life")}</p></div></section><div class="section-heading main-heading"><div><span class="section-kicker">THE FAMILY ARCHIVE / ${s("有序传承", "THOUGHTFUL STEWARDSHIP")}</span><h2 id="page-title" tabindex="-1">${names()[views.indexOf(view)]}</h2><p>${s("负责人及周期为建议，请核实后逐项推进。", "Owners and schedules are proposals. Verify each before proceeding.")}</p></div><div class="actions"><button class="icon-button" data-action="import" title="${s("导入项目备份", "Import project backup")}" aria-label="${s("导入项目备份", "Import project backup")}">${icon("upload")}</button><button class="secondary" data-action="export-csv">${icon("download")}${s("导出清单", "Export CSV")}</button><button class="primary" data-action="add">${icon("plus")}${s("新增行动", "Add action")}</button></div></div>${view !== "history" ? toolbar() : ""}<div id="view-content">${{ overview, board, list, timeline, history, dashboard: dashboardView, people: peopleView, security: securityView, digitization: digitizationView }[view]()}</div><footer class="page-footer"><span><img src="./assets/seal.svg" width="22" height="22" alt="">DeepFamily <b>·</b> ${s("家族传承计划", "Family legacy plan")}</span><span>${s("珍藏过去，连接未来。", "Preserve the past. Connect the future.")} <b>·</b> UTC+8</span></footer></div></main>`;
   decorateCloud();
   if (dashboardDrilldown && !isPhone() && view === "list")
     $("#view-content")?.insertAdjacentHTML("beforebegin", drilldownNote());
@@ -567,6 +575,9 @@ function render() {
 }
 function drilldownNote() {
   return `<div class="dashboard-drilldown-note"><span>${s("正在查看仪表盘选中的任务", "Showing the actions selected in the dashboard")}</span><button class="module-button" data-action="clear">${s("显示全部任务", "Show all actions")}</button></div>`;
+}
+function digitizationView() {
+  return renderDigitization({ s, esc, icon });
 }
 function securityView() {
   return securityGuide(
@@ -834,6 +845,16 @@ function openStart() {
 document.addEventListener("click", async (e) => {
   const btn = e.target.closest("button");
   if (!btn) return;
+  if (btn.dataset.captureTab !== undefined) {
+    switchDigitizationCategory(btn, { s, esc, icon });
+    return;
+  }
+  if (btn.dataset.captureJump) {
+    document
+      .getElementById(btn.dataset.captureJump)
+      ?.scrollIntoView({ behavior: "auto", block: "start" });
+    return;
+  }
   if (btn.dataset.action === "demo-patrick") {
     if (!publicDemo || peopleBusy) return;
     demoPatrick = !demoPatrick;
@@ -1083,6 +1104,10 @@ function historyReplace(url) {
   window.history.replaceState(null, "", url);
 }
 document.addEventListener("input", (e) => {
+  if (e.target.closest("#digitization-estimator")) {
+    updateDigitizationEstimator(document, { s });
+    return;
+  }
   if (
     e.target.closest("#person-form") &&
     ["displayName", "responsibility"].includes(e.target.name)
@@ -1094,6 +1119,10 @@ document.addEventListener("input", (e) => {
   }
 });
 document.addEventListener("change", (e) => {
+  if (e.target.closest("#digitization-estimator")) {
+    updateDigitizationEstimator(document, { s });
+    return;
+  }
   const el = e.target;
   if (
     el.id === "dashboard-person-filter" ||
@@ -1121,6 +1150,10 @@ document.addEventListener("change", (e) => {
   }
 });
 document.addEventListener("submit", async (e) => {
+  if (e.target.id === "digitization-estimator") {
+    e.preventDefault();
+    return;
+  }
   if (e.target.id === "person-form") {
     e.preventDefault();
     if (!canManagePeople() || !peopleReady || peopleBusy) return;
