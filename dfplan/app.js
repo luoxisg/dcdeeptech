@@ -1,3 +1,8 @@
+import {
+  normalizePersonName,
+  personId,
+  validatePersonName,
+} from "./people-model.mjs";
 import { stewardshipEditor, stewardshipFields } from "./stewardship.mjs";
 import {
   renderDashboard,
@@ -19,7 +24,7 @@ import {
   cloudBar,
   adminDialog,
   guestDialog,
-} from "./cloud-ui.js?v=20261118-public-test";
+} from "./cloud-ui.js?v=20261118-patrick-test";
 import {
   renderPhone,
   phoneEditor,
@@ -36,6 +41,8 @@ import {
 } from "./model.mjs";
 
 const publicDemo = new URLSearchParams(location.search).get("demo") === "1";
+let demoPatrick =
+  publicDemo && new URLSearchParams(location.search).get("role") === "patrick";
 const cloudEnabled = backendEnabled && !publicDemo;
 const KEY = publicDemo ? "deepfamily.dfplan.demo.v1" : "deepfamily.dfplan.v1",
   LANG = "deepfamily.dfplan.language";
@@ -160,7 +167,63 @@ let peopleDraft = { displayName: "", responsibility: "" };
 let dashboardSelection = { person: "all", priority: "all" },
   dashboardDrilldown = null;
 const canManagePeople = () =>
-  cloudReady() && cloudSession.admin?.canManagePeople === true;
+  publicDemo
+    ? demoPatrick
+    : cloudReady() && cloudSession.admin?.canManagePeople === true;
+const DEMO_PEOPLE_KEY = "deepfamily.dfplan.demo.people.v1";
+if (publicDemo) {
+  try {
+    const saved = JSON.parse(localStorage.getItem(DEMO_PEOPLE_KEY));
+    if (
+      Array.isArray(saved) &&
+      saved.length <= 500 &&
+      saved.every(
+        (p) =>
+          p &&
+          /^[a-f0-9]{64}$/.test(p.id) &&
+          validatePersonName(p.displayName) &&
+          typeof p.active === "boolean" &&
+          typeof p.responsibility === "string" &&
+          p.responsibility.length <= 240,
+      )
+    )
+      people = saved;
+  } catch {}
+}
+function saveDemoPeople(rows) {
+  if (!publicDemo || !demoPatrick)
+    throw Object.assign(new Error(), { code: "dfplan/not-admin" });
+  localStorage.setItem(DEMO_PEOPLE_KEY, JSON.stringify(rows));
+  people = rows;
+}
+async function addDirectoryPerson(name, responsibility) {
+  if (!publicDemo) return cloud.addPerson(name, responsibility);
+  if (!canManagePeople())
+    throw Object.assign(new Error(), { code: "dfplan/not-admin" });
+  name = String(name || "")
+    .normalize("NFKC")
+    .trim()
+    .replace(/\s+/g, " ");
+  responsibility = String(responsibility || "").trim();
+  if (!validatePersonName(name) || responsibility.length > 240)
+    throw Object.assign(new Error(), { code: "dfplan/person-format" });
+  const existing = people.find(
+    (p) => normalizePersonName(p.displayName) === normalizePersonName(name),
+  );
+  if (existing)
+    throw Object.assign(new Error(), {
+      code: existing.active ? "dfplan/person-exists" : "dfplan/person-removed",
+    });
+  const id = await personId(name);
+  saveDemoPeople([
+    ...people,
+    { id, displayName: name, responsibility, active: true },
+  ]);
+}
+async function setDirectoryPersonActive(id, active) {
+  if (!publicDemo) return cloud.setPersonActive(id, active);
+  saveDemoPeople(people.map((p) => (p.id === id ? { ...p, active } : p)));
+}
 const views = [
   "overview",
   "board",
@@ -530,6 +593,10 @@ function openDashboardTasks(options = {}) {
   changeView("list", false);
 }
 async function refreshPeople() {
+  if (publicDemo) {
+    render();
+    return;
+  }
   const uid = cloudSession.user?.uid;
   const rows = await cloud.listPeople();
   if (!cloudReady() || uid !== cloudSession.user?.uid) return;
@@ -754,6 +821,18 @@ function openStart() {
 document.addEventListener("click", async (e) => {
   const btn = e.target.closest("button");
   if (!btn) return;
+  if (btn.dataset.action === "demo-patrick") {
+    if (!publicDemo || peopleBusy) return;
+    demoPatrick = !demoPatrick;
+    const url = new URL(location.href);
+    if (demoPatrick) url.searchParams.set("role", "patrick");
+    else url.searchParams.delete("role");
+    historyReplace(url);
+    peopleDraft = { displayName: "", responsibility: "" };
+    peopleFormError = "";
+    changeView("people");
+    return;
+  }
   if (btn.dataset.action?.startsWith("gate-")) {
     await loginHelp(btn.dataset.action, {
       s,
@@ -786,7 +865,7 @@ document.addEventListener("click", async (e) => {
     peopleBusy = true;
     btn.disabled = true;
     try {
-      await cloud.setPersonActive(
+      await setDirectoryPersonActive(
         btn.dataset.personId,
         btn.dataset.personActive === "true",
       );
@@ -1037,7 +1116,7 @@ document.addEventListener("submit", async (e) => {
     peopleFormError = "";
     e.target.querySelector('[type="submit"]').disabled = true;
     try {
-      await cloud.addPerson(
+      await addDirectoryPerson(
         data.get("displayName"),
         data.get("responsibility"),
       );
@@ -1251,10 +1330,13 @@ function decorateCloud() {
     const host = $(".phone-content") || $(".content");
     host?.insertAdjacentHTML(
       "afterbegin",
-      `<div class="demo-notice" role="status"><strong>${s("公开测试版 · 无需登录", "Public test · No sign-in needed")}</strong><p>${s("当前为示例计划。修改仅保存在此浏览器，不会写入家族后台。", "This is a sample plan. Changes stay in this browser and never update family records.")}</p><a href="${lang === "en" ? "?lang=en" : "./"}">${s("进入正式家族工作台", "Open the family workspace")}</a></div>`,
+      `<div class="demo-notice" role="status"><strong>${s("公开测试版 · 无需登录", "Public test · No sign-in needed")}</strong><p>${s("当前为示例计划。修改仅保存在此浏览器，不会写入家族后台。", "This is a sample plan. Changes stay in this browser and never update family records.")}</p><button class="cloud-primary" data-action="demo-patrick" aria-pressed="${demoPatrick}" ${peopleBusy ? "disabled" : ""}>${demoPatrick ? s("退出 Patrick 权限体验", "Leave Patrick role preview") : s("体验 Patrick 权限", "Try Patrick permissions")}</button>${demoPatrick ? `<p>${s("Patrick 测试身份：可增加、移出和恢复示例人员；不具备管理员及邀请管理权限。", "Patrick test role: add, remove and restore sample people, without administrator or invitation-management powers.")}</p>` : ""}<a href="${lang === "en" ? "?lang=en" : "./"}">${s("进入正式家族工作台", "Open the family workspace")}</a></div>`,
     );
     document.querySelectorAll(".phone-brand").forEach((link) => {
-      link.href = lang === "en" ? "?demo=1&lang=en" : "?demo=1";
+      link.href =
+        "?demo=1" +
+        (demoPatrick ? "&role=patrick" : "") +
+        (lang === "en" ? "&lang=en" : "");
     });
     return;
   }
