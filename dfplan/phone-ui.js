@@ -87,6 +87,7 @@ export function renderPhone(state, h) {
     lang,
     dashboardContent = "",
     peopleContent = "",
+    securityContent = "",
     drilldown = false,
   } = state;
   const { s, esc, icon, art, value, complete, due, dateLabel, fmt, filtered } =
@@ -102,7 +103,7 @@ export function renderPhone(state, h) {
   const pageHeading = (title, note) =>
     `<div class="phone-heading"><h1 id="page-title" tabindex="-1">${title}</h1>${note ? `<p>${note}</p>` : ""}</div>`;
   const moduleLinks = () =>
-    `<div class="phone-module-links"><button data-view="dashboard">${icon("board")}<strong>${s("进度仪表盘", "Dashboard")}</strong></button><button data-view="people">${icon("people")}<strong>${s("人员与分工", "People & roles")}</strong></button></div>`;
+    `<div class="phone-module-links"><button data-view="dashboard">${icon("board")}<strong>${s("进度仪表盘", "Dashboard")}</strong></button><button data-view="people">${icon("people")}<strong>${s("人员与分工", "People & roles")}</strong></button><button data-view="security">${icon("shield")}<strong>${s("资料与安全", "Materials & safety")}</strong></button></div>`;
   function home() {
     const next = nextAction(project.tasks, complete);
     return `${pageHeading(s("一家人的记忆，<br>一起守护。", "Our family memories.<br>In caring hands."), s("慢慢来，一次做好一件事。", "One small step at a time."))}${moduleLinks()}<section class="phone-progress"><div class="progress-ring" role="progressbar" aria-label="${s("已验收完成的任务比例", "Accepted actions")}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${percent}"><svg viewBox="0 0 100 100" aria-hidden="true"><circle class="ring-track" cx="50" cy="50" r="40"/><circle class="ring-fill" cx="50" cy="50" r="40" pathLength="100" stroke-dasharray="${percent} 100"/></svg><strong>${percent}<small>%</small></strong></div><div><h2>${s("我们的传承进度", "Our progress")}</h2><p>${s(`已完成 ${done} 项，共 ${total} 项`, `${done} of ${total} actions done`)}</p><button class="phone-inline" data-view="timeline">${s("看看走到哪一步", "See our journey")}${icon("arrow")}</button></div></section><section class="phone-next"><div class="phone-section-label">${icon("leaf")}<h2>${next ? s("下一步，做这件事", "One thing to do next") : s("每一步，都已用心完成", "Every step has been completed")}</h2></div>${next ? `<div class="next-preview">${art(taskPicture(next))}<div><strong>${esc(value(next, "title"))}</strong>${badge(next)}</div></div><button class="phone-primary" data-action="edit" data-id="${esc(next.id)}">${icon("play")}${s("打开这件事", "Open this action")}${icon("arrow")}</button>` : `<p>${s("谢谢每一位家人的参与。", "Thank you to everyone who helped.")}</p><button class="phone-primary" data-view="list">${icon("check")}${s("看看全部成果", "See all our actions")}</button>`}</section><section class="phone-topics"><h2>${s("想从哪里开始？", "What would you like to do?")}</h2><div class="topic-grid">${phoneCategories.map((c) => `<button class="topic-tile" data-category="${c.id}">${art(c.icon)}<strong>${lang === "en" ? c.en : c.zh}</strong><span>${project.tasks.filter((t) => c.ids.includes(t.id) && complete(t)).length} / ${project.tasks.filter((t) => c.ids.includes(t.id)).length} ${s("项完成", "done")}</span></button>`).join("")}</div><button class="phone-secondary phone-wide" data-view="list">${icon("list")}${s("查看全部任务", "See all actions")}</button></section>`;
@@ -179,6 +180,7 @@ export function renderPhone(state, h) {
     history: more,
     dashboard: () => dashboardContent,
     people: () => peopleContent,
+    security: () => securityContent,
   };
   return `<main id="main" class="phone-main"><header class="phone-topbar"><a class="phone-brand" href="./" aria-label="${s("家族传承首页", "Family legacy home")}"><img src="./assets/seal.svg" width="38" height="38" alt=""><span>${s("家族传承", "Family legacy")}</span></a><div class="phone-language" role="group" aria-label="Language / 语言"><button data-lang="zh" aria-pressed="${lang === "zh"}">中文</button><button data-lang="en" aria-pressed="${lang === "en"}">EN</button></div></header><div class="phone-reading"><span>${icon("text")}${s("看得清，慢慢做", "Easy to read. Easy to use.")}</span><button data-action="text-size" aria-pressed="${largeText}">${largeText ? s("恢复大字", "Standard text") : s("更大字", "Larger text")}${icon("plus")}</button></div><div class="phone-content">${storageIssue ? `<p class="phone-warning" role="alert">${s("本机记录无法读取，请先到“更多”导入有效备份。", "Cannot read saved records. Restore a valid backup under More.")}</p>` : ""}${titles[view]()}<p class="phone-local-note">${icon("shield")}${cloudEnabled ? s("后端共享保存 · 已授权家人可访问", "Shared backend · Authorized family members") : s("只保存在本机 · 请定期备份", "Saved on this device · Back up regularly")}</p></div><nav class="phone-bottom-nav" aria-label="${s("主要操作", "Main navigation")}">${[
     ["overview", "home", s("首页", "Home")],
