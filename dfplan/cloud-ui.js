@@ -86,6 +86,7 @@ export function cloudError(error, lang) {
     "The cloud operation could not complete. Check the connection or backend configuration.",
   ])[lang === "en" ? 1 : 0];
 }
+const googleMark = `<svg class="google-mark" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>`;
 export function cloudGate(session, available, message, h) {
   const { s, esc, icon, readingControl = "" } = h;
   const busy = ["connecting", "checking", "reading"].includes(session.phase),
@@ -93,18 +94,65 @@ export function cloudGate(session, available, message, h) {
     denied = session.phase === "denied",
     canInitialize =
       session.phase === "not-initialized" && session.admin?.role === "owner";
-  return `<main id="main" class="cloud-gate"><header><img src="./assets/seal.svg" width="54" height="54" alt=""><strong>DeepFamily</strong><div class="cloud-lang">${readingControl}<button data-lang="zh" aria-pressed="${document.documentElement.lang !== "en"}">中文</button><button data-lang="en" aria-pressed="${document.documentElement.lang === "en"}">EN</button></div></header><section>
-  ${icon(invited ? "people" : "shield")}
-  <h1>${busy ? s("正在打开家族计划", "Opening the family plan") : invited ? s("Patrick，欢迎回家", "Welcome home, Patrick") : canInitialize ? s("建立家族传承计划", "Create the family legacy plan") : denied ? s("请使用有效的家族访问方式", "Use an authorized family sign-in") : s("登录家族工作台", "Sign in to the family workspace")}</h1>
-  <p>${busy ? s("请稍候，正在读取家族记录。", "Please wait while we load the family records.") : invited ? s("点一下，即可一起整理家族记忆。无需填写账号或密码。", "One tap to preserve our family memories. No account or password to enter.") : s("登录后，可以查看和修改共享计划。", "Sign in to view and update the shared plan.")}</p>
+  const wechat = /micromessenger/i.test(globalThis.navigator?.userAgent || "");
+  const helpButton = (type, zh, en) =>
+    `<button type="button" class="gate-link" data-action="gate-${type}">${s(zh, en)}</button>`;
+  return `<main id="main" class="cloud-gate"><header class="gate-header"><a class="gate-brand" href="/dfplan/" aria-label="DeepFamily"><span class="gate-seal">${icon("tree")}</span><span><strong>DeepFamily</strong><small>${s("家族共享与协作空间", "A shared family workspace")}</small></span></a><nav class="cloud-lang" aria-label="${s("显示与语言设置", "Display and language settings")}">${readingControl}<div role="group" aria-label="${s("语言切换", "Language")}"><button data-lang="zh" aria-pressed="${document.documentElement.lang !== "en"}">中文</button><button data-lang="en" aria-pressed="${document.documentElement.lang === "en"}">EN</button></div></nav></header>
+  <div class="gate-center"><section class="gate-card" aria-labelledby="login-heading" aria-busy="${busy}"><div class="gate-shield">${icon(invited ? "people" : "shield")}</div>
+  <h1 id="login-heading">${busy ? s("正在打开家族计划", "Opening the family plan") : invited ? s("Patrick，欢迎回家", "Welcome home, Patrick") : canInitialize ? s("建立家族传承计划", "Create the family legacy plan") : s("登录家族工作台", "Sign in to the family workspace")}</h1>
+  <p class="gate-subtitle">${busy ? s("请稍候，正在验证权限并读取家族记录。", "Please wait while we verify access and load family records.") : invited ? s("点一下，一起整理家族记忆。无需填写账号或密码。", "One tap to preserve family memories. No account or password to enter.") : s("登录后，按授权查看和更新共享计划。", "Sign in to view and update the shared plan with your permissions.")}</p>
+  <div class="gate-pills"><span>${icon("tree")}${s("家族计划", "Family plan")}</span><span>${icon("review")}${s("任务协作", "Shared actions")}</span><span>${icon("shield")}${s("授权访问", "Authorized access")}</span></div>
   ${session.user?.email ? `<p class="cloud-email">${esc(session.user.email)}</p>` : ""}
+  ${denied ? `<div class="gate-denied" role="alert"><strong>${s("当前账号尚未获得家族访问权限", "This account is not authorized")}</strong><p>${s("请切换为已授权的 Google 账号，或复制申请消息发送给家族管理员。人员分工名单不等于登录授权名单。", "Use an authorized Google account or send an access request to the family administrator. The people directory does not grant sign-in access.")}</p>${helpButton("request", "复制权限申请消息", "Copy access request")}</div>` : ""}
   ${message ? `<p class="cloud-alert" role="alert">${esc(message)}</p>` : ""}
+  ${wechat ? `<p class="gate-browser-note">${s("微信内可能无法完成 Google 登录。", "Google sign-in may not work inside WeChat.")}${helpButton("browser", "查看浏览器打开图解", "Open in a browser")}</p>` : ""}
   ${canInitialize ? `<button class="cloud-primary" data-action="cloud-initialize">${icon("leaf")}${s("建立家族计划", "Create the family plan")}</button>` : ""}
-  ${!busy && !canInitialize && invited ? `<button class="cloud-primary patrick-enter" data-action="cloud-link-login" ${!available ? "disabled" : ""}>${icon("home")}${s("进入家族计划", "Enter the family plan")}</button><p class="cloud-small">${s("首次进入后，这台手机会记住你。", "This browser will remember your access after the first visit.")}</p>` : ""}
-  ${!busy && !canInitialize ? `<button class="${invited ? "cloud-secondary" : "cloud-primary"}" data-action="cloud-login" ${!available ? "disabled" : ""}>${icon("globe")}${invited ? s("管理员 Google 登录", "Administrator Google sign-in") : s("使用 Google 账号登录", "Sign in with Google")}</button>` : ""}
-  ${session.user ? `<button class="cloud-secondary" data-action="cloud-logout">${s("退出当前访问", "Sign out")}</button>` : ""}
-  ${message ? `<button class="cloud-secondary" data-action="cloud-refresh">${s("重新连接", "Reconnect")}</button>` : ""}
-  <p class="cloud-small">${s("家族资料仅向已获授权的成员开放。", "Family records are available only to authorized members.")}</p></section></main>`;
+  ${!busy && !canInitialize && invited ? `<button class="cloud-primary patrick-enter" data-action="cloud-link-login" ${!available ? "disabled" : ""}>${icon("home")}${s("进入家族计划", "Enter the family plan")}</button><p class="cloud-small">${s("首次进入后，这台手机的浏览器会记住你。请保管好专属链接。", "This browser will remember your access. Keep your personal link private.")}</p>` : ""}
+  ${!busy && !canInitialize ? `<p class="account-hint">${invited ? s("管理员也可使用 Google 账号登录", "Administrators can also sign in with Google") : s("请使用已获家族管理员授权的 Google 邮箱", "Use a Google email authorized by your family administrator")}</p><button class="${invited ? "cloud-secondary" : "cloud-primary"} gate-google" data-action="cloud-login" ${!available ? "disabled" : ""}>${googleMark}${s("使用 Google 账号登录", "Sign in with Google")}</button>` : ""}
+  ${session.user && !busy ? `<button class="cloud-secondary" data-action="cloud-logout">${denied ? s("退出并重新选择账号", "Sign out to choose another account") : s("退出当前访问", "Sign out")}</button>` : ""}
+  ${message && !busy ? `<button class="cloud-secondary" data-action="cloud-refresh">${s("重新连接", "Reconnect")}</button>` : ""}
+  <div class="gate-help"><p class="cloud-small">${s("家族资料仅向已获授权的成员开放。", "Family records are available only to authorized members.")}</p><details><summary>${s("遇到登录问题或需要授权？", "Trouble signing in or need access?")}</summary><ol><li>${s("核对 Google 邮箱，请管理员确认访问授权；加入人员分工名单不会自动开通访问。", "Check your Google email and ask an administrator to authorize access. Joining the people directory does not grant access.")}</li><li>${s("如从微信群打开，请改用 Samsung Internet、Chrome 或 Safari。允许本站弹出登录窗口。", "From WeChat, open in Samsung Internet, Chrome or Safari. Allow this site to open the sign-in window.")}</li><li>${s("Patrick 请使用管理员发来的有效专属链接，勿转发给其他人。", "Patrick: use your valid personal invitation link and do not forward it.")}</li></ol><div class="gate-help-actions">${helpButton("request", "复制权限申请消息", "Copy access request")}${helpButton("browser", "查看浏览器打开图解", "Browser instructions")}</div></details></div>
+  </section></div><footer class="gate-footer">${helpButton("privacy", "隐私与访问说明", "Privacy and access")}${helpButton("home", "添加到手机主屏幕", "Add to home screen")}<p>DeepFamily · ${s("珍藏过去，连接未来", "Preserve the past. Connect the future.")}</p></footer><dialog id="gate-info" aria-labelledby="gate-info-title"><div class="gate-info-body"></div><button class="cloud-primary" data-close="gate-info">${s("关闭", "Close")}</button></dialog></main>`;
+}
+
+export async function loginHelp(action, { s, esc, toast }) {
+  const dialog = document.getElementById("gate-info");
+  if (!dialog) return;
+  let title, body;
+  if (action === "gate-request") {
+    const text = s(
+      "【DeepFamily 权限申请】您好，请帮我为本人的 Google 邮箱开通家族工作台访问权限：https://dcdeeptech.com/dfplan/ 。我的 Google 邮箱是：",
+      "[DeepFamily access request] Please authorize my Google email for https://dcdeeptech.com/dfplan/ . My Google email is: ",
+    );
+    try {
+      if (!navigator.clipboard?.writeText)
+        throw new Error("clipboard-unavailable");
+      await navigator.clipboard.writeText(text);
+      toast(
+        s(
+          "申请消息已复制，请补充邮箱后发送给管理员。",
+          "Request copied. Add your email and send it to your administrator.",
+        ),
+      );
+      return;
+    } catch {
+      title = s("请手动复制申请消息", "Copy the request manually");
+      body = `<p>${s("浏览器未允许自动复制。长按或选中下方文字，复制后补充邮箱，再发送给管理员。", "Automatic copying was unavailable. Select the text below, copy it, add your email, and send it to your administrator.")}</p><textarea readonly aria-label="${s("权限申请消息", "Access request")}">${esc(text)}</textarea>`;
+    }
+  } else if (action === "gate-privacy") {
+    title = s("隐私与访问说明", "Privacy and access");
+    body = `<p>${s("账号通过 Google 官方登录验证；工作台不收集或保存 Google 密码。Patrick 的邀请链接用于建立获授权的设备访问，请勿转发。", "Google handles account sign-in; this workspace does not collect or store your Google password. Patrick’s invitation establishes authorized browser access. Keep it private.")}</p><p>${s("家族记录的读取和修改受 Firebase 后端权限规则控制。访问授权与人员分工分别管理。", "Firebase backend rules control reading and updating family records. Access permissions and the people directory are managed separately.")}</p><p>${s("页面请求搜索引擎不收录，但 noindex 不是访问保护，也不保证链接不被发现。请勿在计划中保存密码或不必要的敏感资料。", "The page asks search engines not to index it. This is not access protection and does not guarantee links stay undiscovered. Keep passwords and unnecessary sensitive information out of the plan.")}</p>`;
+  } else if (action === "gate-home") {
+    title = s("添加到手机主屏幕", "Add to home screen");
+    body = `<p>${s("三星手机 · Samsung Internet：点击右下角菜单 ☰，选择「将页面添加到」→「主屏幕」。不同版本名称可能略有不同。", "Samsung Internet: open the bottom-right menu ☰, then Add page to → Home screen. Wording may vary by version.")}</p><p>${s("Android · Chrome：点击右上角 ⋮，选择「添加到主屏幕」。", "Android Chrome: tap ⋮ at the top right and choose Add to home screen.")}</p><p>${s("iPhone · Safari：点击分享按钮 ↑，选择「添加到主屏幕」。这会保存网站快捷入口；访问仍需授权。", "iPhone Safari: tap Share ↑, then Add to Home Screen. This saves a website shortcut; access still requires authorization.")}</p>`;
+  } else {
+    title = s("请在系统浏览器中打开", "Open in your system browser");
+    body = `<ol class="gate-browser-steps"><li><b>···</b><span>${s("点击微信右上角「···」菜单。", "Tap the ··· menu at the top right of WeChat.")}</span></li><li><b>↗</b><span>${s("选择「在浏览器中打开」，使用 Samsung Internet、Chrome 或 Safari；返回页面后再点击登录。菜单名称因版本而异。", "Choose Open in browser and use Samsung Internet, Chrome or Safari. Then tap sign in again. Menu wording varies.")}</span></li></ol>`;
+  }
+  if (!dialog.isConnected) return;
+  dialog.querySelector(".gate-info-body").innerHTML =
+    `<h2 id="gate-info-title">${title}</h2>${body}`;
+  dialog.showModal();
 }
 export function cloudBar(session, updatedAt, saving, h) {
   const { s, esc, icon, fmt } = h;

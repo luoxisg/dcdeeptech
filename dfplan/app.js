@@ -14,10 +14,11 @@ import {
 import {
   cloudError,
   cloudGate,
+  loginHelp,
   cloudBar,
   adminDialog,
   guestDialog,
-} from "./cloud-ui.js?v=20261116-elder-desktop";
+} from "./cloud-ui.js?v=20261118-login";
 import {
   renderPhone,
   phoneEditor,
@@ -51,9 +52,9 @@ const phoneQuery =
       )
     : { matches: false };
 const isPhone = () => phoneQuery.matches;
-let largeText = false;
+let largeText = true;
 try {
-  largeText = localStorage.getItem("deepfamily.dfplan.largeText") === "true";
+  largeText = localStorage.getItem("deepfamily.dfplan.largeText") !== "false";
 } catch {}
 const icons = {
   text: "M3 5h12M9 5v15m-5 0h10M16 12h6m-3 0v8m-3 0h6",
@@ -431,7 +432,7 @@ function render() {
       s,
       esc,
       icon,
-      readingControl: isPhone() ? "" : readingControl(),
+      readingControl: readingControl(),
     });
     return;
   }
@@ -736,6 +737,10 @@ function openStart() {
 document.addEventListener("click", async (e) => {
   const btn = e.target.closest("button");
   if (!btn) return;
+  if (btn.dataset.action?.startsWith("gate-")) {
+    await loginHelp(btn.dataset.action, { s, esc, toast });
+    return;
+  }
   if (
     btn.dataset.dashboardFocus ||
     btn.dataset.dashboardStatus ||
