@@ -8,7 +8,7 @@ import {
   assigneeSelect,
 } from "./people-ui.mjs?v=20261116-people-directory";
 import {
-  cloudEnabled,
+  cloudEnabled as backendEnabled,
   connectBackend,
 } from "./backend-client.js?v=20261117-stewardship";
 import {
@@ -19,7 +19,7 @@ import {
   cloudBar,
   adminDialog,
   guestDialog,
-} from "./cloud-ui.js?v=20261118-login-help";
+} from "./cloud-ui.js?v=20261118-public-test";
 import {
   renderPhone,
   phoneEditor,
@@ -35,7 +35,9 @@ import {
   csvCell,
 } from "./model.mjs";
 
-const KEY = "deepfamily.dfplan.v1",
+const publicDemo = new URLSearchParams(location.search).get("demo") === "1";
+const cloudEnabled = backendEnabled && !publicDemo;
+const KEY = publicDemo ? "deepfamily.dfplan.demo.v1" : "deepfamily.dfplan.v1",
   LANG = "deepfamily.dfplan.language";
 const $ = (s) => document.querySelector(s);
 const esc = (v) =>
@@ -136,8 +138,21 @@ if (cloudEnabled) {
   storageIssue = false;
 }
 const cloudReady = () => cloudSession.phase === "ready" && cloudLoaded;
-let people = [],
-  peopleReady = false,
+let people = publicDemo
+    ? Array.from({ length: 5 }, (_, i) => ({
+        id: String(i + 1).padStart(64, "0"),
+        displayName: `示例成员 ${i + 1}`,
+        responsibility: [
+          "家族协调",
+          "资料整理",
+          "技术支持",
+          "采访记录",
+          "家族审阅",
+        ][i],
+        active: true,
+      }))
+    : [],
+  peopleReady = publicDemo,
   peopleMessage = "",
   peopleBusy = false,
   peopleFormError = "";
@@ -1232,6 +1247,17 @@ window.addEventListener("storage", (e) => {
 });
 
 function decorateCloud() {
+  if (publicDemo) {
+    const host = $(".phone-content") || $(".content");
+    host?.insertAdjacentHTML(
+      "afterbegin",
+      `<div class="demo-notice" role="status"><strong>${s("公开测试版 · 无需登录", "Public test · No sign-in needed")}</strong><p>${s("当前为示例计划。修改仅保存在此浏览器，不会写入家族后台。", "This is a sample plan. Changes stay in this browser and never update family records.")}</p><a href="${lang === "en" ? "?lang=en" : "./"}">${s("进入正式家族工作台", "Open the family workspace")}</a></div>`,
+    );
+    document.querySelectorAll(".phone-brand").forEach((link) => {
+      link.href = lang === "en" ? "?demo=1&lang=en" : "?demo=1";
+    });
+    return;
+  }
   if (!cloudEnabled || !cloudReady()) return;
   const host = $(".phone-content") || $(".content");
   host?.insertAdjacentHTML(
