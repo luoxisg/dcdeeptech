@@ -115,29 +115,43 @@ export function cloudGate(session, available, message, h) {
   </section></div><footer class="gate-footer">${helpButton("privacy", "隐私与访问说明", "Privacy and access")}${helpButton("home", "添加到手机主屏幕", "Add to home screen")}<p>DeepFamily · ${s("珍藏过去，连接未来", "Preserve the past. Connect the future.")}</p></footer><dialog id="gate-info" aria-labelledby="gate-info-title"><div class="gate-info-body"></div><button class="cloud-primary" data-close="gate-info">${s("关闭", "Close")}</button></dialog></main>`;
 }
 
-export async function loginHelp(action, { s, esc, toast }) {
+export async function loginHelp(action, { s, esc, toast, session = {} }) {
   const dialog = document.getElementById("gate-info");
   if (!dialog) return;
   let title, body;
-  if (action === "gate-request") {
-    const text = s(
-      "【DeepFamily 权限申请】您好，请帮我为本人的 Google 邮箱开通家族工作台访问权限：https://dcdeeptech.com/dfplan/ 。我的 Google 邮箱是：",
-      "[DeepFamily access request] Please authorize my Google email for https://dcdeeptech.com/dfplan/ . My Google email is: ",
-    );
+  if (action === "gate-request" || action === "gate-copy-url") {
+    const email = session.phase === "denied" ? session.user?.email || "" : "";
+    const text =
+      action === "gate-copy-url"
+        ? document.documentElement.lang === "en"
+          ? "https://dcdeeptech.com/dfplan/?lang=en"
+          : "https://dcdeeptech.com/dfplan/"
+        : s(
+            "【DeepFamily 权限申请】您好，请帮我为本人的 Google 邮箱开通家族工作台访问权限：https://dcdeeptech.com/dfplan/ 。我的 Google 邮箱是：",
+            "[DeepFamily access request] Please authorize my Google email for https://dcdeeptech.com/dfplan/ . My Google email is: ",
+          ) + email;
     try {
       if (!navigator.clipboard?.writeText)
         throw new Error("clipboard-unavailable");
       await navigator.clipboard.writeText(text);
       toast(
         s(
-          "申请消息已复制，请补充邮箱后发送给管理员。",
-          "Request copied. Add your email and send it to your administrator.",
+          action === "gate-copy-url"
+            ? "网址已复制，请在手机浏览器中粘贴打开。"
+            : email
+              ? "申请消息已复制，请发送给家族管理员。"
+              : "申请消息已复制，请补充邮箱后发送给管理员。",
+          action === "gate-copy-url"
+            ? "Link copied. Paste it into your phone browser."
+            : email
+              ? "Request copied. Send it to your family administrator."
+              : "Request copied. Add your email and send it to your administrator.",
         ),
       );
       return;
     } catch {
-      title = s("请手动复制申请消息", "Copy the request manually");
-      body = `<p>${s("浏览器未允许自动复制。长按或选中下方文字，复制后补充邮箱，再发送给管理员。", "Automatic copying was unavailable. Select the text below, copy it, add your email, and send it to your administrator.")}</p><textarea readonly aria-label="${s("权限申请消息", "Access request")}">${esc(text)}</textarea>`;
+      title = s("请手动复制", "Copy manually");
+      body = `<p>${s("浏览器未允许自动复制。长按或选中下方文字，复制后按提示使用。", "Automatic copying was unavailable. Select the text below, copy it and use it as indicated.")}</p><textarea readonly aria-label="${s("权限申请消息", "Access request")}">${esc(text)}</textarea>`;
     }
   } else if (action === "gate-privacy") {
     title = s("隐私与访问说明", "Privacy and access");
@@ -145,14 +159,25 @@ export async function loginHelp(action, { s, esc, toast }) {
   } else if (action === "gate-home") {
     title = s("添加到手机主屏幕", "Add to home screen");
     body = `<p>${s("三星手机 · Samsung Internet：点击右下角菜单 ☰，选择「将页面添加到」→「主屏幕」。不同版本名称可能略有不同。", "Samsung Internet: open the bottom-right menu ☰, then Add page to → Home screen. Wording may vary by version.")}</p><p>${s("Android · Chrome：点击右上角 ⋮，选择「添加到主屏幕」。", "Android Chrome: tap ⋮ at the top right and choose Add to home screen.")}</p><p>${s("iPhone · Safari：点击分享按钮 ↑，选择「添加到主屏幕」。这会保存网站快捷入口；访问仍需授权。", "iPhone Safari: tap Share ↑, then Add to Home Screen. This saves a website shortcut; access still requires authorization.")}</p>`;
+  } else if (action === "gate-denied") {
+    if (session.phase !== "denied" || !session.user?.email) return;
+    title = s(
+      "该 Google 账号尚未开通访问权限",
+      "This Google account is not authorized yet",
+    );
+    body = `<p>${s("为保护家庭隐私，工作台仅向获授权的成员开放。当前登录邮箱：", "To protect family privacy, this workspace is open only to authorized members. Current account:")}</p><p class="gate-denied-email">${esc(session.user.email)}</p><p>${s("如已有其他授权账号，请切换账号；如需申请访问，复制含当前邮箱的申请消息，发送给家族管理员。", "Switch to another authorized account, or copy a request containing your current email and send it to your family administrator.")}</p><div class="gate-modal-actions"><button class="cloud-primary" data-action="gate-request">${s("复制权限申请消息", "Copy access request")}</button><button class="cloud-secondary" data-action="cloud-login">${s("切换其他 Google 账号", "Switch Google account")}</button></div>`;
   } else {
+    const ios =
+      action === "gate-browser-ios" ||
+      (action !== "gate-browser-android" &&
+        /iPad|iPhone|iPod/i.test(globalThis.navigator?.userAgent || ""));
     title = s("请在系统浏览器中打开", "Open in your system browser");
-    body = `<ol class="gate-browser-steps"><li><b>···</b><span>${s("点击微信右上角「···」菜单。", "Tap the ··· menu at the top right of WeChat.")}</span></li><li><b>↗</b><span>${s("选择「在浏览器中打开」，使用 Samsung Internet、Chrome 或 Safari；返回页面后再点击登录。菜单名称因版本而异。", "Choose Open in browser and use Samsung Internet, Chrome or Safari. Then tap sign in again. Menu wording varies.")}</span></li></ol>`;
+    body = `<p class="gate-menu-hint" aria-hidden="true">${s("右上角「···」 ↗", "Top-right ··· ↗")}</p><p>${s("微信内可能无法完成 Google 登录。请按以下步骤在浏览器中继续。", "Google sign-in may not work inside WeChat. Continue in your phone browser using these steps.")}</p><div class="gate-os-switch" role="group" aria-label="${s("手机系统", "Phone system")}"><button data-action="gate-browser-android" aria-pressed="${!ios}">Android / Samsung</button><button data-action="gate-browser-ios" aria-pressed="${ios}">iPhone / iPad</button></div><ol class="gate-browser-steps"><li><b>···</b><span>${s("点击微信右上角「···」菜单。", "Tap the ··· menu at the top right of WeChat.")}</span></li><li><b>↗</b><span>${ios ? s("选择「在浏览器中打开」，使用 Safari。", "Choose Open in browser and use Safari.") : s("选择「在浏览器中打开」，使用 Samsung Internet 或 Chrome。", "Choose Open in browser and use Samsung Internet or Chrome.")}${s("菜单名称因版本而异。", " Menu wording varies by version.")}</span></li></ol><p>${s("找不到菜单？复制登录网址，在手机浏览器中粘贴打开。", "Cannot find the menu? Copy the sign-in URL and paste it into your phone browser.")}</p><button class="cloud-secondary" data-action="gate-copy-url">${s("复制登录页网址", "Copy sign-in URL")}</button>${session.invite ? `<p class="cloud-small">${s("Patrick：普通登录网址不含专属邀请。请在系统浏览器中打开管理员发来的原专属链接。", "Patrick: the general URL does not contain your invitation. Open the original personal link from your administrator in your system browser.")}</p>` : ""}`;
   }
   if (!dialog.isConnected) return;
   dialog.querySelector(".gate-info-body").innerHTML =
     `<h2 id="gate-info-title">${title}</h2>${body}`;
-  dialog.showModal();
+  if (!dialog.open) dialog.showModal();
 }
 export function cloudBar(session, updatedAt, saving, h) {
   const { s, esc, icon, fmt } = h;
@@ -173,4 +198,26 @@ function invitationManager(invites, h) {
 export function guestDialog(session, h) {
   const { s, esc, icon } = h;
   return `<div class="dialog-head"><h2 id="account-title">${esc(session.admin.displayName)} · ${s("我的访问", "My access")}</h2><button class="cloud-secondary" data-close="account-dialog">${icon("close")}${s("关闭", "Close")}</button></div><div class="form-body cloud-admin-body"><p>${s("这台手机已记住你的访问。你可以查看和修改家族计划，保存的内容会与家人同步。", "This browser remembers your access. You can view and update the family plan; saved changes are shared with your family.")}</p><p>${s("清除浏览器数据、退出或更换手机后，请让 luoxi 发送新的专属链接。", "After clearing browser data, signing out or changing devices, ask luoxi for a new invitation.")}</p><button class="cloud-secondary" data-action="cloud-refresh">${s("刷新家族记录", "Refresh family records")}</button><button class="cloud-secondary" data-action="cloud-logout">${s("退出本机（再次进入需新邀请）", "Sign out (a new invitation will be needed)")}</button></div>`;
+}
+
+// Prompt once per session; authorization always comes from backend state.
+let guidedBrowser = false;
+let deniedIdentity = "";
+export function syncLoginGuidance(session, h) {
+  const identity =
+    session.phase === "denied" ? session.user?.uid || session.user?.email : "";
+  if (identity && session.user?.email && identity !== deniedIdentity) {
+    deniedIdentity = identity;
+    void loginHelp("gate-denied", { ...h, session });
+  } else if (
+    !guidedBrowser &&
+    !session.invite &&
+    session.phase === "signed-out" &&
+    /MicroMessenger/i.test(globalThis.navigator?.userAgent || "")
+  ) {
+    guidedBrowser = true;
+    void loginHelp("gate-browser", { ...h, session });
+  }
+  if (session.phase === "signed-out" || session.phase === "ready")
+    deniedIdentity = "";
 }

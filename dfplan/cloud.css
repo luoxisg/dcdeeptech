@@ -736,3 +736,44 @@
     scroll-behavior: auto;
   }
 }
+
+.gate-os-switch,
+.gate-modal-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.gate-os-switch button {
+  flex: 1;
+  min-height: 50px;
+  border: 1px solid #b9ccc2;
+  border-radius: 12px;
+  background: white;
+  color: #1e4d3b;
+  font: inherit;
+  padding: 10px;
+}
+.gate-os-switch button[aria-pressed="true"] {
+  background: #1e4d3b;
+  color: white;
+}
+.gate-modal-actions {
+  flex-direction: column;
+  margin-top: 20px;
+}
+#gate-info .gate-denied-email {
+  padding: 12px;
+  border: 1px solid #e5e0d5;
+  background: #f8f6f1;
+  border-radius: 12px;
+  overflow-wrap: anywhere;
+}
+#gate-info .gate-menu-hint {
+  text-align: right;
+  color: #8a4314;
+  font-weight: 700;
+}
+#gate-info :is(button, textarea):focus-visible {
+  outline: 3px solid #8c3f2b;
+  outline-offset: 3px;
+}

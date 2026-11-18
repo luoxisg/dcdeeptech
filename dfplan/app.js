@@ -15,10 +15,11 @@ import {
   cloudError,
   cloudGate,
   loginHelp,
+  syncLoginGuidance,
   cloudBar,
   adminDialog,
   guestDialog,
-} from "./cloud-ui.js?v=20261118-login";
+} from "./cloud-ui.js?v=20261118-login-help";
 import {
   renderPhone,
   phoneEditor,
@@ -434,6 +435,7 @@ function render() {
       icon,
       readingControl: readingControl(),
     });
+    syncLoginGuidance(cloudSession, { s, esc, toast });
     return;
   }
   if (isPhone()) {
@@ -738,7 +740,12 @@ document.addEventListener("click", async (e) => {
   const btn = e.target.closest("button");
   if (!btn) return;
   if (btn.dataset.action?.startsWith("gate-")) {
-    await loginHelp(btn.dataset.action, { s, esc, toast });
+    await loginHelp(btn.dataset.action, {
+      s,
+      esc,
+      toast,
+      session: cloudSession,
+    });
     return;
   }
   if (
