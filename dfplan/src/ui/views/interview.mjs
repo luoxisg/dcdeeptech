@@ -126,6 +126,9 @@ export function render() {
   return html`${pageTitle(t("interview"), s("WU-05 访谈体验：采集 → 整理 → 核实。", "WU-05 sample: collect → organize → verify."))}
     <section class="interview-workspace">
       <div class="panel interview-stage">
+        <button class="btn btn-primary full" data-cmd="voice-open">
+          ${s("打开真实录音访谈", "Open real recording interview")}
+        </button>
         <strong class="badge"
           >${s("脚本演示 · 尚未录音或转写", "Scripted sample · no recording or transcription")}</strong
         >

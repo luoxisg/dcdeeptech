@@ -1,5 +1,6 @@
 /** Browser-only QA dependency: PLAYWRIGHT_MODULE may point to an external installation. */
 import assert from "node:assert/strict";
+import { checkRecording } from "./recording-browser-check.mjs";
 import { checkInterview } from "./interview-browser-check.mjs";
 import { createRequire } from "node:module";
 import { createServer } from "node:http";
@@ -44,7 +45,12 @@ const base = "http://127.0.0.1:" + server.address().port;
 const browser = await chromium.launch({
   executablePath: process.env.CHROMIUM_PATH || undefined,
   headless: true,
-  args: ["--no-sandbox", "--disable-dev-shm-usage"],
+  args: [
+    "--no-sandbox",
+    "--disable-dev-shm-usage",
+    "--use-fake-device-for-media-stream",
+    "--use-fake-ui-for-media-stream",
+  ],
 });
 const errors = [],
   network = [],
@@ -220,6 +226,7 @@ try {
       await page.locator('dialog [data-cmd="close"]').first().click();
     }
     await checkInterview(page);
+    await checkRecording(page);
     await navigate("facts");
     await page.locator('[data-cmd="assertion"]').first().click();
     await page

@@ -15,6 +15,7 @@ export function createResampler(rate, target = 16000) {
   };
 }
 export class AudioAdapter {
+  constructor() { /** @type {AudioContext} */ this.context = null; }
   unlock() {
     const Context = globalThis.AudioContext || globalThis.webkitAudioContext;
     if (!Context) throw new Error("此浏览器不支持音频 / Audio is not supported");

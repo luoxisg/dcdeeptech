@@ -64,3 +64,15 @@ The optional microphone level test asks permission only on explicit activation. 
 Additional verification: `node scripts/dfplan/interview.test.mjs` checks state transitions, pause/interrupt races, draft preservation and complete three-turn flow. `check-mobile.mjs` also exercises WU-05 entry, focus-preserving edits, TXT download, reset confirmation, fake microphone permission cleanup and zero project writes at both mobile sizes.
 
 Live interview drafts and microphone state are cleared on sign-out, access loss or an account change, including when another view is active. Ordinary view switches retain drafts within the same session.
+
+## Interview beta: real local recording
+
+The existing **访谈测试版 / Interview beta** entry now defaults to real microphone recording in the same warm paper/green interface as DFplan. It is also linked from Overview and the scripted oral-history page. Nothing is recorded until the narrator-consent checkbox is checked and Start is clicked. HTTPS and a browser supporting `MediaRecorder` are required.
+
+Pause/resume excludes paused time; mute records silence; “Done” retains the current clip and advances the question. Extra recordings after the three prompts are supported. Finish opens a keyboard-aware bottom sheet with actual audio playback, individual downloads, optional editable notes and TXT export. MIME/extension detection follows the actual browser container (WebM, M4A, Ogg, AAC or a correctly labeled default). No invented transcript is shown. Automatic speech recognition is not invoked.
+
+Audio and notes stay in memory, never LocalStorage, Firestore or an automatic upload. Closing the overlay finalizes the current clip and releases the microphone, retaining clips for reopening on this page. Reset is confirmed. Reload/navigation warns about unrequested downloads; page exit, sign-out or account/access change clears audio and object URLs. A roughly 128 MiB session limit retains available audio and asks the user to download/reset rather than evicting earlier clips. This is not a durable archive: verify downloaded files and back them up appropriately.
+
+The previous Mock / configured WebSocket AI interface is preserved under **Other interview options**, with its original backend and configuration unchanged. Local recordings are not automatically passed into that service. No Firebase rule or production-data change is included.
+
+Checks: `node scripts/dfplan/recording.test.mjs`; the mobile browser gate uses Chromium’s synthetic audio input with the real MediaRecorder and decoder, checking non-silent playable bytes, pause/mute, exact download bytes, notes, keyboard focus, close/reopen, reset, denied/delayed permission and no project writes at 375x812 / 390x844. No human microphone was used in automated QA; physical Samsung/iOS behavior still needs device testing.

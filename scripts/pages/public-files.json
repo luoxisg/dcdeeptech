@@ -177,7 +177,11 @@
     "dfplan/src/adapters/voiceGateway.mjs",
     "dfplan/src/ui/voiceOverlay.mjs",
     "dfplan/styles/voice.css",
-    "dfplan/src/ui/voice-entry.mjs"
+    "dfplan/src/ui/voice-entry.mjs",
+    "dfplan/src/adapters/media-recorder.mjs",
+    "dfplan/src/application/recording-session.mjs",
+    "dfplan/src/domain/recording-model.mjs",
+    "dfplan/src/ui/voiceAssistantOverlay.mjs"
   ],
   "generated_files": {
     "DFplan/index.html": "scripts/pages/templates/dfplan-redirect.html"

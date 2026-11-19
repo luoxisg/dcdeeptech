@@ -1,5 +1,6 @@
 import { createSession, transition, interrupt, appendTurn, addEntity, setDraft } from "../domain/voiceSession.mjs";
 
+/** @param {{lang?:string,config?:any,notify?:(state:any)=>void,audioFactory?:()=>any,gatewayFactory?:(emit:any)=>any}} [options] */
 export function createVoiceController({ lang, config, notify, audioFactory, gatewayFactory } = {}) {
   let session = createSession(lang), gateway, audio, paused = false, muted = false, starting = false, error = "", closed = false;
   let lastVoice = 0, hasVoice = false, rms = 0, lastMeter = 0, audioPending = false, afterAudio = null, playbackEpoch = 0;
