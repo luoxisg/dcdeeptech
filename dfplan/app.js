@@ -8,7 +8,7 @@ import {
   renderDigitization,
   updateDigitizationEstimator,
   switchDigitizationCategory,
-} from "./digitization.mjs?v=20261119-unit-pricing";
+} from "./digitization.mjs?v=20261119-unit-pricing-2";
 import {
   normalizePersonName,
   personId,

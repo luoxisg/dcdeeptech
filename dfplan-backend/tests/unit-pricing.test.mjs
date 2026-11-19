@@ -44,6 +44,14 @@ test("published prices affect estimates while team size only changes time", () =
     team: 4,
   };
   assert.equal(estimateDigitization(q).budget, 46200);
+  assert.equal(estimateDigitization(q).unitQuoteCents, 4620000);
+  assert.equal(
+    estimateDigitization(
+      { pages: 1 },
+      { ...defaultUnitRates, setup: 0, minimum: 0 },
+    ).unitQuoteCents,
+    200,
+  );
   assert.ok(
     estimateDigitization(q, { ...defaultUnitRates, page: 800 }).budget > 46200,
   );

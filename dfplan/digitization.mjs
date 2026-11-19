@@ -71,6 +71,9 @@ export function estimateDigitization(input = {}, rates = defaultUnitRates) {
     team,
     audioMinutes,
     budget,
+    unitQuoteCents: empty
+      ? 0
+      : Math.round(Math.max(subtotalCents, rates.minimum)),
     days: empty ? 0 : Math.ceil(2 + (work * 4) / team),
     gb: pages * 0.06 + photos * 0.12 + audioMinutes * 0.03456 + video * 2,
     package: empty
@@ -171,7 +174,7 @@ function estimatorResults(r, { s }) {
     flagship: s("旗舰全案包", "Flagship"),
     expanded: s("全案扩展测算", "Extended scope"),
   }[r.package];
-  return `<div><span>${s("母版预计体量", "Estimated master files")}</span><strong>${r.gb >= 1000 ? (r.gb / 1000).toFixed(2) + " TB" : r.gb.toFixed(1) + " GB"}</strong><small>${s("三份副本需约 ", "Three copies need about ")}${((r.gb * 3) / 1000).toFixed(2)} TB${s("，另留工作余量", ", plus working headroom")}</small></div><div><span>${s("预计驻场工作日", "Estimated on-site workdays")}</span><strong>${r.days}<small>${s(" 天", " days")}</small></strong><small>${r.team}${s(" 人团队 · 含准备与质检假设", " people · includes setup and QA assumptions")}</small></div><div><span>${s("建议预算级别", "Indicative budget tier")}</span><strong>${money(r.budget)}${r.budget ? "+" : ""}</strong><small>${label} · ${s("待勘测确认", "subject to assessment")}</small></div>`;
+  return `<div><span>${s("母版预计体量", "Estimated master files")}</span><strong>${r.gb >= 1000 ? (r.gb / 1000).toFixed(2) + " TB" : r.gb.toFixed(1) + " GB"}</strong><small>${s("三份副本需约 ", "Three copies need about ")}${((r.gb * 3) / 1000).toFixed(2)} TB${s("，另留工作余量", ", plus working headroom")}</small></div><div><span>${s("预计驻场工作日", "Estimated on-site workdays")}</span><strong>${r.days}<small>${s(" 天", " days")}</small></strong><small>${r.team}${s(" 人团队 · 含准备与质检假设", " people · includes setup and QA assumptions")}</small></div><div><span>${s("按单价测算的金额", "Unit-rate estimate")}</span><strong>${money(r.unitQuoteCents / 100, 2)}</strong><small>${s("已计固定费与最低收费；待勘测确认。", "Includes setup and the minimum charge; subject to assessment.")}</small><small>${label} · ${s("参考套餐预算 ", "Reference package budget ")}${money(r.budget)}${r.budget ? "+" : ""}</small></div>`;
 }
 export function updateDigitizationEstimator(root, h) {
   const form = root.querySelector("#digitization-estimator");
