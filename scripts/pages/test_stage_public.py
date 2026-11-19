@@ -75,6 +75,15 @@ class MediaBoundaryTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 policy.safe_path(name)
 
+    def test_runtime_directory_entries_are_allowed_only_as_directories(self):
+        for name in ["dfplan/src", "dfplan/src/ui", "dfplan/src/ui/views", "dfplan/src/domain"]:
+            policy.safe_path(name, directory=True)
+            with self.assertRaises(ValueError):
+                policy.safe_path(name)
+        for name in ["dfplan/src/tests", "dfplan/src/.git", "other/src"]:
+            with self.assertRaises(ValueError):
+                policy.safe_path(name, directory=True)
+
     def test_rejects_case_conflicting_dfplan_source(self):
         self.entries["DFplan/index.html"] = ("100644", "fixture-blob")
         with self.assertRaisesRegex(ValueError, "source paths must use lowercase"):
