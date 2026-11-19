@@ -7,6 +7,7 @@ export const routes = [
   "board",
   "list",
   "timeline",
+  "interview",
   "facts",
   "digitization",
   "dashboard",

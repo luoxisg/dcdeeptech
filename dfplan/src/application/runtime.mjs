@@ -9,6 +9,7 @@ const routes = new Set([
   "dashboard",
   "people",
   "security",
+  "interview",
   "facts",
   "digitization",
 ]);

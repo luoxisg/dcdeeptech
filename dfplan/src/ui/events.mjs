@@ -125,6 +125,12 @@ export function installUIEvents() {
       });
       return;
     }
+    if (element.dataset.input === "interview-draft")
+      void commands.run("interview-edit", {
+        language: store.getState().language,
+        key: element.name,
+        value: element.value,
+      });
     if (element.dataset.input === "filter-query")
       commands.run("filter", { query: element.value });
     if (element.dataset.input === "capture-quantity")

@@ -1,5 +1,6 @@
 /** Browser-only QA dependency: PLAYWRIGHT_MODULE may point to an external installation. */
 import assert from "node:assert/strict";
+import { checkInterview } from "./interview-browser-check.mjs";
 import { createRequire } from "node:module";
 import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
@@ -140,6 +141,7 @@ try {
         "history",
         "dashboard",
         "people",
+        "interview",
         "facts",
         "security",
         "digitization",
@@ -217,6 +219,7 @@ try {
       await dimensions(54);
       await page.locator('dialog [data-cmd="close"]').first().click();
     }
+    await checkInterview(page);
     await navigate("facts");
     await page.locator('[data-cmd="assertion"]').first().click();
     await page

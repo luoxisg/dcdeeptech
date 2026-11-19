@@ -16,7 +16,7 @@ export function pageTitle(title, note = "") {
     ${note ? html`<p>${note}</p>` : ""}
   </header>`;
 }
-export function modeNotice() {
+export function modeNotice(compact = false) {
   const state = store.getState();
   return html`<aside
     class="notice ${state.mode === "demo" ? "notice-demo" : ""}"
@@ -25,9 +25,13 @@ export function modeNotice() {
     <strong
       >${state.mode === "demo" ? t("demo") : state.ready ? t("formal") : t("signedOut")}</strong
     >
-    <p>
-      ${state.mode === "demo" ? s("修改只留在此浏览器，不读取或写入正式家族资料。", "Edits stay in this browser; live family records are not read or changed.") : state.ready ? s("这里的保存操作会更新获授权的共享项目。", "Saving here updates the authorized shared project.") : s("请使用获授权的登录或专属邀请。", "Use authorized sign-in or your personal invitation.")}
-    </p>
+    ${
+      compact
+        ? ""
+        : html`<p>
+            ${state.mode === "demo" ? s("修改只留在此浏览器，不读取或写入正式家族资料。", "Edits stay in this browser; live family records are not read or changed.") : state.ready ? s("这里的保存操作会更新获授权的共享项目。", "Saving here updates the authorized shared project.") : s("请使用获授权的登录或专属邀请。", "Use authorized sign-in or your personal invitation.")}
+          </p>`
+    }
   </aside>`;
 }
 export function taskCard(task) {
@@ -57,6 +61,7 @@ export function taskCard(task) {
     <button class="btn btn-primary full" data-cmd="editor" data-id="${task.id}">
       ${t("more")}${icon("arrow")}
     </button>
+    ${task.id === "WU-05" ? html`<button class="btn full" data-cmd="navigate" data-view="interview">${s("口述访谈体验", "Oral-history sample")}</button>` : ""}
   </article>`;
 }
 export function formalAcceptance() {

@@ -50,3 +50,13 @@ node scripts/dfplan/check-mobile.mjs
 TypeScript and Playwright are **QA-only tools**, not app dependencies. The browser check accepts `PLAYWRIGHT_MODULE` (external Playwright installation) and `CHROMIUM_PATH` (browser executable). It tests both 375x812 and 390x844, EN/ZH, 48/54px targets, overflow, scroll memory, preserved input focus, simulated visualViewport keyboard resizing, facts, exports and demo/live isolation. Keyboard checks are automated simulation; they do not certify a physical Samsung keyboard/browser combination.
 
 The Pages workflow stages only explicit files in `scripts/pages/public-files.json`, audits content and hashes, and preserves all other sites. Backend scripts only update their source-file paths for this reorganization; this frontend release does **not** deploy Firebase rules or initialize records.
+
+## Oral-history module / 口述访谈
+
+Open **Oral history / 口述访谈** from Overview, Menu (before Fact Verification), or the WU-05 task card. Direct link: `?demo=1#interview`. The original uploaded prototype is adapted into native domain, application, browser-adapter, lazy-view and review-dialog modules; scoped CSS is isolated in `styles/interview.css`. No iframe, new framework or runtime dependency.
+
+Three bilingual scripted turns support interruption, pausing, 3.5-second pause-tolerance demonstration, deduplicated unverified tags, original transcript review and editable drafts. Edited EN/ZH drafts stay in memory across view switches and are not overwritten by later sample turns. Restart requires confirmation. Export/copy includes original sample wording and verification items; no automatic AI, recording, transcription, archive write, task update or fact-confirmation occurs. Export before reloading.
+
+The optional microphone level test asks permission only on explicit activation. It uses local audio amplitude without recording or uploading. Leaving the module stops all tracks and animation; delayed permission grants after navigation are stopped immediately.
+
+Additional verification: `node scripts/dfplan/interview.test.mjs` checks state transitions, pause/interrupt races, draft preservation and complete three-turn flow. `check-mobile.mjs` also exercises WU-05 entry, focus-preserving edits, TXT download, reset confirmation, fake microphone permission cleanup and zero project writes at both mobile sizes.
