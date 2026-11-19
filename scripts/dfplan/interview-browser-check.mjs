@@ -127,6 +127,33 @@ export async function checkInterview(page) {
       .querySelector("[data-interview-primary]")
       ?.textContent.includes("开始示例"),
   );
+  await navigate("overview");
+  const cleared = await page.evaluate(async () => {
+    const { store } = await import("/dfplan/src/application/store.mjs");
+    const { interviewSession } =
+      await import("/dfplan/src/application/interview-session.mjs");
+    const snapshot = store.getState();
+    interviewSession.edit("zh", "body", "PRIVATE_QA_NOTE");
+    store.update({
+      mode: "formal",
+      ready: true,
+      session: { phase: "ready", user: { uid: "QA_FAKE_ID" } },
+    });
+    store.update({
+      ready: false,
+      session: { phase: "signed-out" },
+      dialog: null,
+    });
+    const result = interviewSession.draft("zh").body;
+    store.update(snapshot);
+    return result;
+  });
+  assert.equal(
+    cleared,
+    "",
+    "Signing out on another view must clear interview drafts.",
+  );
+  await page.locator(".interview-entry").waitFor();
   console.log(
     "PASS: interview entry, interruption, pause, editable draft, TXT export, XSS escaping, reset confirmation, pending microphone cleanup and project isolation.",
   );
