@@ -1,8 +1,14 @@
 import {
+  canEditUnitPricing,
+  centsFromSGD,
+  unitRateKeys,
+  validateUnitRates,
+} from "./unit-pricing.mjs?v=20261119-unit-pricing";
+import {
   renderDigitization,
   updateDigitizationEstimator,
   switchDigitizationCategory,
-} from "./digitization.mjs?v=20261118-capture";
+} from "./digitization.mjs?v=20261119-unit-pricing";
 import {
   normalizePersonName,
   personId,
@@ -24,7 +30,7 @@ import {
 import {
   cloudEnabled as backendEnabled,
   connectBackend,
-} from "./backend-client.js?v=20261117-stewardship";
+} from "./backend-client.js?v=20261119-unit-pricing";
 import {
   cloudError,
   cloudGate,
@@ -576,8 +582,56 @@ function render() {
 function drilldownNote() {
   return `<div class="dashboard-drilldown-note"><span>${s("正在查看仪表盘选中的任务", "Showing the actions selected in the dashboard")}</span><button class="module-button" data-action="clear">${s("显示全部任务", "Show all actions")}</button></div>`;
 }
+let pricingState = { ready: false, loading: false, record: null, error: "" },
+  pricingGeneration = 0;
+async function refreshPricing() {
+  if (publicDemo || !cloudReady() || !cloud?.getPricing) return;
+  const generation = ++pricingGeneration,
+    uid = cloudSession.user?.uid;
+  pricingState = { ready: false, loading: true, record: null, error: "" };
+  try {
+    const record = await cloud.getPricing();
+    if (
+      generation !== pricingGeneration ||
+      !cloudReady() ||
+      cloudSession.user?.uid !== uid
+    )
+      return;
+    pricingState = { ready: true, loading: false, record, error: "" };
+  } catch (error) {
+    if (generation !== pricingGeneration || !cloudReady()) return;
+    pricingState = {
+      ready: false,
+      loading: false,
+      record: null,
+      error: s(
+        "无法读取共享单价。当前仅展示参考拆分；请检查后台规则或网络后刷新。",
+        "Shared rates could not be read. Only reference rates are shown; check backend rules or the connection and refresh.",
+      ),
+    };
+  }
+  if (view === "digitization") render();
+}
 function digitizationView() {
-  return renderDigitization({ s, esc, icon });
+  if (
+    !publicDemo &&
+    cloudReady() &&
+    cloud?.getPricing &&
+    !pricingState.ready &&
+    !pricingState.loading &&
+    !pricingState.error
+  ) {
+    pricingState.loading = true;
+    queueMicrotask(refreshPricing);
+  }
+  return renderDigitization(
+    { s, esc, icon },
+    {
+      ...pricingState,
+      demo: publicDemo,
+      canEdit: canEditUnitPricing(cloudSession, publicDemo),
+    },
+  );
 }
 function securityView() {
   return securityGuide(
@@ -845,6 +899,12 @@ function openStart() {
 document.addEventListener("click", async (e) => {
   const btn = e.target.closest("button");
   if (!btn) return;
+  if (btn.dataset.action === "pricing-refresh") {
+    if (pricingState.busy) return;
+    pricingState.error = "";
+    await refreshPricing();
+    return;
+  }
   if (btn.dataset.captureTab !== undefined) {
     switchDigitizationCategory(btn, { s, esc, icon });
     return;
@@ -1104,6 +1164,22 @@ function historyReplace(url) {
   window.history.replaceState(null, "", url);
 }
 document.addEventListener("input", (e) => {
+  if (
+    e.target.closest("#unit-pricing-form") &&
+    canEditUnitPricing(cloudSession, publicDemo)
+  ) {
+    pricingState.reason =
+      e.target.form.elements.namedItem("reason")?.value || "";
+    try {
+      pricingState.draft = Object.fromEntries(
+        unitRateKeys.map((k) => [
+          k,
+          centsFromSGD(e.target.form.elements.namedItem(k).value),
+        ]),
+      );
+    } catch {}
+    return;
+  }
   if (e.target.closest("#digitization-estimator")) {
     updateDigitizationEstimator(document, { s });
     return;
@@ -1150,6 +1226,63 @@ document.addEventListener("change", (e) => {
   }
 });
 document.addEventListener("submit", async (e) => {
+  if (e.target.id === "unit-pricing-form") {
+    e.preventDefault();
+    if (
+      !canEditUnitPricing(cloudSession, publicDemo) ||
+      !pricingState.ready ||
+      pricingState.busy
+    )
+      return;
+    const generation = pricingGeneration,
+      data = new FormData(e.target);
+    try {
+      const rates = validateUnitRates(
+        Object.fromEntries(
+          unitRateKeys.map((k) => [k, centsFromSGD(data.get(k))]),
+        ),
+      );
+      pricingState.busy = true;
+      pricingState.draft = rates;
+      pricingState.reason = String(data.get("reason") || "");
+      render();
+      const record = await cloud.savePricing(
+        rates,
+        pricingState.record?.revision || 0,
+        pricingState.reason,
+      );
+      if (
+        generation !== pricingGeneration ||
+        !canEditUnitPricing(cloudSession, publicDemo)
+      )
+        return;
+      pricingState = { ready: true, loading: false, record, error: "" };
+      toast(
+        s(
+          "单价已保存到后台并生成版本记录。",
+          "Shared rates saved with a new version record.",
+        ),
+      );
+    } catch (error) {
+      if (generation !== pricingGeneration) return;
+      pricingState.error =
+        error.code === "dfplan/pricing-conflict"
+          ? s(
+              "其他管理员已改价，请刷新后台单价后重新核对。",
+              "Another administrator changed rates. Refresh and review before saving.",
+            )
+          : s(
+              "单价未保存。请检查金额、修改原因、管理员权限和后台规则。",
+              "Rates were not saved. Check amounts, reason, administrator access and backend rules.",
+            );
+    } finally {
+      if (generation === pricingGeneration) {
+        pricingState.busy = false;
+        render();
+      }
+    }
+    return;
+  }
   if (e.target.id === "digitization-estimator") {
     e.preventDefault();
     return;
@@ -1430,6 +1563,15 @@ async function startCloud() {
     cloud = await connectBackend(
       (session) => {
         cloudSession = session;
+        if (session.phase !== "ready") {
+          ++pricingGeneration;
+          pricingState = {
+            ready: false,
+            loading: false,
+            record: null,
+            error: "",
+          };
+        }
         if (session.phase !== "ready") {
           people = [];
           peopleReady = false;

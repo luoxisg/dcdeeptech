@@ -989,3 +989,39 @@ test("new assignments require an active directory person, while removed people's
     }),
   );
 });
+
+const pricingPath=projectPath+'/settings/digitizationPricing';
+const priceRates={page:200,photo:800,audioMinute:200,videoMinute:1000,setup:120000,minimum:800000};
+function priceCommit(db,uid='owner',revision=1,overrides={},audit=true) {
+ const batch=writeBatch(db),record={currency:'SGD',rates:{...priceRates},revision,reason:'Reviewed rate change',updatedAt:serverTimestamp(),updatedBy:uid,...overrides};
+ batch.set(doc(db,pricingPath),record);
+ if(audit)batch.set(doc(db,pricingPath+'/versions/'+revision),record);
+ return batch.commit();
+}
+test('only enabled Google owner/admin may publish SGD pricing with immutable version history',async()=>{
+ await assertSucceeds(priceCommit(client()));
+ await assertSucceeds(priceCommit(client('admin',adminEmail),'admin',2,{rates:{...priceRates,page:300}}));
+ await assertFails(deleteDoc(doc(client(),pricingPath)));
+ await assertFails(updateDoc(doc(client(),pricingPath+'/versions/1'),{reason:'Rewrite'}));
+ await assertFails(deleteDoc(doc(client(),pricingPath+'/versions/1')));
+ assert.equal((await getDoc(doc(client(),projectPath))).data().revision,0);
+});
+test('anonymous/demo, unapproved and disabled Google accounts cannot read or edit live pricing',async()=>{
+ await assertSucceeds(priceCommit(client()));
+ for(const db of [env.unauthenticatedContext().firestore(),client('outsider','other@example.com'),client('owner',ownerEmail,{email_verified:false})]){
+  await assertFails(getDoc(doc(db,pricingPath)));await assertFails(priceCommit(db,'outsider',2));
+ }
+ await env.withSecurityRulesDisabled(async c=>updateDoc(doc(c.firestore(),'dfplanAdmins/'+adminEmail),{active:false}));
+ await assertFails(priceCommit(client('admin',adminEmail),'admin',2));
+});
+test('Patrick and personnel-enabled Patrick are read-only for prices and pricing history',async()=>{
+ await assertSucceeds(priceCommit(client()));await issueInvite({canManagePeople:true});const db=anonymous();await assertSucceeds(redeem(db));
+ await assertSucceeds(getDoc(doc(db,pricingPath)));await assertSucceeds(getDoc(doc(db,pricingPath+'/versions/1')));
+ await assertFails(priceCommit(db,'patrick-device',2));await assertFails(deleteDoc(doc(db,pricingPath)));
+});
+test('pricing rejects missing audit, stale revisions, invalid units/currency and arbitrary fields',async()=>{
+ await assertFails(priceCommit(client(),'owner',1,{},false));
+ for(const change of [{currency:'CNY'},{rates:{...priceRates,page:2.5}},{rates:{...priceRates,page:-1}},{rates:{...priceRates,page:100000001}},{rates:{...priceRates,secret:1}},{reason:''},{unexpected:true}])await assertFails(priceCommit(client(),'owner',1,change));
+ await assertSucceeds(priceCommit(client()));await assertFails(priceCommit(client(),'owner',1));await assertFails(priceCommit(client(),'owner',3));
+ await assertFails(setDoc(doc(client(),pricingPath+'/versions/2'),{currency:'SGD',rates:priceRates,revision:2,reason:'Orphan',updatedAt:serverTimestamp(),updatedBy:'owner'}));
+});

@@ -1106,3 +1106,66 @@ body.module-view .content {
     width: 100%;
   }
 }
+
+.unit-price-list {
+  display: grid;
+  margin: 24px 0;
+}
+.unit-price-list > div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(160px, 0.6fr);
+  align-items: center;
+  gap: 18px;
+  padding: 16px 0;
+  border-top: 1px solid #d8e0d2;
+}
+.unit-price-list dt small {
+  display: block;
+  margin-top: 6px;
+}
+.unit-price-list dd {
+  margin: 0;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.unit-price-list dd label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.unit-pricing input {
+  min-height: 56px;
+  width: 100%;
+  min-width: 0;
+  font: inherit;
+  padding: 10px;
+  border: 1px solid #96a88b;
+  border-radius: 10px;
+  background: white;
+  color: #244634;
+}
+.unit-price-reason {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+.unit-pricing form > button {
+  min-height: 56px;
+}
+.unit-pricing > button {
+  margin-top: 18px;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+@media (max-width: 600px) {
+  .unit-price-list > div {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+}

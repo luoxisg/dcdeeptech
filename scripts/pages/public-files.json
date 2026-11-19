@@ -112,7 +112,8 @@
     "dfplan/dashboard.mjs",
     "dfplan/modules.css",
     "dfplan/stewardship.mjs",
-    "dfplan/digitization.mjs"
+    "dfplan/digitization.mjs",
+    "dfplan/unit-pricing.mjs"
   ],
   "generated_files": {
     "DFplan/index.html": "scripts/pages/templates/dfplan-redirect.html"

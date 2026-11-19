@@ -1,3 +1,8 @@
+import {
+  defaultUnitRates,
+  unitPriceSubtotal,
+  renderUnitPricing,
+} from "./unit-pricing.mjs?v=20261119-unit-pricing";
 // Internal planning assumptions supplied for the Phase 1 reference case.
 export const digitizationReference = Object.freeze({
   quote: 46200,
@@ -27,7 +32,7 @@ const bounded = (value, max, fallback = 0) =>
   Number.isFinite(Number(value))
     ? Math.min(max, Math.max(0, Number(value)))
     : fallback;
-export function estimateDigitization(input = {}) {
+export function estimateDigitization(input = {}, rates = defaultUnitRates) {
   const pages = bounded(input.pages, 15000),
     photos = bounded(input.photos, 5000),
     tapes = bounded(input.tapes, 300);
@@ -40,15 +45,14 @@ export function estimateDigitization(input = {}) {
     photos / 375 +
     audioMinutes / (3 * 8 * 60 * 0.8) +
     video / (8 * 60 * 0.8);
-  const referenceWork =
-    5000 / 1250 +
-    1500 / 375 +
-    (150 * 60) / (3 * 8 * 60 * 0.8) +
-    500 / (8 * 60 * 0.8);
   const empty = pages + photos + tapes + video === 0;
+  const subtotalCents = unitPriceSubtotal(
+    { pages, photos, audioMinutes, video },
+    rates,
+  );
   const scaledBudget = empty
     ? 0
-    : Math.ceil((46200 * work) / referenceWork / 100) * 100;
+    : Math.ceil(Math.max(subtotalCents, rates.minimum) / 10000) * 100;
   const budget = empty
     ? 0
     : scaledBudget <= 8000
@@ -80,6 +84,7 @@ export function estimateDigitization(input = {}) {
             : "expanded",
   };
 }
+let activeUnitRates = defaultUnitRates;
 let estimatorDraft = {
   pages: 5000,
   photos: 1500,
@@ -174,13 +179,13 @@ export function updateDigitizationEstimator(root, h) {
   const input = Object.fromEntries(
     [...form.elements].filter((el) => el.name).map((el) => [el.name, el.value]),
   );
-  estimatorDraft = estimateDigitization(input);
+  estimatorDraft = estimateDigitization(input, activeUnitRates);
   for (const output of form.querySelectorAll("output[data-for]"))
     output.textContent = Number(
       form.elements.namedItem(output.dataset.for).value,
     ).toLocaleString("en-SG");
   root.querySelector("#digitization-results").innerHTML = estimatorResults(
-    estimateDigitization(input),
+    estimateDigitization(input, activeUnitRates),
     h,
   );
 }
@@ -195,7 +200,8 @@ export function switchDigitizationCategory(button, h) {
     h,
   );
 }
-export function renderDigitization(h) {
+export function renderDigitization(h, pricing = {}) {
+  activeUnitRates = pricing.record?.rates || defaultUnitRates;
   const { s, icon } = h,
     e = digitizationEconomics();
   const steps = [
@@ -242,7 +248,7 @@ export function renderDigitization(h) {
     )
     .join(
       "",
-    )}</dl><p>${s("直接成本口径毛利约 ", "Indicative gross margin on direct costs: ")}${(e.margin * 100).toFixed(1)}% · ${s("未计销售、管理、税务及额外修复成本，非净利。", "before sales, administration, tax and additional restoration costs; not net profit.")}</p><details><summary>${s("换算与报价口径", "Conversion and pricing basis")}</summary><p>${s("沿用所提供的人民币预算，以参考报价隐含汇率换算：1 新币 = ", "Original budget costs are converted at the supplied quote’s implied rate: SGD 1 = CNY ")}${e.rate.toFixed(4)}${s(" 人民币。此为预算假设，不是实时汇率。报价的 GST、特殊修复、保险条款和二阶段服务范围须另行确认。", ". This is a planning assumption, not a live exchange rate. Confirm GST, specialist restoration, insurance terms and Phase 2 scope separately.")}</p></details></div></section><section class="capture-section"><h2>${s("四类介质，各有保护工艺", "Four media types, tailored handling")}</h2><div class="capture-tabs" role="group" aria-label="${s("采集介质", "Capture media")}">${categories.map((c, i) => `<button type="button" data-capture-tab="${i}" aria-controls="capture-category" aria-pressed="${i === 0}">${icon(["tree", "photo", "mic", "play"][i])}${s(c[0], c[1])}</button>`).join("")}</div><div id="capture-category">${digitizationCategory(0, h)}</div></section><section id="capture-calculator" class="capture-section"><h2>${s("数量、工期与预算测算", "Scope, time & budget estimator")}</h2><p>${s("调节数量即可比较方案。结果用于立项讨论，最终以介质勘测、小样测试和书面报价为准。", "Adjust quantities to compare plans. Results support planning discussions; final scope and pricing follow an assessment, sample test and written quote.")}</p><form id="digitization-estimator">${slider("pages", "文档 / 古籍页数", "Document / book pages", 15000, estimatorDraft.pages, 100)}${slider("photos", "照片 / 胶片数量", "Photos / film frames", 5000, estimatorDraft.photos, 50)}${slider("tapes", "录音磁带盘数", "Audio tapes", 300, estimatorDraft.tapes, 1)}<div class="capture-extra"><label>${s("额外录像时长（分钟）", "Additional video minutes")}<input name="video" type="number" min="0" max="10000" value="${estimatorDraft.video}"></label><label>${s("每盘录音带平均分钟", "Average minutes per audio tape")}<input name="tapeMinutes" type="number" min="1" max="240" value="${estimatorDraft.tapeMinutes}"></label><label>${s("驻场团队", "On-site team")}<select name="team"><option value="4" ${estimatorDraft.team === 4 ? "selected" : ""}>${s("四人", "Four people")}</option><option value="2" ${estimatorDraft.team === 2 ? "selected" : ""}>${s("双人", "Two people")}</option></select></label></div></form><div id="digitization-results" class="capture-results" role="status" aria-live="polite">${estimatorResults(estimateDigitization(estimatorDraft), h)}</div><details class="capture-assumptions"><summary>${s("查看产能、体量与套餐假设", "Capacity, file size & package assumptions")}</summary><p>${s("四人分阶段轮转：文档 1,250 页/团队日、照片 375 张/团队日；录音按三工位并行、每天 8 小时、80% 利用率，录像按一工位；另计两天准备和质检。双人按处理阶段用时加倍估算。脆化、霉损、特殊制式、逐件修复会改变工期。", "Four-person phased workflow: 1,250 pages or 375 photos per team-day; three parallel audio stations and one video station, with eight-hour days at 80% utilization, plus two setup/QA days. A two-person team doubles processing time in this model. Fragility, mould, formats and item-level restoration change the schedule.")}</p><p>${s("按每页 60 MB、每张照片 120 MB、立体声 24-bit/96 kHz WAV 每分钟 34.56 MB、录像每分钟 2 GB 估算。TB 使用十进制；体量随规格和实际文件变化。三份副本另需约三倍容量。", "Assumes 60 MB/page, 120 MB/photo, 34.56 MB/minute for stereo 24-bit/96 kHz WAV and 2 GB/video minute. TB is decimal; actual size depends on specifications and files. Three copies require about three times the master-file capacity.")}</p><p>${s("基础敏捷包 S$8,000+；标准典藏包 S$25,000+；旗舰全案包 S$46,200+。按参考全案的处理工作量比例匹配套餐最低预算；两人团队不自动降低总工作量成本。超参考数量按扩展预算讨论。", "Proposed tiers: Basic S$8,000+, Standard S$25,000+, Flagship S$46,200+. The estimator matches the reference workload ratio to a package minimum. A smaller team does not automatically reduce total labour cost. Larger scope requires an extended budget.")}</p></details></section><section id="capture-sop" class="capture-section"><h2>${s("四步驻场作业流程", "Four-step on-site workflow")}</h2><div class="capture-sop">${steps.map(([zh, en, desc, descEn], i) => `<details ${i === 0 ? "open" : ""}><summary><b>0${i + 1}</b>${s(zh, en)}</summary><p>${s(desc, descEn)}</p></details>`).join("")}</div></section><section class="capture-section"><h2>${s("常见问题与交付边界", "Questions & delivery boundaries")}</h2><div class="capture-faq">${[
+    )}</dl><p>${s("直接成本口径毛利约 ", "Indicative gross margin on direct costs: ")}${(e.margin * 100).toFixed(1)}% · ${s("未计销售、管理、税务及额外修复成本，非净利。", "before sales, administration, tax and additional restoration costs; not net profit.")}</p><details><summary>${s("换算与报价口径", "Conversion and pricing basis")}</summary><p>${s("沿用所提供的人民币预算，以参考报价隐含汇率换算：1 新币 = ", "Original budget costs are converted at the supplied quote’s implied rate: SGD 1 = CNY ")}${e.rate.toFixed(4)}${s(" 人民币。此为预算假设，不是实时汇率。报价的 GST、特殊修复、保险条款和二阶段服务范围须另行确认。", ". This is a planning assumption, not a live exchange rate. Confirm GST, specialist restoration, insurance terms and Phase 2 scope separately.")}</p></details></div></section><section class="capture-section"><h2>${s("四类介质，各有保护工艺", "Four media types, tailored handling")}</h2><div class="capture-tabs" role="group" aria-label="${s("采集介质", "Capture media")}">${categories.map((c, i) => `<button type="button" data-capture-tab="${i}" aria-controls="capture-category" aria-pressed="${i === 0}">${icon(["tree", "photo", "mic", "play"][i])}${s(c[0], c[1])}</button>`).join("")}</div><div id="capture-category">${digitizationCategory(0, h)}</div></section>${renderUnitPricing(h, pricing)}<section id="capture-calculator" class="capture-section"><h2>${s("数量、工期与预算测算", "Scope, time & budget estimator")}</h2><p>${s("调节数量即可比较方案。结果用于立项讨论，最终以介质勘测、小样测试和书面报价为准。", "Adjust quantities to compare plans. Results support planning discussions; final scope and pricing follow an assessment, sample test and written quote.")}</p><form id="digitization-estimator">${slider("pages", "文档 / 古籍页数", "Document / book pages", 15000, estimatorDraft.pages, 100)}${slider("photos", "照片 / 胶片数量", "Photos / film frames", 5000, estimatorDraft.photos, 50)}${slider("tapes", "录音磁带盘数", "Audio tapes", 300, estimatorDraft.tapes, 1)}<div class="capture-extra"><label>${s("额外录像时长（分钟）", "Additional video minutes")}<input name="video" type="number" min="0" max="10000" value="${estimatorDraft.video}"></label><label>${s("每盘录音带平均分钟", "Average minutes per audio tape")}<input name="tapeMinutes" type="number" min="1" max="240" value="${estimatorDraft.tapeMinutes}"></label><label>${s("驻场团队", "On-site team")}<select name="team"><option value="4" ${estimatorDraft.team === 4 ? "selected" : ""}>${s("四人", "Four people")}</option><option value="2" ${estimatorDraft.team === 2 ? "selected" : ""}>${s("双人", "Two people")}</option></select></label></div></form><div id="digitization-results" class="capture-results" role="status" aria-live="polite">${estimatorResults(estimateDigitization(estimatorDraft, activeUnitRates), h)}</div><details class="capture-assumptions"><summary>${s("查看产能、体量与套餐假设", "Capacity, file size & package assumptions")}</summary><p>${s("四人分阶段轮转：文档 1,250 页/团队日、照片 375 张/团队日；录音按三工位并行、每天 8 小时、80% 利用率，录像按一工位；另计两天准备和质检。双人按处理阶段用时加倍估算。脆化、霉损、特殊制式、逐件修复会改变工期。", "Four-person phased workflow: 1,250 pages or 375 photos per team-day; three parallel audio stations and one video station, with eight-hour days at 80% utilization, plus two setup/QA days. A two-person team doubles processing time in this model. Fragility, mould, formats and item-level restoration change the schedule.")}</p><p>${s("按每页 60 MB、每张照片 120 MB、立体声 24-bit/96 kHz WAV 每分钟 34.56 MB、录像每分钟 2 GB 估算。TB 使用十进制；体量随规格和实际文件变化。三份副本另需约三倍容量。", "Assumes 60 MB/page, 120 MB/photo, 34.56 MB/minute for stereo 24-bit/96 kHz WAV and 2 GB/video minute. TB is decimal; actual size depends on specifications and files. Three copies require about three times the master-file capacity.")}</p><p>${s("基础敏捷包 S$8,000+；标准典藏包 S$25,000+；旗舰全案包 S$46,200+。按当前单价计算小计和最低收费，再匹配套餐预算；两人团队不自动降低总工作量成本。超参考数量按扩展预算讨论。", "Proposed tiers: Basic S$8,000+, Standard S$25,000+, Flagship S$46,200+. The estimator applies current unit rates and the minimum project charge, then matches a package budget. A smaller team does not automatically reduce total labour cost. Larger scope requires an extended budget.")}</p></details></section><section id="capture-sop" class="capture-section"><h2>${s("四步驻场作业流程", "Four-step on-site workflow")}</h2><div class="capture-sop">${steps.map(([zh, en, desc, descEn], i) => `<details ${i === 0 ? "open" : ""}><summary><b>0${i + 1}</b>${s(zh, en)}</summary><p>${s(desc, descEn)}</p></details>`).join("")}</div></section><section class="capture-section"><h2>${s("常见问题与交付边界", "Questions & delivery boundaries")}</h2><div class="capture-faq">${[
     [
       "原件一定不会损坏吗？",
       "Can damage be ruled out?",

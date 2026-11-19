@@ -192,6 +192,7 @@ async function harness({
     "data.js",
     "model.mjs",
     "stewardship.mjs",
+    "unit-pricing.mjs?v=20261119-unit-pricing",
     "people-model.mjs?v=20261116-people-directory",
   ])
     source = source.replace(
@@ -508,4 +509,24 @@ test("both Google owner and admin retain all personnel actions and matching page
     await h.client.setPersonActive(id, true);
     assert.equal(h.records.get(project + "/people/" + id).active, true);
   }
+});
+
+test('Google administrators publish pricing atomically with revision history; stale edits are rejected',async()=>{
+ const h=await harness({user:{uid:'owner',email:'owner@example.com',emailVerified:true,isAnonymous:false,providerData:[{providerId:'google.com'}]}});
+ const {defaultUnitRates}=await import('../../dfplan/unit-pricing.mjs');
+ const beforeTasks=JSON.stringify([...h.records].filter(([p])=>p.startsWith(project+'/tasks/')||p.startsWith(project+'/history/')));
+ assert.equal(await h.client.getPricing(),null);
+ const record=await h.client.savePricing({...defaultUnitRates},0,'Initial reviewed tariff');
+ assert.equal(record.revision,1);assert.equal(record.rates.page,200);
+ assert.ok(h.records.has(project+'/settings/digitizationPricing/versions/1'));
+ await assert.rejects(h.client.savePricing({...defaultUnitRates,page:300},0,'Stale edit'),{code:'dfplan/pricing-conflict'});
+ assert.equal(JSON.stringify([...h.records].filter(([p])=>p.startsWith(project+'/tasks/')||p.startsWith(project+'/history/'))),beforeTasks);
+});
+test('Patrick can read published pricing but cannot publish it even with personnel permission',async()=>{
+ const h=await harness({hash:'#invite='+token,canManagePeople:true});await h.client.loginWithLink();await tick();
+ const {defaultUnitRates}=await import('../../dfplan/unit-pricing.mjs');
+ h.records.set(project+'/settings/digitizationPricing',{currency:'SGD',rates:{...defaultUnitRates},revision:1});
+ assert.equal((await h.client.getPricing()).revision,1);
+ await assert.rejects(h.client.savePricing({...defaultUnitRates},1,'Forbidden'),{code:'dfplan/not-admin'});
+ await h.client.logout();await tick();await assert.rejects(h.client.getPricing(),{code:'dfplan/not-admin'});
 });

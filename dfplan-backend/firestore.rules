@@ -190,6 +190,34 @@ service cloud.firestore {
         && request.resource.data.keys().hasOnly(['startDate','revision','updatedAt','updatedBy'])
         && validDate(request.resource.data.startDate)
         && consistentCommit(project,request.resource.data.revision);
+      // Prices are independent of task records and restricted to Google admins.
+      function validPrice(p) {
+        return p.keys().hasOnly(['currency','rates','revision','reason','updatedAt','updatedBy'])
+          && p.currency == 'SGD' && p.revision is int && p.revision > 0
+          && p.reason is string && p.reason.size() > 0 && p.reason.size() <= 500
+          && p.updatedAt == request.time && p.updatedBy == request.auth.uid
+          && p.rates is map && p.rates.keys().hasOnly(['page','photo','audioMinute','videoMinute','setup','minimum'])
+          && validRate(p.rates.page) && validRate(p.rates.photo) && validRate(p.rates.audioMinute)
+          && validRate(p.rates.videoMinute) && validRate(p.rates.setup) && validRate(p.rates.minimum);
+      }
+      function validRate(value) { return value is int && value >= 0 && value <= 100000000; }
+      match /settings/digitizationPricing {
+        allow get: if access(project) && project == 'wu-family';
+        allow create,update: if admin() && project == 'wu-family' && validPrice(request.resource.data)
+          && request.resource.data.revision == (resource == null ? 1 : resource.data.revision + 1)
+          && getAfter(/databases/$(database)/documents/dfplanProjects/$(project)/settings/digitizationPricing/versions/$(string(request.resource.data.revision))).data == request.resource.data;
+        allow delete: if false;
+        match /versions/{revision} {
+          allow read: if access(project) && project == 'wu-family';
+          allow create: if admin() && project == 'wu-family' && validPrice(request.resource.data)
+            && revision == string(request.resource.data.revision)
+            && getAfter(/databases/$(database)/documents/dfplanProjects/$(project)/settings/digitizationPricing).data == request.resource.data
+            && request.resource.data.revision == (exists(/databases/$(database)/documents/dfplanProjects/$(project)/settings/digitizationPricing)
+              ? get(/databases/$(database)/documents/dfplanProjects/$(project)/settings/digitizationPricing).data.revision + 1 : 1);
+          allow update,delete: if false;
+        }
+      }
+      // END UNIT PRICING
       match /people/{person} {
         allow read: if access(project);
         allow create: if (admin() || (anonymousUser() && peopleManager(project))) && project == 'wu-family'

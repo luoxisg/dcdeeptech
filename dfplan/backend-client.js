@@ -1,3 +1,4 @@
+import { validateUnitRates } from "./unit-pricing.mjs?v=20261119-unit-pricing";
 import {
   normalizePersonName,
   personId,
@@ -459,6 +460,64 @@ export async function connectBackend(
     onError,
   );
   return {
+    async getPricing() {
+      const myEpoch = epoch;
+      if (!member || !auth.currentUser) throw codeError("dfplan/not-admin");
+      const row = await dbSdk.getDocFromServer(
+        dbSdk.doc(projectRef, "settings", "digitizationPricing"),
+      );
+      if (epoch !== myEpoch || !member) throw codeError("dfplan/not-admin");
+      if (!row.exists()) return null;
+      const data = row.data();
+      validateUnitRates(data.rates);
+      if (
+        data.currency !== "SGD" ||
+        !Number.isSafeInteger(data.revision) ||
+        data.revision < 1
+      )
+        throw codeError("dfplan/pricing-format");
+      return { rates: data.rates, revision: data.revision };
+    },
+    async savePricing(rates, expectedRevision, reason) {
+      validateUnitRates(rates);
+      if (
+        !member ||
+        !["owner", "admin"].includes(member.role) ||
+        !auth.currentUser ||
+        auth.currentUser.isAnonymous
+      )
+        throw codeError("dfplan/not-admin");
+      if (
+        !Number.isSafeInteger(expectedRevision) ||
+        expectedRevision < 0 ||
+        typeof reason !== "string" ||
+        !reason.trim() ||
+        reason.length > 500
+      )
+        throw codeError("dfplan/pricing-format");
+      const myEpoch = epoch,
+        user = auth.currentUser,
+        ref = dbSdk.doc(projectRef, "settings", "digitizationPricing");
+      await dbSdk.runTransaction(db, async (tx) => {
+        const row = await tx.get(ref);
+        if (myEpoch !== epoch || auth.currentUser?.uid !== user.uid || !member)
+          throw codeError("dfplan/not-admin");
+        if ((row.exists() ? row.data().revision : 0) !== expectedRevision)
+          throw codeError("dfplan/pricing-conflict");
+        const revision = expectedRevision + 1;
+        const record = {
+          currency: "SGD",
+          rates: { ...rates },
+          revision,
+          reason: reason.trim(),
+          updatedAt: dbSdk.serverTimestamp(),
+          updatedBy: user.uid,
+        };
+        tx.set(ref, record);
+        tx.set(dbSdk.doc(ref, "versions", String(revision)), record);
+      });
+      return this.getPricing();
+    },
     login() {
       const provider = new authSdk.GoogleAuthProvider();
       provider.setCustomParameters({ prompt: "select_account" });
