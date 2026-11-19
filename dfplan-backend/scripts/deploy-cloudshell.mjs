@@ -64,7 +64,7 @@ async function main() {
   });
   const { projectId, email, displayName } = settings;
   const configSource = await readFile(
-    new URL("../../dfplan/backend-config.js", import.meta.url),
+    new URL("../../dfplan/src/adapters/backend-config.mjs", import.meta.url),
     "utf8",
   );
   const { backendConfig } = await import(
@@ -147,7 +147,7 @@ async function main() {
       );
     }
     const taskSource = await readFile(
-      new URL("../../dfplan/data.js", import.meta.url),
+      new URL("../../dfplan/src/domain/seed-tasks.mjs", import.meta.url),
       "utf8",
     );
     const { seedTasks } = await import(

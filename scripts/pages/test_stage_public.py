@@ -68,6 +68,13 @@ class MediaBoundaryTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "Potential private credential"):
             policy.scan_content("fixture.txt", b"-----BEGIN PRIVATE KEY-----")
 
+    def test_only_dfplan_runtime_mjs_gets_a_source_path_exception(self):
+        for name in ["dfplan/src/app.mjs", "dfplan/src/domain/task-schema.mjs", "dfplan/src/ui/views/list.mjs"]:
+            policy.safe_path(name)
+        for name in ["other/src/app.mjs", "dfplan/src/app.js", "dfplan/src/tests/private.mjs", "dfplan/src/ui/.env", "dfplan/src/ui/private.key", "dfplan/src/backend/app.mjs"]:
+            with self.assertRaises(ValueError):
+                policy.safe_path(name)
+
     def test_rejects_case_conflicting_dfplan_source(self):
         self.entries["DFplan/index.html"] = ("100644", "fixture-blob")
         with self.assertRaisesRegex(ValueError, "source paths must use lowercase"):

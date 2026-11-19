@@ -44,7 +44,12 @@ def require(condition, message):
 def safe_path(name):
     p = PurePosixPath(name)
     require(not p.is_absolute() and ".." not in p.parts and "\\" not in name, "Unsafe path: " + name)
-    require(p.parts and all(part.casefold() not in {s.casefold() for s in PRIVATE_PARTS} for part in p.parts), "Private/source path: " + name)
+    # Buildless DFplan ESM is public runtime code, still selected by exact manifest paths.
+    runtime_module = (p.parts[:2] == ("dfplan", "src") and p.suffix == ".mjs" and
+                      (p.parts == ("dfplan", "src", "app.mjs") or
+                       (len(p.parts) >= 4 and p.parts[2] in {"domain", "application", "adapters", "ui"})))
+    inspected_parts = p.parts[:1] + p.parts[2:] if runtime_module else p.parts
+    require(p.parts and all(part.casefold() not in {s.casefold() for s in PRIVATE_PARTS} for part in inspected_parts), "Private/source path: " + name)
     require(all(not part.startswith(".") or part == ".nojekyll" for part in p.parts), "Hidden file: " + name)
     require(p.suffix.lower() not in PRIVATE_SUFFIXES, "Non-public file type: " + name)
     require(not p.name.lower().startswith(("env.", "credentials", "id_rsa", "id_ed25519")), "Sensitive filename: " + name)

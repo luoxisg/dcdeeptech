@@ -26,7 +26,7 @@ const template = await readFile(
 const { seedTasks } = await import(
   "data:text/javascript," +
     encodeURIComponent(
-      await readFile(new URL("../../dfplan/data.js", import.meta.url), "utf8"),
+      await readFile(new URL("../../dfplan/src/domain/seed-tasks.mjs", import.meta.url), "utf8"),
     )
 );
 const email = "owner@example.com",

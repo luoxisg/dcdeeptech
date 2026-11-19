@@ -35,7 +35,7 @@ try {
 }
 if (answer !== "INITIALIZE") throw Error("Cancelled without changes.");
 const data = await readFile(
-  new URL("../../dfplan/data.js", import.meta.url),
+  new URL("../../dfplan/src/domain/seed-tasks.mjs", import.meta.url),
   "utf8",
 );
 const { seedTasks } = await import(

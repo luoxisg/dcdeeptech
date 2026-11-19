@@ -1,5 +1,6 @@
 import { test } from "node:test";
-import { stewardshipEditor, stewardshipSummary } from "../../dfplan/stewardship.mjs";
+import { stewardshipSummary } from "../../dfplan/stewardship.mjs";
+import {stewardshipEditor,renderDashboard,renderPeople,assigneeSelect} from "./ui-render-harness.mjs";
 import assert from "node:assert/strict";
 
 test("stewardship coverage measures recorded tasks and escapes controlled references", () => {
@@ -20,14 +21,12 @@ test("stewardship coverage measures recorded tasks and escapes controlled refere
 import {
   dashboardData,
   matchesDashboardTask,
-  renderDashboard,
 } from "../../dfplan/dashboard.mjs";
 import {
   normalizePersonName,
   personId,
   assigneeGroup,
 } from "../../dfplan/people-model.mjs";
-import { renderPeople, assigneeSelect } from "../../dfplan/people-ui.mjs";
 const alex = await personId("Alex Example"),
   ben = await personId("Ben Example"),
   carol = await personId("Carol Example");
@@ -213,8 +212,8 @@ test("personnel controls require directory capability and removed assignees stay
     { canManage: false, ready: true },
     h,
   );
-  assert.ok(!viewer.includes('id="person-form"'));
-  assert.ok(!viewer.includes("data-person-id="));
+  assert.ok(!viewer.includes('data-cmd="person-dialog"'));
+  assert.ok(!viewer.includes('data-cmd="person-active"'));
   assert.ok(viewer.includes("Ben Example"));
   const admin = renderPeople(
     project,
@@ -222,14 +221,14 @@ test("personnel controls require directory capability and removed assignees stay
     { canManage: true, ready: true },
     h,
   );
-  assert.ok(admin.includes('id="person-form"'));
-  assert.ok(admin.includes('data-person-active="false"'));
-  assert.ok(admin.includes('data-person-active="true"'));
+  assert.ok(admin.includes('data-cmd="person-dialog"'));
+  assert.ok(admin.includes('data-active="false"'));
+  assert.ok(admin.includes('data-active="true"'));
   const fresh = assigneeSelect({ assignee: "" }, people, h);
   assert.ok(!fresh.includes("Ben Example"));
   const old = assigneeSelect({ assignee: "Ben Example" }, people, h);
   assert.ok(old.includes("Ben Example"));
-  assert.ok(old.includes("Existing assignment"));
+  assert.ok(/existing assignment/i.test(old));
 });
 test("dashboard and personnel views escape names and render an empty project without invalid chart values", () => {
   const malicious = [
@@ -259,7 +258,7 @@ test("a failed or pending read never renders an empty directory, stale names or 
     const html = renderPeople(project, people, { canManage: true, ready: false, error }, h);
     assert.ok(!html.includes('class="module-empty"'));
     assert.ok(!html.includes('class="people-list"'));
-    assert.ok(!html.includes('id="person-form"'));
+    assert.ok(!html.includes('data-cmd="person-dialog"'));
     assert.ok(!html.includes("Alex Example"));
     if (error) {
       assert.ok(html.includes('role="alert"'));

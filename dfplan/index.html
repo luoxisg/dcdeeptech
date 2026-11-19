@@ -1,42 +1,81 @@
 <!doctype html>
-<html lang="zh-CN">
-  <head>
-    <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width,initial-scale=1,viewport-fit=cover,interactive-widget=resizes-content"
-    />
-    <meta name="theme-color" content="#F6F3EC" />
-    <meta
-      name="description"
-      content="DeepFamily 家族传承计划：用行动整理记忆，以关怀延续家风。A thoughtful workspace for preserving family memories."
-    />
-    <meta name="robots" content="noindex,nofollow" />
-    <title>家族传承计划 · DeepFamily</title>
-    <link rel="icon" href="./assets/seal.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="./styles.css?v=20261116-elder-desktop" />
-    <link rel="stylesheet" href="./phone.css?v=20261116-people-directory" />
-    <link rel="stylesheet" href="./cloud.css?v=20261118-patrick-test" />
-    <link rel="stylesheet" href="./modules.css?v=20261119-unit-pricing" />
-  </head>
-  <body>
-    <a class="skip" href="#main">跳至主内容 / Skip to content</a>
-    <div id="app"></div>
-    <dialog id="account-dialog" aria-labelledby="account-title"></dialog>
-    <dialog id="editor" aria-labelledby="dialog-title"></dialog>
-    <dialog id="start-dialog" aria-labelledby="start-title"></dialog>
-    <dialog id="import-dialog" aria-labelledby="import-title"></dialog>
-    <input
-      type="file"
-      id="import-file"
-      accept="application/json,.json"
-      hidden
-    />
-    <div id="toast" role="status" aria-live="polite"></div>
-    <noscript
-      >请启用 JavaScript 以使用家族传承工作台。Please enable JavaScript to use
-      this workspace.</noscript
-    >
-    <script type="module" src="./app.js?v=20261119-unit-pricing-2"></script>
-  </body>
+<html lang="zh-CN" data-text-scale="elder">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,interactive-widget=resizes-content">
+<meta name="theme-color" content="#F6F3EC">
+<meta name="robots" content="noindex,nofollow">
+<title>DeepFamily · 家族传承工作台</title>
+<link rel="icon" href="./assets/seal.svg" type="image/svg+xml">
+<link rel="stylesheet" href="./styles/main.css">
+<script type="importmap">
+{
+  "imports": {
+    "./src/adapters/backend-config.mjs": "./src/adapters/backend-config.mjs?v=20261119-native-esm-v1",
+    "./src/adapters/firestore-client.mjs": "./src/adapters/firestore-client.mjs?v=20261119-native-esm-v1",
+    "./src/adapters/firestore-port.mjs": "./src/adapters/firestore-port.mjs?v=20261119-native-esm-v1",
+    "./src/adapters/invite-token.mjs": "./src/adapters/invite-token.mjs?v=20261119-native-esm-v1",
+    "./src/adapters/local-storage.mjs": "./src/adapters/local-storage.mjs?v=20261119-native-esm-v1",
+    "./src/app.mjs": "./src/app.mjs?v=20261119-native-esm-v1",
+    "./src/application/actions.mjs": "./src/application/actions.mjs?v=20261119-native-esm-v1",
+    "./src/application/command-bus.mjs": "./src/application/command-bus.mjs?v=20261119-native-esm-v1",
+    "./src/application/runtime.mjs": "./src/application/runtime.mjs?v=20261119-native-esm-v1",
+    "./src/application/storage-port.mjs": "./src/application/storage-port.mjs?v=20261119-native-esm-v1",
+    "./src/application/store.mjs": "./src/application/store.mjs?v=20261119-native-esm-v1",
+    "./src/domain/capture-catalog.mjs": "./src/domain/capture-catalog.mjs?v=20261119-native-esm-v1",
+    "./src/domain/capture-methods.mjs": "./src/domain/capture-methods.mjs?v=20261119-native-esm-v1",
+    "./src/domain/dashboard-model.mjs": "./src/domain/dashboard-model.mjs?v=20261119-native-esm-v1",
+    "./src/domain/digitization-calc.mjs": "./src/domain/digitization-calc.mjs?v=20261119-native-esm-v1",
+    "./src/domain/exports.mjs": "./src/domain/exports.mjs?v=20261119-native-esm-v1",
+    "./src/domain/i18n.mjs": "./src/domain/i18n.mjs?v=20261119-native-esm-v1",
+    "./src/domain/people-model.mjs": "./src/domain/people-model.mjs?v=20261119-native-esm-v1",
+    "./src/domain/project-commands.mjs": "./src/domain/project-commands.mjs?v=20261119-native-esm-v1",
+    "./src/domain/seed-tasks.mjs": "./src/domain/seed-tasks.mjs?v=20261119-native-esm-v1",
+    "./src/domain/stewardship-model.mjs": "./src/domain/stewardship-model.mjs?v=20261119-native-esm-v1",
+    "./src/domain/task-schema.mjs": "./src/domain/task-schema.mjs?v=20261119-native-esm-v1",
+    "./src/domain/types.mjs": "./src/domain/types.mjs?v=20261119-native-esm-v1",
+    "./src/domain/unit-pricing.mjs": "./src/domain/unit-pricing.mjs?v=20261119-native-esm-v1",
+    "./src/ui/components.mjs": "./src/ui/components.mjs?v=20261119-native-esm-v1",
+    "./src/ui/dialogs/account.mjs": "./src/ui/dialogs/account.mjs?v=20261119-native-esm-v1",
+    "./src/ui/dialogs/assertion.mjs": "./src/ui/dialogs/assertion.mjs?v=20261119-native-esm-v1",
+    "./src/ui/dialogs/copy.mjs": "./src/ui/dialogs/copy.mjs?v=20261119-native-esm-v1",
+    "./src/ui/dialogs/editor.mjs": "./src/ui/dialogs/editor.mjs?v=20261119-native-esm-v1",
+    "./src/ui/dialogs/import.mjs": "./src/ui/dialogs/import.mjs?v=20261119-native-esm-v1",
+    "./src/ui/dialogs/person.mjs": "./src/ui/dialogs/person.mjs?v=20261119-native-esm-v1",
+    "./src/ui/dialogs/shared.mjs": "./src/ui/dialogs/shared.mjs?v=20261119-native-esm-v1",
+    "./src/ui/dialogs/start.mjs": "./src/ui/dialogs/start.mjs?v=20261119-native-esm-v1",
+    "./src/ui/events.mjs": "./src/ui/events.mjs?v=20261119-native-esm-v1",
+    "./src/ui/html.mjs": "./src/ui/html.mjs?v=20261119-native-esm-v1",
+    "./src/ui/i18n.mjs": "./src/ui/i18n.mjs?v=20261119-native-esm-v1",
+    "./src/ui/icons.mjs": "./src/ui/icons.mjs?v=20261119-native-esm-v1",
+    "./src/ui/keyboard-viewport.mjs": "./src/ui/keyboard-viewport.mjs?v=20261119-native-esm-v1",
+    "./src/ui/renderer.mjs": "./src/ui/renderer.mjs?v=20261119-native-esm-v1",
+    "./src/ui/shell-header.mjs": "./src/ui/shell-header.mjs?v=20261119-native-esm-v1",
+    "./src/ui/shell-nav-mobile.mjs": "./src/ui/shell-nav-mobile.mjs?v=20261119-native-esm-v1",
+    "./src/ui/views/board.mjs": "./src/ui/views/board.mjs?v=20261119-native-esm-v1",
+    "./src/ui/views/dashboard.mjs": "./src/ui/views/dashboard.mjs?v=20261119-native-esm-v1",
+    "./src/ui/views/digitization.mjs": "./src/ui/views/digitization.mjs?v=20261119-native-esm-v1",
+    "./src/ui/views/facts.mjs": "./src/ui/views/facts.mjs?v=20261119-native-esm-v1",
+    "./src/ui/views/gate.mjs": "./src/ui/views/gate.mjs?v=20261119-native-esm-v1",
+    "./src/ui/views/history.mjs": "./src/ui/views/history.mjs?v=20261119-native-esm-v1",
+    "./src/ui/views/list.mjs": "./src/ui/views/list.mjs?v=20261119-native-esm-v1",
+    "./src/ui/views/overview.mjs": "./src/ui/views/overview.mjs?v=20261119-native-esm-v1",
+    "./src/ui/views/people.mjs": "./src/ui/views/people.mjs?v=20261119-native-esm-v1",
+    "./src/ui/views/security.mjs": "./src/ui/views/security.mjs?v=20261119-native-esm-v1",
+    "./src/ui/views/timeline.mjs": "./src/ui/views/timeline.mjs?v=20261119-native-esm-v1"
+  }
+}
+</script>
+</head>
+<body>
+<a class="skip" href="#main">跳至主内容 / Skip to content</a>
+<div id="app" class="app-shell">
+<header data-slot="header"></header>
+<section data-slot="viewport" aria-label="工作空间 / Workspace"></section>
+<div data-slot="mobile-tabbar"></div>
+<div data-slot="overlay"></div>
+</div>
+<noscript>请启用 JavaScript / Please enable JavaScript.</noscript>
+<script type="module">import "./src/app.mjs";</script>
+</body>
 </html>
