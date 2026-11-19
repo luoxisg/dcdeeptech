@@ -24,6 +24,9 @@ export async function checkInterview(page) {
     localStorage.getItem("deepfamily.dfplan.demo.v1"),
   );
   await page.evaluate(() => {
+    window.__originalSampleGUM = navigator.mediaDevices.getUserMedia.bind(
+      navigator.mediaDevices,
+    );
     window.__micRequests = 0;
     window.__micStops = 0;
     Object.defineProperty(navigator.mediaDevices, "getUserMedia", {
@@ -154,6 +157,12 @@ export async function checkInterview(page) {
     "Signing out on another view must clear interview drafts.",
   );
   await page.locator(".interview-entry").waitFor();
+  await page.evaluate(() =>
+    Object.defineProperty(navigator.mediaDevices, "getUserMedia", {
+      configurable: true,
+      value: window.__originalSampleGUM,
+    }),
+  );
   console.log(
     "PASS: interview entry, interruption, pause, editable draft, TXT export, XSS escaping, reset confirmation, pending microphone cleanup and project isolation.",
   );

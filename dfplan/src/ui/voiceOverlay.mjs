@@ -1,127 +1,498 @@
 import { html, mount } from "./html.mjs";
-import { AudioAdapter } from "../adapters/audioAdapter.mjs";
-import { createVoiceController } from "../application/voiceController.mjs";
-import { CONFIG_KEY, readConfig, normalizeConfig, testConnection, MockVoiceGateway, WebSocketVoiceGateway } from "../adapters/voiceGateway.mjs";
-
-export function openVoiceOverlay({ lang = "zh", largeText = true, onTextScaleChange = () => {} } = {}) {
+import { store } from "../application/store.mjs";
+import { shouldClearInterview } from "../application/interview-session.mjs";
+import { createRecordingSession } from "../application/recording-session.mjs";
+import { recordingPrompt, recordingTime } from "../domain/recording-model.mjs";
+import {
+  createBrowserRecorder,
+  recordingBrowserIO,
+  downloadRecordingFile,
+  downloadRecordingNotes,
+} from "../adapters/media-recorder.mjs";
+import { installSwipeDismiss } from "./keyboard-viewport.mjs";
+const session = createRecordingSession({
+  ...recordingBrowserIO,
+  capture: createBrowserRecorder,
+});
+let activeClose = null;
+store.subscribe((next, previous) => {
+  if (shouldClearInterview(previous, next)) {
+    session.clear();
+    void activeClose?.(true);
+  }
+});
+window.addEventListener("pagehide", () => {
+  session.clear();
+  void activeClose?.(true);
+});
+window.addEventListener("beforeunload", (event) => {
+  if (session.pending()) {
+    event.preventDefault();
+    event.returnValue = "";
+  }
+});
+/** A local recorder is the default; network AI and sample modes remain separate opt-ins. */
+export function openVoiceOverlay({
+  lang = "zh",
+  largeText = true,
+  onTextScaleChange = (_value) => {},
+} = {}) {
   const host = document.getElementById("voice-overlay-root");
   if (!host || host.childElementCount) return;
-  const s = (zh, en) => lang === "en" ? en : zh;
-  const previousFocus = document.activeElement, app = document.getElementById("app");
-  const wasInert = app.inert, overflow = document.body.style.overflow, scrollY = window.scrollY;
-  app.inert = true; document.body.style.overflow = "hidden";
-  let config = readConfig(localStorage), controller, snapshot, sheet = "", tab = "draft", reviewedDraft, lastEntities;
+  const s = (zh, en) => (lang === "en" ? en : zh),
+    app = document.getElementById("app"),
+    previousFocus = /** @type {HTMLElement} */ (document.activeElement),
+    wasInert = app.inert;
+  let closing = false,
+    unsubscribe = null;
+  app.inert = true;
   const q = (selector) => host.querySelector(selector);
-  const say = (text) => {
-    q(".voice-notice").textContent = text;
-    const status = q(".voice-sheet-status"); if (status) status.textContent = text;
+  const text = (selector, value) => {
+    const el = q(selector);
+    if (el && el.textContent !== value) el.textContent = value;
   };
-  mount(host, html`<section class="voice-overlay" role="dialog" aria-modal="true" aria-labelledby="voice-title" tabindex="-1">
-    <header class="voice-header"><h2 id="voice-title">${s("访谈测试版", "Interview beta")}</h2><div><button data-voice="settings">${s("设置", "Settings")}</button><button data-voice="close" aria-label="${s("关闭访谈", "Close interview")}">✕</button></div></header>
-    <div class="voice-entities" aria-label="${s("记忆锚点", "Memory anchors")}"></div>
-    <div class="voice-stage"><p class="voice-mode"></p><p class="voice-state" role="status"></p><button class="voice-orb" data-voice="orb" aria-label="${s("开始或打断访谈", "Start or interrupt interview")}"><span aria-hidden="true">✦</span></button>
-    <p class="voice-subtitle" aria-live="polite"></p><p class="voice-notice" role="status">${s("默认三轮虚构演示，不录音。Live 模式使用麦克风，文字会发送给配置的模型服务，后端在本机自动归档。", "Three fictional demo turns; no recording. Live mode uses your microphone, sends text to the configured model and archives on the local server.")}</p></div>
-    <footer class="voice-controls"><button data-voice="mute"></button><button data-voice="pause"></button><button data-voice="commit">${s("我说完了", "Done speaking")}</button><button data-voice="finalize">${s("结束并生成初稿", "Finish & draft")}</button></footer>
-    <div class="voice-sheet-host"></div></section>`, { force: true });
-  const update = (next) => {
-    snapshot = next;
-    const names = { IDLE: s("准备好后开始", "Start when ready"), LISTENING: s("请慢慢说，我在听", "Take your time. I am listening."), THINKING: s("正在整理您的话", "Reflecting on your story"), SPEAKING: s("轻触光球可打断", "Tap the orb to interrupt"), REVIEWING: s("初稿已生成，请核实", "Draft ready for review") };
-    q(".voice-overlay").dataset.state = next.state;
-    q(".voice-mode").textContent = config.mode === "mock" ? s("MOCK · 虚构演示（共三轮）", "MOCK · Fictional demo (3 turns)") : "LIVE · WebSocket";
-    q(".voice-state").textContent = next.starting ? s("正在连接…", "Connecting…") : names[next.state];
-    q(".voice-orb").style.setProperty("--voice-level", Math.min(.3, next.rms * 3));
-    q(".voice-orb").disabled = next.starting;
-    q(".voice-orb span").textContent = next.state === "IDLE" ? "▶" : "✦";
-    q(".voice-subtitle").textContent = next.turns.at(-1)?.text || s("讲一件您愿意留下来的往事吧。", "Tell a story you would like to preserve.");
-    if (next.entities !== lastEntities) mount(q(".voice-entities"), html`${next.entities.map((entity) => html`<span>${({ time: "◷", person: "♙", place: "⌖" })[entity.kind]} ${entity.value}</span>`)}`);
-    lastEntities = next.entities;
-    q('[data-voice="mute"]').textContent = next.muted ? s("取消静音", "Unmute") : s("静音", "Mute");
-    q('[data-voice="mute"]').setAttribute("aria-pressed", String(next.muted));
-    q('[data-voice="pause"]').textContent = next.paused ? s("继续", "Resume") : s("暂停", "Pause");
-    q('[data-voice="pause"]').setAttribute("aria-pressed", String(next.paused));
-    for (const action of ["mute", "pause", "finalize"]) q(`[data-voice="${action}"]`).disabled = next.state === "IDLE" || next.starting || next.state === "REVIEWING";
-    q('[data-voice="commit"]').disabled = next.state !== "LISTENING" || next.paused || next.muted || (config.mode === "mock" && next.turns.filter((t) => t.role === "user").length >= 3);
-    if (next.error) say(next.error);
-    if (next.draft && !reviewedDraft) { reviewedDraft = true; sheet = "review"; renderSheet(); }
+  const errorText = (code) =>
+    ({
+      permission: s(
+        "未获麦克风权限。请在浏览器网站设置中允许麦克风后重试。",
+        "Microphone permission denied. Allow it in browser site settings and try again.",
+      ),
+      "no-device": s(
+        "未找到麦克风，请连接设备后重试。",
+        "No microphone found. Connect one and try again.",
+      ),
+      unsupported: s(
+        "此浏览器不支持录音。请在 HTTPS 页面使用 Samsung Internet、Chrome 或 Safari。",
+        "Recording is unavailable. Use Samsung Internet, Chrome or Safari on HTTPS.",
+      ),
+      empty: s(
+        "这段未产生有效音频，请重新录制。",
+        "No audio was captured. Please record again.",
+      ),
+      limit: s(
+        "本页录音已达约 128 MB，请下载并重置后继续。",
+        "This session has reached about 128 MB. Download and reset before continuing.",
+      ),
+      "stop-timeout": s(
+        "未能完成这段录音，请先检查已有片段。",
+        "This clip could not be finalized. Check your existing clips.",
+      ),
+      "recording-failed": s(
+        "录音设备不可用或已中断，请检查麦克风。",
+        "The microphone is unavailable or was interrupted. Please check the device.",
+      ),
+    })[code] ||
+    s(
+      "录音未能完成，请检查已有片段后重试。",
+      "Recording could not finish. Check existing clips and retry.",
+    );
+  mount(
+    host,
+    html`<section
+      class="voice-overlay recorder-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="recorder-title"
+      tabindex="-1"
+    >
+      <header class="voice-header">
+        <div>
+          <span class="recorder-brand"
+            >DeepFamily · ${s("口述记忆", "Oral history")}</span
+          >
+          <h2 id="recorder-title">${s("访谈测试版", "Interview beta")}</h2>
+        </div>
+        <div>
+          <button
+            data-recording="scale"
+            aria-label="${s("切换适老大字", "Toggle elder text")}"
+            aria-pressed="${largeText}"
+          >
+            Aa</button
+          ><button data-recording="reset">${s("重置", "Reset")}</button
+          ><button
+            data-recording="close"
+            aria-label="${s("关闭访谈", "Close interview")}"
+          >
+            ×
+          </button>
+        </div>
+      </header>
+      <div class="recorder-body">
+        <section class="recorder-stage">
+          <span class="badge"
+            >${s("真实录音 · 本页保存，不自动上传", "Real recording · held on this page, no automatic upload")}</span
+          >
+          <p class="recording-round"></p>
+          <p class="recording-state" role="status"></p>
+          <button
+            class="voice-orb recording-orb"
+            data-recording="orb"
+            aria-label="${s("开始或结束本段录音", "Start or stop this recording")}"
+          >
+            <span aria-hidden="true">●</span></button
+          ><strong class="recording-timer">00:00</strong>
+          <h3 class="recording-prompt"></h3>
+          <label class="recorder-consent"
+            ><input type="checkbox" data-recording-consent /><span
+              >${s("已征得受访者同意，愿意在本设备录音并保管导出文件。", "I have the narrator’s consent to record on this device and keep the exported files.")}</span
+            ></label
+          >
+          <p class="recording-notice" role="status"></p>
+          <p class="recording-error" role="alert"></p>
+          <p class="recorder-hint">
+            ${s("录音保留在当前页面内存。刷新、离开网站或退出账号前请下载；关闭访谈窗口后可重新打开回放。不会自动转写或写入家族档案。", "Audio stays in this page’s memory. Download before reloading, leaving the site or signing out. Close and reopen this interview to play saved clips. No automatic transcription or family archive write.")}
+          </p>
+          <button class="btn" data-recording="review">
+            ${s("回放与下载已有录音", "Play & download saved clips")}
+          </button>
+          <details class="recorder-options">
+            <summary>${s("其他访谈方式", "Other interview options")}</summary>
+            <p>
+              ${s("原脚本演示和已配置的 AI 访谈仍可使用；联网模式按原设置传输资料，本机录音不会自动发送过去。", "Scripted demos and configured AI interviews remain available. Network modes follow their own settings; local recordings are not sent to them automatically.")}
+            </p>
+            <button data-recording="advanced">
+              ${s("打开脚本 / AI 访谈选项", "Open scripted / AI interview options")}
+            </button>
+          </details>
+        </section>
+      </div>
+      <footer class="voice-controls">
+        <button data-recording="mute">${s("静音", "Mute")}</button
+        ><button data-recording="pause">${s("暂停", "Pause")}</button
+        ><button data-recording="done">
+          ${s("我说完了 · 下一轮", "Done · next question")}</button
+        ><button data-recording="finish">
+          ${s("结束并整理初稿", "Finish & review notes")}
+        </button>
+      </footer>
+      <div class="recording-sheet-host"></div>
+    </section>`,
+  );
+  const update = () => {
+    if (!host.childElementCount) return;
+    const state = session.snapshot(),
+      active = ["recording", "paused"].includes(state.phase),
+      busy = ["requesting", "stopping"].includes(state.phase);
+    text(
+      ".recording-round",
+      state.round < 3
+        ? `${s("第", "Round ")} ${state.round + 1} / 3 ${s("轮", "")}`
+        : s("补充录音", "Additional recording"),
+    );
+    const statuses = {
+      idle: state.clips.length
+        ? s(
+            "已保存到本页，可继续录音",
+            "Saved on this page; record more when ready",
+          )
+        : s(
+            "勾选同意后，点击光球开始录音",
+            "Confirm consent, then tap the orb to record",
+          ),
+      requesting: s("等待麦克风授权…", "Waiting for microphone permission…"),
+      recording: state.muted
+        ? s("已静音 · 正在录制静音", "Muted · recording silence")
+        : s("正在真实录音", "Recording your microphone"),
+      paused: s("录音已暂停", "Recording paused"),
+      stopping: s("正在结束并保留音频…", "Finalizing and retaining audio…"),
+    };
+    text(".recording-state", statuses[state.phase]);
+    text(".recording-timer", recordingTime(state.elapsed));
+    text(
+      ".recording-prompt",
+      recordingPrompt(state.round)[lang === "en" ? 1 : 0],
+    );
+    const orb = /** @type {HTMLButtonElement} */ (q('[data-recording="orb"]'));
+    orb.disabled = busy || (!active && !state.consent);
+    orb.dataset.recordingState = state.phase;
+    orb.setAttribute(
+      "aria-label",
+      active
+        ? s("结束并保存本段录音", "Stop and retain this clip")
+        : s("开始真实录音", "Start real recording"),
+    );
+    text(".recording-orb span", active ? "■" : "●");
+    const consent = /** @type {HTMLInputElement} */ (
+      q("[data-recording-consent]")
+    );
+    consent.checked = state.consent;
+    consent.disabled = state.phase !== "idle";
+    for (const action of ["mute", "pause", "done"]) {
+      const button = /** @type {HTMLButtonElement} */ (
+        q(`[data-recording="${action}"]`)
+      );
+      button.disabled = !active;
+    }
+    /** @type {HTMLButtonElement} */ (q('[data-recording="finish"]')).disabled =
+      busy || (!active && !state.clips.length);
+    /** @type {HTMLButtonElement} */ (q('[data-recording="review"]')).disabled =
+      busy || (!active && !state.clips.length);
+    text(
+      '[data-recording="mute"]',
+      state.muted ? s("取消静音", "Unmute") : s("静音", "Mute"),
+    );
+    q('[data-recording="mute"]').setAttribute(
+      "aria-pressed",
+      String(state.muted),
+    );
+    text(
+      '[data-recording="pause"]',
+      state.phase === "paused"
+        ? s("继续录音", "Resume recording")
+        : s("暂停", "Pause"),
+    );
+    text(
+      ".recording-notice",
+      state.notice === "limit"
+        ? errorText("limit")
+        : state.notice === "device"
+          ? s(
+              "设备已中断，已尽量保留音频，请回放检查。",
+              "The device stopped. Available audio was retained; check playback.",
+            )
+          : state.notice === "saved"
+            ? s(
+                "本段保留在本页，尚未下载到硬盘。",
+                "This clip is held on this page; it is not yet downloaded.",
+              )
+            : "",
+    );
+    text(".recording-error", state.error ? errorText(state.error) : "");
+    const draft = q("[data-recording-draft]");
+    if (draft) draft.textContent = session.draft(lang);
   };
-  const reset = () => { reviewedDraft = false; controller?.dispose(); controller = createVoiceController({ lang, config, notify: update, audioFactory: () => new AudioAdapter(), gatewayFactory: (emit) => config.mode === "mock" ? new MockVoiceGateway(emit) : new WebSocketVoiceGateway(emit, config.url) }); update(controller.snapshot()); };
-  const draft = () => {
-    const title = q("#voice-draft-title"), markdown = q("#voice-draft-markdown");
-    if (title && markdown) controller.editDraft(title.value, markdown.value);
-    return controller.snapshot().draft;
-  };
-  const highlight = (text) => html`${text.split(/(\[待核实\])/g).map((part) => part === "[待核实]" ? html`<mark>${part}</mark>` : part)}`;
-  function renderSheet() {
-    const active = !["IDLE", "REVIEWING"].includes(snapshot.state) || snapshot.starting;
-    const contents = sheet === "settings" ? html`
-      <h3>${s("访谈设置", "Interview settings")}</h3>
-      <label>${s("运行模式", "Mode")}<select id="voice-mode" ${active ? "disabled" : ""}><option value="mock" ${config.mode === "mock" ? "selected" : ""}>Mock · ${s("离线演示", "Offline demo")}</option><option value="live" ${config.mode === "live" ? "selected" : ""}>Live WS</option></select></label>
-      <label>WebSocket URL<input id="voice-url" type="url" value="${config.url}" ${active ? "disabled" : ""}></label>
-      <button data-voice="test">${s("测试连接", "Test connection")}</button>
-      <label>${s("停顿多久后自动发送（毫秒）", "Silence before sending (milliseconds)")}<input id="voice-vad" type="number" min="1500" max="6000" step="100" value="${config.vadSilenceMs}" ${active ? "disabled" : ""}></label>
-      <label class="voice-check"><input id="voice-elder" type="checkbox" ${largeText ? "checked" : ""}>${s("适老大字版", "Large text")}</label>
-      <p>${s("Live：本地识别不收 ASR 接口费；LLM 可能收费，语音合成需要联网。首次启动后端会下载 Whisper 模型。会话期间请先结束，再切换配置。", "Live: local ASR has no API fee; the LLM may charge and TTS needs internet. First backend start downloads Whisper. Finish the session before changing configuration.")}</p>
-      <button data-voice="save-settings" ${active ? "disabled" : ""}>${s("保存设置", "Save settings")}</button>` : sheet === "review" ? html`
-      <h3>${s("事件说明初稿", "Story draft")}</h3><div class="voice-tabs"><button data-voice="draft-tab" aria-pressed="${tab === "draft"}">${s("可编辑初稿", "Editable draft")}</button><button data-voice="transcript-tab" aria-pressed="${tab === "transcript"}">${s("原始对话", "Transcript")}</button></div>
-      ${tab === "draft" ? html`<label>${s("标题", "Title")}<input id="voice-draft-title" value="${snapshot.draft.title}"></label><label>Markdown<textarea id="voice-draft-markdown" rows="9">${snapshot.draft.markdown}</textarea></label><pre class="voice-preview">${highlight(snapshot.draft.markdown)}</pre>` : html`<div class="voice-transcript">${snapshot.turns.map((turn) => html`<p><strong>${turn.role === "user" ? s("讲述者", "Narrator") : s("访谈助手", "Interviewer")}</strong> ${turn.text}</p>`)}</div>`}
-      <div class="voice-export"><button data-voice="copy">${s("复制", "Copy")}</button><button data-voice="export">${s("导出 .md", "Export .md")}</button><button data-voice="save-draft">${s("保存到本机", "Save locally")}</button></div><p>${s("请核实后再归档。保存仅在当前浏览器，不上传 Firebase。", "Review before archiving. Browser saves do not upload to Firebase.")}</p>` : "";
-    mount(q(".voice-sheet-host"), sheet ? html`<div class="voice-sheet-backdrop"><section class="voice-sheet" role="dialog" aria-modal="true" aria-label="${s("访谈面板", "Interview panel")}"><div class="voice-sheet-top"><button class="voice-handle" data-voice="dismiss" aria-label="${s("下滑或点击关闭面板", "Swipe down or click to close panel")}">━</button><button data-voice="dismiss">${s("收起", "Close panel")}</button></div>${contents}<p class="voice-sheet-status" role="status"></p></section></div>` : "");
-    q(".voice-stage").inert = Boolean(sheet); q(".voice-controls").inert = Boolean(sheet); q(".voice-header").inert = Boolean(sheet);
-    q(".voice-sheet button")?.focus({ preventScroll: true });
-    const handle = q(".voice-handle"); let startY;
-    handle?.addEventListener("pointerdown", (event) => { startY = event.clientY; handle.setPointerCapture(event.pointerId); });
-    handle?.addEventListener("pointerup", (event) => { if (event.clientY - startY > 60) dismiss(); });
+  function closeSheet() {
+    const dialog = /** @type {HTMLDialogElement|null} */ (q("dialog"));
+    dialog?.querySelectorAll("audio").forEach((audio) => audio.pause());
+    dialog?.close();
+    mount(q(".recording-sheet-host"), html``);
+    /** @type {HTMLElement} */ (q('[data-recording="orb"]')).focus({
+      preventScroll: true,
+    });
   }
-  function dismiss() { if (sheet === "review") draft(); sheet = ""; renderSheet(); q(".voice-orb").focus({ preventScroll: true }); }
-  function close() {
-    controller.dispose(); host.removeEventListener("click", click); host.removeEventListener("keydown", keydown); host.removeEventListener("input", input);
-    mount(host, ""); app.inert = wasInert; document.body.style.overflow = overflow;
-    window.scrollTo(0, scrollY);
-    const returnFocus = previousFocus?.isConnected ? previousFocus :
-      [...document.querySelectorAll('[data-cmd="voice-open"], .site-menu summary')].find((node) => node.getClientRects().length);
-    returnFocus?.focus({ preventScroll: true });
+  function sheet(kind) {
+    const state = session.snapshot();
+    const review = kind === "review";
+    mount(
+      q(".recording-sheet-host"),
+      html`<dialog
+        class="sheet recorder-sheet"
+        aria-labelledby="recording-sheet-title"
+      >
+        <div class="sheet-form">
+          <header class="sheet-heading">
+            <div
+              class="sheet-handle"
+              data-sheet-handle
+              aria-hidden="true"
+            ></div>
+            <h2 id="recording-sheet-title">
+              ${review ? s("录音回放与访谈笔记", "Recordings & interview notes") : s("清空本页录音？", "Clear this page’s recordings?")}
+            </h2>
+            <button
+              class="btn"
+              data-recording="dismiss"
+              aria-label="${s("关闭面板", "Close panel")}"
+            >
+              ×
+            </button>
+          </header>
+          <div class="sheet-body">
+            ${
+              review
+                ? html`<p>
+                      ${s("请逐段回放核对并下载。文字栏是手工笔记，未接入自动语音转写。", "Check and download each recording. Text fields are manual notes, not automatic speech transcription.")}
+                    </p>
+                    ${state.clips.map(
+                      (clip, index) =>
+                        html`<article class="panel recording-clip">
+                          <h3>
+                            ${s("片段", "Clip")} ${index + 1} ·
+                            ${s("第", "Round ")} ${clip.round + 1}${s("轮", "")}
+                            · ${recordingTime(clip.duration)}
+                          </h3>
+                          <p>${clip.prompt[lang === "en" ? 1 : 0]}</p>
+                          ${clip.incomplete ? html`<p class="notice">${s("此段曾中断，请检查完整性。", "This clip was interrupted; check completeness.")}</p>` : ""}<audio
+                            controls
+                            preload="metadata"
+                            src="${clip.url}"
+                            aria-label="${s("回放片段", "Play clip")} ${index + 1}"
+                          ></audio
+                          ><button
+                            class="btn full"
+                            data-recording="download"
+                            data-id="${clip.id}"
+                          >
+                            ${s("下载本段录音", "Download this recording")}
+                            (.${clip.filename.split(".").pop()})</button
+                          ><label
+                            >${s("本段文字笔记（选填，非自动转写）", "Manual notes (optional; not auto-transcribed)")}<textarea
+                              data-recording-note="${clip.id}"
+                              rows="3"
+                              maxlength="12000"
+                            >
+${clip.note}</textarea>
+                          </label>
+                        </article>`,
+                    )}
+                    <details>
+                      <summary>
+                        ${s("查看待核实初稿", "View unverified notes draft")}
+                      </summary>
+                      <pre class="pre-wrap" data-recording-draft>
+${session.draft(lang)}</pre>
+                    </details>`
+                : html`<p>
+                    ${s("这会删除当前页面中的全部录音和笔记，无法恢复。需要保留时，请先取消并下载。正式家族数据不受影响。", "This permanently clears this page’s recordings and notes. Cancel and download first if you need them. Live family records are unaffected.")}
+                  </p>`
+            }
+            <p class="recording-sheet-notice" role="status"></p>
+          </div>
+          <footer class="sheet-actions">
+            <button class="btn" data-recording="dismiss">
+              ${s("返回", "Back")}</button
+            ><button
+              class="btn btn-primary"
+              data-recording="${review ? "notes" : "confirm-reset"}"
+            >
+              ${review ? s("导出初稿 TXT", "Export notes TXT") : s("确认清空", "Confirm clear")}
+            </button>
+          </footer>
+        </div>
+      </dialog>`,
+    );
+    const dialog = /** @type {HTMLDialogElement} */ (q("dialog"));
+    dialog.showModal();
+    dialog.addEventListener("cancel", (event) => {
+      event.preventDefault();
+      closeSheet();
+    });
+    installSwipeDismiss(dialog, closeSheet);
+  }
+  async function close(force = false) {
+    if (closing) return;
+    closing = true;
+    if (!force) await session.leave();
+    unsubscribe?.();
+    host.removeEventListener("click", click);
+    host.removeEventListener("input", input);
+    host.removeEventListener("keydown", keydown);
+    host.querySelectorAll("audio").forEach((audio) => audio.pause());
+    q("dialog")?.close();
+    mount(host, html``);
+    app.inert = wasInert;
+    activeClose = null;
+    if (previousFocus?.isConnected)
+      previousFocus.focus({ preventScroll: true });
+    else
+      /** @type {HTMLElement} */ (
+        document.querySelector('[data-cmd="voice-open"]')
+      )?.focus({ preventScroll: true });
   }
   async function click(event) {
-    event.stopPropagation(); const action = event.target.closest("[data-voice]")?.dataset.voice;
+    event.stopPropagation();
+    const button = event.target.closest("[data-recording]");
+    if (!button || button.disabled) return;
+    const action = button.dataset.recording;
     try {
-      if (action === "close") close();
-      if (action === "settings") { sheet = "settings"; renderSheet(); }
-      if (action === "dismiss") dismiss();
-      if (action === "orb") { if (snapshot.state === "IDLE") controller.start(); else if (snapshot.state === "REVIEWING") { sheet = "review"; renderSheet(); } else controller.interrupt(); }
-      if (["commit", "mute", "pause", "finalize"].includes(action)) controller[action]();
-      if (action === "save-settings") {
-        config = normalizeConfig({ mode: q("#voice-mode").value, url: q("#voice-url").value, vadSilenceMs: q("#voice-vad").value });
-        localStorage.setItem(CONFIG_KEY, JSON.stringify(config)); largeText = q("#voice-elder").checked; onTextScaleChange(largeText);
-        sheet = ""; reset(); renderSheet(); say(s("设置已保存", "Settings saved"));
+      if (action === "orb") {
+        if (session.snapshot().phase === "idle") await session.start();
+        else await session.stop(false);
       }
-      if (action === "test") { event.target.disabled = true; try { await testConnection(q("#voice-url").value); say(s("WebSocket 连接成功（未测试麦克风或模型）", "WebSocket connected (microphone/model not tested)")); } finally { event.target.disabled = false; } }
-      if (action === "draft-tab" || action === "transcript-tab") { draft(); snapshot = controller.snapshot(); tab = action === "draft-tab" ? "draft" : "transcript"; renderSheet(); }
-      if (action === "copy") { await navigator.clipboard.writeText(draft().markdown); say(s("已复制", "Copied")); }
-      if (action === "export") {
-        const value = draft(), url = URL.createObjectURL(new Blob([value.markdown], { type: "text/markdown;charset=utf-8" }));
-        const link = document.createElement("a"); link.href = url; link.download = "interview-draft.md"; link.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+      if (action === "pause") session.pause();
+      if (action === "mute") session.mute();
+      if (action === "done") await session.stop(true);
+      if (action === "review" || action === "finish") {
+        await session.leave();
+        sheet("review");
       }
-      if (action === "save-draft") {
-        const value = draft(), key = "dfplan.voice.sessions", saved = JSON.parse(localStorage.getItem(key) || "[]");
-        const id = controller.localId ||= crypto.randomUUID();
-        localStorage.setItem(key, JSON.stringify([{ id, ...value, turns: snapshot.turns, savedAt: new Date().toISOString() }, ...saved.filter((item) => item.id !== id)].slice(0, 20)));
-        say(s("已保存到当前浏览器", "Saved in this browser"));
+      if (action === "reset") {
+        await session.leave();
+        sheet("reset");
       }
-    } catch (reason) { say(reason.message || String(reason)); }
+      if (action === "confirm-reset") {
+        closeSheet();
+        session.clear();
+      }
+      if (action === "dismiss") closeSheet();
+      if (action === "close") await close();
+      if (action === "scale") {
+        largeText = !largeText;
+        onTextScaleChange(largeText);
+        button.setAttribute("aria-pressed", String(largeText));
+      }
+      if (action === "download") {
+        const clip = session
+          .snapshot()
+          .clips.find((row) => row.id === button.dataset.id);
+        if (clip) {
+          downloadRecordingFile(clip.url, clip.filename);
+          session.downloaded(clip.id);
+          text(
+            ".recording-sheet-notice",
+            s(
+              "下载已交给浏览器，请检查文件。",
+              "Download requested; check the file in Downloads.",
+            ),
+          );
+        }
+      }
+      if (action === "notes") {
+        downloadRecordingNotes(session.draft(lang));
+        session.notesDownloaded();
+        text(
+          ".recording-sheet-notice",
+          s(
+            "初稿已交给浏览器下载；音频须逐段另存。",
+            "Notes download requested; save each audio clip separately.",
+          ),
+        );
+      }
+      if (action === "advanced") {
+        await close();
+        const { openVoiceOverlay: openAssistant } =
+          await import("./voiceAssistantOverlay.mjs");
+        openAssistant({ lang, largeText, onTextScaleChange });
+      }
+    } catch {
+      text(".recording-error", errorText("recording-failed"));
+    }
+  }
+  function input(event) {
+    event.stopPropagation();
+    if (event.target.matches("[data-recording-consent]"))
+      session.consent(event.target.checked);
+    if (event.target.dataset.recordingNote)
+      session.note(event.target.dataset.recordingNote, event.target.value);
   }
   function keydown(event) {
     event.stopPropagation();
-    if (event.key === "Escape") { event.preventDefault(); sheet ? dismiss() : close(); }
+    if (q("dialog[open]")) return;
+    if (event.key === "Escape") {
+      event.preventDefault();
+      void close();
+    }
     if (event.key === "Tab") {
-      const root = q(".voice-sheet") || q(".voice-overlay");
-      const nodes = [...root.querySelectorAll("button:not(:disabled),input:not(:disabled),select:not(:disabled),textarea")].filter((node) => !node.closest("[inert]"));
-      const first = nodes[0], last = nodes.at(-1);
-      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
-      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+      const nodes = Array.from(
+        host.querySelectorAll(
+          "button:not(:disabled),input:not(:disabled),summary,audio",
+        ),
+      ).filter((el) => el.getClientRects().length);
+      if (event.shiftKey && document.activeElement === nodes[0]) {
+        event.preventDefault();
+        /** @type {HTMLElement} */ (nodes.at(-1))?.focus();
+      } else if (!event.shiftKey && document.activeElement === nodes.at(-1)) {
+        event.preventDefault();
+        /** @type {HTMLElement} */ (nodes[0])?.focus();
+      }
     }
   }
-  host.addEventListener("click", click); host.addEventListener("keydown", keydown);
-  function input(event) { if (event.target.id === "voice-draft-markdown") mount(q(".voice-preview"), highlight(event.target.value)); }
+  host.addEventListener("click", click);
   host.addEventListener("input", input);
-  reset(); q(".voice-overlay").focus();
+  host.addEventListener("keydown", keydown);
+  unsubscribe = session.subscribe(update);
+  activeClose = close;
+  update();
+  /** @type {HTMLElement} */ (q(".voice-overlay")).focus();
 }
