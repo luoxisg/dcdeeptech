@@ -1106,3 +1106,157 @@ body.module-view .content {
     width: 100%;
   }
 }
+
+/* PR-02: read-only summaries and reminders; existing task records are unchanged. */
+.environment-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 18px;
+  margin: 0 0 20px;
+  border: 1px solid #9db8a6;
+  border-radius: 16px;
+  background: #edf3ed;
+  color: #244737;
+  font-size: 18px;
+  line-height: 1.75;
+}
+.environment-notice > .icon {
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+.environment-notice p {
+  margin: 4px 0 0;
+  font-size: inherit;
+  line-height: inherit;
+}
+.environment-demo {
+  background: #fff3df;
+  border-color: #cda86e;
+  color: #704615;
+}
+.cloud-gate .environment-notice {
+  width: 100%;
+  max-width: 760px;
+  margin: 20px auto 0;
+}
+.formal-acceptance,
+.weekly-focus {
+  border: 1px solid #b7c7ac;
+  border-radius: 20px;
+  padding: 22px;
+  margin: 22px 0;
+  background: #fffdf7;
+  color: #294b37;
+  font-size: 18px;
+  line-height: 1.8;
+}
+.formal-acceptance > div,
+.weekly-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+.formal-acceptance h2,
+.weekly-focus h2 {
+  font-family: var(--sans);
+  font-size: 23px;
+  line-height: 1.5;
+  margin: 0;
+}
+.formal-acceptance > div > strong {
+  padding: 6px 14px;
+  background: #fff1dc;
+  color: #805018;
+  border: 1px solid #d4b080;
+  border-radius: 24px;
+}
+.formal-acceptance p,
+.weekly-focus p {
+  margin: 12px 0 0;
+  font-size: inherit;
+  line-height: 1.8;
+}
+.weekly-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 18px;
+}
+.weekly-actions > button {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 18px;
+  min-height: 64px;
+  border: 1px solid #b8c8ad;
+  border-radius: 14px;
+  background: #f3f6ed;
+  text-align: left;
+  font: inherit;
+  line-height: 1.65;
+}
+.weekly-actions > button > span:nth-child(2) {
+  min-width: 0;
+  flex: 1;
+  overflow-wrap: anywhere;
+}
+.weekly-actions strong,
+.weekly-actions small {
+  display: block;
+}
+.weekly-actions small {
+  margin-top: 6px;
+  font-size: 0.9em;
+  color: #53654c;
+}
+.weekly-id {
+  font-size: 0.85em;
+  color: #5d704d;
+  white-space: nowrap;
+}
+.weekly-actions > button > .icon {
+  margin-top: 4px;
+  flex-shrink: 0;
+}
+.weekly-handover {
+  margin-top: 18px;
+  padding: 18px;
+  border-left: 4px solid #a76a2c;
+  background: #fcf5e9;
+  border-radius: 12px;
+}
+.weekly-handover > strong {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.weekly-handover > button {
+  margin-top: 14px;
+  min-height: 52px;
+}
+.weekly-focus button:focus-visible {
+  outline: 3px solid #9a5427;
+  outline-offset: 3px;
+}
+.larger-text :is(.environment-notice, .formal-acceptance, .weekly-focus) {
+  font-size: 22px;
+}
+.phone-layout :is(.environment-notice, .formal-acceptance, .weekly-focus) {
+  font-size: var(--phone-font);
+}
+@media (max-width: 700px) {
+  .weekly-actions {
+    grid-template-columns: 1fr;
+  }
+  .formal-acceptance,
+  .weekly-focus {
+    padding: 18px;
+  }
+  .weekly-handover > button {
+    width: 100%;
+  }
+}
