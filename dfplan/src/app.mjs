@@ -10,6 +10,7 @@ import { consumeInviteToken } from "./adapters/invite-token.mjs";
 import { installRenderer } from "./ui/renderer.mjs";
 import { installUIEvents } from "./ui/events.mjs";
 import { installKeyboardAvoidance } from "./ui/keyboard-viewport.mjs";
+import { installVoiceEntry } from "./ui/voice-entry.mjs";
 // Consume and scrub any invitation before navigation can alter the fragment.
 const invitation = consumeInviteToken(location, history);
 let deviceStorage;
@@ -24,6 +25,7 @@ try {
   };
 }
 installCommands();
+installVoiceEntry();
 installUIEvents();
 installRenderer();
 installKeyboardAvoidance();

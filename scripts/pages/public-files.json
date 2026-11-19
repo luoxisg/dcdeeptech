@@ -170,7 +170,14 @@
     "dfplan/src/domain/interview-model.mjs",
     "dfplan/src/ui/dialogs/interview.mjs",
     "dfplan/src/ui/views/interview.mjs",
-    "dfplan/styles/interview.css"
+    "dfplan/styles/interview.css",
+    "dfplan/src/domain/voiceSession.mjs",
+    "dfplan/src/application/voiceController.mjs",
+    "dfplan/src/adapters/audioAdapter.mjs",
+    "dfplan/src/adapters/voiceGateway.mjs",
+    "dfplan/src/ui/voiceOverlay.mjs",
+    "dfplan/styles/voice.css",
+    "dfplan/src/ui/voice-entry.mjs"
   ],
   "generated_files": {
     "DFplan/index.html": "scripts/pages/templates/dfplan-redirect.html"

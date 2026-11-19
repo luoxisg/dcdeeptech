@@ -40,6 +40,9 @@ jobs:
           test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
           test -f DeepFamily/en/index.html
 
+      - name: Verify DFplan native module fingerprint
+        run: node scripts/dfplan/import-map.mjs
+
       - name: Configure Pages metadata
         uses: actions/configure-pages@v5
         with:

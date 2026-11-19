@@ -216,13 +216,13 @@ export function installRenderer() {
     document.documentElement.dataset.textScale = state.elder
       ? "elder"
       : "standard";
-    const shellChange =
+    const viewportShellChange =
       state.view !== previous.view ||
       state.language !== previous.language ||
-      state.elder !== previous.elder ||
       state.mode !== previous.mode ||
       state.session !== previous.session ||
       state.ready !== previous.ready;
+    const shellChange = viewportShellChange || state.elder !== previous.elder;
     if (shellChange || !header.childNodes.length) {
       mount(
         header,
@@ -247,7 +247,7 @@ export function installRenderer() {
       state.pricing.loading !== previous.pricing.loading ||
       state.pricing.error !== previous.pricing.error;
     if (
-      shellChange ||
+      viewportShellChange ||
       state.project !== previous.project ||
       state.people !== previous.people ||
       state.filter !== previous.filter ||
@@ -263,7 +263,7 @@ export function installRenderer() {
       void renderViewport(
         state,
         previous,
-        shellChange || state.project !== previous.project || pricingChange,
+        viewportShellChange || state.project !== previous.project || pricingChange,
       );
     void renderOverlay(state);
     feedback();

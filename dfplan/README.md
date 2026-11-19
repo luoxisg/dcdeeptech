@@ -1,5 +1,7 @@
 # DeepFamily / DFplan
 
+一级菜单「访谈测试版」提供独立浮层中的三轮虚构 Mock 访谈、记忆锚点、可编辑初稿及本机保存/导出；手机底部导航也提供入口。打开和关闭不重绘工作区。该测试入口与已有正式访谈及事实核对页面并存，不会向 Firestore 写入测试对话。Live WS 的本地启动、API 费用与隐私边界见 [backend/README.md](../backend/README.md)。Pages 只发布前端，不能托管 Python 语音服务；真实语音需要自行启动本地服务并配置模型接口。
+
 Live entry: https://dcdeeptech.com/dfplan/ · isolated demo: https://dcdeeptech.com/dfplan/?demo=1
 
 A buildless native-ESM EN/ZH planning workspace. The ten WU tasks, existing task confirmations, named assignments, stewardship fields, LocalStorage keys, Firestore collections and authorization rules remain compatible. Task completion is separate from independent family acceptance: absent independent audit data, formal acceptance is **unverified**.

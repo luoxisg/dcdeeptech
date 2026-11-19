@@ -41,6 +41,7 @@ export function renderHeader() {
         <summary class="btn">${t("menu")}</summary>
         <nav aria-label="${t("menu")}">
           ${routes.map((view) => html`<button class="btn" data-cmd="navigate" data-view="${view}" aria-current="${state.view === view ? "page" : "false"}">${t(view)}</button>`)}
+          <button class="btn" data-cmd="voice-open">${s("访谈测试版", "Interview beta")}</button>
         </nav>
       </details>
       <span class="mode-label"

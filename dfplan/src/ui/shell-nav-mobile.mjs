@@ -1,6 +1,6 @@
 import { store } from "../application/store.mjs";
 import { html } from "./html.mjs";
-import { t } from "./i18n.mjs";
+import { t, s } from "./i18n.mjs";
 import { icon } from "./icons.mjs";
 export function renderMobileNav() {
   const view = store.getState().view;
@@ -21,5 +21,6 @@ export function renderMobileNav() {
           ${icon(picture)}<span>${t(label)}</span>
         </button>`,
     )}
+    <button class="tab-item" data-cmd="voice-open">${icon("interview")}<span>${s("访谈测试版", "Interview beta")}</span></button>
   </nav>`;
 }

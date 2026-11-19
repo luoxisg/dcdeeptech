@@ -50,3 +50,9 @@ Thumbs.db
 *.log
 coverage/
 .nyc_output/
+
+# Private local voice archives and environment
+backend/data/
+backend/.venv/
+backend/.env
+backend/**/__pycache__/
