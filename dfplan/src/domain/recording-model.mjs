@@ -48,11 +48,14 @@ export function recordingDraft(clips, lang = "zh") {
       ? "Oral-history recording notes — pending verification"
       : "口述访谈录音笔记——待核实",
     en
-      ? "These are recording references and manual notes, not an automatic transcript. Audio files must be downloaded separately."
-      : "以下为录音索引和手工笔记，并非自动转写。音频文件须分别下载。",
+      ? "Recording references, optional machine transcription and manual notes. Machine text is unverified; it is not an automatic factual record. Download audio files separately."
+      : "以下为录音索引、机器转写（如有）及手工笔记；机器文字待核实，不代表事实。音频文件须分别下载。",
     ...clips.map(
       (clip, index) =>
-        `${en ? "Clip" : "片段"} ${index + 1} · ${en ? "Round" : "第"} ${clip.round + 1}${en ? "" : "轮"} · ${recordingTime(clip.duration)}\n${clip.prompt[en ? 1 : 0]}\n${clip.startedAt}\n${clip.filename}\n${clip.incomplete ? (en ? "Interrupted recording; check playback." : "录音曾中断，请回放检查。") + "\n" : ""}${clip.note?.trim() || (en ? "No transcript yet; listen to the recording and add notes." : "尚无文字转写，请播放录音并补充笔记。")}`,
+        `${en ? "Clip" : "片段"} ${index + 1} · ${en ? "Round" : "第"} ${clip.round + 1}${en ? "" : "轮"} · ${recordingTime(clip.duration)}\n${clip.prompt[en ? 1 : 0]}\n${clip.startedAt}\n${clip.filename}\n${clip.incomplete ? (en ? "Interrupted recording; check playback." : "录音曾中断，请回放检查。") + "\n" : ""}${en ? "Transcript (unverified):" : "转写文字（待核实）："}
+${clip.transcript?.trim() || (en ? "No transcript; listen to the recording." : "尚无转写，请回放录音。")}
+${clip.transcriptState && clip.transcriptState !== "complete" && clip.transcriptState !== "off" ? (en ? "Transcript may be incomplete." : "转写可能不完整。") + "\n" : ""}${clip.transcriptEdited && clip.machineTranscript ? (en ? "Original machine transcript: " : "原始机器转写：") + clip.machineTranscript + "\n" : ""}${en ? "Manual notes:" : "手工笔记："}
+${clip.note?.trim() || (en ? "No manual notes yet." : "尚无手工笔记。")}`,
     ),
   ].join("\n\n");
 }

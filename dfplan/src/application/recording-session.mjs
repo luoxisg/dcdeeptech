@@ -13,6 +13,11 @@ export function createRecordingSession(io) {
     elapsed: 0,
     muted: false,
     consent: false,
+    transcriptionEnabled: false,
+    transcriptionLanguage: "zh-CN",
+    liveTranscript: "",
+    transcriptionStatus: "off",
+    transcriptionError: "",
     notesExportRequested: false,
     error: "",
     notice: "",
@@ -37,6 +42,27 @@ export function createRecordingSession(io) {
     consent(value) {
       if (state.phase === "idle") emit({ consent: !!value });
     },
+    transcription(value, language) {
+      if (state.phase === "idle")
+        emit({
+          transcriptionEnabled: !!value,
+          transcriptionLanguage: language === "en-SG" ? "en-SG" : "zh-CN",
+        });
+    },
+    editTranscript(id, value) {
+      emit({
+        notesExportRequested: false,
+        clips: state.clips.map((clip) =>
+          clip.id === id
+            ? {
+                ...clip,
+                transcript: String(value).slice(0, 12000),
+                transcriptEdited: true,
+              }
+            : clip,
+        ),
+      });
+    },
     async start() {
       if (state.phase !== "idle" || !state.consent) return;
       const remaining =
@@ -46,7 +72,10 @@ export function createRecordingSession(io) {
         emit({ error: "limit" });
         return;
       }
-      const adapter = io.capture(),
+      const adapter = io.capture({
+          speech: state.transcriptionEnabled,
+          language: state.transcriptionLanguage,
+        }),
         token = ++epoch;
       capture = adapter;
       advance = false;
@@ -57,6 +86,9 @@ export function createRecordingSession(io) {
         error: "",
         notice: "",
         muted: false,
+        liveTranscript: "",
+        transcriptionStatus: state.transcriptionEnabled ? "starting" : "off",
+        transcriptionError: "",
       });
       adapter.finished
         .then(
@@ -109,9 +141,20 @@ export function createRecordingSession(io) {
           }
         });
       try {
-        const success = await adapter.start((elapsed) => {
-          if (current(token, adapter)) emit({ elapsed });
-        }, remaining);
+        const success = await adapter.start(
+          (elapsed) => {
+            if (current(token, adapter)) emit({ elapsed });
+          },
+          remaining,
+          (transcript) => {
+            if (current(token, adapter))
+              emit({
+                liveTranscript: transcript.text,
+                transcriptionStatus: transcript.status,
+                transcriptionError: transcript.error,
+              });
+          },
+        );
         if (current(token, adapter) && success) emit({ phase: "recording" });
       } catch (error) {
         if (current(token, adapter)) {
@@ -119,6 +162,14 @@ export function createRecordingSession(io) {
           emit({ phase: "idle", error: error.message });
         }
       }
+    },
+    retryTranscription() {
+      if (
+        state.phase === "recording" &&
+        !state.muted &&
+        state.transcriptionEnabled
+      )
+        capture?.retryTranscription?.();
     },
     async stop(nextRound = false) {
       if (!capture || !["recording", "paused"].includes(state.phase)) return;
@@ -189,7 +240,9 @@ export function createRecordingSession(io) {
       return (
         state.phase !== "idle" ||
         state.clips.some((clip) => !clip.downloadRequested) ||
-        (state.clips.some((clip) => clip.note.trim()) &&
+        (state.clips.some(
+          (clip) => clip.note.trim() || clip.transcript?.trim(),
+        ) &&
           !state.notesExportRequested)
       );
     },

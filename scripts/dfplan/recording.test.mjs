@@ -117,7 +117,7 @@ test("closing retains audio and manual notes; only explicit clear revokes their 
   const clip = f.session.snapshot().clips[0];
   f.session.note(clip.id, "真实手工笔记 <img onerror=x>");
   assert.match(f.session.draft("zh"), /真实手工笔记/);
-  assert.match(f.session.draft("en"), /not an automatic transcript/);
+  assert.match(f.session.draft("en"), /not an automatic factual record/);
   assert.equal(f.session.pending(), true);
   f.session.downloaded(clip.id);
   assert.equal(f.session.pending(), true);
@@ -176,4 +176,39 @@ test("session capacity stops further capture instead of silently evicting older 
   assert.equal(f.adapters.length, 1);
   assert.equal(f.session.snapshot().error, "limit");
   assert.equal(f.session.snapshot().clips.length, 1);
+});
+
+test("transcription is explicitly opted in, raw machine text survives edits, and notes need their own export", async () => {
+  const f = fixture();
+  assert.equal(f.session.snapshot().transcriptionEnabled, false);
+  f.session.transcription(true, "en-SG");
+  f.session.consent(true);
+  await f.session.start();
+  f.adapters[0].result = {
+    blob: new Blob(["audio"]),
+    mime: "audio/webm",
+    duration: 1000,
+    transcript: "Machine original",
+    machineTranscript: "Machine original",
+    transcriptState: "complete",
+  };
+  await f.session.stop();
+  const clip = f.session.snapshot().clips[0];
+  f.session.editTranscript(clip.id, "Reviewed text");
+  f.session.note(clip.id, "Independent note");
+  assert.equal(
+    f.session.snapshot().clips[0].machineTranscript,
+    "Machine original",
+  );
+  const text = f.session.draft("en");
+  assert.match(text, /Reviewed text/);
+  assert.match(text, /Machine original/);
+  assert.match(text, /Independent note/);
+  f.session.downloaded(clip.id);
+  assert.equal(f.session.pending(), true);
+  f.session.notesDownloaded();
+  assert.equal(f.session.pending(), false);
+  f.session.clear();
+  assert.equal(f.session.snapshot().transcriptionEnabled, false);
+  assert.equal(f.session.snapshot().liveTranscript, "");
 });

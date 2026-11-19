@@ -263,7 +263,7 @@ export async function checkRecording(page) {
     await page.locator("#recorder-title").innerText(),
     /Interview beta/,
   );
-  assert.match(await page.locator(".recorder-consent").innerText(), /consent/);
+  assert.match(await page.locator(".recorder-consent").first().innerText(), /consent/);
   await page.locator('[data-recording="close"]').click();
   await page.locator('[data-cmd="language"]').click();
   await page.evaluate(() =>
