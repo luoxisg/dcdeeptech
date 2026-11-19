@@ -41,14 +41,19 @@ def require(condition, message):
         raise ValueError(message)
 
 
-def safe_path(name):
+def safe_path(name, directory=False):
     p = PurePosixPath(name)
     require(not p.is_absolute() and ".." not in p.parts and "\\" not in name, "Unsafe path: " + name)
     # Buildless DFplan ESM is public runtime code, still selected by exact manifest paths.
     runtime_module = (p.parts[:2] == ("dfplan", "src") and p.suffix == ".mjs" and
                       (p.parts == ("dfplan", "src", "app.mjs") or
                        (len(p.parts) >= 4 and p.parts[2] in {"domain", "application", "adapters", "ui"})))
-    inspected_parts = p.parts[:1] + p.parts[2:] if runtime_module else p.parts
+    runtime_directory = directory and p.parts in {
+        ("dfplan", "src"),
+        *(("dfplan", "src", layer) for layer in ("domain", "application", "adapters", "ui")),
+        ("dfplan", "src", "ui", "views"), ("dfplan", "src", "ui", "dialogs"),
+    }
+    inspected_parts = p.parts[:1] + p.parts[2:] if runtime_module or runtime_directory else p.parts
     require(p.parts and all(part.casefold() not in {s.casefold() for s in PRIVATE_PARTS} for part in inspected_parts), "Private/source path: " + name)
     require(all(not part.startswith(".") or part == ".nojekyll" for part in p.parts), "Hidden file: " + name)
     require(p.suffix.lower() not in PRIVATE_SUFFIXES, "Non-public file type: " + name)
@@ -176,7 +181,7 @@ def audit_tar(archive, report_path):
             require(not member.issym() and not member.islnk(), "Link in Pages artifact: " + member.name)
             if member.isdir():
                 if str(PurePosixPath(member.name)) != ".":
-                    safe_path(str(PurePosixPath(member.name)))
+                    safe_path(str(PurePosixPath(member.name)), directory=True)
                 continue
             require(member.isfile(), "Non-regular archive entry: " + member.name)
             name = str(PurePosixPath(member.name))
