@@ -1,0 +1,97 @@
+@layer components {
+  /* Oral-history prototype: scoped to its view; shares standard/elder tokens. */
+  .interview-workspace {
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+    gap: var(--space-gap);
+    min-width: 0;
+  }
+  .interview-stage {
+    display: grid;
+    align-content: start;
+    justify-items: stretch;
+    gap: var(--space-gap);
+    text-align: center;
+  }
+  .interview-orb {
+    --mic-level: 0;
+    justify-self: center;
+    width: min(200px, 70%);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    margin: 16px 0;
+    color: white;
+    font-size: 4rem;
+    background: radial-gradient(
+      circle at 35% 30%,
+      #78a78d,
+      #265a48 65%,
+      #173d30
+    );
+    border: 10px solid #e0eadd;
+    box-shadow: 0 0 calc(16px + var(--mic-level) * 48px) #5e927366;
+  }
+  .interview-orb[data-phase="speaking"],
+  .interview-orb[data-phase="listening"] {
+    animation: interview-pulse 2.6s ease-in-out infinite;
+  }
+  .interview-orb[data-phase="thinking"] {
+    background: radial-gradient(circle at 35% 30%, #c7a267, #7f592b);
+  }
+  .interview-cue {
+    min-height: 7em;
+    text-align: left;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+  .interview-controls {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-gap);
+  }
+  .interview-controls > .full {
+    grid-column: 1/-1;
+  }
+  .interview-steps {
+    padding-left: 1.4em;
+  }
+  .interview-steps li + li {
+    margin-top: var(--space-gap);
+  }
+  .interview-entities {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .interview-entities .badge {
+    margin-block: 6px;
+  }
+  .interview-notice {
+    min-height: 1.5em;
+  }
+  .interview-entry {
+    background: #e8eedf;
+  }
+  @keyframes interview-pulse {
+    0%,
+    100% {
+      box-shadow: 0 0 18px #5e927355;
+    }
+    50% {
+      box-shadow: 0 0 40px #5e927388;
+    }
+  }
+  @media (max-width: 767px) {
+    .interview-workspace {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .interview-orb {
+      width: 164px;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .interview-orb {
+      animation: none;
+    }
+  }
+}

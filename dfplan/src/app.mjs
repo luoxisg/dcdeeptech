@@ -53,6 +53,7 @@ window.addEventListener("hashchange", () => {
       "history",
       "dashboard",
       "people",
+      "interview",
       "facts",
       "security",
       "digitization",

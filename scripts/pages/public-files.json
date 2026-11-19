@@ -164,7 +164,13 @@
     "dfplan/styles/components.css",
     "dfplan/styles/layout.css",
     "dfplan/styles/main.css",
-    "dfplan/styles/tokens.css"
+    "dfplan/styles/tokens.css",
+    "dfplan/src/adapters/interview-browser.mjs",
+    "dfplan/src/application/interview-session.mjs",
+    "dfplan/src/domain/interview-model.mjs",
+    "dfplan/src/ui/dialogs/interview.mjs",
+    "dfplan/src/ui/views/interview.mjs",
+    "dfplan/styles/interview.css"
   ],
   "generated_files": {
     "DFplan/index.html": "scripts/pages/templates/dfplan-redirect.html"

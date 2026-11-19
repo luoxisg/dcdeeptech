@@ -15,6 +15,7 @@ const views = {
   history: () => import("./views/history.mjs"),
   dashboard: () => import("./views/dashboard.mjs"),
   people: () => import("./views/people.mjs"),
+  interview: () => import("./views/interview.mjs"),
   facts: () => import("./views/facts.mjs"),
   digitization: () => import("./views/digitization.mjs"),
   security: () => import("./views/security.mjs"),
@@ -27,6 +28,8 @@ const dialogs = {
   account: () => import("./dialogs/account.mjs"),
   person: () => import("./dialogs/person.mjs"),
   assertion: () => import("./dialogs/assertion.mjs"),
+  interview: () => import("./dialogs/interview.mjs"),
+  "interview-reset": () => import("./dialogs/interview.mjs"),
   copy: () => import("./dialogs/copy.mjs"),
 };
 /** Four orthogonal mount regions; editing a field never rebuilds its form. */
@@ -86,6 +89,7 @@ export function installRenderer() {
         return;
       }
     }
+    activeView?.unmount?.(route !== renderedRoute);
     const module = await (views[route] || views.overview)();
     if (epoch !== viewEpoch) return;
     activeView = module;
@@ -107,11 +111,12 @@ export function installRenderer() {
     mount(
       viewport,
       html`<main id="main" tabindex="-1">
-        ${modeNotice()}
+        ${modeNotice(route === "interview")}
         <p class="notice error" data-feedback hidden></p>
         ${content}
       </main>`,
     );
+    if (!recovery) module.mount?.();
     viewport.scrollTop = keepScroll;
     if (state.view !== previous.view) {
       /** @type {HTMLElement} */ (
