@@ -1,5 +1,7 @@
-/** MediaRecorder-only capture. No SpeechRecognition, WebSocket or network upload. */
-export function createBrowserRecorder() {
+import { createBrowserTranscription } from "./browser-transcription.mjs";
+/** Audio stays local; optional browser transcription is separately consented. */
+/** @param {{speech?:boolean,language?:string}} [options] */
+export function createBrowserRecorder(options = {}) {
   let stream = null,
     recorder = null,
     chunks = [],
@@ -13,6 +15,9 @@ export function createBrowserRecorder() {
     bytes = 0,
     reason = "",
     settled = false;
+  let speech = null,
+    speechResult = null,
+    muted = false;
   let resolveFinished, rejectFinished;
   const finished = new Promise((resolve, reject) => {
     resolveFinished = resolve;
@@ -31,6 +36,7 @@ export function createBrowserRecorder() {
   const reject = (code) => {
     if (settled) return;
     settled = true;
+    speech?.cancel();
     clearTimeout(stopGuard);
     release();
     chunks = [];
@@ -38,6 +44,7 @@ export function createBrowserRecorder() {
   };
   function stop(why = "") {
     if (why) reason = why;
+    if (speech && !speechResult) speechResult = speech.finish();
     if (recorder && recorder.state !== "inactive") {
       total = duration();
       started = false;
@@ -53,7 +60,7 @@ export function createBrowserRecorder() {
   }
   return {
     finished,
-    async start(onTick, remainingBytes) {
+    async start(onTick, remainingBytes, onTranscript = (_value) => {}) {
       if (
         !globalThis.isSecureContext ||
         !navigator.mediaDevices?.getUserMedia ||
@@ -92,7 +99,7 @@ export function createBrowserRecorder() {
           if (recorder.state !== "inactive") void stop("device");
           else reject("recording-failed");
         };
-        recorder.onstop = () => {
+        recorder.onstop = async () => {
           clearTimeout(stopGuard);
           if (cancelled) {
             reject("cancelled");
@@ -110,6 +117,20 @@ export function createBrowserRecorder() {
               recorder.mimeType || chunks[0].type || "application/octet-stream",
             blob = new Blob(chunks, { type });
           chunks = [];
+          let transcription = {
+            text: "",
+            status: "off",
+            error: "",
+            language: options.language || "zh-CN",
+          };
+          if (speech) {
+            speechResult ||= speech.finish();
+            transcription = await speechResult;
+          }
+          if (cancelled) {
+            reject("cancelled");
+            return;
+          }
           settled = true;
           resolveFinished({
             blob,
@@ -117,6 +138,11 @@ export function createBrowserRecorder() {
             duration: elapsed,
             incomplete: !!reason,
             reason,
+            transcript: transcription.text,
+            machineTranscript: transcription.text,
+            transcriptState: transcription.status,
+            transcriptError: transcription.error,
+            transcriptLanguage: transcription.language,
           });
         };
         acquired.getTracks().forEach((track) =>
@@ -131,6 +157,13 @@ export function createBrowserRecorder() {
         mark = performance.now();
         started = true;
         recorder.start(500);
+        if (options.speech) {
+          speech = createBrowserTranscription({
+            language: options.language,
+            onChange: onTranscript,
+          });
+          speech.start();
+        }
         timer = setInterval(() => onTick(duration()), 250);
         onTick(0);
         return true;
@@ -148,8 +181,12 @@ export function createBrowserRecorder() {
       }
     },
     stop,
+    retryTranscription() {
+      if (started && !paused && !muted) speech?.resume();
+    },
     pause() {
       if (recorder?.state !== "recording") return;
+      speech?.pause();
       total = duration();
       paused = true;
       recorder.pause();
@@ -159,13 +196,18 @@ export function createBrowserRecorder() {
       mark = performance.now();
       paused = false;
       recorder.resume();
+      if (!muted) speech?.resume();
     },
     mute(value) {
+      muted = value;
+      if (value) speech?.pause();
+      else if (!paused) speech?.resume();
       stream?.getAudioTracks().forEach((track) => {
         track.enabled = !value;
       });
     },
     dispose() {
+      speech?.cancel();
       cancelled = true;
       started = false;
       if (recorder && recorder.state !== "inactive") {

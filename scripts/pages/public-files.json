@@ -181,7 +181,8 @@
     "dfplan/src/adapters/media-recorder.mjs",
     "dfplan/src/application/recording-session.mjs",
     "dfplan/src/domain/recording-model.mjs",
-    "dfplan/src/ui/voiceAssistantOverlay.mjs"
+    "dfplan/src/ui/voiceAssistantOverlay.mjs",
+    "dfplan/src/adapters/browser-transcription.mjs"
   ],
   "generated_files": {
     "DFplan/index.html": "scripts/pages/templates/dfplan-redirect.html"

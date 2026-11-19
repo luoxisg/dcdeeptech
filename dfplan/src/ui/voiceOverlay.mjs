@@ -9,10 +9,11 @@ import {
   downloadRecordingFile,
   downloadRecordingNotes,
 } from "../adapters/media-recorder.mjs";
+import { browserTranscriptionSupported } from "../adapters/browser-transcription.mjs";
 import { installSwipeDismiss } from "./keyboard-viewport.mjs";
 const session = createRecordingSession({
   ...recordingBrowserIO,
-  capture: createBrowserRecorder,
+  capture: (options) => createBrowserRecorder(options),
 });
 let activeClose = null;
 store.subscribe((next, previous) => {
@@ -42,7 +43,10 @@ export function openVoiceOverlay({
   const s = (zh, en) => (lang === "en" ? en : zh),
     app = document.getElementById("app"),
     previousFocus = /** @type {HTMLElement} */ (document.activeElement),
-    wasInert = app.inert;
+    wasInert = app.inert,
+    speechSupported = browserTranscriptionSupported();
+  if (!speechSupported)
+    session.transcription(false, session.snapshot().transcriptionLanguage);
   let closing = false,
     unsubscribe = null;
   app.inert = true;
@@ -121,7 +125,7 @@ export function openVoiceOverlay({
       <div class="recorder-body">
         <section class="recorder-stage">
           <span class="badge"
-            >${s("真实录音 · 本页保存，不自动上传", "Real recording · held on this page, no automatic upload")}</span
+            >${s("真实录音 · 本页保留音频", "Real recording · audio retained on this page")}</span
           >
           <p class="recording-round"></p>
           <p class="recording-state" role="status"></p>
@@ -138,10 +142,41 @@ export function openVoiceOverlay({
               >${s("已征得受访者同意，愿意在本设备录音并保管导出文件。", "I have the narrator’s consent to record on this device and keep the exported files.")}</span
             ></label
           >
+          <section class="recorder-transcription">
+            <label class="recorder-consent"
+              ><input type="checkbox" data-transcription-enable /><span
+                >${s("开启免费实时转写（同意浏览器服务处理语音，可能联网）", "Enable free live transcription (allow the browser service to process speech, possibly online)")}</span
+              ></label
+            >
+            <label
+              >${s("识别语言", "Recognition language")}<select
+                data-transcription-language
+              >
+                <option value="zh-CN">
+                  ${s("普通话", "Mandarin Chinese")}
+                </option>
+                <option value="en-SG">
+                  ${s("英语（新加坡）", "English (Singapore)")}
+                </option>
+              </select></label
+            >
+            <p>
+              ${speechSupported ? s("无需 API 密钥，仅新录音实时转写；结果需核对。服务可能联网或跨境处理；敏感访谈可关闭此开关。可用性取决于浏览器及网络。", "No API key. Live transcription for new recordings; review all text. The provider may process speech online or abroad. Availability varies; keep transcription off for sensitive material.") : s("当前浏览器不支持实时转写。可尝试 Android Chrome；录音和手工笔记仍可使用。", "This browser does not support live transcription. Try Android Chrome; audio recording and manual notes still work.")}
+            </p>
+            <p data-transcription-status role="status"></p>
+            <button class="btn full" data-recording="speech-retry">
+              ${s("重试文字识别（录音继续）", "Retry recognition (keep recording)")}
+            </button>
+            <p
+              class="transcription-live pre-wrap"
+              data-live-transcript
+              aria-label="${s("实时转写文字，待核实", "Live transcript, unverified")}"
+            ></p>
+          </section>
           <p class="recording-notice" role="status"></p>
           <p class="recording-error" role="alert"></p>
           <p class="recorder-hint">
-            ${s("录音保留在当前页面内存。刷新、离开网站或退出账号前请下载；关闭访谈窗口后可重新打开回放。不会自动转写或写入家族档案。", "Audio stays in this page’s memory. Download before reloading, leaving the site or signing out. Close and reopen this interview to play saved clips. No automatic transcription or family archive write.")}
+            ${s("录音保留在当前页面内存。刷新、离开网站或退出账号前请下载；关闭访谈窗口后可重新打开回放。不会写入家族档案；只有开启转写后，浏览器才会调用其识别服务。", "Audio stays in this page’s memory. Download before reloading, leaving the site or signing out. Close and reopen this interview to play saved clips. No family archive write. Only enabling transcription invokes the browser’s recognition service.")}
           </p>
           <button class="btn" data-recording="review">
             ${s("回放与下载已有录音", "Play & download saved clips")}
@@ -198,6 +233,121 @@ export function openVoiceOverlay({
       stopping: s("正在结束并保留音频…", "Finalizing and retaining audio…"),
     };
     text(".recording-state", statuses[state.phase]);
+    const speechToggle = /** @type {HTMLInputElement} */ (
+        q("[data-transcription-enable]")
+      ),
+      speechLanguage = /** @type {HTMLSelectElement} */ (
+        q("[data-transcription-language]")
+      );
+    speechToggle.checked = state.transcriptionEnabled;
+    speechToggle.disabled = !speechSupported || state.phase !== "idle";
+    speechLanguage.value = state.transcriptionLanguage;
+    speechLanguage.disabled = !speechSupported || state.phase !== "idle";
+    const speechMessages = {
+      off: state.transcriptionEnabled
+        ? s(
+            "将随下一段录音启动免费转写。",
+            "Free transcription starts with the next recording.",
+          )
+        : s(
+            "转写未开启，仍可正常录音。",
+            "Transcription is off; audio recording still works.",
+          ),
+      starting: s(
+        "正在启动浏览器语音识别…",
+        "Starting browser speech recognition…",
+      ),
+      listening: s(
+        "正在实时转写，机器文字需核对。",
+        "Transcribing live; review the machine-generated text.",
+      ),
+      paused: s("转写已暂停。", "Transcription paused."),
+      waiting: s(
+        "暂未识别到语音，录音仍在继续。",
+        "No speech recognized yet; audio recording continues.",
+      ),
+      reconnecting: s(
+        "正在重启浏览器识别，录音保持继续。",
+        "Restarting browser recognition; audio recording continues.",
+      ),
+      finishing: s(
+        "正在等待最后的识别文字…",
+        "Waiting for final recognition results…",
+      ),
+      complete: s(
+        "转写已结束，请回放核对。",
+        "Transcription ended; check against the audio.",
+      ),
+      partial: s(
+        "仅保留部分转写，请回放补充核对。",
+        "Partial transcript retained; review and complete it from the audio.",
+      ),
+      empty: s(
+        "未获得转写文字，可使用录音补记。",
+        "No transcript received; use the audio to add notes.",
+      ),
+      stopped: s(
+        "浏览器识别已停止，可在下一段录音重试。",
+        "Browser recognition stopped; retry on the next clip.",
+      ),
+      unsupported: s(
+        "当前浏览器不支持语音识别。",
+        "Speech recognition is unavailable in this browser.",
+      ),
+      error: s(
+        "转写服务未完成，原始录音仍保留。",
+        "Transcription did not complete; the audio is retained.",
+      ),
+    };
+    const speechErrors = {
+      network: s(
+        "网络或浏览器识别服务不可用。",
+        "Network or browser recognition service unavailable.",
+      ),
+      "not-allowed": s(
+        "识别服务未获授权。",
+        "Recognition service permission denied.",
+      ),
+      "service-not-allowed": s(
+        "浏览器未开放识别服务。",
+        "Browser recognition service not permitted.",
+      ),
+      "text-limit": s(
+        "已达本段文字长度上限，请用下一段继续。",
+        "Transcript limit reached; continue in the next clip.",
+      ),
+      "language-not-supported": s(
+        "服务不支持当前识别语言。",
+        "The service does not support this recognition language.",
+      ),
+    };
+    text(
+      "[data-transcription-status]",
+      (speechMessages[state.transcriptionStatus] || speechMessages.error) +
+        (state.transcriptionError
+          ? " " +
+            (speechErrors[state.transcriptionError] ||
+              s(
+                "请核对权限、网络或更换浏览器；录音可继续。",
+                "Check permissions/network or try another browser; recording can continue.",
+              ))
+          : ""),
+    );
+    text("[data-live-transcript]", state.liveTranscript);
+    const retry = /** @type {HTMLButtonElement} */ (
+      q('[data-recording="speech-retry"]')
+    );
+    retry.hidden =
+      !state.transcriptionEnabled ||
+      !speechSupported ||
+      state.phase !== "recording" ||
+      !["error", "stopped"].includes(state.transcriptionStatus);
+    retry.disabled =
+      state.phase !== "recording" ||
+      state.muted ||
+      !["error", "stopped"].includes(state.transcriptionStatus) ||
+      state.transcriptionError === "text-limit";
+
     text(".recording-timer", recordingTime(state.elapsed));
     text(
       ".recording-prompt",
@@ -302,7 +452,7 @@ export function openVoiceOverlay({
             ${
               review
                 ? html`<p>
-                      ${s("请逐段回放核对并下载。文字栏是手工笔记，未接入自动语音转写。", "Check and download each recording. Text fields are manual notes, not automatic speech transcription.")}
+                      ${s("请逐段回放并下载。机器转写可能不完整或有误，请核对后编辑；原始机器文字会保留，并一同导出。", "Check and download each recording. Machine transcripts can be incomplete or incorrect; review and edit them. Original machine text is retained and included in the export.")}
                     </p>
                     ${state.clips.map(
                       (clip, index) =>
@@ -326,7 +476,28 @@ export function openVoiceOverlay({
                           >
                             ${s("下载本段录音", "Download this recording")}
                             (.${clip.filename.split(".").pop()})</button
-                          ><label
+                          >${clip.transcriptState && clip.transcriptState !== "off" ? html`<p class="badge">${s("机器转写 · 待核实", "Machine transcript · unverified")}${["partial", "error", "empty", "stopped"].includes(clip.transcriptState) ? s("（可能不完整）", " (may be incomplete)") : ""}</p>` : ""}
+                          <label
+                            >${s("转写文字（待核实，可编辑）", "Transcript (unverified, editable)")}<textarea
+                              rows="4"
+                              maxlength="12000"
+                              data-recording-transcript="${clip.id}"
+                            >
+${clip.transcript || ""}</textarea>
+                          </label>
+                          ${
+                            clip.machineTranscript
+                              ? html`<details>
+                                  <summary>
+                                    ${s("查看原始机器转写", "View original machine transcript")}
+                                  </summary>
+                                  <p class="pre-wrap">
+                                    ${clip.machineTranscript}
+                                  </p>
+                                </details>`
+                              : ""
+                          }
+                          <label
                             >${s("本段文字笔记（选填，非自动转写）", "Manual notes (optional; not auto-transcribed)")}<textarea
                               data-recording-note="${clip.id}"
                               rows="3"
@@ -400,6 +571,7 @@ ${session.draft(lang)}</pre>
         if (session.snapshot().phase === "idle") await session.start();
         else await session.stop(false);
       }
+      if (action === "speech-retry") session.retryTranscription();
       if (action === "pause") session.pause();
       if (action === "mute") session.mute();
       if (action === "done") await session.stop(true);
@@ -463,6 +635,22 @@ ${session.draft(lang)}</pre>
     event.stopPropagation();
     if (event.target.matches("[data-recording-consent]"))
       session.consent(event.target.checked);
+    if (
+      event.target.matches(
+        "[data-transcription-enable],[data-transcription-language]",
+      )
+    )
+      session.transcription(
+        /** @type {HTMLInputElement} */ (q("[data-transcription-enable]"))
+          .checked,
+        /** @type {HTMLSelectElement} */ (q("[data-transcription-language]"))
+          .value,
+      );
+    if (event.target.dataset.recordingTranscript)
+      session.editTranscript(
+        event.target.dataset.recordingTranscript,
+        event.target.value,
+      );
     if (event.target.dataset.recordingNote)
       session.note(event.target.dataset.recordingNote, event.target.value);
   }

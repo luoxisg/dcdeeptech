@@ -1,5 +1,6 @@
 /** Browser-only QA dependency: PLAYWRIGHT_MODULE may point to an external installation. */
 import assert from "node:assert/strict";
+import { checkTranscription } from "./transcription-browser-check.mjs";
 import { checkRecording } from "./recording-browser-check.mjs";
 import { checkInterview } from "./interview-browser-check.mjs";
 import { createRequire } from "node:module";
@@ -227,6 +228,7 @@ try {
     }
     await checkInterview(page);
     await checkRecording(page);
+    await checkTranscription(page);
     await navigate("facts");
     await page.locator('[data-cmd="assertion"]').first().click();
     await page

@@ -372,3 +372,34 @@
     }
   }
 }
+
+@layer components {
+  .recorder-transcription {
+    width: 100%;
+    min-width: 0;
+    display: grid;
+    gap: 12px;
+    text-align: left;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: var(--space-gap);
+  }
+  .transcription-live {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    max-height: 12em;
+    overflow: auto;
+    padding: 12px;
+    border-radius: 10px;
+    background: #edf1e5;
+  }
+  .transcription-live:empty {
+    display: none;
+  }
+}
+
+@layer components {
+  .voice-overlay [data-recording="speech-retry"][hidden] {
+    display: none;
+  }
+}
