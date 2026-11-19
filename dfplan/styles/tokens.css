@@ -1,0 +1,28 @@
+:root {
+  --touch-min: 48px;
+  --fs-body: 16px;
+  --fs-title: 20px;
+  --space-gap: 12px;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --paper: #f6f3ec;
+  --card: #fffef9;
+  --ink: #203e32;
+  --muted: #526052;
+  --green: #204b3b;
+  --line: #bdcbb5;
+  --gold: #976026;
+  --error: #843e29;
+  --radius: 18px;
+  --tabbar-height: 80px;
+  --font:
+    Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+:root[data-text-scale="elder"] {
+  --touch-min: 54px;
+  --fs-body: 20px;
+  --fs-title: 24px;
+  --space-gap: 16px;
+  --tabbar-height: 96px;
+}

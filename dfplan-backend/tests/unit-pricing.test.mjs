@@ -1,3 +1,4 @@
+import {renderUnitPricing} from "./ui-render-harness.mjs";
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
@@ -6,7 +7,6 @@ import {
   centsFromSGD,
   unitPriceSubtotal,
   canEditUnitPricing,
-  renderUnitPricing,
 } from "../../dfplan/unit-pricing.mjs";
 import { estimateDigitization } from "../../dfplan/digitization.mjs";
 const h = {

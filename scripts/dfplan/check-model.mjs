@@ -4,7 +4,7 @@ import { validateProject, targetDate, csvCell } from "../../dfplan/model.mjs";
 const { seedTasks } = await import(
   "data:text/javascript," +
     encodeURIComponent(
-      readFileSync(new URL("../../dfplan/data.js", import.meta.url), "utf8"),
+      readFileSync(new URL("../../dfplan/src/domain/seed-tasks.mjs", import.meta.url), "utf8"),
     )
 );
 const fresh = () => ({

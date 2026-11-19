@@ -1,0 +1,125 @@
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: var(--fs-body);
+  line-height: 1.65;
+}
+body {
+  overflow: hidden;
+}
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+h1 {
+  font-size: calc(var(--fs-title) * 1.35);
+  line-height: 1.35;
+}
+h2 {
+  font-size: var(--fs-title);
+  line-height: 1.45;
+}
+h3 {
+  font-size: var(--fs-body);
+}
+p + p,
+h2 + p,
+h3 + p {
+  margin-top: var(--space-gap);
+}
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+button,
+a,
+input,
+select,
+textarea,
+summary {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+button {
+  cursor: pointer;
+}
+button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+a {
+  color: var(--green);
+}
+input,
+select,
+textarea {
+  width: 100%;
+  min-width: var(--touch-min);
+  min-height: var(--touch-min);
+  padding: 10px 12px;
+  border: 1px solid #91a48a;
+  border-radius: 10px;
+  background: white;
+  max-width: 100%;
+}
+label {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+input[type="checkbox"] {
+  width: var(--touch-min);
+  height: var(--touch-min);
+  flex-shrink: 0;
+  accent-color: var(--green);
+}
+textarea {
+  resize: vertical;
+}
+img,
+svg {
+  max-width: 100%;
+}
+button,
+select,
+input,
+a,
+summary {
+  overflow-wrap: anywhere;
+}
+button,
+summary {
+  min-height: var(--touch-min);
+  min-width: var(--touch-min);
+}
+progress {
+  display: block;
+  width: 100%;
+  height: 14px;
+  accent-color: var(--green);
+}
+details > summary {
+  display: list-item;
+  cursor: pointer;
+  padding: 12px 8px;
+  font-weight: 650;
+}
+details > p {
+  padding: 8px;
+}
+[hidden] {
+  display: none;
+}

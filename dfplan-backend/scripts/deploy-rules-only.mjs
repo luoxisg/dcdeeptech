@@ -49,7 +49,7 @@ export async function deployWithPreservationCheck({ db, api, projectId, source, 
 
 async function main() {
   if (process.env.FIRESTORE_EMULATOR_HOST) throw Error("Unset FIRESTORE_EMULATOR_HOST before production deployment.");
-  const configSource = await readFile(new URL("../../dfplan/backend-config.js", import.meta.url), "utf8");
+  const configSource = await readFile(new URL("../../dfplan/src/adapters/backend-config.mjs", import.meta.url), "utf8");
   const { backendConfig } = await import("data:text/javascript," + encodeURIComponent(configSource));
   const projectId = backendConfig.firebase.projectId;
   if (projectId !== "deepfamily-dfplan") throw Error("Unexpected Firebase project.");

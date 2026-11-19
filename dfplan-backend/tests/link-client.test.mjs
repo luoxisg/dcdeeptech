@@ -3,14 +3,14 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
-import { renderPeople } from "../../dfplan/people-ui.mjs";
+import { renderPeople } from "./ui-render-harness.mjs";
 const roster = (session) => renderPeople({ tasks: [] }, [], {
   ready: true, canManage: session.admin?.canManagePeople === true,
 }, { s: (zh) => zh, esc: (value) => String(value), icon: () => "" });
 const root = new URL("../../dfplan/", import.meta.url);
 const { seedTasks } = await import(
   "data:text/javascript," +
-    encodeURIComponent(await readFile(new URL("data.js", root), "utf8"))
+    encodeURIComponent(await readFile(new URL("src/domain/seed-tasks.mjs", root), "utf8"))
 );
 const token = "A".repeat(43),
   project = "dfplanProjects/wu-family";
@@ -187,27 +187,9 @@ async function harness({
       },
     },
   };
-  let source = await readFile(new URL("backend-client.js", root), "utf8");
-  for (const name of [
-    "data.js",
-    "model.mjs",
-    "stewardship.mjs",
-    "unit-pricing.mjs?v=20261119-unit-pricing",
-    "people-model.mjs?v=20261116-people-directory",
-  ])
-    source = source.replace(
-      '"./' + name + '"',
-      JSON.stringify(new URL(name, root).href),
-    );
-  source = source.replace(
-    /"\.\/backend-config\.js\?v=[^"]+"/,
-    JSON.stringify(
-      "data:text/javascript," +
-        encodeURIComponent(
-          await readFile(new URL("backend-config.js", root), "utf8"),
-        ),
-    ),
-  );
+  const adapterRoot = new URL("src/adapters/", root);
+  let source = await readFile(new URL("firestore-client.mjs", adapterRoot), "utf8");
+  source = source.replace(/from ["'](\.\.?\/[^"']+)["']/g,(_,path)=>"from "+JSON.stringify(new URL(path,adapterRoot).href));
   for (const [file, key] of [
     ["app", "app"],
     ["auth", "auth"],
@@ -440,7 +422,7 @@ test("an ordinary invitation named Patrick cannot add, remove or restore personn
   });
   assert.deepEqual(await h.client.listPeople(), []);
   assert.equal(h.sessions.at(-1).admin.canManagePeople, false);
-  assert.ok(!roster(h.sessions.at(-1)).includes('id="person-form"'));
+  assert.ok(!roster(h.sessions.at(-1)).includes('data-cmd="person-dialog"'));
   await assert.rejects(
     h.client.addPerson("New person", ""),
     (e) => e.code === "dfplan/not-admin",
@@ -459,7 +441,7 @@ test("authorized Patrick manages people using a protected invitation, without ad
   const h = await harness({ directory: true, canManagePeople: true,
     user: { uid: "patrick-device", email: null, isAnonymous: true }, claimed: true });
   assert.equal(h.sessions.at(-1).admin.canManagePeople, true);
-  assert.ok(roster(h.sessions.at(-1)).includes('id="person-form"'));
+  assert.ok(roster(h.sessions.at(-1)).includes('data-cmd="person-dialog"'));
   const id = await h.client.addPerson("Alex Example", "Archives");
   await h.client.setPersonActive(id, false);
   await h.client.setPersonActive(id, true);
@@ -473,7 +455,7 @@ test("authorized Patrick manages people using a protected invitation, without ad
   await tick();
   assert.equal(h.sessions.at(-1).phase, "ready");
   assert.equal(h.sessions.at(-1).admin.canManagePeople, false);
-  assert.ok(!roster(h.sessions.at(-1)).includes('id="person-form"'));
+  assert.ok(!roster(h.sessions.at(-1)).includes('data-cmd="person-dialog"'));
   await assert.rejects(h.client.addPerson("Other", ""), e => e.code === "dfplan/not-admin");
   await assert.rejects(h.client.setPersonActive(id, false), e => e.code === "dfplan/not-admin");
   // A guest membership field cannot grant the permission back.
@@ -503,7 +485,7 @@ test("both Google owner and admin retain all personnel actions and matching page
       user: { uid: "owner", email: "owner@example.com", emailVerified: true,
         isAnonymous: false, providerData: [{ providerId: "google.com" }] } });
     assert.equal(h.sessions.at(-1).admin.canManagePeople, true);
-    assert.ok(roster(h.sessions.at(-1)).includes('id="person-form"'));
+    assert.ok(roster(h.sessions.at(-1)).includes('data-cmd="person-dialog"'));
     const id = await h.client.addPerson("Google test", "");
     await h.client.setPersonActive(id, false);
     await h.client.setPersonActive(id, true);
