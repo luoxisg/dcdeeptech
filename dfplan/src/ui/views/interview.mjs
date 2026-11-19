@@ -1,4 +1,7 @@
-import { interviewSession as session } from "../../application/interview-session.mjs";
+import {
+  interviewSession as session,
+  shouldClearInterview,
+} from "../../application/interview-session.mjs";
 import { commands } from "../../application/command-bus.mjs";
 import { store } from "../../application/store.mjs";
 import {
@@ -47,6 +50,12 @@ function stopMeter() {
 function install() {
   if (installed) return;
   installed = true;
+  store.subscribe((next, previous) => {
+    if (shouldClearInterview(previous, next)) {
+      stopMeter();
+      session.reset();
+    }
+  });
   commands.register("interview-primary", () => {
     const state = session.getState();
     if (state.paused) session.togglePause();

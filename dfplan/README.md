@@ -60,3 +60,5 @@ Three bilingual scripted turns support interruption, pausing, 3.5-second pause-t
 The optional microphone level test asks permission only on explicit activation. It uses local audio amplitude without recording or uploading. Leaving the module stops all tracks and animation; delayed permission grants after navigation are stopped immediately.
 
 Additional verification: `node scripts/dfplan/interview.test.mjs` checks state transitions, pause/interrupt races, draft preservation and complete three-turn flow. `check-mobile.mjs` also exercises WU-05 entry, focus-preserving edits, TXT download, reset confirmation, fake microphone permission cleanup and zero project writes at both mobile sizes.
+
+Live interview drafts and microphone state are cleared on sign-out, access loss or an account change, including when another view is active. Ordinary view switches retain drafts within the same session.

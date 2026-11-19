@@ -1,6 +1,9 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { createInterviewSession } from "../../dfplan/src/application/interview-session.mjs";
+import {
+  createInterviewSession,
+  shouldClearInterview,
+} from "../../dfplan/src/application/interview-session.mjs";
 import {
   interviewScript,
   interviewDraft,
@@ -125,4 +128,19 @@ test("edited drafts survive later turns and keep separate EN/ZH versions", () =>
   assert.match(session.exportText("zh"), /示例原始对话/);
   session.edit("zh", "body", "x".repeat(13000));
   assert.equal(session.draft("zh").body.length, 12000);
+});
+
+test("live drafts are invalidated on sign-out, permission loss or account switch, not normal navigation", () => {
+  const old = { mode: "formal", ready: true, session: { user: { uid: "A" } } };
+  assert.equal(shouldClearInterview(old, { ...old, view: "overview" }), false);
+  assert.equal(shouldClearInterview(old, { ...old, ready: false }), true);
+  assert.equal(
+    shouldClearInterview(old, { ...old, session: { user: { uid: "B" } } }),
+    true,
+  );
+  assert.equal(shouldClearInterview(old, { ...old, session: {} }), true);
+  assert.equal(
+    shouldClearInterview({ ...old, mode: "demo" }, { ...old, ready: false }),
+    false,
+  );
 });

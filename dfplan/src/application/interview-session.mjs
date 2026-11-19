@@ -200,3 +200,12 @@ export function createInterviewSession(
   };
 }
 export const interviewSession = createInterviewSession();
+
+/** Clear session-local notes when live access is lost or the signed-in identity changes. */
+export function shouldClearInterview(previous, next) {
+  return (
+    previous.mode === "formal" &&
+    (previous.session.user?.uid !== next.session.user?.uid ||
+      (previous.ready && !next.ready))
+  );
+}
