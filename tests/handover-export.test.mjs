@@ -493,3 +493,23 @@ test("recording-only consent is a self-reported summary, never inferred from an 
     false,
   );
 });
+
+test("standard handover retains every existing bilingual task storage field but no arbitrary session fields", async () => {
+  const { seedTasks } = await import("../dfplan/src/domain/seed-tasks.mjs");
+  const { taskStorageFields } =
+    await import("../dfplan/src/domain/task-schema.mjs");
+  const source = {
+    ...structuredClone(seedTasks[0]),
+    outcomes: "Original note",
+    sessionToken: "NEVER_EXPORT_SESSION_TOKEN",
+  };
+  const files = buildHandoverFiles({
+    project: { tasks: [source], history: [] },
+  });
+  const row = parse(files, "audit_and_tasks.json").tasks[0];
+  for (const key of taskStorageFields)
+    if (key !== "outcomes" && source[key] !== undefined)
+      assert.deepEqual(row[key], source[key], key);
+  assert.equal(row.outcomes.text, "Original note");
+  assert.doesNotMatch(content(files), /NEVER_EXPORT_SESSION_TOKEN/);
+});
