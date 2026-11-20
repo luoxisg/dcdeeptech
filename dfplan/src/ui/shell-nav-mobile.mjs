@@ -1,10 +1,10 @@
 import { store } from "../application/store.mjs";
 import { html } from "./html.mjs";
-import { t, s } from "./i18n.mjs";
+import { t } from "./i18n.mjs";
 import { icon } from "./icons.mjs";
 export function renderMobileNav() {
   const view = store.getState().view;
-  return html`<nav class="mobile-tabs" aria-label="${t("menu")}">
+  return html`<div class="mobile-tabs">
     ${[
       ["overview", "home", "overview"],
       ["list", "tasks", "tasks"],
@@ -21,6 +21,8 @@ export function renderMobileNav() {
           ${icon(picture)}<span>${t(label)}</span>
         </button>`,
     )}
-    <button class="tab-item" data-cmd="voice-open">${icon("interview")}<span>${s("访谈测试版", "Interview beta")}</span></button>
-  </nav>`;
+    <button class="tab-item" data-cmd="voice-open">
+      ${icon("microphone")}<span>${t("interview")}</span>
+    </button>
+  </div>`;
 }

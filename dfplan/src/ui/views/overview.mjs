@@ -36,11 +36,14 @@ export function render() {
         ${s("WU-05 长辈访谈：先体验温和提示、原话保留与待核实草稿。", "WU-05 elder interviews: try gentle prompts, original wording and an unverified draft.")}
       </p>
       <button class="btn btn-primary full" data-cmd="voice-open">
-        ${s("真实录音 · 访谈测试版", "Real recording · interview beta")}
+        ${s("口述访谈 · 真实录音", "Oral history · real recording")}
       </button>
-      <button class="btn full" data-cmd="navigate" data-view="interview">
-        ${s("打开口述访谈体验", "Open oral-history sample")}
-      </button>
+      <details>
+        <summary>${s("其他访谈方式", "Other interview options")}</summary>
+        <button class="btn full" data-cmd="navigate" data-view="interview">
+          ${s("脚本演示（非录音）", "Scripted sample (no recording)")}
+        </button>
+      </details>
     </section>
     ${weeklyFocus()}
     <section class="panel">

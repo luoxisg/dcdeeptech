@@ -40,6 +40,13 @@ export function installRenderer() {
     ),
     tabbar = document.querySelector('[data-slot="mobile-tabbar"]'),
     overlay = document.querySelector('[data-slot="overlay"]');
+  const measureTabbar = () =>
+    document.documentElement.style.setProperty(
+      "--mobile-nav-height",
+      `${Math.ceil(tabbar.getBoundingClientRect().height)}px`,
+    );
+  const tabbarObserver = new ResizeObserver(measureTabbar);
+  tabbarObserver.observe(tabbar);
   let viewEpoch = 0,
     dialogEpoch = 0,
     activeView = null,
@@ -263,11 +270,17 @@ export function installRenderer() {
       void renderViewport(
         state,
         previous,
-        viewportShellChange || state.project !== previous.project || pricingChange,
+        viewportShellChange ||
+          state.project !== previous.project ||
+          pricingChange,
       );
     void renderOverlay(state);
     feedback();
   };
   render(initial, initial);
-  return store.subscribe(render);
+  const unsubscribe = store.subscribe(render);
+  return () => {
+    unsubscribe();
+    tabbarObserver.disconnect();
+  };
 }

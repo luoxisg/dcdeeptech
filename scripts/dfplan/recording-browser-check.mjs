@@ -257,14 +257,19 @@ export async function checkRecording(page) {
   await page.locator('[data-recording="advanced"]').click();
   await page.locator('[data-voice="settings"]').waitFor();
   await page.locator('[data-voice="close"]').click();
+  await page.locator(".site-menu > summary").click();
   await page.locator('[data-cmd="language"]').click();
   await open();
   assert.match(
     await page.locator("#recorder-title").innerText(),
-    /Interview beta/,
+    /Oral history/,
   );
-  assert.match(await page.locator(".recorder-consent").first().innerText(), /consent/);
+  assert.match(
+    await page.locator(".recorder-consent").first().innerText(),
+    /consent/,
+  );
   await page.locator('[data-recording="close"]').click();
+  await page.locator(".site-menu > summary").click();
   await page.locator('[data-cmd="language"]').click();
   await page.evaluate(() =>
     Object.defineProperty(navigator.mediaDevices, "getUserMedia", {

@@ -74,14 +74,19 @@
     overflow: hidden;
   }
   .recorder-body {
-    flex: 1;
+    flex: 1 1 0%;
     overflow: auto;
     overscroll-behavior: contain;
     min-height: 0;
     width: 100%;
+    scroll-padding-block: 16px;
+    padding-bottom: 16px;
   }
   .recorder-stage {
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    height: auto;
+    overflow: visible;
     justify-items: center;
     align-content: start;
     gap: 12px;
@@ -93,6 +98,14 @@
     border: 1px solid var(--line);
     border-radius: var(--radius);
     background: var(--card);
+  }
+  .recorder-stage > * {
+    min-width: 0;
+    max-width: 100%;
+  }
+  .recording-state {
+    padding-block: 8px;
+    margin-block: 4px;
   }
   .recording-round,
   .recording-state {
@@ -141,7 +154,10 @@
   }
   .recorder-consent {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
+    height: auto;
+    overflow: visible;
+    flex-shrink: 0;
     gap: 12px;
     text-align: left;
     max-width: 38em;
@@ -336,14 +352,6 @@
   }
 }
 @layer layout {
-  .mobile-tabs {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-  }
-  .mobile-tabs [data-cmd="voice-open"] span {
-    font-size: 0.8em;
-    white-space: normal;
-    line-height: 1.3;
-  }
   .app-skeleton {
     padding: 40px;
     max-width: 900px;
@@ -418,5 +426,28 @@
   }
   .recorder-overlay [data-local-status] {
     overflow-wrap: anywhere;
+  }
+}
+
+@layer components {
+  .recorder-consent span {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  .voice-controls .recording-start {
+    grid-column: 1 / -1;
+    color: white;
+    background: var(--green);
+  }
+  .voice-controls .recording-start:disabled {
+    background: #758d7c;
+  }
+  .recording-start-hint {
+    grid-column: 1 / -1;
+    font-size: 0.85em;
+    text-align: center;
+  }
+  .voice-controls [hidden] {
+    display: none;
   }
 }

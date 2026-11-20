@@ -10,7 +10,10 @@ export async function checkInterview(page) {
     await page.waitForTimeout(100);
   };
   await navigate("list");
-  await page.locator('[data-task-id="WU-05"] [data-view="interview"]').click();
+  await page.locator('[data-task-id="WU-05"] [data-cmd="voice-open"]').click();
+  await page.locator(".recorder-overlay").waitFor();
+  await page.locator('[data-recording="close"]').click();
+  await navigate("interview");
   await page.locator(".interview-workspace").waitFor();
   if (process.env.DFPLAN_SCREENSHOT_DIR)
     await page.screenshot({
@@ -117,6 +120,7 @@ export async function checkInterview(page) {
     before,
     "Interview must not save or change project data.",
   );
+  await page.locator(".site-menu > summary").click();
   await page.locator('[data-cmd="language"]').click();
   await page.waitForFunction(() =>
     document
@@ -124,6 +128,7 @@ export async function checkInterview(page) {
       ?.textContent.includes("Start sample"),
   );
   assert.match(await page.locator("#page-title").innerText(), /Oral history/);
+  await page.locator(".site-menu > summary").click();
   await page.locator('[data-cmd="language"]').click();
   await page.waitForFunction(() =>
     document

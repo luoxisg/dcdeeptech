@@ -109,7 +109,7 @@ export function openVoiceOverlay({
           <span class="recorder-brand"
             >DeepFamily · ${s("口述记忆", "Oral history")}</span
           >
-          <h2 id="recorder-title">${s("访谈测试版", "Interview beta")}</h2>
+          <h2 id="recorder-title">${s("口述访谈", "Oral history")}</h2>
         </div>
         <div>
           <button
@@ -207,6 +207,16 @@ export function openVoiceOverlay({
         </section>
       </div>
       <footer class="voice-controls">
+        <button
+          class="recording-start"
+          data-recording="start"
+          aria-describedby="recording-start-hint"
+        >
+          ${s("开始录音", "Start recording")}
+        </button>
+        <p id="recording-start-hint" class="recording-start-hint">
+          ${s("请先勾选受访者同意，再开始录音。", "Confirm the narrator’s consent before recording.")}
+        </p>
         <button data-recording="mute">${s("静音", "Mute")}</button
         ><button data-recording="pause">${s("暂停", "Pause")}</button
         ><button data-recording="done">
@@ -369,6 +379,16 @@ export function openVoiceOverlay({
       ".recording-prompt",
       recordingPrompt(state.round)[lang === "en" ? 1 : 0],
     );
+    const start = /** @type {HTMLButtonElement} */ (
+      q('[data-recording="start"]')
+    );
+    start.hidden = state.phase !== "idle";
+    start.disabled = !!busy || !state.consent;
+    const hint = /** @type {HTMLElement} */ (q(".recording-start-hint"));
+    hint.hidden = state.phase !== "idle" || state.consent;
+    for (const action of ["mute", "pause", "done", "finish"])
+      /** @type {HTMLElement} */ (q(`[data-recording="${action}"]`)).hidden =
+        state.phase === "idle";
     const orb = /** @type {HTMLButtonElement} */ (q('[data-recording="orb"]'));
     orb.disabled = busy || (!active && !state.consent);
     orb.dataset.recordingState = state.phase;
@@ -681,6 +701,7 @@ ${session.draft(lang)}</pre>
     if (!button || button.disabled) return;
     const action = button.dataset.recording;
     try {
+      if (action === "start") await session.start();
       if (action === "orb") {
         if (session.snapshot().phase === "idle") await session.start();
         else await session.stop(false);

@@ -1,6 +1,7 @@
 /** Browser-only QA dependency: PLAYWRIGHT_MODULE may point to an external installation. */
 import assert from "node:assert/strict";
 import { checkTranscription } from "./transcription-browser-check.mjs";
+import { checkMobileLayout } from "./mobile-layout-browser-check.mjs";
 import { checkRecording } from "./recording-browser-check.mjs";
 import { checkInterview } from "./interview-browser-check.mjs";
 import { createRequire } from "node:module";
@@ -92,6 +93,7 @@ try {
     );
     await page.goto(base + "/dfplan/?demo=1");
     await page.locator(".weekly-focus").waitFor();
+    await checkMobileLayout(page);
     const navigate = async (view) => {
       await page.evaluate(async (view) => {
         const { commands } =
@@ -102,8 +104,8 @@ try {
       await page.waitForFunction(
         (view) =>
           document
-            .querySelector('.site-menu [aria-current="page"]')
-            ?.getAttribute("data-view") === view,
+            .querySelector("[data-current-view]")
+            ?.getAttribute("data-current-view") === view,
         view,
       );
       await page.waitForTimeout(100);
@@ -156,6 +158,7 @@ try {
         await navigate(view);
         await dimensions(elder ? 54 : 48);
       }
+      await page.locator(".site-menu > summary").click();
       await page.locator('[data-cmd="language"]').click();
       await dimensions(elder ? 54 : 48);
       assert.equal(await page.locator(".capture-item").count(), 12);
@@ -166,6 +169,7 @@ try {
         await quantity.evaluate((e) => e === document.activeElement),
         true,
       );
+      await page.locator(".site-menu > summary").click();
       await page.locator('[data-cmd="language"]').click();
     }
     await navigate("overview");
