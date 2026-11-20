@@ -59,6 +59,7 @@ window.addEventListener("hashchange", () => {
       "facts",
       "security",
       "digitization",
+      "handover",
     ].includes(view)
   )
     store.navigate(

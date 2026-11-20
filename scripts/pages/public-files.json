@@ -185,7 +185,10 @@
     "dfplan/src/adapters/browser-transcription.mjs",
     "dfplan/src/adapters/local-asr-client.mjs",
     "dfplan/src/adapters/local-asr-worker.mjs",
-    "dfplan/src/domain/local-asr-model.mjs"
+    "dfplan/src/domain/local-asr-model.mjs",
+    "dfplan/src/application/handover.mjs",
+    "dfplan/src/adapters/zip-writer.mjs",
+    "dfplan/src/ui/views/handover.mjs"
   ],
   "generated_files": {
     "DFplan/index.html": "scripts/pages/templates/dfplan-redirect.html"

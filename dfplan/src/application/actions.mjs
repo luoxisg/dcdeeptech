@@ -25,6 +25,7 @@ export async function commitProject(
   text = "Updated project",
   textEn = text,
   replace = false,
+  auditOnly = false,
 ) {
   const current = store.getState();
   if (
@@ -36,9 +37,13 @@ export async function commitProject(
   validateProject(next);
   store.update({ busy: true, error: "" });
   try {
-    const result = await (replace && port.replace
-      ? port.replace(next, text, textEn)
-      : port.save(next, text, textEn));
+    if (auditOnly && current.mode === "formal" && !port.audit)
+      throw Error("Audit-only storage is unavailable.");
+    const result = await (auditOnly && port.audit
+      ? port.audit(text, textEn)
+      : replace && port.replace
+        ? port.replace(next, text, textEn)
+        : port.save(next, text, textEn));
     if (
       current.mode === "formal" &&
       (!store.getState().ready ||

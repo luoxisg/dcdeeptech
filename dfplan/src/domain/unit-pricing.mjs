@@ -32,6 +32,7 @@ export function centsFromSGD(value) {
   const [whole, fraction = ""] = text.split(".");
   return Number(whole) * 100 + Number(fraction.padEnd(2, "0"));
 }
+/** @param {import("./types.mjs").UnitRates} [rates] */
 export function unitPriceSubtotal(input, rates = defaultUnitRates) {
   validateUnitRates(rates);
   return (

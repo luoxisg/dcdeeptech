@@ -102,3 +102,166 @@ export function translate(key, language = "zh") {
 export function localize(zh, en, language = "zh") {
   return language === "en" ? en : zh;
 }
+
+export const handoverMappings = [
+  [
+    "people.json",
+    "成员主数据、别名与旧地名标签 → 未来 App 家族关系与同人异名检索输入；不在本页生成家谱。",
+    "People, aliases and historical place tags → future App relationship and alias-search inputs; no family-tree rendering here.",
+  ],
+  [
+    "facts_and_assertions.json",
+    "事实、来源、受控凭据编号与不同说法 → 未来大事记及密级控制输入；不等于事实已核实。",
+    "Assertions, sources, controlled references and conflicting accounts → future timeline/access inputs; not proof of verification.",
+  ],
+  [
+    "oral_histories/",
+    "逐字稿、人工笔记与已有实体 → 未来口述音频馆及回忆录章节输入；音频不在本包。",
+    "Transcripts, notes and existing entities → future oral-history library/memoir inputs; audio excluded.",
+  ],
+  [
+    "digitization_inventory.json",
+    "12 项数量、规划单价、风险与原件位置 → 未来高清采集入库元数据底座；数量不是完成证明。",
+    "Twelve quantities, rates, risks and original locations → future high-resolution ingestion metadata; quantities do not prove completion.",
+  ],
+  [
+    "audit_and_tasks.json",
+    "WU 记录、操作日志与已记录同意摘要 → 未来档案溯源及捐赠审核参考；不构成捐赠、产权或信托凭证。",
+    "WU records, audit events and recorded consent summaries → future provenance/donation review references, not donation, title or trust instruments.",
+  ],
+  [
+    "manifest.json",
+    "Schema、导出范围与 SHA-256 → 未来完整性校验和版本兼容输入。",
+    "Schema, export scope and SHA-256 → future integrity and version-compatibility inputs.",
+  ],
+];
+export const handoverTexts = {
+  zh: {
+    handover: "数采输出",
+    handoverTitle: "一阶段数采移交包",
+    handoverSubtitle: "采集成果盘点、数据结构说明与标准化移交",
+    handoverBoundary:
+      "本移交包仅作一阶段采集成果移交与后续 App 导入输入，不构成项目正式验收、法律产权或信托凭证。",
+    handoverScope:
+      "这里只准备未来 DeepFamily App 的输入，不提供成品家谱、电子书或在线纪念馆。",
+    handoverReadiness: "当前可输出资产",
+    handoverPeople: "人物档案",
+    handoverAliases: "别名",
+    handoverFacts: "事实核实",
+    handoverPending: "待核实",
+    handoverSealed: "封存",
+    handoverOral: "口述初稿",
+    handoverBudget: "数字化规划预算",
+    handoverItems: "已选明细项",
+    handoverProgress: "工作单元完成率",
+    handoverNoTasks: "暂无工作单元，完成率未验证",
+    handoverMappings: "六类输出与未来 App 输入映射",
+    handoverFuture: "未来 App 对应用途（非当前功能）",
+    handoverDownload: "下载标准移交包 (.zip)",
+    handoverJSON: "下载单文件 JSON",
+    handoverMD: "下载移交说明 (.md)",
+    handoverOwnMD: "下载本人口述初稿 (.md)",
+    handoverInclude: "包含封存级（Sealed）原内容（仅限主理人离线保管）",
+    handoverRole: "本次导出范围",
+    handoverOwner: "主理人；封存原文默认不包含",
+    handoverEditor: "标准范围；封存原文强制脱敏",
+    handoverVendor: "受限范围；仅采集清单及 WU-02 / WU-03 状态与计划周数",
+    handoverElder: "仅可导出明确绑定本人的口述初稿；未绑定时禁用下载",
+    handoverCompatibility:
+      "兼容模式：使用现有身份映射导出范围，尚未新增四角色登录系统。",
+    handoverEmpty: "没有可导出的口述草稿时生成空索引；不会生成虚构内容。",
+    handoverPrivacy:
+      "移交包不加密、不包含音视频原件。导出后请存放到加密硬盘；浏览器下载请求不等于文件已落盘。",
+    handoverSession: "口述内容只读取当前页面保留的会话；刷新前请先导出。",
+    handoverPacking: "正在组装与计算校验码…",
+    handoverRequested:
+      "下载已交给浏览器，请检查下载文件夹。已记录导出请求日志。",
+    handoverAuditFailed:
+      "下载已请求，但审计日志保存失败。请检查历史记录后重试；不要将此提示视为已审计。",
+    handoverError: "导出未完成，请检查提示后重试。",
+    handoverSingle:
+      "单文件 JSON 汇总相同权限范围内的全部资料；MD 下载仅含说明（长辈仅含本人口述初稿）。",
+    handoverEstimate: "规划数量与预算不是实际文件数量或资产价值。",
+    handoverNotReady: "授权数据尚未就绪。",
+    handoverPeopleUnavailable:
+      "人员名单尚未成功读取，已停止资料包导出，避免将读取失败误报为空名单。仍可下载移交说明。",
+    handoverNotAllowed: "当前身份不支持此导出。",
+    handoverIdentityChanged: "身份已变化，已取消本次导出。",
+    handoverDataChanged: "准备移交包时资料已变化，请重新导出。",
+    handoverMappingsRestricted: "本次范围的输出结构",
+    handoverUnknown: "未登记 / 未评估",
+    handoverNoSelf: "当前没有明确绑定本人的口述初稿。",
+    handoverRecording: "前往口述访谈",
+    handoverRestricted: "受限，不展示家族人员、事实或他人口述内容。",
+  },
+  en: {
+    handover: "Data Output",
+    handoverTitle: "Phase 1 Ingestion Bundle",
+    handoverSubtitle:
+      "Collection inventory, data structures and standardized handover",
+    handoverBoundary:
+      "This bundle is solely a Phase 1 collection handover and input for a future App import. It does not constitute formal project acceptance, legal title, or a trust instrument.",
+    handoverScope:
+      "This prepares inputs for a future DeepFamily App; it does not render a finished family tree, ebook or online memorial.",
+    handoverReadiness: "Available collection outputs",
+    handoverPeople: "People",
+    handoverAliases: "Aliases",
+    handoverFacts: "Assertions",
+    handoverPending: "Pending verification",
+    handoverSealed: "Sealed",
+    handoverOral: "Oral-history drafts",
+    handoverBudget: "Digitization planning budget",
+    handoverItems: "Selected lines",
+    handoverProgress: "Work-unit completion",
+    handoverNoTasks: "No work units; completion is unverified",
+    handoverMappings: "Six outputs and future App inputs",
+    handoverFuture: "Future App purpose (not a current feature)",
+    handoverDownload: "Download standard bundle (.zip)",
+    handoverJSON: "Download single JSON",
+    handoverMD: "Download handover guide (.md)",
+    handoverOwnMD: "Download my oral-history drafts (.md)",
+    handoverInclude: "Include sealed originals (owner offline custody only)",
+    handoverRole: "Export scope",
+    handoverOwner: "Owner; sealed originals excluded by default",
+    handoverEditor: "Standard scope; sealed originals always redacted",
+    handoverVendor:
+      "Restricted; inventory and WU-02 / WU-03 status/planned weeks only",
+    handoverElder:
+      "Only explicitly self-linked drafts; download disabled without an identity link",
+    handoverCompatibility:
+      "Compatibility mode: export scope maps existing identities. No new four-role sign-in system is created.",
+    handoverEmpty:
+      "An empty index explains missing oral drafts; content is never invented.",
+    handoverPrivacy:
+      "Bundles are not encrypted and contain no original audio/video. Keep exports on encrypted drives. A browser download request does not prove the file was saved.",
+    handoverSession:
+      "Oral content comes only from sessions retained on this page; export before reloading.",
+    handoverPacking: "Preparing files and checksums…",
+    handoverRequested:
+      "Download requested; check Downloads. The export-request audit was recorded.",
+    handoverAuditFailed:
+      "Download requested, but the audit could not be saved. Check History before retrying; this is not an audited success.",
+    handoverError: "Export did not complete. Check the error and retry.",
+    handoverSingle:
+      "Single JSON combines the same role-filtered files. MD contains only the guide (self-linked drafts only for elders).",
+    handoverEstimate:
+      "Planned quantities and budgets are not captured-file counts or asset valuations.",
+    handoverNotReady: "Authorized data is not ready.",
+    handoverPeopleUnavailable:
+      "The directory has not loaded successfully. Bundle export is blocked rather than treating a read failure as an empty directory. The guide remains available.",
+    handoverNotAllowed:
+      "This export is not available for the current identity.",
+    handoverIdentityChanged: "Identity changed. Export cancelled.",
+    handoverDataChanged:
+      "Records changed while preparing the bundle. Please export again.",
+    handoverMappingsRestricted: "Output structure for this scope",
+    handoverUnknown: "Not recorded / not assessed",
+    handoverNoSelf:
+      "No oral-history draft is explicitly linked to this identity.",
+    handoverRecording: "Open oral history",
+    handoverRestricted:
+      "Restricted: family people, facts and other narrators’ drafts are not shown.",
+  },
+};
+Object.assign(dictionary.zh, handoverTexts.zh);
+Object.assign(dictionary.en, handoverTexts.en);
