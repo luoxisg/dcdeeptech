@@ -21,7 +21,7 @@ At widths below 768px, the four thumb-zone tabs are Overview, Tasks, Fact Verifi
 
 `?demo=1` uses separate project/people keys and never imports the Firebase SDK or accesses live records. Its five generic people are fictional examples. Patrick preview affects only that demo directory and never grants live access or pricing permissions. The signed-out live site exposes no family project data. Local-only mode is selected only if the existing backend configuration is disabled.
 
-The twelve capture lines aggregate into the **existing six administrator-managed rate keys**; they introduce no new Firestore fields. Oral-history audio means digitization, not interviewing/transcription. Exact rate estimates, reference package budgets and planning FX assumptions are labeled separately. Existing guest, owner/admin and pricing permissions are unchanged.
+The twelve capture lines aggregate into the **existing six administrator-managed rate keys**; they introduce no new Firestore fields. Oral-history audio means digitization, not interviewing/transcription. Exact rate estimates and reference package budgets are labeled separately. Internal cost, margin and FX analysis are not included in the public estimator. Existing guest, owner/admin and pricing permissions are unchanged.
 
 Fact verification is an optional, versioned metadata block inside the existing `outcomes` text field, appended only after an explicit save:
 

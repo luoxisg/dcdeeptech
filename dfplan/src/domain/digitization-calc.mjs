@@ -1,30 +1,5 @@
 import { captureTotals } from "./capture-catalog.mjs";
 import { defaultUnitRates, unitPriceSubtotal } from "./unit-pricing.mjs";
-// Internal planning assumptions supplied for the Phase 1 reference case.
-export const digitizationReference = Object.freeze({
-  quote: 46200,
-  cnyEquivalent: 247822,
-  laborCny: 43200,
-  depreciationCny: 15000,
-  otherCny: 38000,
-});
-export function digitizationEconomics() {
-  const r = digitizationReference,
-    rate = r.cnyEquivalent / r.quote;
-  const labor = r.laborCny / rate,
-    depreciation = r.depreciationCny / rate,
-    other = r.otherCny / rate;
-  const directCost = labor + depreciation + other;
-  return {
-    rate,
-    labor,
-    depreciation,
-    other,
-    directCost,
-    contribution: r.quote - directCost,
-    margin: (r.quote - directCost) / r.quote,
-  };
-}
 const bounded = (value, max, fallback = 0) =>
   Number.isFinite(Number(value))
     ? Math.min(max, Math.max(0, Number(value)))
