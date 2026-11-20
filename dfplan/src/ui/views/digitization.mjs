@@ -52,6 +52,18 @@ export function totalsMarkup() {
       ${s("最终以介质勘测与书面报价为准。", "Subject to media assessment and a written quote.")}
     </p>`;
 }
+export function budgetSummaryMarkup() {
+  const state = store.getState(),
+    result = estimateCatalogue(state.capture, rates(), state.team);
+  const count = captureCatalog.filter(
+    (row) => Number(state.capture[row.id]) > 0,
+  ).length;
+  return html`<span>${s("已选", "Selected")} ${count} ${s("项", "items")}</span
+    ><strong
+      >${s("预估总计", "Estimated total")}
+      ${money(result.unitQuoteCents)}</strong
+    >`;
+}
 export function updateTotals() {
   for (const row of captureCatalog) {
     const input = /** @type {HTMLInputElement|null} */ (
@@ -66,6 +78,7 @@ export function updateTotals() {
       );
   }
   mount(document.querySelector("[data-capture-results]"), totalsMarkup());
+  mount(document.querySelector("[data-capture-budget]"), budgetSummaryMarkup());
 }
 export function categoryMarkup() {
   const state = store.getState(),
@@ -259,5 +272,14 @@ export function render() {
             <p>${s(desc, descEn)}</p>
           </details>`,
       )}
-    </section>`;
+    </section>
+    <aside
+      class="capture-budget"
+      data-capture-budget
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
+    >
+      ${budgetSummaryMarkup()}
+    </aside>`;
 }

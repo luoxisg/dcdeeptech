@@ -127,7 +127,7 @@ export function render() {
     <section class="interview-workspace">
       <div class="panel interview-stage">
         <button class="btn btn-primary full" data-cmd="voice-open">
-          ${s("打开真实录音访谈", "Open real recording interview")}
+          ${s("开始口述访谈 · 真实录音", "Open oral history · real recording")}
         </button>
         <strong class="badge"
           >${s("脚本演示 · 尚未录音或转写", "Scripted sample · no recording or transcription")}</strong

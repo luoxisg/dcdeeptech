@@ -11,8 +11,7 @@
   background: var(--paper);
   border-bottom: 1px solid var(--line);
 }
-.header-main,
-.header-secondary {
+.header-main {
   display: flex;
   gap: 8px;
   align-items: center;
@@ -20,7 +19,7 @@
   min-width: 0;
 }
 .header-main {
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 }
 .header-controls {
   display: flex;
@@ -34,9 +33,27 @@
 .brand img {
   flex-shrink: 0;
 }
-.header-secondary {
-  margin-top: 6px;
+.header-page-title {
+  display: none;
 }
+.desktop-primary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+.menu-utilities {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 10px;
+}
+.menu-utilities .mode-label {
+  grid-column: 1 / -1;
+}
+
 .mode-label {
   color: var(--muted);
   font-size: 0.9em;
@@ -148,19 +165,64 @@
   display: none;
 }
 @media (max-width: 767px) {
+  [data-slot="header"] {
+    height: calc(56px + var(--safe-top));
+    padding: var(--safe-top) 12px 0;
+  }
+  .header-main {
+    height: 55px;
+    gap: 6px;
+  }
+  .header-controls {
+    flex-wrap: nowrap;
+    gap: 6px;
+  }
+  .header-main .btn {
+    padding-block: 0;
+  }
   .header-controls .btn {
     font-size: 0.9em;
     padding-inline: 9px;
   }
+  [data-slot="header"] .live-message:not(:empty) {
+    position: absolute;
+    top: 100%;
+    inset-inline: 12px;
+    background: var(--card);
+    box-shadow: 0 3px 8px #213a3022;
+  }
+  .desktop-primary,
+  .brand-wordmark,
+  .text-scale-label {
+    display: none;
+  }
+  .header-page-title {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: var(--fs-title);
+  }
+  .brand img {
+    width: 28px;
+    height: 28px;
+  }
   .header-main .brand {
     flex: 1;
+    min-width: 0;
     justify-content: flex-start;
   }
   .header-controls {
     margin-left: auto;
   }
   [data-slot="viewport"] {
-    padding-bottom: calc(var(--tabbar-height) + var(--safe-bottom) + 14px);
+    padding-bottom: calc(
+      var(
+          --mobile-nav-height,
+          calc(var(--tabbar-height) + var(--safe-bottom))
+        ) +
+        14px
+    );
   }
   [data-slot="mobile-tabbar"] {
     display: block;
@@ -173,7 +235,7 @@
   }
   .mobile-tabs {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 4px;
   }
   .tab-item {

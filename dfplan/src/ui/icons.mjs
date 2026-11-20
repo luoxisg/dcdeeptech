@@ -1,6 +1,8 @@
 import { html, raw } from "./html.mjs";
 const paths = {
   home: "M3 10 12 3l9 7v11H3zM9 21v-7h6v7",
+  microphone:
+    "M9 5a3 3 0 0 1 6 0v7a3 3 0 0 1-6 0V5M5 10v2a7 7 0 0 0 14 0v-2M12 19v3M8 22h8",
   tasks: "M8 5h13M8 12h13M8 19h13M3 5h1M3 12h1M3 19h1",
   facts: "m4 12 5 5L21 5M3 3h12",
   capture: "M3 4h18v16H3zM3 16l6-7 5 6 3-4 4 5",

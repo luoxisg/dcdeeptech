@@ -12,6 +12,8 @@
     justify-items: stretch;
     gap: var(--space-gap);
     text-align: center;
+    min-height: 0;
+    overflow: visible;
   }
   .interview-orb {
     --mic-level: 0;
@@ -37,6 +39,9 @@
   }
   .interview-orb[data-phase="thinking"] {
     background: radial-gradient(circle at 35% 30%, #c7a267, #7f592b);
+  }
+  .interview-stage .card-meta {
+    padding-block: 8px;
   }
   .interview-cue {
     min-height: 7em;

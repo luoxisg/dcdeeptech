@@ -1,6 +1,6 @@
 # DeepFamily / DFplan
 
-一级菜单「访谈测试版」提供独立浮层中的三轮虚构 Mock 访谈、记忆锚点、可编辑初稿及本机保存/导出；手机底部导航也提供入口。打开和关闭不重绘工作区。该测试入口与已有正式访谈及事实核对页面并存，不会向 Firestore 写入测试对话。Live WS 的本地启动、API 费用与隐私边界见 [backend/README.md](../backend/README.md)。Pages 只发布前端，不能托管 Python 语音服务；真实语音需要自行启动本地服务并配置模型接口。
+统一入口「口述访谈」默认提供真实录音与可选的免费本机转写；手机底部第五个 Tab 使用麦克风图标。脚本演示和已配置的 AI 选项保留在内部，不重复放进主菜单。录音和转写保留在当前页面会话，不写入家族项目；刷新前请下载音频和 TXT。Pages 无需 Python 服务即可运行本机录音与 Whisper，原 Live WS 选项仍见 [backend/README.md](../backend/README.md)。
 
 Live entry: https://dcdeeptech.com/dfplan/ · isolated demo: https://dcdeeptech.com/dfplan/?demo=1
 
@@ -15,7 +15,7 @@ A buildless native-ESM EN/ZH planning workspace. The ten WU tasks, existing task
 - `src/ui`: escaped HTML templates, four independent region mounts, lazy views/dialogs. Forms are preserved during background state updates; explicit `raw()` is reserved for program-owned markup.
 - `styles`: ordered CSS layers, token-based standard/elder scaling; no override chains or `!important`. No bundler, frontend dependencies or build output.
 
-At widths below 768px, the four thumb-zone tabs are Overview, Tasks, Fact Verification and Digitization. All older pages remain accessible through Menu. Scroll positions are remembered per view. Standard controls have a 48px minimum target; elder mode uses 54px targets and 20px body text. Task lists and twelve capture lines reflow into cards. Dialogs use swipe-dismiss handles, sticky actions and `visualViewport` keyboard avoidance.
+At widths below 768px, five thumb-zone tabs provide Overview, Tasks, Fact Verification, Digitization and Oral history. The 56px single-line header shows the seal/current page, Aa and More. More contains Dashboard, People, Security and History, with language/account/access status at its top; task board/list/timeline stay inside Tasks. Desktop retains a separate primary navigation row. The digitization summary sticks above the measured tab-bar height and updates selected-line count and the unit-rate total without replacing focused quantity inputs. The recorder shows only a consent-gated Start recording action while idle, then switches to process controls while recording. Scroll positions are remembered per view. Standard controls have a 48px minimum target; elder mode uses 54px targets and 20px body text. Task lists and twelve capture lines reflow into cards. Dialogs use swipe-dismiss handles, sticky actions and `visualViewport` keyboard avoidance.
 
 ## Data and permissions
 
@@ -55,7 +55,7 @@ The Pages workflow stages only explicit files in `scripts/pages/public-files.jso
 
 ## Oral-history module / 口述访谈
 
-Open **Oral history / 口述访谈** from Overview, Menu (before Fact Verification), or the WU-05 task card. Direct link: `?demo=1#interview`. The original uploaded prototype is adapted into native domain, application, browser-adapter, lazy-view and review-dialog modules; scoped CSS is isolated in `styles/interview.css`. No iframe, new framework or runtime dependency.
+Open **Oral history / 口述访谈** from Overview, the microphone tab or the WU-05 task card for real recording. The retained **scripted sample** is under Overview’s Other interview options, or directly at `?demo=1#interview`. The original uploaded prototype is adapted into native domain, application, browser-adapter, lazy-view and review-dialog modules; scoped CSS is isolated in `styles/interview.css`. No iframe, new framework or runtime dependency.
 
 Three bilingual scripted turns support interruption, pausing, 3.5-second pause-tolerance demonstration, deduplicated unverified tags, original transcript review and editable drafts. Edited EN/ZH drafts stay in memory across view switches and are not overwritten by later sample turns. Restart requires confirmation. Export/copy includes original sample wording and verification items; no automatic AI, recording, transcription, archive write, task update or fact-confirmation occurs. Export before reloading.
 

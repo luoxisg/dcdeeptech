@@ -85,6 +85,12 @@ export function installUIEvents() {
       button.matches(":disabled")
     )
       return;
+    const menu = button.closest(".site-menu");
+    if (menu instanceof HTMLDetailsElement) {
+      menu.open = false;
+      if (button.dataset.cmd === "account")
+        /** @type {HTMLElement} */ (menu.querySelector("summary"))?.focus();
+    }
     const payload = { ...button.dataset };
     delete payload.cmd;
     if (button.dataset.cmd === "navigate")
@@ -94,8 +100,29 @@ export function installUIEvents() {
     try {
       await commands.run(button.dataset.cmd, payload);
       if (button.dataset.cmd === "account") await commands.run("load-account");
+      if (menu && button.dataset.cmd === "language")
+        /** @type {HTMLElement} */ (
+          document.querySelector(".site-menu > summary")
+        )?.focus();
     } catch (error) {
       store.update({ error: String(error.message || error) });
+    }
+  });
+  document.addEventListener("click", (event) => {
+    document.querySelectorAll(".site-menu[open]").forEach((menu) => {
+      if (event.target instanceof Node && !menu.contains(event.target))
+        /** @type {HTMLDetailsElement} */ (menu).open = false;
+    });
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape") return;
+    const menu = /** @type {HTMLDetailsElement|null} */ (
+      document.querySelector(".site-menu[open]")
+    );
+    if (menu) {
+      event.preventDefault();
+      menu.open = false;
+      /** @type {HTMLElement} */ (menu.querySelector("summary"))?.focus();
     }
   });
   document.addEventListener("submit", async (event) => {

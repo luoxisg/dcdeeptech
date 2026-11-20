@@ -61,7 +61,7 @@ export function taskCard(task) {
     <button class="btn btn-primary full" data-cmd="editor" data-id="${task.id}">
       ${t("more")}${icon("arrow")}
     </button>
-    ${task.id === "WU-05" ? html`<button class="btn full" data-cmd="navigate" data-view="interview">${s("口述访谈体验", "Oral-history sample")}</button>` : ""}
+    ${task.id === "WU-05" ? html`<button class="btn full" data-cmd="voice-open">${t("interview")}</button>` : ""}
   </article>`;
 }
 export function formalAcceptance() {
