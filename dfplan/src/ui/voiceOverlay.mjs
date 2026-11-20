@@ -9,9 +9,14 @@ import {
   downloadRecordingFile,
   downloadRecordingNotes,
 } from "../adapters/media-recorder.mjs";
+import { createLocalASRClient } from "../adapters/local-asr-client.mjs";
+import { transcriptionSummary } from "../domain/local-asr-model.mjs";
 import { browserTranscriptionSupported } from "../adapters/browser-transcription.mjs";
 import { installSwipeDismiss } from "./keyboard-viewport.mjs";
+const localASR = createLocalASRClient();
 const session = createRecordingSession({
+  localTranscribe: localASR.transcribe,
+  cancelLocal: localASR.cancel,
   ...recordingBrowserIO,
   capture: (options) => createBrowserRecorder(options),
 });
@@ -149,7 +154,7 @@ export function openVoiceOverlay({
               ></label
             >
             <label
-              >${s("识别语言", "Recognition language")}<select
+              >${s("识别语言（实时 / 本机）", "Language (live / on-device)")}<select
                 data-transcription-language
               >
                 <option value="zh-CN">
@@ -181,6 +186,15 @@ export function openVoiceOverlay({
           <button class="btn" data-recording="review">
             ${s("回放与下载已有录音", "Play & download saved clips")}
           </button>
+          <label class="btn full"
+            >${s("导入已下载的录音，免费转文字", "Import a saved recording for free transcription")}<input
+              type="file"
+              data-import-audio
+              accept=".webm,.wav,.m4a,.mp4,.ogg,.mp3,.aac"
+          /></label>
+          <p>
+            ${s("录音可在回放面板点击‘本机免费转写’。首次需下载约 70–100 MB Whisper 模型及运行文件；音频不上传。每段最多 5 分钟 / 12 MB，手机处理可能需数分钟。", "Use ‘Transcribe on this device’ in playback. First use downloads about 70–100 MB of Whisper model/runtime files; audio is not uploaded. Up to 5 minutes / 12 MB per clip. Processing on phones may take several minutes.")}
+          </p>
           <details class="recorder-options">
             <summary>${s("其他访谈方式", "Other interview options")}</summary>
             <p>
@@ -208,7 +222,9 @@ export function openVoiceOverlay({
     if (!host.childElementCount) return;
     const state = session.snapshot(),
       active = ["recording", "paused"].includes(state.phase),
-      busy = ["requesting", "stopping"].includes(state.phase);
+      busy =
+        ["requesting", "stopping"].includes(state.phase) ||
+        (state.localJob && state.localJob.stage !== "error");
     text(
       ".recording-round",
       state.round < 3
@@ -242,7 +258,7 @@ export function openVoiceOverlay({
     speechToggle.checked = state.transcriptionEnabled;
     speechToggle.disabled = !speechSupported || state.phase !== "idle";
     speechLanguage.value = state.transcriptionLanguage;
-    speechLanguage.disabled = !speechSupported || state.phase !== "idle";
+    speechLanguage.disabled = state.phase !== "idle" || !!busy;
     const speechMessages = {
       off: state.transcriptionEnabled
         ? s(
@@ -409,10 +425,69 @@ export function openVoiceOverlay({
             : "",
     );
     text(".recording-error", state.error ? errorText(state.error) : "");
+    const job = state.localJob;
+    const localErrors = {
+      "file-size": s("文件为空或超过 12 MB。", "Empty file or over 12 MB."),
+      "too-long": s(
+        "超过 5 分钟，请先分段。",
+        "Over 5 minutes; split the recording first.",
+      ),
+      silent: s(
+        "未检测到有效声音，请回放检查。",
+        "No audible signal detected; check playback.",
+      ),
+      decode: s(
+        "浏览器无法解码此音频。请尝试 WAV、WebM 或 M4A。",
+        "Cannot decode audio. Try WAV, WebM or M4A.",
+      ),
+      "no-text": s(
+        "模型未返回文字，请检查录音及语言。",
+        "The model returned no text. Check audio and language.",
+      ),
+      "model-failed": s(
+        "模型加载或运算失败。请检查网络及可用内存，再重试；录音仍保留。",
+        "Model loading/inference failed. Check network and memory, then retry; audio is retained.",
+      ),
+      timeout: s(
+        "处理超时，录音仍保留。请分短段重试。",
+        "Processing timed out. Audio retained; try a shorter clip.",
+      ),
+    };
+    host
+      .querySelectorAll('[data-recording="local-transcribe"]')
+      .forEach((el) => {
+        const button = /** @type {HTMLButtonElement} */ (el),
+          clip = state.clips.find((c) => c.id === button.dataset.id);
+        button.disabled =
+          !!clip?.transcriptEdited || !!(job && job.stage !== "error");
+        const status = q(`[data-local-status="${button.dataset.id}"]`);
+        if (status)
+          status.textContent =
+            job?.id === button.dataset.id
+              ? job.stage === "error"
+                ? localErrors[job.error] ||
+                  s(
+                    "转写未完成，请重试。",
+                    "Transcription failed; please retry.",
+                  )
+                : job.stage === "processing"
+                  ? s("正在本机识别，请稍候…", "Transcribing on this device…")
+                  : job.stage === "decoding"
+                    ? s("正在读取录音…", "Decoding audio…")
+                    : `${s("正在下载模型", "Downloading model")} ${job.file || ""} ${Math.round(job.progress || 0)}%`
+              : "";
+        const summary = q(`[data-transcript-summary="${button.dataset.id}"]`);
+        if (summary && clip)
+          summary.textContent = transcriptionSummary(clip, lang);
+      });
+    host.querySelectorAll('[data-recording="local-cancel"]').forEach((el) => {
+      /** @type {HTMLElement} */ (el).hidden = !job || job.stage === "error";
+    });
     const draft = q("[data-recording-draft]");
     if (draft) draft.textContent = session.draft(lang);
   };
   function closeSheet() {
+    session.cancelLocal();
     const dialog = /** @type {HTMLDialogElement|null} */ (q("dialog"));
     dialog?.querySelectorAll("audio").forEach((audio) => audio.pause());
     dialog?.close();
@@ -452,7 +527,17 @@ export function openVoiceOverlay({
             ${
               review
                 ? html`<p>
-                      ${s("请逐段回放并下载。机器转写可能不完整或有误，请核对后编辑；原始机器文字会保留，并一同导出。", "Check and download each recording. Machine transcripts can be incomplete or incorrect; review and edit them. Original machine text is retained and included in the export.")}
+                      ${s("请逐段回放并下载。机器文字须核对；原始机器文字会一同导出。本机转写首次需下载约 70–100 MB 公开模型及运行文件，不上传录音。每段最多 5 分钟 / 12 MB，手机处理可能需数分钟。", "Check and download each recording. Review machine text; originals are included in exports. On-device transcription first downloads about 70–100 MB of public model/runtime files; audio is not uploaded. Limit: 5 minutes / 12 MB per clip. Phones may take several minutes.")}
+                      <label
+                        >${s("本机转写语言", "On-device language")}<select
+                          data-local-language
+                        >
+                          <option value="zh-CN">
+                            ${s("普通话", "Mandarin Chinese")}
+                          </option>
+                          <option value="en-SG">${s("英语", "English")}</option>
+                        </select></label
+                      >
                     </p>
                     ${state.clips.map(
                       (clip, index) =>
@@ -475,8 +560,32 @@ export function openVoiceOverlay({
                             data-id="${clip.id}"
                           >
                             ${s("下载本段录音", "Download this recording")}
-                            (.${clip.filename.split(".").pop()})</button
-                          >${clip.transcriptState && clip.transcriptState !== "off" ? html`<p class="badge">${s("机器转写 · 待核实", "Machine transcript · unverified")}${["partial", "error", "empty", "stopped"].includes(clip.transcriptState) ? s("（可能不完整）", " (may be incomplete)") : ""}</p>` : ""}
+                            (.${clip.filename.split(".").pop()})
+                          </button>
+                          <p
+                            class="notice"
+                            data-transcript-summary="${clip.id}"
+                          >
+                            ${transcriptionSummary(clip, lang)}
+                          </p>
+                          <button
+                            class="btn full"
+                            data-recording="local-transcribe"
+                            data-id="${clip.id}"
+                          >
+                            ${s("本机免费转写这段录音", "Transcribe this clip on this device")}
+                          </button>
+                          <p>
+                            ${clip.transcriptEdited ? s("本段已人工编辑，保留您的文字。如需重转，请重新导入原录音。", "Manual edits are protected. Import the original audio again to retranscribe.") : s("点击后下载公开模型并在本设备处理录音。结果必须对照录音核实。", "Click to download the public model and process audio on this device. Verify results against the recording.")}
+                          </p>
+                          <p data-local-status="${clip.id}" role="status"></p>
+                          <button
+                            class="btn full"
+                            data-recording="local-cancel"
+                            hidden
+                          >
+                            ${s("取消本机转写", "Cancel local transcription")}
+                          </button>
                           <label
                             >${s("转写文字（待核实，可编辑）", "Transcript (unverified, editable)")}<textarea
                               rows="4"
@@ -534,12 +643,17 @@ ${session.draft(lang)}</pre>
       </dialog>`,
     );
     const dialog = /** @type {HTMLDialogElement} */ (q("dialog"));
+    const language = /** @type {HTMLSelectElement} */ (
+      q("[data-local-language]")
+    );
+    if (language) language.value = state.transcriptionLanguage;
     dialog.showModal();
     dialog.addEventListener("cancel", (event) => {
       event.preventDefault();
       closeSheet();
     });
     installSwipeDismiss(dialog, closeSheet);
+    update();
   }
   async function close(force = false) {
     if (closing) return;
@@ -570,6 +684,21 @@ ${session.draft(lang)}</pre>
       if (action === "orb") {
         if (session.snapshot().phase === "idle") await session.start();
         else await session.stop(false);
+      }
+      if (action === "local-cancel") session.cancelLocal();
+      if (action === "local-transcribe") {
+        const id = button.dataset.id;
+        await session.transcribeClip(
+          id,
+          /** @type {HTMLSelectElement} */ (q("[data-local-language]"))
+            ?.value || session.snapshot().transcriptionLanguage,
+        );
+        const clip = session.snapshot().clips.find((c) => c.id === id);
+        const field = /** @type {HTMLTextAreaElement} */ (
+          q(`[data-recording-transcript="${id}"]`)
+        );
+        if (field && clip && !clip.transcriptEdited)
+          field.value = clip.transcript || "";
       }
       if (action === "speech-retry") session.retryTranscription();
       if (action === "pause") session.pause();
@@ -633,6 +762,24 @@ ${session.draft(lang)}</pre>
   }
   function input(event) {
     event.stopPropagation();
+    if (event.target.matches("[data-import-audio]")) {
+      const file = event.target.files?.[0];
+      if (file) {
+        try {
+          session.importAudio(file);
+          sheet("review");
+        } catch (error) {
+          text(
+            ".recording-error",
+            s(
+              "无法导入：请选 12 MB 以内的音频文件，并先结束录音或转写。",
+              "Import failed. Choose audio under 12 MB and finish recording/transcription first.",
+            ),
+          );
+        }
+      }
+      event.target.value = "";
+    }
     if (event.target.matches("[data-recording-consent]"))
       session.consent(event.target.checked);
     if (

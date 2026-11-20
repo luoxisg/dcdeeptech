@@ -1,3 +1,4 @@
+import { localASRConfig } from "../domain/local-asr-model.mjs";
 import {
   recordingPrompt,
   recordingExtension,
@@ -7,6 +8,7 @@ import {
 /** Capture and object-URL operations are injected. No project/storage/cloud dependency. */
 export function createRecordingSession(io) {
   const initial = () => ({
+    localJob: null,
     phase: "idle",
     round: 0,
     clips: [],
@@ -26,7 +28,8 @@ export function createRecordingSession(io) {
     capture = null,
     epoch = 0,
     advance = false,
-    startedAt = "";
+    startedAt = "",
+    localEpoch = 0;
   const listeners = new Set();
   const emit = (change) => {
     state = { ...state, ...change };
@@ -63,8 +66,91 @@ export function createRecordingSession(io) {
         ),
       });
     },
+    cancelLocal() {
+      localEpoch++;
+      io.cancelLocal?.();
+      emit({ localJob: null });
+    },
+    importAudio(file) {
+      if (
+        state.phase !== "idle" ||
+        (state.localJob && state.localJob.stage !== "error")
+      )
+        throw Error("busy");
+      if (!file?.size || file.size > localASRConfig.maxImportBytes)
+        throw Error("file-size");
+      if (!/\.(webm|m4a|mp4|wav|ogg|mp3|aac)$/i.test(file.name || ""))
+        throw Error("decode");
+      if (
+        state.clips.reduce((n, c) => n + c.blob.size, 0) + file.size >
+        recordingByteLimit
+      )
+        throw Error("limit");
+      const clip = {
+        id: io.id(),
+        round: state.round,
+        prompt: ["导入的访谈录音", "Imported interview recording"],
+        startedAt: io.now(),
+        filename: file.name,
+        blob: file,
+        url: io.createURL(file),
+        duration: 0,
+        mime: file.type,
+        note: "",
+        transcript: "",
+        machineTranscript: "",
+        transcriptState: "off",
+        downloadRequested: true,
+      };
+      emit({ clips: [...state.clips, clip], notesExportRequested: false });
+    },
+    async transcribeClip(id, language) {
+      if (
+        state.phase !== "idle" ||
+        (state.localJob && state.localJob.stage !== "error")
+      )
+        return;
+      const clip = state.clips.find((c) => c.id === id);
+      if (!clip || clip.transcriptEdited) return;
+      const token = ++localEpoch;
+      emit({ localJob: { id, stage: "decoding", progress: 0, error: "" } });
+      try {
+        const result = await io.localTranscribe(clip.blob, language, (p) => {
+          if (token === localEpoch) emit({ localJob: { id, ...p, error: "" } });
+        });
+        if (token !== localEpoch) return;
+        const text = String(result.text || "").trim();
+        if (!text) throw Error("no-text");
+        emit({
+          localJob: null,
+          notesExportRequested: false,
+          clips: state.clips.map((c) =>
+            c.id === id && !c.transcriptEdited
+              ? {
+                  ...c,
+                  transcript: text,
+                  machineTranscript: text,
+                  transcriptState: "complete",
+                  transcriptError: "",
+                  transcriptSource: result.model,
+                  transcriptRevision: result.revision,
+                  duration: result.duration || c.duration,
+                }
+              : c,
+          ),
+        });
+      } catch (error) {
+        if (token === localEpoch)
+          emit({ localJob: { id, stage: "error", error: error.message } });
+      }
+    },
     async start() {
-      if (state.phase !== "idle" || !state.consent) return;
+      if (
+        state.phase !== "idle" ||
+        (state.localJob && state.localJob.stage !== "error") ||
+        !state.consent
+      )
+        return;
       const remaining =
         recordingByteLimit -
         state.clips.reduce((sum, clip) => sum + clip.blob.size, 0);
@@ -196,6 +282,7 @@ export function createRecordingSession(io) {
       emit({ muted });
     },
     async leave() {
+      api.cancelLocal();
       if (state.phase === "requesting") {
         epoch++;
         capture?.dispose();
@@ -229,6 +316,7 @@ export function createRecordingSession(io) {
     },
     draft: (lang) => recordingDraft(state.clips, lang),
     clear() {
+      api.cancelLocal();
       epoch++;
       capture?.dispose();
       capture = null;

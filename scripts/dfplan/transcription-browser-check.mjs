@@ -169,7 +169,14 @@ export async function checkTranscription(page) {
     await page.locator("[data-recording-transcript]").inputValue(),
     "",
   );
-  assert.match(await page.locator(".recording-clip").innerText(), /可能不完整/);
+  assert.match(
+    await page.locator(".recording-clip").innerText(),
+    /未获得转写文字.*网络/,
+  );
+  assert.doesNotMatch(
+    await page.locator(".recording-clip").innerText(),
+    /机器转写 · 待核实（可能不完整）/,
+  );
   await dismiss();
   await reset();
   // English uses the selected language. Unsupported browsers keep local recording available.
