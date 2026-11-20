@@ -82,6 +82,22 @@ export async function checkHandover(page) {
     manifest = JSON.parse(files.get("manifest.json"));
   assert.equal(manifest.schemaVersion, "1.0.0");
   assert.equal(manifest.role, "owner");
+  const originalTask = await page.evaluate(async () => {
+    const { store } = await import("/dfplan/src/application/store.mjs");
+    return store.getState().project.tasks[0];
+  });
+  const exportedTask = JSON.parse(files.get("audit_and_tasks.json")).tasks.find(
+    (task) => task.id === originalTask.id,
+  );
+  for (const key of [
+    "ownerEn",
+    "actionEn",
+    "collaboratorsEn",
+    "deliverableEn",
+    "dependencyEn",
+  ])
+    if (originalTask[key] !== undefined)
+      assert.equal(exportedTask[key], originalTask[key], key);
   assert.equal(manifest.includeSealed, false);
   assert.equal(
     [...files.values()].join("\n").includes("BROWSER_SEALED_PERSON"),

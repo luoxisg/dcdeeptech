@@ -1,5 +1,11 @@
 // @ts-check
-import { csvCell, statuses, statusEn, targetDate } from "./task-schema.mjs";
+import {
+  csvCell,
+  statuses,
+  statusEn,
+  targetDate,
+  taskStorageFields,
+} from "./task-schema.mjs";
 import { captureCatalog } from "./capture-catalog.mjs";
 import { captureMethods } from "./capture-methods.mjs";
 import { estimateCatalogue } from "./digitization-calc.mjs";
@@ -378,34 +384,7 @@ export function buildHandoverFiles(
             };
           return redact(
             {
-              ...pick(task, [
-                "id",
-                "title",
-                "titleEn",
-                "status",
-                "priority",
-                "owner",
-                "assignee",
-                "assigneeId",
-                "collaborators",
-                "action",
-                "deliverable",
-                "dependency",
-                "weekStart",
-                "weekEnd",
-                "due",
-                "completed",
-                "next",
-                "evidence",
-                "accepted",
-                "reviewer",
-                "backup",
-                "claimedOn",
-                "effort",
-                "blockers",
-                "recovery",
-                "updatedAt",
-              ]),
+              ...pick(task, taskStorageFields),
               sensitivity: level(task),
               outcomes: { text: parsed.text, assertions: parsed.assertions },
             },
