@@ -182,7 +182,10 @@
     "dfplan/src/application/recording-session.mjs",
     "dfplan/src/domain/recording-model.mjs",
     "dfplan/src/ui/voiceAssistantOverlay.mjs",
-    "dfplan/src/adapters/browser-transcription.mjs"
+    "dfplan/src/adapters/browser-transcription.mjs",
+    "dfplan/src/adapters/local-asr-client.mjs",
+    "dfplan/src/adapters/local-asr-worker.mjs",
+    "dfplan/src/domain/local-asr-model.mjs"
   ],
   "generated_files": {
     "DFplan/index.html": "scripts/pages/templates/dfplan-redirect.html"

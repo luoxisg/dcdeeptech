@@ -54,7 +54,7 @@ export function recordingDraft(clips, lang = "zh") {
       (clip, index) =>
         `${en ? "Clip" : "片段"} ${index + 1} · ${en ? "Round" : "第"} ${clip.round + 1}${en ? "" : "轮"} · ${recordingTime(clip.duration)}\n${clip.prompt[en ? 1 : 0]}\n${clip.startedAt}\n${clip.filename}\n${clip.incomplete ? (en ? "Interrupted recording; check playback." : "录音曾中断，请回放检查。") + "\n" : ""}${en ? "Transcript (unverified):" : "转写文字（待核实）："}
 ${clip.transcript?.trim() || (en ? "No transcript; listen to the recording." : "尚无转写，请回放录音。")}
-${clip.transcriptState && clip.transcriptState !== "complete" && clip.transcriptState !== "off" ? (en ? "Transcript may be incomplete." : "转写可能不完整。") + "\n" : ""}${clip.transcriptEdited && clip.machineTranscript ? (en ? "Original machine transcript: " : "原始机器转写：") + clip.machineTranscript + "\n" : ""}${en ? "Manual notes:" : "手工笔记："}
+${clip.transcript?.trim() && clip.transcriptState && clip.transcriptState !== "complete" && clip.transcriptState !== "off" ? (en ? "Transcript may be incomplete." : "转写可能不完整。") + "\n" : ""}${clip.transcriptEdited && clip.machineTranscript ? (en ? "Original machine transcript: " : "原始机器转写：") + clip.machineTranscript + "\n" : ""}${en ? "Manual notes:" : "手工笔记："}
 ${clip.note?.trim() || (en ? "No manual notes yet." : "尚无手工笔记。")}`,
     ),
   ].join("\n\n");
