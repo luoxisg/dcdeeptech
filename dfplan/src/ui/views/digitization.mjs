@@ -1,10 +1,7 @@
 import { store } from "../../application/store.mjs";
 import { captureCatalog } from "../../domain/capture-catalog.mjs";
 import { captureMethods } from "../../domain/capture-methods.mjs";
-import {
-  estimateCatalogue,
-  digitizationEconomics,
-} from "../../domain/digitization-calc.mjs";
+import { estimateCatalogue } from "../../domain/digitization-calc.mjs";
 import {
   defaultUnitRates,
   unitRateKeys,
@@ -107,8 +104,7 @@ export function render() {
     price = rates(),
     editable =
       canEditUnitPricing(state.session, state.mode === "demo") &&
-      state.pricing.ready,
-    economics = digitizationEconomics();
+      state.pricing.ready;
   return html`${pageTitle(t("digitization"), s("一阶段现场数字化采集 · 新币预算测算", "Phase 1 on-site digitization · SGD planning"))}
     <div class="notice">
       <p>
@@ -204,22 +200,6 @@ export function render() {
         ${editable ? html`<label>${s("修改原因", "Reason for change")}<input name="reason" required maxlength="500" value="${state.pricing.draft?.reason || ""}" /></label><button class="btn btn-primary" type="submit">${s("保存并发布后台单价", "Publish shared rates")}</button>` : html`<p>${s("仅已启用的 Google 管理员可修改。Patrick、普通成员和演示用户只读。", "Only active Google administrators may edit. Patrick, other members and demo users are read-only.")}</p>`}
       </form>
       ${state.mode === "formal" ? html`<button class="btn" data-cmd="refresh-pricing">${s("刷新后台单价", "Refresh shared rates")}</button>` : ""}
-      <details>
-        <summary>
-          ${s("参考全案的成本口径", "Reference project economics")}
-        </summary>
-        <p>
-          S$46,200 · ${s("直接成本约", "Direct cost about")}
-          ${money(economics.directCost * 100)} ·
-          ${(economics.margin * 100).toFixed(1)}%
-          ${s("毛利（非净利）", "gross margin, not net profit")}
-        </p>
-        <p>
-          ${s("预算汇率：1 新币 =", "Planning rate: SGD 1 = CNY")}
-          ${economics.rate.toFixed(4)}
-          ${s("人民币；非实时汇率。未计销售、管理、税务与额外修复。", "; not a live FX rate. Excludes sales, administration, tax and extra restoration.")}
-        </p>
-      </details>
     </section>
     <section class="panel">
       <h2>${s("介质与工艺", "Media and methods")}</h2>

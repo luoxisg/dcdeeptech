@@ -1,14 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { estimateDigitization, digitizationEconomics } from '../../dfplan/digitization.mjs';
+import { estimateDigitization } from '../../dfplan/digitization.mjs';
 const baseline = { pages:5000,photos:1500,tapes:150,video:500,tapeMinutes:60,team:4 };
-test('SGD cost conversion reconciles to the supplied reference quote', () => {
- const e=digitizationEconomics();
- assert.ok(Math.abs(e.rate*46200-247822)<1e-8);
- assert.ok(Math.abs(e.directCost*e.rate-96200)<1e-8);
- assert.ok(Math.abs(e.directCost+e.contribution-46200)<1e-8);
- assert.ok(Math.abs(e.margin-0.6118181598)<1e-9);
-});
 test('reference scope produces the twenty-day plan, flagship SGD budget and master capacity', () => {
  const r=estimateDigitization(baseline);
  assert.equal(r.days,20);assert.equal(r.budget,46200);assert.equal(r.package,'flagship');
@@ -25,7 +18,7 @@ test('smaller teams change time, tape duration changes both capacity and budget'
  assert.ok(two.days>full.days);assert.equal(two.budget,full.budget);assert.equal(two.gb,full.gb);
  assert.ok(long.days>full.days);assert.ok(long.gb>full.gb);assert.ok(long.budget>full.budget);
 });
-test('package minima agree with visible starting prices and expanded scope is costed', () => {
+test('package minima agree with visible starting prices and expanded scope is priced', () => {
  assert.equal(estimateDigitization({pages:10}).budget,8000);
  const standard=estimateDigitization({pages:5000});assert.equal(standard.package,'standard');assert.equal(standard.budget,25000);
  const large=estimateDigitization({pages:15000,photos:5000,tapes:300,video:2000,tapeMinutes:120});assert.equal(large.package,'expanded');assert.ok(large.budget>46200);
