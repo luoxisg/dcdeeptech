@@ -1,6 +1,7 @@
 import { store } from "./store.mjs";
 import { setStoragePort, getStoragePort } from "./actions.mjs";
 const routes = new Set([
+  "handover",
   "overview",
   "board",
   "list",

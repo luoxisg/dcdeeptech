@@ -4,7 +4,7 @@ import { t } from "./i18n.mjs";
 import { icon } from "./icons.mjs";
 export function renderMobileNav() {
   const view = store.getState().view;
-  return html`<div class="mobile-tabs">
+  return html`<div class="mobile-tabs" data-primary-output="handover">
     ${[
       ["overview", "home", "overview"],
       ["list", "tasks", "tasks"],

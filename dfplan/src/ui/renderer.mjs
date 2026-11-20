@@ -8,6 +8,7 @@ import { modeNotice } from "./components.mjs";
 import { t, s } from "./i18n.mjs";
 import { installSwipeDismiss } from "./keyboard-viewport.mjs";
 const views = {
+  handover: () => import("./views/handover.mjs"),
   overview: () => import("./views/overview.mjs"),
   board: () => import("./views/board.mjs"),
   list: () => import("./views/list.mjs"),

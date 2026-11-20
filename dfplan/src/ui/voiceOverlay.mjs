@@ -1,3 +1,4 @@
+import { registerHandoverRecordings } from "../application/handover.mjs";
 import { html, mount } from "./html.mjs";
 import { store } from "../application/store.mjs";
 import { shouldClearInterview } from "../application/interview-session.mjs";
@@ -20,6 +21,7 @@ const session = createRecordingSession({
   ...recordingBrowserIO,
   capture: (options) => createBrowserRecorder(options),
 });
+registerHandoverRecordings(() => session.snapshot(), session.subscribe);
 let activeClose = null;
 store.subscribe((next, previous) => {
   if (shouldClearInterview(previous, next)) {

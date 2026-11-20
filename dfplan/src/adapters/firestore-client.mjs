@@ -612,6 +612,44 @@ export async function connectBackend(
       });
       return load();
     },
+    async appendAudit(expectedRevision, text, textEn) {
+      if (!member || !last || !auth.currentUser)
+        throw codeError("dfplan/not-admin");
+      if (last.project.history.length >= 5000)
+        throw codeError("dfplan/history-limit");
+      if (
+        [text, textEn].some(
+          (value) =>
+            typeof value !== "string" || value.length > 20000 || !value.trim(),
+        )
+      )
+        throw codeError("dfplan/audit-format");
+      const actor = { ...member },
+        uid = auth.currentUser.uid,
+        email = auth.currentUser.email || "",
+        myEpoch = epoch;
+      await dbSdk.runTransaction(db, async (transaction) => {
+        const snapshot = await transaction.get(projectRef);
+        if (!snapshot.exists() || snapshot.data().revision !== expectedRevision)
+          throw codeError("dfplan/conflict");
+        if (myEpoch !== epoch || !member || auth.currentUser?.uid !== uid)
+          throw codeError("dfplan/not-admin");
+        const revision = expectedRevision + 1,
+          updatedAt = dbSdk.serverTimestamp();
+        // Existing project/history schema and consistentCommit rule; no task writes.
+        transaction.update(projectRef, { revision, updatedAt, updatedBy: uid });
+        transaction.set(dbSdk.doc(history, String(revision)), {
+          revision,
+          text,
+          textEn,
+          actor: actor.displayName,
+          actorEmail: email,
+          actorUid: uid,
+          createdAt: updatedAt,
+        });
+      });
+      return load();
+    },
     async listPeople() {
       if (!member) throw codeError("dfplan/not-admin");
       const rows = await dbSdk.getDocsFromServer(

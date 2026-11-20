@@ -194,6 +194,11 @@ export function createRecordingSession(io) {
                 startedAt,
                 filename: `DeepFamily_Interview_${state.clips.length + 1}.${ext}`,
                 ...result,
+                consent: {
+                  recording: true,
+                  publication: "not_recorded",
+                  ai: "not_recorded",
+                },
                 url: io.createURL(result.blob),
                 note: "",
                 downloadRequested: false,

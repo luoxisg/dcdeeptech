@@ -17,7 +17,7 @@ jobs:
           node-version: "22"
       - run: node scripts/dfplan/import-map.mjs
       - run: node scripts/dfplan/check-model.mjs
-      - run: node --test scripts/dfplan/*.test.mjs tests/voiceSession.test.mjs dfplan-backend/tests/digitization.test.mjs dfplan-backend/tests/login-ui.test.mjs dfplan-backend/tests/link-client.test.mjs
+      - run: node --test scripts/dfplan/*.test.mjs tests/handover-export.test.mjs tests/voiceSession.test.mjs dfplan-backend/tests/digitization.test.mjs dfplan-backend/tests/login-ui.test.mjs dfplan-backend/tests/link-client.test.mjs
 
   voice-protocol:
     name: Voice protocol (no model download or API calls)

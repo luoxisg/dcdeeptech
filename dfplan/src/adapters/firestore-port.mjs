@@ -14,6 +14,8 @@ export async function createFirestorePort(callbacks, preferences) {
     load: () => api.refresh(),
     save: (next, text, textEn) =>
       api.save(next, callbacks.getRevision(), text, textEn),
+    audit: (text, textEn) =>
+      api.appendAudit(callbacks.getRevision(), text, textEn),
     loadPeople: () => api.listPeople(),
     addPerson: (name, responsibility) => api.addPerson(name, responsibility),
     setPersonActive: (id, active) => api.setPersonActive(id, active),

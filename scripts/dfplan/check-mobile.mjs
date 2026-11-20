@@ -1,4 +1,5 @@
 /** Browser-only QA dependency: PLAYWRIGHT_MODULE may point to an external installation. */
+import { checkHandover } from "./handover-browser-check.mjs";
 import assert from "node:assert/strict";
 import { checkTranscription } from "./transcription-browser-check.mjs";
 import { checkMobileLayout } from "./mobile-layout-browser-check.mjs";
@@ -154,10 +155,12 @@ try {
         "facts",
         "security",
         "digitization",
+        "handover",
       ]) {
         await navigate(view);
         await dimensions(elder ? 54 : 48);
       }
+      await navigate("digitization");
       await page.locator(".site-menu > summary").click();
       await page.locator('[data-cmd="language"]').click();
       await dimensions(elder ? 54 : 48);
@@ -271,6 +274,7 @@ try {
       await page.evaluate(() => localStorage.getItem("deepfamily.dfplan.v1")),
       "LIVE_SENTINEL_DO_NOT_TOUCH",
     );
+    await checkHandover(page);
     await navigate("people");
     assert.equal(await page.locator('[data-cmd="dashboard-focus"]').count(), 5);
     console.log(

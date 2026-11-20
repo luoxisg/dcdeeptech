@@ -4,6 +4,7 @@ const bounded = (value, max, fallback = 0) =>
   Number.isFinite(Number(value))
     ? Math.min(max, Math.max(0, Number(value)))
     : fallback;
+/** @param {import("./types.mjs").UnitRates} [rates] */
 export function estimateDigitization(
   input = {},
   rates = defaultUnitRates,
@@ -64,6 +65,7 @@ export function estimateDigitization(
   };
 }
 
+/** @param {import("./types.mjs").UnitRates} [rates] */
 export function estimateCatalogue(
   quantities,
   rates = defaultUnitRates,

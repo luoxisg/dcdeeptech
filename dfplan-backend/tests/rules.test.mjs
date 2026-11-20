@@ -1025,3 +1025,13 @@ test('pricing rejects missing audit, stale revisions, invalid units/currency and
  await assertSucceeds(priceCommit(client()));await assertFails(priceCommit(client(),'owner',1));await assertFails(priceCommit(client(),'owner',3));
  await assertFails(setDoc(doc(client(),pricingPath+'/versions/2'),{currency:'SGD',rates:priceRates,revision:2,reason:'Orphan',updatedAt:serverTimestamp(),updatedBy:'owner'}));
 });
+
+test('handover audit-only revision is allowed by existing rules without a task write and still requires a matching history entry',async()=>{
+ const db=client(),ref=doc(db,projectPath+'/tasks/WU-01');
+ const before=(await getDoc(ref)).data();
+ await assertSucceeds(commit(db,{changedTask:null}));
+ assert.deepEqual((await getDoc(ref)).data(),before);
+ assert.equal((await getDoc(doc(db,projectPath))).data().revision,1);
+ assert.equal((await getDoc(doc(db,projectPath+'/history/1'))).exists(),true);
+ await assertFails(commit(db,{revision:2,changedTask:null,includeAudit:false}));
+});

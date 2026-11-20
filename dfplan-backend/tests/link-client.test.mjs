@@ -512,3 +512,20 @@ test('Patrick can read published pricing but cannot publish it even with personn
  await assert.rejects(h.client.savePricing({...defaultUnitRates},1,'Forbidden'),{code:'dfplan/not-admin'});
  await h.client.logout();await tick();await assert.rejects(h.client.getPricing(),{code:'dfplan/not-admin'});
 });
+
+test('handover audit appends an existing-schema revision/history entry without modifying any task or start date',async()=>{
+ const h=await harness({user:{uid:'owner',email:'owner@example.com',emailVerified:true,isAnonymous:false,providerData:[{providerId:'google.com'}]}});
+ const before=JSON.stringify([...h.records].filter(([path])=>path.startsWith(project+'/tasks/'))),start=h.records.get(project).startDate;
+ const event='Requested handover download {"role":"owner","format":"zip","includeSealed":false}';
+ const result=await h.client.appendAudit(0,event,event);
+ assert.equal(h.records.get(project).revision,1);assert.equal(h.records.get(project).startDate,start);assert.equal(h.records.get(project+'/history/1').text,event);assert.equal(result.project.history.some(e=>e.text===event),true);assert.equal(JSON.stringify([...h.records].filter(([path])=>path.startsWith(project+'/tasks/'))),before);
+ await assert.rejects(h.client.appendAudit(0,event,event),{code:'dfplan/conflict'});
+ assert.equal(h.records.has(project+'/history/2'),false);
+});
+test('authorized editor audit retains existing membership restrictions and fails after revocation',async()=>{
+ const h=await harness({user:{uid:'patrick-device',email:null,isAnonymous:true},claimed:true});
+ await h.client.appendAudit(0,'请求下载数采移交包 editor json','Requested handover editor json');assert.equal(h.records.get(project+'/history/1').actor,'Patrick');
+ h.records.get('dfplanInvites/'+token).active=false;h.emit('dfplanInvites/'+token);await tick();
+ await assert.rejects(h.client.appendAudit(1,'Denied','Denied'),{code:'dfplan/not-admin'});
+ assert.equal(h.records.has(project+'/history/2'),false);
+});

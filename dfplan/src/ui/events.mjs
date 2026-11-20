@@ -93,6 +93,12 @@ export function installUIEvents() {
     }
     const payload = { ...button.dataset };
     delete payload.cmd;
+    if (button.dataset.cmd === "handover-export")
+      payload.includeSealed = String(
+        /** @type {HTMLInputElement|null} */ (
+          document.querySelector("[data-handover-sealed]")
+        )?.checked === true,
+      );
     if (button.dataset.cmd === "navigate")
       payload.scrollTop = /** @type {any} */ (
         document.querySelector('[data-slot="viewport"]')?.scrollTop || 0

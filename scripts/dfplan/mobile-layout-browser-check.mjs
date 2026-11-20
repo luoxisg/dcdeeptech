@@ -28,12 +28,14 @@ export async function checkMobileLayout(page) {
       1,
     );
     assert.equal(
-      await page.locator('.site-menu [data-cmd="navigate"]').count(),
+      await page
+        .locator('.site-menu [data-cmd="navigate"]:not([data-view="handover"])')
+        .count(),
       4,
     );
     assert.deepEqual(
       await page
-        .locator('.site-menu [data-cmd="navigate"]')
+        .locator('.site-menu [data-cmd="navigate"]:not([data-view="handover"])')
         .evaluateAll((nodes) => nodes.map((n) => n.dataset.view)),
       ["dashboard", "people", "security", "history"],
     );

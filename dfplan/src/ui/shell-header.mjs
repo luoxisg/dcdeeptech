@@ -32,6 +32,14 @@ export function renderHeader() {
             ${s("更多", "More")}
           </summary>
           <nav aria-label="${t("menu")}">
+            <button
+              class="btn btn-primary handover-menu-entry"
+              data-cmd="navigate"
+              data-view="handover"
+              aria-current="${state.view === "handover" ? "page" : "false"}"
+            >
+              ${icon("download")}${t("handover")}
+            </button>
             <div class="menu-utilities">
               <span class="mode-label"
                 >${state.mode === "demo" ? s("演示版", "Demo") : state.ready ? s("正式共享", "Live shared") : s("正式站点 · 未登录", "Live · signed out")}</span
@@ -55,6 +63,14 @@ export function renderHeader() {
     </div>
     <nav class="desktop-primary" aria-label="${s("主导航", "Main navigation")}">
       ${["overview", "list", "facts", "digitization"].map((view) => html`<button class="btn" data-cmd="navigate" data-view="${view}" aria-current="${(view === "list" ? ["list", "board", "timeline"].includes(state.view) : state.view === view) ? "page" : "false"}">${view === "list" ? t("tasks") : t(view)}</button>`)}
+      <button
+        class="btn"
+        data-cmd="navigate"
+        data-view="handover"
+        aria-current="${state.view === "handover" ? "page" : "false"}"
+      >
+        ${icon("download")}${t("handover")}
+      </button>
       <button class="btn" data-cmd="voice-open">
         ${icon("microphone")}${t("interview")}
       </button>
