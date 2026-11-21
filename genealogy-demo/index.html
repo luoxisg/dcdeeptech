@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>家谱志 · 世系演示</title>
+<link rel="stylesheet" href="style.css">
+<script defer src="family.js"></script>
+<script defer src="app.js"></script>
+</head>
+<body>
+<header class="top"><div class="wrap masthead"><a href="index.html" class="brand"><span class="seal" aria-hidden="true">譜</span>家谱志</a><span class="status">虚构数据演示</span></div></header>
+<main class="wrap">
+<section class="intro"><div><p class="eyebrow">沈氏 · 清溪堂</p><h1>家族世系</h1><p class="lead">按姓名或字号查找，沿世系追溯每一段亲缘。</p></div><div class="stats" id="stats"></div></section>
+<div class="workspace">
+<aside class="browse panel" aria-label="查找人物">
+<label for="query">查找人物</label>
+<input id="query" type="search" placeholder="姓名或字号，如「沈承远」">
+<h2 id="list-title">支系入口</h2>
+<div id="results" aria-live="polite"></div>
+</aside>
+<div class="content">
+<section class="panel person" id="person" aria-label="人物详情"></section>
+<section class="panel tree"><div class="section-head"><h2>亲属关系</h2><button class="quiet" id="back" type="button">返回上一位</button></div><div id="relations"></div></section>
+</div>
+</div>
+</main>
+<dialog id="source" aria-labelledby="source-title"><div class="section-head"><h2 id="source-title">谱页样张</h2><form method="dialog"><button class="quiet">关闭</button></form></div><div class="source-tools"><span id="page-label"></span><button class="quiet" id="zoom" aria-pressed="false">放大</button></div><div class="page-window"><article id="facsimile" class="facsimile"></article></div></dialog>
+</body>
+</html>

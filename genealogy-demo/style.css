@@ -1,0 +1,74 @@
+:root {
+  color-scheme: light;
+  --ink: #282e29;
+  --soft: #57665d;
+  --pine: #244c3c;
+  --ground: #f0f2ed;
+  --line: #d9e0d7;
+  --paper: #fbfcf8;
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  color: var(--ink);
+  background: var(--ground);
+}
+* { box-sizing: border-box; }
+body { margin: 0; }
+button, input { font: inherit; }
+button { cursor: pointer; }
+button:disabled { opacity: .45; cursor: default; }
+:focus-visible { outline: 3px solid #b65c3d; outline-offset: 3px; }
+.wrap { width: min(1100px, calc(100% - 3rem)); margin-inline: auto; }
+.top { background: var(--paper); border-bottom: 1px solid var(--line); }
+.masthead { min-height: 70px; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.brand { display: inline-flex; align-items: center; gap: .65rem; color: var(--ink); text-decoration: none; font-weight: 700; letter-spacing: .12em; }
+.seal { display: grid; place-items: center; width: 2.2rem; height: 2.2rem; background: #a34536; color: white; border-radius: 6px; font-family: serif; }
+.status { color: var(--soft); font-size: .875rem; }
+.intro { display: flex; justify-content: space-between; align-items: end; gap: 1rem; padding-block: 3.1rem 2rem; }
+.eyebrow { color: var(--pine); font-weight: 700; font-size: .875rem; letter-spacing: .09em; margin: 0 0 .6rem; }
+h1, h2, h3, p { margin-top: 0; }
+h1 { font: 700 clamp(2.5rem, 6vw, 4.5rem)/1.15 "Noto Serif CJK SC", "Songti SC", SimSun, serif; margin-bottom: .7rem; }
+.lead, .stats, .muted { color: var(--soft); }
+.lead, .muted { margin-bottom: 0; }
+.stats { font-size: .875rem; white-space: nowrap; }
+.workspace { display: grid; grid-template-columns: 290px minmax(0, 1fr); align-items: start; gap: 1.25rem; padding-bottom: 3rem; }
+.panel { background: var(--paper); border: 1px solid var(--line); border-radius: 14px; padding: 1.4rem; }
+.content { display: grid; gap: 1.25rem; }
+.browse label { display: block; font-weight: 700; margin-bottom: .55rem; }
+.browse input { width: 100%; min-height: 44px; border: 1px solid #a9b9ad; border-radius: 8px; padding: .55rem .65rem; color: var(--ink); background: white; }
+.browse h2 { font-size: .9rem; margin: 1.5rem 0 .6rem; color: var(--soft); }
+.result { width: 100%; text-align: left; border: 1px solid transparent; border-radius: 8px; padding: .75rem; background: transparent; color: var(--ink); }
+.result:hover, .relative:hover { background: #eaf0e9; }
+.result[aria-current] { background: #e4eee6; border-color: #bfcec1; }
+.result span, .relative span { display: block; color: var(--soft); font-size: .875rem; margin-top: .2rem; }
+.person { border-top: 4px solid var(--pine); }
+.identity { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem; }
+.identity h2 { font: 700 2rem/1.2 "Noto Serif CJK SC", "Songti SC", SimSun, serif; margin: 0; }
+.monogram { display: grid; place-items: center; min-width: 2.65rem; min-height: 2.65rem; color: var(--pine); background: #e4eee6; border-radius: 50%; font-weight: 700; }
+.alias { color: var(--soft); }
+.facts { display: flex; gap: 2rem; margin: 1.2rem 0; }
+dt { font-size: .875rem; color: var(--soft); margin-bottom: .2rem; }
+dd { margin: 0; }
+.primary, .quiet { min-height: 42px; border-radius: 7px; padding: .4rem .7rem; font-size: .875rem; }
+.primary { color: white; background: var(--pine); border: 1px solid var(--pine); }
+.quiet { color: var(--pine); background: var(--paper); border: 1px solid #a9b9ad; white-space: nowrap; }
+.quiet:hover:enabled { background: #e4eee6; }
+.section-head, .source-tools { display: flex; align-items: center; justify-content: space-between; gap: .65rem; }
+.section-head h2 { font-size: 1.2rem; margin: 0; }
+.relation-group { margin-top: 1rem; }
+.relation-group h3 { color: var(--soft); font-size: .875rem; margin: 0 0 .35rem; }
+.relation { display: flex; align-items: center; gap: .65rem; border-top: 1px solid var(--line); padding-block: .25rem; }
+.relative { flex: 1; text-align: left; border: 0; padding: .55rem .35rem; border-radius: 6px; background: transparent; color: var(--ink); font-weight: 700; }
+.relative span { font-weight: 400; }
+dialog { width: min(560px, calc(100% - 2rem)); max-height: 88vh; padding: 1.25rem; border: 1px solid var(--line); border-radius: 12px; background: var(--paper); color: var(--ink); }
+dialog::backdrop { background: #17271cc0; }
+.source-tools { margin-block: .8rem; font-size: .875rem; }
+.page-window { overflow: auto; }
+.facsimile { background: #f6edda; border: 1px solid #d8c8a4; padding: 1.5rem; line-height: 1.65; font-family: "Noto Serif CJK SC", "Songti SC", SimSun, serif; }
+.facsimile.zoomed { font-size: 1.5rem; }
+@media (max-width: 690px) {
+  .wrap { width: calc(100% - 2rem); }
+  .intro { display: block; padding-block: 2rem 1.2rem; }
+  .stats { margin-top: .65rem; }
+  .workspace { grid-template-columns: 1fr; gap: .85rem; }
+  .content { gap: .85rem; }
+  .panel { padding: 1rem; }
+}
