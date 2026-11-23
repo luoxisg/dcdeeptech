@@ -1,1008 +1,612 @@
- 
-<!DOCTYPE html>
-<html lang="zh" class="scroll-smooth">
+<!doctype html>
+<html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DCDEEPTECH - AI Infrastructure Investment</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                    colors: {
-                        slate: {
-                            850: '#151e2e',
-                            900: '#0f172a',
-                            950: '#020617', 
-                        }
-                    },
-                    animation: {
-                        'fade-in-up': 'fadeInUp 0.5s ease-out',
-                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                    },
-                    keyframes: {
-                        fadeInUp: {
-                            '0%': { opacity: '0', transform: 'translateY(10px)' },
-                            '100%': { opacity: '1', transform: 'translateY(0)' },
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        body {
-            background-color: #020617; /* slate-950 */
-            color: #e2e8f0; /* slate-200 */
-        }
-        /* Custom range slider styling */
-        input[type=range] {
-            -webkit-appearance: none; 
-            background: transparent; 
-        }
-        input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            height: 16px;
-            width: 16px;
-            border-radius: 50%;
-            background: #3b82f6;
-            cursor: pointer;
-            margin-top: -6px; 
-            box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
-        }
-        input[type=range]::-webkit-slider-runnable-track {
-            width: 100%;
-            height: 4px;
-            cursor: pointer;
-            background: #334155;
-            border-radius: 2px;
-        }
-        .strategy-node.active {
-            background-color: rgba(30, 58, 138, 0.4);
-            border-color: #3b82f6;
-            transform: scale(1.1);
-        }
-        .strategy-path {
-            transition: stroke 0.5s ease;
-        }
-        .strategy-step-card.active {
-            background-color: #1e293b;
-            border-color: #3b82f6;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        }
-        .strategy-step-card.active h3 {
-            color: white;
-        }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DeepFamily｜天使轮商业计划书 v3（SGD 500,000）</title>
+<style>
+:root{
+  --ink:#0f172a;
+  --deep:#0b132b;
+  --navy:#1e3a8a;
+  --accent:#2563eb;
+  --sky:#0ea5e9;
+  --gold:#d97706;
+  --green:#16a34a;
+  --bg:#ffffff;
+  --paper:#f8fafc;
+  --card-bg:#ffffff;
+  --muted:#475569;
+  --line:#e2e8f0;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;color:var(--ink);background:var(--bg);font:15.5px/1.8 "PingFang SC","Microsoft YaHei","Hiragino Sans GB",-apple-system,BlinkMacSystemFont,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{width:min(1060px,calc(100% - 48px));margin:auto}
+a{color:var(--accent);text-decoration:none}
+
+/* 顶栏 */
+.topbar{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.95);border-bottom:1px solid var(--line);backdrop-filter:blur(10px)}
+.topbar .wrap{height:58px;display:flex;align-items:center;justify-content:space-between}
+.brand{font-weight:800;font-size:18px;color:var(--deep);letter-spacing:-.02em}
+.brand span{color:var(--accent)}
+.brand small{font-size:11px;font-weight:600;margin-left:8px;padding:2px 8px;background:#eff6ff;border-radius:12px;color:var(--accent)}
+.topbar nav a{color:var(--muted);font-size:13px;margin-left:16px;font-weight:500}
+.topbar nav a:hover{color:var(--accent)}
+
+/* 封面 */
+.hero{background:linear-gradient(135deg,#0b132b 0%,#172554 55%,#1e3a8a 100%);color:#fff;padding:76px 0 64px;position:relative;overflow:hidden}
+.hero .kicker{color:#38bdf8;font-size:12.5px;letter-spacing:.22em;text-transform:uppercase;font-weight:700}
+.hero h1{font-size:42px;line-height:1.25;margin:16px 0 18px;font-weight:800;letter-spacing:-.01em}
+.hero h1 em{color:#38bdf8;font-style:normal}
+.hero .sub{color:#cbd5e1;font-size:16.5px;max-width:820px;line-height:1.8;margin:0}
+.hero .badges{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+.hero .badge{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.18);color:#e2e8f0;padding:5px 12px;border-radius:20px;font-size:12.5px}
+.hero .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-top:38px;padding-top:28px;border-top:1px solid rgba(255,255,255,.14)}
+.hero .stat b{display:block;font-size:28px;color:#38bdf8;font-weight:800;line-height:1.2}
+.hero .stat span{display:block;color:#94a3b8;font-size:12.5px;margin-top:6px}
+
+/* 目录 */
+.toc{background:var(--paper);border-bottom:1px solid var(--line)}
+.toc .wrap{padding:22px 0}
+.toc ol{columns:2;column-gap:44px;padding-left:20px;margin:0}
+.toc li{margin:5px 0;font-size:13.5px;color:var(--muted)}
+.toc li a{color:var(--ink);font-weight:500}
+.toc li a:hover{color:var(--accent)}
+
+/* 章节 */
+.section{padding:52px 0;border-bottom:1px solid var(--line)}
+.section.alt{background:var(--paper)}
+.section .kicker{color:var(--accent);font-size:12px;letter-spacing:.14em;font-weight:700;text-transform:uppercase}
+.section h2{font-size:26px;line-height:1.35;margin:8px 0 10px;font-weight:800;color:var(--deep)}
+.section h3{font-size:18px;margin:28px 0 12px;font-weight:700;color:var(--deep)}
+.section p{color:#334155;margin:10px 0}
+
+/* 结论先行条 */
+.point{background:linear-gradient(135deg,#0f172a,#1e293b);color:#fff;border-radius:10px;padding:18px 24px;margin:18px 0 24px;border-left:4px solid #38bdf8}
+.point .tag{color:#38bdf8;font-weight:700;font-size:11.5px;letter-spacing:.12em;display:block;margin-bottom:6px;text-transform:uppercase}
+.point p{margin:0;color:#f1f5f9;font-size:15.5px;line-height:1.75}
+
+/* 卡片网格 */
+.grid{display:grid;gap:16px;margin:18px 0}
+.grid.c2{grid-template-columns:repeat(2,1fr)}
+.grid.c3{grid-template-columns:repeat(3,1fr)}
+.grid.c4{grid-template-columns:repeat(4,1fr)}
+.card{background:var(--card-bg);border:1px solid var(--line);border-radius:10px;padding:18px 20px}
+.card.alt{background:var(--paper)}
+.card.highlight{border-color:#93c5fd;background:#eff6ff}
+.card h4{font-size:15px;margin:0 0 8px;color:var(--deep);font-weight:700}
+.card .num{font-size:24px;font-weight:800;color:var(--accent);line-height:1.2}
+.card .num.green{color:var(--green)}
+.card .num.gold{color:var(--gold)}
+.card p{font-size:13.5px;color:var(--muted);margin:6px 0 0;line-height:1.68}
+.card ul{padding-left:18px;margin:8px 0 0;font-size:13.5px;color:var(--muted)}
+.card li{margin:4px 0}
+
+/* 表格 */
+table{width:100%;border-collapse:collapse;margin:18px 0;font-size:13.5px;background:#fff;border-radius:8px;overflow:hidden;border:1px solid var(--line)}
+th{background:linear-gradient(135deg,#1e3a8a,#2563eb);color:#fff;text-align:left;padding:11px 13px;font-weight:600}
+td{padding:10px 13px;border-bottom:1px solid var(--line);vertical-align:top;line-height:1.65;color:#1e293b}
+tr:nth-child(even) td{background:#f8fafc}
+tr.row-hl td{background:#eff6ff;font-weight:600}
+td strong{color:var(--navy)}
+
+/* 提示框 */
+.note{background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:12px 16px;font-size:13px;color:#1e3a8a;margin:16px 0}
+.note.warn{background:#fffbeb;border-color:#fde68a;color:#92400e}
+.note.ok{background:#f0fdf4;border-color:#bbf7d0;color:#166534}
+
+/* 图表容器 */
+.figure{margin:24px 0;text-align:center}
+.figure svg{max-width:100%;height:auto;border-radius:10px;border:1px solid var(--line)}
+.figure .caption{font-size:12.5px;color:var(--muted);margin-top:8px}
+
+/* 页脚 */
+footer{background:var(--deep);color:#94a3b8;padding:54px 0;text-align:center}
+footer h2{color:#fff;font-size:24px;margin:0 0 10px}
+footer p{color:#cbd5e1;max-width:680px;margin:8px auto;font-size:14.5px}
+footer .mantra{color:#38bdf8;font-size:14px;letter-spacing:.12em;margin-top:18px;font-weight:600}
+
+@media(max-width:768px){
+  .hero h1{font-size:30px}
+  .hero .stats,.grid.c2,.grid.c3,.grid.c4{grid-template-columns:1fr}
+  .topbar nav{display:none}
+  .toc ol{columns:1}
+}
+@media print{
+  .topbar{display:none}
+  .section{padding:32px 0;page-break-inside:avoid}
+  .hero{padding:44px 0 36px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .point,th,.card.highlight,.note,.badge{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
 </head>
-<body class="antialiased selection:bg-blue-500/30">
+<body>
 
-    <!-- Navbar -->
-    <nav id="navbar" class="fixed w-full z-50 transition-all duration-300 py-5">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-            <!-- Logo -->
-            <div class="flex items-center space-x-2">
-                <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-600/20">
-                    <i data-lucide="database" class="text-white w-6 h-6"></i>
-                </div>
-                <span class="text-2xl font-bold text-white tracking-tight">DC<span class="text-blue-500">DEEPTECH</span></span>
-            </div>
-
-            <!-- Desktop Menu -->
-            <div class="hidden md:flex items-center space-x-6">
-                <a href="#StrategicModel" class="nav-item text-slate-300 hover:text-white text-sm font-medium transition-colors" data-i18n="nav.items.0">战略模型</a>
-                <a href="#Advantages" class="nav-item text-slate-300 hover:text-white text-sm font-medium transition-colors" data-i18n="nav.items.1">核心优势</a>
-                <!-- Added HaaS Link -->
-                <a href="#HaaS" class="nav-item text-white bg-blue-900/30 px-3 py-1 rounded-full border border-blue-500/30 hover:bg-blue-600 hover:border-blue-500 text-sm font-medium transition-all" data-i18n="nav.items.4">本地 HaaS</a>
-                
-                <a href="#Services" class="nav-item text-slate-300 hover:text-white text-sm font-medium transition-colors" data-i18n="nav.items.2">服务体系</a>
-                <a href="#ROI" class="nav-item text-slate-300 hover:text-white text-sm font-medium transition-colors" data-i18n="nav.items.3">投资回报</a>
-                
-                <div class="h-6 w-px bg-slate-700 mx-2"></div>
-                
-                <button id="lang-toggle-desktop" class="flex items-center space-x-1 text-slate-300 hover:text-white transition-colors text-sm font-medium">
-                    <i data-lucide="globe" class="w-4 h-4"></i>
-                    <span id="lang-label-desktop">EN</span>
-                </button>
-
-                <button onclick="openLoginModal()" class="bg-blue-600 hover:bg-blue-500 text-white shadow-lg hover:shadow-blue-500/30 px-4 py-2 rounded-lg text-sm font-medium transition-all transform hover:-translate-y-0.5" data-i18n="nav.login">
-                    LP 门户登录
-                </button>
-            </div>
-
-            <!-- Mobile Menu Button -->
-            <div class="md:hidden flex items-center space-x-4">
-                <button id="lang-toggle-mobile" class="flex items-center space-x-1 text-slate-300 hover:text-white">
-                    <i data-lucide="globe" class="w-5 h-5"></i>
-                    <span id="lang-label-mobile" class="text-sm font-bold">EN</span>
-                </button>
-                <button id="mobile-menu-btn" class="text-white p-2">
-                    <i data-lucide="menu"></i>
-                </button>
-            </div>
-        </div>
-
-        <!-- Mobile Menu (Hidden by default) -->
-        <div id="mobile-menu" class="hidden md:hidden bg-slate-900 border-b border-slate-800 absolute w-full shadow-2xl">
-            <div class="px-4 pt-2 pb-6 space-y-2">
-                <a href="#StrategicModel" class="block px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-md" data-i18n="nav.items.0">战略模型</a>
-                <a href="#Advantages" class="block px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-md" data-i18n="nav.items.1">核心优势</a>
-                <a href="#HaaS" class="block px-3 py-2 text-blue-400 font-semibold hover:text-white hover:bg-slate-800 rounded-md" data-i18n="nav.items.4">本地 HaaS</a>
-                <a href="#Services" class="block px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-md" data-i18n="nav.items.2">服务体系</a>
-                <a href="#ROI" class="block px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-md" data-i18n="nav.items.3">投资回报</a>
-                <div class="pt-4 border-t border-slate-800 mt-2">
-                    <button onclick="openLoginModal()" class="w-full bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg" data-i18n="nav.login">LP 门户登录</button>
-                </div>
-            </div>
-        </div>
+<header class="topbar">
+  <div class="wrap">
+    <a class="brand" href="#top">Deep<span>Family</span><small>BP v3 · Singapore</small></a>
+    <nav>
+      <a href="#exec">摘要</a>
+      <a href="#traction">商业进展</a>
+      <a href="#market">市场漏斗</a>
+      <a href="#hdp">HDP 护城河</a>
+      <a href="#pdpa">新加坡合规</a>
+      <a href="#product">产品防沉睡</a>
+      <a href="#compete">竞品格局</a>
+      <a href="#finance">财务压测</a>
+      <a href="#team">团队治理</a>
+      <a href="./en.html" style="padding:4px 10px;border-radius:6px;background:#eff6ff;color:#2563eb;font-weight:700;border:1px solid #bfdbfe;">EN</a>
     </nav>
+  </div>
+</header>
 
-    <main>
-        <!-- Hero Section -->
-        <div class="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
-            <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1558494949-ef526b0042a0?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')] bg-cover bg-center opacity-10"></div>
-            <div class="absolute inset-0 bg-gradient-to-b from-slate-950/80 via-slate-950/90 to-slate-950"></div>
-            <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl animate-pulse-slow"></div>
-            <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-indigo-600/20 rounded-full blur-3xl animate-pulse-slow" style="animation-delay: 1s;"></div>
+<!-- 封面 -->
+<section class="hero" id="top">
+  <div class="wrap">
+    <div class="kicker">Angel Round Investment Memorandum · v3.0 · Singapore HQ</div>
+    <h1>高净值华人家族的<em>合规数字资产金库</em><br>与代际 AI 基础设施</h1>
+    <p class="sub">以 <strong>Heritage Data Protocol (HDP v1.0)</strong> 为底层协议，通过高毛利白手套初始化工程（0 个月回本）切入私有数据入口，结合本地蓝光主权归档与 WhatsApp/微信托管型「阿忆 AI 管家」，为新加坡及东南亚创富家族构建可追溯、可继承、永续生长的百年数字记忆底座。</p>
+    <div class="badges">
+      <span class="badge">总部：DeepFamily Pte. Ltd. (新加坡)</span>
+      <span class="badge">工具：SVCA CARE / Post-Money SAFE</span>
+      <span class="badge">交割方式：两段式滚动交割 (Rolling Close)</span>
+      <span class="badge">首台套：已正式签约 S$100,000（首付 53.8%）</span>
+    </div>
+    <div class="stats">
+      <div class="stat"><b>S$500,000</b><span>本轮天使轮融资规模（约 ¥269 万）</span></div>
+      <div class="stat"><b>S$100,000</b><span>首台套已签合同（53.8% 首付落袋）</span></div>
+      <div class="stat"><b>63.7% / 56.2%</b><span>标准复制毛利率（未扣 / 扣渠道分成）</span></div>
+      <div class="stat"><b>28.7 个月</b><span>精益架构零新增客户静态 Runway</span></div>
+    </div>
+  </div>
+</section>
 
-            <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center z-10 animate-fade-in-up">
-                <div class="inline-flex items-center space-x-2 bg-slate-800/50 rounded-full px-4 py-1.5 mb-8 border border-slate-700">
-                    <span class="flex h-2 w-2 rounded-full bg-green-400"></span>
-                    <span class="text-slate-300 text-xs font-medium tracking-wide" data-i18n="hero.badge">新加坡资金 × 巴西算力资产</span>
-                </div>
-                
-                <h1 class="text-4xl md:text-7xl font-bold text-white mb-6 leading-tight tracking-tight">
-                    <span data-i18n="hero.title_prefix">定义跨境</span> <br class="md:hidden" />
-                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400" data-i18n="hero.title_highlight">AI 基础设施</span><br />
-                    <span data-i18n="hero.title_suffix">的新资产范式</span>
-                </h1>
-                
-                <p class="mt-6 text-xl text-slate-400 max-w-3xl mx-auto leading-relaxed" data-i18n="hero.desc">
-                    DCDEEPTECH 通过独特的轻资产运营模式，连接低成本资本与高回报算力资产。利用政策套利与技术专长，为 LP 创造超越传统 REITs 的 Alpha 收益。
-                </p>
-                
-                <div class="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
-                    <button class="bg-blue-600 hover:bg-blue-500 text-white shadow-lg hover:shadow-blue-500/30 px-6 py-3 rounded-lg font-medium transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
-                        <span data-i18n="hero.btn_primary">探索投资模型</span> <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                    </button>
-                    <button class="bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 px-6 py-3 rounded-lg font-medium transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
-                        <span data-i18n="hero.btn_secondary">下载研究报告 (PDF)</span> <i data-lucide="briefcase" class="w-4 h-4"></i>
-                    </button>
-                </div>
+<!-- 目录 -->
+<section class="toc">
+  <div class="wrap">
+    <ol>
+      <li><a href="#exec">一、执行摘要与融资条款概览</a></li>
+      <li><a href="#traction">二、为什么是现在 &amp; 商业牵引力（Traction）</a></li>
+      <li><a href="#market">三、市场空间与 L1→L2 阶梯获客漏斗</a></li>
+      <li><a href="#hdp">四、核心壁垒：Heritage Data Protocol (HDP v1.0)</a></li>
+      <li><a href="#pdpa">五、新加坡顶级合规护城河（PDPA 与数据主权）</a></li>
+      <li><a href="#product">六、去外包化交付工厂与「阿忆」防沉睡闭环</a></li>
+      <li><a href="#compete">七、海内外四象限竞品格局（HereAfter AI 警钟）</a></li>
+      <li><a href="#finance">八、财务精算、五大情景压力测试与资金用途</a></li>
+      <li><a href="#team">九、团队铁三角、本地信用背书与治理承诺</a></li>
+    </ol>
+  </div>
+</section>
 
-                <div class="mt-20 grid grid-cols-2 md:grid-cols-4 gap-8 border-t border-slate-800 pt-8">
-                    <div class="text-center">
-                        <div class="text-3xl font-bold text-white" data-i18n="hero.stats.0.value">>20%</div>
-                        <div class="text-sm text-slate-500 mt-1" data-i18n="hero.stats.0.label">目标 IRR</div>
-                    </div>
-                    <div class="text-center">
-                        <div class="text-3xl font-bold text-white" data-i18n="hero.stats.1.value">40%+</div>
-                        <div class="text-sm text-slate-500 mt-1" data-i18n="hero.stats.1.label">税务节省 (ReData)</div>
-                    </div>
-                    <div class="text-center">
-                        <div class="text-3xl font-bold text-white" data-i18n="hero.stats.2.value"><6%</div>
-                        <div class="text-sm text-slate-500 mt-1" data-i18n="hero.stats.2.label">融资成本 (EFS)</div>
-                    </div>
-                    <div class="text-center">
-                        <div class="text-3xl font-bold text-white" data-i18n="hero.stats.3.value">100% Green</div>
-                        <div class="text-sm text-slate-500 mt-1" data-i18n="hero.stats.3.label">能源结构</div>
-                    </div>
-                </div>
-            </div>
-        </div>
+<!-- 一、执行摘要 -->
+<section class="section" id="exec">
+  <div class="wrap">
+    <div class="kicker">01 · Executive Summary</div>
+    <h2>执行摘要与融资条款概览</h2>
 
-        <!-- Strategy Model Section -->
-        <section id="StrategicModel" class="py-24 bg-slate-900 relative">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="mb-12 text-center">
-                    <span class="text-blue-400 font-semibold tracking-wider uppercase text-sm" data-i18n="strategy.subtitle">STRATEGIC ARBITRAGE</span>
-                    <h2 class="text-3xl md:text-4xl font-bold text-white mt-2 leading-tight" data-i18n="strategy.title">跨境套利核心模型</h2>
-                    <div class="h-1 w-20 bg-blue-600 mt-4 rounded-full mx-auto"></div>
-                </div>
-                
-                <div class="grid md:grid-cols-2 gap-12 items-center">
-                    <!-- Interactive Graphic -->
-                    <div class="relative h-[500px] bg-slate-800/30 rounded-2xl border border-slate-700/50 p-8 flex flex-col items-center justify-center">
-                        <!-- SVG Lines -->
-                        <div class="absolute inset-0 pointer-events-none">
-                            <svg class="w-full h-full">
-                                <path id="path-1" d="M100 100 Q 400 50 700 100" fill="none" stroke="#1e293b" stroke-width="2" stroke-dasharray="5,5" class="strategy-path" />
-                                <path id="path-2" d="M700 100 Q 750 300 700 500" fill="none" stroke="#1e293b" stroke-width="2" stroke-dasharray="5,5" class="strategy-path" />
-                                <path id="path-3" d="M700 500 Q 400 550 100 500" fill="none" stroke="#1e293b" stroke-width="2" stroke-dasharray="5,5" class="strategy-path" />
-                                <path id="path-4" d="M100 500 Q 50 300 100 100" fill="none" stroke="#3b82f6" stroke-width="2" stroke-dasharray="5,5" stroke-opacity="0.3" />
-                            </svg>
-                        </div>
-
-                        <!-- Central Hub -->
-                        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-slate-900 rounded-full border-2 border-blue-500/30 flex flex-col items-center justify-center z-10 shadow-[0_0_50px_rgba(59,130,246,0.2)]">
-                            <div class="text-blue-500 font-bold text-xl">DCDEEPTECH</div>
-                            <div class="text-xs text-slate-400 mt-2 text-center px-4 whitespace-pre-line leading-tight" data-i18n="strategy.center_text">
-                                轻资产运营<br>(合规/运维/风控)
-                            </div>
-                        </div>
-
-                        <!-- Nodes -->
-                        <div class="strategy-node absolute top-10 left-10 p-4 rounded-xl border border-slate-700 bg-slate-900 opacity-60 transition-all duration-500 cursor-pointer" onclick="setStrategyStep(1)" data-step="1">
-                            <i data-lucide="building-2" class="w-6 h-6 mb-2 text-blue-400"></i>
-                            <div class="text-xs font-bold text-slate-200">SG Capital</div>
-                        </div>
-                        <div class="strategy-node absolute top-10 right-10 p-4 rounded-xl border border-slate-700 bg-slate-900 opacity-60 transition-all duration-500 cursor-pointer" onclick="setStrategyStep(2)" data-step="2">
-                            <i data-lucide="server" class="w-6 h-6 mb-2 text-indigo-400"></i>
-                            <div class="text-xs font-bold text-slate-200">Hardware</div>
-                        </div>
-                        <div class="strategy-node absolute bottom-10 right-10 p-4 rounded-xl border border-slate-700 bg-slate-900 opacity-60 transition-all duration-500 cursor-pointer" onclick="setStrategyStep(3)" data-step="3">
-                            <i data-lucide="globe" class="w-6 h-6 mb-2 text-green-400"></i>
-                            <div class="text-xs font-bold text-slate-200">Brazil DC</div>
-                        </div>
-                        <div class="strategy-node absolute bottom-10 left-10 p-4 rounded-xl border border-slate-700 bg-slate-900 opacity-60 transition-all duration-500 cursor-pointer" onclick="setStrategyStep(4)" data-step="4">
-                            <i data-lucide="trending-up" class="w-6 h-6 mb-2 text-yellow-400"></i>
-                            <div class="text-xs font-bold text-slate-200">Returns</div>
-                        </div>
-                    </div>
-
-                    <!-- Steps Text -->
-                    <div class="space-y-6">
-                        <!-- Step 1 -->
-                        <div id="step-card-1" class="strategy-step-card p-6 rounded-xl border border-transparent transition-all duration-300 cursor-pointer hover:bg-slate-800/50" onclick="setStrategyStep(1)">
-                            <div class="flex items-start gap-4">
-                                <div class="p-3 rounded-lg bg-blue-500/20"><i data-lucide="building-2" class="w-6 h-6 text-blue-400"></i></div>
-                                <div>
-                                    <h3 class="text-lg font-bold text-slate-400 transition-colors" data-i18n="strategy.steps.0.title">资本形成 (新加坡)</h3>
-                                    <p class="text-slate-400 text-sm mt-2 leading-relaxed" data-i18n="strategy.steps.0.desc">利用 EFS-Trade Loan 与 VCC 架构，获取低息资金与灵活的基金结构。</p>
-                                    <div class="mt-3 hidden step-highlight inline-block px-3 py-1 rounded-full bg-blue-900/50 border border-blue-500/30 text-xs text-blue-300 font-medium">
-                                        🚀 <span class="advantage-label">核心优势</span>: <span data-i18n="strategy.steps.0.highlight">SORA + 2% 融资成本</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Step 2 -->
-                        <div id="step-card-2" class="strategy-step-card p-6 rounded-xl border border-transparent transition-all duration-300 cursor-pointer hover:bg-slate-800/50" onclick="setStrategyStep(2)">
-                            <div class="flex items-start gap-4">
-                                <div class="p-3 rounded-lg bg-slate-800"><i data-lucide="server" class="w-6 h-6 text-indigo-400"></i></div>
-                                <div>
-                                    <h3 class="text-lg font-bold text-slate-400 transition-colors" data-i18n="strategy.steps.1.title">资产购置 & ReData</h3>
-                                    <p class="text-slate-400 text-sm mt-2 leading-relaxed" data-i18n="strategy.steps.1.desc">采购 H100/H200 集群，利用巴西 ReData 政策豁免联邦税，降低 CAPEX。</p>
-                                    <div class="mt-3 hidden step-highlight inline-block px-3 py-1 rounded-full bg-blue-900/50 border border-blue-500/30 text-xs text-blue-300 font-medium">
-                                        🚀 <span class="advantage-label">核心优势</span>: <span data-i18n="strategy.steps.1.highlight">节省 ~45% 落地成本</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Step 3 -->
-                        <div id="step-card-3" class="strategy-step-card p-6 rounded-xl border border-transparent transition-all duration-300 cursor-pointer hover:bg-slate-800/50" onclick="setStrategyStep(3)">
-                            <div class="flex items-start gap-4">
-                                <div class="p-3 rounded-lg bg-slate-800"><i data-lucide="zap" class="w-6 h-6 text-green-400"></i></div>
-                                <div>
-                                    <h3 class="text-lg font-bold text-slate-400 transition-colors" data-i18n="strategy.steps.2.title">部署与运营 (巴西)</h3>
-                                    <p class="text-slate-400 text-sm mt-2 leading-relaxed" data-i18n="strategy.steps.2.desc">部署于绿色能源数据中心，提供 MSP 级运维，确保高在线率。</p>
-                                    <div class="mt-3 hidden step-highlight inline-block px-3 py-1 rounded-full bg-blue-900/50 border border-blue-500/30 text-xs text-blue-300 font-medium">
-                                        🚀 <span class="advantage-label">核心优势</span>: <span data-i18n="strategy.steps.2.highlight">清洁能源溢价</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Step 4 -->
-                        <div id="step-card-4" class="strategy-step-card p-6 rounded-xl border border-transparent transition-all duration-300 cursor-pointer hover:bg-slate-800/50" onclick="setStrategyStep(4)">
-                            <div class="flex items-start gap-4">
-                                <div class="p-3 rounded-lg bg-slate-800"><i data-lucide="trending-up" class="w-6 h-6 text-yellow-400"></i></div>
-                                <div>
-                                    <h3 class="text-lg font-bold text-slate-400 transition-colors" data-i18n="strategy.steps.3.title">价值分配</h3>
-                                    <p class="text-slate-400 text-sm mt-2 leading-relaxed" data-i18n="strategy.steps.3.desc">算力租赁产生美元现金流，通过 VCC 分红回流 LP，享受双边税收协定。</p>
-                                    <div class="mt-3 hidden step-highlight inline-block px-3 py-1 rounded-full bg-blue-900/50 border border-blue-500/30 text-xs text-blue-300 font-medium">
-                                        🚀 <span class="advantage-label">核心优势</span>: <span data-i18n="strategy.steps.3.highlight">美元收益，税收优化</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Advantages Section -->
-        <section id="Advantages" class="py-24 bg-slate-950">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="mb-12 text-center">
-                    <span class="text-blue-400 font-semibold tracking-wider uppercase text-sm" data-i18n="advantages.subtitle">WHY US</span>
-                    <h2 class="text-3xl md:text-4xl font-bold text-white mt-2 leading-tight" data-i18n="advantages.title">无法复制的竞争壁垒</h2>
-                    <div class="h-1 w-20 bg-blue-600 mt-4 rounded-full mx-auto"></div>
-                </div>
-                
-                <div class="grid md:grid-cols-3 gap-8">
-                    <!-- Card 1 -->
-                    <div class="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-xl p-6 hover:border-blue-500/50 transition-colors duration-300 hover:bg-slate-800/80">
-                        <div class="h-12 w-12 bg-blue-600/20 rounded-lg flex items-center justify-center mb-6">
-                            <i data-lucide="shield-check" class="text-blue-500 w-6 h-6"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-white mb-4" data-i18n="advantages.cards.0.title">ReData 税务护城河</h3>
-                        <p class="text-slate-400 text-sm leading-relaxed mb-4" data-i18n="advantages.cards.0.desc">
-                            充分利用巴西《数据中心服务特别税收制度》(ReData)，暂停联邦税（II, IPI, PIS/COFINS）。
-                        </p>
-                        <ul class="space-y-2">
-                            <li class="flex items-center text-sm text-slate-300"><i data-lucide="check-circle-2" class="w-4 h-4 text-green-500 mr-2"></i><span data-i18n="advantages.cards.0.points.0">节省 80%-100% 进口税费</span></li>
-                            <li class="flex items-center text-sm text-slate-300"><i data-lucide="check-circle-2" class="w-4 h-4 text-green-500 mr-2"></i><span data-i18n="advantages.cards.0.points.1">IRR 提升显著</span></li>
-                        </ul>
-                    </div>
-                    <!-- Card 2 -->
-                    <div class="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-xl p-6 hover:border-blue-500/50 transition-colors duration-300 hover:bg-slate-800/80">
-                        <div class="h-12 w-12 bg-indigo-600/20 rounded-lg flex items-center justify-center mb-6">
-                            <i data-lucide="building-2" class="text-indigo-500 w-6 h-6"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-white mb-4" data-i18n="advantages.cards.1.title">EFS 融资杠杆</h3>
-                        <p class="text-slate-400 text-sm leading-relaxed mb-4" data-i18n="advantages.cards.1.desc">
-                            基于新加坡企业融资计划 (EFS)，通过政府分担风险机制获得低息贷款，极大优化资本结构。
-                        </p>
-                        <ul class="space-y-2">
-                            <li class="flex items-center text-sm text-slate-300"><i data-lucide="check-circle-2" class="w-4 h-4 text-green-500 mr-2"></i><span data-i18n="advantages.cards.1.points.0">政府风险分担高达 50-70%</span></li>
-                            <li class="flex items-center text-sm text-slate-300"><i data-lucide="check-circle-2" class="w-4 h-4 text-green-500 mr-2"></i><span data-i18n="advantages.cards.1.points.1">极具竞争力的资本成本</span></li>
-                        </ul>
-                    </div>
-                    <!-- Card 3 -->
-                    <div class="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-xl p-6 hover:border-blue-500/50 transition-colors duration-300 hover:bg-slate-800/80">
-                        <div class="h-12 w-12 bg-green-600/20 rounded-lg flex items-center justify-center mb-6">
-                            <i data-lucide="zap" class="text-green-500 w-6 h-6"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-white mb-4" data-i18n="advantages.cards.2.title">ESG 与 溢价市场</h3>
-                        <p class="text-slate-400 text-sm leading-relaxed mb-4" data-i18n="advantages.cards.2.desc">
-                            巴西拥有全球最清洁的能源矩阵之一。ReData 要求使用可再生能源，完美契合全球 ESG 投资标准。
-                        </p>
-                        <ul class="space-y-2">
-                            <li class="flex items-center text-sm text-slate-300"><i data-lucide="check-circle-2" class="w-4 h-4 text-green-500 mr-2"></i><span data-i18n="advantages.cards.2.points.0">100% 水电/可再生能源</span></li>
-                            <li class="flex items-center text-sm text-slate-300"><i data-lucide="check-circle-2" class="w-4 h-4 text-green-500 mr-2"></i><span data-i18n="advantages.cards.2.points.1">LGPD 数据主权带来的区域溢价</span></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- New Section: Singapore Local HaaS -->
-        <section id="HaaS" class="py-24 bg-gradient-to-b from-slate-950 to-slate-900 border-t border-slate-800/50">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="grid md:grid-cols-2 gap-12 items-center">
-                    <div class="order-2 md:order-1">
-                        <span class="text-blue-400 font-semibold tracking-wider uppercase text-sm" data-i18n="haas.subtitle">DOMESTIC CAPABILITIES</span>
-                        <h2 class="text-3xl md:text-4xl font-bold text-white mt-2 mb-6 leading-tight" data-i18n="haas.title">新加坡本地 HaaS 业务</h2>
-                        <p class="text-slate-400 text-lg mb-8 leading-relaxed" data-i18n="haas.desc">
-                            除了跨境资产配置，我们在新加坡本土提供高性能裸金属租赁与托管服务，服务于对数据主权与低延迟有严苛要求的金融与政府客户。
-                        </p>
-
-                        <div class="space-y-6">
-                            <!-- Feature 1 -->
-                            <div class="flex items-start">
-                                <div class="flex-shrink-0">
-                                    <div class="flex items-center justify-center h-12 w-12 rounded-md bg-blue-900/50 border border-blue-500/30 text-white">
-                                        <i data-lucide="lock" class="w-6 h-6"></i>
-                                    </div>
-                                </div>
-                                <div class="ml-4">
-                                    <h3 class="text-lg leading-6 font-bold text-white" data-i18n="haas.cards.0.title">主权级数据合规</h3>
-                                    <p class="mt-2 text-base text-slate-400" data-i18n="haas.cards.0.desc">
-                                        完全符合新加坡 PDPA 与金融管理局 (MAS) 数据本地化要求，适合处理敏感数据集。
-                                    </p>
-                                </div>
-                            </div>
-                            <!-- Feature 2 -->
-                            <div class="flex items-start">
-                                <div class="flex-shrink-0">
-                                    <div class="flex items-center justify-center h-12 w-12 rounded-md bg-blue-900/50 border border-blue-500/30 text-white">
-                                        <i data-lucide="network" class="w-6 h-6"></i>
-                                    </div>
-                                </div>
-                                <div class="ml-4">
-                                    <h3 class="text-lg leading-6 font-bold text-white" data-i18n="haas.cards.1.title">极低延迟网络</h3>
-                                    <p class="mt-2 text-base text-slate-400" data-i18n="haas.cards.1.desc">
-                                        直连 SGX 交易所与东南亚骨干网，提供 <1ms 的本地互联延迟，赋能高频量化交易。
-                                    </p>
-                                </div>
-                            </div>
-                            <!-- Feature 3 -->
-                            <div class="flex items-start">
-                                <div class="flex-shrink-0">
-                                    <div class="flex items-center justify-center h-12 w-12 rounded-md bg-blue-900/50 border border-blue-500/30 text-white">
-                                        <i data-lucide="cpu" class="w-6 h-6"></i>
-                                    </div>
-                                </div>
-                                <div class="ml-4">
-                                    <h3 class="text-lg leading-6 font-bold text-white" data-i18n="haas.cards.2.title">灵活裸金属租赁</h3>
-                                    <p class="mt-2 text-base text-slate-400" data-i18n="haas.cards.2.desc">
-                                        提供 H100/H800 集群的按月/按周灵活租赁，无需长期 CAPEX 投入，即开即用。
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="order-1 md:order-2 relative">
-                         <!-- Visual representation of local stack -->
-                         <div class="relative bg-gradient-to-tr from-slate-900 to-slate-800 rounded-2xl border border-slate-700/50 p-8 shadow-2xl">
-                             <div class="absolute -top-4 -right-4 w-24 h-24 bg-blue-500/20 rounded-full blur-2xl"></div>
-                             <div class="space-y-4">
-                                 <!-- Server Rack Visualization -->
-                                 <div class="flex items-center justify-between p-4 bg-slate-950/80 rounded-lg border border-slate-800">
-                                     <div class="flex items-center space-x-3">
-                                         <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-                                         <span class="text-sm font-mono text-blue-300">SG-REGION-1 (Jurong)</span>
-                                     </div>
-                                     <span class="text-xs text-slate-500 font-mono">ONLINE</span>
-                                 </div>
-                                 
-                                 <div class="grid grid-cols-4 gap-2">
-                                    <div class="h-24 bg-blue-900/20 border border-blue-500/30 rounded flex flex-col items-center justify-center gap-1">
-                                        <i data-lucide="cpu" class="w-4 h-4 text-blue-400"></i>
-                                        <span class="text-[10px] text-blue-200">H100</span>
-                                    </div>
-                                    <div class="h-24 bg-blue-900/20 border border-blue-500/30 rounded flex flex-col items-center justify-center gap-1">
-                                        <i data-lucide="cpu" class="w-4 h-4 text-blue-400"></i>
-                                        <span class="text-[10px] text-blue-200">H100</span>
-                                    </div>
-                                    <div class="h-24 bg-blue-900/20 border border-blue-500/30 rounded flex flex-col items-center justify-center gap-1">
-                                        <i data-lucide="cpu" class="w-4 h-4 text-blue-400"></i>
-                                        <span class="text-[10px] text-blue-200">H100</span>
-                                    </div>
-                                    <div class="h-24 bg-blue-900/20 border border-blue-500/30 rounded flex flex-col items-center justify-center gap-1">
-                                        <i data-lucide="cpu" class="w-4 h-4 text-blue-400"></i>
-                                        <span class="text-[10px] text-blue-200">H100</span>
-                                    </div>
-                                 </div>
-
-                                 <div class="p-4 bg-slate-950/50 rounded-lg border border-slate-800 space-y-2">
-                                     <div class="flex justify-between text-xs text-slate-400">
-                                         <span>Network Latency (SGX)</span>
-                                         <span class="text-green-400">0.8ms</span>
-                                     </div>
-                                     <div class="w-full bg-slate-800 rounded-full h-1.5">
-                                         <div class="bg-green-500 h-1.5 rounded-full" style="width: 15%"></div>
-                                     </div>
-                                 </div>
-                             </div>
-                         </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ROI Calculator -->
-        <section id="ROI" class="py-24 bg-slate-900">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="bg-gradient-to-br from-blue-900/20 to-indigo-900/20 border border-blue-500/20 rounded-2xl p-8 md:p-12">
-                    <div class="grid md:grid-cols-2 gap-12">
-                        <div>
-                            <div class="mb-12 text-left">
-                                <span class="text-blue-400 font-semibold tracking-wider uppercase text-sm" data-i18n="roi.subtitle">FINANCIAL SIMULATION</span>
-                                <h2 class="text-3xl md:text-4xl font-bold text-white mt-2 leading-tight" data-i18n="roi.title">收益测算模拟器</h2>
-                                <div class="h-1 w-20 bg-blue-600 mt-4 rounded-full"></div>
-                            </div>
-                            <p class="text-slate-400 mb-8">
-                                <span data-i18n="roi.desc">基于 H100 集群部署模型，调整参数以查看预计回报。</span>
-                                <br /><span class="text-xs text-slate-500" data-i18n="roi.disclaimer">*仅供演示，不构成投资建议。</span>
-                            </p>
-            
-                            <div class="space-y-6">
-                                <div>
-                                    <div class="flex justify-between text-white mb-2">
-                                        <label data-i18n="roi.labels.investment">总资产投入 (USD)</label>
-                                        <span class="font-mono" id="val-investment">$5.0M</span>
-                                    </div>
-                                    <input type="range" id="input-investment" min="1000000" max="20000000" step="500000" value="5000000" class="w-full">
-                                </div>
-            
-                                <div>
-                                    <div class="flex justify-between text-white mb-2">
-                                        <label data-i18n="roi.labels.leverage">EFS 债务杠杆比例</label>
-                                        <span class="font-mono" id="val-leverage">70%</span>
-                                    </div>
-                                    <input type="range" id="input-leverage" min="0" max="80" step="5" value="70" class="w-full">
-                                </div>
-            
-                                <div>
-                                    <div class="flex justify-between text-white mb-2">
-                                        <label data-i18n="roi.labels.utilization">算力利用率 (Utilization)</label>
-                                        <span class="font-mono" id="val-utilization">85%</span>
-                                    </div>
-                                    <input type="range" id="input-utilization" min="50" max="100" step="5" value="85" class="w-full">
-                                </div>
-                            </div>
-                        </div>
-            
-                        <div class="bg-slate-950/50 rounded-xl p-6 border border-slate-800 flex flex-col justify-center">
-                            <div class="grid grid-cols-2 gap-6 mb-8">
-                                <div class="p-4 bg-slate-900 rounded-lg">
-                                    <div class="text-xs text-slate-400 mb-1" data-i18n="roi.labels.equity">权益投入 (Equity)</div>
-                                    <div class="text-xl font-mono text-white" id="out-equity">$1.50M</div>
-                                </div>
-                                <div class="p-4 bg-slate-900 rounded-lg">
-                                    <div class="text-xs text-slate-400 mb-1" data-i18n="roi.labels.cashflow">年度净现金流</div>
-                                    <div class="text-xl font-mono text-green-400" id="out-cashflow">$1048k</div>
-                                </div>
-                            </div>
-            
-                            <div class="text-center">
-                                <div class="text-sm text-slate-400 mb-2" data-i18n="roi.labels.coc">预计现金回报率 (CoC)</div>
-                                <div class="text-6xl font-bold text-blue-500 tracking-tight" id="out-coc">69.9%</div>
-                                <div class="mt-4 inline-block px-4 py-1 bg-green-500/10 text-green-400 text-sm rounded-full border border-green-500/20" data-i18n="roi.labels.comparison">
-                                    优于传统 REITs (5-7%)
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Services Section -->
-        <section id="Services" class="py-24 bg-slate-950">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="mb-12 text-center">
-                    <span class="text-blue-400 font-semibold tracking-wider uppercase text-sm" data-i18n="services.subtitle">LIFECYCLE MANAGEMENT</span>
-                    <h2 class="text-3xl md:text-4xl font-bold text-white mt-2 leading-tight" data-i18n="services.title">全周期价值创造</h2>
-                    <div class="h-1 w-20 bg-blue-600 mt-4 rounded-full mx-auto"></div>
-                </div>
-                <div class="grid md:grid-cols-4 gap-6">
-                    <div class="border-l-2 border-slate-800 pl-6 hover:border-blue-500 transition-colors">
-                        <h4 class="text-white font-bold text-lg mb-2" data-i18n="services.items.0.title">01. 架构咨询</h4>
-                        <p class="text-slate-500 text-sm" data-i18n="services.items.0.desc">VCC 基金设立, EFS 融资申请, 模型搭建</p>
-                    </div>
-                    <div class="border-l-2 border-slate-800 pl-6 hover:border-blue-500 transition-colors">
-                        <h4 class="text-white font-bold text-lg mb-2" data-i18n="services.items.1.title">02. 采购与合规</h4>
-                        <p class="text-slate-500 text-sm" data-i18n="services.items.1.desc">ReData 资质获取, 供应链谈判, 零税负进口</p>
-                    </div>
-                    <div class="border-l-2 border-slate-800 pl-6 hover:border-blue-500 transition-colors">
-                        <h4 class="text-white font-bold text-lg mb-2" data-i18n="services.items.2.title">03. 技术运维</h4>
-                        <p class="text-slate-500 text-sm" data-i18n="services.items.2.desc">L1/L2 支持, 7x24 监控, 算力调度优化</p>
-                    </div>
-                    <div class="border-l-2 border-slate-800 pl-6 hover:border-blue-500 transition-colors">
-                        <h4 class="text-white font-bold text-lg mb-2" data-i18n="services.items.3.title">04. 退出机制</h4>
-                        <p class="text-slate-500 text-sm" data-i18n="services.items.3.desc">资产残值管理, 二手市场转售, 收益清算</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <!-- Footer -->
-    <footer class="bg-slate-950 border-t border-slate-900 py-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid md:grid-cols-4 gap-8">
-                <div class="col-span-1 md:col-span-2">
-                    <div class="flex items-center space-x-2 mb-4">
-                        <i data-lucide="database" class="text-blue-600 w-6 h-6"></i>
-                        <span class="text-xl font-bold text-white">DC<span class="text-blue-500">DEEPTECH</span></span>
-                    </div>
-                    <p class="text-slate-500 text-sm max-w-sm" data-i18n="footer.desc">
-                        连接新加坡资本与巴西数字资产的战略合作伙伴。专注于为重资产投资者提供轻资产运营、合规与技术管理服务。
-                    </p>
-                </div>
-                
-                <div>
-                    <h4 class="text-white font-semibold mb-4" data-i18n="footer.services_title">服务</h4>
-                    <ul class="space-y-2 text-sm text-slate-500" id="footer-services-list">
-                        <li>资本结构咨询</li>
-                        <li>ReData 合规申请</li>
-                        <li>算力进出口物流</li>
-                        <li>MSP 运维管理</li>
-                    </ul>
-                </div>
-    
-                <div>
-                    <h4 class="text-white font-semibold mb-4" data-i18n="footer.contact_title">联系我们</h4>
-                    <ul class="space-y-2 text-sm text-slate-500">
-                        <li>info@dcdeeptech.com</li>
-                        <li>Singapore HQ: Marina Bay Fin. Ctr.</li>
-                        <li>Brazil Ops: São Paulo</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="border-t border-slate-900 mt-12 pt-8 text-center text-xs text-slate-600" data-i18n="footer.copyright">
-                © 2026 DCDEEPTECH PTE. LTD. All rights reserved. 本网站仅供信息参考，不构成财务建议。
-            </div>
-        </div>
-    </footer>
-
-    <!-- Login Modal -->
-    <div id="login-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-        <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-md p-8 relative animate-fade-in-up">
-            <button onclick="closeLoginModal()" class="absolute top-4 right-4 text-slate-500 hover:text-white">
-                <i data-lucide="x" class="w-5 h-5"></i>
-            </button>
-            
-            <div class="text-center mb-8">
-                <i data-lucide="lock" class="w-10 h-10 text-blue-500 mx-auto mb-4"></i>
-                <h3 class="text-2xl font-bold text-white" data-i18n="login.title">LP 投资者门户</h3>
-                <p class="text-slate-400 text-sm mt-2" data-i18n="login.subtitle">访问实时仪表盘、月度运营报告及财务报表</p>
-            </div>
-    
-            <form class="space-y-4" onsubmit="event.preventDefault();">
-                <div>
-                    <label class="block text-sm font-medium text-slate-300 mb-1" data-i18n="login.email">企业邮箱</label>
-                    <input type="email" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-blue-500 outline-none" placeholder="name@fund.com" />
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-slate-300 mb-1" data-i18n="login.code">访问代码</label>
-                    <input type="password" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-blue-500 outline-none" placeholder="••••••••" />
-                </div>
-                <button class="w-full mt-4 bg-blue-600 hover:bg-blue-500 text-white shadow-lg hover:shadow-blue-500/30 px-6 py-3 rounded-lg font-medium transition-all" data-i18n="login.btn">安全登录</button>
-            </form>
-            
-            <div class="mt-6 text-center">
-                <a href="#" class="text-xs text-blue-400 hover:underline"><span data-i18n="login.request">申请访问权限</span> &rarr;</a>
-            </div>
-        </div>
+    <div class="point">
+      <span class="tag">核心投资结论</span>
+      <p>DeepFamily 不是低客单修谱工具，也不是重人力 IT 外包，而是面向新加坡及东南亚塔尖华人家族的<strong>「合规私有数据金库 + 代际 AI 基础设施」</strong>。项目已跨过 0→1 付费验证（首台套 S$10 万正式签约、53.8% 首付实现 0 个月 CAC 回本），并在新加坡精益架构下实现<strong>零新增 28.7 个月超长现金安全垫、年签 4.3 家即盈亏平衡</strong>。</p>
     </div>
 
-    <script>
-        // --- Translations ---
-        const translations = {
-            zh: {
-                nav: { items: ['战略模型', '核心优势', '服务体系', '投资回报', '本地 HaaS'], login: 'LP 门户登录' },
-                hero: {
-                    badge: '新加坡资金 × 巴西算力资产',
-                    title_prefix: '定义跨境',
-                    title_highlight: 'AI 基础设施',
-                    title_suffix: '的新资产范式',
-                    desc: 'DCDEEPTECH 通过独特的轻资产运营模式，连接低成本资本与高回报算力资产。利用政策套利与技术专长，为 LP 创造超越传统 REITs 的 Alpha 收益。',
-                    btn_primary: '探索投资模型',
-                    btn_secondary: '下载研究报告 (PDF)',
-                    stats: [
-                        { label: '目标 IRR', value: '>20%' },
-                        { label: '税务节省 (ReData)', value: '40%+' },
-                        { label: '融资成本 (EFS)', value: '<6%' },
-                        { label: '能源结构', value: '100% 绿色' },
-                    ]
-                },
-                strategy: {
-                    subtitle: 'STRATEGIC ARBITRAGE',
-                    title: '跨境套利核心模型',
-                    center_text: '轻资产运营\n(合规/运维/风控)',
-                    steps: [
-                        { title: "资本形成 (新加坡)", desc: "利用 EFS-Trade Loan 与 VCC 架构，获取低息资金与灵活的基金结构。", highlight: "SORA + 2% 融资成本" },
-                        { title: "资产购置 & ReData", desc: "采购 H100/H200 集群，利用巴西 ReData 政策豁免联邦税，降低 CAPEX。", highlight: "节省 ~45% 落地成本" },
-                        { title: "部署与运营 (巴西)", desc: "部署于绿色能源数据中心，提供 MSP 级运维，确保高在线率。", highlight: "清洁能源溢价" },
-                        { title: "价值分配", desc: "算力租赁产生美元现金流，通过 VCC 分红回流 LP，享受双边税收协定。", highlight: "美元收益，税收优化" }
-                    ]
-                },
-                advantages: {
-                    subtitle: 'WHY US',
-                    title: '无法复制的竞争壁垒',
-                    cards: [
-                        { title: "ReData 税务护城河", desc: "充分利用巴西《数据中心服务特别税收制度》(ReData)，暂停联邦税（II, IPI, PIS/COFINS）。", points: ["节省 80%-100% 进口税费", "IRR 提升显著"] },
-                        { title: "EFS 融资杠杆", desc: "基于新加坡企业融资计划 (EFS)，通过政府分担风险机制获得低息贷款，极大优化资本结构。", points: ["政府风险分担高达 50-70%", "极具竞争力的资本成本"] },
-                        { title: "ESG 与 溢价市场", desc: "巴西拥有全球最清洁的能源矩阵之一。ReData 要求使用可再生能源，完美契合全球 ESG 投资标准。", points: ["100% 水电/可再生能源", "LGPD 数据主权带来的区域溢价"] }
-                    ]
-                },
-                haas: {
-                    subtitle: 'DOMESTIC CAPABILITIES',
-                    title: '新加坡本地 HaaS 业务',
-                    desc: '除了跨境资产配置，我们在新加坡本土提供高性能裸金属租赁与托管服务，服务于对数据主权与低延迟有严苛要求的金融与政府客户。',
-                    cards: [
-                        { title: "主权级数据合规", desc: "完全符合新加坡 PDPA 与金融管理局 (MAS) 数据本地化要求，适合处理敏感数据集。" },
-                        { title: "极低延迟网络", desc: "直连 SGX 交易所与东南亚骨干网，提供 <1ms 的本地互联延迟，赋能高频量化交易。" },
-                        { title: "灵活裸金属租赁", desc: "提供 H100/H800 集群的按月/按周灵活租赁，无需长期 CAPEX 投入，即开即用。" }
-                    ]
-                },
-                roi: {
-                    subtitle: 'FINANCIAL SIMULATION',
-                    title: '收益测算模拟器',
-                    desc: '基于 H100 集群部署模型，调整参数以查看预计回报。',
-                    disclaimer: '*仅供演示，不构成投资建议。',
-                    labels: { investment: '总资产投入 (USD)', leverage: 'EFS Debt Leverage Ratio', utilization: '算力利用率 (Utilization)', equity: '权益投入 (Equity)', cashflow: '年度净现金流', coc: '预计现金回报率 (CoC)', comparison: '优于传统 REITs (5-7%)' }
-                },
-                services: {
-                    subtitle: 'LIFECYCLE MANAGEMENT',
-                    title: '全周期价值创造',
-                    items: [
-                        { title: "01. 架构咨询", desc: "VCC 基金设立, EFS 融资申请, 模型搭建" },
-                        { title: "02. 采购与合规", desc: "ReData 资质获取, 供应链谈判, 零税负进口" },
-                        { title: "03. 技术运维", desc: "L1/L2 支持, 7x24 监控, 算力调度优化" },
-                        { title: "04. 退出机制", desc: "资产残值管理, 二手市场转售, 收益清算" },
-                    ]
-                },
-                footer: {
-                    desc: '连接新加坡资本与巴西数字资产的战略合作伙伴。专注于为重资产投资者提供轻资产运营、合规与技术管理服务。',
-                    services_title: '服务',
-                    services_list: ['资本结构咨询', 'ReData 合规申请', '算力进出口物流', 'MSP 运维管理'],
-                    contact_title: '联系我们',
-                    copyright: '© 2026 DCDEEPTECH PTE. LTD. All rights reserved. 本网站仅供信息参考，不构成财务建议。'
-                },
-                login: { title: 'LP 投资者门户', subtitle: '访问实时仪表盘、月度运营报告及财务报表', email: '企业邮箱', code: '访问代码', btn: '安全登录', request: '申请访问权限' }
-            },
-            en: {
-                nav: { items: ['Strategic Model', 'Key Advantages', 'Services', 'ROI Analysis', 'Local HaaS'], login: 'LP Portal Login' },
-                hero: {
-                    badge: 'Singapore Capital × Brazil Compute Assets',
-                    title_prefix: 'Defining the New',
-                    title_highlight: 'Cross-Border AI Infrastructure',
-                    title_suffix: 'Asset Paradigm',
-                    desc: 'DCDEEPTECH bridges low-cost capital with high-yield compute assets through a unique asset-light operating model. We leverage policy arbitrage and technical expertise to generate Alpha returns for LPs that outperform traditional REITs.',
-                    btn_primary: 'Explore Model',
-                    btn_secondary: 'Download Report (PDF)',
-                    stats: [
-                        { label: 'Target IRR', value: '>20%' },
-                        { label: 'Tax Savings (ReData)', value: '40%+' },
-                        { label: 'Financing Cost (EFS)', value: '<6%' },
-                        { label: 'Energy Mix', value: '100% Green' },
-                    ]
-                },
-                strategy: {
-                    subtitle: 'STRATEGIC ARBITRAGE',
-                    title: 'Core Cross-Border Arbitrage Model',
-                    center_text: 'Asset-Light Ops\n(Compliance/O&M/Risk)',
-                    steps: [
-                        { title: "Capital Formation (SG)", desc: "Leveraging EFS-Trade Loans and VCC structures to secure low-interest capital and flexible fund architecture.", highlight: "SORA + 2% Cost of Debt" },
-                        { title: "Asset Acquisition & ReData", desc: "Procuring H100/H200 clusters, utilizing Brazil's ReData policy to exempt federal taxes and lower CAPEX.", highlight: "Save ~45% Landed Cost" },
-                        { title: "Deployment & Ops (Brazil)", desc: "Deployed in green energy data centers with MSP-grade O&M to ensure high availability.", highlight: "Green Energy Premium" },
-                        { title: "Value Distribution", desc: "Compute leasing generates USD cash flow, distributed back to LPs via VCC, benefiting from bilateral tax treaties.", highlight: "USD Yields, Tax Optimized" }
-                    ]
-                },
-                advantages: {
-                    subtitle: 'WHY US',
-                    title: 'Unreplicable Competitive Moats',
-                    cards: [
-                        { title: "ReData Tax Moat", desc: "Fully leveraging Brazil's Special Regime for Data Centers (ReData) to suspend federal taxes (II, IPI, PIS/COFINS).", points: ["Save 80%-100% on Import Duties", "Significant IRR Uplift"] },
-                        { title: "EFS Financing Leverage", desc: "Based on Singapore's Enterprise Financing Scheme (EFS), utilizing government risk-sharing to secure low-interest loans and optimize capital structure.", points: ["Gov Risk Sharing up to 50-70%", "Highly Competitive Cost of Capital"] },
-                        { title: "ESG & Premium Market", desc: "Brazil boasts one of the cleanest energy matrices globally. ReData requires renewable energy use, aligning perfectly with global ESG standards.", points: ["100% Hydro/Renewable Energy", "Regional Premium via LGPD Data Sovereignty"] }
-                    ]
-                },
-                haas: {
-                    subtitle: 'DOMESTIC CAPABILITIES',
-                    title: 'Singapore Domestic HaaS',
-                    desc: 'Complementing our cross-border assets, we offer high-performance bare metal leasing and managed services in Singapore, serving financial and government clients with strict data sovereignty and latency requirements.',
-                    cards: [
-                        { title: "Sovereign AI Cloud", desc: "Fully compliant with Singapore PDPA and MAS data localization requirements, ideal for sensitive datasets." },
-                        { title: "Ultra-Low Latency", desc: "Direct connectivity to SGX and SEA backbones, offering <1ms local latency for high-frequency trading." },
-                        { title: "Flexible Bare Metal", desc: "Offers flexible monthly/weekly leasing of H100/H800 clusters without long-term CAPEX commitment." }
-                    ]
-                },
-                roi: {
-                    subtitle: 'FINANCIAL SIMULATION',
-                    title: 'Return Simulation',
-                    desc: 'Based on H100 cluster deployment models. Adjust parameters to view projected returns.',
-                    disclaimer: '*For demonstration only, not financial advice.',
-                    labels: { investment: 'Total Asset Investment (USD)', leverage: 'EFS Debt Leverage Ratio', utilization: 'Compute Utilization', equity: 'Equity Contribution', cashflow: 'Annual Net Cash Flow', coc: 'Projected Cash-on-Cash (CoC)', comparison: 'Outperforms Traditional REITs (5-7%)' }
-                },
-                services: {
-                    subtitle: 'LIFECYCLE MANAGEMENT',
-                    title: 'Full Lifecycle Value Creation',
-                    items: [
-                        { title: "01. Structuring Advisory", desc: "VCC Fund Setup, EFS Application, Model Building" },
-                        { title: "02. Procurement & Compliance", desc: "ReData Qualification, Supply Chain Negotiation, Zero-Tax Import" },
-                        { title: "03. Technical Operations", desc: "L1/L2 Support, 24/7 Monitoring, Scheduler Optimization" },
-                        { title: "04. Exit Mechanism", desc: "Residual Value Mgmt, Secondary Market Resale, Yield Liquidation" },
-                    ]
-                },
-                footer: {
-                    desc: 'Strategic partner connecting Singaporean capital with Brazilian digital assets. Focusing on asset-light operations, compliance, and technical management for heavy-asset investors.',
-                    services_title: 'Services',
-                    services_list: ['Capital Structuring', 'ReData Compliance', 'Compute Logistics', 'MSP Operations'],
-                    contact_title: 'Contact Us',
-                    copyright: '© 2026 DCDEEPTECH PTE. LTD. All rights reserved. This website is for informational purposes only and does not constitute financial advice.'
-                },
-                login: { title: 'LP Investor Portal', subtitle: 'Access real-time dashboards, monthly operational reports, and financial statements.', email: 'Corporate Email', code: 'Access Code', btn: 'Secure Login', request: 'Request Access' }
-            }
-        };
+    <div class="grid c3">
+      <div class="card alt">
+        <h4>1. 不可逆的时间窗口 + 真实买单</h4>
+        <p>第一代华人创富者步入 60–80 岁，声音与记忆正在不可逆流失。首台套吴总项目已正式签署 <strong>S$100,000</strong> 工程合同并实付 <strong>53.8%（S$53,800）</strong>，证明塔尖家族愿为“可信保存”支付高溢价。</p>
+      </div>
+      <div class="card alt">
+        <h4>2. 协议层与合规层双重壁垒</h4>
+        <p>自研 <strong>HDP v1.0 协议</strong>对标 ISO 14721 (OAIS) 与 W3C PROV-O，深度对齐新加坡 <strong>PDPA 2012</strong>，以“四态事实 + 11 项独立授权 + 蓝光 WORM 四步撤回闭环”建立家办级信任门槛。</p>
+      </div>
+      <div class="card alt">
+        <h4>3. 极高资本效率与正现金流飞轮</h4>
+        <p>硬件由 ¥11 万大幅降本至 <strong>S$7,600</strong>（Mac mini M5 Pro + 18TB 蓝光）；中新协同把月固定成本压至 S$1.86 万，<strong>第 2 年实现净利 S$20.8 万，第 3 年 S$61.8 万</strong>。</p>
+      </div>
+    </div>
 
-        // --- State ---
-        let currentLang = 'zh';
-        let activeStrategyStep = 1;
+    <h3>本轮天使轮融资方案（SGD 500,000）</h3>
+    <table>
+      <thead><tr><th>交易要素</th><th>方案设计</th><th>核心说明</th></tr></thead>
+      <tbody>
+        <tr><td><strong>融资主体</strong></td><td>DeepFamily Pte. Ltd.（新加坡）</td><td>交割前完成全部核心 IP 归属、首台套合同主体并表及 ACRA DPO 登记。</td></tr>
+        <tr><td><strong>融资规模与工具</strong></td><td><strong>SGD 500,000</strong> · SVCA CARE / YC Post-Money SAFE</td><td>支持 Rolling Close（随签随打款），法务成本低至 S$3K–6K，1–3 周快速交割。</td></tr>
+        <tr><td><strong>两段式滚动估值</strong></td><td>早鸟档（前 S$20–25 万）：<strong>S$3.5M–4.0M Cap</strong><br>标准档（后 S$25–30 万）：<strong>S$4.5M–5.0M Cap</strong></td><td>整轮综合稀释严格控制在 <strong>11.5%–13.5%</strong>；早鸟档优先面向核心家办与领投战略天使。</td></tr>
+        <tr><td><strong>目标投资人画像</strong></td><td>T1 家办/华商天使（60–70%）+ T2 家企顾问/信托（20–30%）+ T3 天使社群（10–20%）</td><td>寻找懂高净值复利与东南亚华人圈层的同频伙伴，同时具备“客户转股东”与渠道协同效应。</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
 
-        // --- Init ---
-        document.addEventListener('DOMContentLoaded', () => {
-            lucide.createIcons();
-            initNavbar();
-            initStrategy();
-            initROI();
-            initLanguage();
-            initMobileMenu();
-        });
+<!-- 二、商业牵引力 -->
+<section class="section alt" id="traction">
+  <div class="wrap">
+    <div class="kicker">02 · Why Now &amp; Traction</div>
+    <h2>为什么是现在 &amp; 已验证的商业牵引力</h2>
 
-        // --- Navbar Logic ---
-        function initNavbar() {
-            window.addEventListener('scroll', () => {
-                const navbar = document.getElementById('navbar');
-                if (window.scrollY > 50) {
-                    navbar.classList.add('bg-slate-950/90', 'backdrop-blur-md', 'border-b', 'border-slate-800', 'py-3');
-                    navbar.classList.remove('py-5');
-                } else {
-                    navbar.classList.remove('bg-slate-950/90', 'backdrop-blur-md', 'border-b', 'border-slate-800', 'py-3');
-                    navbar.classList.add('py-5');
-                }
-            });
-        }
+    <div class="point">
+      <span class="tag">战略判断：数据先行</span>
+      <p>未来 AI 模型会持续进化，但永远无法重新采集已离世长辈的声音，也无法找回散落损毁的老照片。<strong>「数据保存窗口关闭」与「多模态 AI 工程化成熟」在当下首次交汇</strong>，率先占据高净值家族私有数据入口者，将掌握未来百年的底层资产。</p>
+    </div>
 
-        function initMobileMenu() {
-            const btn = document.getElementById('mobile-menu-btn');
-            const menu = document.getElementById('mobile-menu');
-            btn.addEventListener('click', () => {
-                menu.classList.toggle('hidden');
-            });
-            // Close menu on click link
-            menu.querySelectorAll('a').forEach(link => {
-                link.addEventListener('click', () => {
-                    menu.classList.add('hidden');
-                });
-            });
-        }
+    <div class="grid c4">
+      <div class="card highlight">
+        <div class="num">S$100,000</div>
+        <h4>首台套正式签约</h4>
+        <p>吴总家族项目（<code>DF-HT-2026-001</code>）已签正式合同，不含 9% GST 净收入 <strong>S$91,743</strong>，签约首付 <strong>53.8%</strong> 实现前期正现金流。</p>
+      </div>
+      <div class="card">
+        <div class="num green">35%–47%</div>
+        <h4>LinkedIn 冷启动通过率</h4>
+        <p>2 周内面向新加坡/大马家办与家族掌门人冷启动触达 73 人，实测通过率远超 B2B 均值（15%–20%），已沉淀 <strong>30+ 位一度热连接</strong>。</p>
+      </div>
+      <div class="card">
+        <div class="num">406 条</div>
+        <h4>四国华人生态研究库</h4>
+        <p>覆盖新、马、泰、印四国华人家族与家办/信托/家企顾问/宗亲会生态，其中高精准商业渠道（家办/信托/顾问/律所）核心联系人 58 位。</p>
+      </div>
+      <div class="card">
+        <div class="num gold">槟城陈氏</div>
+        <h4>宗亲会双层模式推进</h4>
+        <p>与新加坡 30 年老牌企业 <strong>Infologic</strong> 联合推进槟城颍川堂陈公司文化传承白皮书，打通“宗亲会公域背书 → 家族私人馆变现”路径。</p>
+      </div>
+    </div>
+  </div>
+</section>
 
-        // --- Login Modal ---
-        function openLoginModal() {
-            document.getElementById('login-modal').classList.remove('hidden');
-        }
-        function closeLoginModal() {
-            document.getElementById('login-modal').classList.add('hidden');
-        }
+<!-- 三、市场与 GTM 漏斗 -->
+<section class="section" id="market">
+  <div class="wrap">
+    <div class="kicker">03 · Market &amp; GTM Funnel</div>
+    <h2>市场空间与 L1 → L2 阶梯获客漏斗</h2>
 
-        // --- Strategy Model Logic ---
-        function initStrategy() {
-            setStrategyStep(1);
-        }
+    <div class="point">
+      <span class="tag">市场与转化结论</span>
+      <p>我们坚决聚焦金字塔尖（新加坡 1,000–2,000 个、东南亚 10,000–20,000 个高净值华人家族，可触达空间超 50–100 亿元）。为彻底打通陌生转化瓶颈，本轮正式推出 <strong>「L1 轻量化付费试点 → L2 典藏版全案」两段式漏斗</strong>，并建立符合新加坡金融监管的 B2B2C 分层渠道体系。</p>
+    </div>
 
-        function setStrategyStep(stepId) {
-            activeStrategyStep = stepId;
-            
-            // Update Nodes
-            document.querySelectorAll('.strategy-node').forEach(node => {
-                const step = parseInt(node.getAttribute('data-step'));
-                
-                // Get icon (could be i or svg depending on if lucide ran)
-                const icon = node.querySelector('i') || node.querySelector('svg');
+    <div class="figure">
+      <svg viewBox="0 0 920 260" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="bgFunnel" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f8fafc"/><stop offset="1" stop-color="#eff6ff"/></linearGradient>
+          <marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker>
+        </defs>
+        <rect x="0" y="0" width="920" height="260" fill="url(#bgFunnel)" rx="10"/>
+        <text x="460" y="32" text-anchor="middle" font-size="16" font-weight="700" fill="#0f172a">DeepFamily 两段式高净值客户转化漏斗（降低 75% 首次决策门槛）</text>
 
-                if (step === stepId) {
-                    node.classList.add('active', 'bg-blue-900/40', 'scale-110', 'border-blue-500', 'opacity-100');
-                    node.classList.remove('opacity-60', 'bg-slate-900', 'border-slate-700');
-                    // Change icon color
-                    if (icon) icon.classList.add('text-white');
-                } else {
-                    node.classList.remove('active', 'bg-blue-900/40', 'scale-110', 'border-blue-500', 'opacity-100');
-                    node.classList.add('opacity-60', 'bg-slate-900', 'border-slate-700');
-                     // Reset icon color
-                    if (icon) icon.classList.remove('text-white');
-                }
-            });
+        <!-- 阶段 0 -->
+        <rect x="28" y="62" width="190" height="156" rx="10" fill="#fff" stroke="#cbd5e1" stroke-width="1.5"/>
+        <rect x="28" y="62" width="190" height="8" rx="4" fill="#64748b"/>
+        <text x="123" y="96" text-anchor="middle" font-size="14" font-weight="700" fill="#334155">信任入口（B2B2C）</text>
+        <text x="123" y="124" text-anchor="middle" font-size="12" fill="#475569">吴总圈层 · Infologic 信用</text>
+        <text x="123" y="146" text-anchor="middle" font-size="12" fill="#475569">家企顾问 · TEP 信托</text>
+        <text x="123" y="168" text-anchor="middle" font-size="12" fill="#475569">宗亲会公域展厅（如槟城陈氏）</text>
+        <text x="123" y="198" text-anchor="middle" font-size="11.5" font-weight="700" fill="#2563eb">15 分钟脱敏 Demo 破冰</text>
 
-            // Update SVG Paths (Simple logic: if step >= path index, highlight it)
-            // Path 1 connects 1-2, Path 2 connects 2-3, Path 3 connects 3-4
-            document.getElementById('path-1').setAttribute('stroke', stepId >= 2 ? '#3b82f6' : '#1e293b');
-            document.getElementById('path-2').setAttribute('stroke', stepId >= 3 ? '#3b82f6' : '#1e293b');
-            document.getElementById('path-3').setAttribute('stroke', stepId >= 4 ? '#3b82f6' : '#1e293b');
+        <line x1="224" y1="140" x2="256" y2="140" stroke="#2563eb" stroke-width="2.5" marker-end="url(#arr)"/>
 
-            // Update Text Cards
-            document.querySelectorAll('.strategy-step-card').forEach((card, idx) => {
-                const id = idx + 1;
-                const highlight = card.querySelector('.step-highlight');
-                const title = card.querySelector('h3');
-                
-                if (id === stepId) {
-                    card.classList.add('bg-slate-800', 'border-blue-500', 'shadow-lg');
-                    card.classList.remove('border-transparent');
-                    title.classList.add('text-white');
-                    title.classList.remove('text-slate-400');
-                    highlight.classList.remove('hidden');
-                } else {
-                    card.classList.remove('bg-slate-800', 'border-blue-500', 'shadow-lg');
-                    card.classList.add('border-transparent');
-                    title.classList.remove('text-white');
-                    title.classList.add('text-slate-400');
-                    highlight.classList.add('hidden');
-                }
-            });
-        }
+        <!-- 阶段 1 -->
+        <rect x="262" y="62" width="205" height="156" rx="10" fill="#fff" stroke="#38bdf8" stroke-width="2"/>
+        <rect x="262" y="62" width="205" height="8" rx="4" fill="#0ea5e9"/>
+        <text x="364" y="96" text-anchor="middle" font-size="14" font-weight="700" fill="#0369a1">L1 轻量化付费试点</text>
+        <text x="364" y="122" text-anchor="middle" font-size="16" font-weight="800" fill="#0ea5e9">S$15K – S$25K</text>
+        <text x="364" y="148" text-anchor="middle" font-size="12" fill="#475569">6–8 周极速交付闭环</text>
+        <text x="364" y="170" text-anchor="middle" font-size="12" fill="#475569">1 位核心长辈口述 + 300 素材</text>
+        <text x="364" y="198" text-anchor="middle" font-size="11.5" font-weight="700" fill="#16a34a">预期 50%–65% 升级 L2</text>
 
-        // --- ROI Calculator Logic ---
-        function initROI() {
-            const inputs = ['input-investment', 'input-leverage', 'input-utilization'];
-            inputs.forEach(id => {
-                document.getElementById(id).addEventListener('input', calculateROI);
-            });
-            calculateROI();
-        }
+        <line x1="473" y1="140" x2="505" y2="140" stroke="#2563eb" stroke-width="2.5" marker-end="url(#arr)"/>
 
-        function calculateROI() {
-            const investment = parseFloat(document.getElementById('input-investment').value);
-            const leverage = parseFloat(document.getElementById('input-leverage').value);
-            const utilization = parseFloat(document.getElementById('input-utilization').value);
+        <!-- 阶段 2 -->
+        <rect x="511" y="62" width="195" height="156" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+        <rect x="511" y="62" width="195" height="8" rx="4" fill="#2563eb"/>
+        <text x="608" y="96" text-anchor="middle" font-size="14" font-weight="700" fill="#1e3a8a">L2 典藏版传承工程</text>
+        <text x="608" y="122" text-anchor="middle" font-size="16" font-weight="800" fill="#2563eb">S$80K – S$100K</text>
+        <text x="608" y="148" text-anchor="middle" font-size="12" fill="#334155">30–45 天标准化交付</text>
+        <text x="608" y="170" text-anchor="middle" font-size="12" fill="#334155">Mac mini + 蓝光主权归档</text>
+        <text x="608" y="198" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1e3a8a">53.8% 首付 · 0 个月回本</text>
 
-            // Display Inputs
-            document.getElementById('val-investment').textContent = '$' + (investment / 1000000).toFixed(1) + 'M';
-            document.getElementById('val-leverage').textContent = leverage + '%';
-            document.getElementById('val-utilization').textContent = utilization + '%';
+        <line x1="712" y1="140" x2="744" y2="140" stroke="#2563eb" stroke-width="2.5" marker-end="url(#arr)"/>
 
-            // Calc
-            const equity = investment * ((100 - leverage) / 100);
-            const debt = investment * (leverage / 100);
-            const annualRevenue = investment * 0.45 * (utilization / 100);
-            const operationalCosts = annualRevenue * 0.25;
-            const interest = debt * 0.055;
-            const netIncome = annualRevenue - operationalCosts - interest;
-            const coc = (netIncome / equity) * 100;
+        <!-- 阶段 3 -->
+        <rect x="750" y="62" width="144" height="156" rx="10" fill="#0f172a" stroke="#1e293b" stroke-width="1.5"/>
+        <text x="822" y="96" text-anchor="middle" font-size="14" font-weight="700" fill="#38bdf8">永续 ARR 复利</text>
+        <text x="822" y="124" text-anchor="middle" font-size="15" font-weight="800" fill="#fff">S$9.6K/年</text>
+        <text x="822" y="150" text-anchor="middle" font-size="11.5" fill="#cbd5e1">阿忆管家 + 年度纪事</text>
+        <text x="822" y="172" text-anchor="middle" font-size="11.5" fill="#cbd5e1">增量蓝光封盘 + 传记</text>
+        <text x="822" y="198" text-anchor="middle" font-size="11.5" font-weight="700" fill="#4ade80">5年 LTV/CAC 6–13.6x</text>
+      </svg>
+      <div class="caption">图 1：从高信任圈层破冰到 L1 试点、L2 全案及永续年费的完整增长飞轮</div>
+    </div>
 
-            // Display Outputs
-            document.getElementById('out-equity').textContent = '$' + (equity / 1000000).toFixed(2) + 'M';
-            document.getElementById('out-cashflow').textContent = '$' + (netIncome / 1000).toFixed(0) + 'k';
-            
-            const cocEl = document.getElementById('out-coc');
-            cocEl.textContent = isFinite(coc) ? coc.toFixed(1) + '%' : 'N/A';
-        }
+    <h3>B2B2C 渠道合规分层策略（前 6 个月聚焦新加坡 60% + 马来西亚 35%）</h3>
+    <div class="grid c3">
+      <div class="card">
+        <h4>第一梯队：家企接班顾问 / 信托 / 律所</h4>
+        <p><strong>痛点最契合、零利益冲突</strong>。采用透明 <strong>10%–15% 首单转介佣金</strong>或 <strong>25%–35% 联合交付模块分账</strong>，帮顾问增加“非金融软传承”抓手。</p>
+      </div>
+      <div class="card">
+        <h4>第二梯队：新加坡私行 / 持牌 MFO</h4>
+        <p><strong>严守 MAS 监管红线</strong>，绝不谈现金返佣；改以“UHNW 客户 VIP 尊享礼遇 + 闭门家族治理沙龙”切入，用高端增值服务绑定机构合作。</p>
+      </div>
+      <div class="card">
+        <h4>第三梯队：华商宗亲会 / 商会</h4>
+        <p>以槟城陈氏为样板，坚持<strong>双层变现</strong>：宗族层做低成本/赞助型公关展厅（借助 Infologic 本地信用），后端收割杰出企业家家族私人传承馆。</p>
+      </div>
+    </div>
+  </div>
+</section>
 
-        // --- Language Switching ---
-        function initLanguage() {
-            document.getElementById('lang-toggle-desktop').addEventListener('click', toggleLang);
-            document.getElementById('lang-toggle-mobile').addEventListener('click', toggleLang);
-        }
+<!-- 四、HDP 护城河 -->
+<section class="section alt" id="hdp">
+  <div class="wrap">
+    <div class="kicker">04 · Core Moat · Protocol Layer</div>
+    <h2>核心壁垒：DeepFamily Heritage Data Protocol (HDP v1.0)</h2>
 
-        function toggleLang() {
-            currentLang = currentLang === 'zh' ? 'en' : 'zh';
-            updateContent();
-            // Update Toggle Button Text
-            const labelText = currentLang === 'zh' ? 'EN' : '中';
-            document.getElementById('lang-label-desktop').textContent = labelText;
-            document.getElementById('lang-label-mobile').textContent = currentLang.toUpperCase();
-        }
+    <div class="point">
+      <span class="tag">护城河升维</span>
+      <p>通用大模型与数字人 API 正在快速商品化，<strong>真正的长期壁垒不在模型，而在「家族私有数据治理协议与可审计证据链」</strong>。DeepFamily 自研的 <code>HDP v1.0 (DF-HDP-STD-001)</code> 对标国际档案馆标准，将公司从“AI 集成应用”升维为“家族数字资产标准制定者”。</p>
+    </div>
 
-        function updateContent() {
-            const t = translations[currentLang];
+    <div class="figure">
+      <svg viewBox="0 0 920 310" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="920" height="310" fill="#ffffff" rx="10"/>
+        <text x="460" y="30" text-anchor="middle" font-size="16" font-weight="700" fill="#0f172a">DeepFamily Heritage Data Protocol (HDP v1.0) 五层协议架构</text>
 
-            // Helper to safe update text
-            const safeSetText = (selector, value) => {
-                const el = document.querySelector(selector);
-                if (el) el.textContent = value;
-            };
+        <rect x="40" y="48" width="840" height="44" rx="8" fill="#1e3a8a"/>
+        <text x="64" y="75" font-size="13.5" font-weight="700" fill="#fff">L5 家族文化表达与代际交互层</text>
+        <text x="856" y="75" text-anchor="end" font-size="12.5" fill="#bae6fd">WhatsApp/微信阿忆管家 · 家族传记 · 授权数字人 · 年度纪事</text>
 
-            const safeSetHTML = (selector, value) => {
-                const el = document.querySelector(selector);
-                if (el) el.innerHTML = value;
-            }
+        <rect x="40" y="98" width="840" height="44" rx="8" fill="#2563eb"/>
+        <text x="64" y="125" font-size="13.5" font-weight="700" fill="#fff">L4 权利与合规门禁层（11 项独立 RGT）</text>
+        <text x="856" y="125" text-anchor="end" font-size="12.5" fill="#dbeafe">肖像/声音/逝者/未成年人 13 岁分级独立授权 · 撤回权强制拦截</text>
 
-            // Using data-i18n attributes for simple text mapping
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.getAttribute('data-i18n');
-                const keys = key.split('.');
-                let value = t;
-                keys.forEach(k => {
-                    if (value[k] === undefined) {
-                        // Handle array index access
-                        const intK = parseInt(k);
-                        if (!isNaN(intK) && Array.isArray(value)) {
-                            value = value[intK];
-                        } else {
-                            value = value[k];
-                        }
-                    } else {
-                        value = value[k];
-                    }
-                });
-                
-                if (typeof value === 'string') {
-                    // Special handling for HTML content (newlines etc)
-                    if (key.includes('center_text')) {
-                        el.innerHTML = value.replace('\n', '<br>');
-                    } else {
-                        el.textContent = value;
-                    }
-                }
-            });
+        <rect x="40" y="148" width="840" height="44" rx="8" fill="#0284c7"/>
+        <text x="64" y="175" font-size="13.5" font-weight="700" fill="#fff">L3 四态事实与 AI 置信度分流层</text>
+        <text x="856" y="175" text-anchor="end" font-size="12.5" fill="#e0f2fe">已确认 / 待确认 / 多方说法 / 仅作线索 · ≥72 分推荐人工终审 · 零幻觉溯源</text>
 
-            // Special handling for Footer Services List (rebuild list)
-            const footerList = document.getElementById('footer-services-list');
-            footerList.innerHTML = '';
-            t.footer.services_list.forEach(item => {
-                const li = document.createElement('li');
-                li.textContent = item;
-                footerList.appendChild(li);
-            });
+        <rect x="40" y="198" width="840" height="44" rx="8" fill="#0f766e"/>
+        <text x="64" y="225" font-size="13.5" font-weight="700" fill="#fff">L2 不可变证据链与中文宗法本体层</text>
+        <text x="856" y="225" text-anchor="end" font-size="12.5" fill="#ccfbf1">对标 W3C PROV-O / PREMIS 3.0 · SHA-256 哈希固化 · 堂号/字辈/方言音译</text>
 
-            // Update Advantage Label in Strategy
-            document.querySelectorAll('.advantage-label').forEach(el => {
-                el.textContent = currentLang === 'zh' ? '核心优势' : 'Advantage';
-            });
-        }
-    </script>
+        <rect x="40" y="248" width="840" height="44" rx="8" fill="#0f172a"/>
+        <text x="64" y="275" font-size="13.5" font-weight="700" fill="#38bdf8">L1 3-2-1 主权存储与 OAIS 反锁定导出层</text>
+        <text x="856" y="275" text-anchor="end" font-size="12.5" fill="#cbd5e1">本地 Mac mini + 18TB 蓝光 WORM 5 匣 · 对标 ISO 14721 · 零依赖离线 HTML 查看器</text>
+      </svg>
+      <div class="caption">图 2：HDP v1.0 五层协议架构——本轮融资核心将协议条款 100% 硬化进生产代码</div>
+    </div>
+
+    <div class="grid c3">
+      <div class="card">
+        <h4>“反锁定”才是入场券</h4>
+        <p>高净值家族最恐惧“初创公司倒闭导致百年家史灰飞烟灭”。一键导出 OAIS 开放格式 + 零依赖离线查看器，让家办敢把核心家产托付给我们。</p>
+      </div>
+      <div class="card">
+        <h4>真正的切换成本在“活图谱”</h4>
+        <p>离开 DeepFamily 的语义知识图谱、四态事实治理与持续进化的阿忆管家，导出的文件会退化为静态文件夹——数据主权归客户，智能复利留平台。</p>
+      </div>
+      <div class="card">
+        <h4>本轮 39% 资金硬化代码</h4>
+        <p>坦诚当前 HDP 处于规范完成向全量工程化迈进阶段；本轮 S$19.5 万研发资金将在 M1–M6 把 RGT 门禁、SHA-256 链与一键打包器全部代码化落地。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 五、新加坡合规护城河 -->
+<section class="section" id="pdpa">
+  <div class="wrap">
+    <div class="kicker">05 · Singapore Legal &amp; Compliance Moat</div>
+    <h2>新加坡顶级合规护城河（PDPA 与数据主权）</h2>
+
+    <div class="point">
+      <span class="tag">家办尽调通行证</span>
+      <p>新加坡家办（SFO/MFO）对隐私泄露零容忍（PDPA 最高罚则达年营收 10% 或 S$100 万）。DeepFamily 已建立精准对齐<strong>新加坡 PDPA 2012、版权法 2021、计算机滥用法 1993 及诽谤法 1957</strong> 的专项合规体系，把法律门槛转化为竞争壁垒。</p>
+    </div>
+
+    <table>
+      <thead><tr><th>合规风险维度</th><th>DeepFamily 工程与法律闭环机制</th></tr></thead>
+      <tbody>
+        <tr><td><strong>WORM 蓝光不可擦除 vs PDPA 撤回权冲突</strong></td><td>独创<strong>“四步合规闭环”</strong>：① 撤回项入《限制清单》；② 物理隔离对应盘片禁止检索；③ 按人物/资产<strong>独立密钥销毁（Crypto-shredding）</strong>或迁移重刻；④ 历史恢复前强制校验防“数据复活”。</td></tr>
+        <tr><td><strong>逝者、未成年人与 AI 数字人授权</strong></td><td>逝者 10 年保护/100 年豁免分层；未成年人严格区分 13 岁以下监护人同意与 13–17 岁本人同意；肖像、声音克隆、AI 合成内容强制 11 项独立授权与显著生成标识。</td></tr>
+        <tr><td><strong>跨境研发与 PDPA 第 26 条红线</strong></td><td>研发测试 100% 使用合成脱敏数据，<strong>默认关闭境外访问真实库</strong>；生产运维由新加坡本地或“零信任限时审批工单（禁用下载）”执行，涉离岸支持签署 <strong>ASEAN MCCs</strong>。</td></tr>
+        <tr><td><strong>数据泄露与主体责任</strong></td><td>对齐 PDPA 第 26D 条 <strong>3 日内强制通报</strong>预案；交割前完成新加坡 <code>DeepFamily Pte. Ltd.</code> 在 ACRA <code>BizFile+</code> 的正式 DPO 登记，全面采用 <strong>SIAC 保密仲裁</strong>保护豪门隐私。</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- 六、产品防沉睡与交付工厂 -->
+<section class="section alt" id="product">
+  <div class="wrap">
+    <div class="kicker">06 · Delivery Factory &amp; Retention Flywheel</div>
+    <h2>去外包化交付工厂与「阿忆」防沉睡闭环</h2>
+
+    <div class="grid c2">
+      <div class="card">
+        <h4>破局一：消灭“人海定制陷阱”（90 天 → 30–45 天）</h4>
+        <p>首台套因从 0 到 1 摸索，依赖 5 个角色流转 9 份离线 Excel/Word 表单，周期达 90 天。本轮重点打造 <strong>HDP 交付工厂</strong>：</p>
+        <ul>
+          <li><strong>在线表单与电子签门禁</strong>：手机端扫码自动生成 P/E/M/L 编码与 RGT 独立授权，自动计算 SHA-256 哈希；</li>
+          <li><strong>卡片式手机终审 UI</strong>：长辈在手机上滑动即可确认 AI 提取的 72 分以上事实；</li>
+          <li><strong>一键 OAIS/蓝光打包器</strong>：自动生成 ISO 镜像与零依赖离线查看器，将后台人工成本压降 <strong>70%</strong>，交付周期压缩至 <strong>30–45 天</strong>。</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>破局二：打破“交付即沉睡”（支撑 S$9,600/年续费）</h4>
+        <p>独立 App 对 60–80 岁长辈摩擦极高。我们把「阿忆 AI 管家」升级为<strong>零摩擦活水闭环</strong>：</p>
+        <ul>
+          <li><strong>寄生 WhatsApp / 微信家族群</strong>：长辈无需下载新 App，在日常聊天群里即可语音回复“阿忆”的纪念日老照片补问；</li>
+          <li><strong>从“存过去”延伸到“记当下”</strong>：自动沉淀新生儿满月、孩子毕业、春节聚会等当代活水；</li>
+          <li><strong>年度封盘仪式感</strong>：每年底自动编纂《家族年度纪事》并刻录年度增量蓝光盘，让年费续约成为家族年度仪式刚需（且第 2 单起取消免费运维）。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 七、海内外四象限竞品格局 -->
+<section class="section" id="compete">
+  <div class="wrap">
+    <div class="kicker">07 · Competitive Landscape</div>
+    <h2>海内外四象限竞品格局：为什么我们是唯一卡位？</h2>
+
+    <div class="note warn">
+      <strong>行业警钟：海外 AI 数字遗产先驱 HereAfter AI 已正式关停 C 端消费级服务。</strong> 这从反面强力印证了 DeepFamily 的战略判断——低客单（$59–$199/年）+ 纯公有云订阅无法跨越“高获客成本”与“平台倒闭记忆清零”的信任死穴；只有聚焦<strong>塔尖高净值 + 物理蓝光数据主权 + 高毛利白手套初始化</strong>，商业闭环才能真正成立。
+    </div>
+
+    <table>
+      <thead><tr><th>竞争维度</th><th>海外大众订阅<br>(Storyworth / Ancestry / HereAfter AI)</th><th>国内低价修谱 SaaS<br>(百家有谱 / 修谱王)</th><th>传统私人传记 / 纪录片工作室</th><th>DeepFamily 传承基础设施</th></tr></thead>
+      <tbody>
+        <tr><td><strong>客单与商业模式</strong></td><td>$59–$399/年（低客单难覆盖高 CAC）</td><td>免费至数千元/年（靠印书赚钱）</td><td>一次性项目费，交付即终结</td><td><strong>S$8–10 万初始化 + S$9.6K/年费 + 增值</strong></td></tr>
+        <tr><td><strong>华人宗族语义</strong></td><td>极弱（不懂字辈、堂号、多方言）</td><td>仅懂世系连线，无口述与 AI 治理</td><td>纯人工撰写，无法结构化检索</td><td><strong>四态事实 + 华人宗法本体 + 证据链</strong></td></tr>
+        <tr><td><strong>数据主权与合规</strong></td><td>公有云锁定（平台关停即丢失）</td><td>无新加坡 PDPA / 跨境合规能力</td><td>硬盘交付，无加密与权限管控</td><td><strong>本地 Mac mini + 蓝光 WORM + PDPA 闭环</strong></td></tr>
+        <tr><td><strong>持续生长能力</strong></td><td>静态问答邮件/静态树</td><td>静态谱书，交付即沉睡</td><td>一次性成片，无法互动生长</td><td><strong>WhatsApp/微信阿忆管家 + 年度活水</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- 八、财务精算与压力测试 -->
+<section class="section alt" id="finance">
+  <div class="wrap">
+    <div class="kicker">08 · Financial Model &amp; Stress Test</div>
+    <h2>财务精算、五大情景压力测试与 SGD 50 万资金用途</h2>
+
+    <div class="point">
+      <span class="tag">财务结论（1 SGD = 5.38 CNY，已剔除 9% 新加坡 GST 并计入渠道分成）</span>
+      <p>硬件由 ¥11 万大幅优化为 <strong>S$7,600（Mac mini M5 Pro + 18TB 蓝光 5 匣）</strong>，标准复制毛利率达 <strong>63.7%</strong>（扣除 7.5% 综合渠道分成后净毛利 <strong>56.2%</strong>）。在中新协同精益架构下（年固定成本 S$22.3 万），<strong>年度盈亏平衡仅 4.3 家，零新增静态 Runway 达 28.7 个月</strong>。</p>
+    </div>
+
+    <div class="grid c4">
+      <div class="card"><div class="num">S$91,743</div><h4>单客净收入</h4><p>含税 S$100,000 剔除 9% GST，签约首付 53.8% 实现 0 个月回本</p></div>
+      <div class="card"><div class="num green">56.2%</div><h4>扣渠道后净毛利率</h4><p>单客可变成本 S$33,346 + 7.5% 综合渠道费 S$6,881，净毛利 S$51,516</p></div>
+      <div class="card"><div class="num">4.33 家/年</div><h4>年度盈亏平衡点</h4><p>固定成本 S$22.3 万 ÷ 单客净毛利，明年再签 4 家即可现金流打平</p></div>
+      <div class="card"><div class="num gold">6.0–13.6x</div><h4>5 年 LTV / CAC</h4><p>圈层直客 13.6x，B2B2C 渠道（15% 分成）6.0x，复利特征显著</p></div>
+    </div>
+
+    <!-- 3年收入与净利 SVG 图 -->
+    <div class="figure">
+      <svg viewBox="0 0 920 280" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="920" height="280" fill="#ffffff" rx="10"/>
+        <text x="460" y="28" text-anchor="middle" font-size="15.5" font-weight="700" fill="#0f172a">基准精益情景：三年营收、净利润与期末现金流曲线（单位：新币 S$ 万）</text>
+        <!-- 网格线 -->
+        <line x1="80" y1="220" x2="860" y2="220" stroke="#cbd5e1" stroke-width="1.5"/>
+        <line x1="80" y1="170" x2="860" y2="170" stroke="#f1f5f9" stroke-width="1"/>
+        <line x1="80" y1="120" x2="860" y2="120" stroke="#f1f5f9" stroke-width="1"/>
+        <line x1="80" y1="70" x2="860" y2="70" stroke="#f1f5f9" stroke-width="1"/>
+        <text x="68" y="224" text-anchor="end" font-size="11" fill="#64748b">0</text>
+        <text x="68" y="174" text-anchor="end" font-size="11" fill="#64748b">50</text>
+        <text x="68" y="124" text-anchor="end" font-size="11" fill="#64748b">100</text>
+        <text x="68" y="74" text-anchor="end" font-size="11" fill="#64748b">150</text>
+
+        <!-- 第1年 -->
+        <rect x="160" y="192" width="44" height="28" rx="4" fill="#2563eb"/>
+        <text x="182" y="186" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1e3a8a">27.5</text>
+        <rect x="212" y="220" width="44" height="10" rx="2" fill="#f59e0b"/>
+        <text x="234" y="242" text-anchor="middle" font-size="11" font-weight="700" fill="#d97706">-8.7</text>
+        <rect x="264" y="179" width="44" height="41" rx="4" fill="#16a34a"/>
+        <text x="286" y="173" text-anchor="middle" font-size="11.5" font-weight="700" fill="#15803d">41.3</text>
+        <text x="234" y="262" text-anchor="middle" font-size="13" font-weight="700" fill="#0f172a">第 1 年（新增 3 家）</text>
+
+        <!-- 第2年 -->
+        <rect x="410" y="144" width="44" height="76" rx="4" fill="#2563eb"/>
+        <text x="432" y="138" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1e3a8a">75.7</text>
+        <rect x="462" y="199" width="44" height="21" rx="4" fill="#0ea5e9"/>
+        <text x="484" y="193" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0284c7">+20.8</text>
+        <rect x="514" y="158" width="44" height="62" rx="4" fill="#16a34a"/>
+        <text x="536" y="152" text-anchor="middle" font-size="11.5" font-weight="700" fill="#15803d">62.1</text>
+        <text x="484" y="262" text-anchor="middle" font-size="13" font-weight="700" fill="#0f172a">第 2 年（新增 8 家）</text>
+
+        <!-- 第3年 -->
+        <rect x="660" y="74" width="44" height="146" rx="4" fill="#2563eb"/>
+        <text x="682" y="68" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1e3a8a">146.1</text>
+        <rect x="712" y="158" width="44" height="62" rx="4" fill="#0ea5e9"/>
+        <text x="734" y="152" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0284c7">+61.8</text>
+        <rect x="764" y="96" width="44" height="124" rx="4" fill="#16a34a"/>
+        <text x="786" y="90" text-anchor="middle" font-size="11.5" font-weight="700" fill="#15803d">123.8</text>
+        <text x="734" y="262" text-anchor="middle" font-size="13" font-weight="700" fill="#0f172a">第 3 年（新增 15 家）</text>
+
+        <!-- 图例 -->
+        <rect x="300" y="42" width="12" height="12" rx="2" fill="#2563eb"/><text x="318" y="52" font-size="11.5" fill="#475569">总营收</text>
+        <rect x="390" y="42" width="12" height="12" rx="2" fill="#0ea5e9"/><text x="408" y="52" font-size="11.5" fill="#475569">净利润（第1年为投入期）</text>
+        <rect x="570" y="42" width="12" height="12" rx="2" fill="#16a34a"/><text x="588" y="52" font-size="11.5" fill="#475569">期末账面现金（含本轮 S$50 万）</text>
+      </svg>
+      <div class="caption">图 3：基准精益情景下，第 2 年实现盈利转正，第 3 年末账面现金突破 S$123.8 万</div>
+    </div>
+
+    <h3>五大情景敏感性压力测试（Python 自动化验算）</h3>
+    <table>
+      <thead><tr><th>压力测试情景</th><th>净毛利率</th><th>盈亏平衡</th><th>零新增 Runway</th><th>第 1 年净利</th><th>第 2 年净利</th><th>第 3 年净利</th><th>第 3 年末现金</th></tr></thead>
+      <tbody>
+        <tr class="row-hl"><td><strong>基准精益情景（推荐）</strong>：固定成本 S$22.3万，新增 3→8→15，综合渠道 7.5%</td><td>56.2%</td><td>4.33 家</td><td>28.7 个月</td><td>-S$86,724</td><td>+S$207,610</td><td>+S$617,504</td><td>S$1,238,390</td></tr>
+        <tr><td><strong>悲观获客情景</strong>：新增减半 2→4→7，全渠道 15% 分成</td><td>48.7%</td><td>5.00 家</td><td>28.7 个月</td><td>-S$145,121</td><td>-S$32,138</td><td>+S$126,409</td><td>S$449,150</td></tr>
+        <tr><td><strong>范围蔓延/成本失控</strong>：可变成本涨 50% 至 S$5.0万，全渠道 15%</td><td>30.5%</td><td>7.97 家</td><td>28.7 个月</td><td>-S$133,794</td><td>+S$19,332</td><td>+S$264,483</td><td>S$650,022</td></tr>
+        <tr><td><strong>客单价下探情景</strong>：客单降至含税 S$6.5万，综合渠道 7.5%</td><td>36.6%</td><td>10.22 家</td><td>28.7 个月</td><td>-S$146,128</td><td>-S$30,004</td><td>+S$171,978</td><td>S$495,846</td></tr>
+      </tbody>
+    </table>
+
+    <h3>SGD 500,000 精益资金用途与 18 个月里程碑</h3>
+    <div class="grid c2">
+      <div class="card">
+        <h4>资金分配明细（15.3% 现金红线锁死安全垫）</h4>
+        <ul>
+          <li><strong>39.0% · S$195,000</strong>：核心研发与 HDP 平台化（在线工作台、RGT 门禁、一键 OAIS 蓝光打包、WhatsApp/微信阿忆）；</li>
+          <li><strong>17.8% · S$89,000</strong>：新加坡/大马 BD、闭门沙龙与 L1 试点获客；</li>
+          <li><strong>15.3% · S$76,500</strong>：<strong>战略现金储备红线</strong>（独立账户专款留存）；</li>
+          <li><strong>14.9% · S$74,500</strong>：首台套交付保障与可复用专业采集设备 CapEx；</li>
+          <li><strong>13.0% · S$65,000</strong>：新加坡主体运营、PDPA 合规审计与 PI/Cyber 保险。</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>双门控交付与商业里程碑</h4>
+        <ul>
+          <li><strong>M1–M3（交付与标准化）</strong>：首台套核心交付上线；HDP 在线工作台与一键蓝光打包器投入生产，消灭离线 Excel；</li>
+          <li><strong>M6（PMF 外部验证）</strong>：首台套完整终验；签下至少 <strong>2 个无关联陌生付费单 / L1 轻试点</strong>；落地 2 家 B2B2C 顾问渠道；</li>
+          <li><strong>M12（现金流打平）</strong>：累计签约 <strong>4–5 个高净值家族</strong>，实现年度经营性现金流打平，掌握 Pre-A 轮主动权。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 九、团队与治理 -->
+<section class="section" id="team">
+  <div class="wrap">
+    <div class="kicker">09 · Team, Credibility &amp; Governance</div>
+    <h2>中新协同铁三角、本地信用背书与透明治理承诺</h2>
+
+    <div class="grid c3">
+      <div class="card">
+        <h4>创始人牵头 + 中新协同研发</h4>
+        <p>创始人全面统筹产品定义、新加坡高净值 BD 与交付标准；研发采用<strong>“新加坡技术/合规负责人 + 国内精锐全栈（AI 辅助提效）”</strong>架构，兼顾顶级合规与极致人效。</p>
+      </div>
+      <div class="card highlight">
+        <h4>Infologic（新加坡 30 年本地信用）</h4>
+        <p>依托 1992 年成立的新加坡老牌系统集成商 <strong>Infologic</strong> 作为战略集成与信用背书伙伴，快速跨越新加坡及大马华人企业家圈层的高信任门槛。</p>
+      </div>
+      <div class="card">
+        <h4>吴总（Founding Design Partner）</h4>
+        <p>创始标杆客户与早期赞助人，以真金白银（S$10 万合同、53.8% 首付）验证真实痛点与完整交付闭环，并提供深度圈层口碑引荐。</p>
+      </div>
+    </div>
+
+    <div class="note ok">
+      <strong>对机构与天使投资人的四项透明治理承诺（交割先决条件 CP）：</strong><br>
+      ① <strong>独立实体与 IP 100% 洁净</strong>：交割前完成 <code>DeepFamily Pte. Ltd.</code> 独立运营主体、全体人员及历史关联方的《IP 无条件转让契据》与首台套合同《主体变更协议（Novation）》；<br>
+      ② <strong>赞助与客户边界完全透明</strong>：签署三方《赞助款性质与无隐性权益确认函》，明确创始客户对产品路线与其他家族拓展无排他权、无否决权；<br>
+      ③ <strong>彻底去外包化标准合同</strong>：删除定制源码交付条款、增补累计赔偿责任上限（≤实收服务费）与 SIAC 新加坡国际仲裁中心保密仲裁；<br>
+      ④ <strong>新加坡 PDPA 实操落位</strong>：完成 ACRA <code>BizFile+</code> 正式 DPO 登记与境外零访问技术隔离。
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <h2>保存家族记忆，保存家族进入未来的权利。</h2>
+    <p>DeepFamily Pte. Ltd. · Singapore Angel Round (SGD 500,000)<br>欢迎预约 15 分钟实体蓝光与脱敏家族知识库现场 Demo</p>
+    <div class="mantra">数据百年存在 · 协议百年可审计 · 家族百年传承</div>
+  </div>
+</footer>
+
 </body>
 </html>
