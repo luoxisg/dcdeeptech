@@ -3,12 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DeepFamily Pte. Ltd. — Angel Round Investment Memorandum (SGD 500,000)</title>
+<title>DeepFamily | 50-Year Fiduciary-Grade Digital Heritage Preservation &amp; Angel Round (2027–2077 · SGD 500,000)</title>
 <style>
   :root {
     --navy: #0b162a;
     --navy-mid: #152642;
     --navy-light: #1e3a5f;
+    --accent: #2563eb;
+    --sky: #38bdf8;
     --gold: #b8924a;
     --gold-bright: #d4af63;
     --gold-soft: #f6efe2;
@@ -16,10 +18,10 @@
     --teal-soft: #ecfdf5;
     --crimson: #b91c1c;
     --crimson-soft: #fef2f2;
-    --ink: #1e293b;
-    --muted: #526074;
+    --ink: #0f172a;
+    --muted: #475569;
     --line: #e2e8f0;
-    --paper: #f7f8fb;
+    --paper: #f8fafc;
     --white: #ffffff;
   }
 
@@ -31,7 +33,7 @@
     background: var(--white);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", "Helvetica Neue", Arial, sans-serif;
     font-size: 15px;
-    line-height: 1.7;
+    line-height: 1.72;
     -webkit-font-smoothing: antialiased;
     font-variant-numeric: tabular-nums;
   }
@@ -46,13 +48,15 @@
     margin: 0 auto;
   }
 
-  /* Top Navigation */
+  a { color: var(--accent); text-decoration: none; }
+
+  /* Sticky Topbar */
   .topbar {
     position: sticky;
     top: 0;
     z-index: 100;
     background: rgba(11, 22, 42, 0.96);
-    border-bottom: 1px solid rgba(184, 146, 74, 0.3);
+    border-bottom: 1px solid rgba(212, 175, 99, 0.3);
     backdrop-filter: blur(10px);
   }
   .topbar .wrap {
@@ -60,23 +64,23 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 16px;
+    gap: 12px;
   }
   .brand {
     color: var(--white);
-    text-decoration: none;
     font-weight: 700;
     font-size: 17px;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.03em;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 9px;
+    white-space: nowrap;
   }
   .brand-mark {
     width: 26px;
     height: 26px;
     border-radius: 5px;
-    background: linear-gradient(135deg, var(--gold), #8f6d2e);
+    background: linear-gradient(135deg, var(--gold-bright), #8f6d2e);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -86,39 +90,59 @@
     font-size: 14px;
   }
   .brand span { color: var(--gold-bright); }
+  .brand small {
+    font-size: 10.5px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: rgba(212, 175, 99, 0.16);
+    color: var(--gold-bright);
+    border: 1px solid rgba(212, 175, 99, 0.35);
+  }
   .topbar nav {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 13px;
     flex-wrap: wrap;
   }
   .topbar nav a {
     color: #cbd5e1;
-    text-decoration: none;
-    font-size: 12.5px;
+    font-size: 12px;
     font-weight: 500;
     transition: color 0.15s;
   }
   .topbar nav a:hover { color: var(--gold-bright); }
+  .btn-lang {
+    padding: 4px 10px !important;
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.09);
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    font-weight: 700 !important;
+    font-size: 11.5px !important;
+  }
+  .btn-lang:hover {
+    background: rgba(212, 175, 99, 0.22);
+    border-color: var(--gold-bright);
+  }
   .btn-print {
     background: var(--gold);
     color: var(--navy);
     border: none;
-    border-radius: 4px;
-    padding: 6px 12px;
-    font-size: 12px;
+    border-radius: 5px;
+    padding: 5px 11px;
+    font-size: 11.5px;
     font-weight: 700;
     cursor: pointer;
-    letter-spacing: 0.03em;
+    letter-spacing: 0.02em;
   }
   .btn-print:hover { background: var(--gold-bright); }
 
   /* Cover Hero */
   .hero {
-    background: radial-gradient(circle at 85% 20%, #1d3557 0%, var(--navy) 60%);
+    background: radial-gradient(circle at 84% 18%, #1d3557 0%, var(--navy) 62%);
     color: var(--white);
-    padding: 76px 0 64px;
-    position: relative;
+    padding: 72px 0 60px;
     border-bottom: 4px solid var(--gold);
   }
   .hero-badge-row {
@@ -126,14 +150,14 @@
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: 12px;
-    margin-bottom: 24px;
+    gap: 10px;
+    margin-bottom: 20px;
   }
   .hero-kicker {
     color: var(--gold-bright);
     font-size: 12px;
     font-weight: 700;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.17em;
     text-transform: uppercase;
   }
   .confidential-pill {
@@ -146,44 +170,57 @@
     border-radius: 999px;
   }
   .hero h1 {
-    font-size: 42px;
-    line-height: 1.2;
+    font-size: 39px;
+    line-height: 1.22;
     margin: 0 0 18px;
     font-weight: 700;
-    max-width: 880px;
+    max-width: 920px;
   }
-  .hero h1 em {
-    color: var(--gold-bright);
-    font-style: normal;
-  }
+  .hero h1 em { color: var(--gold-bright); font-style: normal; }
   .hero .sub {
     color: #cbd5e1;
-    font-size: 16.5px;
-    line-height: 1.75;
-    max-width: 820px;
-    margin: 0 0 36px;
+    font-size: 16px;
+    line-height: 1.78;
+    max-width: 880px;
+    margin: 0;
+  }
+  .hero .badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+    margin-top: 22px;
+  }
+  .hero .badge-pill {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(212, 175, 99, 0.32);
+    color: #e2e8f0;
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: 12px;
   }
   .hero-kpis {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 16px;
-    margin-top: 28px;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255, 255, 255, 0.14);
   }
   .hero-kpi {
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(212, 175, 99, 0.35);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(212, 175, 99, 0.32);
     border-radius: 8px;
-    padding: 18px 20px;
+    padding: 16px 18px;
   }
   .hero-kpi .val {
-    font-size: 26px;
+    font-size: 25px;
     font-weight: 700;
     color: var(--gold-bright);
     line-height: 1.2;
   }
   .hero-kpi .lbl {
     font-size: 12.5px;
-    color: #e2e8f0;
+    color: #f1f5f9;
     margin-top: 6px;
     font-weight: 600;
   }
@@ -192,24 +229,12 @@
     color: #94a3b8;
     margin-top: 3px;
   }
-  .hero-meta {
-    margin-top: 32px;
-    padding-top: 18px;
-    border-top: 1px solid rgba(255, 255, 255, 0.12);
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 12px;
-    font-size: 12.5px;
-    color: #94a3b8;
-  }
-  .hero-meta strong { color: #e2e8f0; }
 
   /* Table of Contents */
   .toc {
     background: var(--paper);
     border-bottom: 1px solid var(--line);
-    padding: 24px 0;
+    padding: 22px 0;
   }
   .toc-title {
     font-size: 11px;
@@ -217,23 +242,22 @@
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--muted);
-    margin-bottom: 12px;
+    margin-bottom: 10px;
   }
   .toc-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 8px 24px;
+    gap: 7px 24px;
     list-style: none;
     padding: 0;
     margin: 0;
   }
   .toc-grid li a {
-    text-decoration: none;
     color: var(--ink);
     font-size: 13px;
     display: flex;
     align-items: baseline;
-    gap: 8px;
+    gap: 7px;
   }
   .toc-grid li a:hover { color: var(--gold); }
   .toc-num {
@@ -245,7 +269,7 @@
 
   /* Sections */
   .section {
-    padding: 52px 0;
+    padding: 50px 0;
     border-bottom: 1px solid var(--line);
   }
   .section.alt { background: var(--paper); }
@@ -258,29 +282,29 @@
     margin-bottom: 6px;
   }
   .section h2 {
-    font-size: 28px;
+    font-size: 26px;
     color: var(--navy);
-    margin: 0 0 14px;
+    margin: 0 0 12px;
     line-height: 1.3;
   }
   .section h3 {
-    font-size: 18px;
+    font-size: 17.5px;
     color: var(--navy);
-    margin: 28px 0 12px;
+    margin: 26px 0 10px;
   }
   .section p {
-    margin: 0 0 12px;
+    margin: 0 0 11px;
     color: #334155;
   }
 
-  /* Executive Thesis Banner */
+  /* Thesis Box */
   .thesis {
-    background: var(--navy);
+    background: linear-gradient(135deg, #0b162a, #152642);
     color: var(--white);
-    border-left: 4px solid var(--gold);
-    border-radius: 6px;
-    padding: 20px 24px;
-    margin: 18px 0 24px;
+    border-left: 4px solid var(--gold-bright);
+    border-radius: 8px;
+    padding: 18px 24px;
+    margin: 16px 0 22px;
   }
   .thesis-tag {
     color: var(--gold-bright);
@@ -294,35 +318,37 @@
   .thesis p {
     color: #e2e8f0;
     margin: 0;
-    font-size: 15.5px;
-    line-height: 1.7;
+    font-size: 15px;
+    line-height: 1.72;
   }
 
   /* Grids & Cards */
-  .grid { display: grid; gap: 16px; margin: 18px 0; }
+  .grid { display: grid; gap: 15px; margin: 18px 0; }
   .c2 { grid-template-columns: repeat(2, 1fr); }
   .c3 { grid-template-columns: repeat(3, 1fr); }
   .c4 { grid-template-columns: repeat(4, 1fr); }
+  .c5 { grid-template-columns: repeat(5, 1fr); }
 
   .card {
     background: var(--white);
     border: 1px solid var(--line);
     border-radius: 8px;
-    padding: 18px 20px;
+    padding: 16px 18px;
     break-inside: avoid;
   }
   .card.soft { background: var(--paper); }
   .card.gold-top { border-top: 3px solid var(--gold); }
   .card.teal-top { border-top: 3px solid var(--teal); }
   .card.navy-top { border-top: 3px solid var(--navy); }
+  .card.highlight { background: #f4f7fc; border-color: #cbd5e1; }
   .card h4 {
-    margin: 0 0 8px;
-    font-size: 14.5px;
+    margin: 0 0 7px;
+    font-size: 14px;
     color: var(--navy);
     font-weight: 700;
   }
   .card .metric {
-    font-size: 24px;
+    font-size: 22px;
     font-weight: 700;
     color: var(--navy);
     line-height: 1.2;
@@ -330,19 +356,20 @@
   }
   .card .metric.gold { color: var(--gold); }
   .card .metric.teal { color: var(--teal); }
+  .card .metric.blue { color: var(--accent); }
   .card p {
-    font-size: 13.5px;
+    font-size: 13px;
     color: var(--muted);
     margin: 0;
-    line-height: 1.6;
+    line-height: 1.62;
   }
   .card ul {
-    margin: 8px 0 0;
+    margin: 6px 0 0;
     padding-left: 18px;
-    font-size: 13.5px;
+    font-size: 13px;
     color: #334155;
   }
-  .card li { margin: 4px 0; }
+  .card li { margin: 5px 0; }
 
   /* Callouts */
   .callout {
@@ -350,9 +377,9 @@
     border: 1px solid rgba(184, 146, 74, 0.35);
     border-left: 4px solid var(--gold);
     border-radius: 6px;
-    padding: 14px 18px;
-    margin: 18px 0;
-    font-size: 13.5px;
+    padding: 13px 17px;
+    margin: 16px 0;
+    font-size: 13px;
     color: #3f2e12;
   }
   .callout.teal {
@@ -367,14 +394,19 @@
     border-left-color: var(--crimson);
     color: #7f1d1d;
   }
-  .callout strong { color: inherit; }
+  .callout.blue {
+    background: #eff6ff;
+    border-color: #bfdbfe;
+    border-left-color: var(--accent);
+    color: #1e3a8a;
+  }
 
   /* Tables */
   table {
     width: 100%;
     border-collapse: collapse;
-    margin: 18px 0;
-    font-size: 13px;
+    margin: 16px 0;
+    font-size: 12.8px;
     background: var(--white);
     border: 1px solid var(--line);
     break-inside: avoid;
@@ -383,13 +415,12 @@
     background: var(--navy);
     color: var(--white);
     text-align: left;
-    padding: 10px 12px;
+    padding: 9px 11px;
     font-weight: 600;
     font-size: 12px;
-    letter-spacing: 0.03em;
   }
   tbody td {
-    padding: 10px 12px;
+    padding: 9px 11px;
     border-bottom: 1px solid var(--line);
     vertical-align: top;
     color: #334155;
@@ -401,29 +432,27 @@
     color: var(--navy);
   }
   .num-cell { text-align: right; white-space: nowrap; }
-  .center-cell { text-align: center; }
 
   /* Badges */
   .badge {
     display: inline-block;
     padding: 2px 8px;
     border-radius: 999px;
-    font-size: 11px;
+    font-size: 10.5px;
     font-weight: 700;
     letter-spacing: 0.02em;
   }
   .badge-teal { background: var(--teal-soft); color: var(--teal); border: 1px solid rgba(15,118,110,0.25); }
   .badge-gold { background: var(--gold-soft); color: #8a6421; border: 1px solid rgba(184,146,74,0.35); }
-  .badge-crimson { background: var(--crimson-soft); color: var(--crimson); border: 1px solid rgba(185,28,28,0.25); }
   .badge-navy { background: #e2e8f0; color: var(--navy); }
 
-  /* SVG Figures */
+  /* Figures */
   .figure {
     background: var(--white);
     border: 1px solid var(--line);
     border-radius: 8px;
-    padding: 18px;
-    margin: 22px 0;
+    padding: 16px;
+    margin: 20px 0;
     text-align: center;
     break-inside: avoid;
   }
@@ -446,68 +475,69 @@
   footer {
     background: var(--navy);
     color: #94a3b8;
-    padding: 48px 0;
+    padding: 46px 0;
     border-top: 4px solid var(--gold);
   }
   footer h2 {
     color: var(--white);
-    font-size: 24px;
+    font-size: 22px;
     margin: 0 0 10px;
   }
-  footer p { margin: 6px 0; font-size: 13.5px; }
-  .footer-grid {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 24px;
-    align-items: center;
+  footer p { margin: 6px 0; font-size: 13.5px; color: #cbd5e1; }
+  .mantra {
+    color: var(--gold-bright);
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+    margin-top: 14px;
+    text-transform: uppercase;
   }
   .disclaimer {
-    margin-top: 28px;
-    padding-top: 18px;
+    margin-top: 24px;
+    padding-top: 16px;
     border-top: 1px solid rgba(255, 255, 255, 0.12);
     font-size: 11.5px;
     color: #64748b;
     line-height: 1.6;
   }
 
-  /* Responsive */
-  @media (max-width: 820px) {
-    .hero h1 { font-size: 30px; }
-    .hero-kpis, .c2, .c3, .c4, .toc-grid, .footer-grid { grid-template-columns: 1fr; }
+  @media (max-width: 900px) {
+    .hero h1 { font-size: 28px; }
+    .hero-kpis, .c2, .c3, .c4, .c5, .toc-grid { grid-template-columns: 1fr; }
     .topbar nav { display: none; }
   }
 
-  /* Print to PDF */
   @page {
     size: A4 portrait;
-    margin: 13mm 12mm;
+    margin: 12mm 12mm;
   }
   @media print {
     * {
       -webkit-print-color-adjust: exact !important;
       print-color-adjust: exact !important;
     }
-    body { font-size: 11.5px; line-height: 1.5; background: #fff; }
+    body { font-size: 11px; line-height: 1.48; background: #fff; }
     .topbar { display: none !important; }
     .wrap { width: 100%; }
-    .hero { padding: 36px 24px 32px; border-radius: 6px; page-break-after: always; }
-    .hero h1 { font-size: 30px; }
-    .hero-kpis { grid-template-columns: repeat(4, 1fr); gap: 10px; }
-    .hero-kpi { padding: 12px; }
-    .hero-kpi .val { font-size: 19px; }
+    .hero { padding: 34px 22px 28px; border-radius: 6px; page-break-after: always; }
+    .hero h1 { font-size: 27px; }
+    .hero-kpis { grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .hero-kpi { padding: 10px; }
+    .hero-kpi .val { font-size: 18px; }
     .toc { display: none; }
-    .section { padding: 20px 0; border-bottom: none; page-break-before: always; }
+    .section { padding: 18px 0; border-bottom: none; page-break-before: always; }
     .section:first-of-type { page-break-before: auto; }
     .section.alt { background: #fff; }
-    .section h2 { font-size: 20px; margin-bottom: 10px; }
-    .section h3 { font-size: 14px; margin: 14px 0 8px; }
-    .grid { gap: 10px; margin: 10px 0; }
-    .card { padding: 12px 14px; }
-    .card .metric { font-size: 18px; }
-    table { font-size: 10.5px; margin: 10px 0; }
-    thead th, tbody td { padding: 6px 8px; }
-    .figure { padding: 10px; margin: 12px 0; }
-    footer { padding: 24px; border-radius: 6px; page-break-before: always; }
+    .section h2 { font-size: 19px; margin-bottom: 8px; }
+    .section h3 { font-size: 13.5px; margin: 14px 0 6px; }
+    .grid { gap: 9px; margin: 10px 0; }
+    .c5 { grid-template-columns: repeat(5, 1fr); }
+    .card { padding: 10px 12px; }
+    .card .metric { font-size: 16px; }
+    table { font-size: 10px; margin: 10px 0; }
+    thead th, tbody td { padding: 5px 7px; }
+    .figure { padding: 10px; margin: 10px 0; }
+    footer { padding: 22px; border-radius: 6px; page-break-before: always; }
   }
 </style>
 </head>
@@ -519,18 +549,19 @@
     <a class="brand" href="#cover">
       <span class="brand-mark">D</span>
       Deep<span>Family</span>
+      <small>2027–2077 · 50-Yr Vault</small>
     </a>
     <nav>
       <a href="#exec">01 Summary</a>
-      <a href="#traction">02 Traction</a>
-      <a href="#gtm">03 Market &amp; GTM</a>
-      <a href="#hdp">04 HDP v1.0</a>
-      <a href="#pdpa">05 PDPA Moat</a>
-      <a href="#delivery">06 Delivery &amp; AI</a>
-      <a href="#compete">07 Competition</a>
-      <a href="#finance">08 Financials</a>
-      <a href="#team">09 Team &amp; Gov</a>
-      <a href="./index.html" style="padding:5px 10px;border-radius:4px;border:1px solid rgba(212,175,99,0.45);color:#d4af63;font-weight:700;">中文</a>
+      <a href="#arch50">02 50-Yr Arch</a>
+      <a href="#formats">03 Formats &amp; AI</a>
+      <a href="#roadmap50">04 Migration</a>
+      <a href="#poc90">05 90-Day PoC</a>
+      <a href="#market">06 GTM &amp; Comp</a>
+      <a href="#pdpa">07 PDPA</a>
+      <a href="#finance">08 Cost &amp; Fin</a>
+      <a href="#team">09 Governance</a>
+      <a href="./index.html" class="btn-lang">中文</a>
       <button class="btn-print" onclick="window.print()">Export PDF</button>
     </nav>
   </div>
@@ -540,45 +571,48 @@
 <section class="hero" id="cover">
   <div class="wrap">
     <div class="hero-badge-row">
-      <div class="hero-kicker">Angel Round Investment Memorandum &middot; Version 3.0 &middot; November 2026</div>
+      <div class="hero-kicker">2027–2077 · Auditable Digital Heritage Preservation · Angel Round (SGD 500,000)</div>
       <div class="confidential-pill">Strictly Private &amp; Confidential</div>
     </div>
 
-    <h1>The Sovereign Digital Heritage Vault &amp; <em>Intergenerational AI Infrastructure</em></h1>
+    <h1>Fiduciary-Grade <em>50-Year Recoverable &amp; Takeover-Ready</em> Digital Heritage Preservation</h1>
     <p class="sub">
-      Purpose-built for UHNW Chinese families in Singapore &amp; Southeast Asia. Powered by our proprietary
-      <strong>Heritage Data Protocol (HDP v1.0)</strong>, air-gapped <strong>Archival Blu-ray</strong> custody,
-      and our WhatsApp/WeChat-native <strong>"Ah Yi" AI Family Steward</strong>—turning fragile founder memory
-      into a compounding, PDPA-compliant multi-generational asset.
+      The 50-year objective is <strong>continuous data recoverability</strong>—not expecting a single optical disc
+      or drive to last 50 years. Engineered against <strong>ISO 14721:2025 (OAIS)</strong>,
+      <strong>ISO 16363:2025</strong>, and <strong>NDSA Levels of Digital Preservation 2.1 (2026)</strong>,
+      DeepFamily combines high-margin white-glove onboarding (<strong>0-month payback</strong>), an enhanced
+      <code>3-2-1-1-0</code> dual-domain architecture, and third-party succession governance—elevating family
+      genealogy into institutional-grade digital heritage custody for UHNW families in Singapore &amp; Southeast Asia.
     </p>
+
+    <div class="badges">
+      <span class="badge-pill">Entity: DeepFamily Pte. Ltd. (Singapore)</span>
+      <span class="badge-pill">Instrument: SVCA CARE / YC Post-Money SAFE</span>
+      <span class="badge-pill">Architecture: Enhanced 3-2-1-1-0 + Dual Admin Domains</span>
+      <span class="badge-pill">Flagship Signed: S$100,000 (53.8% Upfront Collected)</span>
+    </div>
 
     <div class="hero-kpis">
       <div class="hero-kpi">
         <div class="val">SGD 500,000</div>
         <div class="lbl">Angel Round Target</div>
-        <div class="sublbl">SVCA CARE / YC Post-Money SAFE<br>Rolling Close: S$3.5M–5.0M Cap</div>
+        <div class="sublbl">Rolling Close: S$3.5M–5.0M Cap<br>Blended Dilution 11.5%–13.5%</div>
       </div>
       <div class="hero-kpi">
-        <div class="val">S$100,000</div>
-        <div class="lbl">Signed Flagship Contract</div>
-        <div class="sublbl">DF-HT-2026-001 (S$91,743 ex-GST)<br>53.8% Upfront &rarr; 0-Mo Payback</div>
+        <div class="val">2027–2077</div>
+        <div class="lbl">50-Yr Auditable Preservation</div>
+        <div class="sublbl">5-Layer Acceptance Criteria &amp;<br>3–5 Yr Migration Cadence</div>
       </div>
       <div class="hero-kpi">
         <div class="val">63.7% / 56.2%</div>
         <div class="lbl">Standard Gross Margin</div>
-        <div class="sublbl">63.7% Direct &middot; 56.2% Net of<br>7.5% Blended Channel Fee</div>
+        <div class="sublbl">63.7% Direct · 56.2% Net of<br>7.5% Blended Channel Fee</div>
       </div>
       <div class="hero-kpi">
         <div class="val">28.7 Months</div>
         <div class="lbl">Zero-New-Client Runway</div>
-        <div class="sublbl">S$223k/yr Lean Fixed Burn<br>Breakeven at 4.33 Families/yr</div>
+        <div class="sublbl">S$223k/yr Lean Fixed Burn<br>Breakeven: 4.33 Families/yr</div>
       </div>
-    </div>
-
-    <div class="hero-meta">
-      <div><strong>Entity:</strong> DeepFamily Pte. Ltd. (Singapore HQ)</div>
-      <div><strong>Instrument:</strong> SVCA CARE / YC Post-Money SAFE (Rolling Close)</div>
-      <div><strong>Primary Markets:</strong> Singapore &middot; Malaysia &middot; Southeast Asia</div>
     </div>
   </div>
 </section>
@@ -586,17 +620,17 @@
 <!-- TABLE OF CONTENTS -->
 <section class="toc">
   <div class="wrap">
-    <div class="toc-title">Memorandum Contents</div>
+    <div class="toc-title">Investment Memorandum Contents</div>
     <ul class="toc-grid">
-      <li><a href="#exec"><span class="toc-num">01</span> Executive Summary &amp; Round Terms</a></li>
-      <li><a href="#traction"><span class="toc-num">02</span> Commercial Traction &amp; Lighthouse Contract</a></li>
-      <li><a href="#gtm"><span class="toc-num">03</span> Market Opportunity &amp; L1&rarr;L2 GTM Funnel</a></li>
-      <li><a href="#hdp"><span class="toc-num">04</span> Technology Moat: HDP v1.0 Protocol</a></li>
-      <li><a href="#pdpa"><span class="toc-num">05</span> Regulatory Moat: Singapore PDPA Compliance</a></li>
-      <li><a href="#delivery"><span class="toc-num">06</span> Delivery Factory &amp; "Ah Yi" Retention Loop</a></li>
-      <li><a href="#compete"><span class="toc-num">07</span> Global Competitive Landscape</a></li>
-      <li><a href="#finance"><span class="toc-num">08</span> Financial Model, Stress Test &amp; Use of Funds</a></li>
-      <li><a href="#team"><span class="toc-num">09</span> Team, Strategic Anchors &amp; Governance</a></li>
+      <li><a href="#exec"><span class="toc-num">01</span> Executive Summary &amp; Round Structure</a></li>
+      <li><a href="#arch50"><span class="toc-num">02</span> 5-Layer 2077 Criteria &amp; 3-2-1-1-0 Architecture</a></li>
+      <li><a href="#formats"><span class="toc-num">03</span> Integrity, Open Formats &amp; AI/LLM Boundaries</a></li>
+      <li><a href="#roadmap50"><span class="toc-num">04</span> 2027–2077 Migration &amp; Anti-Dormancy Loop</a></li>
+      <li><a href="#poc90"><span class="toc-num">05</span> Wu Family 90-Day LLM-Independent PoC</a></li>
+      <li><a href="#market"><span class="toc-num">06</span> Market, L1&rarr;L2 GTM &amp; Global Competition</a></li>
+      <li><a href="#pdpa"><span class="toc-num">07</span> Singapore PDPA 2012 &amp; WORM Compliance</a></li>
+      <li><a href="#finance"><span class="toc-num">08</span> 50-Yr Cost Model (1TB), Financials &amp; Use of Funds</a></li>
+      <li><a href="#team"><span class="toc-num">09</span> Team, Strategic Anchors &amp; Fiduciary Governance</a></li>
     </ul>
   </div>
 </section>
@@ -604,813 +638,691 @@
 <!-- 01. EXECUTIVE SUMMARY -->
 <section class="section" id="exec">
   <div class="wrap">
-    <div class="section-kicker">Section 01 &middot; Executive Summary</div>
-    <h2>Category-Defining Infrastructure for Asia's Great Wealth &amp; Memory Transfer</h2>
+    <div class="section-kicker">Section 01 &middot; Executive Summary &amp; Investment Thesis</div>
+    <h2>From "Single-Medium Myth" to 50-Year Auditable Fiduciary Preservation</h2>
 
     <div class="thesis">
-      <span class="thesis-tag">Investment Thesis</span>
+      <span class="thesis-tag">Technical &amp; Commercial Verdict: Conditionally Feasible — Engineered for Institutional Scrutiny</span>
       <p>
-        DeepFamily is not a consumer genealogy app or a bespoke memoir agency. We are building the
-        <strong>sovereign digital asset vault and intergenerational AI infrastructure</strong> for UHNW Chinese
-        families in Singapore and Southeast Asia. By pairing high-margin, upfront-paid white-glove onboarding
-        (<strong>0-month CAC payback</strong>) with our <strong>HDP v1.0 data governance protocol</strong>,
-        air-gapped Blu-ray custody, and a WhatsApp/WeChat-native AI steward, we capture an irreplaceable private
-        knowledge graph that compounds in stickiness across decades.
+        No credible operator can scientifically guarantee that a single optical disc will survive 100 years or
+        promise absolute zero loss. DeepFamily meets the due diligence bar of Singapore Single/Multi-Family
+        Offices (SFOs/MFOs), trustees, and fiduciary institutions (such as RCNM) with intellectual honesty:
+        <strong>through multi-copy redundancy, continuous SHA-256 signed verification, 3–5 year media migration,
+        dual-track open formats, and third-party independent takeover drills</strong>, we deliver an auditable
+        50-year preservation service (2027–2077)—funded upfront by a S$100,000 signed flagship contract
+        (53.8% deposit, 0-month CAC payback).
       </p>
     </div>
 
     <div class="grid c3">
       <div class="card gold-top">
-        <h4>1. Irreversible Timing Window</h4>
+        <h4>1. Urgent Rescue Window + Paid Validation</h4>
         <p>
-          Southeast Asia's 1st- and 2nd-generation Chinese business patriarchs are aged 65–85. Their dialect oral
-          histories, decision heuristics, and family provenance face permanent loss within 5–10 years. Demand is
-          driven by urgency, not discretionary software upgrades.
-        </p>
-      </div>
-      <div class="card teal-top">
-        <h4>2. Capital-Efficient Cash Engine</h4>
-        <p>
-          Hardware costs have been compressed to <strong>S$7,600</strong> (Mac mini M5 Pro + 5&times; 18TB Blu-ray).
-          With <strong>53.8% upfront payment</strong> covering hardware and ingestion, DeepFamily achieves
-          <strong>0-month CAC payback</strong>, <strong>56.2% net gross margin</strong> (after channel fees),
-          and breaks even at just <strong>4.33 families/year</strong>.
+          Southeast Asia's first-generation Chinese business founders are aged 60–80; their oral histories face
+          irreversible loss. Flagship contract <code>DF-HT-2026-001</code> is signed at <strong>S$100,000</strong>
+          (S$91,743 ex-9% GST; S$53,800 upfront), validating UHNW willingness to pay for sovereign, recoverable custody.
         </p>
       </div>
       <div class="card navy-top">
-        <h4>3. Protocol &amp; Compliance Moat</h4>
+        <h4>2. Three International Frameworks</h4>
         <p>
-          Where consumer AI legacy startups (e.g., <strong>HereAfter AI</strong>) collapsed due to cloud-only
-          existential trust failure, DeepFamily leads with <strong>PDPA 2012 compliance</strong>,
-          <strong>OAIS open-format anti-lock-in</strong>, and <strong>WORM Blu-ray physical sovereignty</strong>—winning
-          direct credibility with SFOs, private banks, and legal advisors.
+          Engineered against <strong>ISO 14721:2025 (OAIS)</strong>, <strong>ISO 16363:2025</strong> (Audit &amp;
+          Certification of Trustworthy Digital Repositories), and <strong>NDSA Levels of Digital Preservation 2.1
+          (2026)</strong>. We explicitly state that architectural alignment &ne; formal certification—earning
+          fiduciary credibility through rigor, not marketing claims.
+        </p>
+      </div>
+      <div class="card teal-top">
+        <h4>3. Capital Efficiency &amp; 50-Yr Cost Discipline</h4>
+        <p>
+          Our lean SG–CN architecture holds fixed burn at S$18.6k/mo (<strong>28.7 months</strong> static runway).
+          Our 1TB 50-year lifecycle model calculates <strong>S$84,579</strong> cumulative nominal preservation cost—anchoring
+          a sustainable model combining high-margin onboarding, annual fiduciary fees, and dedicated preservation reserves.
         </p>
       </div>
     </div>
 
-    <h3>Angel Round Structure (Rolling Close)</h3>
+    <h3>Angel Round Structure (SGD 500,000 · Rolling Close)</h3>
     <table>
       <thead>
         <tr>
-          <th>Tranche / Parameter</th>
-          <th>Target Allocation</th>
-          <th>Valuation Cap (Post-Money)</th>
-          <th>Instrument &amp; Strategic Purpose</th>
+          <th style="width:22%">Deal Term</th>
+          <th style="width:34%">Proposed Structure</th>
+          <th>Strategic Rationale</th>
         </tr>
       </thead>
       <tbody>
+        <tr>
+          <td><strong>Investee Entity</strong></td>
+          <td>DeepFamily Pte. Ltd. (Singapore HQ)</td>
+          <td>Full IP assignment, flagship contract novation (<code>DF-HT-2026-001</code>), and ACRA DPO registration completed prior to closing.</td>
+        </tr>
         <tr class="highlight-row">
-          <td><strong>First Close (Early Bird)</strong></td>
-          <td>S$200,000 – S$250,000</td>
-          <td><strong>S$3.5M – S$4.0M Cap</strong></td>
-          <td>SVCA CARE / YC Post-Money SAFE. Reserved for Singapore SFOs, HNW Chinese angels, and strategic channel partners closing within 4–6 weeks.</td>
+          <td><strong>Round Size &amp; Instrument</strong></td>
+          <td><strong>SGD 500,000</strong> &middot; SVCA CARE / YC Post-Money SAFE</td>
+          <td>Supports Rolling Close with minimal legal overhead (S$3k–6k) and 1–3 week execution velocity.</td>
         </tr>
         <tr>
-          <td><strong>Second Close (Standard)</strong></td>
-          <td>S$250,000 – S$300,000</td>
-          <td><strong>S$4.5M – S$5.0M Cap</strong></td>
-          <td>SVCA CARE / YC Post-Money SAFE. Unlocked upon Flagship milestone delivery and 2nd non-affiliated paying family / L1 pilot signing.</td>
+          <td><strong>Two-Tranche Valuation Cap</strong></td>
+          <td>First Close (S$200k–250k): <strong>S$3.5M–4.0M Cap</strong><br>Second Close (S$250k–300k): <strong>S$4.5M–5.0M Cap</strong></td>
+          <td>Blended round dilution capped at <strong>11.5%–13.5%</strong>. Early Bird tranche rewards anchor SFOs, fiduciary partners, and strategic angels.</td>
         </tr>
         <tr>
-          <td><strong>Total Angel Round</strong></td>
-          <td><strong>SGD 500,000</strong></td>
-          <td>Blended Dilution: ~11.5%–13.5%</td>
-          <td>Delivers <strong>28.7 months</strong> zero-new-client static runway; targets Year 2 profitability (+S$207.6k) and Year 3 ending cash of <strong>S$1.24M</strong>.</td>
+          <td><strong>Target Syndicate</strong></td>
+          <td>T1 SFOs/HNW Angels (60–70%) &middot; T2 Trust/Advisory/Integrators (20–30%) &middot; T3 AngelCentral/Grants (10–20%)</td>
+          <td>Aligns capital with our "Client-to-Shareholder" flywheel and non-conflicting B2B2C distribution channels.</td>
         </tr>
       </tbody>
     </table>
   </div>
 </section>
 
-<!-- 02. COMMERCIAL TRACTION -->
-<section class="section alt" id="traction">
+<!-- 02. 50-YEAR OBJECTIVES & 3-2-1-1-0 ARCHITECTURE -->
+<section class="section alt" id="arch50">
   <div class="wrap">
-    <div class="section-kicker">Section 02 &middot; Commercial Traction</div>
-    <h2>Validated Willingness to Pay: S$100,000 Signed Flagship &amp; High-Velocity Outreach</h2>
+    <div class="section-kicker">Section 02 &middot; 50-Year Preservation Objectives &amp; 3-2-1-1-0 Architecture</div>
+    <h2>What Must Survive to 2077? Five-Layer Acceptance &amp; Dual-Domain Custody</h2>
 
-    <div class="grid c4">
-      <div class="card">
-        <div class="metric gold">S$100,000</div>
-        <h4>Signed Flagship Contract</h4>
-        <p><code>DF-HT-2026-001</code> (S$91,743 net of 9% GST). Real commercial validation of UHNW pricing power.</p>
+    <div class="thesis">
+      <span class="thesis-tag">Core Principle: Data Recoverability &ne; Hardware Lifespan</span>
+      <p>
+        Both the Canadian Conservation Institute (CCI) and U.S. National Archives (NARA) warn that recordable
+        optical media (Blu-ray / M-DISC) are vulnerable to storage conditions and drive obsolescence;
+        <strong>manufacturer 100-year claims cannot serve as a 50-year guarantee.</strong> DeepFamily relies on
+        <strong>continuous multi-copy verification, scheduled media refresh, and cross-domain migration</strong>—never
+        a single "magic disc."
+      </p>
+    </div>
+
+    <h3>Five-Layer 2077 Acceptance Criteria (L1–L3 Technical Preservation &middot; L4–L5 Fiduciary Governance)</h3>
+    <div class="grid c5">
+      <div class="card highlight">
+        <div class="metric blue">L1</div>
+        <h4>Bit-Level Integrity</h4>
+        <p>Zero unrecoverable byte corruption by 2077; verified via full <strong>SHA-256 signed manifest chains</strong>.</p>
       </div>
-      <div class="card">
-        <div class="metric teal">53.8%</div>
-        <h4>Upfront Cash Collected</h4>
-        <p><strong>S$53,800</strong> paid upon signing—covering 100% of hardware (S$7.6k) and initial ingestion. <strong>0-mo payback.</strong></p>
+      <div class="card highlight">
+        <div class="metric blue">L2</div>
+        <h4>File Readability</h4>
+        <p>Photos, manuscripts, and audio/video remain openable after 50 years via <strong>open formats + standalone readers</strong>.</p>
       </div>
-      <div class="card">
-        <div class="metric">35%–47%</div>
-        <h4>LinkedIn Acceptance Rate</h4>
-        <p>Cold outreach to SG/MY family offices &amp; advisors in 2 weeks (vs. 15%–20% B2B SaaS benchmark).</p>
+      <div class="card highlight">
+        <div class="metric blue">L3</div>
+        <h4>Information Understandability</h4>
+        <p>People, lineage, context, and source provenance remain intelligible via <strong>metadata &amp; knowledge graph reconstruction</strong>.</p>
       </div>
-      <div class="card">
-        <div class="metric">406 / 35</div>
-        <h4>SEA Pipeline Foundation</h4>
-        <p>406 researched UHNW &amp; advisor targets across 4 SEA countries; 30–35 warm 1st-degree connections.</p>
+      <div class="card teal-top">
+        <div class="metric teal">L4</div>
+        <h4>Rights Inheritability</h4>
+        <p>Lawful heirs and trustees retrieve assets under clear authority via <strong>cross-generational RGT handover tests</strong>.</p>
+      </div>
+      <div class="card gold-top">
+        <div class="metric gold">L5</div>
+        <h4>Operational Continuity</h4>
+        <p>Even if DeepFamily ceases operations, archives remain recoverable via <strong>third-party independent takeover drills</strong>.</p>
       </div>
     </div>
 
     <div class="figure">
-      <svg viewBox="0 0 960 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Flagship Contract Cash Flow and Zero-Month Payback Timeline">
-        <rect x="0" y="0" width="960" height="220" rx="6" fill="#f8fafc"/>
-        <text x="24" y="30" font-family="Georgia, serif" font-size="14" font-weight="700" fill="#0b162a">Flagship Contract Cash-Flow Mechanics (DF-HT-2026-001 &middot; S$100,000 Gross / S$91,743 Net ex-GST)</text>
+      <svg viewBox="0 0 940 355" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Enhanced 3-2-1-1-0 and Dual Independent Administrative Domains Architecture">
+        <rect x="0" y="0" width="940" height="355" rx="8" fill="#f8fafc"/>
+        <text x="470" y="28" text-anchor="middle" font-family="Georgia, serif" font-size="15.5" font-weight="700" fill="#0b162a">DeepFamily 50-Year Enhanced 3-2-1-1-0 &amp; Dual Independent Administrative Domains</text>
+        <text x="470" y="48" text-anchor="middle" font-size="11.5" fill="#475569">&ge;3 Full Copies &middot; &ge;2 Media Types &middot; &ge;1 Offsite &middot; &ge;1 Offline Immutable &middot; 0 Unresolved Fixity Errors (Audited Recovery Target)</text>
 
-        <!-- Timeline Line -->
-        <line x1="60" y1="108" x2="900" y2="108" stroke="#cbd5e1" stroke-width="3"/>
+        <!-- Control Plane -->
+        <rect x="34" y="64" width="872" height="44" rx="6" fill="#0b162a"/>
+        <text x="470" y="90" text-anchor="middle" font-size="12.5" font-weight="700" fill="#d4af63">DeepFamily Preservation Control Plane (Asset Registry &middot; SHA-256 Signed Manifests &middot; RGT Permissions &middot; Migration Scheduler)</text>
 
-        <!-- Node 1: T+0 Signing -->
-        <circle cx="110" cy="108" r="14" fill="#0f766e"/>
-        <text x="110" y="113" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">T0</text>
-        <rect x="35" y="46" width="175" height="44" rx="5" fill="#ecfdf5" stroke="#0f766e" stroke-width="1.2"/>
-        <text x="122" y="65" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0f766e">53.8% Upfront: S$53,800</text>
-        <text x="122" y="81" text-anchor="middle" font-size="10" fill="#134e4a">Covers 100% HW + 50% Eng/Data</text>
-        <text x="110" y="142" text-anchor="middle" font-size="11" font-weight="700" fill="#0b162a">Contract Signing</text>
-        <text x="110" y="158" text-anchor="middle" font-size="10" fill="#0f766e">0-Month CAC Payback</text>
+        <!-- Copy A -->
+        <rect x="34" y="122" width="276" height="108" rx="6" fill="#ffffff" stroke="#2563eb" stroke-width="1.8"/>
+        <rect x="34" y="122" width="276" height="8" rx="4" fill="#2563eb"/>
+        <text x="172" y="150" text-anchor="middle" font-size="13" font-weight="700" fill="#1e3a8a">Copy A &middot; Admin Domain 1</text>
+        <text x="172" y="170" text-anchor="middle" font-size="11.5" font-weight="600" fill="#0f172a">Local Node (Mac mini) / Primary Cold Cloud</text>
+        <text x="172" y="191" text-anchor="middle" font-size="11" fill="#475569">Monthly manifest fixity check &middot; Auto-heal</text>
+        <text x="172" y="212" text-anchor="middle" font-size="11" font-weight="600" fill="#2563eb">Active Maintenance &amp; Fast Retrieval Tier</text>
 
-        <!-- Node 2: T+45 Freeze -->
-        <circle cx="370" cy="108" r="14" fill="#b8924a"/>
-        <text x="370" y="113" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">T45</text>
-        <rect x="280" y="46" width="180" height="44" rx="5" fill="#f6efe2" stroke="#b8924a" stroke-width="1.2"/>
-        <text x="370" y="65" text-anchor="middle" font-size="11.5" font-weight="700" fill="#8a6421">Scope Freeze &amp; CR Gate</text>
-        <text x="370" y="81" text-anchor="middle" font-size="10" fill="#5c4314">Written CRs @ S$630/manday</text>
-        <text x="370" y="142" text-anchor="middle" font-size="11" font-weight="700" fill="#0b162a">Ingestion &amp; RGT Sign-off</text>
-        <text x="370" y="158" text-anchor="middle" font-size="10" fill="#526074">15% Var-Cost Circuit Breaker</text>
+        <!-- Copy B -->
+        <rect x="332" y="122" width="276" height="108" rx="6" fill="#ffffff" stroke="#0f766e" stroke-width="1.8"/>
+        <rect x="332" y="122" width="276" height="8" rx="4" fill="#0f766e"/>
+        <text x="470" y="150" text-anchor="middle" font-size="13" font-weight="700" fill="#0f766e">Copy B &middot; Independent Domain 2</text>
+        <text x="470" y="170" text-anchor="middle" font-size="11.5" font-weight="600" fill="#0f172a">Offsite Separate Cloud Account &amp; Key Domain</text>
+        <text x="470" y="191" text-anchor="middle" font-size="11" fill="#475569">Quarterly readability &amp; manifest audit</text>
+        <text x="470" y="212" text-anchor="middle" font-size="11" font-weight="600" fill="#0f766e">Eliminates Single-Account / Corporate Failure</text>
 
-        <!-- Node 3: T+90 Acceptance -->
-        <circle cx="630" cy="108" r="14" fill="#152642"/>
-        <text x="630" y="113" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">T90</text>
-        <rect x="540" y="46" width="180" height="44" rx="5" fill="#eef2ff" stroke="#152642" stroke-width="1.2"/>
-        <text x="630" y="65" text-anchor="middle" font-size="11.5" font-weight="700" fill="#152642">Vault &amp; Blu-ray Handover</text>
-        <text x="630" y="81" text-anchor="middle" font-size="10" fill="#334155">15-Day Deemed Acceptance</text>
-        <text x="630" y="142" text-anchor="middle" font-size="11" font-weight="700" fill="#0b162a">Milestone Balance Paid</text>
-        <text x="630" y="158" text-anchor="middle" font-size="10" fill="#526074">Mac mini M5 Pro + 5&times;18TB</text>
+        <!-- Copy C -->
+        <rect x="630" y="122" width="276" height="108" rx="6" fill="#ffffff" stroke="#b8924a" stroke-width="1.8"/>
+        <rect x="630" y="122" width="276" height="8" rx="4" fill="#b8924a"/>
+        <text x="768" y="150" text-anchor="middle" font-size="13" font-weight="700" fill="#8a6421">Copy C &middot; Offline Immutable WORM</text>
+        <text x="768" y="170" text-anchor="middle" font-size="11.5" font-weight="600" fill="#0f172a">Archival Blu-ray / M-DISC (Institutional LTO)</text>
+        <text x="768" y="191" text-anchor="middle" font-size="11" fill="#475569">Annual read sampling &amp; full restore drill</text>
+        <text x="768" y="212" text-anchor="middle" font-size="11" font-weight="600" fill="#8a6421">Ransomware Shield &amp; Vendor-Exit Floor</text>
 
-        <!-- Node 4: Recurring ARR -->
-        <circle cx="855" cy="108" r="14" fill="#0f766e"/>
-        <text x="855" y="113" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">ARR</text>
-        <rect x="765" y="46" width="175" height="44" rx="5" fill="#ecfdf5" stroke="#0f766e" stroke-width="1.2"/>
-        <text x="852" y="65" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0f766e">S$9,600 / yr Recurring</text>
-        <text x="852" y="81" text-anchor="middle" font-size="10" fill="#134e4a">Ah Yi AI + Annual Blu-ray Seal</text>
-        <text x="855" y="142" text-anchor="middle" font-size="11" font-weight="700" fill="#0b162a">Compounding LTV</text>
-        <text x="855" y="158" text-anchor="middle" font-size="10" fill="#0f766e">5-Yr LTV/CAC: 6.0x–13.6x</text>
+        <!-- Independent Verification Layer -->
+        <rect x="34" y="242" width="872" height="42" rx="6" fill="#152642"/>
+        <text x="470" y="267" text-anchor="middle" font-size="12" font-weight="600" fill="#ffffff">Independent Integrity Verification Layer: Signed H0 at Ingest &middot; Periodic H1 Match &middot; Quarantine on Mismatch &middot; Heal Only from Healthy Copy &middot; Append-Only Audit Log</text>
 
-        <!-- Bottom note bar -->
-        <rect x="24" y="180" width="912" height="26" rx="4" fill="#0b162a"/>
-        <text x="480" y="197" text-anchor="middle" font-size="11" fill="#d4af63" font-weight="600">
-          Commercial Discipline: Fixed Hardware (S$7.6k) + Fixed Platform Config (S$42.8k) + Variable Ingestion Cap (S$49.6k &plusmn;15%) &middot; Zero Free Maintenance from Client #2 Onward
-        </text>
+        <!-- Escrow & Succession Layer -->
+        <rect x="34" y="294" width="872" height="46" rx="6" fill="#0f766e"/>
+        <text x="470" y="321" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">Escrow &amp; Succession Layer: Ring-Fenced Preservation Reserve &middot; Successor Custodian &middot; Split Key Escrow &middot; Open Export &middot; 3-Year Exit Drills</text>
       </svg>
       <div class="figure-caption">
-        <strong>Figure 1:</strong> Flagship contract <code>DF-HT-2026-001</code> cash-conversion architecture. Front-loaded 53.8% deposit eliminates working-capital drag and funds hardware and collection upfront.
+        <strong>Figure 1:</strong> DeepFamily Enhanced 3-2-1-1-0 Preservation Architecture. Dual independent administrative domains and key escrow ensure that a single compromised credential, billing lapse, or corporate insolvency cannot wipe out all copies simultaneously.
       </div>
+    </div>
+
+    <div class="callout blue">
+      <strong>Why Two Independent Administrative Domains Are Non-Negotiable:</strong> If all three copies sit under
+      one cloud administrator, one master key, or one company billing account, a single breach, payment failure, or
+      liquidation destroys all three copies at once. Dual domains + independent key escrow guarantee that lawful
+      heirs or a successor custodian can independently reconstruct the archive under worst-case conditions.
+    </div>
+  </div>
+</section>
+
+<!-- 03. INTEGRITY, OPEN FORMATS & AI BOUNDARIES -->
+<section class="section" id="formats">
+  <div class="wrap">
+    <div class="section-kicker">Section 03 &middot; Integrity, Open Formats &amp; Strict AI Boundaries</div>
+    <h2>Signed Fixity Chains, Open Preservation Formats &amp; AI/LLM Isolation</h2>
+
+    <div class="thesis">
+      <span class="thesis-tag">The Real 50-Year Threat: Intact Bytes, Obsolete Software</span>
+      <p>
+        Even if every byte survives to 2077, proprietary software extinction turns archives into unreadable noise.
+        Aligned with the <strong>Library of Congress 2025–2026 Recommended Formats Statement</strong> and
+        <strong>Heritage Data Protocol (HDP v1.0)</strong>, DeepFamily enforces a dual-track policy
+        (<em>Original Master + Open Preservation Format</em>) and decrees that
+        <strong>LLMs and vector databases are strictly rebuildable derivatives—never primary preservation masters.</strong>
+      </p>
     </div>
 
     <div class="grid c2">
       <div class="card">
-        <h4>Commercial Discipline Embedded in Contract</h4>
-        <ul>
-          <li><strong>Decoupled Pricing:</strong> Hardware (S$7,600) and software configuration (S$42,800) are fixed; labor-intensive ingestion (S$49,600) is billed on actuals with a <strong>15% circuit breaker</strong>.</li>
-          <li><strong>Anti-Scope-Creep Guardrails:</strong> Formal scope freeze at T+45; verbal/WhatsApp requests excluded; written Change Requests priced at <strong>S$630/manday</strong>.</li>
-          <li><strong>Deemed Acceptance:</strong> 15 business days silent deemed acceptance eliminates subjective "emotional withholding" of final payments.</li>
-        </ul>
+        <h4>Open Format Preservation Policy (Anti-Obsolescence)</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Asset Category</th>
+              <th>Primary Master &amp; Open Preservation Format</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Photographs &amp; Scans</strong></td>
+              <td>Original raw capture + lossless <strong>TIFF</strong> preservation master</td>
+            </tr>
+            <tr>
+              <td><strong>Manuscripts &amp; Clan Books</strong></td>
+              <td>Original scan + <strong>PDF/A</strong> archival standard + TIFF master where needed</td>
+            </tr>
+            <tr>
+              <td><strong>Elder Oral Histories</strong></td>
+              <td>Original recording + uncompressed <strong>WAV / BWF</strong> broadcast master</td>
+            </tr>
+            <tr>
+              <td><strong>Video Interviews</strong></td>
+              <td>Original camera master + preservation mezzanine + open playable copy</td>
+            </tr>
+            <tr>
+              <td><strong>Lineage, Events &amp; Rights</strong></td>
+              <td><strong>UTF-8 JSON / CSV + GEDCOM</strong> + PDF/A consent forms + media manifest</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
       <div class="card">
-        <h4>Active SEA Pipeline &amp; Penang Clan Anchor</h4>
+        <h4>Cryptographic Chains &amp; AI/LLM Non-Mutation Rules</h4>
         <ul>
-          <li><strong>406-Target Curated SEA Database:</strong> 202 verified profiles (25 named UHNW families + 176 ecosystem advisors across SG, MY, ID, TH) + 204 secondary targets.</li>
-          <li><strong>30–35 Warm 1st-Degree Connections:</strong> Including SFO principals, TEP trust directors, FBN Asia succession advisors, and 3rd-gen Singapore business heirs.</li>
-          <li><strong>Penang Tan Clan (Eng Chuan Tong Tan Kongsi):</strong> Active feasibility &amp; PoC advancement with one of Penang's five historic Hokkien clans (200+ years heritage) as our Malaysian trust anchor.</li>
+          <li><strong>Hash + Digital Signature + Independent Log:</strong> Storing raw SHA-256 hashes alone fails if an attacker alters both data and manifest. Manifests are digitally signed and written to an append-only log in an independent domain, supporting smooth cryptographic upgrades while retaining legacy proof chains.</li>
+          <li><strong>Beyond GEDCOM:</strong> Because GEDCOM loses nuanced Chinese clan semantics and custom fields, every export bundles structured JSON/CSV, schema documentation, and an explicit media-binding manifest.</li>
+          <li><strong>AI/LLM as Rebuildable Derivative:</strong> In 2057 or 2077, superior models can re-index embeddings or re-render avatars from pristine masters. Vector stores must never replace primary text, audio, and provenance records.</li>
+          <li><strong>Four-State Fact Governance:</strong> Conflicting oral histories retain explicit <em>Confirmed / Pending / Family Testimony / AI Inferred</em> states (72-point confidence threshold). <strong>AI never adjudicates historical truth for a family.</strong></li>
         </ul>
       </div>
     </div>
-  </div>
-</section>
 
-<!-- 03. MARKET & GTM FUNNEL -->
-<section class="section" id="gtm">
-  <div class="wrap">
-    <div class="section-kicker">Section 03 &middot; Market Opportunity &amp; Go-To-Market</div>
-    <h2>High-Trust B2B2C Distribution &amp; Two-Stage L1 &rarr; L2 Conversion Funnel</h2>
-
-    <p>
-      Singapore hosts over <strong>1,650+ Single Family Offices (MAS-awarded)</strong> and serves as the wealth
-      governance hub for Southeast Asia's Chinese diaspora. UHNW families rarely buy legacy services from cold
-      ads—they buy through <strong>peer endorsement</strong> and <strong>trusted non-financial advisors</strong>.
-      To avoid long 9–12 month cold sales cycles on S$100k tickets, DeepFamily deploys a disciplined two-stage
-      commercial funnel backed by zero-upfront-cost B2B2C trust channels.
-    </p>
-
-    <div class="figure">
-      <svg viewBox="0 0 960 290" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Two-Stage L1 to L2 GTM Funnel and B2B2C Trust Channels">
-        <rect x="0" y="0" width="960" height="290" rx="6" fill="#f8fafc"/>
-        <text x="24" y="28" font-family="Georgia, serif" font-size="14" font-weight="700" fill="#0b162a">Two-Stage L1 &rarr; L2 Conversion Engine &amp; B2B2C Trust Distribution</text>
-
-        <!-- Left Column: 3 Channels -->
-        <rect x="24" y="48" width="250" height="64" rx="6" fill="#ffffff" stroke="#0b162a" stroke-width="1.3"/>
-        <text x="38" y="68" font-size="12" font-weight="700" fill="#0b162a">Channel A: Peer &amp; SFO Circle</text>
-        <text x="38" y="85" font-size="10.5" fill="#526074">Founding Partner referrals &middot; Private salons</text>
-        <text x="38" y="101" font-size="10" font-weight="700" fill="#0f766e">CAC: S$2k–5k &middot; Cycle: 2–4 mos</text>
-
-        <rect x="24" y="124" width="250" height="64" rx="6" fill="#ffffff" stroke="#b8924a" stroke-width="1.3"/>
-        <text x="38" y="144" font-size="12" font-weight="700" fill="#8a6421">Channel B: B2B2C Advisors</text>
-        <text x="38" y="161" font-size="10.5" fill="#526074">Succession advisors, TEPs, law firms, MFOs</text>
-        <text x="38" y="177" font-size="10" font-weight="700" fill="#8a6421">10–15% Referral / Co-Delivery / VIP Concierge</text>
-
-        <rect x="24" y="200" width="250" height="64" rx="6" fill="#ffffff" stroke="#0f766e" stroke-width="1.3"/>
-        <text x="38" y="220" font-size="12" font-weight="700" fill="#0f766e">Channel C: Clan Associations</text>
-        <text x="38" y="237" font-size="10.5" fill="#526074">Dual-Layer: Public Clan Hall (Penang Tan)</text>
-        <text x="38" y="253" font-size="10" font-weight="700" fill="#0f766e">&rarr; Private Distinguished Family Vaults</text>
-
-        <!-- Arrows to L1 -->
-        <line x1="274" y1="80" x2="328" y2="132" stroke="#94a3b8" stroke-width="2"/>
-        <line x1="274" y1="156" x2="328" y2="156" stroke="#94a3b8" stroke-width="2"/>
-        <line x1="274" y1="232" x2="328" y2="180" stroke="#94a3b8" stroke-width="2"/>
-
-        <!-- Middle: L1 Entry Pilot -->
-        <rect x="330" y="64" width="250" height="184" rx="8" fill="#f6efe2" stroke="#b8924a" stroke-width="2"/>
-        <rect x="330" y="64" width="250" height="32" rx="8" fill="#b8924a"/>
-        <text x="455" y="85" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0b162a">STAGE L1: ENTRY PILOT</text>
-        <text x="455" y="122" text-anchor="middle" font-size="22" font-weight="700" fill="#0b162a">S$15k – S$25k</text>
-        <text x="455" y="140" text-anchor="middle" font-size="11" font-weight="600" fill="#8a6421">6–8 Weeks Rapid Delivery</text>
-        <text x="348" y="168" font-size="11" fill="#334155">&bull; 1 Patriarch / Matriarch oral history</text>
-        <text x="348" y="186" font-size="11" fill="#334155">&bull; 300–500 core family assets digitized</text>
-        <text x="348" y="204" font-size="11" fill="#334155">&bull; Interactive timeline &amp; HDP audit</text>
-        <text x="348" y="226" font-size="10.5" font-weight="700" fill="#0f766e">Goal: Break trust ice &amp; validate RGT</text>
-
-        <!-- Conversion Arrow -->
-        <line x1="580" y1="156" x2="652" y2="156" stroke="#0f766e" stroke-width="3"/>
-        <polygon points="652,149 666,156 652,163" fill="#0f766e"/>
-        <rect x="586" y="114" width="70" height="32" rx="4" fill="#ecfdf5" stroke="#0f766e"/>
-        <text x="621" y="128" text-anchor="middle" font-size="11" font-weight="700" fill="#0f766e">50–65%</text>
-        <text x="621" y="141" text-anchor="middle" font-size="9.5" fill="#134e4a">Upgrade</text>
-
-        <!-- Right: L2 Flagship Vault -->
-        <rect x="668" y="54" width="268" height="204" rx="8" fill="#0b162a" stroke="#d4af63" stroke-width="2"/>
-        <rect x="668" y="54" width="268" height="32" rx="8" fill="#152642"/>
-        <text x="802" y="75" text-anchor="middle" font-size="12.5" font-weight="700" fill="#d4af63">STAGE L2: FLAGSHIP VAULT</text>
-        <text x="802" y="114" text-anchor="middle" font-size="22" font-weight="700" fill="#ffffff">S$80k – S$100k</text>
-        <text x="802" y="132" text-anchor="middle" font-size="11" font-weight="600" fill="#d4af63">+ S$9,600 / yr Recurring ARR</text>
-        <text x="686" y="160" font-size="11" fill="#e2e8f0">&bull; 3–4 generations, 30–50+ members</text>
-        <text x="686" y="178" font-size="11" fill="#e2e8f0">&bull; 1,000–2,000+ governed assets (HDP)</text>
-        <text x="686" y="196" font-size="11" fill="#e2e8f0">&bull; Mac mini M5 Pro + 5&times;18TB Blu-ray</text>
-        <text x="686" y="214" font-size="11" fill="#e2e8f0">&bull; "Ah Yi" WhatsApp/WeChat AI Steward</text>
-        <text x="686" y="236" font-size="10.5" font-weight="700" fill="#34d399">Net Gross Margin: 56.2% (63.7% Direct)</text>
-      </svg>
-      <div class="figure-caption">
-        <strong>Figure 2:</strong> Two-stage L1&rarr;L2 GTM funnel. Eliminates high-friction cold pitching by onboarding skeptical families via a 6–8 week L1 pilot before upgrading to full sovereign custody.
-      </div>
-    </div>
-
-    <h3>Compliant B2B2C Channel Incentive Matrix</h3>
+    <h3>Routine Verification &amp; Recovery SLA Cadence</h3>
     <table>
       <thead>
         <tr>
-          <th>Channel Model</th>
-          <th>Target Partner Segment</th>
-          <th>Commercial &amp; Fee Structure</th>
-          <th>MAS / Governance Guardrail</th>
+          <th style="width:24%">Verification Scope</th>
+          <th style="width:42%">Scheduled Frequency &amp; Action</th>
+          <th>Audit Target</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td><strong>Model A: Pure Referral</strong></td>
-          <td>Independent family business advisors, TEP trust specialists, chamber introducers</td>
-          <td><strong>10%–15%</strong> first-order fee (paid pro-rata on cash receipt) + <strong>5%</strong> ARR share (Y1–Y3)</td>
-          <td>Written referral agreement; transparent disclosure; zero upfront retainer burn.</td>
+          <td><strong>New Asset Ingest</strong></td>
+          <td>Generate signed manifest H<sub>0</sub>; write to Copy A/B/C; run immediate full read-back verification</td>
+          <td>100% of assets carry hash, permanent ID, provenance &amp; RGT status</td>
         </tr>
         <tr>
-          <td><strong>Model B: Co-Delivery</strong></td>
-          <td>Family governance consultancies, law firms, <strong>Infologic</strong>, boutique studios</td>
-          <td>Transparent module split: Partner bills 25%–35% (advisory/legal/local capture); DeepFamily bills <strong>65%–75%</strong> (HDP, AI, Vault)</td>
-          <td>Clear L1/L2/L3 acceptance boundaries; zero hidden kickbacks; joint enterprise credibility.</td>
+          <td><strong>Online &amp; Offsite Domains</strong></td>
+          <td><strong>Monthly</strong> fixity scan on Copy A; <strong>Quarterly</strong> readability &amp; manifest check on Copy B</td>
+          <td>Instant quarantine on anomaly; auto-heal from healthy copy (0 unresolved errors)</td>
         </tr>
         <tr>
-          <td><strong>Model C: Prestige Concierge</strong></td>
-          <td>MAS-regulated Private Banks, licensed MFOs, FBN Asia, Clan Associations</td>
-          <td><strong>Zero cash commission</strong>. Partner offers exclusive VIP concierge pricing or co-hosted Next-Gen heritage workshops.</td>
-          <td>100% compliant with MAS conflict-of-interest rules; clan public assets strictly isolated from private family vaults.</td>
+          <td><strong>Offline WORM &amp; Full Restore</strong></td>
+          <td><strong>Annual</strong> offline media read verification + <strong>1&times;/yr</strong> full cross-domain family restore drill</td>
+          <td>Early media-aging detection triggering proactive refresh before failure</td>
+        </tr>
+        <tr>
+          <td><strong>Exit &amp; Key Succession</strong></td>
+          <td><strong>Annual</strong> key recovery drill; <strong>&ge;1&times; every 3 years</strong> independent third-party exit export verification</td>
+          <td>Verified full archive reconstruction without DeepFamily proprietary software</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- 04. 2027-2077 MIGRATION ROADMAP & ANTI-DORMANCY -->
+<section class="section alt" id="roadmap50">
+  <div class="wrap">
+    <div class="section-kicker">Section 04 &middot; 2027–2077 Lifecycle Migration &amp; Anti-Dormancy</div>
+    <h2>Fifty-Year Dynamic Migration Roadmap &amp; Living Family Retention</h2>
+
+    <div class="thesis">
+      <span class="thesis-tag">Operational Cadence: Benchmarked to UK National Archives 3–5 Year Storage Check Rhythm</span>
+      <p>
+        50-year custody is continuous multi-generational operations, not a one-time disc burn in 2027.
+        On the front end, our <strong>WhatsApp/WeChat-native "Ah Yi" AI Steward</strong> captures live family
+        milestones and drives annual archival sealing; on the back end, <strong>3–5 year hardware refreshes,
+        10-year architecture reviews, and 20-year independent takeover drills</strong> uphold the 2077 promise.
+      </p>
+    </div>
+
+    <div class="figure">
+      <svg viewBox="0 0 940 168" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="2027 to 2077 Fifty-Year Migration and Takeover Timeline">
+        <rect x="0" y="0" width="940" height="168" rx="8" fill="#ffffff"/>
+        <text x="24" y="26" font-family="Georgia, serif" font-size="13.5" font-weight="700" fill="#0b162a">2027–2077 Fifty-Year Migration, Audit &amp; Independent Takeover Cadence</text>
+        <line x1="56" y1="86" x2="884" y2="86" stroke="#cbd5e1" stroke-width="3"/>
+
+        <!-- 7 Milestone Nodes -->
+        <circle cx="72" cy="86" r="11" fill="#0b162a"/>
+        <text x="72" y="64" text-anchor="middle" font-size="11" font-weight="700" fill="#0b162a">2027</text>
+        <text x="72" y="114" text-anchor="middle" font-size="10" font-weight="700" fill="#0b162a">Baseline</text>
+        <text x="72" y="128" text-anchor="middle" font-size="9.5" fill="#475569">3-Copy + H0</text>
+        <text x="72" y="142" text-anchor="middle" font-size="9.5" fill="#475569">First Restore</text>
+
+        <circle cx="204" cy="86" r="10" fill="#2563eb"/>
+        <text x="204" y="64" text-anchor="middle" font-size="11" font-weight="700" fill="#1e3a8a">2030–32</text>
+        <text x="204" y="114" text-anchor="middle" font-size="10" font-weight="700" fill="#1e3a8a">1st Refresh</text>
+        <text x="204" y="128" text-anchor="middle" font-size="9.5" fill="#475569">Media &amp; Drive</text>
+        <text x="204" y="142" text-anchor="middle" font-size="9.5" fill="#475569">Replacement</text>
+
+        <circle cx="336" cy="86" r="10" fill="#2563eb"/>
+        <text x="336" y="64" text-anchor="middle" font-size="11" font-weight="700" fill="#1e3a8a">2035–37</text>
+        <text x="336" y="114" text-anchor="middle" font-size="10" font-weight="700" fill="#1e3a8a">Arch Update</text>
+        <text x="336" y="128" text-anchor="middle" font-size="9.5" fill="#475569">Format &amp; Crypto</text>
+        <text x="336" y="142" text-anchor="middle" font-size="9.5" fill="#475569">Batch Migration</text>
+
+        <circle cx="470" cy="86" r="12" fill="#0f766e"/>
+        <text x="470" y="64" text-anchor="middle" font-size="11" font-weight="700" fill="#0f766e">2047 (Yr 20)</text>
+        <text x="470" y="114" text-anchor="middle" font-size="10" font-weight="700" fill="#0f766e">Takeover Drill</text>
+        <text x="470" y="128" text-anchor="middle" font-size="9.5" fill="#475569">3rd-Party Full</text>
+        <text x="470" y="142" text-anchor="middle" font-size="9.5" fill="#475569">Reconstruction</text>
+
+        <circle cx="604" cy="86" r="10" fill="#b8924a"/>
+        <text x="604" y="64" text-anchor="middle" font-size="11" font-weight="700" fill="#8a6421">2057 (Yr 30)</text>
+        <text x="604" y="114" text-anchor="middle" font-size="10" font-weight="700" fill="#8a6421">30-Yr Review</text>
+        <text x="604" y="128" text-anchor="middle" font-size="9.5" fill="#475569">Heir Handover &amp;</text>
+        <text x="604" y="142" text-anchor="middle" font-size="9.5" fill="#475569">Reserve Audit</text>
+
+        <circle cx="736" cy="86" r="10" fill="#152642"/>
+        <text x="736" y="64" text-anchor="middle" font-size="11" font-weight="700" fill="#0b162a">2067 (Yr 40)</text>
+        <text x="736" y="114" text-anchor="middle" font-size="10" font-weight="700" fill="#0b162a">40-Yr Migrate</text>
+        <text x="736" y="128" text-anchor="middle" font-size="9.5" fill="#475569">Post-Quantum &amp;</text>
+        <text x="736" y="142" text-anchor="middle" font-size="9.5" fill="#475569">3rd-Gen Access</text>
+
+        <circle cx="868" cy="86" r="12" fill="#b8924a" stroke="#0b162a" stroke-width="2"/>
+        <text x="868" y="64" text-anchor="middle" font-size="11" font-weight="700" fill="#0b162a">2077 (Yr 50)</text>
+        <text x="868" y="114" text-anchor="middle" font-size="10" font-weight="700" fill="#8a6421">Acceptance</text>
+        <text x="868" y="128" text-anchor="middle" font-size="9.5" fill="#475569">Independent</text>
+        <text x="868" y="142" text-anchor="middle" font-size="9.5" fill="#475569">Next-50 Handover</text>
+      </svg>
+      <div class="figure-caption">
+        <strong>Figure 2:</strong> 2027–2077 fifty-year migration roadmap. By 2067, the archive carries zero dependency on any 2027 hardware interface or commercial software license.
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th style="width:18%">Milestone</th>
+          <th style="width:48%">Core Engineering &amp; Fiduciary Actions</th>
+          <th>Mandatory Audit Evidence</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="highlight-row">
+          <td><strong>2027 &middot; Baseline</strong></td>
+          <td>Ingest initial family archives in open formats; establish 3 independent copies, dual domains, SHA-256 signed manifests, and baseline restore report.</td>
+          <td>100% of originals locatable, readable, and independently verifiable.</td>
+        </tr>
+        <tr>
+          <td><strong>2030–2032 &middot; Refresh</strong></td>
+          <td>Assess cloud cold tier, local node, and optical drive lifespans; retire aging hardware and execute first copy-media refresh.</td>
+          <td>100% hash parity across old/new copies; cross-domain restore verified.</td>
+        </tr>
+        <tr>
+          <td><strong>2035–2037 &middot; Arch Update</strong></td>
+          <td>Audit format compatibility, cryptographic algorithms, key custody, and escrow agents; execute batch format migration where required.</td>
+          <td>Zero loss of kinship semantics or provenance evidence chains post-migration.</td>
+        </tr>
+        <tr>
+          <td><strong>2047 &middot; 20-Yr Takeover</strong></td>
+          <td>Commission a non-operating third-party custodian to rebuild sample family archives using only standard export packages and escrowed keys.</td>
+          <td>Proven 100% independent reconstruction without DeepFamily software.</td>
+        </tr>
+        <tr>
+          <td><strong>2057 &middot; 30-Yr Review</strong></td>
+          <td>Third-party audit of media health, format longevity, heir rights succession, and preservation reserve solvency; adjust fees/top-ups if needed.</td>
+          <td>Verified generational handover and next-20-year funding adequacy.</td>
+        </tr>
+        <tr>
+          <td><strong>2067 &middot; 40-Yr Migration</strong></td>
+          <td>Execute fresh platform recovery, post-quantum/next-gen cryptographic re-signing, and 3rd-generation heir access verification.</td>
+          <td>Zero dependency on 2027 hardware interfaces or proprietary licenses.</td>
+        </tr>
+        <tr class="highlight-row">
+          <td><strong>2077 &middot; 50-Yr Acceptance</strong></td>
+          <td>Independent audit of masters, open copies, metadata, provenance, and rights registers; formal handover into the next 50-year cycle.</td>
+          <td>Complete, authentic, readable family digital heritage spanning half a century.</td>
         </tr>
       </tbody>
     </table>
 
-    <div class="callout">
-      <strong>Geographic Discipline (M1–M6):</strong> <strong>60% Singapore</strong> (SFOs, Founding Partner circle, Infologic ecosystem) + <strong>35% Malaysia</strong> (Penang Tan Clan &amp; KL advisors) + <strong>5% Indonesia/Thailand</strong> (relationship nurture only—zero travel burn until Y2).
+    <div class="grid c2">
+      <div class="card">
+        <h4>Delivery Factory: 90 Days &rarr; 30–45 Days (-70% Effort)</h4>
+        <p>
+          To escape the manual bottleneck of our flagship (90 days, 5 roles, 9 offline Excel sheets), our S$195k R&amp;D
+          budget deploys an <strong>online HDP workspace, e-Sign RGT gate, dialect hotword ASR, and one-click OAIS
+          packager</strong> (with zero-dependency offline HTML viewer)—cutting backend effort by <strong>70%</strong>
+          and locking in <strong>63.7%</strong> standard gross margins.
+        </p>
+      </div>
+      <div class="card">
+        <h4>"Ah Yi" in WhatsApp / WeChat: Solving Post-Delivery Hibernation</h4>
+        <p>
+          Elders never download a standalone app. "Ah Yi" lives natively inside Singapore families' WhatsApp/WeChat
+          groups—prompting voice stories on anniversaries while capturing live contemporary milestones (newborns,
+          graduations, CNY). Each year-end, it compiles a <em>Living Family Chronicle</em> and runs annual archival
+          sealing, anchoring high-stickiness <strong>S$9,600/yr ARR</strong>.
+        </p>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- 04. HDP v1.0 PROTOCOL MOAT -->
-<section class="section alt" id="hdp">
+<!-- 05. WU FAMILY 90-DAY POC -->
+<section class="section" id="poc90">
   <div class="wrap">
-    <div class="section-kicker">Section 04 &middot; Core Technology Moat</div>
-    <h2>Heritage Data Protocol (HDP v1.0): From "AI Album" to Institutional Standard</h2>
+    <div class="section-kicker">Section 05 &middot; 90-Day Preservation Proof of Concept</div>
+    <h2>Wu Family 90-Day LLM-Independent Preservation PoC (Hard Diligence Proof)</h2>
 
-    <p>
-      Traditional genealogy tools store flat trees; generic AI wrappers hallucinate family history.
-      Our proprietary <strong>DeepFamily Heritage Data Protocol v1.0 (<code>DF-HDP-STD-001</code>)</strong> is a
-      five-layer archival and governance architecture benchmarked against international museum/archival standards
-      (<strong>ISO 14721:2025 OAIS</strong>, <strong>W3C PROV-O</strong>, <strong>PREMIS 3.0</strong>,
-      <strong>IIIF 3.0</strong>) and Singapore's <strong>PDPA 2012</strong>.
-    </p>
+    <div class="thesis">
+      <span class="thesis-tag">Why Run an LLM-Independent Preservation PoC First?</span>
+      <p>
+        A brochure claiming "100-year Blu-ray lifespan" will never convince a Singapore SFO or institutional trustee.
+        Executing <strong>6 destructive &amp; takeover tests within 90 days</strong> on the Wu Family's Volume 5
+        genealogy and consented media—and publishing <strong>4 investor-grade engineering artifacts</strong>—delivers
+        irrefutable proof of fiduciary capability ahead of our Second Close and Pre-A.
+      </p>
+    </div>
 
-    <div class="figure">
-      <svg viewBox="0 0 960 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="HDP v1.0 Five-Layer Sovereign Architecture">
-        <rect x="0" y="0" width="960" height="320" rx="6" fill="#ffffff"/>
-        <text x="24" y="28" font-family="Georgia, serif" font-size="14" font-weight="700" fill="#0b162a">DeepFamily Heritage Data Protocol v1.0 (DF-HDP-STD-001) — Five-Layer Governance Stack</text>
-
-        <!-- Layer 5 (Top) -->
-        <rect x="24" y="46" width="912" height="46" rx="6" fill="#0b162a"/>
-        <text x="42" y="66" font-size="12.5" font-weight="700" fill="#d4af63">LAYER 5 &middot; LONG-TERM PRESERVATION &amp; ANTI-LOCK-IN</text>
-        <text x="42" y="83" font-size="11" fill="#e2e8f0">ISO 14721:2025 (OAIS) &middot; 3-2-1 Custody (Blu-ray + Local + Encrypted Backup) &middot; Open Export (JSON-LD / RDF / CSV / PDF-A) &middot; Offline HTML Viewer</text>
-
-        <!-- Layer 4 -->
-        <rect x="24" y="100" width="912" height="46" rx="6" fill="#152642"/>
-        <text x="42" y="120" font-size="12.5" font-weight="700" fill="#d4af63">LAYER 4 &middot; PRIVACY COMPLIANCE &amp; GRANULAR RIGHTS REGISTER (RGT001)</text>
-        <text x="42" y="137" font-size="11" fill="#e2e8f0">11 Separated Consent Purposes (Voice Clone, Digital Twin, AI Training, Cross-Branch, etc.) &middot; 3 Visibility Tiers &middot; Server-Side RBAC Enforcement</text>
-
-        <!-- Layer 3 -->
-        <rect x="24" y="154" width="912" height="46" rx="6" fill="#0f766e"/>
-        <text x="42" y="174" font-size="12.5" font-weight="700" fill="#ffffff">LAYER 3 &middot; FOUR-STATE FACT GOVERNANCE &amp; AI HALLUCINATION GUARDRAILS</text>
-        <text x="42" y="191" font-size="11" fill="#d1fae5">4 Fact States (Confirmed / Pending / Family Testimony / AI Inferred) &middot; 72-Point AI Confidence Routing &middot; Rules-First Computation &middot; Mandatory Citations</text>
-
-        <!-- Layer 2 -->
-        <rect x="24" y="208" width="912" height="46" rx="6" fill="#1e3a5f"/>
-        <text x="42" y="228" font-size="12.5" font-weight="700" fill="#d4af63">LAYER 2 &middot; PROVENANCE &amp; IMMUTABLE EVIDENCE CHAIN</text>
-        <text x="42" y="245" font-size="11" fill="#e2e8f0">W3C PROV-O &middot; PREMIS 3.0 &middot; IIIF 3.0 &middot; 3-Copy Isolation (Master / Preservation / Access) &middot; SHA-256 Ingestion Hashing &middot; Never Overwrite Originals</text>
-
-        <!-- Layer 1 (Base) -->
-        <rect x="24" y="262" width="912" height="46" rx="6" fill="#f6efe2" stroke="#b8924a" stroke-width="1.5"/>
-        <text x="42" y="282" font-size="12.5" font-weight="700" fill="#0b162a">LAYER 1 &middot; UNIFIED ONTOLOGY &amp; CHINESE CLAN SEMANTICS</text>
-        <text x="42" y="299" font-size="11" fill="#5c4314">10 Permanent Entity IDs (P/X/E/M/L/O/F/INT/RGT/DF-DOC) &middot; 3-Layer Rare Char/IVS Separation &middot; Fuzzy/Lunar Date Precision &middot; Adoption &amp; Multi-Branch Support</text>
-      </svg>
-      <div class="figure-caption">
-        <strong>Figure 3:</strong> HDP v1.0 five-layer architecture. Angel proceeds (39% R&amp;D allocation) harden this specification into automated server-side schema enforcement, RGT gates, and one-click OAIS archival packaging.
+    <div class="grid c2">
+      <div class="card">
+        <h4>Six Mandatory Destructive &amp; Recovery Tests (90 Days)</h4>
+        <table>
+          <thead>
+            <tr>
+              <th style="width:36%">PoC Test</th>
+              <th>Pass / Fail Engineering Gate</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>1. Raw Archive Ingest</strong></td>
+              <td>100% assigned SHA-256 hash, provenance record, permanent ID &amp; uncertainty state flags</td>
+            </tr>
+            <tr>
+              <td><strong>2. Single-Point Failure</strong></td>
+              <td>Deliberately delete/isolate 1 full copy; verify complete recovery from healthy admin domain</td>
+            </tr>
+            <tr>
+              <td><strong>3. Bit-Rot / Tamper Test</strong></td>
+              <td>Mutate test file bits; verify accurate alert, quarantine &amp; zero corruption propagation</td>
+            </tr>
+            <tr>
+              <td><strong>4. Cloud-Off Offline Read</strong></td>
+              <td>Sever all cloud services; verify full browsing via offline copy + standalone reader</td>
+            </tr>
+            <tr>
+              <td><strong>5. 3rd-Party Takeover</strong></td>
+              <td>Bypass DeepFamily backend entirely; rebuild archive via export package + escrowed keys</td>
+            </tr>
+            <tr>
+              <td><strong>6. Knowledge Rebuild</strong></td>
+              <td>Reconstruct people, kinship graph, historical events &amp; original source provenance intact</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card highlight">
+        <h4>Four Investor-Grade Artifacts Delivered at Day 90</h4>
+        <ul>
+          <li><strong>1. Preservation Architecture Specification:</strong> Full multi-copy topology, dual administrative domain isolation, and end-to-end data flow blueprint.</li>
+          <li><strong>2. Preservation Evidence Report:</strong> Signed execution logs proving fixity checks, fault isolation, tamper detection, and cross-domain recovery.</li>
+          <li><strong>3. 50-Year Lifecycle Cost Model:</strong> Actuarial 50-year preservation liability ledger calibrated to real Wu Family per-TB storage and vendor quotes.</li>
+          <li><strong>4. Exit &amp; Succession Runbook:</strong> Step-by-step operational manual for key handover, heir verification, and third-party recovery if DeepFamily ceases operations.</li>
+        </ul>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- 06. MARKET, GTM & COMPETITION -->
+<section class="section alt" id="market">
+  <div class="wrap">
+    <div class="section-kicker">Section 06 &middot; Market, L1&rarr;L2 GTM &amp; Global Competition</div>
+    <h2>High-Trust B2B2C Distribution &amp; The HereAfter AI Industry Wake-Up Call</h2>
 
     <div class="grid c3">
       <div class="card">
-        <h4>Anti-Hallucination Trust Engine</h4>
+        <h4>Apex UHNW Beachhead</h4>
         <p>
-          Every family fact carries an explicit epistemic status. AI extractions below the <strong>72-point
-          confidence threshold</strong> are automatically routed to human review. Deterministic kinship math runs
-          in server-side code—never by LLM guesswork—eliminating "fabricated ancestors."
+          Targeting <strong>1,000–2,000</strong> UHNW Chinese families in Singapore and <strong>10,000–20,000</strong>
+          across Southeast Asia. Built a <strong>406-contact SEA database</strong> with <strong>35%–47%</strong>
+          LinkedIn cold-acceptance in 2 weeks (30+ warm SFO/TEP connections), plus joint advancement with
+          <strong>Infologic</strong> on the Penang Tan Clan dual-layer model.
         </p>
       </div>
       <div class="card">
-        <h4>Chinese &amp; SEA Dialect Semantics</h4>
+        <h4>Two-Stage L1 &rarr; L2 Funnel</h4>
         <p>
-          Handles cross-script identity resolution (e.g., Traditional Chinese clan registers vs. Hokkien/Teochew
-          romanizations like <em>Tan/Lim/Teo</em> vs. colonial land deeds), rare CJK/IVS characters,
-          lunar/reign-era dates (<code>date_raw + date_precision</code>), and complex adoption/dual-heir lineages.
+          New non-affiliated families enter via a 6–8 week <strong>L1 Entry Pilot (S$15k–25k)</strong> to break trust
+          friction and validate RGT governance, upgrading smoothly to the <strong>L2 Flagship Vault (S$80k–100k,
+          30–45 day delivery)</strong> at an expected <strong>50%–65%</strong> conversion rate.
         </p>
       </div>
       <div class="card">
-        <h4>Anti-Lock-In = Ultimate Trust</h4>
+        <h4>MAS-Compliant B2B2C Channels</h4>
         <p>
-          UHNW patriarchs fear vendor bankruptcy. By guaranteeing open-standard exports plus a
-          <strong>zero-dependency offline HTML browser</strong> burned onto every archival Blu-ray, families
-          know their heritage remains readable 50+ years from now—even without DeepFamily's servers.
+          <strong>Succession Advisors &amp; Independent Trusts:</strong> 10%–15% referral or 25%–35% transparent
+          co-delivery split. <strong>Licensed Private Banks / MFOs:</strong> Zero kickback (MAS compliant); framed as
+          VIP concierge. <strong>Clan Associations:</strong> Public digital hall for prestige; private vaults for monetization.
         </p>
       </div>
     </div>
-  </div>
-</section>
-
-<!-- 05. SINGAPORE PDPA COMPLIANCE MOAT -->
-<section class="section" id="pdpa">
-  <div class="wrap">
-    <div class="section-kicker">Section 05 &middot; Regulatory &amp; Legal Moat</div>
-    <h2>Institutional-Grade Singapore PDPA Compliance Built Into Code</h2>
-
-    <p>
-      Private family archives sit at the intersection of Singapore's <strong>PDPA 2012 (2020 Amendment)</strong>,
-      <strong>Copyright Act 2021</strong> (including Part 7 Moral Rights), <strong>Defamation Act 1957</strong>,
-      and <strong>Computer Misuse Act 1993</strong>. DeepFamily's legal-engineering architecture turns regulatory
-      friction into a decisive entry barrier against generic consumer apps and offshore vendors.
-    </p>
-
-    <div class="figure">
-      <svg viewBox="0 0 960 205" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Four-Step WORM Blu-ray Withdrawal and Crypto-Shredding Compliance Loop">
-        <rect x="0" y="0" width="960" height="205" rx="6" fill="#f8fafc"/>
-        <text x="24" y="28" font-family="Georgia, serif" font-size="14" font-weight="700" fill="#0b162a">Solving the Core Legal Paradox: PDPA Right of Withdrawal (s.16) vs. Immutable WORM Blu-ray</text>
-
-        <!-- Step 1 -->
-        <rect x="24" y="50" width="205" height="106" rx="6" fill="#ffffff" stroke="#0b162a" stroke-width="1.5"/>
-        <rect x="24" y="50" width="205" height="26" rx="6" fill="#0b162a"/>
-        <text x="126" y="67" text-anchor="middle" font-size="11" font-weight="700" fill="#d4af63">STEP 1 &middot; RESTRICTION LIST</text>
-        <text x="36" y="96" font-size="11" fill="#334155">Living subject withdraws</text>
-        <text x="36" y="112" font-size="11" fill="#334155">consent &rarr; Instant logging in</text>
-        <text x="36" y="128" font-size="11" font-weight="700" fill="#0b162a">Restriction Register</text>
-        <text x="36" y="144" font-size="10" fill="#0f766e">&amp; live AI/UI/voice takedown</text>
-
-        <line x1="229" y1="103" x2="256" y2="103" stroke="#b8924a" stroke-width="2.5"/>
-        <polygon points="256,97 266,103 256,109" fill="#b8924a"/>
-
-        <!-- Step 2 -->
-        <rect x="268" y="50" width="205" height="106" rx="6" fill="#ffffff" stroke="#b8924a" stroke-width="1.5"/>
-        <rect x="268" y="50" width="205" height="26" rx="6" fill="#b8924a"/>
-        <text x="370" y="67" text-anchor="middle" font-size="11" font-weight="700" fill="#0b162a">STEP 2 &middot; PHYSICAL ISOLATION</text>
-        <text x="280" y="96" font-size="11" fill="#334155">Affected WORM Blu-ray disc</text>
-        <text x="280" y="112" font-size="11" fill="#334155">physically quarantined;</text>
-        <text x="280" y="128" font-size="11" font-weight="700" fill="#0b162a">restoration to searchable</text>
-        <text x="280" y="144" font-size="10" fill="#8a6421">environment hard-blocked</text>
-
-        <line x1="473" y1="103" x2="500" y2="103" stroke="#b8924a" stroke-width="2.5"/>
-        <polygon points="500,97 510,103 500,109" fill="#b8924a"/>
-
-        <!-- Step 3 -->
-        <rect x="512" y="50" width="205" height="106" rx="6" fill="#ffffff" stroke="#0f766e" stroke-width="1.5"/>
-        <rect x="512" y="50" width="205" height="26" rx="6" fill="#0f766e"/>
-        <text x="614" y="67" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">STEP 3 &middot; CRYPTO-SHREDDING</text>
-        <text x="524" y="96" font-size="11" fill="#334155">Per-subject / per-asset key</text>
-        <text x="524" y="112" font-size="11" font-weight="700" fill="#0f766e">cryptographic destruction</text>
-        <text x="524" y="128" font-size="11" fill="#334155">(rendering bits unreadable)</text>
-        <text x="524" y="144" font-size="10" fill="#526074">or clean migration + disc shred</text>
-
-        <line x1="717" y1="103" x2="744" y2="103" stroke="#b8924a" stroke-width="2.5"/>
-        <polygon points="744,97 754,103 744,109" fill="#b8924a"/>
-
-        <!-- Step 4 -->
-        <rect x="756" y="50" width="180" height="106" rx="6" fill="#ffffff" stroke="#152642" stroke-width="1.5"/>
-        <rect x="756" y="50" width="180" height="26" rx="6" fill="#152642"/>
-        <text x="846" y="67" text-anchor="middle" font-size="11" font-weight="700" fill="#d4af63">STEP 4 &middot; ANTI-RESURRECTION</text>
-        <text x="768" y="96" font-size="11" fill="#334155">Every future cold-archive</text>
-        <text x="768" y="112" font-size="11" fill="#334155">restore runs mandatory</text>
-        <text x="768" y="128" font-size="11" font-weight="700" fill="#0b162a">Restriction List check</text>
-        <text x="768" y="144" font-size="10" fill="#526074">Zero data resurrection risk</text>
-
-        <rect x="24" y="168" width="912" height="24" rx="4" fill="#ecfdf5"/>
-        <text x="480" y="184" text-anchor="middle" font-size="10.5" font-weight="600" fill="#134e4a">
-          Contractual SLA Alignment: 2 SG Business Days Request Forwarding &middot; 30-Day Statutory Response &middot; 24-Hr Internal Breach Alert &middot; 72-Hr (3 Calendar Days) PDPC Notification
-        </text>
-      </svg>
-      <div class="figure-caption">
-        <strong>Figure 4:</strong> Four-step WORM withdrawal compliance loop resolving the legal tension between permanent optical media and PDPA Section 16 withdrawal rights.
-      </div>
-    </div>
-
-    <div class="grid c2">
-      <div class="card">
-        <h4>AI Ethics, Minors &amp; Deceased Data Controls</h4>
-        <ul>
-          <li><strong>11 Separated Consent Scopes:</strong> Inclusion in a family tree or photo archive <em>never</em> implies consent for voice cloning, digital twins, or external AI training (strictly prohibited).</li>
-          <li><strong>Mandatory Synthetic Labeling:</strong> All AI-synthesized voice/avatar outputs carry permanent provenance badges to prevent misrepresentation as authentic historical recordings.</li>
-          <li><strong>Age-Tiered Minor Protection:</strong> Aligned with PDPC Children's Guidelines (&lt;13 parental consent; 13–17 age-appropriate consent; default prohibition on voice/digital twin synthesis).</li>
-          <li><strong>Deceased Protection (PDPA s.4(4)):</strong> Security and disclosure controls maintained for deceased individuals (&le;10 years); historical exceptions verified at record level (&ge;100 years).</li>
-        </ul>
-      </div>
-      <div class="card">
-        <h4>Cross-Border &amp; Air-Gapped Data Residency</h4>
-        <ul>
-          <li><strong>Offshore Access Default-Off:</strong> Primary family vault resides physically in Singapore (local Mac mini M5 Pro + Blu-ray); offshore access, telemetry, and external LLM calls are disabled by default.</li>
-          <li><strong>Synthetic-Only R&amp;D:</strong> Cross-border engineering teams develop and test exclusively on 100% synthetic/irreversibly anonymized datasets; any exception requires signed <strong>ASEAN MCCs</strong> and zero-trust timed access.</li>
-          <li><strong>Defamation Safe Harbor (Act 1957):</strong> Built-in notice-and-takedown workflow preserves disputed oral history evidence while pausing live access and AI retrieval pending family resolution.</li>
-          <li><strong>SFO Contracting Alignment:</strong> Preferential contracting with client SFOs / family holding entities (Pte. Ltd.) to preserve statutory Data Intermediary clarity.</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- 06. DELIVERY FACTORY & AH YI RETENTION LOOP -->
-<section class="section alt" id="delivery">
-  <div class="wrap">
-    <div class="section-kicker">Section 06 &middot; Scalability &amp; Retention Engine</div>
-    <h2>Escaping the Outsourcing Trap: 45-Day Delivery Factory &amp; "Ah Yi" Retention Loop</h2>
-
-    <p>
-      Investors rightly ask two questions of high-touch legacy businesses: <strong>(1) Can delivery scale without
-      linear headcount?</strong> and <strong>(2) How do you prevent "post-delivery hibernation" when ARR renewal
-      comes due?</strong> Our Angel R&amp;D roadmap directly solves both structural bottlenecks.
-    </p>
-
-    <div class="figure">
-      <svg viewBox="0 0 960 270" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Delivery Factory Compression and Ah Yi Anti-Hibernation Flywheel">
-        <rect x="0" y="0" width="960" height="270" rx="6" fill="#ffffff"/>
-
-        <!-- Left Half: Delivery Factory -->
-        <rect x="18" y="18" width="448" height="234" rx="8" fill="#f8fafc" stroke="#cbd5e1"/>
-        <text x="36" y="44" font-family="Georgia, serif" font-size="13.5" font-weight="700" fill="#0b162a">A. Standardized HDP Delivery Factory</text>
-        <text x="36" y="62" font-size="11" fill="#526074">Compressing cycle time &amp; cutting manual effort by 70%</text>
-
-        <!-- Before Bar -->
-        <text x="36" y="92" font-size="11" font-weight="700" fill="#b91c1c">Flagship v1 (Manual): 90 Days &middot; 5 Roles &middot; 9 Offline Excels</text>
-        <rect x="36" y="100" width="400" height="24" rx="4" fill="#fee2e2" stroke="#b91c1c"/>
-        <text x="236" y="116" text-anchor="middle" font-size="10.5" font-weight="700" fill="#7f1d1d">Heavy Manual Coordination &amp; Offline Forms (S-01 to S-09)</text>
-
-        <!-- After Bar -->
-        <text x="36" y="148" font-size="11" font-weight="700" fill="#0f766e">HDP Factory v2: 30–45 Days &middot; -70% Effort &middot; 3–4 Parallel Families</text>
-        <rect x="36" y="156" width="195" height="24" rx="4" fill="#0f766e"/>
-        <text x="133" y="172" text-anchor="middle" font-size="10.5" font-weight="700" fill="#ffffff">Automated HDP Pipeline</text>
-        <rect x="236" y="156" width="200" height="24" rx="4" fill="#ecfdf5" stroke="#0f766e" stroke-dasharray="4 3"/>
-        <text x="336" y="172" text-anchor="middle" font-size="10.5" font-weight="700" fill="#0f766e">70% Margin Capacity Unlocked</text>
-
-        <text x="36" y="204" font-size="10.5" fill="#334155">&bull; <strong>Zero Excel:</strong> Web/mobile ingestion + e-Sign RGT gate</text>
-        <text x="36" y="222" font-size="10.5" fill="#334155">&bull; <strong>Dialect Hotword ASR:</strong> Cuts transcription from 6h &rarr; 1h per audio hr</text>
-        <text x="36" y="240" font-size="10.5" fill="#334155">&bull; <strong>One-Click OAIS Packager:</strong> Auto ISO + SHA-256 + Offline HTML</text>
-
-        <!-- Right Half: Ah Yi Flywheel -->
-        <rect x="494" y="18" width="448" height="234" rx="8" fill="#0b162a"/>
-        <text x="514" y="44" font-family="Georgia, serif" font-size="13.5" font-weight="700" fill="#d4af63">B. "Ah Yi" (阿忆) Anti-Hibernation Flywheel</text>
-        <text x="514" y="62" font-size="11" fill="#94a3b8">Embedded natively in WhatsApp &amp; WeChat (Zero App Friction)</text>
-
-        <!-- 4 Flywheel Nodes -->
-        <rect x="516" y="80" width="190" height="62" rx="6" fill="#152642" stroke="#d4af63"/>
-        <text x="611" y="99" text-anchor="middle" font-size="11" font-weight="700" fill="#d4af63">1. Warm Micro-Prompts</text>
-        <text x="611" y="116" text-anchor="middle" font-size="10" fill="#e2e8f0">Anniversary/photo nudges in</text>
-        <text x="611" y="130" text-anchor="middle" font-size="10" fill="#e2e8f0">WhatsApp/WeChat family group</text>
-
-        <rect x="730" y="80" width="190" height="62" rx="6" fill="#152642" stroke="#0f766e"/>
-        <text x="825" y="99" text-anchor="middle" font-size="11" font-weight="700" fill="#34d399">2. Voice-First Capture</text>
-        <text x="825" y="116" text-anchor="middle" font-size="10" fill="#e2e8f0">Elders hold-to-speak dialect reply;</text>
-        <text x="825" y="130" text-anchor="middle" font-size="10" fill="#e2e8f0">Next-Gen drops CNY/trip photos</text>
-
-        <rect x="730" y="172" width="190" height="62" rx="6" fill="#152642" stroke="#d4af63"/>
-        <text x="825" y="191" text-anchor="middle" font-size="11" font-weight="700" fill="#d4af63">3. Auto HDP Graph Update</text>
-        <text x="825" y="208" text-anchor="middle" font-size="10" fill="#e2e8f0">Auto-tags people, events &amp; facts;</text>
-        <text x="825" y="222" text-anchor="middle" font-size="10" fill="#e2e8f0">Elders retain final approval authority</text>
-
-        <rect x="516" y="172" width="190" height="62" rx="6" fill="#0f766e" stroke="#34d399"/>
-        <text x="611" y="191" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">4. Annual Chronicle Ritual</text>
-        <text x="611" y="208" text-anchor="middle" font-size="10" fill="#d1fae5">Auto-compiled Year-in-Review +</text>
-        <text x="611" y="222" text-anchor="middle" font-size="10" fill="#d1fae5">CNY Blu-ray Sealing &rarr; S$9.6k ARR</text>
-
-        <!-- Flywheel Connectors -->
-        <line x1="706" y1="111" x2="728" y2="111" stroke="#d4af63" stroke-width="2"/>
-        <line x1="825" y1="142" x2="825" y2="170" stroke="#34d399" stroke-width="2"/>
-        <line x1="730" y1="203" x2="708" y2="203" stroke="#d4af63" stroke-width="2"/>
-        <line x1="611" y1="172" x2="611" y2="144" stroke="#34d399" stroke-width="2"/>
-      </svg>
-      <div class="figure-caption">
-        <strong>Figure 5:</strong> Dual operational moat—industrialized 30–45 day HDP delivery (left) paired with our WhatsApp/WeChat-native "Ah Yi" retention flywheel (right) that turns static history into a living family chronicle.
-      </div>
-    </div>
-
-    <div class="callout teal">
-      <strong>Pragmatic Engineering Discipline (What We Explicitly DO NOT Build):</strong> We do <em>not</em> waste
-      capital training foundation LLMs, OCR, ASR, or avatar models. We orchestrate best-in-class commercial APIs
-      behind our proprietary <strong>HDP state machine, RGT permission gate, dialect hotword pipeline, and
-      one-click OAIS Blu-ray packager</strong>—leveraging AI-assisted engineering (Claude Code workflows) so a
-      lean 3–4 person core team delivers 5&times; output.
-    </div>
-  </div>
-</section>
-
-<!-- 07. GLOBAL COMPETITIVE LANDSCAPE -->
-<section class="section" id="compete">
-  <div class="wrap">
-    <div class="section-kicker">Section 07 &middot; Global Competitive Landscape</div>
-    <h2>Why Consumer Legacy Apps Fail—and Why DeepFamily Owns the Sovereign Apex</h2>
 
     <div class="callout crimson">
-      <strong>Industry Wake-Up Call — The Shutdown of HereAfter AI:</strong> Consumer AI legacy pioneer
-      <strong>HereAfter AI</strong> formally shut down its consumer app and instructed users to export their audio
-      files. Its exit proves two foundational truths: (1) low-ARPU consumer subscriptions cannot absorb high trust
-      CAC, and (2) <strong>no UHNW family will entrust irreplaceable founder memories to a cloud-only startup
-      that might vanish in 3 years.</strong>
+      <strong>Industry Wake-Up Call — HereAfter AI Consumer Shutdown:</strong> Consumer AI legacy pioneer
+      <strong>HereAfter AI</strong> shut down its consumer app and instructed users to export their audio files.
+      This proves the fatal flaw of low-ARPU cloud-only subscriptions: they cannot survive high trust CAC or answer
+      a family's existential question—<em>"What happens to our memories if your startup dies?"</em> Only DeepFamily's
+      <strong>high-margin onboarding + Enhanced 3-2-1-1-0 + third-party exit drills</strong> solves this trust barrier.
     </div>
+  </div>
+</section>
 
-    <div class="figure">
-      <svg viewBox="0 0 960 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Global Competitive Positioning Quadrant">
-        <rect x="0" y="0" width="960" height="300" rx="6" fill="#f8fafc"/>
-        <text x="24" y="26" font-family="Georgia, serif" font-size="14" font-weight="700" fill="#0b162a">Global Competitive Positioning Matrix</text>
-
-        <!-- Axes -->
-        <line x1="80" y1="255" x2="910" y2="255" stroke="#0b162a" stroke-width="2"/>
-        <line x1="80" y1="45" x2="80" y2="255" stroke="#0b162a" stroke-width="2"/>
-        <!-- Midlines -->
-        <line x1="495" y1="45" x2="495" y2="255" stroke="#cbd5e1" stroke-dasharray="5 5"/>
-        <line x1="80" y1="150" x2="910" y2="150" stroke="#cbd5e1" stroke-dasharray="5 5"/>
-
-        <!-- Axis Labels -->
-        <text x="495" y="284" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0b162a">DATA SOVEREIGNTY, PDPA COMPLIANCE &amp; 50-YEAR ARCHIVAL PERMANENCE &rarr;</text>
-        <text x="26" y="150" text-anchor="middle" font-size="11" font-weight="700" fill="#0b162a" transform="rotate(-90 26 150)">CULTURAL DEPTH &amp; LIVING AI &rarr;</text>
-
-        <!-- Quadrant Labels -->
-        <text x="95" y="64" font-size="10.5" fill="#94a3b8" font-weight="600">HIGH AI / LOW SOVEREIGNTY (EXISTENTIAL TRUST RISK)</text>
-        <text x="510" y="64" font-size="10.5" fill="#0f766e" font-weight="700">SOVEREIGN APEX (WHITE SPACE)</text>
-        <text x="95" y="244" font-size="10.5" fill="#94a3b8" font-weight="600">MASS-MARKET CLOUD / PRINT COMMODITY</text>
-        <text x="510" y="244" font-size="10.5" fill="#94a3b8" font-weight="600">HIGH PRIVACY / STATIC HIBERNATION</text>
-
-        <!-- Competitor 1: HereAfter AI -->
-        <circle cx="230" cy="98" r="10" fill="#b91c1c" opacity="0.85"/>
-        <text x="246" y="95" font-size="11.5" font-weight="700" fill="#b91c1c">HereAfter AI (Shut Down C2C)</text>
-        <text x="246" y="110" font-size="10" fill="#64748b">Cloud-only SaaS &middot; Trust &amp; CAC failure</text>
-
-        <!-- Competitor 2: Ancestry / MyHeritage -->
-        <circle cx="195" cy="182" r="10" fill="#64748b"/>
-        <text x="211" y="179" font-size="11.5" font-weight="700" fill="#334155">Ancestry / MyHeritage</text>
-        <text x="211" y="194" font-size="10" fill="#64748b">Public cloud &middot; Western nuclear model</text>
-
-        <!-- Competitor 3: China SaaS -->
-        <circle cx="330" cy="218" r="10" fill="#64748b"/>
-        <text x="346" y="215" font-size="11.5" font-weight="700" fill="#334155">China Mass SaaS (Baijia Youpu / Xiupu Wang)</text>
-        <text x="346" y="230" font-size="10" fill="#64748b">Freemium + print &middot; Zero PDPA / AI governance</text>
-
-        <!-- Competitor 4: Storyworth -->
-        <circle cx="380" cy="128" r="9" fill="#64748b"/>
-        <text x="395" y="126" font-size="11" font-weight="700" fill="#334155">Storyworth</text>
-        <text x="395" y="140" font-size="10" fill="#64748b">English email-to-book ($59–199/yr)</text>
-
-        <!-- Competitor 5: Bespoke Biographers -->
-        <circle cx="670" cy="202" r="11" fill="#b8924a"/>
-        <text x="688" y="199" font-size="11.5" font-weight="700" fill="#8a6421">Private Biographers &amp; Film Studios</text>
-        <text x="688" y="214" font-size="10" fill="#64748b">High touch, but static &amp; instant hibernation</text>
-
-        <!-- DeepFamily -->
-        <circle cx="775" cy="102" r="22" fill="#0b162a" stroke="#d4af63" stroke-width="3"/>
-        <text x="775" y="106" text-anchor="middle" font-size="11" font-weight="700" fill="#d4af63">DF</text>
-        <rect x="650" y="130" width="250" height="44" rx="5" fill="#0b162a"/>
-        <text x="775" y="148" text-anchor="middle" font-size="12" font-weight="700" fill="#d4af63">DeepFamily (Sole Sovereign Stack)</text>
-        <text x="775" y="164" text-anchor="middle" font-size="10" fill="#e2e8f0">HDP v1.0 + PDPA + Blu-ray + Ah Yi AI</text>
-      </svg>
-      <div class="figure-caption">
-        <strong>Figure 6:</strong> Competitive white space. DeepFamily occupies the uncontested upper-right sovereign quadrant—combining institutional archival permanence with Chinese clan semantics and living AI engagement.
-      </div>
-    </div>
+<!-- 07. SINGAPORE PDPA COMPLIANCE MOAT -->
+<section class="section" id="pdpa">
+  <div class="wrap">
+    <div class="section-kicker">Section 07 &middot; Singapore Legal &amp; PDPA Compliance Moat</div>
+    <h2>Institutional Singapore PDPA 2012 &amp; WORM Withdrawal Architecture</h2>
 
     <table>
       <thead>
         <tr>
-          <th>Category / Player</th>
-          <th>Pricing &amp; Business Model</th>
-          <th>Sovereignty &amp; PDPA</th>
-          <th>Chinese Clan Depth</th>
-          <th>Living AI &amp; Retention</th>
+          <th style="width:28%">Compliance &amp; Legal Pillar</th>
+          <th>DeepFamily Engineering &amp; Contractual Enforcement</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td><strong>HereAfter AI</strong> <span class="badge badge-crimson">Shut Down</span></td>
-          <td>Low-ARPU Consumer SaaS</td>
-          <td>Cloud-only (Fatal flaw)</td>
-          <td>None (English only)</td>
-          <td>Static Q&amp;A; service terminated</td>
+          <td><strong>WORM Immutable Media vs. PDPA s.16 Withdrawal Right</strong></td>
+          <td>Proprietary <strong>4-Step Isolation Loop</strong>: (1) Log in <em>Restriction List</em> &amp; pause live UI/AI; (2) Physically quarantine affected offline media from searchable restoration; (3) Execute per-subject <strong>Crypto-Shredding</strong> (destroy unique key) or clean migration + disc destruction; (4) Mandatory pre-restore Restriction List verification to prevent data resurrection.</td>
         </tr>
         <tr>
-          <td><strong>Storyworth</strong></td>
-          <td>US$59–199/yr + printed book</td>
-          <td>Public cloud + print</td>
-          <td>None (English only)</td>
-          <td>No knowledge graph or AI</td>
+          <td><strong>Deceased, Minors &amp; AI Avatar Boundaries</strong></td>
+          <td>Aligned with <strong>PDPA 2012</strong> (incl. s.26D 3-calendar-day breach notice), <strong>Copyright Act 2021</strong> (Part 7 Moral Rights), and <strong>Defamation Act 1957</strong>: deceased protection (&le;10 yrs) / historical exception (&ge;100 yrs); minor consent tiering (&lt;13 parental / 13–17 age-appropriate); <strong>11 separated RGT consent scopes</strong> + mandatory synthetic AI watermarking.</td>
         </tr>
         <tr>
-          <td><strong>Ancestry / MyHeritage</strong></td>
-          <td>DNA kits + US$189–399/yr</td>
-          <td>Multi-tenant public cloud</td>
-          <td>Weak (Western nuclear)</td>
-          <td>Photo animation only</td>
-        </tr>
-        <tr>
-          <td><strong>China Mass SaaS</strong> (Baijia Youpu)</td>
-          <td>Freemium + print monetization</td>
-          <td>No PDPA / no Blu-ray</td>
-          <td>Basic tree templates</td>
-          <td>Zero AI governance</td>
-        </tr>
-        <tr>
-          <td><strong>Private Biographers</strong></td>
-          <td>S$20k–200k+ one-off fee</td>
-          <td>High privacy, no digital vault</td>
-          <td>Manual storytelling</td>
-          <td>Static book/film; instant sleep</td>
-        </tr>
-        <tr class="highlight-row">
-          <td><strong>DeepFamily</strong></td>
-          <td><strong>S$15k–25k L1 &rarr; S$80k–100k L2 + S$9.6k/yr ARR</strong></td>
-          <td><strong>Air-gapped Mac mini + 5&times;18TB Blu-ray + PDPA/OAIS</strong></td>
-          <td><strong>Full HDP v1.0 (IVS, dialects, multi-branch)</strong></td>
-          <td><strong>"Ah Yi" WhatsApp/WeChat Steward + Annual Seal</strong></td>
+          <td><strong>Cross-Border Controls &amp; Corporate Governance</strong></td>
+          <td>R&amp;D runs on 100% synthetic data; offshore access to live family vaults disabled by default; production support via Singapore personnel or zero-trust timed access + <strong>ASEAN MCCs</strong>; ACRA <code>BizFile+</code> DPO registration and <strong>SIAC confidential arbitration</strong> finalized pre-closing.</td>
         </tr>
       </tbody>
     </table>
   </div>
 </section>
 
-<!-- 08. FINANCIAL MODEL, STRESS TEST & USE OF FUNDS -->
+<!-- 08. 50-YEAR COST MODEL, FINANCIALS & USE OF FUNDS -->
 <section class="section alt" id="finance">
   <div class="wrap">
-    <div class="section-kicker">Section 08 &middot; Financial Model, Stress Test &amp; Use of Funds</div>
-    <h2>Actuarial-Grade Unit Economics &amp; Five-Scenario Survival Proof</h2>
+    <div class="section-kicker">Section 08 &middot; 50-Year Lifecycle Cost, Unit Economics &amp; Angel Use of Funds</div>
+    <h2>1TB 50-Year Cost Model, Five-Scenario Stress Test &amp; SGD 500k Allocation</h2>
 
-    <p>
-      Our financial model is strictly reconciled against our signed flagship contract (<code>DF-HT-2026-001</code>),
-      explicitly accounting for <strong>Singapore 9% GST</strong> and <strong>B2B2C channel commissions</strong>.
-      By operating a lean Singapore-front / remote-engineering structure (annual fixed cost compressed to
-      <strong>S$223,000/yr</strong> or S$18.6k/mo), DeepFamily achieves institutional resilience across all stress
-      scenarios.
-    </p>
+    <div class="thesis">
+      <span class="thesis-tag">Two Ledgers That Must Both Balance: Today's Unit Economics + 50-Year Fiduciary Liability</span>
+      <p>
+        <strong>Commercial Ledger:</strong> Net revenue <strong>S$91,743/family</strong> (ex-9% GST), hardware
+        compressed to <strong>S$7,600</strong> (Mac mini M5 Pro + 5&times;18TB Blu-ray), standard gross margin
+        <strong>63.7%</strong> (<strong>56.2%</strong> net of 7.5% blended channel fee), zero-new-client static
+        runway <strong>28.7 months</strong>, breakeven at <strong>4.33 families/year</strong>.<br>
+        <strong>50-Year Fiduciary Ledger (1TB Logical / 3TB Physical):</strong> A 1TB family archive (300GB photos/docs
+        + 200GB audio + 450GB video + 50GB metadata) costs <strong>S$450–1,200/yr</strong> at scale. At a base of
+        S$1,000 in Year 1 with 2% annual inflation, 50-year cumulative nominal preservation cost reaches
+        <strong>S$84,579</strong>—proving why a S$20,000 initial reserve alone is insufficient without prudent yield,
+        ongoing annual fees, and periodic top-ups. We never make reckless "one-time fee covers 50 years" promises.
+      </p>
+    </div>
 
     <div class="grid c4">
       <div class="card">
-        <div class="metric">S$7,600</div>
-        <h4>Hardware BOM / Vault</h4>
-        <p>Mac mini M5 Pro + 5&times; 18TB archival Blu-ray cartridges (down ~64% vs. legacy GPU workstation).</p>
+        <div class="metric">S$450–1,200</div>
+        <h4>1TB Annual Custody Cost</h4>
+        <p>Cold Cloud S$100–300 + Media S$50–150 + Fixity/Migration S$150–400 + Audit S$150–350.</p>
+      </div>
+      <div class="card gold-top">
+        <div class="metric gold">S$84,579</div>
+        <h4>50-Yr Nominal Cost (1TB)</h4>
+        <p>S$1,000 Yr1 + 2%/yr inflation stress test; funded via Reserve + Yield + Annual Fiduciary Fees.</p>
+      </div>
+      <div class="card teal-top">
+        <div class="metric teal">56.2%</div>
+        <h4>Net Onboarding GM</h4>
+        <p>S$51,516 net GP/family; 53.8% upfront gives 0-mo payback; 5-yr LTV/CAC 6.0x–13.6x.</p>
       </div>
       <div class="card">
-        <div class="metric teal">63.7% / 56.2%</div>
-        <h4>Standard Gross Margin</h4>
-        <p><strong>63.7%</strong> direct (S$33,346 var cost on S$91,743 net); <strong>56.2%</strong> net of 7.5% blended channel fee.</p>
-      </div>
-      <div class="card">
-        <div class="metric gold">4.33 / yr</div>
-        <h4>Annual Breakeven</h4>
-        <p>S$223,000 fixed cost &divide; S$51,516 net gross profit/family. Achievable in Year 2.</p>
-      </div>
-      <div class="card">
-        <div class="metric">6.0x – 13.6x</div>
-        <h4>5-Year LTV / CAC</h4>
-        <p><strong>13.6x</strong> direct circle; <strong>6.0x</strong> B2B2C channel (15% fee), both with <strong>0-month payback</strong>.</p>
+        <div class="metric blue">4.33 / yr</div>
+        <h4>Lean Breakeven Point</h4>
+        <p>S$223k/yr fixed cost; Y2 Net Profit +S$207.6k; Y3 Net Profit +S$617.5k; Y3 Cash S$1.24M.</p>
       </div>
     </div>
 
     <div class="figure">
-      <svg viewBox="0 0 960 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="3-Year Base Case Financial Trajectory and Use of Funds">
-        <rect x="0" y="0" width="960" height="250" rx="6" fill="#ffffff"/>
+      <svg viewBox="0 0 940 245" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="1TB 50-Year Preservation Cost Curve and SGD 500k Use of Funds">
+        <rect x="0" y="0" width="940" height="245" rx="8" fill="#ffffff"/>
 
-        <!-- Left Chart: 3-Year Net Profit & Ending Cash -->
-        <text x="24" y="28" font-family="Georgia, serif" font-size="13.5" font-weight="700" fill="#0b162a">A. Base Case Trajectory (3 &rarr; 8 &rarr; 15 New Families, SGD)</text>
+        <!-- Left: 50-Yr Cumulative Cost vs Reserve -->
+        <text x="24" y="28" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#0b162a">A. 1TB 50-Year Cumulative Nominal Cost (S$1k Yr1 + 2%/yr)</text>
+        <line x1="56" y1="192" x2="445" y2="192" stroke="#94a3b8" stroke-width="1.5"/>
+        <line x1="56" y1="48" x2="56" y2="192" stroke="#94a3b8" stroke-width="1.5"/>
+        <text x="48" y="196" text-anchor="end" font-size="9.5" fill="#64748b">0</text>
+        <text x="48" y="156" text-anchor="end" font-size="9.5" fill="#64748b">25k</text>
+        <text x="48" y="116" text-anchor="end" font-size="9.5" fill="#64748b">50k</text>
+        <text x="48" y="68" text-anchor="end" font-size="9.5" fill="#64748b">85k</text>
 
-        <!-- Zero Axis -->
-        <line x1="40" y1="165" x2="450" y2="165" stroke="#94a3b8" stroke-width="1.5"/>
-        <text x="34" y="169" text-anchor="end" font-size="10" fill="#64748b">0</text>
+        <!-- S$20k static line -->
+        <line x1="56" y1="160" x2="445" y2="160" stroke="#b91c1c" stroke-dasharray="4 3" stroke-width="1.3"/>
+        <text x="442" y="155" text-anchor="end" font-size="9.5" font-weight="700" fill="#b91c1c">S$20k Static Reserve Alone (Insufficient)</text>
 
-        <!-- Year 1 -->
-        <rect x="78" y="165" width="44" height="16" rx="2" fill="#b91c1c"/>
-        <text x="100" y="195" text-anchor="middle" font-size="10.5" font-weight="700" fill="#b91c1c">-S$86.7k</text>
-        <rect x="128" y="122" width="44" height="43" rx="2" fill="#0b162a"/>
-        <text x="150" y="115" text-anchor="middle" font-size="10.5" font-weight="700" fill="#0b162a">S$413k</text>
-        <text x="125" y="220" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0b162a">Year 1 (3 Fam)</text>
+        <!-- Cost Bars by Decade -->
+        <rect x="80" y="174" width="44" height="18" rx="2" fill="#2563eb"/>
+        <text x="102" y="169" text-anchor="middle" font-size="9.5" font-weight="700" fill="#1e3a8a">S$10.9k</text>
+        <text x="102" y="208" text-anchor="middle" font-size="10" fill="#334155">Yr 10</text>
 
-        <!-- Year 2 -->
-        <rect x="210" y="132" width="44" height="33" rx="2" fill="#0f766e"/>
-        <text x="232" y="125" text-anchor="middle" font-size="10.5" font-weight="700" fill="#0f766e">+S$207.6k</text>
-        <rect x="260" y="100" width="44" height="65" rx="2" fill="#0b162a"/>
-        <text x="282" y="93" text-anchor="middle" font-size="10.5" font-weight="700" fill="#0b162a">S$621k</text>
-        <text x="257" y="220" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0b162a">Year 2 (8 Fam)</text>
+        <rect x="155" y="153" width="44" height="39" rx="2" fill="#2563eb"/>
+        <text x="177" y="148" text-anchor="middle" font-size="9.5" font-weight="700" fill="#1e3a8a">S$24.3k</text>
+        <text x="177" y="208" text-anchor="middle" font-size="10" fill="#334155">Yr 20</text>
 
-        <!-- Year 3 -->
-        <rect x="342" y="95" width="44" height="70" rx="2" fill="#0f766e"/>
-        <text x="364" y="88" text-anchor="middle" font-size="10.5" font-weight="700" fill="#0f766e">+S$617.5k</text>
-        <rect x="392" y="48" width="44" height="117" rx="2" fill="#b8924a"/>
-        <text x="414" y="42" text-anchor="middle" font-size="10.5" font-weight="700" fill="#8a6421">S$1,238k</text>
-        <text x="389" y="220" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0b162a">Year 3 (15 Fam)</text>
+        <rect x="230" y="127" width="44" height="65" rx="2" fill="#0f766e"/>
+        <text x="252" y="122" text-anchor="middle" font-size="9.5" font-weight="700" fill="#0f766e">S$40.6k</text>
+        <text x="252" y="208" text-anchor="middle" font-size="10" fill="#334155">Yr 30</text>
 
-        <!-- Legend Left -->
-        <rect x="44" y="232" width="10" height="10" fill="#0f766e"/>
-        <text x="60" y="241" font-size="10" fill="#526074">Annual Net Profit</text>
-        <rect x="165" y="232" width="10" height="10" fill="#0b162a"/>
-        <text x="181" y="241" font-size="10" fill="#526074">Ending Cash Balance (Y3: S$1,238,390)</text>
+        <rect x="305" y="95" width="44" height="97" rx="2" fill="#152642"/>
+        <text x="327" y="90" text-anchor="middle" font-size="9.5" font-weight="700" fill="#0b162a">S$60.4k</text>
+        <text x="327" y="208" text-anchor="middle" font-size="10" fill="#334155">Yr 40</text>
+
+        <rect x="380" y="57" width="44" height="135" rx="2" fill="#b8924a"/>
+        <text x="402" y="51" text-anchor="middle" font-size="10" font-weight="700" fill="#8a6421">S$84.6k</text>
+        <text x="402" y="208" text-anchor="middle" font-size="10" font-weight="700" fill="#0b162a">Yr 50</text>
+
+        <text x="250" y="230" text-anchor="middle" font-size="10" fill="#475569">Funded via Prudent Reserve + Yield + Annual Fiduciary Fees + Periodic Top-Ups</text>
 
         <!-- Divider -->
-        <line x1="485" y1="20" x2="485" y2="238" stroke="#e2e8f0" stroke-width="1.5"/>
+        <line x1="472" y1="18" x2="472" y2="232" stroke="#e2e8f0" stroke-width="1.5"/>
 
-        <!-- Right Chart: SGD 500,000 Use of Funds -->
-        <text x="510" y="28" font-family="Georgia, serif" font-size="13.5" font-weight="700" fill="#0b162a">B. Use of Funds (SGD 500,000 Lean Allocation)</text>
+        <!-- Right: SGD 500k Use of Funds -->
+        <text x="496" y="28" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#0b162a">B. Angel Round Use of Funds (SGD 500,000)</text>
 
-        <!-- Bar 1: R&D 39% -->
-        <text x="510" y="60" font-size="11" font-weight="700" fill="#0b162a">1. Core R&amp;D &amp; HDP Platform Engine</text>
-        <text x="936" y="60" text-anchor="end" font-size="11" font-weight="700" fill="#0b162a">39.0% &middot; S$195,000</text>
-        <rect x="510" y="66" width="426" height="12" rx="3" fill="#e2e8f0"/>
-        <rect x="510" y="66" width="166" height="12" rx="3" fill="#0b162a"/>
+        <text x="496" y="58" font-size="10.5" font-weight="700" fill="#0b162a">1. Core R&amp;D, HDP Engine &amp; "Ah Yi" AI</text>
+        <text x="916" y="58" text-anchor="end" font-size="10.5" font-weight="700" fill="#0b162a">39.0% &middot; S$195,000</text>
+        <rect x="496" y="64" width="420" height="11" rx="3" fill="#e2e8f0"/>
+        <rect x="496" y="64" width="164" height="11" rx="3" fill="#0b162a"/>
 
-        <!-- Bar 2: BD 17.8% -->
-        <text x="510" y="100" font-size="11" font-weight="700" fill="#0b162a">2. Singapore BD, Salons &amp; L1 GTM</text>
-        <text x="936" y="100" text-anchor="end" font-size="11" font-weight="700" fill="#0f766e">17.8% &middot; S$89,000</text>
-        <rect x="510" y="106" width="426" height="12" rx="3" fill="#e2e8f0"/>
-        <rect x="510" y="106" width="76" height="12" rx="3" fill="#0f766e"/>
+        <text x="496" y="96" font-size="10.5" font-weight="700" fill="#0b162a">2. SG/MY BD, Private Salons &amp; L1 GTM</text>
+        <text x="916" y="96" text-anchor="end" font-size="10.5" font-weight="700" fill="#0f766e">17.8% &middot; S$89,000</text>
+        <rect x="496" y="102" width="420" height="11" rx="3" fill="#e2e8f0"/>
+        <rect x="496" y="102" width="75" height="11" rx="3" fill="#0f766e"/>
 
-        <!-- Bar 3: Reserve 15.3% -->
-        <text x="510" y="140" font-size="11" font-weight="700" fill="#8a6421">3. Ring-Fenced Strategic Cash Reserve</text>
-        <text x="936" y="140" text-anchor="end" font-size="11" font-weight="700" fill="#8a6421">15.3% &middot; S$76,500</text>
-        <rect x="510" y="146" width="426" height="12" rx="3" fill="#e2e8f0"/>
-        <rect x="510" y="146" width="65" height="12" rx="3" fill="#b8924a"/>
+        <text x="496" y="134" font-size="10.5" font-weight="700" fill="#8a6421">3. Ring-Fenced Strategic Cash Reserve</text>
+        <text x="916" y="134" text-anchor="end" font-size="10.5" font-weight="700" fill="#8a6421">15.3% &middot; S$76,500</text>
+        <rect x="496" y="140" width="420" height="11" rx="3" fill="#e2e8f0"/>
+        <rect x="496" y="140" width="64" height="11" rx="3" fill="#b8924a"/>
 
-        <!-- Bar 4: Delivery 14.9% -->
-        <text x="510" y="180" font-size="11" font-weight="700" fill="#0b162a">4. Flagship Delivery &amp; Capture CapEx</text>
-        <text x="936" y="180" text-anchor="end" font-size="11" font-weight="700" fill="#1e3a5f">14.9% &middot; S$74,500</text>
-        <rect x="510" y="186" width="426" height="12" rx="3" fill="#e2e8f0"/>
-        <rect x="510" y="186" width="63" height="12" rx="3" fill="#1e3a5f"/>
+        <text x="496" y="172" font-size="10.5" font-weight="700" fill="#0b162a">4. Wu 90-Day PoC, Flagship &amp; Capture CapEx</text>
+        <text x="916" y="172" text-anchor="end" font-size="10.5" font-weight="700" fill="#2563eb">14.9% &middot; S$74,500</text>
+        <rect x="496" y="178" width="420" height="11" rx="3" fill="#e2e8f0"/>
+        <rect x="496" y="178" width="63" height="11" rx="3" fill="#2563eb"/>
 
-        <!-- Bar 5: Compliance 13.0% -->
-        <text x="510" y="220" font-size="11" font-weight="700" fill="#0b162a">5. SG Entity, PDPA Audit &amp; PI/Cyber Insurance</text>
-        <text x="936" y="220" text-anchor="end" font-size="11" font-weight="700" fill="#475569">13.0% &middot; S$65,000</text>
-        <rect x="510" y="226" width="426" height="12" rx="3" fill="#e2e8f0"/>
-        <rect x="510" y="226" width="55" height="12" rx="3" fill="#64748b"/>
+        <text x="496" y="210" font-size="10.5" font-weight="700" fill="#0b162a">5. SG Entity, Legal Clean-Up, PDPA &amp; Insurance</text>
+        <text x="916" y="210" text-anchor="end" font-size="10.5" font-weight="700" fill="#475569">13.0% &middot; S$65,000</text>
+        <rect x="496" y="216" width="420" height="11" rx="3" fill="#e2e8f0"/>
+        <rect x="496" y="216" width="55" height="11" rx="3" fill="#64748b"/>
       </svg>
       <div class="figure-caption">
-        <strong>Figure 7:</strong> Base-case 3-year profitability &amp; cash accumulation (left) and strict SGD 500,000 capital allocation including a ring-fenced S$76,500 fixed-deposit reserve (right).
+        <strong>Figure 3:</strong> Left: 1TB single-family 50-year cumulative nominal preservation cost (S$84,579) illustrating why static reserves must be paired with yield and ongoing fees. Right: Lean SGD 500,000 allocation with a ring-fenced S$76,500 reserve.
       </div>
     </div>
 
-    <h3>Five-Scenario Python Stress Test Matrix (SGD)</h3>
+    <h3>Five-Scenario Financial Stress Test Matrix (Python-Verified, SGD)</h3>
     <table>
       <thead>
         <tr>
           <th>Stress Test Scenario</th>
-          <th class="num-cell">Net GP / Fam</th>
           <th class="num-cell">Net GM</th>
           <th class="num-cell">Breakeven</th>
           <th class="num-cell">Static Runway</th>
@@ -1423,7 +1335,6 @@
       <tbody>
         <tr class="highlight-row">
           <td><strong>1. Base Lean Case (Recommended)</strong><br><small>Fixed S$223k &middot; 3&rarr;8&rarr;15 &middot; 7.5% Channel</small></td>
-          <td class="num-cell">S$51,516</td>
           <td class="num-cell">56.2%</td>
           <td class="num-cell">4.33 / yr</td>
           <td class="num-cell">28.7 mos</td>
@@ -1434,7 +1345,6 @@
         </tr>
         <tr>
           <td><strong>2. Pessimistic Acquisition</strong><br><small>50% slower (2&rarr;4&rarr;7) &middot; 15% Full Channel</small></td>
-          <td class="num-cell">S$44,636</td>
           <td class="num-cell">48.7%</td>
           <td class="num-cell">5.00 / yr</td>
           <td class="num-cell">28.7 mos</td>
@@ -1445,7 +1355,6 @@
         </tr>
         <tr>
           <td><strong>3. Scope Creep / Cost Overrun</strong><br><small>Var Cost +50% (S$50k) &middot; 15% Channel</small></td>
-          <td class="num-cell">S$27,982</td>
           <td class="num-cell">30.5%</td>
           <td class="num-cell">7.97 / yr</td>
           <td class="num-cell">28.7 mos</td>
@@ -1456,7 +1365,6 @@
         </tr>
         <tr>
           <td><strong>4. ASP Compression</strong><br><small>Gross ASP drops to S$65k &middot; 7.5% Channel</small></td>
-          <td class="num-cell">S$21,815</td>
           <td class="num-cell">36.6%</td>
           <td class="num-cell">10.22 / yr</td>
           <td class="num-cell">28.7 mos</td>
@@ -1467,7 +1375,6 @@
         </tr>
         <tr>
           <td><strong>5. Legacy High Fixed Cost</strong><br><small>Fixed S$269.5k/yr &middot; 7.5% Channel</small></td>
-          <td class="num-cell">S$51,516</td>
           <td class="num-cell">56.2%</td>
           <td class="num-cell">5.23 / yr</td>
           <td class="num-cell">23.7 mos</td>
@@ -1479,30 +1386,22 @@
       </tbody>
     </table>
 
-    <div class="callout teal">
-      <strong>Key Stress-Test Takeaway:</strong> Even under <strong>Scenario 2 (50% slower acquisition + 15% full
-      channel payout)</strong>, DeepFamily reaches profitability in Year 3 with <strong>S$449,150 ending cash</strong>
-      and zero insolvency risk. Our true financial guardrail is <strong>scope &amp; pricing discipline</strong>—enforced
-      via T+45 scope freezes and defending S$80k–100k L2 flagship pricing. Base Case Revenue scales from
-      <strong>S$275k (Y1) &rarr; S$757k (Y2) &rarr; S$1,461k (Y3)</strong>.
-    </div>
-
-    <h3>12-Month Dual-Gated Execution Milestones</h3>
+    <h3>90-Day &amp; 12-Month Execution Milestones</h3>
     <div class="grid c3">
       <div class="card">
-        <span class="badge badge-navy">M1 – M3 &middot; Standardize</span>
-        <h4 style="margin-top:8px;">Flagship Core &amp; HDP Factory</h4>
-        <p>Deliver flagship core milestones; launch online HDP workspace, RGT e-Sign gate &amp; one-click OAIS Blu-ray packager, retiring all 9 offline Excel sheets.</p>
+        <span class="badge badge-navy">M3 &middot; 90-Day PoC Gate</span>
+        <h4 style="margin-top:7px;">Wu 6-Test PoC &amp; 4 Artifacts</h4>
+        <p>Deliver Wu Family 6-test Preservation PoC and publish all 4 investor-grade documents (Architecture, Evidence Report, 50-Yr Cost Model, Exit Runbook).</p>
       </div>
       <div class="card">
         <span class="badge badge-gold">M6 &middot; External PMF</span>
-        <h4 style="margin-top:8px;">Non-Affiliated Proof &amp; Channels</h4>
-        <p>Complete flagship final acceptance; close <strong>2+ non-affiliated paying families / L1 pilots</strong>; activate 2 B2B2C advisory channels.</p>
+        <h4 style="margin-top:7px;">Non-Affiliated Clients &amp; Reserve</h4>
+        <p>Complete flagship final acceptance; sign <strong>2+ non-affiliated paying families / L1 pilots</strong>; finalize per-TB preservation reserve pricing from live quotes.</p>
       </div>
       <div class="card">
         <span class="badge badge-teal">M12 &middot; Cash Breakeven</span>
-        <h4 style="margin-top:8px;">Operating Breakeven &amp; Pre-A</h4>
-        <p>Reach <strong>4–5 cumulative paying UHNW families</strong>, achieving annual operating cash breakeven and commanding leverage for Pre-A.</p>
+        <h4 style="margin-top:7px;">Operating Breakeven &amp; Fund Pilot</h4>
+        <p>Reach <strong>4–5 cumulative paying families</strong>, hitting annual operating cash breakeven and piloting a ring-fenced preservation reserve structure.</p>
       </div>
     </div>
   </div>
@@ -1511,90 +1410,42 @@
 <!-- 09. TEAM, STRATEGIC ANCHORS & GOVERNANCE -->
 <section class="section" id="team">
   <div class="wrap">
-    <div class="section-kicker">Section 09 &middot; Team, Strategic Anchors &amp; Governance</div>
-    <h2>Singapore-Anchored Trust Triangle &amp; Institutional Governance Commitments</h2>
+    <div class="section-kicker">Section 09 &middot; Team, Strategic Anchors &amp; Fiduciary Governance</div>
+    <h2>Singapore-Anchored Trust Triangle &amp; Pre-Closing Governance Commitments</h2>
 
     <div class="grid c3">
       <div class="card navy-top">
         <span class="badge badge-navy">Execution Core</span>
-        <h4 style="margin-top:8px;">Founder-Led SG-CN Lean Squad</h4>
+        <h4 style="margin-top:7px;">Founder-Led SG–CN Engineering</h4>
         <p>
-          Founder leads product vision, HDP architecture, and UHNW client conversion, supported by a lean
-          Singapore technical/compliance lead and high-efficiency cross-border full-stack/AI engineers utilizing
-          AI-assisted development workflows.
+          Founder leads architecture, Singapore UHNW BD, and fiduciary governance; engineering pairs a Singapore
+          technical/compliance lead with a lean AI-accelerated cross-border squad—sustaining our 28.7-month runway.
         </p>
       </div>
       <div class="card gold-top">
-        <span class="badge badge-gold">30-Year Trust Anchor</span>
-        <h4 style="margin-top:8px;">Infologic Pte Ltd (Est. 1992)</h4>
+        <span class="badge badge-gold">30-Year Local Anchor</span>
+        <h4 style="margin-top:7px;">Infologic Pte Ltd (Est. 1992)</h4>
         <p>
-          Established Singapore enterprise IT and systems integration partner with 30+ years of local track record.
-          Serves as DeepFamily's strategic co-delivery &amp; enterprise credibility anchor—eliminating startup
-          counterparty fear for UHNW families.
+          Established Singapore enterprise IT integrator with 30+ years of track record. Serves as DeepFamily's
+          strategic co-delivery and local credibility anchor across Singapore/Malaysian family and clan ecosystems.
         </p>
       </div>
       <div class="card teal-top">
-        <span class="badge badge-teal">Lighthouse Validation</span>
-        <h4 style="margin-top:8px;">Founding Design Partner (Mr. Wu)</h4>
+        <span class="badge badge-teal">Founding Design Partner</span>
+        <h4 style="margin-top:7px;">Wu Family (Lighthouse Client)</h4>
         <p>
-          Signed S$100,000 flagship contract (<code>DF-HT-2026-001</code>) and provided foundational project
-          sponsorship. Catalyzes Singapore entrepreneur peer introductions while holding <strong>zero exclusivity
-          and zero veto rights</strong> over DeepFamily's roadmap or clientele.
+          Signed S$100,000 flagship contract (53.8% upfront) and provided foundational project sponsorship—supplying
+          live Volume 5 archives for our 90-day PoC and warm entrepreneur referrals, with zero exclusivity or veto.
         </p>
       </div>
     </div>
 
-    <h3>Pre-Closing Institutional Governance Commitments ("3-Clear, 1-Lock")</h3>
-    <p>
-      To meet institutional Angel and Family Office Legal Due Diligence (LDD) standards, the following four
-      Conditions Precedent (CPs) are executed prior to closing:
-    </p>
-    <table>
-      <thead>
-        <tr>
-          <th style="width:18%">Governance Pillar</th>
-          <th>Binding Legal Deliverable (Pre-Closing CP)</th>
-          <th style="width:24%">Investor Protection Outcome</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><strong>1. Clean SG HoldCo &amp; DPO</strong></td>
-          <td>Operate &amp; fundraise exclusively through <strong>DeepFamily Pte. Ltd.</strong> (Singapore); complete ACRA <code>BizFile+</code> DPO registration; clean Cap Table (85%–90% Founders with 4-yr vesting / 1-yr cliff + 10%–15% ESOP).</td>
-          <td>Clean Singapore IP holding vehicle with institutional founder alignment.</td>
-        </tr>
-        <tr>
-          <td><strong>2. Full IP Ownership &amp; Novation</strong></td>
-          <td>Execute unconditional <strong>Deed of IP Assignment</strong> + Moral Rights Waiver (Copyright Act 2021) from Infologic, founders, and developers; execute tripartite <strong>Deed of Novation</strong> transferring <code>DF-HT-2026-001</code> into DeepFamily Pte. Ltd.</td>
-          <td>100% platform IP and S$100k flagship revenue consolidated inside the investee entity.</td>
-        </tr>
-        <tr>
-          <td><strong>3. Sponsor Clarity &amp; Contract Hardening</strong></td>
-          <td>Execute tripartite confirmation defining Founding Partner's sponsorship as non-dilutive / non-exclusive (no veto); amend flagship SOW to remove custom source-code handover, add a <strong>liability cap</strong> (&le; fees paid), and adopt <strong>SIAC confidential arbitration</strong>.</td>
-          <td>Zero hidden equity/debt overhangs; protected platform IP; capped legal exposure.</td>
-        </tr>
-        <tr>
-          <td><strong>4. Strategic Partner Lock-In</strong></td>
-          <td>Execute formal <strong>Strategic Integration &amp; Referral Framework</strong> with Infologic Pte Ltd (transparent co-delivery split + milestone-vested advisory alignment).</td>
-          <td>Permanent 30-year Singapore enterprise credibility without entity commingling.</td>
-        </tr>
-      </tbody>
-    </table>
-
-    <h3>Target Angel Syndicate Composition (SGD 500,000)</h3>
-    <div class="grid c3">
-      <div class="card soft">
-        <h4>Tier 1 &middot; Anchor (60%–70% / S$300k–350k)</h4>
-        <p><strong>Singapore/SEA SFOs, MFOs &amp; HNW Chinese Angels.</strong> "Client-to-Shareholder" flywheel: S$50k–150k tickets securing early equity plus priority sovereign vault onboarding for their own families.</p>
-      </div>
-      <div class="card soft">
-        <h4>Tier 2 &middot; Strategic (20%–30% / S$100k–150k)</h4>
-        <p><strong>Succession Advisors, TEP Trust Firms &amp; Local Integrators.</strong> Aligning non-financial soft-heritage distribution partners with zero channel conflict and shared equity upside.</p>
-      </div>
-      <div class="card soft">
-        <h4>Tier 3 &middot; Leverage (10%–20% / S$50k–100k)</h4>
-        <p><strong>AngelCentral / BANSEA Syndicates</strong> + parallel evaluation of non-dilutive Singapore government grants (e.g., EnterpriseSG Startup SG Founder S$50k).</p>
-      </div>
+    <div class="callout teal">
+      <strong>Four Binding Governance &amp; Fiduciary Commitments (Pre-Closing Conditions Precedent):</strong><br>
+      <strong>1. Clean Singapore HoldCo &amp; 100% IP Ownership:</strong> Execute unconditional <em>Deed of IP Assignment</em> + Moral Rights Waiver (Copyright Act 2021) from all parties and tripartite <em>Deed of Novation</em> consolidating <code>DF-HT-2026-001</code> into <code>DeepFamily Pte. Ltd.</code>.<br>
+      <strong>2. Transparent Sponsor Boundary:</strong> Execute tripartite confirmation clarifying Founding Partner sponsorship carries zero hidden equity/debt overhang, zero exclusivity, and zero roadmap veto.<br>
+      <strong>3. Anti-Outsourcing Contract Hardening:</strong> Amend SOW to remove custom source-code handover, institute a cumulative liability cap (&le; fees paid), and adopt <strong>SIAC confidential arbitration</strong>.<br>
+      <strong>4. Fiduciary Restraint Principle:</strong> DeepFamily never promises physically impossible "single-disc 100-year zero loss"—we fulfill 50-year recoverability through a four-part framework: <em>Preservation Agreement + Audited SLA + Independent Audits + Ring-Fenced Preservation Reserve</em>.
     </div>
   </div>
 </section>
@@ -1602,25 +1453,14 @@
 <!-- FOOTER -->
 <footer>
   <div class="wrap">
-    <div class="footer-grid">
-      <div>
-        <h2>DeepFamily Pte. Ltd.</h2>
-        <p style="color:#d4af63; font-weight:600; font-size:15px;">
-          Preserving Southeast Asia's Founding Legacies — Sovereigned by Code, Verified by Law, Alive for Generations.
-        </p>
-        <p>Angel Round Target: <strong>SGD 500,000</strong> &middot; SVCA CARE / YC Post-Money SAFE (Rolling Close)</p>
-        <p>Data Room Available Upon Request: HDP v1.0 Spec, PDPA Compliance Annex, Interactive Financial Stress-Test Model &amp; 15-Min Live Flagship Demo.</p>
-      </div>
-      <div style="text-align:right;">
-        <div style="display:inline-block; text-align:left; background:rgba(255,255,255,0.06); border:1px solid rgba(212,175,99,0.35); border-radius:6px; padding:16px 20px;">
-          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.12em; color:#d4af63; font-weight:700;">Singapore Headquarters</div>
-          <div style="color:#fff; font-weight:700; margin-top:4px;">DeepFamily Pte. Ltd.</div>
-          <div style="font-size:12.5px; color:#cbd5e1; margin-top:6px;">Investor Inquiries &amp; Private Demo:<br>Available via Founding Team</div>
-        </div>
-      </div>
-    </div>
+    <h2>The 50-year goal is not unchanging hardware—it is family data that remains forever recoverable, readable, and inheritable.</h2>
+    <p>
+      DeepFamily Pte. Ltd. &middot; Singapore Angel Round (SGD 500,000) &middot; 2027–2077 Auditable Preservation Architecture<br>
+      Request a 15-minute live briefing on our Wu Family 90-Day Preservation PoC &amp; multi-copy recovery workflow.
+    </p>
+    <div class="mantra">ISO 14721:2025 (OAIS) &middot; Enhanced 3-2-1-1-0 &middot; Open Formats &middot; Independent Third-Party Takeover</div>
     <div class="disclaimer">
-      <strong>Confidentiality &amp; Disclaimer:</strong> This Investment Memorandum is provided solely for informational purposes to qualified prospective angel investors, single/multi-family offices, and strategic partners on a strictly confidential basis. It does not constitute an offer to sell or a solicitation of an offer to buy any securities in any jurisdiction where such offer or solicitation would be unlawful. Financial projections and stress-test scenarios are based on management's current actuarial assumptions reconciled against contract DF-HT-2026-001 and involve inherent business and execution risks. All figures are denominated in Singapore Dollars (SGD) unless otherwise stated.
+      <strong>Confidentiality &amp; Disclaimer:</strong> This Investment Memorandum is provided strictly on a confidential basis for informational purposes to qualified prospective angel investors, family offices, and institutional trustees. References to ISO 14721:2025, ISO 16363:2025, and NDSA Levels of Digital Preservation 2.1 denote architectural and audit design baselines and do not imply formal third-party certification. Financial models and 50-year cost projections are based on current actuarial assumptions and involve inherent execution risks. All monetary amounts are in Singapore Dollars (SGD) unless stated otherwise.
     </div>
   </div>
 </footer>
