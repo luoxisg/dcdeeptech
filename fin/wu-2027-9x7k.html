@@ -15,6 +15,8 @@
   --gold-soft:#f7f1e3;
   --teal:#0f766e;
   --teal-soft:#ecfdf5;
+  --crimson:#b91c1c;
+  --crimson-soft:#fef2f2;
   --ink:#1e293b;
   --muted:#475569;
   --line:#e2ddd2;
@@ -29,10 +31,18 @@ body{
   background:var(--white);
   font:15.5px/1.82 "PingFang SC","Microsoft YaHei","Hiragino Sans GB",-apple-system,BlinkMacSystemFont,sans-serif;
   -webkit-font-smoothing:antialiased;
+  font-variant-numeric:tabular-nums;
 }
 .wrap{width:min(1060px,calc(100% - 48px));margin:auto}
 a{color:var(--navy);text-decoration:none}
 code{background:#f1f5f9;padding:1px 6px;border-radius:4px;font-size:13px;color:var(--navy);font-family:"SFMono-Regular",Consolas,monospace}
+
+/* 顶部阅读进度条 */
+.read-progress{
+  position:fixed;top:0;left:0;height:3px;width:0%;z-index:50;
+  background:linear-gradient(90deg,var(--gold),var(--gold-bright),#38bdf8);
+  transition:width .12s linear;
+}
 
 /* 顶栏 */
 .topbar{
@@ -54,19 +64,28 @@ code{background:#f1f5f9;padding:1px 6px;border-radius:4px;font-size:13px;color:v
   font-size:11px;font-weight:600;color:var(--gold-bright);
   border:1px solid rgba(212,175,99,.4);padding:2px 8px;border-radius:12px;
 }
-.topbar nav{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-.topbar nav a{color:#cbd5e1;font-size:12.5px;font-weight:500}
-.topbar nav a:hover{color:var(--gold-bright)}
+.topbar nav{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.topbar nav a{
+  color:#cbd5e1;font-size:12.5px;font-weight:500;
+  padding:4px 6px;border-radius:4px;transition:color .2s,background .2s;
+}
+.topbar nav a:hover,.topbar nav a.active{color:var(--gold-bright);background:rgba(212,175,99,.12)}
 .btn-print{
   background:var(--gold);color:var(--navy);border:none;border-radius:5px;
   padding:6px 13px;font-size:12px;font-weight:700;cursor:pointer;
+  transition:background .2s,transform .15s;
 }
-.btn-print:hover{background:var(--gold-bright)}
+.btn-print:hover{background:var(--gold-bright);transform:translateY(-1px)}
 
 /* 封面 */
 .hero{
   background:radial-gradient(circle at 85% 20%,#1a3154 0%,var(--navy) 64%);
   color:#fff;padding:74px 0 60px;border-bottom:4px solid var(--gold);
+  position:relative;overflow:hidden;
+}
+.hero::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(circle at 18% 82%,rgba(184,146,74,.1),transparent 42%);
 }
 .hero-top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:20px}
 .hero .kicker{color:var(--gold-bright);font-size:12px;letter-spacing:.2em;text-transform:uppercase;font-weight:700}
@@ -74,9 +93,10 @@ code{background:#f1f5f9;padding:1px 6px;border-radius:4px;font-size:13px;color:v
 .hero h1{
   font-family:"Songti SC","Noto Serif SC","SimSun",Georgia,serif;
   font-size:38px;line-height:1.28;margin:0 0 18px;font-weight:700;
+  animation:heroFade .7s ease-out both;
 }
 .hero h1 em{color:var(--gold-bright);font-style:normal}
-.hero .sub{color:#cbd5e1;font-size:16px;max-width:860px;line-height:1.85;margin:0}
+.hero .sub{color:#cbd5e1;font-size:16px;max-width:860px;line-height:1.85;margin:0;animation:heroFade .85s ease-out both}
 .hero .sub code{background:rgba(255,255,255,.12);color:var(--gold-bright)}
 .hero .stats{
   display:grid;grid-template-columns:repeat(4,1fr);gap:16px;
@@ -85,7 +105,9 @@ code{background:#f1f5f9;padding:1px 6px;border-radius:4px;font-size:13px;color:v
 .hero .stat{
   background:rgba(255,255,255,.05);border:1px solid rgba(212,175,99,.28);
   border-radius:8px;padding:15px 16px;
+  transition:transform .25s ease,border-color .25s ease,background .25s ease;
 }
+.hero .stat:hover{transform:translateY(-3px);border-color:var(--gold-bright);background:rgba(255,255,255,.08)}
 .hero .stat b{display:block;font-size:24px;color:var(--gold-bright);font-weight:800;line-height:1.2}
 .hero .stat span{display:block;color:#cbd5e1;font-size:12px;margin-top:5px}
 
@@ -97,7 +119,11 @@ code{background:#f1f5f9;padding:1px 6px;border-radius:4px;font-size:13px;color:v
 .exec-box h3{margin:0 0 12px;color:var(--navy);font-size:19px}
 .exec-box p{margin:10px 0;color:#334155}
 .exec-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:18px}
-.exec-item{background:#fff;border:1px solid var(--line);border-radius:8px;padding:14px 16px}
+.exec-item{
+  background:#fff;border:1px solid var(--line);border-radius:8px;padding:14px 16px;
+  transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease;
+}
+.exec-item:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(11,22,42,.06);border-color:var(--gold)}
 .exec-item strong{color:var(--navy);display:block;margin-bottom:4px;font-size:14px}
 .exec-item span{font-size:13px;color:var(--muted)}
 
@@ -116,6 +142,10 @@ code{background:#f1f5f9;padding:1px 6px;border-radius:4px;font-size:13px;color:v
 .section h3{font-size:17.5px;margin:26px 0 12px;font-weight:700;color:var(--navy)}
 .section p{color:#334155;margin:10px 0}
 
+/* 滚动浮现动画（克制且打印安全） */
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .55s cubic-bezier(.22,1,.36,1),transform .55s cubic-bezier(.22,1,.36,1)}
+.reveal.in-view{opacity:1;transform:translateY(0)}
+
 /* 结论条 */
 .point{
   background:linear-gradient(135deg,var(--navy),var(--navy-mid));
@@ -131,7 +161,11 @@ code{background:#f1f5f9;padding:1px 6px;border-radius:4px;font-size:13px;color:v
 .grid.c3{grid-template-columns:repeat(3,1fr)}
 .grid.c4{grid-template-columns:repeat(4,1fr)}
 .grid.c5{grid-template-columns:repeat(5,1fr)}
-.card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+.card{
+  background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px 18px;
+  transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease;
+}
+.card:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(11,22,42,.06);border-color:var(--gold)}
 .card.gold-tint{background:var(--gold-soft);border-color:#e4cfa3}
 .card.teal-tint{background:var(--teal-soft);border-color:#a7f3d0}
 .card h4{font-size:14.5px;margin:0 0 8px;color:var(--navy);font-weight:700}
@@ -155,16 +189,76 @@ td strong{color:var(--navy)}
 .note.gold{background:var(--gold-soft);border-color:#e4cfa3;border-left-color:var(--gold);color:#5c4316}
 .note.ok{background:var(--teal-soft);border-color:#a7f3d0;border-left-color:var(--teal);color:#115e59}
 
-/* 图表 */
+/* 交互式面板与图表 */
 .figure{margin:24px 0;text-align:center}
-.figure svg{max-width:100%;height:auto;border-radius:10px;border:1px solid var(--line)}
+.figure svg{max-width:100%;height:auto;border-radius:10px;border:1px solid var(--line);background:#fff}
 .figure .caption{font-size:12.5px;color:var(--muted);margin-top:8px}
+
+.interactive-panel{
+  background:#fff;border:1px solid var(--line);border-radius:12px;
+  padding:20px 22px;margin:22px 0;box-shadow:0 6px 22px rgba(11,22,42,.04);
+}
+.panel-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:16px}
+.panel-title{font-size:15.5px;font-weight:800;color:var(--navy);margin:0}
+.btn-group{display:flex;flex-wrap:wrap;gap:8px}
+.seg-btn{
+  background:var(--paper);color:var(--muted);border:1px solid var(--line);
+  border-radius:6px;padding:6px 12px;font-size:12.5px;font-weight:600;cursor:pointer;
+  transition:all .18s ease;
+}
+.seg-btn:hover{border-color:var(--gold);color:var(--navy)}
+.seg-btn.active{background:var(--navy);color:var(--gold-bright);border-color:var(--navy)}
+
+/* 时间轴详情卡 */
+.timeline-detail{
+  background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--gold);
+  border-radius:8px;padding:14px 18px;margin-top:14px;text-align:left;
+  display:grid;grid-template-columns:180px 1fr 260px;gap:16px;align-items:center;
+  transition:opacity .2s ease;
+}
+.td-year{font-size:20px;font-weight:800;color:var(--navy)}
+.td-year small{display:block;font-size:12px;color:var(--teal);font-weight:700;margin-top:2px}
+.td-action strong{display:block;font-size:14px;color:var(--navy);margin-bottom:3px}
+.td-action span{font-size:13px;color:var(--muted)}
+.td-proof{background:#fff;border:1px solid var(--line);border-radius:6px;padding:10px 12px;font-size:12.5px;color:#115e59;background:var(--teal-soft);border-color:#a7f3d0}
+.td-proof strong{display:block;color:var(--teal);margin-bottom:2px}
+
+/* 模拟器布局 */
+.sim-grid{display:grid;grid-template-columns:330px 1fr;gap:20px;align-items:stretch}
+.sim-controls{
+  background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:16px 18px;
+  display:flex;flex-direction:column;justify-content:space-between;gap:12px;
+}
+.ctrl-row label{display:flex;justify-content:space-between;font-size:12.5px;font-weight:700;color:var(--navy);margin-bottom:5px}
+.ctrl-row label span{color:var(--teal);font-weight:800}
+.ctrl-row input[type=range]{width:100%;accent-color:var(--navy);cursor:pointer}
+.sim-status{
+  border-radius:8px;padding:11px 13px;font-size:12.5px;font-weight:600;
+  border:1px solid #a7f3d0;background:var(--teal-soft);color:#115e59;
+}
+.sim-status.warn{border-color:#fecaca;background:var(--crimson-soft);color:var(--crimson)}
+.sim-chart-wrap{display:flex;flex-direction:column;justify-content:center}
+.sim-chart-wrap svg{width:100%;height:auto;border:1px solid var(--line);border-radius:10px;background:#fff}
+
+/* SVG 动效 */
+@keyframes heroFade{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes flowDash{to{stroke-dashoffset:-24}}
+@keyframes pulseRing{0%{r:11;opacity:.65}70%{r:20;opacity:0}100%{r:20;opacity:0}}
+@keyframes dotBlink{0%,100%{opacity:1}50%{opacity:.35}}
+.flow-line{stroke-dasharray:6 6;animation:flowDash 1.4s linear infinite}
+.pulse-halo{animation:pulseRing 2.2s ease-out infinite}
+.status-dot{animation:dotBlink 1.8s ease-in-out infinite}
+.tl-node{cursor:pointer;transition:transform .2s ease}
+.tl-node:hover circle.main-dot{filter:brightness(1.15)}
+.bar-anim{transition:y .35s cubic-bezier(.22,1,.36,1),height .35s cubic-bezier(.22,1,.36,1),fill .25s ease}
 
 /* 分工卡片 */
 .step-card{
   background:#fff;border:1px solid var(--line);border-radius:10px;padding:20px 22px;
   display:flex;gap:18px;align-items:flex-start;margin-bottom:14px;
+  transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease;
 }
+.step-card:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(11,22,42,.06);border-color:var(--gold)}
 .step-num{
   min-width:42px;height:42px;border-radius:50%;
   background:var(--navy);color:var(--gold-bright);
@@ -182,12 +276,18 @@ footer .mantra{color:var(--gold-bright);font-size:13.5px;letter-spacing:.12em;ma
 
 @media(max-width:860px){
   .hero h1{font-size:28px}
-  .hero .stats,.exec-grid,.grid.c2,.grid.c3,.grid.c4,.grid.c5{grid-template-columns:1fr}
+  .hero .stats,.exec-grid,.grid.c2,.grid.c3,.grid.c4,.grid.c5,.sim-grid,.timeline-detail{grid-template-columns:1fr}
   .topbar nav{display:none}
   .toc ol{columns:1}
 }
+@media (prefers-reduced-motion:reduce){
+  .reveal{opacity:1;transform:none;transition:none}
+  .flow-line,.pulse-halo,.status-dot{animation:none}
+}
 @media print{
-  .topbar{display:none}
+  .read-progress,.topbar,.btn-group,.sim-controls{display:none !important}
+  .reveal{opacity:1 !important;transform:none !important}
+  .sim-grid{grid-template-columns:1fr}
   .section{padding:26px 0;page-break-inside:avoid}
   .hero{padding:36px 0 28px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   .point,th,.card.gold-tint,.card.teal-tint,.note,.step-num{-webkit-print-color-adjust:exact;print-color-adjust:exact}
@@ -196,6 +296,8 @@ footer .mantra{color:var(--gold-bright);font-size:13.5px;letter-spacing:.12em;ma
 </head>
 <body>
 
+<div class="read-progress" id="readProgress"></div>
+
 <header class="topbar">
   <div class="wrap">
     <a class="brand" href="#top">
@@ -203,15 +305,15 @@ footer .mantra{color:var(--gold-bright);font-size:13.5px;letter-spacing:.12em;ma
       Deep<span>Family</span>
       <small>新加坡行业开创战略版</small>
     </a>
-    <nav>
+    <nav id="topNav">
       <a href="#preface">战略概要</a>
-      <a href="#ch1">01 行业空白与2077标准</a>
-      <a href="#ch2">02 50年受托底座</a>
-      <a href="#ch3">03 活态年鉴与迁移</a>
-      <a href="#ch4">04 0号样板与1:5生态</a>
-      <a href="#ch5">05 两本硬账与S$50万</a>
-      <a href="#ch6">06 治理与风险隔离</a>
-      <a href="#ch7">07 90天协同分工</a>
+      <a href="#ch1">01 行业与2077标准</a>
+      <a href="#ch2">02 50年底座</a>
+      <a href="#ch3">03 迁移与年鉴</a>
+      <a href="#ch4">04 0号样板与1:5</a>
+      <a href="#ch5">05 两本硬账</a>
+      <a href="#ch6">06 治理隔离</a>
+      <a href="#ch7">07 90天分工</a>
       <button class="btn-print" onclick="window.print()">导出 PDF</button>
     </nav>
   </div>
@@ -238,7 +340,7 @@ footer .mantra{color:var(--gold-bright);font-size:13.5px;letter-spacing:.12em;ma
 <!-- 战略概要 -->
 <section class="section" id="preface">
   <div class="wrap">
-    <div class="exec-box">
+    <div class="exec-box reveal">
       <h3>战略概要｜以 0 号标杆定义新加坡家族数字传承新行业</h3>
       <p>过往市场中的家族记忆服务长期局限于两类不可持续的形态：一类是低客单消费级订阅应用（海外先驱 <strong>HereAfter AI</strong> 已正式关停 C 端消费级服务），另一类是依赖重人力交付、交付即沉睡的私人传记与影像工作室，既难以形成规模效应，亦缺乏跨越半个世纪的技术可持续性保障。</p>
       <p>新加坡核心家族办公室与持牌受托机构目前高度关注一个结构性缺口：<strong>如何以金融信托同等级别的工程严谨度，长期承接第一代创富者的口述信史、历史文献与家族精神脉络。</strong>本战略备忘录聚焦以下四项核心议题：</p>
@@ -258,9 +360,9 @@ footer .mantra{color:var(--gold-bright);font-size:13.5px;letter-spacing:.12em;ma
     <ol>
       <li><a href="#ch1">第一章｜行业空白与定位：为什么新加坡需要受托级家族数字传承？</a></li>
       <li><a href="#ch2">第二章｜行业 0 号底座：3-2-1-1-0 双独立管理域与 AI/PDPA 边界</a></li>
-      <li><a href="#ch3">第三章｜长效运营闭环：2027–2077 动态迁移与“阿忆”活态年鉴</a></li>
+      <li><a href="#ch3">第三章｜长效运营闭环：2027–2077 交互式迁移路线与“阿忆”年鉴</a></li>
       <li><a href="#ch4">第四章｜双阶段演进：一期 90 天金标准 PoC 与二期 1:5 公益生态</a></li>
-      <li><a href="#ch5">第五章｜两本财务硬账：商业造血模型 + 50 年保存准备金精算</a></li>
+      <li><a href="#ch5">第五章｜两本财务硬账：4 情景交互压测 + 50 年保存准备金模拟器</a></li>
       <li><a href="#ch6">第六章｜公司治理与法务前置：机构尽调达标与家族资产风险隔离</a></li>
       <li><a href="#ch7">第七章｜90 天协同推进与关键节点分工</a></li>
     </ol>
@@ -273,12 +375,12 @@ footer .mantra{color:var(--gold-bright);font-size:13.5px;letter-spacing:.12em;ma
     <div class="kicker">Chapter 01 · Defining a New Industry in Singapore</div>
     <h2>第一章｜行业空白与定位：为什么新加坡需要受托级家族数字传承？</h2>
 
-    <div class="point">
+    <div class="point reveal">
       <span class="tag">核心行业判断：金融传承高度成熟，非金融软传承尚属空白</span>
       <p>新加坡聚集了 1,000–2,000 个高净值华人家族及密集的单/多家族办公室（SFO/MFO），辐射东南亚 10,000–20,000 个企业家家族（潜在可触达空间超 50–100 亿元）。现阶段财富机构已完整覆盖资产配置、信托与税务筹划，但面对“第一代创富者（60–80 岁）记忆抢救窗口关闭、跨代文化断层及私有档案防丢失”仍缺乏受托级基础设施。<strong>率先确立 50 年可恢复、可审计工程标准的机构，将定义这一新兴赛道。</strong></p>
     </div>
 
-    <div class="note gold">
+    <div class="note gold reveal">
       <strong>行业实证警示：海外 AI 数字遗产先驱 HereAfter AI 已正式关停其 C 端消费级服务。</strong> 这证明“低客单年费 + 纯公有云存储”既无法支撑跨周期的运营维护支出，亦无法消除高净值家族对“服务商停运导致记忆清零”的根本顾虑。同时，加拿大文物保护研究所（CCI）与美国国家档案馆（NARA）研究亦指出，可刻录蓝光/M-DISC 介质寿命受温湿度及驱动器世代演进制约，<strong>不能将单介质的标称寿命直接等同于 50 年保存保证</strong>。
     </div>
 
@@ -286,27 +388,27 @@ footer .mantra{color:var(--gold-bright);font-size:13.5px;letter-spacing:.12em;ma
     <p>DeepFamily 工程架构全面对齐国际数字保存三大参考框架：<strong>ISO 14721:2025（OAIS 开放档案信息系统）</strong>、<strong>ISO 16363:2025（可信数字档案库审计与认证）</strong> 与 <strong>NDSA Levels of Digital Preservation 2.1（2026 新版）</strong>（对外严格声明：采用国际标准作为工程设计与审计依据，不代表已取得外部机构正式认证）。基于此，50 年目标被拆解为 2077 年可量化验收的五个层级：</p>
 
     <div class="grid c5">
-      <div class="card gold-tint">
+      <div class="card gold-tint reveal">
         <div class="num">L1</div>
         <h4>比特完整性</h4>
         <p>50 年间原始档案未发生不可恢复字节损坏。<strong>2077 验收</strong>：SHA-256 数字签名验证链全量核验。</p>
       </div>
-      <div class="card gold-tint">
+      <div class="card gold-tint reveal">
         <div class="num">L2</div>
         <h4>文件可读取</h4>
         <p>2027 年留存的族谱、影像与音视频 50 年后直接打开。<strong>2077 验收</strong>：零依赖独立阅读器脱机实测。</p>
       </div>
-      <div class="card gold-tint">
+      <div class="card gold-tint reveal">
         <div class="num">L3</div>
         <h4>信息可理解</h4>
-        <p>世系辈分、过继/兼祧、历史背景与出处清晰可解。<strong>2077 验收</strong>：结构化元数据与关系图谱完整重建。</p>
+        <p>世系辈分、过继/兼祧、历史背景与出处清晰可解。<strong>2077 验收</strong>：元数据与关系图谱完整重建。</p>
       </div>
-      <div class="card teal-tint">
+      <div class="card teal-tint reveal">
         <div class="num teal">L4</div>
         <h4>权利可继承</h4>
         <p>合法后代与受托人依生前授权接管数据。<strong>2077 验收</strong>：跨代身份核验与 11 项 RGT 授权交接测试。</p>
       </div>
-      <div class="card teal-tint">
+      <div class="card teal-tint reveal">
         <div class="num navy">L5</div>
         <h4>运营可延续</h4>
         <p><strong>即使 DeepFamily 停止运营，第三方仍可接管恢复。</strong><strong>2077 验收</strong>：脱离原厂后台的独立重建演习。</p>
@@ -321,49 +423,69 @@ footer .mantra{color:var(--gold-bright);font-size:13.5px;letter-spacing:.12em;ma
     <div class="kicker">Chapter 02 · Industry Standard #0 Architecture</div>
     <h2>第二章｜行业 0 号底座：3-2-1-1-0 双独立管理域与 AI/PDPA 边界</h2>
 
-    <div class="point">
+    <div class="point reveal">
       <span class="tag">架构核心：以“双独立管理域”消除单一主体连带失效风险</span>
       <p>若三份备份同受单一云管理员、同一主加密密钥或同一公司付款账户控制，在发生账号入侵或运营主体终止时，三份副本将面临同步失效风险。本方案采用<strong>增强型 3-2-1-1-0 + 双独立管理域 + 受托应急接管层</strong>，在技术与权限上彻底隔离商业运营风险与家族档案资产，满足新加坡家办及 RCNM 等潜在受托机构的审计要求。</p>
     </div>
 
-    <!-- SVG 图 1：3-2-1-1-0 双独立管理域架构 -->
-    <div class="figure">
-      <svg viewBox="0 0 920 355" xmlns="http://www.w3.org/2000/svg">
-        <rect x="0" y="0" width="920" height="355" fill="#ffffff" rx="10"/>
-        <text x="460" y="28" text-anchor="middle" font-size="16" font-weight="700" fill="#0b162a">新加坡受托级 3-2-1-1-0 与双独立管理域架构（0 号样板实装）</text>
+    <!-- 动态图表 1：3-2-1-1-0 双独立管理域动态拓扑 -->
+    <div class="figure reveal">
+      <svg viewBox="0 0 920 385" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arrNavy" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#1e3a5f"/></marker>
+          <marker id="arrTeal" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#0f766e"/></marker>
+          <marker id="arrGold" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#b8924a"/></marker>
+        </defs>
+        <rect x="0" y="0" width="920" height="385" fill="#ffffff" rx="10"/>
+        <text x="460" y="28" text-anchor="middle" font-size="16" font-weight="700" fill="#0b162a">新加坡受托级 3-2-1-1-0 与双独立管理域动态校验拓扑（0 号样板实装）</text>
         <text x="460" y="48" text-anchor="middle" font-size="12" fill="#475569">≥3 份完整副本 · ≥2 类介质 · ≥1 份异地 · ≥1 份物理离线不可变 · 0 个未解决校验错误（审计恢复目标）</text>
 
+        <!-- 控制面 -->
         <rect x="40" y="64" width="840" height="44" rx="8" fill="#0b162a"/>
-        <text x="460" y="91" text-anchor="middle" font-size="13.5" font-weight="700" fill="#d4af63">HDP 登记与校验控制面：唯一编码 (P/E/M/DF-DOC) · SHA-256 签名清单 H₀ · 11 项 RGT 门禁 · 追加式审计日志</text>
+        <circle cx="62" cy="86" r="5" fill="#4ade80" class="status-dot"/>
+        <text x="468" y="91" text-anchor="middle" font-size="13.5" font-weight="700" fill="#d4af63">HDP 登记与校验控制面：唯一编码 (P/E/M/DF-DOC) · SHA-256 签名清单 H₀ · 11 项 RGT 门禁 · 追加式审计日志</text>
 
-        <rect x="40" y="122" width="266" height="108" rx="8" fill="#faf9f6" stroke="#1e3a5f" stroke-width="2"/>
-        <rect x="40" y="122" width="266" height="8" rx="4" fill="#1e3a5f"/>
-        <text x="173" y="150" text-anchor="middle" font-size="13.5" font-weight="700" fill="#0b162a">Copy A · 日常管理域 1</text>
-        <text x="173" y="172" text-anchor="middle" font-size="12" font-weight="600" fill="#1e293b">Mac mini M5 Pro 本地工作节点</text>
-        <text x="173" y="192" text-anchor="middle" font-size="11.5" fill="#475569">日常浏览 · 阿忆检索 · 受控冷分层</text>
-        <text x="173" y="212" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1e3a5f">每月自动核查清单并自愈修复</text>
+        <!-- 流动数据校验连线 -->
+        <line x1="173" y1="108" x2="173" y2="136" stroke="#1e3a5f" stroke-width="2" class="flow-line" marker-end="url(#arrNavy)"/>
+        <line x1="460" y1="108" x2="460" y2="136" stroke="#0f766e" stroke-width="2" class="flow-line" marker-end="url(#arrTeal)"/>
+        <line x1="747" y1="108" x2="747" y2="136" stroke="#b8924a" stroke-width="2" class="flow-line" marker-end="url(#arrGold)"/>
 
-        <rect x="327" y="122" width="266" height="108" rx="8" fill="#ecfdf5" stroke="#0f766e" stroke-width="2"/>
-        <rect x="327" y="122" width="266" height="8" rx="4" fill="#0f766e"/>
-        <text x="460" y="150" text-anchor="middle" font-size="13.5" font-weight="700" fill="#0f766e">Copy B · 独立管理域 2</text>
-        <text x="460" y="172" text-anchor="middle" font-size="12" font-weight="600" fill="#1e293b">异地独立云账号与托管 KMS 密钥</text>
-        <text x="460" y="192" text-anchor="middle" font-size="11.5" fill="#475569">原厂运维无权删改 · 账单独立隔离</text>
-        <text x="460" y="212" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0f766e">每季度跨区域可读性与签名核查</text>
+        <!-- 三副本卡片 -->
+        <rect x="40" y="140" width="266" height="110" rx="8" fill="#faf9f6" stroke="#1e3a5f" stroke-width="2"/>
+        <rect x="40" y="140" width="266" height="8" rx="4" fill="#1e3a5f"/>
+        <circle cx="60" cy="164" r="4" fill="#2563eb" class="status-dot"/>
+        <text x="178" y="168" text-anchor="middle" font-size="13.5" font-weight="700" fill="#0b162a">Copy A · 日常管理域 1</text>
+        <text x="173" y="190" text-anchor="middle" font-size="12" font-weight="600" fill="#1e293b">Mac mini M5 Pro 本地工作节点</text>
+        <text x="173" y="210" text-anchor="middle" font-size="11.5" fill="#475569">日常浏览 · 阿忆检索 · 受控冷分层</text>
+        <text x="173" y="232" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1e3a5f">每月自动核查清单并自愈修复</text>
 
-        <rect x="614" y="122" width="266" height="108" rx="8" fill="#f7f1e3" stroke="#b8924a" stroke-width="2"/>
-        <rect x="614" y="122" width="266" height="8" rx="4" fill="#b8924a"/>
-        <text x="747" y="150" text-anchor="middle" font-size="13.5" font-weight="700" fill="#8c6a2b">Copy C · 物理离线不可变</text>
-        <text x="747" y="172" text-anchor="middle" font-size="12" font-weight="600" fill="#1e293b">18TB 蓝光 5 匣（一式两份异地）</text>
-        <text x="747" y="192" text-anchor="middle" font-size="11.5" fill="#475569">断网免疫勒索 · 内置零依赖阅读器</text>
-        <text x="747" y="212" text-anchor="middle" font-size="11.5" font-weight="700" fill="#8c6a2b">季度增量 · 年度封盘 · 每年抽检</text>
+        <rect x="327" y="140" width="266" height="110" rx="8" fill="#ecfdf5" stroke="#0f766e" stroke-width="2"/>
+        <rect x="327" y="140" width="266" height="8" rx="4" fill="#0f766e"/>
+        <circle cx="347" cy="164" r="4" fill="#10b981" class="status-dot"/>
+        <text x="465" y="168" text-anchor="middle" font-size="13.5" font-weight="700" fill="#0f766e">Copy B · 独立管理域 2</text>
+        <text x="460" y="190" text-anchor="middle" font-size="12" font-weight="600" fill="#1e293b">异地独立云账号与托管 KMS 密钥</text>
+        <text x="460" y="210" text-anchor="middle" font-size="11.5" fill="#475569">原厂运维无权删改 · 账单独立隔离</text>
+        <text x="460" y="232" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0f766e">每季度跨区域可读性与签名核查</text>
 
-        <rect x="40" y="242" width="840" height="40" rx="8" fill="#152642"/>
-        <text x="460" y="267" text-anchor="middle" font-size="12.5" font-weight="600" fill="#fff">异常即刻隔离 · 严禁受损副本反向覆盖健康副本 · 随密码学演进平滑追加新算法并保留 2027 历史锚点</text>
+        <rect x="614" y="140" width="266" height="110" rx="8" fill="#f7f1e3" stroke="#b8924a" stroke-width="2"/>
+        <rect x="614" y="140" width="266" height="8" rx="4" fill="#b8924a"/>
+        <circle cx="634" cy="164" r="4" fill="#d97706" class="status-dot"/>
+        <text x="752" y="168" text-anchor="middle" font-size="13.5" font-weight="700" fill="#8c6a2b">Copy C · 物理离线不可变</text>
+        <text x="747" y="190" text-anchor="middle" font-size="12" font-weight="600" fill="#1e293b">18TB 蓝光 5 匣（一式两份异地）</text>
+        <text x="747" y="210" text-anchor="middle" font-size="11.5" fill="#475569">断网免疫勒索 · 内置零依赖阅读器</text>
+        <text x="747" y="232" text-anchor="middle" font-size="11.5" font-weight="700" fill="#8c6a2b">季度增量 · 年度封盘 · 每年抽检</text>
 
-        <rect x="40" y="292" width="840" height="46" rx="8" fill="#0b162a" stroke="#b8924a" stroke-width="1.5"/>
-        <text x="460" y="320" text-anchor="middle" font-size="12.5" font-weight="700" fill="#d4af63">受托接管层：家族离线拆封 Copy C ｜ 或由 RCNM / 家办 / 持牌信托凭托管密钥 72 小时接管 Copy B（每 3 年演练一次）</text>
+        <!-- 跨管理域灾备连线 -->
+        <line x1="460" y1="250" x2="460" y2="270" stroke="#0f766e" stroke-width="2" class="flow-line"/>
+        <line x1="747" y1="250" x2="747" y2="270" stroke="#b8924a" stroke-width="2" class="flow-line"/>
+
+        <rect x="40" y="272" width="840" height="40" rx="8" fill="#152642"/>
+        <text x="460" y="297" text-anchor="middle" font-size="12.5" font-weight="600" fill="#fff">异常即刻隔离 · 严禁受损副本反向覆盖健康副本 · 随密码学演进平滑追加新算法并保留 2027 历史锚点</text>
+
+        <rect x="40" y="322" width="840" height="46" rx="8" fill="#0b162a" stroke="#b8924a" stroke-width="1.5"/>
+        <text x="460" y="350" text-anchor="middle" font-size="12.5" font-weight="700" fill="#d4af63">受托接管层：家族离线拆封 Copy C ｜ 或由 RCNM / 家办 / 持牌信托凭托管密钥 72 小时接管 Copy B（每 3 年演练一次）</text>
       </svg>
-      <div class="caption">图 1：通过物理隔离与双管理域架构解除“服务商存续依赖”，构筑受托级准入门槛</div>
+      <div class="caption">图 1：通过物理隔离与双管理域动态校验架构解除“服务商存续依赖”，构筑受托级准入门槛</div>
     </div>
 
     <h3>开放格式双轨制（对标美国国会图书馆 2025–2026 推荐保存格式）</h3>
@@ -378,7 +500,7 @@ footer .mantra{color:var(--gold-bright);font-size:13.5px;letter-spacing:.12em;ma
     </table>
 
     <div class="grid c2">
-      <div class="card">
+      <div class="card reveal">
         <h4>AI 与大模型（LLM）的四项工程边界</h4>
         <p>开放格式档案库对应数字金库的<strong>“底层资产与契据”</strong>，而大语言模型与“阿忆”则属于<strong>“可随时重建的当代检索助手”</strong>：</p>
         <ul>
@@ -388,7 +510,7 @@ footer .mantra{color:var(--gold-bright);font-size:13.5px;letter-spacing:.12em;ma
           <li><strong>零外部训练锁定</strong>：吴氏家族原始资料及问答日志严格隔离，严禁用于任何第三方大模型训练。</li>
         </ul>
       </div>
-      <div class="card teal-tint">
+      <div class="card teal-tint reveal">
         <h4>新加坡 PDPA 2012 合规防线（家办尽调准入）</h4>
         <ul>
           <li><strong>11 项独立授权门禁（<code>RGT001</code>）</strong>：将“家族查阅、跨支系共享、公展、声音克隆、数字人”拆分为独立授权开关，未经签字授权则后台物理锁定对应生成能力；</li>
@@ -404,77 +526,45 @@ footer .mantra{color:var(--gold-bright);font-size:13.5px;letter-spacing:.12em;ma
 <section class="section" id="ch3">
   <div class="wrap">
     <div class="kicker">Chapter 03 · 2027–2077 Migration &amp; Anti-Dormancy</div>
-    <h2>第三章｜长效运营闭环：2027–2077 动态迁移与“阿忆”活态年鉴</h2>
+    <h2>第三章｜长效运营闭环：2027–2077 交互式迁移路线与“阿忆”年鉴</h2>
 
-    <div class="point">
+    <div class="point reveal">
       <span class="tag">后端定期迁移 × 前端零摩擦留存</span>
       <p>后端参照<strong>英国国家档案馆（TNA）3–5 年存储介质检查周期</strong>执行跨代迁移与第三方接管演练；前端不依赖独立 App 增加使用门槛，而是将“阿忆 AI 管家”嵌入新加坡华人高频使用的 <strong>WhatsApp 与微信家族群</strong>，每年底自动编纂《家族年度纪事》并完成年度增量蓝光封盘，以真实使用价值支撑 S$9,600/年的长期运维续费。</p>
     </div>
 
-    <!-- SVG 图 2：2027-2077 迁移时间轴 -->
-    <div class="figure">
-      <svg viewBox="0 0 920 205" xmlns="http://www.w3.org/2000/svg">
-        <rect x="0" y="0" width="920" height="205" fill="#faf9f6" rx="10"/>
-        <text x="460" y="28" text-anchor="middle" font-size="15.5" font-weight="700" fill="#0b162a">2027–2077 五十年动态技术迁移与独立接管演练路线图</text>
-        <line x1="65" y1="95" x2="855" y2="95" stroke="#b8924a" stroke-width="3"/>
-
-        <circle cx="80" cy="95" r="10" fill="#0b162a" stroke="#d4af63" stroke-width="3"/>
-        <text x="80" y="68" text-anchor="middle" font-size="12.5" font-weight="800" fill="#0b162a">2027</text>
-        <text x="80" y="124" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1e293b">0 号样板建库</text>
-        <text x="80" y="142" text-anchor="middle" font-size="10.5" fill="#475569">第五卷入库</text>
-        <text x="80" y="158" text-anchor="middle" font-size="10.5" fill="#475569">90天PoC验收</text>
-
-        <circle cx="206" cy="95" r="9" fill="#1e3a5f" stroke="#d4af63" stroke-width="2.5"/>
-        <text x="206" y="68" text-anchor="middle" font-size="12" font-weight="700" fill="#1e3a5f">2030–32</text>
-        <text x="206" y="124" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1e293b">首次存储刷新</text>
-        <text x="206" y="142" text-anchor="middle" font-size="10.5" fill="#475569">主机/光驱/冷云</text>
-        <text x="206" y="158" text-anchor="middle" font-size="10.5" fill="#475569">首轮介质替换</text>
-
-        <circle cx="333" cy="95" r="9" fill="#1e3a5f" stroke="#d4af63" stroke-width="2.5"/>
-        <text x="333" y="68" text-anchor="middle" font-size="12" font-weight="700" fill="#1e3a5f">2035–37</text>
-        <text x="333" y="124" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1e293b">首个架构更新</text>
-        <text x="333" y="142" text-anchor="middle" font-size="10.5" fill="#475569">格式/加密算法</text>
-        <text x="333" y="158" text-anchor="middle" font-size="10.5" fill="#475569">语义零丢失迁移</text>
-
-        <circle cx="460" cy="95" r="11" fill="#0f766e" stroke="#d4af63" stroke-width="3"/>
-        <text x="460" y="68" text-anchor="middle" font-size="12.5" font-weight="800" fill="#0f766e">2047 (20年)</text>
-        <text x="460" y="124" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0f766e">独立接管演练</text>
-        <text x="460" y="142" text-anchor="middle" font-size="10.5" fill="#475569">脱离原厂系统</text>
-        <text x="460" y="158" text-anchor="middle" font-size="10.5" fill="#475569">第三方独立重建</text>
-
-        <circle cx="586" cy="95" r="9" fill="#1e3a5f" stroke="#d4af63" stroke-width="2.5"/>
-        <text x="586" y="68" text-anchor="middle" font-size="12" font-weight="700" fill="#1e3a5f">2057 (30年)</text>
-        <text x="586" y="124" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1e293b">持续性审查</text>
-        <text x="586" y="142" text-anchor="middle" font-size="10.5" fill="#475569">跨代继承核验</text>
-        <text x="586" y="158" text-anchor="middle" font-size="10.5" fill="#475569">保存准备金审计</text>
-
-        <circle cx="713" cy="95" r="9" fill="#1e3a5f" stroke="#d4af63" stroke-width="2.5"/>
-        <text x="713" y="68" text-anchor="middle" font-size="12" font-weight="700" fill="#1e3a5f">2067 (40年)</text>
-        <text x="713" y="124" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1e293b">独立迁移审查</text>
-        <text x="713" y="142" text-anchor="middle" font-size="10.5" fill="#475569">后量子签名替换</text>
-        <text x="713" y="158" text-anchor="middle" font-size="10.5" fill="#475569">无2027软件依赖</text>
-
-        <circle cx="840" cy="95" r="11" fill="#b8924a" stroke="#0b162a" stroke-width="3"/>
-        <text x="840" y="68" text-anchor="middle" font-size="12.5" font-weight="800" fill="#8c6a2b">2077 (50年)</text>
-        <text x="840" y="124" text-anchor="middle" font-size="11.5" font-weight="700" fill="#8c6a2b">50 年独立终验</text>
-        <text x="840" y="142" text-anchor="middle" font-size="10.5" fill="#475569">全量原件与图谱</text>
-        <text x="840" y="158" text-anchor="middle" font-size="10.5" fill="#475569">移交下个50年</text>
-
-        <text x="460" y="188" text-anchor="middle" font-size="11.5" font-weight="600" fill="#0f766e">贯穿 50 年常态 SLA：入库即验 · 在线每月核查 · 异地每季核查 · 每年全家族恢复演习 · 每 3 年脱离原厂退出验证</text>
-      </svg>
-      <div class="caption">图 2：以 3–5 年存储刷新与每 3 年/20 年独立接管演练，确保 50 年保存架构的工程可审计性</div>
+    <!-- 交互式图表 2：2027-2077 交互式迁移时间轴 -->
+    <div class="interactive-panel reveal">
+      <div class="panel-head">
+        <p class="panel-title">交互式 2027–2077 五十年迁移与独立接管演练路线图（点击年份节点查看细节）</p>
+        <span style="font-size:12px;color:var(--muted);">遵循英国国家档案馆 3–5 年检查周期</span>
+      </div>
+      <div class="figure" style="margin:8px 0 0">
+        <svg viewBox="0 0 920 155" xmlns="http://www.w3.org/2000/svg" id="tlSvg">
+          <rect x="0" y="0" width="920" height="155" fill="#faf9f6" rx="8"/>
+          <line x1="65" y1="74" x2="855" y2="74" stroke="#e2ddd2" stroke-width="4"/>
+          <line x1="65" y1="74" x2="855" y2="74" stroke="#b8924a" stroke-width="2" class="flow-line"/>
+          <g id="tlNodes"></g>
+          <text x="460" y="140" text-anchor="middle" font-size="11.5" font-weight="600" fill="#0f766e">贯穿 50 年常态 SLA：入库即验 · 在线每月核查 · 异地每季核查 · 每年全家族恢复演习 · 每 3 年脱离原厂退出验证</text>
+        </svg>
+      </div>
+      <div class="timeline-detail" id="tlDetail">
+        <div class="td-year" id="tdYear">2027<small>建库基准年</small></div>
+        <div class="td-action"><strong id="tdTitle">0 号样板建库封盘</strong><span id="tdDesc">吴氏第五卷、首批 1,000 份素材与 6 位长辈口述按开放格式入库，部署双独立管理域、SHA-256 签名清单与首份 90 天 PoC 验收报告。</span></div>
+        <div class="td-proof"><strong>2077 路线图必交凭证</strong><span id="tdProof">100% 原始文件可定位、可读取、可独立校验；首份《实测证据报告》。</span></div>
+      </div>
     </div>
 
     <div class="grid c3">
-      <div class="card">
+      <div class="card reveal">
         <h4>零学习门槛：嵌入式群聊交互</h4>
         <p>长辈无需适应独立客户端。“阿忆”在先祖纪念日或节庆将修复后的历史照片推送至家族群并定向提问，长辈直接发送语音即可完成口述转录与时间线挂载。</p>
       </div>
-      <div class="card">
+      <div class="card reveal">
         <h4>承接当代日常增量记忆</h4>
         <p>家族日常分享的子女毕业、新生儿满月与聚会影像自动进入分类归档流，使档案库由静态历史保存延伸为持续更新的家族纪实载体。</p>
       </div>
-      <div class="card gold-tint">
+      <div class="card gold-tint reveal">
         <h4>年度封盘仪式：《家族年度纪事》</h4>
         <p>每年春节前夕自动编纂一部《家族年度纪事》并同步完成年度全量蓝光封盘校验，将年度运维服务转化为家族固定传承仪式。</p>
       </div>
@@ -488,7 +578,7 @@ footer .mantra{color:var(--gold-bright);font-size:13.5px;letter-spacing:.12em;ma
     <div class="kicker">Chapter 04 · Industry Standard #0 &amp; 1:5 Ecosystem Scale-Up</div>
     <h2>第四章｜双阶段演进：一期 90 天金标准 PoC 与二期 1:5 公益生态</h2>
 
-    <div class="point">
+    <div class="point reveal">
       <span class="tag">节奏控制：一期立标实证，二期标准化放量</span>
       <p>吴总提出的 <strong>1:5 公益传承模式</strong>（由一个标杆家族带动五个普通家庭留存记忆）与跨宗亲会馆联动，构成了本行业最具差异化的社会价值与生态扩张引擎。在推进策略上采取<strong>双阶段演进</strong>：<strong>一期 90 天</strong>集中工程资源将吴氏第五卷建成经得起家办与 RCNM 检验的<strong>新加坡 0 号金标准样板</strong>；<strong>二期（M4 起）</strong>伴随外部 S$500,000 到位及 HDP 自动化工具链上线（后台人效提升 70%、交付周期压至 30–45 天），全面承接会馆网络与 1:5 公益生态，确保公益计划具备可持续造血能力。</p>
     </div>
@@ -507,7 +597,7 @@ footer .mantra{color:var(--gold-bright);font-size:13.5px;letter-spacing:.12em;ma
     </table>
 
     <div class="grid c2">
-      <div class="card gold-tint">
+      <div class="card gold-tint reveal">
         <h4>90 天验收交付的 4 份行业标准技术证据</h4>
         <ul>
           <li><strong>1. 《保存架构规范》</strong>（Preservation Architecture Specification）</li>
@@ -516,7 +606,7 @@ footer .mantra{color:var(--gold-bright);font-size:13.5px;letter-spacing:.12em;ma
           <li><strong>4. 《退出与继承接管手册》</strong>（Exit &amp; Succession Runbook）</li>
         </ul>
       </div>
-      <div class="card">
+      <div class="card reveal">
         <h4>二期生态扩张：新加坡及东南亚市场辐射路径</h4>
         <ul>
           <li><strong>双信用锚定机构渠道</strong>：依托成立于 1992 年的新加坡老牌企业 <strong>Infologic</strong> 30 年本地商业信用，结合吴氏 0 号样板，切入新加坡 SFO/MFO、持牌信托及 RCNM 等受托机构；</li>
@@ -530,55 +620,119 @@ footer .mantra{color:var(--gold-bright);font-size:13.5px;letter-spacing:.12em;ma
 <!-- 第五章 -->
 <section class="section" id="ch5">
   <div class="wrap">
-    <div class="kicker">Chapter 05 · Two Financial Ledgers &amp; SGD 500k Launchpad</div>
-    <h2>第五章｜两本财务硬账：商业造血模型 + 50 年保存准备金精算</h2>
+    <div class="kicker">Chapter 05 · Two Financial Ledgers &amp; Interactive Stress Tests</div>
+    <h2>第五章｜两本财务硬账：4 情景交互压测 + 50 年保存准备金模拟器</h2>
 
-    <div class="point">
+    <div class="point reveal">
       <span class="tag">财务稳健性决定长期托付的可信度</span>
-      <p>首台套合同（含税 <strong>S$100,000</strong> / 剔除 9% GST 净收入 <strong>S$91,743</strong>，签约首付 <strong>S$53,800</strong>）已实现 0 个月获客回本。以此实单为基础引入 <strong>SGD 500,000 新加坡启动轮</strong>（SVCA CARE / Post-Money SAFE 滚动交割，定向引入新加坡家办与信托生态伙伴），可将公司零新增客户静态 Runway 延伸至 <strong>28.7 个月</strong>并于第 2 年实现盈利造血，同时为 50 年保存建立科学、可审计的准备金测算基准。</p>
+      <p>首台套合同（含税 <strong>S$100,000</strong> / 剔除 9% GST 净收入 <strong>S$91,743</strong>，签约首付 <strong>S$53,800</strong>）已实现 0 个月获客回本。以此实单为基础引入 <strong>SGD 500,000 新加坡启动轮</strong>（SVCA CARE / Post-Money SAFE 滚动交割），可将公司零新增客户静态 Runway 延伸至 <strong>28.7 个月</strong>并于第 2 年实现盈利造血，同时为 50 年保存建立科学、可审计的准备金测算基准。</p>
     </div>
 
-    <!-- SVG 图 3：资金放大与准备金对比 -->
-    <div class="figure">
-      <svg viewBox="0 0 920 250" xmlns="http://www.w3.org/2000/svg">
-        <rect x="0" y="0" width="920" height="250" fill="#ffffff" rx="10"/>
-        <text x="460" y="28" text-anchor="middle" font-size="15.5" font-weight="700" fill="#0b162a">双账本精算：S$50 万启动资金配置 + 1TB 档案 50 年保存准备金压力测试</text>
+    <!-- 交互式图表 3：商业造血与 4 情景压力测试 -->
+    <div class="interactive-panel reveal">
+      <div class="panel-head">
+        <p class="panel-title">第一本账｜公司 3 年商业造血与 4 情景压力测试（Python 精算数据交互看板）</p>
+        <div class="btn-group" id="scBtns">
+          <button class="seg-btn active" data-sc="base">基准精益（推荐）</button>
+          <button class="seg-btn" data-sc="pess">悲观获客减半</button>
+          <button class="seg-btn" data-sc="cost">交付成本涨50%</button>
+          <button class="seg-btn" data-sc="price">客单下探S$6.5万</button>
+        </div>
+      </div>
+      <div class="grid c4" style="margin:0 0 14px">
+        <div class="card gold-tint"><div class="num navy" id="kpiMargin">56.2%</div><p>扣渠道后净毛利率</p></div>
+        <div class="card"><div class="num teal" id="kpiBe">4.33 家/年</div><p>年度盈亏平衡点</p></div>
+        <div class="card"><div class="num" id="kpiRunway">28.7 个月</div><p>零新增静态 Runway</p></div>
+        <div class="card teal-tint"><div class="num teal" id="kpiCash">S$1,238,390</div><p>第 3 年末账面现金</p></div>
+      </div>
+      <div class="figure" style="margin:0">
+        <svg viewBox="0 0 920 265" xmlns="http://www.w3.org/2000/svg" id="finSvg">
+          <rect x="0" y="0" width="920" height="265" fill="#faf9f6" rx="8"/>
+          <text x="460" y="24" text-anchor="middle" font-size="13.5" font-weight="700" fill="#0b162a" id="finSubtitle">基准精益情景：年固定成本 S$22.3万 · 新增家族 3→8→15 · 综合渠道分成 7.5%</text>
+          <!-- 图例 -->
+          <rect x="290" y="36" width="12" height="12" rx="2" fill="#1e3a5f"/><text x="308" y="46" font-size="11.5" fill="#475569">总营收</text>
+          <rect x="380" y="36" width="12" height="12" rx="2" fill="#0f766e"/><text x="398" y="46" font-size="11.5" fill="#475569">净利润（负值标红）</text>
+          <rect x="540" y="36" width="12" height="12" rx="2" fill="#b8924a"/><text x="558" y="46" font-size="11.5" fill="#475569">期末账面现金（含本轮 S$50 万）</text>
+          <!-- 基准轴 y=200 为零线，比例尺 150万 = 135px (0.09px per 1k) -->
+          <line x1="75" y1="200" x2="870" y2="200" stroke="#94a3b8" stroke-width="1.5"/>
+          <line x1="75" y1="155" x2="870" y2="155" stroke="#e2ddd2" stroke-width="1" stroke-dasharray="3 3"/>
+          <line x1="75" y1="110" x2="870" y2="110" stroke="#e2ddd2" stroke-width="1" stroke-dasharray="3 3"/>
+          <line x1="75" y1="65" x2="870" y2="65" stroke="#e2ddd2" stroke-width="1" stroke-dasharray="3 3"/>
+          <text x="65" y="204" text-anchor="end" font-size="11" fill="#64748b">0</text>
+          <text x="65" y="159" text-anchor="end" font-size="11" fill="#64748b">S$500k</text>
+          <text x="65" y="114" text-anchor="end" font-size="11" fill="#64748b">S$1,000k</text>
+          <text x="65" y="69" text-anchor="end" font-size="11" fill="#64748b">S$1,500k</text>
+          <g id="finBars"></g>
+        </svg>
+      </div>
+    </div>
 
-        <rect x="30" y="50" width="415" height="180" rx="8" fill="#faf9f6" stroke="#e2ddd2"/>
-        <text x="237" y="74" text-anchor="middle" font-size="13.5" font-weight="700" fill="#0b162a">外部 SGD 500,000 启动资金精益分配</text>
-        <rect x="52" y="92" width="150" height="20" rx="4" fill="#1e3a5f"/><text x="210" y="106" font-size="11.5" fill="#1e293b"><strong>39.0% (S$195k)</strong> HDP引擎化降本70% &amp; 阿忆</text>
-        <rect x="52" y="120" width="70" height="20" rx="4" fill="#0f766e"/><text x="130" y="134" font-size="11.5" fill="#1e293b"><strong>17.8% (S$89k)</strong> 家办闭门演示 &amp; L1试点拓展</text>
-        <rect x="52" y="148" width="60" height="20" rx="4" fill="#b8924a"/><text x="120" y="162" font-size="11.5" fill="#1e293b"><strong>15.3% (S$76.5k)</strong> 战略现金储备红线（独立锁死）</text>
-        <rect x="52" y="176" width="58" height="20" rx="4" fill="#334155"/><text x="118" y="190" font-size="11.5" fill="#1e293b"><strong>14.9% (S$74.5k)</strong> 90天PoC与可复用采集设备</text>
-        <rect x="52" y="204" width="50" height="16" rx="4" fill="#64748b"/><text x="110" y="216" font-size="11.5" fill="#1e293b"><strong>13.0% (S$65k)</strong> 新加坡主体/DPO合规与PI保险</text>
-
-        <rect x="465" y="50" width="425" height="180" rx="8" fill="#faf9f6" stroke="#e2ddd2"/>
-        <text x="677" y="74" text-anchor="middle" font-size="13.5" font-weight="700" fill="#0b162a">1TB 档案 50 年支出 vs 准备金压测（名义总支出 S$84,579）</text>
-        <text x="485" y="104" font-size="12" fill="#475569">• 仅配置 S$20,000 静态现金 (0% 收益)</text>
-        <rect x="485" y="112" width="125" height="14" rx="3" fill="#dc2626"/><text x="618" y="123" font-size="11" font-weight="700" fill="#b91c1c">第 17 年耗尽</text>
-        <text x="485" y="145" font-size="12" fill="#475569">• S$20,000 + 3% 审慎收益（无后续划拨）</text>
-        <rect x="485" y="153" width="170" height="14" rx="3" fill="#d97706"/><text x="663" y="164" font-size="11" font-weight="700" fill="#b45309">第 23 年耗尽</text>
-        <text x="485" y="186" font-size="12" fill="#0f766e"><strong>• 可行方案：S$20k+3%收益+S$800/年划拨 或 S$40k+3–4%收益</strong></text>
-        <rect x="485" y="194" width="375" height="16" rx="3" fill="#0f766e"/><text x="672" y="206" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">✅ 覆盖 50 年全程不断档（2077 年期末仍余 +S$8.7k 至 +S$63.5k）</text>
-      </svg>
-      <div class="caption">图 3：左图保障平台中期自我造血；右图确立新加坡受托级长期保存准备金定价模型</div>
+    <!-- 交互式图表 4：1TB 50 年保存准备金实时模拟器 -->
+    <div class="interactive-panel reveal">
+      <div class="panel-head">
+        <p class="panel-title">第二本账｜1TB 档案（三副本 3TB）50 年保存准备金实时模拟器</p>
+        <div class="btn-group" id="resPresets">
+          <button class="seg-btn" data-init="20000" data-rate="0" data-top="0">S$2万纯现金（会耗尽）</button>
+          <button class="seg-btn active" data-init="20000" data-rate="3.0" data-top="800">推荐双轨：S$2万+3%+年划拨S$800</button>
+          <button class="seg-btn" data-init="40000" data-rate="3.5" data-top="0">S$4万准备金+3.5%稳健收益</button>
+        </div>
+      </div>
+      <div class="sim-grid">
+        <div class="sim-controls">
+          <div>
+            <div class="ctrl-row">
+              <label>初始专款准备金 <span id="lblInit">S$20,000</span></label>
+              <input type="range" id="rngInit" min="10000" max="60000" step="2500" value="20000">
+            </div>
+            <div class="ctrl-row" style="margin-top:10px">
+              <label>审慎理财年化收益率 <span id="lblRate">3.0%</span></label>
+              <input type="range" id="rngRate" min="0" max="5" step="0.5" value="3.0">
+            </div>
+            <div class="ctrl-row" style="margin-top:10px">
+              <label>年度受托续费专项划拨 <span id="lblTop">S$800 / 年</span></label>
+              <input type="range" id="rngTop" min="0" max="1500" step="100" value="800">
+            </div>
+          </div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.6;">
+            <strong>模型基准</strong>：1TB 规模化年支出 S$450–1,200/年；压测按第 1 年 S$1,000、年均通胀及维护增长 2% 计，<strong>50 年累计名义支出 S$84,579</strong>。
+          </div>
+          <div class="sim-status" id="simStatus">加载测算中...</div>
+        </div>
+        <div class="sim-chart-wrap">
+          <svg viewBox="0 0 600 245" xmlns="http://www.w3.org/2000/svg" id="resSvg">
+            <defs>
+              <linearGradient id="areaTeal" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#0f766e" stop-opacity="0.32"/>
+                <stop offset="100%" stop-color="#0f766e" stop-opacity="0.03"/>
+              </linearGradient>
+              <linearGradient id="areaRed" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#b91c1c" stop-opacity="0.28"/>
+                <stop offset="100%" stop-color="#b91c1c" stop-opacity="0.02"/>
+              </linearGradient>
+            </defs>
+            <rect x="0" y="0" width="600" height="245" fill="#ffffff" rx="8"/>
+            <text x="300" y="22" text-anchor="middle" font-size="13" font-weight="700" fill="#0b162a">2027–2077 逐年准备金账户余额推演（SGD）</text>
+            <g id="resChartBody"></g>
+          </svg>
+        </div>
+      </div>
     </div>
 
     <div class="grid c2">
-      <div class="card">
-        <h4>第一本账：公司商业造血模型（单位经济与现金流）</h4>
+      <div class="card reveal">
+        <h4>商业造血核心参数摘要</h4>
         <ul>
           <li><strong>硬件与毛利结构</strong>：硬件优化为 Mac mini M5 Pro + 18TB 蓝光 5 匣仅 <strong>S$7,600</strong>；标准复制毛利率 <strong>63.7%</strong>（扣除 7.5% 综合渠道分成后净毛利率 <strong>56.2%</strong>，单客净毛利 S$51,516）；</li>
           <li><strong>L1 → L2 转化漏斗</strong>：通过 <strong>L1 轻试点（S$15K–25K，6–8 周）</strong>降低初次决策门槛，预期 50%–65% 升级至 <strong>L2 典藏版（S$80K–100K）</strong>；</li>
-          <li><strong>盈亏平衡与盈利预测</strong>：中新协同架构下月固定成本控制在 S$1.86 万；年签 <strong>4.33 家</strong>即达盈亏平衡，基准情景第 2 年净利 <strong>+S$207,610</strong>、第 3 年 <strong>+S$617,504</strong>、第 3 年末账面现金 <strong>S$1,238,390</strong>。</li>
+          <li><strong>资金分配红线</strong>：S$50 万中 39.0% 投 HDP 研发、17.8% 投家办 BD、14.9% 投 PoC 与设备、13.0% 投主体与保险、<strong>15.3%（S$76,500）锁入战略现金红线</strong>。</li>
         </ul>
       </div>
-      <div class="card gold-tint">
-        <h4>第二本账：1TB 档案 50 年保存准备金账（受托定价基准）</h4>
+      <div class="card gold-tint reveal">
+        <h4>50 年准备金制度化建议</h4>
         <ul>
-          <li><strong>1TB（三副本 3TB）规模化年成本</strong>：<strong>S$450–1,200/年</strong>（异地冷云 S$100–300 + 蓝光介质/驱替 S$50–150 + 校验迁移 S$150–400 + 审计托管 S$150–350）；</li>
-          <li><strong>50 年累计名义成本</strong>：按首年 S$1,000、年均 2% 通胀与维护增长计，50 年累计名义支出为 <strong>S$84,579</strong>；</li>
-          <li><strong>制度化商业设计</strong>：避免不可持续的一次性低价买断，确立<strong>“高毛利初始化（S$8–10 万）+ 年度活水/受托费（S$9,600/年）+ 专款隔离的保存准备金（Preservation Reserve）”</strong>三支柱结构，并可对接 RCNM/持牌信托设立独立准备金托管账户。</li>
+          <li><strong>1TB（三副本 3TB）成本构成</strong>：异地冷云 S$100–300 + 介质/驱替 S$50–150 + 校验迁移 S$150–400 + 审计托管 S$150–350，合计 S$450–1,200/年；</li>
+          <li><strong>先测体量再定额</strong>：借 90 天 PoC 测出吴氏第五卷与音视频的真实 TB 体量，再在独立托管账户中设立专款隔离的 <strong>保存准备金（Preservation Reserve）</strong>；</li>
+          <li><strong>10 年期动态审视</strong>：每 10 年根据存储单价下跌与新增视频增量复核准备金覆盖率，可对接 RCNM/持牌信托推出行业标准准备金账户。</li>
         </ul>
       </div>
     </div>
@@ -591,7 +745,7 @@ footer .mantra{color:var(--gold-bright);font-size:13.5px;letter-spacing:.12em;ma
     <div class="kicker">Chapter 06 · Corporate Governance &amp; Asset Ring-Fencing</div>
     <h2>第六章｜公司治理与法务前置：机构尽调达标与家族资产风险隔离</h2>
 
-    <div class="point">
+    <div class="point reveal">
       <span class="tag">交易前置条件：顺畅过会 S$500,000 尽调与实现双向保护</span>
       <p>新加坡家族办公室与持牌信托在资金交割前，将对融资主体的股权洁净度、知识产权归属、关联交易性质及合同责任上限进行严格尽调。在启动外部交割前一次性完成以下四项治理前置，不仅能够确保 S$500,000 快速闭环落袋，更能在法律与物理层面上将吴氏家族私密资产与公司未来的商业运营风险实现 <strong>100% 彻底隔离</strong>。</p>
     </div>
@@ -616,7 +770,7 @@ footer .mantra{color:var(--gold-bright);font-size:13.5px;letter-spacing:.12em;ma
 
     <p>系统工程研发、90 天 PoC 测试、新加坡法务整改及外部机构 1-on-1 路演全部由 DeepFamily 团队与 Infologic 主导执行；为确保 0 号行业样板与 S$500,000 启动轮在 90 天内同步落地，吴总侧需协同推进以下 <strong>3 项关键节点</strong>：</p>
 
-    <div class="step-card">
+    <div class="step-card reveal">
       <div class="step-num">1</div>
       <div class="step-body">
         <h4>Week 1–3｜签署治理前置文件，启动外部 S$500,000 滚动交割</h4>
@@ -625,7 +779,7 @@ footer .mantra{color:var(--gold-bright);font-size:13.5px;letter-spacing:.12em;ma
       </div>
     </div>
 
-    <div class="step-card">
+    <div class="step-card reveal">
       <div class="step-num">2</div>
       <div class="step-body">
         <h4>Week 2–12｜确认第五卷及脱敏授权样本，完成 90 天 6 项 PoC 验收</h4>
@@ -634,7 +788,7 @@ footer .mantra{color:var(--gold-bright);font-size:13.5px;letter-spacing:.12em;ma
       </div>
     </div>
 
-    <div class="step-card">
+    <div class="step-card reveal">
       <div class="step-num">3</div>
       <div class="step-body">
         <h4>Week 7–10｜组织 1 场 6–8 人新加坡核心圈层闭门演示会</h4>
@@ -643,7 +797,7 @@ footer .mantra{color:var(--gold-bright);font-size:13.5px;letter-spacing:.12em;ma
       </div>
     </div>
 
-    <div class="note ok">
+    <div class="note ok reveal">
       <strong>战略共识：</strong>新加坡金融资产传承体系已高度成熟，而<strong>“50 年受托级家族数字遗产保存”正处于行业定义窗口期</strong>。未来 90 天将以吴氏 0 号样板树立工程与合规标杆，以 S$500,000 启动资金筑实平台底座，共同确立该新兴行业在新加坡的标准与生态格局。
     </div>
   </div>
@@ -656,6 +810,297 @@ footer .mantra{color:var(--gold-bright);font-size:13.5px;letter-spacing:.12em;ma
     <div class="mantra">ISO 14721 (OAIS) · 增强型 3-2-1-1-0 · 双独立管理域 · 第三方独立接管</div>
   </div>
 </footer>
+
+<script>
+(function(){
+  /* 1. 阅读进度条与 Scroll Spy */
+  var bar = document.getElementById("readProgress");
+  var navLinks = Array.prototype.slice.call(document.querySelectorAll("#topNav a[href^='#']"));
+  var sections = navLinks.map(function(a){ return document.querySelector(a.getAttribute("href")); }).filter(Boolean);
+
+  function onScroll(){
+    var docH = document.documentElement.scrollHeight - window.innerHeight;
+    var pct = docH > 0 ? Math.min(100, Math.max(0, (window.scrollY / docH) * 100)) : 0;
+    bar.style.width = pct.toFixed(1) + "%";
+    var cur = "";
+    var offset = window.scrollY + 120;
+    sections.forEach(function(sec){ if(sec.offsetTop <= offset) cur = "#" + sec.id; });
+    navLinks.forEach(function(a){
+      if(a.getAttribute("href") === cur) a.classList.add("active");
+      else a.classList.remove("active");
+    });
+  }
+  window.addEventListener("scroll", onScroll, {passive:true});
+  onScroll();
+
+  /* 2. Scroll-Reveal 滚动浮现 */
+  var reveals = document.querySelectorAll(".reveal");
+  if("IntersectionObserver" in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){ e.target.classList.add("in-view"); io.unobserve(e.target); }
+      });
+    }, {threshold:0.08, rootMargin:"0px 0px -30px 0px"});
+    reveals.forEach(function(el){ io.observe(el); });
+  } else {
+    reveals.forEach(function(el){ el.classList.add("in-view"); });
+  }
+
+  /* 3. 交互式 2027–2077 迁移时间轴 */
+  var tlData = [
+    {year:"2027", tag:"建库基准年", title:"0 号样板建库与 90 天 PoC 验收", desc:"吴氏第五卷、首批 1,000 份素材与 6 位长辈口述按开放格式入库；建立双独立管理域、SHA-256 签名清单 H₀ 与首份完整恢复报告。", proof:"100% 原始文件可定位、可读取、可独立校验；交付 4 份尽调证据文档。"},
+    {year:"2030–2032", tag:"首次存储刷新", title:"硬件、光驱与冷存储第一轮替换", desc:"参照 TNA 3–5 年检查周期，评估 Mac mini 本地节点、蓝光读取器及异地云存储介质健康状态，完成首轮无感替换。", proof:"新旧副本 SHA-256 哈希比对 100% 一致；跨管理域恢复演练成功。"},
+    {year:"2035–2037", tag:"首个架构周期更新", title:"文件格式、加密算法与托管机构重估", desc:"全面评估 TIFF/PDF-A/WAV-BWF 格式生态、新一代密码学签名升级及第三方受托保管资质，必要时执行批量格式衍生。", proof:"迁移前后吴氏世系语义、四态事实状态与来源证据链零丢失。"},
+    {year:"2047", tag:"第 20 年关键节点", title:"第三方独立接管重建演练", desc:"委托不参与日常运维的替代保管机构（如 RCNM / 家办信托），完全停用 DeepFamily 生产后台，仅凭导出包与托管密钥独立重建。", proof:"签署《20 年独立接管重建证明》，实证脱离原厂系统仍可 100% 恢复。"},
+    {year:"2057", tag:"第 30 年持续审查", title:"跨代权限继承与保存准备金审计", desc:"核验第二/三代合法继承人 RGT 授权交接闭环，审计三副本健康度，并重算保存准备金余额与未来 20 年费率覆盖率。", proof:"跨代继承交接记录 + 后 20 年保存资金足额覆盖审计函。"},
+    {year:"2067", tag:"第 40 年独立迁移", title:"新一代平台与后量子密码体系迁移", desc:"完成独立平台恢复、新一代数字签名算法追加替换，并由第三/四代家族成员实测零依赖离线访问。", proof:"彻底脱离 2027 年任何硬件接口或商业软件许可依赖。"},
+    {year:"2077", tag:"第 50 年终验移交", title:"五层验收闭环与下个 50 年移交", desc:"由家族后代与第三方受托机构对原件母版、开放副本、关系图谱、签名链与 RGT 授权档进行全量独立验收。", proof:"L1–L5 五层标准全部达标，完整移交下一个 50 年保存周期。"}
+  ];
+  var tlG = document.getElementById("tlNodes");
+  var activeTl = 0;
+  function renderTimeline(){
+    tlG.innerHTML = "";
+    var startX = 80, stepX = 126.6;
+    tlData.forEach(function(item, idx){
+      var cx = startX + idx * stepX;
+      var isAct = idx === activeTl;
+      var g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+      g.setAttribute("class", "tl-node");
+      if(isAct){
+        var halo = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        halo.setAttribute("cx", cx); halo.setAttribute("cy", 74); halo.setAttribute("r", 14);
+        halo.setAttribute("fill", "none"); halo.setAttribute("stroke", "#b8924a"); halo.setAttribute("stroke-width", "2.5");
+        halo.setAttribute("class", "pulse-halo");
+        g.appendChild(halo);
+      }
+      var c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      c.setAttribute("cx", cx); c.setAttribute("cy", 74);
+      c.setAttribute("r", isAct ? 11 : 8);
+      c.setAttribute("fill", isAct ? "#b8924a" : (idx === 3 ? "#0f766e" : "#0b162a"));
+      c.setAttribute("stroke", isAct ? "#0b162a" : "#d4af63");
+      c.setAttribute("stroke-width", isAct ? "3" : "2");
+      c.setAttribute("class", "main-dot");
+      g.appendChild(c);
+
+      var t1 = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      t1.setAttribute("x", cx); t1.setAttribute("y", 46); t1.setAttribute("text-anchor", "middle");
+      t1.setAttribute("font-size", isAct ? "13.5" : "12"); t1.setAttribute("font-weight", isAct ? "800" : "700");
+      t1.setAttribute("fill", isAct ? "#8c6a2b" : "#0b162a");
+      t1.textContent = item.year;
+      g.appendChild(t1);
+
+      var t2 = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      t2.setAttribute("x", cx); t2.setAttribute("y", 104); t2.setAttribute("text-anchor", "middle");
+      t2.setAttribute("font-size", "11.5"); t2.setAttribute("font-weight", isAct ? "700" : "600");
+      t2.setAttribute("fill", isAct ? "#0b162a" : "#475569");
+      t2.textContent = item.tag;
+      g.appendChild(t2);
+
+      g.addEventListener("click", function(){ activeTl = idx; renderTimeline(); updateTlDetail(); });
+      tlG.appendChild(g);
+    });
+  }
+  function updateTlDetail(){
+    var d = tlData[activeTl];
+    document.getElementById("tdYear").innerHTML = d.year + "<small>" + d.tag + "</small>";
+    document.getElementById("tdTitle").textContent = d.title;
+    document.getElementById("tdDesc").textContent = d.desc;
+    document.getElementById("tdProof").textContent = d.proof;
+  }
+  renderTimeline();
+
+  /* 4. 交互式 4 情景商业压测柱状图（精确对齐 Python 压测输出） */
+  var scenarios = {
+    base: {
+      sub:"基准精益情景：年固定成本 S$22.3万 · 新增家族 3→8→15 · 综合渠道分成 7.5%",
+      margin:"56.2%", be:"4.33 家/年", runway:"28.7 个月", cash:"S$1,238,390",
+      years:[
+        {lbl:"第 1 年（3 家）", rev:275.2, net:-86.7, cash:413.3},
+        {lbl:"第 2 年（8 家）", rev:757.0, net:207.6, cash:620.9},
+        {lbl:"第 3 年（15 家）", rev:1460.6, net:617.5, cash:1238.4}
+      ]
+    },
+    pess: {
+      sub:"悲观获客情景：新增减半 2→4→7 · 全渠道 15% 分成 · 全程现金流不断链",
+      margin:"48.7%", be:"5.00 家/年", runway:"28.7 个月", cash:"S$449,150",
+      years:[
+        {lbl:"第 1 年（2 家）", rev:183.5, net:-145.1, cash:354.9},
+        {lbl:"第 2 年（4 家）", rev:382.3, net:-32.1, cash:322.7},
+        {lbl:"第 3 年（7 家）", rev:688.3, net:126.4, cash:449.2}
+      ]
+    },
+    cost: {
+      sub:"范围蔓延/成本失控：可变成本涨 50% 至 S$5.0万 · 全渠道 15% 分成",
+      margin:"30.5%", be:"7.97 家/年", runway:"28.7 个月", cash:"S$650,022",
+      years:[
+        {lbl:"第 1 年（3 家）", rev:275.2, net:-133.8, cash:366.2},
+        {lbl:"第 2 年（8 家）", rev:757.0, net:19.3, cash:385.5},
+        {lbl:"第 3 年（15 家）", rev:1460.6, net:264.5, cash:650.0}
+      ]
+    },
+    price: {
+      sub:"客单下探情景：客单降至含税 S$6.5万（净 S$5.96万）· 综合渠道 7.5%",
+      margin:"36.6%", be:"10.22 家/年", runway:"28.7 个月", cash:"S$495,846",
+      years:[
+        {lbl:"第 1 年（3 家）", rev:211.0, net:-146.1, cash:353.9},
+        {lbl:"第 2 年（8 家）", rev:500.1, net:-30.0, cash:323.9},
+        {lbl:"第 3 年（15 家）", rev:979.0, net:172.0, cash:495.8}
+      ]
+    }
+  };
+  var finBars = document.getElementById("finBars");
+  function renderFin(key){
+    var sc = scenarios[key];
+    document.getElementById("finSubtitle").textContent = sc.sub;
+    document.getElementById("kpiMargin").textContent = sc.margin;
+    document.getElementById("kpiBe").textContent = sc.be;
+    document.getElementById("kpiRunway").textContent = sc.runway;
+    document.getElementById("kpiCash").textContent = sc.cash;
+
+    finBars.innerHTML = "";
+    var baseY = 200, scale = 135 / 1500;
+    var centers = [215, 475, 735];
+    sc.years.forEach(function(yr, i){
+      var cx = centers[i];
+      var bars = [
+        {val: yr.rev, dx:-66, color:"#1e3a5f", prefix:""},
+        {val: yr.net, dx:-18, color: yr.net >= 0 ? "#0f766e" : "#b91c1c", prefix: yr.net >= 0 ? "+" : ""},
+        {val: yr.cash, dx:30, color:"#b8924a", prefix:""}
+      ];
+      bars.forEach(function(b){
+        var h = Math.max(4, Math.abs(b.val) * scale);
+        var y = b.val >= 0 ? baseY - h : baseY;
+        var rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        rect.setAttribute("x", cx + b.dx);
+        rect.setAttribute("y", y);
+        rect.setAttribute("width", 40);
+        rect.setAttribute("height", h);
+        rect.setAttribute("rx", 4);
+        rect.setAttribute("fill", b.color);
+        rect.setAttribute("class", "bar-anim");
+        finBars.appendChild(rect);
+
+        var txt = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        txt.setAttribute("x", cx + b.dx + 20);
+        txt.setAttribute("y", b.val >= 0 ? y - 6 : y + h + 13);
+        txt.setAttribute("text-anchor", "middle");
+        txt.setAttribute("font-size", "11");
+        txt.setAttribute("font-weight", "700");
+        txt.setAttribute("fill", b.color);
+        txt.textContent = b.prefix + Math.round(b.val) + "k";
+        finBars.appendChild(txt);
+      });
+      var xl = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      xl.setAttribute("x", cx); xl.setAttribute("y", 246); xl.setAttribute("text-anchor", "middle");
+      xl.setAttribute("font-size", "12.5"); xl.setAttribute("font-weight", "700"); xl.setAttribute("fill", "#0b162a");
+      xl.textContent = yr.lbl;
+      finBars.appendChild(xl);
+    });
+  }
+  document.getElementById("scBtns").addEventListener("click", function(e){
+    var btn = e.target.closest(".seg-btn");
+    if(!btn) return;
+    Array.prototype.forEach.call(this.querySelectorAll(".seg-btn"), function(b){ b.classList.remove("active"); });
+    btn.classList.add("active");
+    renderFin(btn.getAttribute("data-sc"));
+  });
+  renderFin("base");
+
+  /* 5. 1TB 50 年保存准备金实时交互模拟器 */
+  var rngInit = document.getElementById("rngInit");
+  var rngRate = document.getElementById("rngRate");
+  var rngTop = document.getElementById("rngTop");
+  var resBody = document.getElementById("resChartBody");
+  var simStatus = document.getElementById("simStatus");
+
+  function fmtSGD(v){
+    var sign = v < 0 ? "-" : "";
+    return sign + "S$" + Math.abs(Math.round(v)).toLocaleString("en-US");
+  }
+
+  function updateReserveSim(){
+    var init = parseFloat(rngInit.value);
+    var rate = parseFloat(rngRate.value) / 100.0;
+    var top = parseFloat(rngTop.value);
+    document.getElementById("lblInit").textContent = fmtSGD(init);
+    document.getElementById("lblRate").textContent = (rate * 100).toFixed(1) + "%";
+    document.getElementById("lblTop").textContent = fmtSGD(top) + " / 年";
+
+    var bal = init;
+    var pts = [{yr:0, val:bal}];
+    var depletedYr = null;
+    for(var y = 1; y <= 50; y++){
+      var cost = 1000 * Math.pow(1.02, y - 1);
+      bal = bal * (1 + rate) + top - cost;
+      if(bal < 0 && depletedYr === null) depletedYr = y;
+      pts.push({yr:y, val:bal});
+    }
+
+    var minVal = Math.min(0, pts.reduce(function(m,p){ return Math.min(m, p.val); }, 0));
+    var maxVal = Math.max(25000, pts.reduce(function(m,p){ return Math.max(m, p.val); }, 0) * 1.1);
+    var x0 = 58, x1 = 576, yTop = 36, yBot = 212;
+    function mapX(yr){ return x0 + (yr / 50) * (x1 - x0); }
+    function mapY(v){ return yBot - ((v - minVal) / (maxVal - minVal)) * (yBot - yTop); }
+
+    var yZero = mapY(0);
+    var html = "";
+    // 水平参考线
+    [0, maxVal * 0.5, maxVal].forEach(function(gv){
+      var gy = mapY(gv);
+      html += '<line x1="'+x0+'" y1="'+gy.toFixed(1)+'" x2="'+x1+'" y2="'+gy.toFixed(1)+'" stroke="'+(gv===0?'#64748b':'#e2ddd2')+'" stroke-width="'+(gv===0?'1.4':'1')+'" '+(gv===0?'':'stroke-dasharray="3 3"')+'/>';
+      html += '<text x="'+(x0-6)+'" y="'+(gy+4).toFixed(1)+'" text-anchor="end" font-size="10.5" fill="#64748b">'+(gv===0?'0':Math.round(gv/1000)+'k')+'</text>';
+    });
+    // X轴年份标签
+    [0, 10, 20, 30, 40, 50].forEach(function(yr){
+      var gx = mapX(yr);
+      html += '<text x="'+gx.toFixed(1)+'" y="232" text-anchor="middle" font-size="10.5" fill="#475569">'+(2027+yr)+'</text>';
+    });
+
+    // 路径构建
+    var lineD = pts.map(function(p, idx){
+      return (idx === 0 ? "M" : "L") + mapX(p.yr).toFixed(1) + "," + mapY(p.val).toFixed(1);
+    }).join(" ");
+    var areaD = lineD + " L" + mapX(50).toFixed(1) + "," + yZero.toFixed(1) + " L" + mapX(0).toFixed(1) + "," + yZero.toFixed(1) + " Z";
+    var isSafe = depletedYr === null;
+    html += '<path d="'+areaD+'" fill="'+(isSafe?'url(#areaTeal)':'url(#areaRed)')+'"/>';
+    html += '<path d="'+lineD+'" fill="none" stroke="'+(isSafe?'#0f766e':'#b91c1c')+'" stroke-width="2.5"/>';
+
+    // 终点标注
+    var endPt = pts[pts.length - 1];
+    var ex = mapX(50), ey = mapY(endPt.val);
+    html += '<circle cx="'+ex.toFixed(1)+'" cy="'+ey.toFixed(1)+'" r="4.5" fill="'+(isSafe?'#0f766e':'#b91c1c')+'"/>';
+    html += '<text x="'+(ex-6).toFixed(1)+'" y="'+(ey > 55 ? ey-10 : ey+16).toFixed(1)+'" text-anchor="end" font-size="11.5" font-weight="800" fill="'+(isSafe?'#0f766e':'#b91c1c')+'">2077余额: '+fmtSGD(endPt.val)+'</text>';
+
+    resBody.innerHTML = html;
+
+    if(isSafe){
+      simStatus.className = "sim-status";
+      simStatus.innerHTML = "✅ <strong>全程不断档</strong>：覆盖全部 50 年刚性维护支出后，2077 年期末余额仍余 <strong>+" + fmtSGD(endPt.val) + "</strong>。";
+    } else {
+      simStatus.className = "sim-status warn";
+      simStatus.innerHTML = "⚠️ <strong>第 " + depletedYr + " 年（" + (2027 + depletedYr) + "）资金耗尽</strong>：50 年末累计缺口 <strong>" + fmtSGD(endPt.val) + "</strong>，须提高初始准备金或配置年度划拨。";
+    }
+  }
+
+  [rngInit, rngRate, rngTop].forEach(function(el){
+    el.addEventListener("input", function(){
+      Array.prototype.forEach.call(document.querySelectorAll("#resPresets .seg-btn"), function(b){ b.classList.remove("active"); });
+      updateReserveSim();
+    });
+  });
+  document.getElementById("resPresets").addEventListener("click", function(e){
+    var btn = e.target.closest(".seg-btn");
+    if(!btn) return;
+    Array.prototype.forEach.call(this.querySelectorAll(".seg-btn"), function(b){ b.classList.remove("active"); });
+    btn.classList.add("active");
+    rngInit.value = btn.getAttribute("data-init");
+    rngRate.value = btn.getAttribute("data-rate");
+    rngTop.value = btn.getAttribute("data-top");
+    updateReserveSim();
+  });
+  updateReserveSim();
+})();
+</script>
 
 </body>
 </html>
