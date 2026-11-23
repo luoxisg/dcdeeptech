@@ -1,0 +1,662 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>DeepFamily × 吴氏家族｜创始共创与 50 年数字遗产保存战略计划书（2027–2077）</title>
+<style>
+:root{
+  --navy:#0b162a;
+  --navy-mid:#152642;
+  --navy-light:#1e3a5f;
+  --gold:#b8924a;
+  --gold-bright:#d4af63;
+  --gold-soft:#f7f1e3;
+  --teal:#0f766e;
+  --teal-soft:#ecfdf5;
+  --ink:#1e293b;
+  --muted:#475569;
+  --line:#e2ddd2;
+  --paper:#faf9f6;
+  --white:#ffffff;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  color:var(--ink);
+  background:var(--white);
+  font:15.5px/1.82 "PingFang SC","Microsoft YaHei","Hiragino Sans GB",-apple-system,BlinkMacSystemFont,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{width:min(1060px,calc(100% - 48px));margin:auto}
+a{color:var(--navy);text-decoration:none}
+
+/* 顶栏 */
+.topbar{
+  position:sticky;top:0;z-index:30;
+  background:rgba(11,22,42,.96);
+  border-bottom:1px solid rgba(184,146,74,.35);
+  backdrop-filter:blur(10px);
+}
+.topbar .wrap{height:60px;display:flex;align-items:center;justify-content:space-between;gap:14px}
+.brand{color:#fff;font-weight:800;font-size:17.5px;display:flex;align-items:center;gap:10px;white-space:nowrap}
+.brand-seal{
+  width:28px;height:28px;border-radius:6px;
+  background:linear-gradient(135deg,var(--gold-bright),#8c6a2b);
+  color:var(--navy);display:inline-flex;align-items:center;justify-content:center;
+  font-family:"Songti SC","SimSun",Georgia,serif;font-weight:800;font-size:15px;
+}
+.brand span{color:var(--gold-bright)}
+.brand small{
+  font-size:11px;font-weight:600;color:var(--gold-bright);
+  border:1px solid rgba(212,175,99,.4);padding:2px 8px;border-radius:12px;
+}
+.topbar nav{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.topbar nav a{color:#cbd5e1;font-size:12.5px;font-weight:500}
+.topbar nav a:hover{color:var(--gold-bright)}
+.btn-print{
+  background:var(--gold);color:var(--navy);border:none;border-radius:5px;
+  padding:6px 13px;font-size:12px;font-weight:700;cursor:pointer;
+}
+.btn-print:hover{background:var(--gold-bright)}
+
+/* 封面 */
+.hero{
+  background:radial-gradient(circle at 85% 20%,#1a3154 0%,var(--navy) 64%);
+  color:#fff;padding:74px 0 60px;border-bottom:4px solid var(--gold);
+}
+.hero-top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:20px}
+.hero .kicker{color:var(--gold-bright);font-size:12px;letter-spacing:.2em;text-transform:uppercase;font-weight:700}
+.hero .edition{font-size:11.5px;color:#e2e8f0;border:1px solid rgba(212,175,99,.4);padding:4px 12px;border-radius:999px;background:rgba(184,146,74,.12)}
+.hero h1{
+  font-family:"Songti SC","Noto Serif SC","SimSun",Georgia,serif;
+  font-size:38px;line-height:1.28;margin:0 0 18px;font-weight:700;
+}
+.hero h1 em{color:var(--gold-bright);font-style:normal}
+.hero .sub{color:#cbd5e1;font-size:16px;max-width:860px;line-height:1.85;margin:0}
+.hero .stats{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:16px;
+  margin-top:34px;padding-top:26px;border-top:1px solid rgba(255,255,255,.14);
+}
+.hero .stat{
+  background:rgba(255,255,255,.05);border:1px solid rgba(212,175,99,.28);
+  border-radius:8px;padding:15px 16px;
+}
+.hero .stat b{display:block;font-size:24px;color:var(--gold-bright);font-weight:800;line-height:1.2}
+.hero .stat span{display:block;color:#cbd5e1;font-size:12px;margin-top:5px}
+
+/* 序言信笺卡片 */
+.letter-box{
+  background:var(--paper);border:1px solid var(--line);border-left:5px solid var(--gold);
+  border-radius:10px;padding:28px 32px;margin:34px 0 10px;
+}
+.letter-box h3{margin:0 0 12px;color:var(--navy);font-size:19px}
+.letter-box p{margin:10px 0;color:#334155}
+.letter-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:18px}
+.letter-item{background:#fff;border:1px solid var(--line);border-radius:8px;padding:14px 16px}
+.letter-item strong{color:var(--navy);display:block;margin-bottom:4px;font-size:14px}
+.letter-item span{font-size:13px;color:var(--muted)}
+
+/* 目录 */
+.toc{background:var(--paper);border-bottom:1px solid var(--line);padding:20px 0}
+.toc ol{columns:2;column-gap:44px;padding-left:20px;margin:0}
+.toc li{margin:4px 0;font-size:13.5px;color:var(--muted)}
+.toc li a{color:var(--navy);font-weight:600}
+.toc li a:hover{color:var(--gold)}
+
+/* 章节 */
+.section{padding:48px 0;border-bottom:1px solid var(--line)}
+.section.alt{background:var(--paper)}
+.section .kicker{color:var(--gold);font-size:12px;letter-spacing:.14em;font-weight:700;text-transform:uppercase}
+.section h2{font-size:25px;line-height:1.35;margin:8px 0 12px;font-weight:800;color:var(--navy)}
+.section h3{font-size:17.5px;margin:26px 0 12px;font-weight:700;color:var(--navy)}
+.section p{color:#334155;margin:10px 0}
+
+/* 结论条 */
+.point{
+  background:linear-gradient(135deg,var(--navy),var(--navy-mid));
+  color:#fff;border-radius:10px;padding:18px 24px;margin:18px 0 24px;
+  border-left:4px solid var(--gold-bright);
+}
+.point .tag{color:var(--gold-bright);font-weight:700;font-size:11.5px;letter-spacing:.12em;display:block;margin-bottom:6px;text-transform:uppercase}
+.point p{margin:0;color:#f1f5f9;font-size:15px;line-height:1.75}
+
+/* 卡片网格 */
+.grid{display:grid;gap:16px;margin:18px 0}
+.grid.c2{grid-template-columns:repeat(2,1fr)}
+.grid.c3{grid-template-columns:repeat(3,1fr)}
+.grid.c4{grid-template-columns:repeat(4,1fr)}
+.grid.c5{grid-template-columns:repeat(5,1fr)}
+.card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+.card.gold-tint{background:var(--gold-soft);border-color:#e4cfa3}
+.card.teal-tint{background:var(--teal-soft);border-color:#a7f3d0}
+.card h4{font-size:14.5px;margin:0 0 8px;color:var(--navy);font-weight:700}
+.card .num{font-size:22px;font-weight:800;color:var(--gold);line-height:1.2}
+.card .num.navy{color:var(--navy)}
+.card .num.teal{color:var(--teal)}
+.card p{font-size:13px;color:var(--muted);margin:6px 0 0;line-height:1.65}
+.card ul{padding-left:18px;margin:8px 0 0;font-size:13px;color:var(--muted)}
+.card li{margin:4px 0}
+
+/* 表格 */
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13px;background:#fff;border-radius:8px;overflow:hidden;border:1px solid var(--line)}
+th{background:linear-gradient(135deg,var(--navy),var(--navy-light));color:#fff;text-align:left;padding:10px 12px;font-weight:600}
+td{padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top;line-height:1.62;color:#1e293b}
+tr:nth-child(even) td{background:#faf9f6}
+tr.row-hl td{background:var(--gold-soft);font-weight:600}
+td strong{color:var(--navy)}
+
+/* 提示框 */
+.note{background:#f8fafc;border:1px solid #cbd5e1;border-left:4px solid var(--navy);border-radius:8px;padding:13px 16px;font-size:13px;color:var(--ink);margin:16px 0}
+.note.gold{background:var(--gold-soft);border-color:#e4cfa3;border-left-color:var(--gold);color:#5c4316}
+.note.ok{background:var(--teal-soft);border-color:#a7f3d0;border-left-color:var(--teal);color:#115e59}
+
+/* 图表 */
+.figure{margin:24px 0;text-align:center}
+.figure svg{max-width:100%;height:auto;border-radius:10px;border:1px solid var(--line)}
+.figure .caption{font-size:12.5px;color:var(--muted);margin-top:8px}
+
+/* 行动清单卡片 */
+.step-card{
+  background:#fff;border:1px solid var(--line);border-radius:10px;padding:20px 22px;
+  display:flex;gap:18px;align-items:flex-start;margin-bottom:14px;
+}
+.step-num{
+  min-width:42px;height:42px;border-radius:50%;
+  background:var(--navy);color:var(--gold-bright);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:17px;border:2px solid var(--gold);
+}
+.step-body h4{margin:0 0 6px;color:var(--navy);font-size:15.5px}
+.step-body p{margin:4px 0;font-size:13.5px;color:var(--muted)}
+
+/* 页脚 */
+footer{background:var(--navy);color:#94a3b8;padding:54px 0;text-align:center;border-top:4px solid var(--gold)}
+footer h2{font-family:"Songti SC","Noto Serif SC",Georgia,serif;color:#fff;font-size:24px;margin:0 0 12px}
+footer p{color:#cbd5e1;max-width:740px;margin:8px auto;font-size:14px;line-height:1.8}
+footer .mantra{color:var(--gold-bright);font-size:13.5px;letter-spacing:.12em;margin-top:20px;font-weight:700}
+
+@media(max-width:860px){
+  .hero h1{font-size:28px}
+  .hero .stats,.letter-grid,.grid.c2,.grid.c3,.grid.c4,.grid.c5{grid-template-columns:1fr}
+  .topbar nav{display:none}
+  .toc ol{columns:1}
+}
+@media print{
+  .topbar{display:none}
+  .section{padding:26px 0;page-break-inside:avoid}
+  .hero{padding:36px 0 28px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .point,th,.card.gold-tint,.card.teal-tint,.note,.step-num{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap">
+    <a class="brand" href="#top">
+      <span class="brand-seal">吴</span>
+      Deep<span>Family</span>
+      <small>Founding Co-Builder Edition</small>
+    </a>
+    <nav>
+      <a href="#preface">序言</a>
+      <a href="#ch1">01 缘起与2077标准</a>
+      <a href="#ch2">02 吴氏金库底座</a>
+      <a href="#ch3">03 活态年鉴与迁移</a>
+      <a href="#ch4">04 双阶段与90天PoC</a>
+      <a href="#ch5">05 1:5放大与成本账</a>
+      <a href="#ch6">06 机构礼服与隔离</a>
+      <a href="#ch7">07 90天3件共创事</a>
+      <button class="btn-print" onclick="window.print()">导出 PDF</button>
+    </nav>
+  </div>
+</header>
+
+<!-- 封面 -->
+<section class="hero" id="top">
+  <div class="wrap">
+    <div class="hero-top">
+      <div class="kicker">DeepFamily × Wu Family · 2027–2077 Preservation Blueprint</div>
+      <div class="edition">致创始赞助人兼标杆家族掌门人 · 吴总专属共创版</div>
+    </div>
+    <h1><em>创始共创</em>与 50 年受托级<br>数字遗产保存战略计划书</h1>
+    <p class="sub">致敬吴总以 <code>DF-HT-2026-001</code>（含税 S$100,000，首付 S$53,800）率先点亮行业第一盏灯。本计划书系统呈现我们如何守护吴氏家族 <strong>2027–2077 年“可恢复、可读取、可独立接管”</strong>的 50 年主权数字金库，并以吴氏样板为支点撬动 <strong>SGD 500,000</strong> 新加坡家办联合资金，让一期“金标准交付”与二期“1:5 公益传承”行稳致远。</p>
+    <div class="stats">
+      <div class="stat"><b>S$100,000</b><span>首台套标杆签约（53.8% 首付已就位）</span></div>
+      <div class="stat"><b>2027–2077</b><span>五层可审计保存与第三方独立接管</span></div>
+      <div class="stat"><b>S$500,000</b><span>外部联合放大轮（撬动 28.7 月跑道）</span></div>
+      <div class="stat"><b>90 天 PoC</b><span>6 项硬核实测 + 4 份受托级证据交付</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 序言 -->
+<section class="section" id="preface">
+  <div class="wrap">
+    <div class="letter-box">
+      <h3>序言｜致点燃行业第一盏灯的共创者：吴总</h3>
+      <p>尊敬的吴总：</p>
+      <p>在这个人人谈论 AI 生成内容、却极少有人认真回答“五十年后谁来守护家族记忆”的时代，您以 <code>DF-HT-2026-001</code> 的正式签约与 <strong>S$53,800</strong> 的首笔实付，为 DeepFamily、也为新加坡及东南亚华人家族的代际数字传承，率先点亮了第一盏灯。</p>
+      <p>这份文件不是一份面向陌生 VC 的路演说明书，而是我们向<strong>创始赞助人与首台套标杆家族掌门人（Founding Patron &amp; Co-Builder）</strong>呈报的一对一专属共创蓝图，回答四个与吴氏家族切身相关的问题：</p>
+      <div class="letter-grid">
+        <div class="letter-item"><strong>1. 给吴氏家族一座怎样的金库？</strong><span>哪怕未来 50 年运营公司更迭，吴氏后代与受托人（如 RCNM / 家办 / 信托）在 <strong>2077 年</strong> 依然能独立打开、完整重建的主权数字金库。</span></div>
+        <div class="letter-item"><strong>2. 如何把您的托付放大 5 倍？</strong><span>以您的首台套势能撬动 <strong>S$500,000</strong> 新加坡家办联合资金，实现 <strong>28.7 个月</strong>稳健跑道并于第 2 年盈利，让承托吴氏金库的平台永续健康。</span></div>
+        <div class="letter-item"><strong>3. 如何稳妥落地您的公益愿景？</strong><span>一期 90 天聚力把吴氏第五卷建成“行业零号金标准样板”；二期伴随外部资金与高效底座就位，从容开启宗亲会馆联动与 <strong>1:5 公益传承</strong>。</span></div>
+        <div class="letter-item"><strong>4. 未来 90 天需要吴总配合什么？</strong><span>极简、低负担的 <strong>3 件高杠杆事项</strong>；其余全部工程建设、法务穿礼服、90 天 PoC 测试与外部融资重担，由我们团队稳稳扛起。</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 目录 -->
+<section class="toc">
+  <div class="wrap">
+    <ol>
+      <li><a href="#ch1">第一章｜共创缘起与行业警钟：2077 年五层受托验收标准</a></li>
+      <li><a href="#ch2">第二章｜吴氏家族的专属金库底座：3-2-1-1-0 与 AI/PDPA 边界</a></li>
+      <li><a href="#ch3">第三章｜从“静态封存”到“活着的家族年鉴”：50年迁移与阿忆</a></li>
+      <li><a href="#ch4">第四章｜双阶段演进：一期 90 天金标准 PoC 与二期 1:5 公益生态</a></li>
+      <li><a href="#ch5">第五章｜1:5 资金放大器：当下商业造血账 + 50 年保存准备金账</a></li>
+      <li><a href="#ch6">第六章｜为共同事业穿上“机构礼服”：风险隔离与共赢治理</a></li>
+      <li><a href="#ch7">第七章｜未来 90 天并肩作战：只需吴总轻松支持的 3 件事</a></li>
+    </ol>
+  </div>
+</section>
+
+<!-- 第一章 -->
+<section class="section" id="ch1">
+  <div class="wrap">
+    <div class="kicker">Chapter 01 · Why 50-Year Fiduciary Preservation</div>
+    <h2>第一章｜共创缘起与行业警钟：为什么吴氏家族需要“50 年不依赖单一公司的数字金库”？</h2>
+
+    <div class="point">
+      <span class="tag">核心工程共识：保存目标 ≠ 某台设备的寿命</span>
+      <p>任何负责任的工程师都不会向您承诺“一张蓝光盘或一台 Mac mini 能完好无损用 50 年”。加拿大文物保护研究所（CCI）与美国国家档案馆（NARA）均指出可刻录光盘受环境与光驱淘汰影响。DeepFamily 的 50 年承诺是：<strong>通过多副本、持续完整性验证、周期性迁移、开放格式与独立接管机制，保证 2077 年吴氏数据持续可恢复、可读取、可继承。</strong></p>
+    </div>
+
+    <div class="note gold">
+      <strong>行业警钟：海外最知名的 AI 数字遗产先驱 HereAfter AI 已正式关停其 C 端消费级服务。</strong> 它的退场印证了一个现实：依赖低价纯云端订阅的产品，既无法覆盖半个世纪的托管刚性成本，更无法解答高净值家族最深层的担忧——<em>“如果十年、二十年后服务商不在了，我们托付的家族记忆怎么办？”</em>
+    </div>
+
+    <h3>对标三大国际框架 · 吴氏家族 2077 年五层递进验收标准</h3>
+    <p>我们在架构设计上全面参考 <strong>ISO 14721:2025（OAIS 开放档案信息系统）</strong>、<strong>ISO 16363:2025（可信数字档案库评估）</strong> 与 <strong>NDSA Levels of Digital Preservation 2.1（2026 新版）</strong>（坦诚声明：采标工程设计用于审计依据，不等于已取得官方正式认证），为吴氏后代确立 2077 年清晰可测的五层验收标准：</p>
+
+    <div class="grid c5">
+      <div class="card gold-tint">
+        <div class="num">L1</div>
+        <h4>比特完整性</h4>
+        <p>50 年间吴氏档案未发生不可恢复字节损坏。<strong>2077 验收</strong>：SHA-256 签名验证链与不可变日志全量核验。</p>
+      </div>
+      <div class="card gold-tint">
+        <div class="num">L2</div>
+        <h4>文件可读取</h4>
+        <p>2027 年留存的第五卷、老照片与音视频，50 年后直接打开。<strong>2077 验收</strong>：零依赖独立阅读器脱机实测。</p>
+      </div>
+      <div class="card gold-tint">
+        <div class="num">L3</div>
+        <h4>信息可理解</h4>
+        <p>世系脉络、过继/兼祧、人物故事与出处清晰可解。<strong>2077 验收</strong>：结构化元数据与关系图谱完整重建。</p>
+      </div>
+      <div class="card teal-tint">
+        <div class="num teal">L4</div>
+        <h4>权利可继承</h4>
+        <p>吴氏合法后代与受托人依生前授权接管数据。<strong>2077 验收</strong>：跨代身份核验与 RGT 11 项授权交接测试。</p>
+      </div>
+      <div class="card teal-tint">
+        <div class="num navy">L5</div>
+        <h4>运营可延续</h4>
+        <p><strong>即使 DeepFamily 停止运营，第三方仍可接管恢复。</strong><strong>2077 验收</strong>：脱离原厂后台的独立重建演习。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 第二章 -->
+<section class="section alt" id="ch2">
+  <div class="wrap">
+    <div class="kicker">Chapter 02 · Wu Family Sovereign Digital Vault</div>
+    <h2>第二章｜吴氏家族的专属金库底座：3-2-1-1-0 双管理域、开放格式与隐私防线</h2>
+
+    <div class="point">
+      <span class="tag">为什么必须设计“两个独立管理域”？</span>
+      <p>如果三份备份受控于同一个云管理员、同一把主密钥或同一家公司付款账户，一旦账号失窃或公司停服，三份副本将同时失效。吴氏架构采用<strong>增强型 3-2-1-1-0 + 双独立管理域 + 受托应急接管层</strong>，确保哪怕极端情况下 DeepFamily 不复存在，吴氏后代或受托机构（如 RCNM / 家办 / 信托）依然能独立重建。</p>
+    </div>
+
+    <!-- SVG 图 1：吴氏 3-2-1-1-0 双独立管理域架构 -->
+    <div class="figure">
+      <svg viewBox="0 0 920 355" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="920" height="355" fill="#ffffff" rx="10"/>
+        <text x="460" y="28" text-anchor="middle" font-size="16" font-weight="700" fill="#0b162a">吴氏家族专属增强型 3-2-1-1-0 与双独立管理域受托架构</text>
+        <text x="460" y="48" text-anchor="middle" font-size="12" fill="#475569">≥3 份完整副本 · ≥2 类介质 · ≥1 份异地 · ≥1 份物理离线不可变 · 0 个未解决校验错误（审计恢复目标）</text>
+
+        <rect x="40" y="64" width="840" height="44" rx="8" fill="#0b162a"/>
+        <text x="460" y="91" text-anchor="middle" font-size="13.5" font-weight="700" fill="#d4af63">HDP 登记与校验控制面：唯一编码 (P/E/M/DF-DOC) · SHA-256 签名清单 H₀ · 11 项 RGT 门禁 · 追加式审计日志</text>
+
+        <rect x="40" y="122" width="266" height="108" rx="8" fill="#faf9f6" stroke="#1e3a5f" stroke-width="2"/>
+        <rect x="40" y="122" width="266" height="8" rx="4" fill="#1e3a5f"/>
+        <text x="173" y="150" text-anchor="middle" font-size="13.5" font-weight="700" fill="#0b162a">Copy A · 日常管理域 1</text>
+        <text x="173" y="172" text-anchor="middle" font-size="12" font-weight="600" fill="#1e293b">Mac mini M5 Pro 本地工作节点</text>
+        <text x="173" y="192" text-anchor="middle" font-size="11.5" fill="#475569">日常浏览 · 阿忆检索 · 受控冷分层</text>
+        <text x="173" y="212" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1e3a5f">每月自动核查清单并自愈修复</text>
+
+        <rect x="327" y="122" width="266" height="108" rx="8" fill="#ecfdf5" stroke="#0f766e" stroke-width="2"/>
+        <rect x="327" y="122" width="266" height="8" rx="4" fill="#0f766e"/>
+        <text x="460" y="150" text-anchor="middle" font-size="13.5" font-weight="700" fill="#0f766e">Copy B · 独立管理域 2</text>
+        <text x="460" y="172" text-anchor="middle" font-size="12" font-weight="600" fill="#1e293b">异地独立云账号与托管 KMS 密钥</text>
+        <text x="460" y="192" text-anchor="middle" font-size="11.5" fill="#475569">原厂运维无权删改 · 账单独立隔离</text>
+        <text x="460" y="212" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0f766e">每季度跨区域可读性与签名核查</text>
+
+        <rect x="614" y="122" width="266" height="108" rx="8" fill="#f7f1e3" stroke="#b8924a" stroke-width="2"/>
+        <rect x="614" y="122" width="266" height="8" rx="4" fill="#b8924a"/>
+        <text x="747" y="150" text-anchor="middle" font-size="13.5" font-weight="700" fill="#8c6a2b">Copy C · 物理离线不可变</text>
+        <text x="747" y="172" text-anchor="middle" font-size="12" font-weight="600" fill="#1e293b">18TB 蓝光 5 匣（一式两份异地）</text>
+        <text x="747" y="192" text-anchor="middle" font-size="11.5" fill="#475569">断网免疫勒索 · 内置零依赖阅读器</text>
+        <text x="747" y="212" text-anchor="middle" font-size="11.5" font-weight="700" fill="#8c6a2b">季度增量 · 年度封盘 · 每年抽检</text>
+
+        <rect x="40" y="242" width="840" height="40" rx="8" fill="#152642"/>
+        <text x="460" y="267" text-anchor="middle" font-size="12.5" font-weight="600" fill="#fff">绝对隔离修复铁律：异常副本立即隔离 · 绝不反向污染健康副本 · 随密码学演进平滑升级签名算法并保留 2027 历史锚点</text>
+
+        <rect x="40" y="292" width="840" height="46" rx="8" fill="#0b162a" stroke="#b8924a" stroke-width="1.5"/>
+        <text x="460" y="320" text-anchor="middle" font-size="12.5" font-weight="700" fill="#d4af63">受托应急接管层：吴氏后代离线直接拆封 Copy C ｜ 或 RCNM / 家办 / 信托凭托管密钥 72 小时接管 Copy B（每 3 年演练一次）</text>
+      </svg>
+      <div class="caption">图 1：吴氏家族 50 年增强型 3-2-1-1-0 架构——以物理隔离与双管理域保障终极家族数据主权</div>
+    </div>
+
+    <h3>开放格式双轨制（对标美国国会图书馆 2025–2026 推荐标准）</h3>
+    <table>
+      <thead><tr><th>吴氏核心资产类别</th><th>采集原件（Master）</th><th>长期保存开放标准格式（Preservation）</th><th>专项工程保护细则</th></tr></thead>
+      <tbody>
+        <tr><td><strong>1. 《吴氏第五卷》与文献</strong></td><td>纸质原件（<strong>当日扫完即归还</strong>）</td><td>无损 <strong>TIFF</strong> 母版 + <strong>PDF/A</strong>（内嵌字体检索层）</td><td><code>name_raw</code> 原字层与检索层分离，<code>utf8mb4</code> 编码保 50 年繁简异体字不乱码。</td></tr>
+        <tr><td><strong>2. 老照片与家族实物</strong></td><td>相片/匾额/印章当日拍完归还</td><td>无损 <strong>TIFF</strong>（保留完整色彩空间与 EXIF）</td><td>AI 修复仅作派生对比层严禁覆盖母版；遵循“整页最严权限隔离”。</td></tr>
+        <tr><td><strong>3. 6 位长辈口述录音</strong></td><td>双机位无损采集母带</td><td><strong>WAV / BWF</strong> 无损广播级音频（含时间码）</td><td>保留闽南/潮州/粤语方言原声及专有名词校对表，不因普通话润色覆写原音。</td></tr>
+        <tr><td><strong>4. 双机位访谈视频</strong></td><td>原始录制母带</td><td>高质量开放封装保存母版 + <strong>WAV/BWF 分离音轨</strong></td><td>经授权的 1 位初代长辈数字人严格标注“AI 合成标识”，与真实历史录像物理隔离。</td></tr>
+        <tr><td><strong>5. 世系、事件与 RGT 授权</strong></td><td>结构化主库 + 签字原件</td><td><strong>UTF-8 JSON / CSV + GEDCOM + PDF/A</strong></td><td>因 GEDCOM 会丢失中文原字、过继/兼祧双亲缘与四态事实，强制伴随 JSON/CSV 与离线 HTML 阅读器导出。</td></tr>
+      </tbody>
+    </table>
+
+    <div class="grid c2">
+      <div class="card">
+        <h4>AI 与大模型（LLM）的不可篡改铁律</h4>
+        <p>把开放格式档案库比作保险柜里的<strong>“地契与原稿”</strong>，LLM 与“阿忆”只是 2026 年聘请的<strong>“当代图书管理员”</strong>：</p>
+        <ul>
+          <li><strong>AI 只是可重建派生层</strong>：绝不将向量库作为主档；2077 年可用当时更强模型几分钟重扫原件；</li>
+          <li><strong>确定性代码计算世系</strong>：代际、过继、兼祧去重全由确定性代码计算，严禁 AI 脑补“失考”祖先；</li>
+          <li><strong>四态事实 + 72 分阈值</strong>：严格区分“已确认 / 待确认 / 家属陈述 / AI 推断”，争议史实并行保留，终审权永远归吴氏家族；</li>
+          <li><strong>零外部训练锁定</strong>：吴氏真实资料与问答日志物理隔离，严禁用于外部大模型训练。</li>
+        </ul>
+      </div>
+      <div class="card teal-tint">
+        <h4>新加坡 PDPA 2012 最高标准隐私防线</h4>
+        <ul>
+          <li><strong>11 项精细授权门禁（RGT001）</strong>：将“家族查阅、跨支系、公展、声音克隆、数字人”彻底拆分，未经本人或监护人电子签署，后台物理锁定生成权限；</li>
+          <li><strong>未成年人 &amp; 逝者分层合规</strong>：严格区分 13 岁以下监护人同意与 13–17 岁本人同意，对齐逝者 10 年保护/100 年历史豁免规则；</li>
+          <li><strong>WORM 蓝光 × PDPA 撤回权“四步隔离闭环”</strong>：采用<strong>按人物/按资产独立密钥加密（Per-Subject Crypto-shredding）</strong>——若在世成员撤回同意，直接列入限制清单、隔离盘片、销毁对应独立子密钥（无需整盘作废）并在任何恢复前强制校验防“复活”。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 第三章 -->
+<section class="section" id="ch3">
+  <div class="wrap">
+    <div class="kicker">Chapter 03 · 2027–2077 Migration &amp; Living Chronicle</div>
+    <h2>第三章｜从“静态封存”到“活着的家族年鉴”：50 年动态迁移与“阿忆”陪伴</h2>
+
+    <div class="point">
+      <span class="tag">前后端双轮驱动</span>
+      <p>后端参照<strong>英国国家档案馆（TNA）3–5 年存储检查周期</strong>稳健完成跨代介质与格式迁移；前端将“阿忆 AI 管家”无摩擦寄生到吴氏家人每天都在用的 <strong>WhatsApp 与微信群</strong>，让家族记忆从“一次性建库”变为每年生长的活态年鉴。</p>
+    </div>
+
+    <!-- SVG 图 2：2027-2077 迁移时间轴 -->
+    <div class="figure">
+      <svg viewBox="0 0 920 205" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="920" height="205" fill="#faf9f6" rx="10"/>
+        <text x="460" y="28" text-anchor="middle" font-size="15.5" font-weight="700" fill="#0b162a">2027–2077 吴氏数字金库五十年技术迁移与独立接管演练时间轴</text>
+        <line x1="65" y1="95" x2="855" y2="95" stroke="#b8924a" stroke-width="3"/>
+
+        <!-- 7 节点 -->
+        <circle cx="80" cy="95" r="10" fill="#0b162a" stroke="#d4af63" stroke-width="3"/>
+        <text x="80" y="68" text-anchor="middle" font-size="12.5" font-weight="800" fill="#0b162a">2027</text>
+        <text x="80" y="124" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1e293b">建库基准年</text>
+        <text x="80" y="142" text-anchor="middle" font-size="10.5" fill="#475569">第五卷入库</text>
+        <text x="80" y="158" text-anchor="middle" font-size="10.5" fill="#475569">90天PoC验收</text>
+
+        <circle cx="206" cy="95" r="9" fill="#1e3a5f" stroke="#d4af63" stroke-width="2.5"/>
+        <text x="206" y="68" text-anchor="middle" font-size="12" font-weight="700" fill="#1e3a5f">2030–32</text>
+        <text x="206" y="124" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1e293b">首次存储刷新</text>
+        <text x="206" y="142" text-anchor="middle" font-size="10.5" fill="#475569">主机/光驱/冷云</text>
+        <text x="206" y="158" text-anchor="middle" font-size="10.5" fill="#475569">第一轮介质替换</text>
+
+        <circle cx="333" cy="95" r="9" fill="#1e3a5f" stroke="#d4af63" stroke-width="2.5"/>
+        <text x="333" y="68" text-anchor="middle" font-size="12" font-weight="700" fill="#1e3a5f">2035–37</text>
+        <text x="333" y="124" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1e293b">首个架构更新</text>
+        <text x="333" y="142" text-anchor="middle" font-size="10.5" fill="#475569">格式/加密算法</text>
+        <text x="333" y="158" text-anchor="middle" font-size="10.5" fill="#475569">语义零丢失迁移</text>
+
+        <circle cx="460" cy="95" r="11" fill="#0f766e" stroke="#d4af63" stroke-width="3"/>
+        <text x="460" y="68" text-anchor="middle" font-size="12.5" font-weight="800" fill="#0f766e">2047 (20年)</text>
+        <text x="460" y="124" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0f766e">独立接管演练</text>
+        <text x="460" y="142" text-anchor="middle" font-size="10.5" fill="#475569">脱离原厂系统</text>
+        <text x="460" y="158" text-anchor="middle" font-size="10.5" fill="#475569">第三方独立重建</text>
+
+        <circle cx="586" cy="95" r="9" fill="#1e3a5f" stroke="#d4af63" stroke-width="2.5"/>
+        <text x="586" y="68" text-anchor="middle" font-size="12" font-weight="700" fill="#1e3a5f">2057 (30年)</text>
+        <text x="586" y="124" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1e293b">持续性审查</text>
+        <text x="586" y="142" text-anchor="middle" font-size="10.5" fill="#475569">跨代继承核验</text>
+        <text x="586" y="158" text-anchor="middle" font-size="10.5" fill="#475569">保存准备金审计</text>
+
+        <circle cx="713" cy="95" r="9" fill="#1e3a5f" stroke="#d4af63" stroke-width="2.5"/>
+        <text x="713" y="68" text-anchor="middle" font-size="12" font-weight="700" fill="#1e3a5f">2067 (40年)</text>
+        <text x="713" y="124" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1e293b">独立迁移审查</text>
+        <text x="713" y="142" text-anchor="middle" font-size="10.5" fill="#475569">后量子签名替换</text>
+        <text x="713" y="158" text-anchor="middle" font-size="10.5" fill="#475569">无2027软件依赖</text>
+
+        <circle cx="840" cy="95" r="11" fill="#b8924a" stroke="#0b162a" stroke-width="3"/>
+        <text x="840" y="68" text-anchor="middle" font-size="12.5" font-weight="800" fill="#8c6a2b">2077 (50年)</text>
+        <text x="840" y="124" text-anchor="middle" font-size="11.5" font-weight="700" fill="#8c6a2b">50 年独立终验</text>
+        <text x="840" y="142" text-anchor="middle" font-size="10.5" fill="#475569">全量原件与图谱</text>
+        <text x="840" y="158" text-anchor="middle" font-size="10.5" fill="#475569">移交下个50年</text>
+
+        <text x="460" y="188" text-anchor="middle" font-size="11.5" font-weight="600" fill="#0f766e">贯穿 50 年常态 SLA：新档入库即验 · 在线每月核查 · 异地每季核查 · 每年全家族恢复演习 · 每 3 年脱离原厂退出验证</text>
+      </svg>
+      <div class="caption">图 2：从 2027 建库到 2077 终验——定期刷新介质与每 3 年/20 年独立接管演练，彻底替代“单盘赌寿命”</div>
+    </div>
+
+    <div class="grid c3">
+      <div class="card">
+        <h4>长辈零门槛：寄生微信 / WhatsApp</h4>
+        <p>不用学新 App。“阿忆”在先祖纪念日或节日温和发出一张老照片邀请语音补充，长辈发条语音即可自动校勘挂接时间线。</p>
+      </div>
+      <div class="card">
+        <h4>承接当代家族活水</h4>
+        <p>新生儿满月、孩子毕业、家族聚餐的群内照片顺手一传，“阿忆”自动完成归类并纳入季度增量归档，让家史不断代。</p>
+      </div>
+      <div class="card gold-tint">
+        <h4>春节仪式：《吴氏家族年度纪事》</h4>
+        <p>每年春节前自动编纂一部《吴氏家族年度纪事》并完成年度蓝光封盘校验，让传承成为吴氏家族每年最温暖的新春仪式。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 第四章 -->
+<section class="section alt" id="ch4">
+  <div class="wrap">
+    <div class="kicker">Chapter 04 · Two-Phase Co-Builder Roadmap &amp; Wu Family PoC</div>
+    <h2>第四章｜双阶段演进蓝图：一期 90 天“零号金标准样板”与二期 1:5 公益生态</h2>
+
+    <div class="point">
+      <span class="tag">一期立标 · 二期扩圈：把吴总的每一分远见落到实处</span>
+      <p>吴总在前期共创中提出的多语种扩展、宗亲会馆联动及极具大爱精神的 <strong>1:5 公益传承模式</strong>（一个标杆家族带动五个普通家庭），正是 DeepFamily 的灵魂所在。为了确保宏大愿景具备长期造血力，我们确立<strong>“一期 90 天先用吴氏第五卷铸成经得起家办与 RCNM 检验的零号金标准样板；二期伴随 S$50 万到位与自动化底座上线，从容承接会馆网络与 1:5 公益生态”</strong>的双阶段路径。</p>
+    </div>
+
+    <h3>第一阶段（未来 90 天）：吴氏家族 6 项独立于 LLM 的 Preservation PoC 测试</h3>
+    <table>
+      <thead><tr><th>测试编号与名称</th><th>抽取的吴氏测试样本</th><th>工程执行与硬性验收标准（Pass / Fail）</th></tr></thead>
+      <tbody>
+        <tr><td><strong>PoC-1：原始入库与不确定保留</strong></td><td>吴氏第五卷页、老照片、口述 WAV、“待确认/争议”条目</td><td>100% 取得 SHA-256 哈希清单 H₀、数字签名、来源 <code>anchor_id</code> 与 RGT 状态；不确定史实 100% 保留原状不被 AI“脑补转正”。</td></tr>
+        <tr><td><strong>PoC-2：模拟单点故障恢复</strong></td><td>PoC-1 全量入库三副本样本集</td><td>人为彻底删除 Copy A 测试节点后，跨管理域从 Copy B 拉取解密恢复；文件数与哈希与 H₀ <strong>100% 一致</strong>并记录真实 RTO。</td></tr>
+        <tr><td><strong>PoC-3：人为比特损坏防污染</strong></td><td>1 份第五卷 TIFF + 1 份老照片副本</td><td>十六进制篡改 1–4 字节模拟静默腐败；扫描器必须精准告警隔离，<strong>严禁受损文件反向覆盖 Copy B/C</strong> 并自动自愈。</td></tr>
+        <tr><td><strong>PoC-4：断云完全离线读取</strong></td><td>Copy C 档案级蓝光测试归档包</td><td>拔网线、关 Wi-Fi，在无任何 DeepFamily 软件的全新电脑上，双击零依赖静态 HTML 阅读器流畅读取第五卷、音频与世系树。</td></tr>
+        <tr><td><strong>PoC-5：第三方独立接管重建</strong></td><td>标准导出包 + 托管恢复密钥 + 接管手册</td><td>由未参与日常开发的第三方代表，<strong>不登录生产后台、不调原厂 API</strong>，仅凭导出包与密钥在洁净环境 100% 重建档案与权限规则。</td></tr>
+        <tr><td><strong>PoC-6：第五卷知识与证据链重建</strong></td><td>导出的 JSON/CSV + GEDCOM + 媒体清单</td><td>脱离前端与 LLM 重建世系（验证过继/兼祧去重与四态事实）；随机抽查 10 条结论 100% 直达原书页码或录音分钟级时间戳。</td></tr>
+      </tbody>
+    </table>
+
+    <div class="grid c2">
+      <div class="card gold-tint">
+        <h4>90 天结束时交付吴总 &amp; 机构尽调的 4 份硬核证据</h4>
+        <ul>
+          <li><strong>1. 《保存架构规范》</strong>（Preservation Architecture Specification）</li>
+          <li><strong>2. 《实测证据报告》</strong>（Preservation Evidence Report）</li>
+          <li><strong>3. 《基于吴氏真实容量的 50 年成本模型》</strong>（50-Year Lifecycle Cost Model）</li>
+          <li><strong>4. 《退出与继承接管手册》</strong>（Exit &amp; Succession Runbook）</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>第二阶段（M4 起）：从吴氏灯塔辐射 1:5 公益与新马受托生态</h4>
+        <ul>
+          <li><strong>交付提效 70% 后开启 1:5 公益</strong>：待 HDP 在线工作台与一键 OAIS 打包器把交付压缩至 30–45 天、外部 S$50 万就位，低边际成本底座即可稳健反哺 1:5 公益家庭；</li>
+          <li><strong>Infologic + 吴氏双锚效应</strong>：依托 1992 年成立的新加坡老牌企业 <strong>Infologic</strong> 信用，辐射家办、持牌信托、RCNM 等受托机构及槟城陈氏宗亲会（现有 406 条四国研究库，LinkedIn 通过率 35%–47%）。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 第五章 -->
+<section class="section" id="ch5">
+  <div class="wrap">
+    <div class="kicker">Chapter 05 · 1:5 Capital Multiplier &amp; Two Transparent Ledgers</div>
+    <h2>第五章｜1:5 资金放大器：撬动 S$500,000 与交底两本透明账</h2>
+
+    <div class="point">
+      <span class="tag">为什么用吴总的首单去撬动外部 S$500,000？</span>
+      <p>吴总签约 `DF-HT-2026-001`（S$100,000，首付 S$53,800）证明了高净值付费意愿。我们以首台套为支点启动 <strong>SGD 500,000 外部天使轮</strong>（SVCA CARE / Post-Money SAFE 滚动交割，精准引入新加坡家办与信托生态伙伴），目的是<strong>把您的 1 份托付放大成 5 倍持久的平台底座</strong>——让守护吴氏金库的机构拥有 <strong>28.7 个月</strong>现金安全垫并在第 2 年实现盈利造血。</p>
+    </div>
+
+    <!-- SVG 图 3：资金放大与准备金对比 -->
+    <div class="figure">
+      <svg viewBox="0 0 920 250" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="920" height="250" fill="#ffffff" rx="10"/>
+        <text x="460" y="28" text-anchor="middle" font-size="15.5" font-weight="700" fill="#0b162a">双账本全景：S$50 万外部资金筑牢平台底座 + 1TB 档案 50 年保存准备金模拟</text>
+
+        <!-- 左：50万分配 -->
+        <rect x="30" y="50" width="415" height="180" rx="8" fill="#faf9f6" stroke="#e2ddd2"/>
+        <text x="237" y="74" text-anchor="middle" font-size="13.5" font-weight="700" fill="#0b162a">外部 SGD 500,000 投入方向（全部反哺底座与安全垫）</text>
+        <rect x="52" y="92" width="150" height="20" rx="4" fill="#1e3a5f"/><text x="210" y="106" font-size="11.5" fill="#1e293b"><strong>39.0% (S$195k)</strong> HDP引擎化降本70% &amp; 阿忆</text>
+        <rect x="52" y="120" width="70" height="20" rx="4" fill="#0f766e"/><text x="130" y="134" font-size="11.5" fill="#1e293b"><strong>17.8% (S$89k)</strong> 家办闭门沙龙 &amp; L1试点拓展</text>
+        <rect x="52" y="148" width="60" height="20" rx="4" fill="#b8924a"/><text x="120" y="162" font-size="11.5" fill="#1e293b"><strong>15.3% (S$76.5k)</strong> 战略现金储备红线（独立锁死）</text>
+        <rect x="52" y="176" width="58" height="20" rx="4" fill="#334155"/><text x="118" y="190" font-size="11.5" fill="#1e293b"><strong>14.9% (S$74.5k)</strong> 吴氏90天PoC与专业采集设备</text>
+        <rect x="52" y="204" width="50" height="16" rx="4" fill="#64748b"/><text x="110" y="216" font-size="11.5" fill="#1e293b"><strong>13.0% (S$65k)</strong> 新加坡主体/DPO合规与PI保险</text>
+
+        <!-- 右：50年保存成本 -->
+        <rect x="465" y="50" width="425" height="180" rx="8" fill="#faf9f6" stroke="#e2ddd2"/>
+        <text x="677" y="74" text-anchor="middle" font-size="13.5" font-weight="700" fill="#0b162a">1TB 档案 50 年保存支出 vs 准备金情景（S$84,579 名义总成本）</text>
+        <text x="485" y="104" font-size="12" fill="#475569">• 仅放 S$20,000 静态现金 (0%收益)</text>
+        <rect x="485" y="112" width="125" height="14" rx="3" fill="#dc2626"/><text x="618" y="123" font-size="11" font-weight="700" fill="#b91c1c">第 17 年耗尽</text>
+        <text x="485" y="145" font-size="12" fill="#475569">• S$20,000 + 3% 审慎收益（无续费）</text>
+        <rect x="485" y="153" width="170" height="14" rx="3" fill="#d97706"/><text x="663" y="164" font-size="11" font-weight="700" fill="#b45309">第 23 年耗尽</text>
+        <text x="485" y="186" font-size="12" fill="#0f766e"><strong>• 推荐：S$20k+3%收益+S$800/年划拨 或 S$40k+3–4%收益</strong></text>
+        <rect x="485" y="194" width="375" height="16" rx="3" fill="#0f766e"/><text x="672" y="206" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">✅ 覆盖 50 年全程不断档（2077 年期末仍余 +S$8.7k 至 +S$63.5k）</text>
+      </svg>
+      <div class="caption">图 3：左图确保 DeepFamily 平台永续健康；右图用真实算术规划吴氏 50 年专款准备金</div>
+    </div>
+
+    <div class="grid c2">
+      <div class="card">
+        <h4>第一本账：DeepFamily 当下商业造血账（永续不倒）</h4>
+        <ul>
+          <li><strong>硬件与成本优化</strong>：Mac mini M5 Pro + 18TB 蓝光 5 匣仅 <strong>S$7,600</strong>，标准复制毛利 <strong>63.7%</strong>（扣 7.5% 渠道分成后净毛利 <strong>56.2%</strong>，单客净毛利 S$51,516）；</li>
+          <li><strong>极厚安全垫</strong>：中新协同把固定成本压至 S$1.86 万/月，叠加首台套回款，<strong>零新增客户静态 Runway 达 28.7 个月</strong>；</li>
+          <li><strong>盈亏平衡与盈利</strong>：年签 <strong>4.33 家</strong>即可打平；基准情景第 2 年净利 <strong>+S$207,610</strong>、第 3 年 <strong>+S$617,504</strong>、第 3 年末现金 <strong>S$1,238,390</strong>（即使新增减半的悲观情景第 3 年末现金仍有 S$44.9 万）。</li>
+        </ul>
+      </div>
+      <div class="card gold-tint">
+        <h4>第二本账：吴氏 1TB 50 年保存准备金账（务实不忽悠）</h4>
+        <ul>
+          <li><strong>1TB（三副本 3TB）规模化年成本</strong>：<strong>S$450–1,200/年</strong>（异地冷云 S$100–300 + 蓝光耗材/驱替 S$50–150 + 校验迁移 S$150–400 + 审计托管 S$150–350）；</li>
+          <li><strong>50 年累计名义支出</strong>：按首年 S$1,000、年增 2% 计，50 年累计约 <strong>S$84,579</strong>；</li>
+          <li><strong>给吴总的务实建议</strong>：先借 90 天 PoC 测出吴氏第五卷+访谈的<strong>真实 TB 体积</strong>，再在独立账户（可配合家办/RCNM 体系）设立<strong>专款隔离的保存准备金</strong>，采用“初始准备金 + 审慎收益/年度服务划拨 + 每 10 年动态复核”制度。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 第六章 -->
+<section class="section alt" id="ch6">
+  <div class="wrap">
+    <div class="kicker">Chapter 06 · Institutional Attire &amp; Risk Isolation</div>
+    <h2>第六章｜为共同事业穿上“机构礼服”：家族数据隔离与四项共赢治理安排</h2>
+
+    <div class="point">
+      <span class="tag">双赢设计：助推外部 S$50 万关账 × 彻底保护吴氏家族安全</span>
+      <p>新加坡家办与持牌信托在注入 S$500,000 前，会按国际标准审视企业主体洁净度与权属边界。我们邀请吴总共同签署四项简明、体面的“机构礼服”书面安排——它不仅让外部资金在 1–3 周内放心打款，更从法律和物理上把吴氏家族的私密资产与公司商业风险彻底隔离。</p>
+    </div>
+
+    <table>
+      <thead><tr><th>协同治理事项</th><th>对外部 S$50 万融资的助推价值</th><th>对吴氏家族的直接保护价值（共赢点）</th></tr></thead>
+      <tbody>
+        <tr><td><strong>1. 主体并表与洁净 IP 归属</strong><br>（<code>DeepFamily Pte. Ltd.</code> + Infologic 契据 + 合同主体转移）</td><td>将 <code>DF-HT-2026-001</code> 规范并表至独立新加坡主体 <code>DeepFamily Pte. Ltd.</code>，并明确平台底座 IP 归属公司，满足新加坡机构尽调要求。</td><td><strong>100% 物理与法律风险隔离</strong>：吴氏永久拥有全部原始素材、家族图谱、数字人形象/声音权及永久非排他使用权；同时使吴氏家族与公司未来商业扩展风险完全脱钩。</td></tr>
+        <tr><td><strong>2. 创始赞助与标杆定位书面明晰</strong><br>（《赞助款性质与标杆共创确认函》）</td><td>以透明商业条款界定吴总作为“创始标杆赞助人与首台套客户”的荣誉与边界（不涉及隐性负债或对其他家族的排他绑定），加速家办关账。</td><td><strong>零负担赋能</strong>：吴总无需承担公司日常繁琐经营与合规连带责任，专享创始标杆礼遇与首台套示范成果，同时坐享 S$50 万外部资金带来的技术持续升级。</td></tr>
+        <tr><td><strong>3. 数据主权大于“源码负担”</strong><br>（以开放格式导出取代源码交付 + 版本统合）</td><td>统合主合同、Nov 9 确认版 SOW 与《新加坡专项合规附件》，向投资人证明商业软件标准化、非一次性外包。</td><td><strong>真正带得走的自由，而非带不走的包袱</strong>：商业源码脱离团队即成无法维护的“死代码”；而<strong>开放格式全量导出 + 零依赖离线阅读器 + 第三方接管演练</strong>，才赋予吴氏 2077 年独立带走的绝对自由。</td></tr>
+        <tr><td><strong>4. 隐私优先的保密仲裁机制</strong><br>（SIAC 保密仲裁 + PI/Cyber 保险兜底）</td><td>对齐新加坡国际商业争议标准与本地专业责任险/网络安全险（PI &amp; Cyber Insurance），符合持牌机构治理规范。</td><td><strong>绝对守护家族隐私体面</strong>：以<strong>新加坡国际仲裁中心（SIAC）保密仲裁</strong>取代公开法院诉讼——确保在任何情况下，吴氏家族内部资料与往来绝不因公开司法文书暴露于公众视野。</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- 第七章 -->
+<section class="section" id="ch7">
+  <div class="wrap">
+    <div class="kicker">Chapter 07 · 90-Day Co-Builder Action Checklist</div>
+    <h2>第七章｜未来 90 天并肩作战清单：只需吴总轻松支持的 3 件事</h2>
+
+    <div class="step-card">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h4>Week 1–3｜确认书面“治理礼服”文件，为 S$50 万快速关账按下启动键</h4>
+        <p><strong>具体配合</strong>：审阅并签署《合同主体转移与版本统合确认书》及《创始赞助与标杆共创确认函》，确立 <code>DeepFamily Pte. Ltd.</code> 独立承接、IP 与吴氏数据主权边界以及 SIAC 保密仲裁护盾。</p>
+        <p><strong>共赢结果</strong>：帮助团队在 1–3 周内启动滚动交割，将 <strong>SGD 500,000</strong> 外部资金引入项目研发、合规与服务底座。</p>
+      </div>
+    </div>
+
+    <div class="step-card">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h4>Week 2–12｜指定授权脱敏样本（含吴氏第五卷），协同跑通 90 天 6 项硬核实测</h4>
+        <p><strong>具体配合</strong>：授权团队选用<strong>吴氏第五卷族谱及部分已脱敏/授权的老照片与口述样本</strong>，配合完成独立于 LLM 的 90 天 Preservation PoC。</p>
+        <p><strong>共赢结果</strong>：在 M3 节点亲眼验收 <strong>6 项破坏性与接管实测全部通过</strong>，拿到吴氏专属的 <strong>4 份机构级工程验收报告</strong>与可断网直接打开的实体蓝光金标准样板。</p>
+      </div>
+    </div>
+
+    <div class="step-card">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h4>Week 7–10｜作为创始东道主，主持或见证 1 场 10 人以内的闭门家宴演示</h4>
+        <p><strong>具体配合</strong>：在 90 天金标准样板成型之际，由吴总在私密场域邀请 <strong>6–8 位</strong>最信任的企业家挚友、家办掌门人或会馆领袖，共同见证 15 分钟吴氏 50 年数字金库现场演示（含“断云离线读取”与“阿忆”语音互动）。</p>
+        <p><strong>共赢结果</strong>：无需刻意推销，只用一杯茶的时间，将“零号金标准样板”的自然震撼力转化为圈层信赖，顺利锁单外部联合资金并开启二期更广阔的家族传承与 1:5 公益生态。</p>
+      </div>
+    </div>
+
+    <div class="note ok">
+      <strong>共同约定：</strong>做家族数字遗产，本质上是在和时间做一场长达五十年的约定。今天您用 <code>DF-HT-2026-001</code> 立下第一块基石；接下来我们用 <strong>S$500,000</strong> 的联合放大、<strong>ISO/OAIS</strong> 标准的严密工程、<strong>双独立管理域</strong>的主权守护与 <strong>“阿忆”</strong> 的日常陪伴，陪吴氏家族把这份托付稳稳交到 <strong>2077 年</strong>的后代手中。
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <h2>50 年的目标不是设备不变，而是吴氏家族的记忆与精神，永远可恢复、可读取、可继承。</h2>
+    <p>DeepFamily Pte. Ltd. × 吴氏家族（Founding Patron &amp; Co-Builder）<br>2027–2077 跨代数字遗产保存工程 · 新加坡</p>
+    <div class="mantra">ISO 14721 (OAIS) · 增强型 3-2-1-1-0 · 开放格式双轨 · 独立受托接管</div>
+  </div>
+</footer>
+
+</body>
+</html>
